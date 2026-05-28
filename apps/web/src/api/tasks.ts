@@ -20,6 +20,14 @@ export interface Task {
   children?: Task[];
   assignee?: { fullName: string; user?: { name: string } };
   project?: { id: string; code: string; name: string };
+  bugLinks?: { bugId: string; bug: { id: string; title: string; status: string; estimatedHours?: number; itemType: string } }[];
+}
+
+/** Task có bugs/issues active → không cho nhập % thủ công */
+export function isProgressLocked(task: Pick<Task, 'children' | 'bugLinks'>): boolean {
+  if ((task.children?.length ?? 0) > 0) return true;
+  const activeBugs = task.bugLinks?.filter((l) => l.bug.status !== 'CANCELLED') ?? [];
+  return activeBugs.length > 0;
 }
 
 export const tasksApi = {

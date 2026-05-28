@@ -132,6 +132,9 @@ export class TasksService {
         parent: { select: { id: true, title: true } },
         children: true,
         assignee: { include: { user: { select: { name: true } } } },
+        bugLinks: {
+          include: { bug: { select: { id: true, title: true, status: true, estimatedHours: true, itemType: true } } },
+        },
       },
     });
     if (!task) throw new NotFoundException('Không tìm thấy task');
@@ -192,6 +195,11 @@ export class TasksService {
     const hasChildren = await this.prisma.task.count({ where: { parentId: id } });
     if (hasChildren > 0) throw new BadRequestException('Task có subtask — tiến độ được tính tự động');
 
+    const activeBugCount = await this.prisma.bugTask.count({
+      where: { taskId: id, bug: { status: { not: 'CANCELLED' } } },
+    });
+    if (activeBugCount > 0) throw new BadRequestException('Task có bug/issue linked — tiến độ được tính tự động từ bug');
+
     if (progressPct >= 100 && !task.dueDate) {
       throw new BadRequestException('Vui lòng nhập deadline trước khi hoàn thành task');
     }
@@ -200,8 +208,36 @@ export class TasksService {
     await this.prisma.task.update({ where: { id }, data: { progress: progressPct, status: newStatus } });
 
     if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+    else await this.syncProjectProgress(task.projectId);
 
     return this.prisma.task.findUnique({ where: { id } });
+  }
+
+  /** Tính lại % task từ bug/issue linked (gọi khi bug đổi trạng thái). */
+  async syncProgressFromBugs(taskId: string): Promise<void> {
+    const links = await this.prisma.bugTask.findMany({
+      where: { taskId },
+      include: { bug: { select: { status: true, estimatedHours: true } } },
+    });
+
+    const active = links.filter((l) => l.bug && l.bug.status !== 'CANCELLED');
+    if (!active.length) return;
+
+    const BUG_PCT: Record<string, number> = { IN_PROGRESS: 50, RESOLVED: 100, CLOSED: 100 };
+    const totalHours = active.reduce((s, l) => s + (l.bug.estimatedHours ?? 1), 0);
+    const weighted = active.reduce((s, l) => {
+      const pct = BUG_PCT[l.bug.status] ?? 0;
+      const hrs = l.bug.estimatedHours ?? 1;
+      return s + pct * (totalHours > 0 ? hrs / totalHours : 1 / active.length);
+    }, 0);
+
+    const task = await this.prisma.task.findUnique({ where: { id: taskId } });
+    if (!task) return;
+
+    await this.prisma.task.update({ where: { id: taskId }, data: { progress: Math.round(weighted) } });
+
+    if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+    else await this.syncProjectProgress(task.projectId);
   }
 
   async getPendingApprovalTasks(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
@@ -299,6 +335,7 @@ export class TasksService {
 
     const updated = await this.prisma.task.update({ where: { id }, data });
     if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+    else await this.syncProjectProgress(task.projectId);
 
     // Đồng bộ: khi task DONE/CANCELLED → kiểm tra bug linked có thể auto-resolve
     if (status === 'DONE' || status === 'CANCELLED') {
@@ -371,6 +408,25 @@ export class TasksService {
       data: { progress: Math.round(weightedProgress) },
     });
     if (updated.parentId) await this.rollUpProgress(updated.parentId, projectId);
+    else await this.syncProjectProgress(projectId);
+  }
+
+  private async syncProjectProgress(projectId: string): Promise<void> {
+    const rootTasks = await this.prisma.task.findMany({
+      where: { projectId, parentId: null },
+    });
+    if (!rootTasks.length) return;
+
+    const totalEstimate = rootTasks.reduce((s, t) => s + Number(t.estimateHours), 0);
+    const weighted = rootTasks.reduce(
+      (s, t) => s + (Number(t.progress) * (totalEstimate > 0 ? Number(t.estimateHours) / totalEstimate : 1 / rootTasks.length)),
+      0,
+    );
+
+    await this.prisma.project.update({
+      where: { id: projectId },
+      data: { progress: Math.round(weighted) },
+    });
   }
 
   private async findOrThrow(id: string): Promise<Task> {

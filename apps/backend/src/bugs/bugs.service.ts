@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException,
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TelegramService } from '../integrations/telegram/telegram.service';
+import { TasksService } from '../tasks/tasks.service';
 import { BugStatus, BugSeverity, BugItemType, NotificationType } from '../generated/prisma';
 import { CreateBugDto } from './dto/create-bug.dto';
 import { UpdateBugDto } from './dto/update-bug.dto';
@@ -59,6 +60,7 @@ export class BugsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
+    private readonly tasksService: TasksService,
     @Optional() private readonly telegramService: TelegramService,
   ) {}
 
@@ -282,6 +284,9 @@ export class BugsService {
       this.cancelLinkedPendingTasks(id).catch(() => {});
     }
 
+    // Đồng bộ: Mọi đổi trạng thái bug → cập nhật lại % task linked
+    this.syncLinkedTasksProgress(id).catch(() => {});
+
     return updated;
   }
 
@@ -395,6 +400,16 @@ export class BugsService {
     }
 
     return where;
+  }
+
+  private async syncLinkedTasksProgress(bugId: string): Promise<void> {
+    const links = await this.prisma.bugTask.findMany({
+      where: { bugId },
+      select: { taskId: true },
+    });
+    for (const { taskId } of links) {
+      await this.tasksService.syncProgressFromBugs(taskId);
+    }
   }
 
   /**

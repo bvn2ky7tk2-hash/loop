@@ -1,4 +1,5 @@
-import { useState, CSSProperties } from 'react';
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import {
   DndContext, DragOverlay,
   PointerSensor, useSensor, useSensors, useDroppable, useDraggable,
@@ -7,12 +8,23 @@ import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import {
   Typography, Progress, DatePicker, Popover, Slider, Modal,
-  Spin, Empty, Badge, App, Select, theme,
+  Spin, App, Select, Tooltip, Dropdown, Avatar,
 } from 'antd';
-import { CalendarOutlined, HolderOutlined } from '@ant-design/icons';
+import {
+  CalendarOutlined,
+  HourglassOutlined,
+  PlayCircleOutlined,
+  ClockCircleOutlined,
+  RollbackOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  MoreOutlined,
+  InboxOutlined,
+  FolderOpenOutlined,
+} from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { tasksApi, type Task, type TaskStatus } from '../../api/tasks';
+import { tasksApi, isProgressLocked, type Task, type TaskStatus } from '../../api/tasks';
 import { projectsApi } from '../../api/projects';
 import { employeesApi } from '../../api/employees';
 import { useAuthStore } from '../../store/auth.store';
@@ -20,27 +32,46 @@ import { useThemeStore } from '../../store/theme.store';
 
 const { Text } = Typography;
 
-// ── Config ──────────────────────────────────────────────────────────────────
+// ── Config ───────────────────────────────────────────────────────────────────
 
 type FilterType = 'ALL' | 'TODAY' | 'TODO' | 'IN_PROGRESS' | 'DONE' | 'CANCELLED';
 
 const MANAGER_ROLES = ['PM', 'ADMIN', 'LEADERSHIP'];
 
-const COLUMNS: { status: TaskStatus; label: string; accent: string }[] = [
-  { status: 'TODO',             label: 'Chưa bắt đầu',   accent: '#64748B' },
-  { status: 'IN_PROGRESS',      label: 'Đang thực hiện', accent: '#4F46E5' },
-  { status: 'PENDING_APPROVAL', label: 'Chờ duyệt',       accent: '#D97706' },
-  { status: 'RETURNED',         label: 'Trả lại',          accent: '#DC2626' },
-  { status: 'DONE',             label: 'Hoàn thành',       accent: '#059669' },
-  { status: 'CANCELLED',        label: 'Đã huỷ',           accent: '#6B7280' },
+const COLUMNS: {
+  status: TaskStatus;
+  label: string;
+  accent: string;
+  icon: React.ReactNode;
+  emptyDesc: string;
+}[] = [
+  { status: 'TODO',             label: 'Chưa bắt đầu',   accent: '#64748B', icon: <HourglassOutlined />,    emptyDesc: 'Kéo thả công việc vào đây để bắt đầu' },
+  { status: 'IN_PROGRESS',      label: 'Đang thực hiện', accent: '#4F46E5', icon: <PlayCircleOutlined />,    emptyDesc: 'Chưa có công việc đang thực hiện' },
+  { status: 'PENDING_APPROVAL', label: 'Chờ duyệt',      accent: '#D97706', icon: <ClockCircleOutlined />,   emptyDesc: 'Kéo thả công việc vào đây để cập nhật' },
+  { status: 'RETURNED',         label: 'Trả lại',         accent: '#DC2626', icon: <RollbackOutlined />,      emptyDesc: 'Kéo thả công việc vào đây để cập nhật' },
+  { status: 'DONE',             label: 'Hoàn thành',      accent: '#059669', icon: <CheckCircleOutlined />,   emptyDesc: 'Công việc hoàn thành sẽ xuất hiện ở đây' },
+  { status: 'CANCELLED',        label: 'Đã huỷ',          accent: '#94A3B8', icon: <CloseCircleOutlined />,   emptyDesc: 'Các công việc đã huỷ sẽ xuất hiện ở đây' },
 ];
 
 const today = dayjs().format('YYYY-MM-DD');
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function initials(name: string) {
+  return name.split(' ').slice(-2).map((w) => w[0]).join('').toUpperCase();
+}
+
+function avatarColor(name: string) {
+  const colors = ['#4F46E5', '#059669', '#D97706', '#DC2626', '#0891B2', '#7C3AED', '#0D9488'];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % colors.length;
+  return colors[h];
+}
+
 // ── Task Card ────────────────────────────────────────────────────────────────
 
 function TaskCard({
-  task, isDragging, onProgressChange, onDueDateChange, showAssignee,
+  task, isDragging, showAssignee, onProgressChange, onDueDateChange,
 }: {
   task: Task;
   isDragging?: boolean;
@@ -48,57 +79,87 @@ function TaskCard({
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { token } = theme.useToken();
+  const { mode } = useThemeStore();
+  const isDark = mode === 'dark';
   const progress = Number(task.progress);
   const isOverdue = task.dueDate && task.dueDate < today && task.status !== 'DONE' && task.status !== 'CANCELLED';
 
+  // Màu progress bar theo trạng thái
+  const col = COLUMNS.find((c) => c.status === task.status);
+  const barColor = col?.accent ?? (progress >= 100 ? '#059669' : progress >= 50 ? '#4F46E5' : '#D97706');
+
   const cardStyle: CSSProperties = {
-    background: token.colorBgContainer,
-    borderRadius: 8,
+    background: isDark ? '#1E293B' : '#FFFFFF',
+    borderRadius: 10,
     padding: '10px 12px',
     marginBottom: 8,
     boxShadow: isDragging
-      ? `0 8px 24px ${token.colorShadow}`
-      : `0 1px 3px ${token.colorBorderSecondary}`,
-    border: `1px solid ${token.colorBorderSecondary}`,
+      ? '0 8px 24px rgba(0,0,0,0.18)'
+      : isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.07)',
+    border: `1px solid ${isDark ? '#2D3F56' : '#E8EDF3'}`,
     cursor: isDragging ? 'grabbing' : 'grab',
-    opacity: isDragging ? 0.88 : 1,
+    opacity: isDragging ? 0.9 : 1,
     userSelect: 'none',
+    transition: 'box-shadow 0.15s',
   };
 
-  const progressColor = progress >= 100 ? '#059669' : progress >= 50 ? token.colorPrimary : '#D97706';
+  const moreMenuItems = [
+    { key: 'view',   label: 'Xem chi tiết' },
+    { key: 'edit',   label: 'Chỉnh sửa' },
+    { type: 'divider' as const },
+    { key: 'delete', label: 'Xoá', danger: true },
+  ];
+
+  const assigneeName = task.assignee?.fullName ?? '';
 
   return (
     <div style={cardStyle}>
-      {/* Project + assignee row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5, flexWrap: 'wrap' }}>
+      {/* Row 1: project tag + assignee + more */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
         {task.project && (
           <span style={{
-            fontSize: 10, fontWeight: 600, padding: '1px 6px', borderRadius: 4,
-            background: token.colorFillSecondary, color: token.colorTextSecondary,
-            letterSpacing: 0.3,
+            fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
+            background: isDark ? '#0F172A' : '#F1F5F9',
+            color: isDark ? '#94A3B8' : '#64748B',
+            letterSpacing: 0.4, flexShrink: 0,
           }}>
             {task.project.code}
           </span>
         )}
-        {showAssignee && task.assignee && (
+        {showAssignee && assigneeName && (
           <span style={{
-            fontSize: 10, padding: '1px 6px', borderRadius: 4,
-            background: token.colorFillTertiary, color: token.colorTextTertiary,
+            fontSize: 11, color: isDark ? '#94A3B8' : '#64748B',
+            flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
-            {task.assignee.fullName}
+            {assigneeName}
           </span>
         )}
+        <div style={{ marginLeft: 'auto', flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+          <Dropdown menu={{ items: moreMenuItems }} trigger={['click']} placement="bottomRight">
+            <button style={{
+              border: 'none', background: 'transparent', cursor: 'pointer',
+              color: isDark ? '#64748B' : '#94A3B8', fontSize: 16, padding: '0 2px',
+              display: 'flex', alignItems: 'center', borderRadius: 4,
+            }}>
+              <MoreOutlined />
+            </button>
+          </Dropdown>
+        </div>
       </div>
 
       {/* Title */}
-      <Text style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 7, lineHeight: 1.4, color: token.colorText }}>
+      <Text style={{
+        display: 'block', fontSize: 13.5, fontWeight: 600,
+        marginBottom: 9, lineHeight: 1.45,
+        color: isDark ? '#E2E8F0' : '#1E293B',
+      }}>
         {task.title}
       </Text>
 
-      {/* Progress — click to open slider */}
+      {/* Progress bar */}
       <Popover
         trigger="click"
+        open={isProgressLocked(task) ? false : undefined}
         content={
           <div style={{ width: 200 }}>
             <Text style={{ fontSize: 12 }}>Tiến độ: <b>{progress}%</b></Text>
@@ -111,37 +172,67 @@ function TaskCard({
           </div>
         }
       >
-        <div style={{ cursor: 'pointer', marginBottom: 5 }} onClick={(e) => e.stopPropagation()}>
+        <div
+          style={{ cursor: isProgressLocked(task) ? 'default' : 'pointer', marginBottom: 8 }}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Progress
             percent={progress}
-            size="small"
-            strokeColor={progressColor}
+            size={['100%', 5]}
+            strokeColor={barColor}
+
             showInfo={false}
+            style={{ marginBottom: 3 }}
           />
-          <Text style={{ fontSize: 11, color: token.colorTextQuaternary }}>
-            {progress}% · {Number(task.estimateHours)}h ước tính
+          <Text style={{ fontSize: 11, color: isDark ? '#64748B' : '#94A3B8', fontWeight: 500 }}>
+            <span style={{ color: barColor, fontWeight: 700 }}>{progress}%</span>
+            {' · '}
+            {Number(task.estimateHours)}h ước tính
           </Text>
         </div>
       </Popover>
 
-      {/* Due date */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }} onClick={(e) => e.stopPropagation()}>
-        <CalendarOutlined style={{ fontSize: 10, color: isOverdue ? '#DC2626' : token.colorTextQuaternary }} />
-        <DatePicker
-          size="small"
-          variant="borderless"
-          format="DD/MM/YYYY"
-          placeholder="Chưa có deadline"
-          value={task.dueDate ? dayjs(task.dueDate) : null}
-          onChange={(d) => d && onDueDateChange(task.id, d.format('YYYY-MM-DD'))}
-          style={{ padding: 0, fontSize: 11, color: isOverdue ? '#DC2626' : token.colorTextSecondary, width: 115 }}
-          suffixIcon={null}
-        />
-        {isOverdue && (
-          <span style={{
-            fontSize: 10, fontWeight: 600, padding: '0 5px', borderRadius: 3,
-            background: '#FEF2F2', color: '#DC2626',
-          }}>Trễ</span>
+      {/* Row bottom: date + avatar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+           onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <CalendarOutlined style={{
+            fontSize: 11,
+            color: isOverdue ? '#DC2626' : isDark ? '#64748B' : '#94A3B8',
+          }} />
+          <DatePicker
+            size="small"
+            variant="borderless"
+            format="DD/MM/YYYY"
+            placeholder="Chưa có deadline"
+            value={task.dueDate ? dayjs(task.dueDate) : null}
+            onChange={(d) => d && onDueDateChange(task.id, d.format('YYYY-MM-DD'))}
+            style={{
+              padding: 0, fontSize: 12, width: 100,
+              color: isOverdue ? '#DC2626' : isDark ? '#64748B' : '#64748B',
+            }}
+            suffixIcon={null}
+          />
+          {isOverdue && (
+            <span style={{
+              fontSize: 10, fontWeight: 600, padding: '1px 5px', borderRadius: 4,
+              background: '#FEF2F2', color: '#DC2626',
+            }}>Trễ</span>
+          )}
+        </div>
+
+        {assigneeName && (
+          <Tooltip title={assigneeName}>
+            <Avatar
+              size={24}
+              style={{
+                backgroundColor: avatarColor(assigneeName),
+                fontSize: 10, fontWeight: 700, flexShrink: 0,
+              }}
+            >
+              {initials(assigneeName)}
+            </Avatar>
+          </Tooltip>
         )}
       </div>
     </div>
@@ -176,42 +267,83 @@ function DraggableCard(props: {
   );
 }
 
-// ── Droppable Column ─────────────────────────────────────────────────────────
+// ── Kanban Column ────────────────────────────────────────────────────────────
 
 function KanbanColumn({
-  status, label, accent, tasks, showAssignee, onProgressChange, onDueDateChange,
+  status, label, accent, icon, emptyDesc, tasks, showAssignee, onProgressChange, onDueDateChange,
 }: {
-  status: TaskStatus; label: string; accent: string; tasks: Task[];
-  showAssignee: boolean;
+  status: TaskStatus; label: string; accent: string; icon: React.ReactNode; emptyDesc: string;
+  tasks: Task[]; showAssignee: boolean;
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { token } = theme.useToken();
+  const { mode } = useThemeStore();
+  const isDark = mode === 'dark';
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
+  const colHeaderBg  = isDark ? '#1A2744' : '#F8FAFC';
+  const colBodyBg    = isDark ? '#141D2E' : '#F1F5F9';
+  const colBorderClr = isDark ? '#253352' : '#E2E8F0';
+
+  const columnMenuItems = [
+    { key: 'sort-date',  label: 'Sắp xếp theo ngày' },
+    { key: 'sort-title', label: 'Sắp xếp theo tên' },
+  ];
+
   return (
-    <div style={{ width: 248, flexShrink: 0, display: 'flex', flexDirection: 'column' }}>
+    <div style={{
+      width: 264,
+      flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: 12,
+      overflow: 'hidden',
+      border: `1px solid ${colBorderClr}`,
+    }}>
       {/* Header */}
       <div style={{
-        padding: '9px 12px', borderRadius: '8px 8px 0 0',
-        background: token.colorFillTertiary,
-        borderLeft: `3px solid ${accent}`,
-        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3,
+        padding: '10px 12px',
+        background: colHeaderBg,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 7,
+        borderBottom: `2px solid ${accent}20`,
       }}>
-        <span style={{ fontWeight: 700, fontSize: 12, color: accent, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <span style={{ color: accent, fontSize: 14, display: 'flex', alignItems: 'center' }}>
+          {icon}
+        </span>
+        <span style={{
+          fontSize: 11, fontWeight: 700, color: accent,
+          textTransform: 'uppercase', letterSpacing: 0.7, flex: 1,
+        }}>
           {label}
         </span>
-        <Badge count={tasks.length} style={{ backgroundColor: accent }} />
+        <span style={{
+          fontSize: 11, fontWeight: 700,
+          background: `${accent}18`, color: accent,
+          borderRadius: 20, padding: '1px 8px', minWidth: 22, textAlign: 'center',
+        }}>
+          {tasks.length}
+        </span>
+        <Dropdown menu={{ items: columnMenuItems }} trigger={['click']} placement="bottomRight">
+          <button style={{
+            border: 'none', background: 'transparent', cursor: 'pointer',
+            color: isDark ? '#475569' : '#94A3B8', fontSize: 16,
+            display: 'flex', alignItems: 'center', padding: '0 2px', borderRadius: 4,
+          }}>
+            <MoreOutlined />
+          </button>
+        </Dropdown>
       </div>
 
       {/* Drop zone */}
       <div
         ref={setNodeRef}
         style={{
-          flex: 1, minHeight: 140, borderRadius: '0 0 8px 8px',
-          padding: '6px 5px',
-          background: isOver ? token.colorFillSecondary : token.colorFillQuaternary,
-          border: isOver ? `2px dashed ${accent}` : `2px dashed transparent`,
+          flex: 1, minHeight: 200,
+          padding: '8px 8px 4px',
+          background: isOver ? `${accent}0A` : colBodyBg,
+          border: isOver ? `2px dashed ${accent}60` : '2px dashed transparent',
           transition: 'all 0.15s',
         }}
       >
@@ -224,9 +356,22 @@ function KanbanColumn({
             onDueDateChange={onDueDateChange}
           />
         ))}
+
         {tasks.length === 0 && (
-          <div style={{ textAlign: 'center', color: token.colorTextQuaternary, paddingTop: 24, fontSize: 12 }}>
-            Kéo task vào đây
+          <div style={{
+            textAlign: 'center',
+            paddingTop: 32,
+            paddingBottom: 20,
+          }}>
+            <div style={{ fontSize: 36, color: isDark ? '#334155' : '#CBD5E1', marginBottom: 8 }}>
+              <InboxOutlined />
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? '#475569' : '#94A3B8', marginBottom: 4 }}>
+              Chưa có công việc
+            </div>
+            <div style={{ fontSize: 11, color: isDark ? '#334155' : '#CBD5E1', lineHeight: 1.5, padding: '0 8px' }}>
+              {emptyDesc}
+            </div>
           </div>
         )}
       </div>
@@ -238,37 +383,34 @@ function KanbanColumn({
 
 export default function MyTasksPage() {
   const { message } = App.useApp();
-  const { token } = theme.useToken();
-  const { preset } = useThemeStore();
+  const { preset, mode } = useThemeStore();
+  const isDark = mode === 'dark';
   const qc = useQueryClient();
   const { user } = useAuthStore();
   const isManager = MANAGER_ROLES.includes(user?.role ?? '');
 
-  const [filter, setFilter]           = useState<FilterType>('ALL');
-  const [projectId, setProjectId]     = useState<string | undefined>();
-  const [employeeId, setEmployeeId]   = useState<string | undefined>();
+  const [filter, setFilter]         = useState<FilterType>('ALL');
+  const [projectId, setProjectId]   = useState<string | undefined>();
+  const [employeeId, setEmployeeId] = useState<string | undefined>();
 
   function handleProjectChange(pid: string | undefined) {
     setProjectId(pid);
-    // Reset nhân sự nếu không còn thuộc dự án vừa chọn
     if (employeeId) setEmployeeId(undefined);
   }
-  const [activeTask, setActiveTask]   = useState<Task | null>(null);
+  const [activeTask, setActiveTask]     = useState<Task | null>(null);
   const [dueDateModal, setDueDateModal] = useState(false);
-  const [pendingMove, setPendingMove] = useState<{ id: string; status: TaskStatus } | null>(null);
+  const [pendingMove, setPendingMove]   = useState<{ id: string; status: TaskStatus } | null>(null);
   const [pendingDueDate, setPendingDueDate] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
   );
 
-  // ── Data ────────────────────────────────────────────────────────────────────
+  // ── Data ─────────────────────────────────────────────────────────────────
 
   const { data: tasks = [], isLoading, isFetching } = useQuery({
     queryKey: ['kanban-tasks', projectId, employeeId],
     queryFn: () => tasksApi.myTasks({ projectId, employeeId }),
-    // Manager/Admin phải chọn project để tránh load toàn bộ hệ thống
-    // Member load task của mình trực tiếp không cần chọn project
     enabled: isManager ? !!projectId : true,
   });
 
@@ -290,12 +432,10 @@ export default function MyTasksPage() {
   });
 
   const employeeOptions = projectId
-    ? projectMembers
-        .filter((m) => m.employee)
-        .map((m) => ({ value: m.employeeId, label: m.employee!.fullName }))
+    ? projectMembers.filter((m) => m.employee).map((m) => ({ value: m.employeeId, label: m.employee!.fullName }))
     : allEmployees.map((e) => ({ value: e.id, label: e.fullName }));
 
-  // ── Mutations ───────────────────────────────────────────────────────────────
+  // ── Mutations ─────────────────────────────────────────────────────────────
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['kanban-tasks'] });
 
@@ -325,14 +465,14 @@ export default function MyTasksPage() {
     onSuccess: invalidate,
   });
 
-  // ── Filter logic ─────────────────────────────────────────────────────────────
+  // ── Filter logic ──────────────────────────────────────────────────────────
 
   const filtered = tasks.filter((t) => {
-    if (filter === 'TODAY') return t.dueDate === today;
-    if (filter === 'TODO') return t.status === 'TODO';
+    if (filter === 'TODAY')       return t.dueDate === today;
+    if (filter === 'TODO')        return t.status === 'TODO';
     if (filter === 'IN_PROGRESS') return t.status === 'IN_PROGRESS';
-    if (filter === 'DONE') return t.status === 'DONE';
-    if (filter === 'CANCELLED') return t.status === 'CANCELLED';
+    if (filter === 'DONE')        return t.status === 'DONE';
+    if (filter === 'CANCELLED')   return t.status === 'CANCELLED';
     return true;
   });
 
@@ -346,12 +486,10 @@ export default function MyTasksPage() {
     setActiveTask(null);
     const { active, over } = event;
     if (!over) return;
-
     const taskId    = active.id as string;
     const newStatus = over.id as TaskStatus;
     const task      = tasks.find((t) => t.id === taskId);
     if (!task || task.status === newStatus) return;
-
     if (newStatus === 'DONE' && !task.dueDate) {
       setPendingMove({ id: taskId, status: newStatus });
       setPendingDueDate('');
@@ -361,87 +499,104 @@ export default function MyTasksPage() {
     moveMutation.mutate({ id: taskId, status: newStatus });
   }
 
-  // ── Filter pills ──────────────────────────────────────────────────────────
+  // ── Filter tabs ───────────────────────────────────────────────────────────
 
   const FILTERS: { key: FilterType; label: string; count: number }[] = [
-    { key: 'ALL',         label: 'Tất cả',          count: tasks.length },
-    { key: 'TODAY',       label: 'Hôm nay',          count: tasks.filter((t) => t.dueDate === today).length },
-    { key: 'TODO',        label: 'Chưa bắt đầu',    count: tasks.filter((t) => t.status === 'TODO').length },
-    { key: 'IN_PROGRESS', label: 'Đang thực hiện',  count: tasks.filter((t) => t.status === 'IN_PROGRESS').length },
-    { key: 'DONE',        label: 'Hoàn thành',       count: tasks.filter((t) => t.status === 'DONE').length },
-    { key: 'CANCELLED',   label: 'Đã huỷ',           count: tasks.filter((t) => t.status === 'CANCELLED').length },
+    { key: 'ALL',         label: 'Tất cả',         count: tasks.length },
+    { key: 'TODAY',       label: 'Hôm nay',         count: tasks.filter((t) => t.dueDate === today).length },
+    { key: 'TODO',        label: 'Chưa bắt đầu',   count: tasks.filter((t) => t.status === 'TODO').length },
+    { key: 'IN_PROGRESS', label: 'Đang thực hiện', count: tasks.filter((t) => t.status === 'IN_PROGRESS').length },
+    { key: 'DONE',        label: 'Hoàn thành',      count: tasks.filter((t) => t.status === 'DONE').length },
+    { key: 'CANCELLED',   label: 'Đã huỷ',          count: tasks.filter((t) => t.status === 'CANCELLED').length },
   ];
 
   const pillBase: CSSProperties = {
     padding: '4px 12px', borderRadius: 9999, cursor: 'pointer',
-    fontSize: 12, fontWeight: 500, border: `1.5px solid ${token.colorBorder}`,
-    background: token.colorBgContainer, color: token.colorText,
-    display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s',
+    fontSize: 12, fontWeight: 500,
+    border: `1.5px solid ${isDark ? '#2D3F56' : '#E2E8F0'}`,
+    background: isDark ? '#1E293B' : '#FFFFFF',
+    color: isDark ? '#94A3B8' : '#64748B',
+    display: 'flex', alignItems: 'center', gap: 6,
+    transition: 'all 0.15s', whiteSpace: 'nowrap',
   };
   const pillActive: CSSProperties = {
-    ...pillBase, borderColor: preset.primary,
-    background: `${preset.primary}18`, color: preset.primary,
+    ...pillBase,
+    borderColor: preset.primary,
+    background: `${preset.primary}18`,
+    color: preset.primary,
   };
 
+  const pageBg = isDark ? '#0F172A' : '#F8FAFC';
+
   return (
-    <div style={{ padding: 24, height: '100%', display: 'flex', flexDirection: 'column', background: token.colorBgLayout }}>
+    <div style={{ padding: '20px 24px', height: '100%', display: 'flex', flexDirection: 'column', background: pageBg }}>
 
-      {/* ── Header ── */}
-      <div style={{ marginBottom: 14 }}>
+      {/* ── Page header ── */}
+      <div style={{ marginBottom: 16 }}>
+        <h1 style={{
+          fontSize: 22, fontWeight: 800, margin: '0 0 14px',
+          color: isDark ? '#F1F5F9' : '#0F172A', letterSpacing: '-0.3px',
+        }}>
+          Kanban Board
+        </h1>
 
-        {/* Row 1: title + hint */}
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
-          <h1 className="page-title" style={{ fontSize: 18 }}>Kanban Board</h1>
-          <span style={{ color: token.colorTextQuaternary, fontSize: 11, display: 'flex', alignItems: 'center', gap: 4 }}>
-            <HolderOutlined /> Kéo thả đổi trạng thái · Click progress cập nhật %
-          </span>
-        </div>
-
-        {/* Row 2: dropdowns (left) + status pills (right) */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
-
-          {/* Project filter */}
+        {/* Filter bar */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center',
+          background: isDark ? '#1E293B' : '#FFFFFF',
+          border: `1px solid ${isDark ? '#2D3F56' : '#E2E8F0'}`,
+          borderRadius: 10, padding: '8px 12px',
+        }}>
+          {/* Project selector */}
           <Select
             allowClear
-            placeholder="Tất cả dự án"
-            style={{ minWidth: 300, flex: '0 1 380px' }}
+            placeholder={
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <FolderOpenOutlined /> Tất cả dự án
+              </span>
+            }
+            style={{ minWidth: 280, flex: '0 1 340px' }}
             value={projectId}
             onChange={handleProjectChange}
-            showSearch={{ optionFilterProp: 'label' }}
+            showSearch
+            filterOption={(input, opt) => (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())}
             options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))}
           />
 
-          {/* Employee filter — PM/ADMIN/LEADERSHIP only */}
+          {/* Assignee filter */}
           {isManager && (
             <Select
               allowClear
-              placeholder={projectId ? 'Lọc nhân sự dự án' : 'Tất cả nhân sự'}
-              style={{ minWidth: 200, flex: '0 1 240px' }}
+              placeholder="Lọc nhân sự, dự án"
+              style={{ minWidth: 190, flex: '0 1 220px' }}
               value={employeeId}
               onChange={setEmployeeId}
-              showSearch={{ optionFilterProp: 'label' }}
+              showSearch
+              filterOption={(input, opt) => (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())}
               options={employeeOptions}
             />
           )}
 
           {/* Divider */}
-          <div style={{ width: 1, height: 20, background: token.colorBorder, flexShrink: 0 }} />
+          <div style={{ width: 1, height: 22, background: isDark ? '#2D3F56' : '#E2E8F0', flexShrink: 0 }} />
 
           {/* Status quick-filter pills */}
-          {FILTERS.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              style={filter === f.key ? pillActive : pillBase}
-            >
-              {f.label}
-              <span style={{
-                background: filter === f.key ? preset.primary : token.colorFillSecondary,
-                color: filter === f.key ? '#fff' : token.colorTextSecondary,
-                borderRadius: 9999, padding: '0 6px', fontSize: 11, fontWeight: 700,
-              }}>{f.count}</span>
-            </button>
-          ))}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+            {FILTERS.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                style={filter === f.key ? pillActive : pillBase}
+              >
+                {f.label}
+                <span style={{
+                  background: filter === f.key ? preset.primary : isDark ? '#2D3F56' : '#F1F5F9',
+                  color: filter === f.key ? '#fff' : isDark ? '#64748B' : '#94A3B8',
+                  borderRadius: 9999, padding: '0 6px', fontSize: 11, fontWeight: 700,
+                }}>{f.count}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -452,12 +607,28 @@ export default function MyTasksPage() {
             <Spin size="large" />
           </div>
         ) : tasks.length === 0 && !isFetching ? (
-          (isManager && !projectId)
-            ? <Empty description="Vui lòng chọn dự án để xem danh sách task" />
-            : <Empty description={isManager ? 'Không có task nào phù hợp' : 'Bạn chưa có task nào được giao'} />
+          <div style={{
+            height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            flexDirection: 'column', gap: 12,
+            color: isDark ? '#475569' : '#94A3B8',
+          }}>
+            <InboxOutlined style={{ fontSize: 48 }} />
+            <div style={{ fontSize: 15, fontWeight: 600 }}>
+              {isManager && !projectId ? 'Vui lòng chọn dự án' : 'Không có task nào'}
+            </div>
+            <div style={{ fontSize: 13 }}>
+              {isManager && !projectId
+                ? 'Chọn dự án để xem danh sách công việc'
+                : isManager ? 'Không có task phù hợp với bộ lọc hiện tại' : 'Bạn chưa có task nào được giao'}
+            </div>
+          </div>
         ) : (
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div style={{ display: 'flex', gap: 10, overflowX: 'auto', height: '100%', paddingBottom: 16, alignItems: 'flex-start' }}>
+            <div style={{
+              display: 'flex', gap: 10,
+              overflowX: 'auto', height: '100%',
+              paddingBottom: 16, alignItems: 'flex-start',
+            }}>
               {COLUMNS.map((col) => (
                 <KanbanColumn
                   key={col.status}
@@ -484,20 +655,20 @@ export default function MyTasksPage() {
           </DndContext>
         )}
 
-        {/* Overlay khi chuyển dự án (có cache cũ, đang fetch mới) */}
+        {/* Overlay khi đang fetch dữ liệu mới */}
         {isFetching && !isLoading && (
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'rgba(0,0,0,0.08)',
+            background: isDark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.6)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            borderRadius: 8, zIndex: 10,
+            borderRadius: 8, zIndex: 10, backdropFilter: 'blur(2px)',
           }}>
             <Spin size="large" />
           </div>
         )}
       </div>
 
-      {/* ── Modal nhập deadline khi kéo sang DONE ── */}
+      {/* ── Modal: nhập deadline khi kéo sang DONE ── */}
       <Modal
         title="Nhập deadline trước khi hoàn thành"
         open={dueDateModal}
@@ -512,7 +683,7 @@ export default function MyTasksPage() {
         cancelText="Huỷ"
         okButtonProps={{ disabled: !pendingDueDate }}
       >
-        <Text style={{ display: 'block', marginBottom: 12, color: token.colorTextSecondary }}>
+        <Text style={{ display: 'block', marginBottom: 12 }}>
           Task này chưa có deadline. Chọn deadline để ghi nhận:
         </Text>
         <DatePicker

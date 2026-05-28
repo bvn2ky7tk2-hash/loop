@@ -15,7 +15,7 @@ import {
   CheckCircleOutlined, RollbackOutlined, EyeOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { tasksApi, type Task } from '../../api/tasks';
+import { tasksApi, isProgressLocked, type Task } from '../../api/tasks';
 import { projectsApi } from '../../api/projects';
 import { employeesApi } from '../../api/employees';
 import dayjs from 'dayjs';
@@ -278,7 +278,17 @@ export default function TasksPage() {
           });
         },
       },
-      { key: 'progress', label: 'Cập nhật tiến độ', icon: <CheckOutlined />, onClick: () => setProgressOpen(r.id) },
+      {
+        key: 'progress',
+        label: isProgressLocked(r) ? (
+          <Tooltip title={r.children?.length ? 'Task cha — tiến độ tự tính từ subtask' : 'Có bug/issue linked — tiến độ tự tính'}>
+            <span style={{ opacity: 0.4 }}>Cập nhật tiến độ</span>
+          </Tooltip>
+        ) : 'Cập nhật tiến độ',
+        icon: <CheckOutlined />,
+        disabled: isProgressLocked(r),
+        onClick: () => !isProgressLocked(r) && setProgressOpen(r.id),
+      },
       { key: 'log', label: 'Ghi giờ thực tế', onClick: () => setLogOpen(r.id) },
       ...(r.status === 'PENDING_APPROVAL' ? [{
         key: 'approve', label: 'Duyệt task',
