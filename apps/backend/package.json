@@ -26,8 +26,16 @@
     "seed:patch": "node prisma/seed-patch.js",
     "seed:client-contracts": "node prisma/seed-client-contracts.js",
     "seed:crm-activities": "node prisma/seed-crm-activities.js",
+    "seed:skills": "node prisma/seed-skills.js",
     "seed:payroll": "npx tsx prisma/seed-payroll.ts",
-    "seed:payroll-demo": "npx tsx prisma/seed-payroll-demo.ts"
+    "seed:payroll-demo": "npx tsx prisma/seed-payroll-demo.ts",
+    "seed:okr": "node prisma/seed-okr.js",
+    "seed:forecast": "node prisma/seed-forecast.js",
+    "seed:kb": "node prisma/seed-kb.js",
+    "seed:portal": "node prisma/seed-portal.js",
+    "seed:procurement": "node prisma/seed-procurement.js",
+    "seed:notifications": "node prisma/seed-notifications.js",
+    "seed:audit-logs": "node prisma/seed-audit-logs.js"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

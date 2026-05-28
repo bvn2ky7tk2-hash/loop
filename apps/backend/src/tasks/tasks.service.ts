@@ -1,5 +1,5 @@
 import {
-  Injectable, NotFoundException, BadRequestException, ForbiddenException,
+  Injectable, NotFoundException, BadRequestException, ForbiddenException, Optional,
 } from '@nestjs/common';
 import { Prisma, TaskStatus } from '../generated/prisma';
 import type { Task, User } from '../generated/prisma';
@@ -8,6 +8,8 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { paginate, type PaginatedResult } from '../common/dto/pagination.dto';
 import { TelegramService } from '../integrations/telegram/telegram.service';
 import { TelegramCardBuilder } from '../integrations/telegram/telegram-card.builder';
+import { NotificationsService } from '../notifications/notifications.service';
+import * as ExcelJS from 'exceljs';
 
 const MAX_TASK_LEVELS = 5;
 const DEFAULT_MAX_ESTIMATE_HOURS = 4;
@@ -18,6 +20,7 @@ export class TasksService {
     private readonly prisma: PrismaService,
     private readonly telegramService: TelegramService,
     private readonly telegramCardBuilder: TelegramCardBuilder,
+    @Optional() private readonly notificationsService?: NotificationsService,
   ) {}
 
   async create(projectId: string, dto: CreateTaskDto, caller: User): Promise<Task & { warning?: string }> {
@@ -58,9 +61,32 @@ export class TasksService {
 
     if (task.assigneeId) {
       this.sendTelegramCardAsync(task).catch(() => {});
+      this.notifyAssigneeAsync(task.assigneeId, task.id, task.title, task.projectId).catch(() => {});
     }
 
     return { ...task, ...(warning ? { warning } : {}) };
+  }
+
+  /** Gửi in-app notification cho assignee khi task được giao */
+  private async notifyAssigneeAsync(assigneeId: string, taskId: string, taskTitle: string, projectId: string): Promise<void> {
+    if (!this.notificationsService) return;
+    try {
+      const [employee, project] = await Promise.all([
+        this.prisma.employee.findUnique({ where: { id: assigneeId }, select: { userId: true } }),
+        this.prisma.project.findUnique({ where: { id: projectId }, select: { name: true } }),
+      ]);
+      if (!employee?.userId) return;
+      await this.notificationsService.createInApp(employee.userId, {
+        type: 'TASK_ASSIGNED',
+        title: 'Bạn được giao task mới',
+        body: `${taskTitle}${project ? ` trong dự án ${project.name}` : ''}`,
+        link: '/tasks',
+        entityType: 'TASK',
+        entityId: taskId,
+      });
+    } catch {
+      // fire-and-forget
+    }
   }
 
   private async sendTelegramCardAsync(task: Task): Promise<void> {
@@ -427,6 +453,45 @@ export class TasksService {
       where: { id: projectId },
       data: { progress: Math.round(weighted) },
     });
+  }
+
+  async exportExcel(): Promise<Buffer> {
+    const tasks = await this.prisma.task.findMany({
+      include: {
+        project:  { select: { name: true } },
+        assignee: { select: { fullName: true } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 5000,
+    });
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Tasks');
+
+    ws.columns = [
+      { header: 'Tiêu đề',     key: 'title',    width: 35 },
+      { header: 'Dự án',       key: 'project',  width: 22 },
+      { header: 'Người nhận',  key: 'assignee', width: 22 },
+      { header: 'Trạng thái',  key: 'status',   width: 16 },
+      { header: 'Deadline',    key: 'dueDate',  width: 13 },
+      { header: 'Mức ưu tiên', key: 'priority', width: 13 },
+    ];
+
+    ws.getRow(1).font = { bold: true };
+
+    tasks.forEach((t) => {
+      ws.addRow({
+        title:    t.title,
+        project:  t.project?.name ?? '',
+        assignee: t.assignee?.fullName ?? '',
+        status:   t.status,
+        dueDate:  t.dueDate ? new Date(t.dueDate).toLocaleDateString('vi-VN') : '',
+        priority: (t as { priority?: string }).priority ?? '',
+      });
+    });
+
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.from(buf);
   }
 
   private async findOrThrow(id: string): Promise<Task> {

@@ -1,14 +1,16 @@
 import {
   Controller, Get, Post, Patch,
-  Body, Param, Query,
+  Body, Param, Query, Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { Roles } from '../common/decorators/roles.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import { PaginationDto } from '../common/dto/pagination.dto';
-import { LeaveStatus } from '../generated/prisma';
+import { LeaveStatus, Role } from '../generated/prisma';
 import type { User } from '../generated/prisma';
 import { LeavesService } from './leaves.service';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
@@ -39,6 +41,18 @@ export class LeavesController {
     @Query('year') year?: string,
   ) {
     return this.service.getBalance(employeeId, year ? parseInt(year, 10) : undefined);
+  }
+
+  @Get('export')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Export danh sách nghỉ phép ra Excel' })
+  async exportExcel(@Res() res: Response) {
+    const buf = await this.service.exportExcel();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="leaves.xlsx"');
+    res.end(buf);
   }
 
   @Get()

@@ -3,7 +3,9 @@ import {
   NotFoundException,
   BadRequestException,
   OnModuleInit,
+  Optional,
 } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { ExpenseStatus, DefinitionStatus } from '../generated/prisma';
 import { CreateExpenseDto } from './dto/create-expense.dto';
@@ -11,6 +13,8 @@ import { ApproveExpenseDto } from './dto/approve-expense.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 const EXPENSE_INCLUDE = {
   submittedBy: { select: { id: true, name: true } },
@@ -24,6 +28,8 @@ export class ExpensesService implements OnModuleInit {
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
     private readonly financeEventBus: FinanceEventBus,
+    private readonly auditLog: AuditLogService,
+    @Optional() private readonly notificationsService?: NotificationsService,
   ) {}
 
   onModuleInit() {
@@ -199,7 +205,70 @@ export class ExpensesService implements OnModuleInit {
         userId: approverId,
       });
     }
+
+    // Notify requester về kết quả phê duyệt
+    if (this.notificationsService && expense.submittedById) {
+      const isApproved = dto.status === ExpenseStatus.APPROVED;
+      this.notificationsService.createInApp(expense.submittedById, {
+        type: isApproved ? 'EXPENSE_APPROVED' : 'EXPENSE_REJECTED',
+        title: isApproved ? 'Phiếu chi đã được duyệt' : 'Phiếu chi bị từ chối',
+        body: isApproved
+          ? `Phiếu chi "${expense.title}" đã được phê duyệt`
+          : `Phiếu chi "${expense.title}" bị từ chối${dto.rejectedReason ? ': ' + dto.rejectedReason : ''}`,
+        link: '/finance/expenses',
+        entityType: 'EXPENSE',
+        entityId: id,
+      }).catch(() => {});
+    }
+
+    // Ghi audit log — phê duyệt/từ chối phiếu chi
+    this.auditLog.log({
+      userId: approverId,
+      action: dto.status === ExpenseStatus.APPROVED ? 'APPROVE' : 'REJECT',
+      module: 'finance',
+      entity: 'Expense',
+      entityId: id,
+      newValues: { status: dto.status, rejectedReason: dto.rejectedReason },
+    }).catch(() => {});
+
     return updated;
+  }
+
+  // ── Export Excel ───────────────────────────────────────────────────────────
+  async exportExcel(): Promise<Buffer> {
+    const expenses = await this.prisma.expense.findMany({
+      include: EXPENSE_INCLUDE,
+      orderBy: { createdAt: 'desc' },
+      take: 5000,
+    });
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Phiếu chi');
+
+    ws.columns = [
+      { header: 'Tiêu đề',     key: 'title',       width: 30 },
+      { header: 'Danh mục',    key: 'category',    width: 15 },
+      { header: 'Tổng tiền',   key: 'totalAmount', width: 15 },
+      { header: 'Trạng thái',  key: 'status',      width: 14 },
+      { header: 'Người nộp',   key: 'submittedBy', width: 22 },
+      { header: 'Ngày tạo',    key: 'createdAt',   width: 13 },
+    ];
+
+    ws.getRow(1).font = { bold: true };
+
+    expenses.forEach((e) => {
+      ws.addRow({
+        title:       e.title,
+        category:    e.category,
+        totalAmount: Number(e.totalAmount),
+        status:      e.status,
+        submittedBy: (e as { submittedBy?: { name?: string } }).submittedBy?.name ?? '',
+        createdAt:   new Date(e.createdAt).toLocaleDateString('vi-VN'),
+      });
+    });
+
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.from(buf);
   }
 
   // ── Xóa phiếu chi (chỉ khi PENDING) ───────────────────────────────────────

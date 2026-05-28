@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Optional } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { LeaveStatus, DefinitionStatus } from '../generated/prisma';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { ApproveLeaveDto } from './dto/approve-leave.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 const LEAVE_REQUEST_INCLUDE = {
-  employee: { select: { id: true, fullName: true } },
+  employee: { select: { id: true, fullName: true, userId: true } },
   leaveType: { select: { id: true, name: true, isPaid: true, color: true } },
   approvedBy: { select: { id: true, name: true } },
 } as const;
@@ -17,6 +20,8 @@ export class LeavesService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
+    private readonly auditLog: AuditLogService,
+    @Optional() private readonly notificationsService?: NotificationsService,
   ) {}
 
   onModuleInit() {
@@ -224,6 +229,32 @@ export class LeavesService implements OnModuleInit {
       return result;
     });
 
+    // Notify requester (employee.userId) về kết quả duyệt
+    const employeeWithUser = updated.employee as unknown as { userId?: string; fullName: string };
+    if (employeeWithUser?.userId && this.notificationsService) {
+      const isApproved = dto.status === 'APPROVED';
+      this.notificationsService.createInApp(employeeWithUser.userId, {
+        type: isApproved ? 'LEAVE_APPROVED' : 'LEAVE_REJECTED',
+        title: isApproved ? 'Đơn nghỉ phép đã được duyệt' : 'Đơn nghỉ phép bị từ chối',
+        body: isApproved
+          ? `Đơn nghỉ phép ${(request.leaveType as any)?.name ?? ''} (${request.days} ngày) đã được phê duyệt`
+          : `Đơn nghỉ phép bị từ chối${dto.rejectedReason ? ': ' + dto.rejectedReason : ''}`,
+        link: '/hr/leaves',
+        entityType: 'LEAVE',
+        entityId: id,
+      }).catch(() => {});
+    }
+
+    // Ghi audit log — duyệt/từ chối nghỉ phép
+    this.auditLog.log({
+      userId: approverId,
+      action: dto.status === 'APPROVED' ? 'APPROVE' : 'REJECT',
+      module: 'hr',
+      entity: 'Leave',
+      entityId: id,
+      newValues: { status: dto.status, rejectedReason: dto.rejectedReason },
+    }).catch(() => {});
+
     return updated;
   }
 
@@ -244,5 +275,41 @@ export class LeavesService implements OnModuleInit {
       where: { isActive: true },
       orderBy: { name: 'asc' },
     });
+  }
+
+  async exportExcel(): Promise<Buffer> {
+    const requests = await this.prisma.leaveRequest.findMany({
+      include: LEAVE_REQUEST_INCLUDE,
+      orderBy: { createdAt: 'desc' },
+      take: 5000,
+    });
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Nghỉ phép');
+
+    ws.columns = [
+      { header: 'Nhân viên',      key: 'employee',  width: 25 },
+      { header: 'Loại nghỉ',      key: 'leaveType', width: 18 },
+      { header: 'Từ ngày',        key: 'from',      width: 13 },
+      { header: 'Đến ngày',       key: 'to',        width: 13 },
+      { header: 'Số ngày',        key: 'days',      width: 10 },
+      { header: 'Trạng thái',     key: 'status',    width: 13 },
+    ];
+
+    ws.getRow(1).font = { bold: true };
+
+    requests.forEach((r) => {
+      ws.addRow({
+        employee:  (r as { employee?: { fullName?: string } }).employee?.fullName ?? '',
+        leaveType: (r as { leaveType?: { name?: string } }).leaveType?.name ?? '',
+        from:      new Date(r.startDate).toLocaleDateString('vi-VN'),
+        to:        new Date(r.endDate).toLocaleDateString('vi-VN'),
+        days:      Number(r.days),
+        status:    r.status,
+      });
+    });
+
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.from(buf);
   }
 }

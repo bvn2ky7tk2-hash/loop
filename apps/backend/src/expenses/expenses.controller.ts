@@ -8,7 +8,9 @@ import {
   Body,
   Query,
   Req,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -44,6 +46,17 @@ export class ExpensesController {
       query?.page,
       query?.limit,
     );
+  }
+
+  // ── Export Excel ───────────────────────────────────────────────────────────
+  @Get('export')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @ApiOperation({ summary: 'Export danh sách phiếu chi ra Excel' })
+  async exportExcel(@Res() res: Response) {
+    const buf = await this.service.exportExcel();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="expenses.xlsx"');
+    res.end(buf);
   }
 
   // ── Chi tiết phiếu chi ─────────────────────────────────────────────────────

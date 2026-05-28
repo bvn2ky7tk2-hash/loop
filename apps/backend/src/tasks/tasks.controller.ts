@@ -1,6 +1,7 @@
 import {
-  Controller, Get, Post, Put, Body, Param, Query,
+  Controller, Get, Post, Put, Body, Param, Query, Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -36,6 +37,17 @@ export class TasksController {
   @ApiOperation({ summary: 'Cây task của dự án' })
   getTree(@Param('projectId') projectId: string) {
     return this.service.getProjectTaskTree(projectId);
+  }
+
+  @Get('tasks/export')
+  @Roles(Role.ADMIN, Role.PM)
+  @RequirePermission(PERMISSIONS.TASKS_READ)
+  @ApiOperation({ summary: 'Export danh sách task ra Excel' })
+  async exportTasks(@Res() res: Response) {
+    const buf = await this.service.exportExcel();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="tasks.xlsx"');
+    res.end(buf);
   }
 
   @Get('tasks/pending-approval')
