@@ -473,6 +473,16 @@ export type PurchaseOrder = $Result.DefaultSelection<Prisma.$PurchaseOrderPayloa
  * 
  */
 export type PurchaseOrderItem = $Result.DefaultSelection<Prisma.$PurchaseOrderItemPayload>
+/**
+ * Model AutomationRule
+ * 
+ */
+export type AutomationRule = $Result.DefaultSelection<Prisma.$AutomationRulePayload>
+/**
+ * Model ScheduledReport
+ * 
+ */
+export type ScheduledReport = $Result.DefaultSelection<Prisma.$ScheduledReportPayload>
 
 /**
  * Enums
@@ -1071,6 +1081,23 @@ export const PoItemStatus: {
 
 export type PoItemStatus = (typeof PoItemStatus)[keyof typeof PoItemStatus]
 
+
+export const ReportFrequency: {
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY'
+};
+
+export type ReportFrequency = (typeof ReportFrequency)[keyof typeof ReportFrequency]
+
+
+export const ReportFormat: {
+  EXCEL: 'EXCEL',
+  PDF: 'PDF'
+};
+
+export type ReportFormat = (typeof ReportFormat)[keyof typeof ReportFormat]
+
 }
 
 export type SkillCategory = $Enums.SkillCategory
@@ -1292,6 +1319,14 @@ export const PoStatus: typeof $Enums.PoStatus
 export type PoItemStatus = $Enums.PoItemStatus
 
 export const PoItemStatus: typeof $Enums.PoItemStatus
+
+export type ReportFrequency = $Enums.ReportFrequency
+
+export const ReportFrequency: typeof $Enums.ReportFrequency
+
+export type ReportFormat = $Enums.ReportFormat
+
+export const ReportFormat: typeof $Enums.ReportFormat
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2333,6 +2368,26 @@ export class PrismaClient<
     * ```
     */
   get purchaseOrderItem(): Prisma.PurchaseOrderItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.automationRule`: Exposes CRUD operations for the **AutomationRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AutomationRules
+    * const automationRules = await prisma.automationRule.findMany()
+    * ```
+    */
+  get automationRule(): Prisma.AutomationRuleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.scheduledReport`: Exposes CRUD operations for the **ScheduledReport** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ScheduledReports
+    * const scheduledReports = await prisma.scheduledReport.findMany()
+    * ```
+    */
+  get scheduledReport(): Prisma.ScheduledReportDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -2858,7 +2913,9 @@ export namespace Prisma {
     CustomerTicket: 'CustomerTicket',
     Vendor: 'Vendor',
     PurchaseOrder: 'PurchaseOrder',
-    PurchaseOrderItem: 'PurchaseOrderItem'
+    PurchaseOrderItem: 'PurchaseOrderItem',
+    AutomationRule: 'AutomationRule',
+    ScheduledReport: 'ScheduledReport'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2874,7 +2931,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "automationRule" | "scheduledReport"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -9686,6 +9743,154 @@ export namespace Prisma {
           }
         }
       }
+      AutomationRule: {
+        payload: Prisma.$AutomationRulePayload<ExtArgs>
+        fields: Prisma.AutomationRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AutomationRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AutomationRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          findFirst: {
+            args: Prisma.AutomationRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AutomationRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          findMany: {
+            args: Prisma.AutomationRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+          }
+          create: {
+            args: Prisma.AutomationRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          createMany: {
+            args: Prisma.AutomationRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AutomationRuleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+          }
+          delete: {
+            args: Prisma.AutomationRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          update: {
+            args: Prisma.AutomationRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.AutomationRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AutomationRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AutomationRuleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>[]
+          }
+          upsert: {
+            args: Prisma.AutomationRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AutomationRulePayload>
+          }
+          aggregate: {
+            args: Prisma.AutomationRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAutomationRule>
+          }
+          groupBy: {
+            args: Prisma.AutomationRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AutomationRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AutomationRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<AutomationRuleCountAggregateOutputType> | number
+          }
+        }
+      }
+      ScheduledReport: {
+        payload: Prisma.$ScheduledReportPayload<ExtArgs>
+        fields: Prisma.ScheduledReportFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ScheduledReportFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ScheduledReportFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          findFirst: {
+            args: Prisma.ScheduledReportFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ScheduledReportFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          findMany: {
+            args: Prisma.ScheduledReportFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>[]
+          }
+          create: {
+            args: Prisma.ScheduledReportCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          createMany: {
+            args: Prisma.ScheduledReportCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ScheduledReportCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>[]
+          }
+          delete: {
+            args: Prisma.ScheduledReportDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          update: {
+            args: Prisma.ScheduledReportUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          deleteMany: {
+            args: Prisma.ScheduledReportDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ScheduledReportUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ScheduledReportUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>[]
+          }
+          upsert: {
+            args: Prisma.ScheduledReportUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ScheduledReportPayload>
+          }
+          aggregate: {
+            args: Prisma.ScheduledReportAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateScheduledReport>
+          }
+          groupBy: {
+            args: Prisma.ScheduledReportGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ScheduledReportGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ScheduledReportCountArgs<ExtArgs>
+            result: $Utils.Optional<ScheduledReportCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -9886,6 +10091,8 @@ export namespace Prisma {
     vendor?: VendorOmit
     purchaseOrder?: PurchaseOrderOmit
     purchaseOrderItem?: PurchaseOrderItemOmit
+    automationRule?: AutomationRuleOmit
+    scheduledReport?: ScheduledReportOmit
   }
 
   /* Types for Logging */
@@ -120580,6 +120787,2264 @@ export namespace Prisma {
 
 
   /**
+   * Model AutomationRule
+   */
+
+  export type AggregateAutomationRule = {
+    _count: AutomationRuleCountAggregateOutputType | null
+    _avg: AutomationRuleAvgAggregateOutputType | null
+    _sum: AutomationRuleSumAggregateOutputType | null
+    _min: AutomationRuleMinAggregateOutputType | null
+    _max: AutomationRuleMaxAggregateOutputType | null
+  }
+
+  export type AutomationRuleAvgAggregateOutputType = {
+    runCount: number | null
+  }
+
+  export type AutomationRuleSumAggregateOutputType = {
+    runCount: number | null
+  }
+
+  export type AutomationRuleMinAggregateOutputType = {
+    id: string | null
+    key: string | null
+    name: string | null
+    description: string | null
+    cronExpr: string | null
+    isActive: boolean | null
+    lastRunAt: Date | null
+    runCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AutomationRuleMaxAggregateOutputType = {
+    id: string | null
+    key: string | null
+    name: string | null
+    description: string | null
+    cronExpr: string | null
+    isActive: boolean | null
+    lastRunAt: Date | null
+    runCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AutomationRuleCountAggregateOutputType = {
+    id: number
+    key: number
+    name: number
+    description: number
+    cronExpr: number
+    isActive: number
+    lastRunAt: number
+    runCount: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AutomationRuleAvgAggregateInputType = {
+    runCount?: true
+  }
+
+  export type AutomationRuleSumAggregateInputType = {
+    runCount?: true
+  }
+
+  export type AutomationRuleMinAggregateInputType = {
+    id?: true
+    key?: true
+    name?: true
+    description?: true
+    cronExpr?: true
+    isActive?: true
+    lastRunAt?: true
+    runCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AutomationRuleMaxAggregateInputType = {
+    id?: true
+    key?: true
+    name?: true
+    description?: true
+    cronExpr?: true
+    isActive?: true
+    lastRunAt?: true
+    runCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AutomationRuleCountAggregateInputType = {
+    id?: true
+    key?: true
+    name?: true
+    description?: true
+    cronExpr?: true
+    isActive?: true
+    lastRunAt?: true
+    runCount?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AutomationRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AutomationRule to aggregate.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AutomationRules
+    **/
+    _count?: true | AutomationRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AutomationRuleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AutomationRuleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AutomationRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AutomationRuleMaxAggregateInputType
+  }
+
+  export type GetAutomationRuleAggregateType<T extends AutomationRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregateAutomationRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAutomationRule[P]>
+      : GetScalarType<T[P], AggregateAutomationRule[P]>
+  }
+
+
+
+
+  export type AutomationRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AutomationRuleWhereInput
+    orderBy?: AutomationRuleOrderByWithAggregationInput | AutomationRuleOrderByWithAggregationInput[]
+    by: AutomationRuleScalarFieldEnum[] | AutomationRuleScalarFieldEnum
+    having?: AutomationRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AutomationRuleCountAggregateInputType | true
+    _avg?: AutomationRuleAvgAggregateInputType
+    _sum?: AutomationRuleSumAggregateInputType
+    _min?: AutomationRuleMinAggregateInputType
+    _max?: AutomationRuleMaxAggregateInputType
+  }
+
+  export type AutomationRuleGroupByOutputType = {
+    id: string
+    key: string
+    name: string
+    description: string | null
+    cronExpr: string
+    isActive: boolean
+    lastRunAt: Date | null
+    runCount: number
+    createdAt: Date
+    updatedAt: Date
+    _count: AutomationRuleCountAggregateOutputType | null
+    _avg: AutomationRuleAvgAggregateOutputType | null
+    _sum: AutomationRuleSumAggregateOutputType | null
+    _min: AutomationRuleMinAggregateOutputType | null
+    _max: AutomationRuleMaxAggregateOutputType | null
+  }
+
+  type GetAutomationRuleGroupByPayload<T extends AutomationRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AutomationRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AutomationRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AutomationRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], AutomationRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AutomationRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    name?: boolean
+    description?: boolean
+    cronExpr?: boolean
+    isActive?: boolean
+    lastRunAt?: boolean
+    runCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["automationRule"]>
+
+  export type AutomationRuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    name?: boolean
+    description?: boolean
+    cronExpr?: boolean
+    isActive?: boolean
+    lastRunAt?: boolean
+    runCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["automationRule"]>
+
+  export type AutomationRuleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    name?: boolean
+    description?: boolean
+    cronExpr?: boolean
+    isActive?: boolean
+    lastRunAt?: boolean
+    runCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["automationRule"]>
+
+  export type AutomationRuleSelectScalar = {
+    id?: boolean
+    key?: boolean
+    name?: boolean
+    description?: boolean
+    cronExpr?: boolean
+    isActive?: boolean
+    lastRunAt?: boolean
+    runCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AutomationRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "name" | "description" | "cronExpr" | "isActive" | "lastRunAt" | "runCount" | "createdAt" | "updatedAt", ExtArgs["result"]["automationRule"]>
+
+  export type $AutomationRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AutomationRule"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      key: string
+      name: string
+      description: string | null
+      cronExpr: string
+      isActive: boolean
+      lastRunAt: Date | null
+      runCount: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["automationRule"]>
+    composites: {}
+  }
+
+  type AutomationRuleGetPayload<S extends boolean | null | undefined | AutomationRuleDefaultArgs> = $Result.GetResult<Prisma.$AutomationRulePayload, S>
+
+  type AutomationRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AutomationRuleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AutomationRuleCountAggregateInputType | true
+    }
+
+  export interface AutomationRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AutomationRule'], meta: { name: 'AutomationRule' } }
+    /**
+     * Find zero or one AutomationRule that matches the filter.
+     * @param {AutomationRuleFindUniqueArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AutomationRuleFindUniqueArgs>(args: SelectSubset<T, AutomationRuleFindUniqueArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AutomationRule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AutomationRuleFindUniqueOrThrowArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AutomationRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, AutomationRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AutomationRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindFirstArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AutomationRuleFindFirstArgs>(args?: SelectSubset<T, AutomationRuleFindFirstArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AutomationRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindFirstOrThrowArgs} args - Arguments to find a AutomationRule
+     * @example
+     * // Get one AutomationRule
+     * const automationRule = await prisma.automationRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AutomationRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, AutomationRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AutomationRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AutomationRules
+     * const automationRules = await prisma.automationRule.findMany()
+     * 
+     * // Get first 10 AutomationRules
+     * const automationRules = await prisma.automationRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const automationRuleWithIdOnly = await prisma.automationRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AutomationRuleFindManyArgs>(args?: SelectSubset<T, AutomationRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AutomationRule.
+     * @param {AutomationRuleCreateArgs} args - Arguments to create a AutomationRule.
+     * @example
+     * // Create one AutomationRule
+     * const AutomationRule = await prisma.automationRule.create({
+     *   data: {
+     *     // ... data to create a AutomationRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends AutomationRuleCreateArgs>(args: SelectSubset<T, AutomationRuleCreateArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AutomationRules.
+     * @param {AutomationRuleCreateManyArgs} args - Arguments to create many AutomationRules.
+     * @example
+     * // Create many AutomationRules
+     * const automationRule = await prisma.automationRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AutomationRuleCreateManyArgs>(args?: SelectSubset<T, AutomationRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AutomationRules and returns the data saved in the database.
+     * @param {AutomationRuleCreateManyAndReturnArgs} args - Arguments to create many AutomationRules.
+     * @example
+     * // Create many AutomationRules
+     * const automationRule = await prisma.automationRule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AutomationRules and only return the `id`
+     * const automationRuleWithIdOnly = await prisma.automationRule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AutomationRuleCreateManyAndReturnArgs>(args?: SelectSubset<T, AutomationRuleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AutomationRule.
+     * @param {AutomationRuleDeleteArgs} args - Arguments to delete one AutomationRule.
+     * @example
+     * // Delete one AutomationRule
+     * const AutomationRule = await prisma.automationRule.delete({
+     *   where: {
+     *     // ... filter to delete one AutomationRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AutomationRuleDeleteArgs>(args: SelectSubset<T, AutomationRuleDeleteArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AutomationRule.
+     * @param {AutomationRuleUpdateArgs} args - Arguments to update one AutomationRule.
+     * @example
+     * // Update one AutomationRule
+     * const automationRule = await prisma.automationRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AutomationRuleUpdateArgs>(args: SelectSubset<T, AutomationRuleUpdateArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AutomationRules.
+     * @param {AutomationRuleDeleteManyArgs} args - Arguments to filter AutomationRules to delete.
+     * @example
+     * // Delete a few AutomationRules
+     * const { count } = await prisma.automationRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AutomationRuleDeleteManyArgs>(args?: SelectSubset<T, AutomationRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AutomationRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AutomationRules
+     * const automationRule = await prisma.automationRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AutomationRuleUpdateManyArgs>(args: SelectSubset<T, AutomationRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AutomationRules and returns the data updated in the database.
+     * @param {AutomationRuleUpdateManyAndReturnArgs} args - Arguments to update many AutomationRules.
+     * @example
+     * // Update many AutomationRules
+     * const automationRule = await prisma.automationRule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AutomationRules and only return the `id`
+     * const automationRuleWithIdOnly = await prisma.automationRule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AutomationRuleUpdateManyAndReturnArgs>(args: SelectSubset<T, AutomationRuleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AutomationRule.
+     * @param {AutomationRuleUpsertArgs} args - Arguments to update or create a AutomationRule.
+     * @example
+     * // Update or create a AutomationRule
+     * const automationRule = await prisma.automationRule.upsert({
+     *   create: {
+     *     // ... data to create a AutomationRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AutomationRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AutomationRuleUpsertArgs>(args: SelectSubset<T, AutomationRuleUpsertArgs<ExtArgs>>): Prisma__AutomationRuleClient<$Result.GetResult<Prisma.$AutomationRulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AutomationRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleCountArgs} args - Arguments to filter AutomationRules to count.
+     * @example
+     * // Count the number of AutomationRules
+     * const count = await prisma.automationRule.count({
+     *   where: {
+     *     // ... the filter for the AutomationRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends AutomationRuleCountArgs>(
+      args?: Subset<T, AutomationRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AutomationRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AutomationRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AutomationRuleAggregateArgs>(args: Subset<T, AutomationRuleAggregateArgs>): Prisma.PrismaPromise<GetAutomationRuleAggregateType<T>>
+
+    /**
+     * Group by AutomationRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AutomationRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AutomationRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AutomationRuleGroupByArgs['orderBy'] }
+        : { orderBy?: AutomationRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AutomationRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAutomationRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AutomationRule model
+   */
+  readonly fields: AutomationRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AutomationRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AutomationRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AutomationRule model
+   */
+  interface AutomationRuleFieldRefs {
+    readonly id: FieldRef<"AutomationRule", 'String'>
+    readonly key: FieldRef<"AutomationRule", 'String'>
+    readonly name: FieldRef<"AutomationRule", 'String'>
+    readonly description: FieldRef<"AutomationRule", 'String'>
+    readonly cronExpr: FieldRef<"AutomationRule", 'String'>
+    readonly isActive: FieldRef<"AutomationRule", 'Boolean'>
+    readonly lastRunAt: FieldRef<"AutomationRule", 'DateTime'>
+    readonly runCount: FieldRef<"AutomationRule", 'Int'>
+    readonly createdAt: FieldRef<"AutomationRule", 'DateTime'>
+    readonly updatedAt: FieldRef<"AutomationRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AutomationRule findUnique
+   */
+  export type AutomationRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule findUniqueOrThrow
+   */
+  export type AutomationRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule findFirst
+   */
+  export type AutomationRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AutomationRules.
+     */
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule findFirstOrThrow
+   */
+  export type AutomationRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which AutomationRule to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AutomationRules.
+     */
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule findMany
+   */
+  export type AutomationRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter, which AutomationRules to fetch.
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AutomationRules to fetch.
+     */
+    orderBy?: AutomationRuleOrderByWithRelationInput | AutomationRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AutomationRules.
+     */
+    cursor?: AutomationRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AutomationRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AutomationRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AutomationRules.
+     */
+    distinct?: AutomationRuleScalarFieldEnum | AutomationRuleScalarFieldEnum[]
+  }
+
+  /**
+   * AutomationRule create
+   */
+  export type AutomationRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AutomationRule.
+     */
+    data: XOR<AutomationRuleCreateInput, AutomationRuleUncheckedCreateInput>
+  }
+
+  /**
+   * AutomationRule createMany
+   */
+  export type AutomationRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AutomationRules.
+     */
+    data: AutomationRuleCreateManyInput | AutomationRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AutomationRule createManyAndReturn
+   */
+  export type AutomationRuleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * The data used to create many AutomationRules.
+     */
+    data: AutomationRuleCreateManyInput | AutomationRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AutomationRule update
+   */
+  export type AutomationRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AutomationRule.
+     */
+    data: XOR<AutomationRuleUpdateInput, AutomationRuleUncheckedUpdateInput>
+    /**
+     * Choose, which AutomationRule to update.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule updateMany
+   */
+  export type AutomationRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AutomationRules.
+     */
+    data: XOR<AutomationRuleUpdateManyMutationInput, AutomationRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which AutomationRules to update
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * Limit how many AutomationRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AutomationRule updateManyAndReturn
+   */
+  export type AutomationRuleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * The data used to update AutomationRules.
+     */
+    data: XOR<AutomationRuleUpdateManyMutationInput, AutomationRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which AutomationRules to update
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * Limit how many AutomationRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AutomationRule upsert
+   */
+  export type AutomationRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AutomationRule to update in case it exists.
+     */
+    where: AutomationRuleWhereUniqueInput
+    /**
+     * In case the AutomationRule found by the `where` argument doesn't exist, create a new AutomationRule with this data.
+     */
+    create: XOR<AutomationRuleCreateInput, AutomationRuleUncheckedCreateInput>
+    /**
+     * In case the AutomationRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AutomationRuleUpdateInput, AutomationRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * AutomationRule delete
+   */
+  export type AutomationRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+    /**
+     * Filter which AutomationRule to delete.
+     */
+    where: AutomationRuleWhereUniqueInput
+  }
+
+  /**
+   * AutomationRule deleteMany
+   */
+  export type AutomationRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AutomationRules to delete
+     */
+    where?: AutomationRuleWhereInput
+    /**
+     * Limit how many AutomationRules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AutomationRule without action
+   */
+  export type AutomationRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AutomationRule
+     */
+    select?: AutomationRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AutomationRule
+     */
+    omit?: AutomationRuleOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ScheduledReport
+   */
+
+  export type AggregateScheduledReport = {
+    _count: ScheduledReportCountAggregateOutputType | null
+    _avg: ScheduledReportAvgAggregateOutputType | null
+    _sum: ScheduledReportSumAggregateOutputType | null
+    _min: ScheduledReportMinAggregateOutputType | null
+    _max: ScheduledReportMaxAggregateOutputType | null
+  }
+
+  export type ScheduledReportAvgAggregateOutputType = {
+    dayOfWeek: number | null
+    dayOfMonth: number | null
+    hour: number | null
+    sentCount: number | null
+  }
+
+  export type ScheduledReportSumAggregateOutputType = {
+    dayOfWeek: number | null
+    dayOfMonth: number | null
+    hour: number | null
+    sentCount: number | null
+  }
+
+  export type ScheduledReportMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    template: string | null
+    frequency: $Enums.ReportFrequency | null
+    dayOfWeek: number | null
+    dayOfMonth: number | null
+    hour: number | null
+    format: $Enums.ReportFormat | null
+    isActive: boolean | null
+    lastSentAt: Date | null
+    sentCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ScheduledReportMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    template: string | null
+    frequency: $Enums.ReportFrequency | null
+    dayOfWeek: number | null
+    dayOfMonth: number | null
+    hour: number | null
+    format: $Enums.ReportFormat | null
+    isActive: boolean | null
+    lastSentAt: Date | null
+    sentCount: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ScheduledReportCountAggregateOutputType = {
+    id: number
+    name: number
+    template: number
+    recipients: number
+    frequency: number
+    dayOfWeek: number
+    dayOfMonth: number
+    hour: number
+    format: number
+    isActive: number
+    lastSentAt: number
+    sentCount: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ScheduledReportAvgAggregateInputType = {
+    dayOfWeek?: true
+    dayOfMonth?: true
+    hour?: true
+    sentCount?: true
+  }
+
+  export type ScheduledReportSumAggregateInputType = {
+    dayOfWeek?: true
+    dayOfMonth?: true
+    hour?: true
+    sentCount?: true
+  }
+
+  export type ScheduledReportMinAggregateInputType = {
+    id?: true
+    name?: true
+    template?: true
+    frequency?: true
+    dayOfWeek?: true
+    dayOfMonth?: true
+    hour?: true
+    format?: true
+    isActive?: true
+    lastSentAt?: true
+    sentCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ScheduledReportMaxAggregateInputType = {
+    id?: true
+    name?: true
+    template?: true
+    frequency?: true
+    dayOfWeek?: true
+    dayOfMonth?: true
+    hour?: true
+    format?: true
+    isActive?: true
+    lastSentAt?: true
+    sentCount?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ScheduledReportCountAggregateInputType = {
+    id?: true
+    name?: true
+    template?: true
+    recipients?: true
+    frequency?: true
+    dayOfWeek?: true
+    dayOfMonth?: true
+    hour?: true
+    format?: true
+    isActive?: true
+    lastSentAt?: true
+    sentCount?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ScheduledReportAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScheduledReport to aggregate.
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScheduledReports to fetch.
+     */
+    orderBy?: ScheduledReportOrderByWithRelationInput | ScheduledReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ScheduledReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScheduledReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScheduledReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ScheduledReports
+    **/
+    _count?: true | ScheduledReportCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ScheduledReportAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ScheduledReportSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ScheduledReportMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ScheduledReportMaxAggregateInputType
+  }
+
+  export type GetScheduledReportAggregateType<T extends ScheduledReportAggregateArgs> = {
+        [P in keyof T & keyof AggregateScheduledReport]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateScheduledReport[P]>
+      : GetScalarType<T[P], AggregateScheduledReport[P]>
+  }
+
+
+
+
+  export type ScheduledReportGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ScheduledReportWhereInput
+    orderBy?: ScheduledReportOrderByWithAggregationInput | ScheduledReportOrderByWithAggregationInput[]
+    by: ScheduledReportScalarFieldEnum[] | ScheduledReportScalarFieldEnum
+    having?: ScheduledReportScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ScheduledReportCountAggregateInputType | true
+    _avg?: ScheduledReportAvgAggregateInputType
+    _sum?: ScheduledReportSumAggregateInputType
+    _min?: ScheduledReportMinAggregateInputType
+    _max?: ScheduledReportMaxAggregateInputType
+  }
+
+  export type ScheduledReportGroupByOutputType = {
+    id: string
+    name: string
+    template: string
+    recipients: string[]
+    frequency: $Enums.ReportFrequency
+    dayOfWeek: number | null
+    dayOfMonth: number | null
+    hour: number
+    format: $Enums.ReportFormat
+    isActive: boolean
+    lastSentAt: Date | null
+    sentCount: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ScheduledReportCountAggregateOutputType | null
+    _avg: ScheduledReportAvgAggregateOutputType | null
+    _sum: ScheduledReportSumAggregateOutputType | null
+    _min: ScheduledReportMinAggregateOutputType | null
+    _max: ScheduledReportMaxAggregateOutputType | null
+  }
+
+  type GetScheduledReportGroupByPayload<T extends ScheduledReportGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ScheduledReportGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ScheduledReportGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ScheduledReportGroupByOutputType[P]>
+            : GetScalarType<T[P], ScheduledReportGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ScheduledReportSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    template?: boolean
+    recipients?: boolean
+    frequency?: boolean
+    dayOfWeek?: boolean
+    dayOfMonth?: boolean
+    hour?: boolean
+    format?: boolean
+    isActive?: boolean
+    lastSentAt?: boolean
+    sentCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["scheduledReport"]>
+
+  export type ScheduledReportSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    template?: boolean
+    recipients?: boolean
+    frequency?: boolean
+    dayOfWeek?: boolean
+    dayOfMonth?: boolean
+    hour?: boolean
+    format?: boolean
+    isActive?: boolean
+    lastSentAt?: boolean
+    sentCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["scheduledReport"]>
+
+  export type ScheduledReportSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    template?: boolean
+    recipients?: boolean
+    frequency?: boolean
+    dayOfWeek?: boolean
+    dayOfMonth?: boolean
+    hour?: boolean
+    format?: boolean
+    isActive?: boolean
+    lastSentAt?: boolean
+    sentCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["scheduledReport"]>
+
+  export type ScheduledReportSelectScalar = {
+    id?: boolean
+    name?: boolean
+    template?: boolean
+    recipients?: boolean
+    frequency?: boolean
+    dayOfWeek?: boolean
+    dayOfMonth?: boolean
+    hour?: boolean
+    format?: boolean
+    isActive?: boolean
+    lastSentAt?: boolean
+    sentCount?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ScheduledReportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "template" | "recipients" | "frequency" | "dayOfWeek" | "dayOfMonth" | "hour" | "format" | "isActive" | "lastSentAt" | "sentCount" | "createdAt" | "updatedAt", ExtArgs["result"]["scheduledReport"]>
+
+  export type $ScheduledReportPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ScheduledReport"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      template: string
+      recipients: string[]
+      frequency: $Enums.ReportFrequency
+      dayOfWeek: number | null
+      dayOfMonth: number | null
+      hour: number
+      format: $Enums.ReportFormat
+      isActive: boolean
+      lastSentAt: Date | null
+      sentCount: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["scheduledReport"]>
+    composites: {}
+  }
+
+  type ScheduledReportGetPayload<S extends boolean | null | undefined | ScheduledReportDefaultArgs> = $Result.GetResult<Prisma.$ScheduledReportPayload, S>
+
+  type ScheduledReportCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ScheduledReportFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ScheduledReportCountAggregateInputType | true
+    }
+
+  export interface ScheduledReportDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ScheduledReport'], meta: { name: 'ScheduledReport' } }
+    /**
+     * Find zero or one ScheduledReport that matches the filter.
+     * @param {ScheduledReportFindUniqueArgs} args - Arguments to find a ScheduledReport
+     * @example
+     * // Get one ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ScheduledReportFindUniqueArgs>(args: SelectSubset<T, ScheduledReportFindUniqueArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ScheduledReport that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ScheduledReportFindUniqueOrThrowArgs} args - Arguments to find a ScheduledReport
+     * @example
+     * // Get one ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ScheduledReportFindUniqueOrThrowArgs>(args: SelectSubset<T, ScheduledReportFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScheduledReport that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportFindFirstArgs} args - Arguments to find a ScheduledReport
+     * @example
+     * // Get one ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ScheduledReportFindFirstArgs>(args?: SelectSubset<T, ScheduledReportFindFirstArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ScheduledReport that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportFindFirstOrThrowArgs} args - Arguments to find a ScheduledReport
+     * @example
+     * // Get one ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ScheduledReportFindFirstOrThrowArgs>(args?: SelectSubset<T, ScheduledReportFindFirstOrThrowArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ScheduledReports that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ScheduledReports
+     * const scheduledReports = await prisma.scheduledReport.findMany()
+     * 
+     * // Get first 10 ScheduledReports
+     * const scheduledReports = await prisma.scheduledReport.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const scheduledReportWithIdOnly = await prisma.scheduledReport.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ScheduledReportFindManyArgs>(args?: SelectSubset<T, ScheduledReportFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ScheduledReport.
+     * @param {ScheduledReportCreateArgs} args - Arguments to create a ScheduledReport.
+     * @example
+     * // Create one ScheduledReport
+     * const ScheduledReport = await prisma.scheduledReport.create({
+     *   data: {
+     *     // ... data to create a ScheduledReport
+     *   }
+     * })
+     * 
+     */
+    create<T extends ScheduledReportCreateArgs>(args: SelectSubset<T, ScheduledReportCreateArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ScheduledReports.
+     * @param {ScheduledReportCreateManyArgs} args - Arguments to create many ScheduledReports.
+     * @example
+     * // Create many ScheduledReports
+     * const scheduledReport = await prisma.scheduledReport.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ScheduledReportCreateManyArgs>(args?: SelectSubset<T, ScheduledReportCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ScheduledReports and returns the data saved in the database.
+     * @param {ScheduledReportCreateManyAndReturnArgs} args - Arguments to create many ScheduledReports.
+     * @example
+     * // Create many ScheduledReports
+     * const scheduledReport = await prisma.scheduledReport.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ScheduledReports and only return the `id`
+     * const scheduledReportWithIdOnly = await prisma.scheduledReport.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ScheduledReportCreateManyAndReturnArgs>(args?: SelectSubset<T, ScheduledReportCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ScheduledReport.
+     * @param {ScheduledReportDeleteArgs} args - Arguments to delete one ScheduledReport.
+     * @example
+     * // Delete one ScheduledReport
+     * const ScheduledReport = await prisma.scheduledReport.delete({
+     *   where: {
+     *     // ... filter to delete one ScheduledReport
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ScheduledReportDeleteArgs>(args: SelectSubset<T, ScheduledReportDeleteArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ScheduledReport.
+     * @param {ScheduledReportUpdateArgs} args - Arguments to update one ScheduledReport.
+     * @example
+     * // Update one ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ScheduledReportUpdateArgs>(args: SelectSubset<T, ScheduledReportUpdateArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ScheduledReports.
+     * @param {ScheduledReportDeleteManyArgs} args - Arguments to filter ScheduledReports to delete.
+     * @example
+     * // Delete a few ScheduledReports
+     * const { count } = await prisma.scheduledReport.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ScheduledReportDeleteManyArgs>(args?: SelectSubset<T, ScheduledReportDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScheduledReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ScheduledReports
+     * const scheduledReport = await prisma.scheduledReport.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ScheduledReportUpdateManyArgs>(args: SelectSubset<T, ScheduledReportUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ScheduledReports and returns the data updated in the database.
+     * @param {ScheduledReportUpdateManyAndReturnArgs} args - Arguments to update many ScheduledReports.
+     * @example
+     * // Update many ScheduledReports
+     * const scheduledReport = await prisma.scheduledReport.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ScheduledReports and only return the `id`
+     * const scheduledReportWithIdOnly = await prisma.scheduledReport.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ScheduledReportUpdateManyAndReturnArgs>(args: SelectSubset<T, ScheduledReportUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ScheduledReport.
+     * @param {ScheduledReportUpsertArgs} args - Arguments to update or create a ScheduledReport.
+     * @example
+     * // Update or create a ScheduledReport
+     * const scheduledReport = await prisma.scheduledReport.upsert({
+     *   create: {
+     *     // ... data to create a ScheduledReport
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ScheduledReport we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ScheduledReportUpsertArgs>(args: SelectSubset<T, ScheduledReportUpsertArgs<ExtArgs>>): Prisma__ScheduledReportClient<$Result.GetResult<Prisma.$ScheduledReportPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ScheduledReports.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportCountArgs} args - Arguments to filter ScheduledReports to count.
+     * @example
+     * // Count the number of ScheduledReports
+     * const count = await prisma.scheduledReport.count({
+     *   where: {
+     *     // ... the filter for the ScheduledReports we want to count
+     *   }
+     * })
+    **/
+    count<T extends ScheduledReportCountArgs>(
+      args?: Subset<T, ScheduledReportCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ScheduledReportCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ScheduledReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ScheduledReportAggregateArgs>(args: Subset<T, ScheduledReportAggregateArgs>): Prisma.PrismaPromise<GetScheduledReportAggregateType<T>>
+
+    /**
+     * Group by ScheduledReport.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ScheduledReportGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ScheduledReportGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ScheduledReportGroupByArgs['orderBy'] }
+        : { orderBy?: ScheduledReportGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ScheduledReportGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetScheduledReportGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ScheduledReport model
+   */
+  readonly fields: ScheduledReportFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ScheduledReport.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ScheduledReportClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ScheduledReport model
+   */
+  interface ScheduledReportFieldRefs {
+    readonly id: FieldRef<"ScheduledReport", 'String'>
+    readonly name: FieldRef<"ScheduledReport", 'String'>
+    readonly template: FieldRef<"ScheduledReport", 'String'>
+    readonly recipients: FieldRef<"ScheduledReport", 'String[]'>
+    readonly frequency: FieldRef<"ScheduledReport", 'ReportFrequency'>
+    readonly dayOfWeek: FieldRef<"ScheduledReport", 'Int'>
+    readonly dayOfMonth: FieldRef<"ScheduledReport", 'Int'>
+    readonly hour: FieldRef<"ScheduledReport", 'Int'>
+    readonly format: FieldRef<"ScheduledReport", 'ReportFormat'>
+    readonly isActive: FieldRef<"ScheduledReport", 'Boolean'>
+    readonly lastSentAt: FieldRef<"ScheduledReport", 'DateTime'>
+    readonly sentCount: FieldRef<"ScheduledReport", 'Int'>
+    readonly createdAt: FieldRef<"ScheduledReport", 'DateTime'>
+    readonly updatedAt: FieldRef<"ScheduledReport", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ScheduledReport findUnique
+   */
+  export type ScheduledReportFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter, which ScheduledReport to fetch.
+     */
+    where: ScheduledReportWhereUniqueInput
+  }
+
+  /**
+   * ScheduledReport findUniqueOrThrow
+   */
+  export type ScheduledReportFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter, which ScheduledReport to fetch.
+     */
+    where: ScheduledReportWhereUniqueInput
+  }
+
+  /**
+   * ScheduledReport findFirst
+   */
+  export type ScheduledReportFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter, which ScheduledReport to fetch.
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScheduledReports to fetch.
+     */
+    orderBy?: ScheduledReportOrderByWithRelationInput | ScheduledReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScheduledReports.
+     */
+    cursor?: ScheduledReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScheduledReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScheduledReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScheduledReports.
+     */
+    distinct?: ScheduledReportScalarFieldEnum | ScheduledReportScalarFieldEnum[]
+  }
+
+  /**
+   * ScheduledReport findFirstOrThrow
+   */
+  export type ScheduledReportFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter, which ScheduledReport to fetch.
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScheduledReports to fetch.
+     */
+    orderBy?: ScheduledReportOrderByWithRelationInput | ScheduledReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ScheduledReports.
+     */
+    cursor?: ScheduledReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScheduledReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScheduledReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScheduledReports.
+     */
+    distinct?: ScheduledReportScalarFieldEnum | ScheduledReportScalarFieldEnum[]
+  }
+
+  /**
+   * ScheduledReport findMany
+   */
+  export type ScheduledReportFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter, which ScheduledReports to fetch.
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ScheduledReports to fetch.
+     */
+    orderBy?: ScheduledReportOrderByWithRelationInput | ScheduledReportOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ScheduledReports.
+     */
+    cursor?: ScheduledReportWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ScheduledReports from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ScheduledReports.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ScheduledReports.
+     */
+    distinct?: ScheduledReportScalarFieldEnum | ScheduledReportScalarFieldEnum[]
+  }
+
+  /**
+   * ScheduledReport create
+   */
+  export type ScheduledReportCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ScheduledReport.
+     */
+    data: XOR<ScheduledReportCreateInput, ScheduledReportUncheckedCreateInput>
+  }
+
+  /**
+   * ScheduledReport createMany
+   */
+  export type ScheduledReportCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ScheduledReports.
+     */
+    data: ScheduledReportCreateManyInput | ScheduledReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ScheduledReport createManyAndReturn
+   */
+  export type ScheduledReportCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * The data used to create many ScheduledReports.
+     */
+    data: ScheduledReportCreateManyInput | ScheduledReportCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ScheduledReport update
+   */
+  export type ScheduledReportUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ScheduledReport.
+     */
+    data: XOR<ScheduledReportUpdateInput, ScheduledReportUncheckedUpdateInput>
+    /**
+     * Choose, which ScheduledReport to update.
+     */
+    where: ScheduledReportWhereUniqueInput
+  }
+
+  /**
+   * ScheduledReport updateMany
+   */
+  export type ScheduledReportUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ScheduledReports.
+     */
+    data: XOR<ScheduledReportUpdateManyMutationInput, ScheduledReportUncheckedUpdateManyInput>
+    /**
+     * Filter which ScheduledReports to update
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * Limit how many ScheduledReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScheduledReport updateManyAndReturn
+   */
+  export type ScheduledReportUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * The data used to update ScheduledReports.
+     */
+    data: XOR<ScheduledReportUpdateManyMutationInput, ScheduledReportUncheckedUpdateManyInput>
+    /**
+     * Filter which ScheduledReports to update
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * Limit how many ScheduledReports to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScheduledReport upsert
+   */
+  export type ScheduledReportUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ScheduledReport to update in case it exists.
+     */
+    where: ScheduledReportWhereUniqueInput
+    /**
+     * In case the ScheduledReport found by the `where` argument doesn't exist, create a new ScheduledReport with this data.
+     */
+    create: XOR<ScheduledReportCreateInput, ScheduledReportUncheckedCreateInput>
+    /**
+     * In case the ScheduledReport was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ScheduledReportUpdateInput, ScheduledReportUncheckedUpdateInput>
+  }
+
+  /**
+   * ScheduledReport delete
+   */
+  export type ScheduledReportDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+    /**
+     * Filter which ScheduledReport to delete.
+     */
+    where: ScheduledReportWhereUniqueInput
+  }
+
+  /**
+   * ScheduledReport deleteMany
+   */
+  export type ScheduledReportDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ScheduledReports to delete
+     */
+    where?: ScheduledReportWhereInput
+    /**
+     * Limit how many ScheduledReports to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ScheduledReport without action
+   */
+  export type ScheduledReportDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ScheduledReport
+     */
+    select?: ScheduledReportSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ScheduledReport
+     */
+    omit?: ScheduledReportOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -122023,6 +124488,42 @@ export namespace Prisma {
   export type PurchaseOrderItemScalarFieldEnum = (typeof PurchaseOrderItemScalarFieldEnum)[keyof typeof PurchaseOrderItemScalarFieldEnum]
 
 
+  export const AutomationRuleScalarFieldEnum: {
+    id: 'id',
+    key: 'key',
+    name: 'name',
+    description: 'description',
+    cronExpr: 'cronExpr',
+    isActive: 'isActive',
+    lastRunAt: 'lastRunAt',
+    runCount: 'runCount',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AutomationRuleScalarFieldEnum = (typeof AutomationRuleScalarFieldEnum)[keyof typeof AutomationRuleScalarFieldEnum]
+
+
+  export const ScheduledReportScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    template: 'template',
+    recipients: 'recipients',
+    frequency: 'frequency',
+    dayOfWeek: 'dayOfWeek',
+    dayOfMonth: 'dayOfMonth',
+    hour: 'hour',
+    format: 'format',
+    isActive: 'isActive',
+    lastSentAt: 'lastSentAt',
+    sentCount: 'sentCount',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ScheduledReportScalarFieldEnum = (typeof ScheduledReportScalarFieldEnum)[keyof typeof ScheduledReportScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -122934,6 +125435,34 @@ export namespace Prisma {
    * Reference to a field of type 'PoItemStatus[]'
    */
   export type ListEnumPoItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PoItemStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportFrequency'
+   */
+  export type EnumReportFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFrequency'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportFrequency[]'
+   */
+  export type ListEnumReportFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFrequency[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportFormat'
+   */
+  export type EnumReportFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFormat'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReportFormat[]'
+   */
+  export type ListEnumReportFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFormat[]'>
     
   /**
    * Deep Input Types
@@ -130632,6 +133161,184 @@ export namespace Prisma {
     status?: EnumPoItemStatusWithAggregatesFilter<"PurchaseOrderItem"> | $Enums.PoItemStatus
     createdAt?: DateTimeWithAggregatesFilter<"PurchaseOrderItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"PurchaseOrderItem"> | Date | string
+  }
+
+  export type AutomationRuleWhereInput = {
+    AND?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    OR?: AutomationRuleWhereInput[]
+    NOT?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    id?: StringFilter<"AutomationRule"> | string
+    key?: StringFilter<"AutomationRule"> | string
+    name?: StringFilter<"AutomationRule"> | string
+    description?: StringNullableFilter<"AutomationRule"> | string | null
+    cronExpr?: StringFilter<"AutomationRule"> | string
+    isActive?: BoolFilter<"AutomationRule"> | boolean
+    lastRunAt?: DateTimeNullableFilter<"AutomationRule"> | Date | string | null
+    runCount?: IntFilter<"AutomationRule"> | number
+    createdAt?: DateTimeFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeFilter<"AutomationRule"> | Date | string
+  }
+
+  export type AutomationRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    cronExpr?: SortOrder
+    isActive?: SortOrder
+    lastRunAt?: SortOrderInput | SortOrder
+    runCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    key?: string
+    AND?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    OR?: AutomationRuleWhereInput[]
+    NOT?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
+    name?: StringFilter<"AutomationRule"> | string
+    description?: StringNullableFilter<"AutomationRule"> | string | null
+    cronExpr?: StringFilter<"AutomationRule"> | string
+    isActive?: BoolFilter<"AutomationRule"> | boolean
+    lastRunAt?: DateTimeNullableFilter<"AutomationRule"> | Date | string | null
+    runCount?: IntFilter<"AutomationRule"> | number
+    createdAt?: DateTimeFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeFilter<"AutomationRule"> | Date | string
+  }, "id" | "key">
+
+  export type AutomationRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    cronExpr?: SortOrder
+    isActive?: SortOrder
+    lastRunAt?: SortOrderInput | SortOrder
+    runCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AutomationRuleCountOrderByAggregateInput
+    _avg?: AutomationRuleAvgOrderByAggregateInput
+    _max?: AutomationRuleMaxOrderByAggregateInput
+    _min?: AutomationRuleMinOrderByAggregateInput
+    _sum?: AutomationRuleSumOrderByAggregateInput
+  }
+
+  export type AutomationRuleScalarWhereWithAggregatesInput = {
+    AND?: AutomationRuleScalarWhereWithAggregatesInput | AutomationRuleScalarWhereWithAggregatesInput[]
+    OR?: AutomationRuleScalarWhereWithAggregatesInput[]
+    NOT?: AutomationRuleScalarWhereWithAggregatesInput | AutomationRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AutomationRule"> | string
+    key?: StringWithAggregatesFilter<"AutomationRule"> | string
+    name?: StringWithAggregatesFilter<"AutomationRule"> | string
+    description?: StringNullableWithAggregatesFilter<"AutomationRule"> | string | null
+    cronExpr?: StringWithAggregatesFilter<"AutomationRule"> | string
+    isActive?: BoolWithAggregatesFilter<"AutomationRule"> | boolean
+    lastRunAt?: DateTimeNullableWithAggregatesFilter<"AutomationRule"> | Date | string | null
+    runCount?: IntWithAggregatesFilter<"AutomationRule"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"AutomationRule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AutomationRule"> | Date | string
+  }
+
+  export type ScheduledReportWhereInput = {
+    AND?: ScheduledReportWhereInput | ScheduledReportWhereInput[]
+    OR?: ScheduledReportWhereInput[]
+    NOT?: ScheduledReportWhereInput | ScheduledReportWhereInput[]
+    id?: StringFilter<"ScheduledReport"> | string
+    name?: StringFilter<"ScheduledReport"> | string
+    template?: StringFilter<"ScheduledReport"> | string
+    recipients?: StringNullableListFilter<"ScheduledReport">
+    frequency?: EnumReportFrequencyFilter<"ScheduledReport"> | $Enums.ReportFrequency
+    dayOfWeek?: IntNullableFilter<"ScheduledReport"> | number | null
+    dayOfMonth?: IntNullableFilter<"ScheduledReport"> | number | null
+    hour?: IntFilter<"ScheduledReport"> | number
+    format?: EnumReportFormatFilter<"ScheduledReport"> | $Enums.ReportFormat
+    isActive?: BoolFilter<"ScheduledReport"> | boolean
+    lastSentAt?: DateTimeNullableFilter<"ScheduledReport"> | Date | string | null
+    sentCount?: IntFilter<"ScheduledReport"> | number
+    createdAt?: DateTimeFilter<"ScheduledReport"> | Date | string
+    updatedAt?: DateTimeFilter<"ScheduledReport"> | Date | string
+  }
+
+  export type ScheduledReportOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    template?: SortOrder
+    recipients?: SortOrder
+    frequency?: SortOrder
+    dayOfWeek?: SortOrderInput | SortOrder
+    dayOfMonth?: SortOrderInput | SortOrder
+    hour?: SortOrder
+    format?: SortOrder
+    isActive?: SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
+    sentCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScheduledReportWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ScheduledReportWhereInput | ScheduledReportWhereInput[]
+    OR?: ScheduledReportWhereInput[]
+    NOT?: ScheduledReportWhereInput | ScheduledReportWhereInput[]
+    name?: StringFilter<"ScheduledReport"> | string
+    template?: StringFilter<"ScheduledReport"> | string
+    recipients?: StringNullableListFilter<"ScheduledReport">
+    frequency?: EnumReportFrequencyFilter<"ScheduledReport"> | $Enums.ReportFrequency
+    dayOfWeek?: IntNullableFilter<"ScheduledReport"> | number | null
+    dayOfMonth?: IntNullableFilter<"ScheduledReport"> | number | null
+    hour?: IntFilter<"ScheduledReport"> | number
+    format?: EnumReportFormatFilter<"ScheduledReport"> | $Enums.ReportFormat
+    isActive?: BoolFilter<"ScheduledReport"> | boolean
+    lastSentAt?: DateTimeNullableFilter<"ScheduledReport"> | Date | string | null
+    sentCount?: IntFilter<"ScheduledReport"> | number
+    createdAt?: DateTimeFilter<"ScheduledReport"> | Date | string
+    updatedAt?: DateTimeFilter<"ScheduledReport"> | Date | string
+  }, "id">
+
+  export type ScheduledReportOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    template?: SortOrder
+    recipients?: SortOrder
+    frequency?: SortOrder
+    dayOfWeek?: SortOrderInput | SortOrder
+    dayOfMonth?: SortOrderInput | SortOrder
+    hour?: SortOrder
+    format?: SortOrder
+    isActive?: SortOrder
+    lastSentAt?: SortOrderInput | SortOrder
+    sentCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ScheduledReportCountOrderByAggregateInput
+    _avg?: ScheduledReportAvgOrderByAggregateInput
+    _max?: ScheduledReportMaxOrderByAggregateInput
+    _min?: ScheduledReportMinOrderByAggregateInput
+    _sum?: ScheduledReportSumOrderByAggregateInput
+  }
+
+  export type ScheduledReportScalarWhereWithAggregatesInput = {
+    AND?: ScheduledReportScalarWhereWithAggregatesInput | ScheduledReportScalarWhereWithAggregatesInput[]
+    OR?: ScheduledReportScalarWhereWithAggregatesInput[]
+    NOT?: ScheduledReportScalarWhereWithAggregatesInput | ScheduledReportScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ScheduledReport"> | string
+    name?: StringWithAggregatesFilter<"ScheduledReport"> | string
+    template?: StringWithAggregatesFilter<"ScheduledReport"> | string
+    recipients?: StringNullableListFilter<"ScheduledReport">
+    frequency?: EnumReportFrequencyWithAggregatesFilter<"ScheduledReport"> | $Enums.ReportFrequency
+    dayOfWeek?: IntNullableWithAggregatesFilter<"ScheduledReport"> | number | null
+    dayOfMonth?: IntNullableWithAggregatesFilter<"ScheduledReport"> | number | null
+    hour?: IntWithAggregatesFilter<"ScheduledReport"> | number
+    format?: EnumReportFormatWithAggregatesFilter<"ScheduledReport"> | $Enums.ReportFormat
+    isActive?: BoolWithAggregatesFilter<"ScheduledReport"> | boolean
+    lastSentAt?: DateTimeNullableWithAggregatesFilter<"ScheduledReport"> | Date | string | null
+    sentCount?: IntWithAggregatesFilter<"ScheduledReport"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ScheduledReport"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ScheduledReport"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -139053,6 +141760,216 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AutomationRuleCreateInput = {
+    id?: string
+    key: string
+    name: string
+    description?: string | null
+    cronExpr: string
+    isActive?: boolean
+    lastRunAt?: Date | string | null
+    runCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUncheckedCreateInput = {
+    id?: string
+    key: string
+    name: string
+    description?: string | null
+    cronExpr: string
+    isActive?: boolean
+    lastRunAt?: Date | string | null
+    runCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cronExpr?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    runCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cronExpr?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    runCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleCreateManyInput = {
+    id?: string
+    key: string
+    name: string
+    description?: string | null
+    cronExpr: string
+    isActive?: boolean
+    lastRunAt?: Date | string | null
+    runCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AutomationRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cronExpr?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    runCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AutomationRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cronExpr?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastRunAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    runCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScheduledReportCreateInput = {
+    id?: string
+    name: string
+    template: string
+    recipients?: ScheduledReportCreaterecipientsInput | string[]
+    frequency?: $Enums.ReportFrequency
+    dayOfWeek?: number | null
+    dayOfMonth?: number | null
+    hour?: number
+    format?: $Enums.ReportFormat
+    isActive?: boolean
+    lastSentAt?: Date | string | null
+    sentCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScheduledReportUncheckedCreateInput = {
+    id?: string
+    name: string
+    template: string
+    recipients?: ScheduledReportCreaterecipientsInput | string[]
+    frequency?: $Enums.ReportFrequency
+    dayOfWeek?: number | null
+    dayOfMonth?: number | null
+    hour?: number
+    format?: $Enums.ReportFormat
+    isActive?: boolean
+    lastSentAt?: Date | string | null
+    sentCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScheduledReportUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    recipients?: ScheduledReportUpdaterecipientsInput | string[]
+    frequency?: EnumReportFrequencyFieldUpdateOperationsInput | $Enums.ReportFrequency
+    dayOfWeek?: NullableIntFieldUpdateOperationsInput | number | null
+    dayOfMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    hour?: IntFieldUpdateOperationsInput | number
+    format?: EnumReportFormatFieldUpdateOperationsInput | $Enums.ReportFormat
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScheduledReportUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    recipients?: ScheduledReportUpdaterecipientsInput | string[]
+    frequency?: EnumReportFrequencyFieldUpdateOperationsInput | $Enums.ReportFrequency
+    dayOfWeek?: NullableIntFieldUpdateOperationsInput | number | null
+    dayOfMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    hour?: IntFieldUpdateOperationsInput | number
+    format?: EnumReportFormatFieldUpdateOperationsInput | $Enums.ReportFormat
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScheduledReportCreateManyInput = {
+    id?: string
+    name: string
+    template: string
+    recipients?: ScheduledReportCreaterecipientsInput | string[]
+    frequency?: $Enums.ReportFrequency
+    dayOfWeek?: number | null
+    dayOfMonth?: number | null
+    hour?: number
+    format?: $Enums.ReportFormat
+    isActive?: boolean
+    lastSentAt?: Date | string | null
+    sentCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ScheduledReportUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    recipients?: ScheduledReportUpdaterecipientsInput | string[]
+    frequency?: EnumReportFrequencyFieldUpdateOperationsInput | $Enums.ReportFrequency
+    dayOfWeek?: NullableIntFieldUpdateOperationsInput | number | null
+    dayOfMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    hour?: IntFieldUpdateOperationsInput | number
+    format?: EnumReportFormatFieldUpdateOperationsInput | $Enums.ReportFormat
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ScheduledReportUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    template?: StringFieldUpdateOperationsInput | string
+    recipients?: ScheduledReportUpdaterecipientsInput | string[]
+    frequency?: EnumReportFrequencyFieldUpdateOperationsInput | $Enums.ReportFrequency
+    dayOfWeek?: NullableIntFieldUpdateOperationsInput | number | null
+    dayOfMonth?: NullableIntFieldUpdateOperationsInput | number | null
+    hour?: IntFieldUpdateOperationsInput | number
+    format?: EnumReportFormatFieldUpdateOperationsInput | $Enums.ReportFormat
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastSentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sentCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -145495,6 +148412,150 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPoItemStatusFilter<$PrismaModel>
     _max?: NestedEnumPoItemStatusFilter<$PrismaModel>
+  }
+
+  export type AutomationRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    cronExpr?: SortOrder
+    isActive?: SortOrder
+    lastRunAt?: SortOrder
+    runCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleAvgOrderByAggregateInput = {
+    runCount?: SortOrder
+  }
+
+  export type AutomationRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    cronExpr?: SortOrder
+    isActive?: SortOrder
+    lastRunAt?: SortOrder
+    runCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    cronExpr?: SortOrder
+    isActive?: SortOrder
+    lastRunAt?: SortOrder
+    runCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AutomationRuleSumOrderByAggregateInput = {
+    runCount?: SortOrder
+  }
+
+  export type EnumReportFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFrequency | EnumReportFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFrequencyFilter<$PrismaModel> | $Enums.ReportFrequency
+  }
+
+  export type EnumReportFormatFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFormat | EnumReportFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFormatFilter<$PrismaModel> | $Enums.ReportFormat
+  }
+
+  export type ScheduledReportCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    template?: SortOrder
+    recipients?: SortOrder
+    frequency?: SortOrder
+    dayOfWeek?: SortOrder
+    dayOfMonth?: SortOrder
+    hour?: SortOrder
+    format?: SortOrder
+    isActive?: SortOrder
+    lastSentAt?: SortOrder
+    sentCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScheduledReportAvgOrderByAggregateInput = {
+    dayOfWeek?: SortOrder
+    dayOfMonth?: SortOrder
+    hour?: SortOrder
+    sentCount?: SortOrder
+  }
+
+  export type ScheduledReportMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    template?: SortOrder
+    frequency?: SortOrder
+    dayOfWeek?: SortOrder
+    dayOfMonth?: SortOrder
+    hour?: SortOrder
+    format?: SortOrder
+    isActive?: SortOrder
+    lastSentAt?: SortOrder
+    sentCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScheduledReportMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    template?: SortOrder
+    frequency?: SortOrder
+    dayOfWeek?: SortOrder
+    dayOfMonth?: SortOrder
+    hour?: SortOrder
+    format?: SortOrder
+    isActive?: SortOrder
+    lastSentAt?: SortOrder
+    sentCount?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ScheduledReportSumOrderByAggregateInput = {
+    dayOfWeek?: SortOrder
+    dayOfMonth?: SortOrder
+    hour?: SortOrder
+    sentCount?: SortOrder
+  }
+
+  export type EnumReportFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFrequency | EnumReportFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.ReportFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumReportFrequencyFilter<$PrismaModel>
+  }
+
+  export type EnumReportFormatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFormat | EnumReportFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFormatWithAggregatesFilter<$PrismaModel> | $Enums.ReportFormat
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportFormatFilter<$PrismaModel>
+    _max?: NestedEnumReportFormatFilter<$PrismaModel>
   }
 
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
@@ -152188,6 +155249,23 @@ export namespace Prisma {
     update?: XOR<XOR<PurchaseOrderUpdateToOneWithWhereWithoutItemsInput, PurchaseOrderUpdateWithoutItemsInput>, PurchaseOrderUncheckedUpdateWithoutItemsInput>
   }
 
+  export type ScheduledReportCreaterecipientsInput = {
+    set: string[]
+  }
+
+  export type ScheduledReportUpdaterecipientsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type EnumReportFrequencyFieldUpdateOperationsInput = {
+    set?: $Enums.ReportFrequency
+  }
+
+  export type EnumReportFormatFieldUpdateOperationsInput = {
+    set?: $Enums.ReportFormat
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -153455,6 +156533,40 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPoItemStatusFilter<$PrismaModel>
     _max?: NestedEnumPoItemStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReportFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFrequency | EnumReportFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFrequencyFilter<$PrismaModel> | $Enums.ReportFrequency
+  }
+
+  export type NestedEnumReportFormatFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFormat | EnumReportFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFormatFilter<$PrismaModel> | $Enums.ReportFormat
+  }
+
+  export type NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFrequency | EnumReportFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFrequency[] | ListEnumReportFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.ReportFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumReportFrequencyFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReportFormatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReportFormat | EnumReportFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReportFormat[] | ListEnumReportFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumReportFormatWithAggregatesFilter<$PrismaModel> | $Enums.ReportFormat
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReportFormatFilter<$PrismaModel>
+    _max?: NestedEnumReportFormatFilter<$PrismaModel>
   }
 
   export type BugAttachmentCreateWithoutUploaderInput = {

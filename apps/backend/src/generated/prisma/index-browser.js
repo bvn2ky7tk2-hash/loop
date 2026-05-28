@@ -1274,6 +1274,36 @@ exports.Prisma.PurchaseOrderItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AutomationRuleScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  name: 'name',
+  description: 'description',
+  cronExpr: 'cronExpr',
+  isActive: 'isActive',
+  lastRunAt: 'lastRunAt',
+  runCount: 'runCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ScheduledReportScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  template: 'template',
+  recipients: 'recipients',
+  frequency: 'frequency',
+  dayOfWeek: 'dayOfWeek',
+  dayOfMonth: 'dayOfMonth',
+  hour: 'hour',
+  format: 'format',
+  isActive: 'isActive',
+  lastSentAt: 'lastSentAt',
+  sentCount: 'sentCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1732,6 +1762,17 @@ exports.PoItemStatus = exports.$Enums.PoItemStatus = {
   RETURNED: 'RETURNED'
 };
 
+exports.ReportFrequency = exports.$Enums.ReportFrequency = {
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY'
+};
+
+exports.ReportFormat = exports.$Enums.ReportFormat = {
+  EXCEL: 'EXCEL',
+  PDF: 'PDF'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1824,7 +1865,9 @@ exports.Prisma.ModelName = {
   CustomerTicket: 'CustomerTicket',
   Vendor: 'Vendor',
   PurchaseOrder: 'PurchaseOrder',
-  PurchaseOrderItem: 'PurchaseOrderItem'
+  PurchaseOrderItem: 'PurchaseOrderItem',
+  AutomationRule: 'AutomationRule',
+  ScheduledReport: 'ScheduledReport'
 };
 
 /**

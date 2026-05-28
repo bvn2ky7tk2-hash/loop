@@ -39,6 +39,13 @@ export class MailService {
       .catch((e) => this.logger.error('Email send failed', e));
   }
 
+  async sendHtml(to: string, subject: string, html: string): Promise<void> {
+    if (!this.transporter) return;
+    await this.transporter
+      .sendMail({ from: this.from, to, subject, html })
+      .catch((e) => this.logger.error('HTML email send failed', e));
+  }
+
   async sendPayslipEmail(
     to: string,
     name: string,

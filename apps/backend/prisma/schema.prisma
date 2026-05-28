@@ -2234,3 +2234,56 @@ model PurchaseOrderItem {
   @@index([poId])
   @@map("purchase_order_items")
 }
+
+// ─── Automation Rules ─────────────────────────────────────────────────────────
+
+model AutomationRule {
+  id          String    @id @default(uuid())
+  key         String    @unique @db.VarChar(100)
+  name        String    @db.VarChar(200)
+  description String?   @db.Text
+  cronExpr    String    @db.VarChar(100) @map("cron_expr")
+  isActive    Boolean   @default(true) @map("is_active")
+  lastRunAt   DateTime? @map("last_run_at")
+  runCount    Int       @default(0) @map("run_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("automation_rules")
+}
+
+// ─── Scheduled Reports ────────────────────────────────────────────────────────
+
+enum ReportFrequency {
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+
+  @@map("report_frequency")
+}
+
+enum ReportFormat {
+  EXCEL
+  PDF
+
+  @@map("report_format")
+}
+
+model ScheduledReport {
+  id          String          @id @default(uuid())
+  name        String          @db.VarChar(200)
+  template    String          @db.VarChar(100)
+  recipients  String[]
+  frequency   ReportFrequency @default(WEEKLY)
+  dayOfWeek   Int?            @map("day_of_week")
+  dayOfMonth  Int?            @map("day_of_month")
+  hour        Int             @default(8)
+  format      ReportFormat    @default(EXCEL) @map("report_format")
+  isActive    Boolean         @default(true) @map("is_active")
+  lastSentAt  DateTime?       @map("last_sent_at")
+  sentCount   Int             @default(0) @map("sent_count")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  @@map("scheduled_reports")
+}

@@ -105,6 +105,13 @@ export const PERMISSIONS = {
   ASSET_ASSIGN: 'asset:assign',
   ASSET_MANAGE: 'asset:manage',
 
+  // Procurement — Mua hàng
+  PROCUREMENT_READ:    'procurement:read',
+  PROCUREMENT_CREATE:  'procurement:create',
+  PROCUREMENT_UPDATE:  'procurement:update',
+  PROCUREMENT_APPROVE: 'procurement:approve',
+  PROCUREMENT_MANAGE:  'procurement:manage',
+
   // OKR & KPI
   OKR_READ:   'okr:read',
   OKR_CREATE: 'okr:create',
@@ -221,6 +228,12 @@ export const ALL_PERMISSIONS: PermissionDef[] = [
   { code: PERMISSIONS.ASSET_ASSIGN, module: 'asset', action: 'assign', description: 'Cấp phát / thu hồi tài sản' },
   { code: PERMISSIONS.ASSET_MANAGE, module: 'asset', action: 'manage', description: 'Quản lý bảo trì, xoá tài sản' },
 
+  { code: PERMISSIONS.PROCUREMENT_READ,    module: 'procurement', action: 'read',    description: 'Xem nhà cung cấp và đơn mua hàng' },
+  { code: PERMISSIONS.PROCUREMENT_CREATE,  module: 'procurement', action: 'create',  description: 'Tạo đơn mua hàng mới' },
+  { code: PERMISSIONS.PROCUREMENT_UPDATE,  module: 'procurement', action: 'update',  description: 'Cập nhật đơn mua hàng' },
+  { code: PERMISSIONS.PROCUREMENT_APPROVE, module: 'procurement', action: 'approve', description: 'Phê duyệt đơn mua hàng' },
+  { code: PERMISSIONS.PROCUREMENT_MANAGE,  module: 'procurement', action: 'manage',  description: 'Quản lý nhà cung cấp toàn bộ' },
+
   { code: PERMISSIONS.OKR_READ,   module: 'okr', action: 'read',   description: 'Xem mục tiêu và kết quả then chốt' },
   { code: PERMISSIONS.OKR_CREATE, module: 'okr', action: 'create', description: 'Tạo OKR mới' },
   { code: PERMISSIONS.OKR_UPDATE, module: 'okr', action: 'update', description: 'Cập nhật tiến độ OKR' },
@@ -264,6 +277,8 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.ADMIN_ORG,
     PERMISSIONS.ASSET_READ, PERMISSIONS.ASSET_CREATE, PERMISSIONS.ASSET_UPDATE,
     PERMISSIONS.ASSET_ASSIGN, PERMISSIONS.ASSET_MANAGE,
+    PERMISSIONS.PROCUREMENT_READ, PERMISSIONS.PROCUREMENT_CREATE,
+    PERMISSIONS.PROCUREMENT_APPROVE, PERMISSIONS.PROCUREMENT_MANAGE,
     PERMISSIONS.OKR_READ, PERMISSIONS.OKR_CREATE, PERMISSIONS.OKR_UPDATE, PERMISSIONS.OKR_MANAGE,
     PERMISSIONS.SKILLS_READ, PERMISSIONS.SKILLS_MANAGE,
     PERMISSIONS.TRAINING_READ, PERMISSIONS.TRAINING_CREATE, PERMISSIONS.TRAINING_MANAGE,
@@ -288,6 +303,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.LEAVES_READ, PERMISSIONS.LEAVES_CREATE,
     PERMISSIONS.CONTRACTS_READ,
     PERMISSIONS.RECRUIT_READ, PERMISSIONS.RECRUIT_CREATE, PERMISSIONS.RECRUIT_UPDATE,
+    PERMISSIONS.PROCUREMENT_READ,
     PERMISSIONS.OKR_READ, PERMISSIONS.OKR_CREATE, PERMISSIONS.OKR_UPDATE,
     PERMISSIONS.SKILLS_READ,
     PERMISSIONS.TRAINING_READ,

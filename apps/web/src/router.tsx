@@ -68,6 +68,8 @@ const VendorsPage           = lazy(() => import('./pages/procurement/VendorsPage
 const PurchaseOrdersPage    = lazy(() => import('./pages/procurement/PurchaseOrdersPage'));
 const ImportPage            = lazy(() => import('./pages/admin/ImportPage'));
 const AuditLogPage          = lazy(() => import('./pages/audit-log/AuditLogPage'));
+const AutomationPage        = lazy(() => import('./pages/admin/AutomationPage'));
+const ScheduledReportsPage  = lazy(() => import('./pages/admin/ScheduledReportsPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -155,6 +157,8 @@ export const router = createBrowserRouter([
       { path: 'procurement/orders',   element: wrap(PurchaseOrdersPage) },
       { path: 'import',               element: wrap(ImportPage) },
       { path: 'audit-log',            element: wrap(AuditLogPage) },
+      { path: 'automation',           element: wrap(AutomationPage) },
+      { path: 'scheduled-reports',    element: wrap(ScheduledReportsPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

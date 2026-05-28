@@ -45,6 +45,8 @@ import { KbModule } from './kb/kb.module';
 import { PortalModule } from './portal/portal.module';
 import { ProcurementModule } from './procurement/procurement.module';
 import { ImportModule } from './import/import.module';
+import { AutomationModule } from './automation/automation.module';
+import { ScheduledReportsModule } from './scheduled-reports/scheduled-reports.module';
 
 @Module({
   providers: [
@@ -112,6 +114,8 @@ import { ImportModule } from './import/import.module';
     PortalModule,
     ProcurementModule,
     ImportModule,
+    AutomationModule,
+    ScheduledReportsModule,
   ],
 })
 export class AppModule {}
