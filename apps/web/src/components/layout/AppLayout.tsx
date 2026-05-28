@@ -5,6 +5,8 @@ import { AppSidebar } from './AppSidebar';
 import { AppTopbar } from './AppTopbar';
 import { useAuthStore } from '../../store/auth.store';
 import { authApi } from '../../api/auth';
+import { CommandPalette } from '../ui/CommandPalette';
+import { useCommandPaletteStore } from '../../store/commandPalette.store';
 
 const { Content } = Layout;
 
@@ -15,6 +17,7 @@ export function AppLayout() {
   const [collapsed, setCollapsed] = useState(window.innerWidth < BREAKPOINT_SIDEBAR);
   const [isMobile,  setIsMobile]  = useState(window.innerWidth < BREAKPOINT_MOBILE);
   const { user, isLoading, setUser, setLoading } = useAuthStore();
+  const openPalette = useCommandPaletteStore((s) => s.open);
 
   useEffect(() => {
     authApi.me()
@@ -30,6 +33,18 @@ export function AppLayout() {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
+
+  // Cmd+K / Ctrl+K → mở Command Palette
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [openPalette]);
 
   if (isLoading) {
     return (
@@ -75,6 +90,8 @@ export function AppLayout() {
           <Outlet />
         </Content>
       </Layout>
+
+      <CommandPalette />
     </Layout>
   );
 }

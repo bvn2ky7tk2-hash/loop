@@ -19,6 +19,8 @@ import { tasksApi } from '../../api/tasks';
 import { useDefinitions, useStartInstance } from '../../api/processes.api';
 import { ChangePasswordModal } from '../ChangePasswordModal';
 import { GlobalSearch } from './GlobalSearch';
+import { useCommandPaletteStore } from '../../store/commandPalette.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Header } = Layout;
 
@@ -170,6 +172,8 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
   const { mode, preset } = useThemeStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const openPalette = useCommandPaletteStore((s) => s.open);
+  const { textMuted, borderColor: paletteBorderColor } = useThemePalette();
   const [quickTaskOpen,      setQuickTaskOpen]      = useState(false);
   const [quickBugOpen,       setQuickBugOpen]       = useState(false);
   const [quickProcessOpen,   setQuickProcessOpen]   = useState(false);
@@ -271,7 +275,7 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
             : '0 2px 12px rgba(57,73,171,0.22)',
         }}
       >
-        {/* Left: toggle only */}
+        {/* Left: toggle + Cmd+K hint */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Button
             type="text"
@@ -283,6 +287,26 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
             size="large"
             aria-label="Toggle sidebar"
           />
+          <Tooltip title="Mở Command Palette" placement="bottom">
+            <span
+              onClick={openPalette}
+              style={{
+                fontSize: 12,
+                color: textMuted,
+                background: isDark ? 'rgba(255,255,255,0.06)' : '#F5F5F5',
+                border: `1px solid ${paletteBorderColor}`,
+                borderRadius: 6,
+                padding: '2px 8px',
+                cursor: 'pointer',
+                userSelect: 'none',
+                lineHeight: '20px',
+                display: 'inline-block',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {navigator.platform.includes('Mac') ? '⌘K' : 'Ctrl+K'}
+            </span>
+          </Tooltip>
         </div>
 
         {/* Center: global search inline */}
