@@ -1,4 +1,4 @@
-import api from './auth';
+import { apiClient as api } from './client';
 
 export interface AutomationRule {
   id: string;

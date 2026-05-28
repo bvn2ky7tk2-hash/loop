@@ -1,4 +1,4 @@
-import api from './auth';
+import { apiClient as api } from './client';
 
 // ─── Work ──────────────────────────────────────────────────────────────────
 export interface WorkDashboardData {
