@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Req, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
@@ -23,6 +24,17 @@ export class EmployeesController {
   @ApiOperation({ summary: 'Tạo hồ sơ nhân sự' })
   create(@Body() dto: CreateEmployeeDto) {
     return this.service.create(dto);
+  }
+
+  @Get('export')
+  @Roles(Role.ADMIN)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Export danh sách nhân viên ra Excel' })
+  async export(@Res() res: Response) {
+    const buf = await this.service.exportExcel();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="employees.xlsx"');
+    res.end(buf);
   }
 
   @Get('me')

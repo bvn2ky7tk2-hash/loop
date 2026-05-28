@@ -327,7 +327,485 @@ async function main() {
   console.log('Seeding Payroll Compliance config (BHXH, TNCN, giảm trừ, lương vùng)...');
   await seedPayrollComplianceConfig();
 
+  console.log('Patching payroll records March/April 2026 (recalc BHXH/TNCN)...');
+  await seedPayrollPatch();
+
+  console.log('Seeding Skills & Employee Skill Matrix...');
+  await seedSkillsDemo();
+
+  console.log('Seeding OKR & KPI demo data...');
+  await seedOkrDemo();
+
+  console.log('Seeding Accounting journal entries demo...');
+  await seedAccountingDemo();
+
   console.log('✅ Seed xong: admin@loop.vn / admin | pm@loop.vn / admin | user.demo@loop.vn / Demo@1234');
+}
+
+async function seedPayrollPatch() {
+  const rateMap: Record<string, number> = {
+    EMP001: 2_500_000, EMP002: 2_000_000, EMP003: 1_500_000,
+    EMP004: 1_800_000, EMP005: 1_600_000, EMP006: 1_900_000, EMP007: 1_400_000,
+  };
+  const targetPeriods = ['Tháng 3/2026', 'Tháng 4/2026'];
+
+  for (const periodName of targetPeriods) {
+    const pp = await prisma.payrollPeriod.findFirst({ where: { name: periodName } });
+    if (!pp) continue;
+
+    // Force recreate records với compliance đầy đủ
+    await prisma.payrollRecord.deleteMany({ where: { periodId: pp.id } });
+
+    const employees = await prisma.employee.findMany({
+      where: { code: { in: Object.keys(rateMap) } },
+      select: { id: true, code: true },
+    });
+    for (const emp of employees) {
+      const rate = rateMap[emp.code];
+      if (!rate) continue;
+      const rec = calcPayrollCompliance({ dailyRate: rate, workDays: 22, overtimeHours: 4, dependentCount: 0 });
+      await prisma.payrollRecord.create({ data: { periodId: pp.id, employeeId: emp.id, ...rec } });
+    }
+    console.log(`  ✓ ${periodName}: ${employees.length} records patched với BHXH/TNCN đầy đủ`);
+  }
+}
+
+async function seedSkillsDemo() {
+  try {
+    const existing = await prisma.skill.count();
+    if (existing > 0) {
+      console.log(`  ⏭  ${existing} skills đã tồn tại, bỏ qua`);
+      return;
+    }
+
+    const skillDefs: Array<{ name: string; category: string; description?: string }> = [
+      // Technical
+      { name: 'TypeScript',        category: 'TECHNICAL', description: 'Lập trình TypeScript / JavaScript' },
+      { name: 'React',             category: 'TECHNICAL', description: 'Frontend framework React.js' },
+      { name: 'NestJS',            category: 'TECHNICAL', description: 'Backend framework NestJS' },
+      { name: 'Node.js',           category: 'TECHNICAL', description: 'Runtime Node.js' },
+      { name: 'PostgreSQL',        category: 'TECHNICAL', description: 'Cơ sở dữ liệu quan hệ PostgreSQL' },
+      { name: 'Prisma ORM',        category: 'TECHNICAL', description: 'ORM Prisma cho Node.js' },
+      { name: 'Docker',            category: 'TECHNICAL', description: 'Container hóa với Docker' },
+      { name: 'Git',               category: 'TECHNICAL', description: 'Quản lý phiên bản Git' },
+      { name: 'Redis',             category: 'TECHNICAL', description: 'In-memory cache Redis' },
+      { name: 'REST API',          category: 'TECHNICAL', description: 'Thiết kế và tích hợp REST API' },
+      { name: 'GraphQL',           category: 'TECHNICAL', description: 'Query language GraphQL' },
+      { name: 'React Native',      category: 'TECHNICAL', description: 'Mobile development React Native' },
+      { name: 'Python',            category: 'TECHNICAL', description: 'Lập trình Python' },
+      { name: 'Java / Spring Boot',category: 'TECHNICAL', description: 'Backend Java với Spring Boot' },
+      { name: 'AWS',               category: 'TECHNICAL', description: 'Dịch vụ đám mây AWS' },
+      { name: 'CI/CD',             category: 'TECHNICAL', description: 'Triển khai liên tục CI/CD pipelines' },
+      { name: 'Figma',             category: 'TECHNICAL', description: 'Thiết kế UI/UX với Figma' },
+      // Soft skills
+      { name: 'Communication',     category: 'SOFT', description: 'Kỹ năng giao tiếp và trình bày' },
+      { name: 'Problem Solving',   category: 'SOFT', description: 'Tư duy phân tích và giải quyết vấn đề' },
+      { name: 'Teamwork',          category: 'SOFT', description: 'Làm việc nhóm hiệu quả' },
+      { name: 'Leadership',        category: 'SOFT', description: 'Kỹ năng lãnh đạo và quản lý' },
+      { name: 'Time Management',   category: 'SOFT', description: 'Quản lý thời gian và ưu tiên công việc' },
+      // Domain
+      { name: 'ERP Systems',       category: 'DOMAIN', description: 'Kinh nghiệm hệ thống ERP' },
+      { name: 'Agile / Scrum',     category: 'DOMAIN', description: 'Phương pháp luận Agile và Scrum' },
+      { name: 'System Design',     category: 'DOMAIN', description: 'Thiết kế kiến trúc hệ thống' },
+      // Language
+      { name: 'Tiếng Anh',         category: 'LANGUAGE', description: 'Đọc/viết/nói tiếng Anh' },
+      { name: 'Tiếng Nhật',        category: 'LANGUAGE', description: 'Tiếng Nhật (JLPT N3+)' },
+      // Certification
+      { name: 'AWS Solutions Architect', category: 'CERTIFICATION', description: 'AWS Certified Solutions Architect' },
+      { name: 'PMP',               category: 'CERTIFICATION', description: 'Project Management Professional' },
+    ];
+
+    const skills = await Promise.all(
+      skillDefs.map(s => prisma.skill.create({ data: s as any }))
+    );
+    const skillMap = Object.fromEntries(skills.map(s => [s.name, s.id]));
+
+    // Gán kỹ năng cho 7 demo employees
+    const employees = await prisma.employee.findMany({
+      where: { code: { in: ['EMP001','EMP002','EMP003','EMP004','EMP005','EMP006','EMP007'] } },
+      select: { id: true, code: true },
+    });
+
+    const assignments: Array<{ code: string; skills: Array<{ name: string; level: string }> }> = [
+      { code: 'EMP001', skills: [
+        { name: 'TypeScript', level: 'EXPERT' }, { name: 'NestJS', level: 'EXPERT' },
+        { name: 'System Design', level: 'ADVANCED' }, { name: 'Leadership', level: 'ADVANCED' },
+        { name: 'Tiếng Anh', level: 'ADVANCED' }, { name: 'Agile / Scrum', level: 'ADVANCED' },
+      ]},
+      { code: 'EMP002', skills: [
+        { name: 'Agile / Scrum', level: 'EXPERT' }, { name: 'Leadership', level: 'EXPERT' },
+        { name: 'Communication', level: 'ADVANCED' }, { name: 'TypeScript', level: 'INTERMEDIATE' },
+        { name: 'PMP', level: 'ADVANCED' }, { name: 'Tiếng Anh', level: 'EXPERT' },
+      ]},
+      { code: 'EMP003', skills: [
+        { name: 'React', level: 'EXPERT' }, { name: 'TypeScript', level: 'ADVANCED' },
+        { name: 'Figma', level: 'INTERMEDIATE' }, { name: 'React Native', level: 'INTERMEDIATE' },
+        { name: 'Git', level: 'ADVANCED' },
+      ]},
+      { code: 'EMP004', skills: [
+        { name: 'Communication', level: 'EXPERT' }, { name: 'ERP Systems', level: 'ADVANCED' },
+        { name: 'Teamwork', level: 'ADVANCED' }, { name: 'Tiếng Anh', level: 'INTERMEDIATE' },
+        { name: 'Time Management', level: 'ADVANCED' },
+      ]},
+      { code: 'EMP005', skills: [
+        { name: 'PostgreSQL', level: 'EXPERT' }, { name: 'ERP Systems', level: 'ADVANCED' },
+        { name: 'Python', level: 'INTERMEDIATE' }, { name: 'Problem Solving', level: 'ADVANCED' },
+        { name: 'Tiếng Anh', level: 'INTERMEDIATE' },
+      ]},
+      { code: 'EMP006', skills: [
+        { name: 'NestJS', level: 'ADVANCED' }, { name: 'Node.js', level: 'ADVANCED' },
+        { name: 'Docker', level: 'INTERMEDIATE' }, { name: 'PostgreSQL', level: 'INTERMEDIATE' },
+        { name: 'Git', level: 'ADVANCED' }, { name: 'CI/CD', level: 'BEGINNER' },
+      ]},
+      { code: 'EMP007', skills: [
+        { name: 'React', level: 'ADVANCED' }, { name: 'TypeScript', level: 'INTERMEDIATE' },
+        { name: 'Figma', level: 'BEGINNER' }, { name: 'Communication', level: 'INTERMEDIATE' },
+        { name: 'Git', level: 'INTERMEDIATE' },
+      ]},
+    ];
+
+    let empSkillCount = 0;
+    for (const emp of employees) {
+      const asgn = assignments.find(a => a.code === emp.code);
+      if (!asgn) continue;
+      for (const s of asgn.skills) {
+        const skillId = skillMap[s.name];
+        if (!skillId) continue;
+        await prisma.employeeSkill.create({
+          data: { employeeId: emp.id, skillId, level: s.level as any, certifiedAt: new Date('2026-01-01') },
+        });
+        empSkillCount++;
+      }
+    }
+    console.log(`  ✓ ${skills.length} skills seeded, ${empSkillCount} employee-skill assignments`);
+  } catch (err) {
+    console.error('  ✗ seedSkillsDemo error:', err);
+  }
+}
+
+async function seedOkrDemo() {
+  try {
+    const existing = await prisma.okrObjective.count();
+    if (existing > 0) {
+      console.log(`  ⏭  ${existing} OKR objectives đã tồn tại, bỏ qua`);
+      return;
+    }
+
+    const uAdmin = await prisma.user.findUnique({ where: { email: 'admin@loop.vn' } });
+    const uPm    = await prisma.user.findUnique({ where: { email: 'pm@loop.vn' } });
+    const uHr    = await prisma.user.findUnique({ where: { email: 'hr@loop.vn' } });
+    if (!uAdmin || !uPm) { console.log('  ⚠ Chưa có users, bỏ qua seed OKR'); return; }
+
+    const orgDev = await prisma.orgUnit.findFirst({ where: { code: 'DEV' } });
+    const orgHrd = await prisma.orgUnit.findFirst({ where: { code: 'HRD' } });
+
+    // ── Objectives Q2/2026 ────────────────────────────────────────────────────
+    const objectives = [
+      {
+        title: 'Nâng cao chất lượng sản phẩm và tốc độ giao hàng',
+        description: 'Cải thiện quy trình dev để giảm bug rate và tăng tốc độ release trong Q2/2026',
+        cycle: 'Q2', year: 2026, ownerId: uPm.id,
+        orgUnitId: orgDev?.id ?? null, status: 'ACTIVE',
+        krs: [
+          { title: 'Giảm bug rate xuống dưới 2 bugs/sprint', targetValue: 2, unit: 'bugs/sprint', currentValue: 3.5, startValue: 5 },
+          { title: 'Đạt 85% test coverage trên backend', targetValue: 85, unit: '%', currentValue: 72, startValue: 60 },
+          { title: 'Rút ngắn thời gian từ code→production xuống <3 ngày', targetValue: 3, unit: 'ngày', currentValue: 4.5, startValue: 7 },
+        ],
+      },
+      {
+        title: 'Xây dựng đội ngũ kỹ sư mạnh, gắn kết lâu dài',
+        description: 'Tập trung phát triển năng lực kỹ thuật và giữ chân nhân tài trong Q2/2026',
+        cycle: 'Q2', year: 2026, ownerId: uHr?.id ?? uAdmin.id,
+        orgUnitId: orgHrd?.id ?? null, status: 'ACTIVE',
+        krs: [
+          { title: 'Hoàn thành 100% kế hoạch đào tạo kỹ thuật Q2', targetValue: 100, unit: '%', currentValue: 65, startValue: 0 },
+          { title: 'Giữ tỷ lệ nghỉ việc dưới 5% trong Q2', targetValue: 5, unit: '%', currentValue: 2, startValue: 0 },
+          { title: 'Mỗi dev Senior/Expert mentor ít nhất 1 Junior', targetValue: 5, unit: 'cặp', currentValue: 3, startValue: 0 },
+        ],
+      },
+      {
+        title: 'Tăng doanh thu từ khách hàng hiện tại lên 20%',
+        description: 'Upsell và gia hạn hợp đồng với top 5 khách hàng hiện tại trong H1/2026',
+        cycle: 'H1', year: 2026, ownerId: uAdmin.id,
+        orgUnitId: null, status: 'ACTIVE',
+        krs: [
+          { title: 'Ký gia hạn hợp đồng với FPT và Viettel', targetValue: 2, unit: 'hợp đồng', currentValue: 1, startValue: 0 },
+          { title: 'Upsell thêm module mới cho 3 KH cũ', targetValue: 3, unit: 'KH', currentValue: 1, startValue: 0 },
+          { title: 'Tăng ARR từ 1.4 tỷ lên 1.68 tỷ VNĐ', targetValue: 1_680_000_000, unit: 'VNĐ', currentValue: 1_500_000_000, startValue: 1_400_000_000 },
+        ],
+      },
+      {
+        title: 'Hoàn thiện hạ tầng kỹ thuật & DevOps cho scale',
+        description: 'Setup CI/CD, monitoring, auto-scaling trước khi onboard khách hàng lớn Q3/2026',
+        cycle: 'Q2', year: 2026, ownerId: uPm.id,
+        orgUnitId: orgDev?.id ?? null, status: 'DRAFT',
+        krs: [
+          { title: 'Triển khai GitHub Actions CI/CD cho toàn bộ service', targetValue: 100, unit: '%', currentValue: 40, startValue: 0 },
+          { title: 'P99 latency API < 200ms', targetValue: 200, unit: 'ms', currentValue: 380, startValue: 500 },
+          { title: 'Uptime SLA 99.5% trong Q2', targetValue: 99.5, unit: '%', currentValue: 98.7, startValue: 97 },
+        ],
+      },
+    ];
+
+    let objCount = 0; let krCount = 0;
+    for (const { krs, ...objData } of objectives) {
+      const obj = await prisma.okrObjective.create({ data: { ...objData as any } });
+      for (const kr of krs) {
+        await prisma.okrKeyResult.create({ data: { objectiveId: obj.id, ...kr } });
+        krCount++;
+      }
+      objCount++;
+    }
+
+    // ── KPI Metrics ───────────────────────────────────────────────────────────
+    const kpiDefs = [
+      { name: 'Doanh thu hàng tháng (MRR)', unit: 'VNĐ', targetValue: 140_000_000, frequency: 'MONTHLY' as const,
+        records: [ { period: '2026-02', value: 118_000_000 }, { period: '2026-03', value: 125_000_000 }, { period: '2026-04', value: 132_000_000 }, { period: '2026-05', value: 138_000_000 } ] },
+      { name: 'Số hợp đồng mới ký', unit: 'hợp đồng', targetValue: 3, frequency: 'MONTHLY' as const,
+        records: [ { period: '2026-02', value: 1 }, { period: '2026-03', value: 2 }, { period: '2026-04', value: 1 }, { period: '2026-05', value: 2 } ] },
+      { name: 'Bug rate (bugs/sprint)', unit: 'bugs', targetValue: 2, frequency: 'MONTHLY' as const,
+        records: [ { period: '2026-02', value: 6 }, { period: '2026-03', value: 4.5 }, { period: '2026-04', value: 3.8 }, { period: '2026-05', value: 3.2 } ] },
+      { name: 'Tỷ lệ nghỉ việc hàng quý', unit: '%', targetValue: 5, frequency: 'QUARTERLY' as const,
+        records: [ { period: '2025-Q4', value: 8 }, { period: '2026-Q1', value: 5 }, { period: '2026-Q2', value: 2 } ] },
+      { name: 'API Uptime', unit: '%', targetValue: 99.5, frequency: 'MONTHLY' as const,
+        records: [ { period: '2026-02', value: 98.2 }, { period: '2026-03', value: 99.1 }, { period: '2026-04', value: 99.3 }, { period: '2026-05', value: 98.9 } ] },
+    ];
+
+    let kpiCount = 0;
+    for (const { records, ...kpiData } of kpiDefs) {
+      const metric = await prisma.kpiMetric.create({ data: { ...kpiData as any } });
+      for (const rec of records) {
+        await prisma.kpiRecord.create({ data: { metricId: metric.id, period: rec.period, value: rec.value } });
+      }
+      kpiCount++;
+    }
+
+    console.log(`  ✓ ${objCount} OKR objectives + ${krCount} key results seeded`);
+    console.log(`  ✓ ${kpiCount} KPI metrics + ${kpiDefs.reduce((s, k) => s + k.records.length, 0)} records seeded`);
+  } catch (err) {
+    console.error('  ✗ seedOkrDemo error:', err);
+  }
+}
+
+async function seedAccountingDemo() {
+  try {
+    const existing = await prisma.journalEntry.count();
+    if (existing > 0) {
+      console.log(`  ⏭  ${existing} journal entries đã tồn tại, bỏ qua`);
+      return;
+    }
+
+    const admin = await prisma.user.findFirst({ where: { email: 'admin@loop.vn' }, select: { id: true } });
+    if (!admin) { console.log('  ⚠ Chưa có admin user, bỏ qua seed accounting'); return; }
+
+    // Tạo journal entry helper
+    const je = async (date: string, description: string, lines: Array<{ code: string; debit?: number; credit?: number; note?: string }>) => {
+      const entry = await prisma.journalEntry.create({
+        data: { date: new Date(date), description, createdById: admin.id },
+      });
+      for (const l of lines) {
+        await prisma.journalLine.create({
+          data: {
+            entryId: entry.id,
+            accountCode: l.code,
+            debit: l.debit ?? 0,
+            credit: l.credit ?? 0,
+            description: l.note,
+          },
+        });
+      }
+      return entry;
+    };
+
+    // ── Tháng 1/2026 ─────────────────────────────────────────────────────────
+    await je('2026-01-05', 'Ghi nhận doanh thu dịch vụ T1/2026 — FPT + VNG', [
+      { code: '131',  debit: 130_900_000 },
+      { code: '5113', credit: 119_000_000 },
+      { code: '3331', credit: 11_900_000 },
+    ]);
+    await je('2026-01-08', 'Thu tiền từ khách hàng T1/2026', [
+      { code: '1121', debit: 130_900_000 },
+      { code: '131',  credit: 130_900_000 },
+    ]);
+    await je('2026-01-25', 'Chi phí lương nhân viên T1/2026', [
+      { code: '622',  debit: 180_000_000, note: 'Lương kỹ thuật' },
+      { code: '6421', debit: 96_000_000,  note: 'Lương quản lý' },
+      { code: '3341', credit: 276_000_000 },
+    ]);
+    await je('2026-01-25', 'BHXH/BHYT/BHTN chủ sử dụng lao động T1/2026', [
+      { code: '622',  debit: 36_000_000, note: 'BHXH/BHYT NSDLĐ nhân sự kỹ thuật' },
+      { code: '6421', debit: 19_200_000, note: 'BHXH/BHYT NSDLĐ nhân sự quản lý' },
+      { code: '3383', credit: 42_840_000 },
+      { code: '3384', credit: 12_360_000 },
+    ]);
+    await je('2026-01-28', 'Thanh toán lương T1/2026', [
+      { code: '3341', debit: 276_000_000 },
+      { code: '1121', credit: 276_000_000 },
+    ]);
+    await je('2026-01-31', 'Chi phí văn phòng + dịch vụ mua ngoài T1/2026', [
+      { code: '6422', debit: 8_000_000,  note: 'Văn phòng phẩm, in ấn' },
+      { code: '6423', debit: 22_000_000, note: 'Cloud AWS, phần mềm' },
+      { code: '1121', credit: 30_000_000 },
+    ]);
+    await je('2026-01-31', 'Khấu hao TSCĐ T1/2026', [
+      { code: '627',  debit: 5_000_000 },
+      { code: '2141', credit: 5_000_000 },
+    ]);
+
+    // ── Tháng 2/2026 ─────────────────────────────────────────────────────────
+    await je('2026-02-05', 'Ghi nhận doanh thu dịch vụ T2/2026', [
+      { code: '131',  debit: 129_800_000 },
+      { code: '5113', credit: 118_000_000 },
+      { code: '3331', credit: 11_800_000 },
+    ]);
+    await je('2026-02-08', 'Thu tiền từ khách hàng T2/2026', [
+      { code: '1121', debit: 129_800_000 },
+      { code: '131',  credit: 129_800_000 },
+    ]);
+    await je('2026-02-25', 'Chi phí lương nhân viên T2/2026', [
+      { code: '622',  debit: 180_000_000 },
+      { code: '6421', debit: 96_000_000 },
+      { code: '3341', credit: 276_000_000 },
+    ]);
+    await je('2026-02-25', 'BHXH/BHYT NSDLĐ T2/2026', [
+      { code: '622',  debit: 36_000_000 },
+      { code: '6421', debit: 19_200_000 },
+      { code: '3383', credit: 42_840_000 },
+      { code: '3384', credit: 12_360_000 },
+    ]);
+    await je('2026-02-28', 'Thanh toán lương + chi phí VP T2/2026', [
+      { code: '3341', debit: 276_000_000 },
+      { code: '6422', debit: 7_500_000 },
+      { code: '6423', debit: 22_000_000 },
+      { code: '1121', credit: 305_500_000 },
+    ]);
+    await je('2026-02-28', 'Khấu hao T2/2026', [
+      { code: '627',  debit: 5_000_000 },
+      { code: '2141', credit: 5_000_000 },
+    ]);
+
+    // ── Tháng 3/2026 ─────────────────────────────────────────────────────────
+    await je('2026-03-05', 'Doanh thu dịch vụ T3/2026 — FPT milestone 2', [
+      { code: '131',  debit: 275_000_000 },
+      { code: '5113', credit: 250_000_000 },
+      { code: '3331', credit: 25_000_000 },
+    ]);
+    await je('2026-03-08', 'Thu tiền FPT milestone T3', [
+      { code: '1121', debit: 275_000_000 },
+      { code: '131',  credit: 275_000_000 },
+    ]);
+    await je('2026-03-05', 'Doanh thu SLA Viettel Q1/2026', [
+      { code: '131',  debit: 66_000_000 },
+      { code: '5113', credit: 60_000_000 },
+      { code: '3331', credit: 6_000_000 },
+    ]);
+    await je('2026-03-10', 'Thu tiền Viettel Q1', [
+      { code: '1121', debit: 66_000_000 },
+      { code: '131',  credit: 66_000_000 },
+    ]);
+    await je('2026-03-25', 'Chi phí lương T3/2026', [
+      { code: '622',  debit: 189_000_000 },
+      { code: '6421', debit: 100_800_000 },
+      { code: '3341', credit: 289_800_000 },
+    ]);
+    await je('2026-03-25', 'BHXH/BHYT NSDLĐ T3/2026', [
+      { code: '622',  debit: 37_800_000 },
+      { code: '6421', debit: 20_160_000 },
+      { code: '3383', credit: 44_982_000 },
+      { code: '3384', credit: 12_978_000 },
+    ]);
+    await je('2026-03-28', 'Thanh toán lương + chi phí VP T3', [
+      { code: '3341', debit: 289_800_000 },
+      { code: '6422', debit: 9_000_000 },
+      { code: '6423', debit: 25_000_000 },
+      { code: '1121', credit: 323_800_000 },
+    ]);
+    await je('2026-03-31', 'Khấu hao T3/2026', [
+      { code: '627',  debit: 5_000_000 },
+      { code: '2141', credit: 5_000_000 },
+    ]);
+
+    // ── Tháng 4/2026 ─────────────────────────────────────────────────────────
+    await je('2026-04-05', 'Doanh thu dịch vụ T4/2026', [
+      { code: '131',  debit: 145_200_000 },
+      { code: '5113', credit: 132_000_000 },
+      { code: '3331', credit: 13_200_000 },
+    ]);
+    await je('2026-04-08', 'Thu tiền KH T4/2026', [
+      { code: '1121', debit: 145_200_000 },
+      { code: '131',  credit: 145_200_000 },
+    ]);
+    await je('2026-04-05', 'Tạm ứng hợp đồng FPT Mobile (CTR-2026-002)', [
+      { code: '1121', debit: 40_700_000 },
+      { code: '131',  credit: 40_700_000 },
+    ]);
+    await je('2026-04-25', 'Chi phí lương T4/2026', [
+      { code: '622',  debit: 189_000_000 },
+      { code: '6421', debit: 100_800_000 },
+      { code: '3341', credit: 289_800_000 },
+    ]);
+    await je('2026-04-25', 'BHXH/BHYT NSDLĐ T4/2026', [
+      { code: '622',  debit: 37_800_000 },
+      { code: '6421', debit: 20_160_000 },
+      { code: '3383', credit: 44_982_000 },
+      { code: '3384', credit: 12_978_000 },
+    ]);
+    await je('2026-04-28', 'Thanh toán lương + chi phí T4', [
+      { code: '3341', debit: 289_800_000 },
+      { code: '6422', debit: 8_000_000 },
+      { code: '6423', debit: 25_000_000 },
+      { code: '1121', credit: 322_800_000 },
+    ]);
+    await je('2026-04-30', 'Khấu hao T4/2026', [
+      { code: '627',  debit: 5_000_000 },
+      { code: '2141', credit: 5_000_000 },
+    ]);
+
+    // ── Tháng 5/2026 ─────────────────────────────────────────────────────────
+    await je('2026-05-05', 'Doanh thu dịch vụ T5/2026', [
+      { code: '131',  debit: 151_800_000 },
+      { code: '5113', credit: 138_000_000 },
+      { code: '3331', credit: 13_800_000 },
+    ]);
+    await je('2026-05-08', 'Thu tiền KH T5/2026', [
+      { code: '1121', debit: 151_800_000 },
+      { code: '131',  credit: 151_800_000 },
+    ]);
+    await je('2026-05-25', 'Chi phí lương T5/2026', [
+      { code: '622',  debit: 194_040_000 },
+      { code: '6421', debit: 103_488_000 },
+      { code: '3341', credit: 297_528_000 },
+    ]);
+    await je('2026-05-25', 'BHXH/BHYT NSDLĐ T5/2026', [
+      { code: '622',  debit: 38_808_000 },
+      { code: '6421', debit: 20_697_600 },
+      { code: '3383', credit: 46_131_960 },
+      { code: '3384', credit: 13_373_640 },
+    ]);
+    await je('2026-05-28', 'Thanh toán lương + chi phí T5', [
+      { code: '3341', debit: 297_528_000 },
+      { code: '6422', debit: 9_000_000 },
+      { code: '6423', debit: 27_000_000 },
+      { code: '1121', credit: 333_528_000 },
+    ]);
+    await je('2026-05-31', 'Khấu hao T5/2026', [
+      { code: '627',  debit: 5_000_000 },
+      { code: '2141', credit: 5_000_000 },
+    ]);
+
+    // ── Số dư đầu kỳ (01/01/2026) — vốn + tài sản ────────────────────────────
+    await je('2026-01-01', 'Số dư đầu kỳ 2026 — vốn và tiền gửi', [
+      { code: '1121', debit: 500_000_000, note: 'Tiền gửi ngân hàng đầu kỳ' },
+      { code: '211',  debit: 120_000_000, note: 'TSCĐ — máy tính, thiết bị' },
+      { code: '4111', credit: 620_000_000, note: 'Vốn góp chủ sở hữu' },
+    ]);
+
+    const total = await prisma.journalEntry.count();
+    const lines = await prisma.journalLine.count();
+    console.log(`  ✓ ${total} journal entries + ${lines} journal lines seeded (Jan–May 2026)`);
+  } catch (err) {
+    console.error('  ✗ seedAccountingDemo error:', err);
+  }
 }
 
 async function seedProcessDefinitions(orgUnitId: string) {
@@ -1425,32 +1903,16 @@ async function seedPhase2Demo() {
       { empCode: 'EMP007', workDays: 21, leaveDays: 2, overtimeHours: 4  },
     ];
 
+    // Xóa records cũ (có thể có compliance=0) rồi tạo lại đúng
+    await prisma.payrollRecord.deleteMany({ where: { periodId: payrollPeriod.id } });
     for (const pr of payrollDefs) {
-      const emp      = employees[pr.empCode];
-      const rate     = rateMap[pr.empCode];
-      const base     = pr.workDays * rate;
-
-      const existing = await prisma.payrollRecord.findFirst({
-        where: { periodId: payrollPeriod.id, employeeId: emp.id },
-      });
-      if (existing) continue;
-
-      await prisma.payrollRecord.create({
-        data: {
-          periodId:     payrollPeriod.id,
-          employeeId:   emp.id,
-          workDays:     pr.workDays,
-          leaveDays:    pr.leaveDays,
-          overtimeHours: pr.overtimeHours,
-          baseSalary:   base,
-          bonus:        0,
-          deductions:   0,
-          netSalary:    base,
-        },
-      });
+      const emp  = employees[pr.empCode];
+      const rate = rateMap[pr.empCode];
+      const rec = calcPayrollCompliance({ dailyRate: rate, workDays: pr.workDays, overtimeHours: pr.overtimeHours });
+      await prisma.payrollRecord.create({ data: { periodId: payrollPeriod.id, employeeId: emp.id, ...rec } });
     }
 
-    console.log('  ✓ Payroll period "Tháng 5/2026" + 7 payroll records seeded');
+    console.log('  ✓ Payroll period "Tháng 5/2026" + 7 payroll records seeded (BHXH/TNCN đầy đủ)');
 
     // ── 10. Contracts ────────────────────────────────────────────────────────
     for (const [code, emp] of Object.entries(employees)) {
@@ -2148,6 +2610,72 @@ async function seedAssetsDemo() {
   }
 }
 
+// ─── Payroll compliance calculator (dùng chung cho seed) ─────────────────────
+
+function calcPayrollCompliance(opts: {
+  dailyRate: number;
+  workDays: number;
+  overtimeHours?: number;
+  allowances?: number;
+  bonus?: number;
+  dependentCount?: number;
+}) {
+  const BHXH_CEILING  = 20 * 2_340_000; // 46,800,000
+  const SELF_DEDUCT   = 11_000_000;
+  const DEP_DEDUCT    = 4_400_000;
+  const BRACKETS      = [
+    { from: 0,          to: 5_000_000,  rate: 0.05 },
+    { from: 5_000_000,  to: 10_000_000, rate: 0.10 },
+    { from: 10_000_000, to: 18_000_000, rate: 0.15 },
+    { from: 18_000_000, to: 32_000_000, rate: 0.20 },
+    { from: 32_000_000, to: 52_000_000, rate: 0.25 },
+    { from: 52_000_000, to: 80_000_000, rate: 0.30 },
+    { from: 80_000_000, to: null,       rate: 0.35 },
+  ];
+
+  const { dailyRate, workDays, overtimeHours = 0, allowances = 0, bonus = 0, dependentCount = 0 } = opts;
+  const baseSalary  = Math.round(dailyRate * workDays);
+  const overtimePay = Math.round((dailyRate / 8) * 1.5 * overtimeHours);
+  const grossSalary = baseSalary + overtimePay + allowances + bonus;
+
+  const bhBase         = Math.min(grossSalary, BHXH_CEILING);
+  const bhxhEmployee   = Math.round(bhBase * 0.08);
+  const bhytEmployee   = Math.round(bhBase * 0.015);
+  const bhtnEmployee   = Math.round(bhBase * 0.01);
+  const bhxhEmployer   = Math.round(bhBase * 0.17);
+  const bhytEmployer   = Math.round(bhBase * 0.03);
+  const bhtnEmployer   = Math.round(bhBase * 0.01);
+  const tnldEmployer   = Math.round(bhBase * 0.005);
+
+  const selfDeduction      = SELF_DEDUCT;
+  const dependentDeduction = DEP_DEDUCT * dependentCount;
+  const taxableIncome = Math.max(0,
+    grossSalary - bhxhEmployee - bhytEmployee - bhtnEmployee - selfDeduction - dependentDeduction,
+  );
+
+  let pitAmount = 0;
+  for (const b of BRACKETS) {
+    if (taxableIncome <= b.from) break;
+    const upper = b.to === null ? taxableIncome : Math.min(taxableIncome, b.to);
+    pitAmount += Math.round((upper - b.from) * b.rate);
+  }
+
+  const netSalary     = grossSalary - bhxhEmployee - bhytEmployee - bhtnEmployee - pitAmount;
+  const totalLaborCost = grossSalary + bhxhEmployer + bhytEmployer + bhtnEmployer + tnldEmployer;
+
+  return {
+    workDays, leaveDays: Math.max(0, 22 - workDays),
+    paidLeaveDays: 0, unpaidLeaveDays: 0,
+    overtimeHours,
+    baseSalary, overtimePay, allowances, bonus, deductions: 0,
+    grossSalary, bhxhEmployee, bhytEmployee, bhtnEmployee,
+    bhxhEmployer, bhytEmployer, bhtnEmployer, tnldEmployer,
+    selfDeduction, dependentDeduction, dependentCount,
+    taxableIncome, pitAmount,
+    netSalary, totalLaborCost,
+  };
+}
+
 // ─── Enriched Demo — Projects, Tasks, TimeLogs, Timesheets, Payroll history, Recruitment ──
 
 async function seedEnrichedDemo() {
@@ -2453,18 +2981,15 @@ async function seedEnrichedDemo() {
             status: period.status as any, processedById: period.processedById },
         });
       }
+      // Xóa records cũ (có thể có compliance=0) rồi tạo lại đúng
+      await prisma.payrollRecord.deleteMany({ where: { periodId: pp.id } });
       for (const e of empList) {
-        const exists = await prisma.payrollRecord.findFirst({ where: { periodId: pp.id, employeeId: e.empId } });
-        if (exists) continue;
         const rate = rateMap[e.code];
-        await prisma.payrollRecord.create({
-          data: { periodId: pp.id, employeeId: e.empId,
-            workDays: 22, leaveDays: 1, overtimeHours: 4,
-            baseSalary: 22 * rate, bonus: 0, deductions: 0, netSalary: 22 * rate },
-        });
+        const rec  = calcPayrollCompliance({ dailyRate: rate, workDays: 22, overtimeHours: 4, dependentCount: 0 });
+        await prisma.payrollRecord.create({ data: { periodId: pp.id, employeeId: e.empId, ...rec } });
       }
     }
-    console.log('  ✓ Payroll periods March + April 2026 seeded (tổng 3 tháng có dữ liệu)');
+    console.log('  ✓ Payroll periods March + April 2026 seeded với đầy đủ trường compliance');
 
     // ── 8. Recruitment — enrich interview history ────────────────────────────
     // Trần Thị Bình (OFFER) — 4 vòng PASS → HIRED → Employee EMP008

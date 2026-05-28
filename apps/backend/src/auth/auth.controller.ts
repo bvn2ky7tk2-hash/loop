@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards, HttpCode, UnauthorizedException, Patch } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Throttle } from '@nestjs/throttler';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -63,6 +63,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @SkipThrottle({ auth: true })
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile with permissions' })

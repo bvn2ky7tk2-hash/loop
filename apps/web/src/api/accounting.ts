@@ -90,3 +90,49 @@ export function useCreateJournal() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['accounting', 'journal'] }),
   });
 }
+
+// ─── Financial Reports ────────────────────────────────────────────────────────
+
+export interface FinancialReportRow {
+  code: string;
+  name: string;
+  type: AccountType;
+  balance: number;
+}
+
+export interface ProfitLossReport {
+  startDate: string;
+  endDate: string;
+  revenue: FinancialReportRow[];
+  totalRevenue: number;
+  expenses: FinancialReportRow[];
+  totalExpenses: number;
+  netIncome: number;
+}
+
+export interface BalanceSheetReport {
+  asOfDate: string;
+  assets: FinancialReportRow[];
+  totalAssets: number;
+  liabilities: FinancialReportRow[];
+  totalLiabilities: number;
+  equity: FinancialReportRow[];
+  totalEquity: number;
+  totalLiabilitiesAndEquity: number;
+}
+
+export function useGetProfitLoss(startDate: string, endDate: string) {
+  return useQuery({
+    queryKey: ['accounting', 'profit-loss', startDate, endDate],
+    queryFn: () => apiClient.get<ProfitLossReport>('/api/v1/accounting/reports/profit-loss', { params: { startDate, endDate } }).then(r => r.data),
+    enabled: !!startDate && !!endDate,
+  });
+}
+
+export function useGetBalanceSheet(asOfDate: string) {
+  return useQuery({
+    queryKey: ['accounting', 'balance-sheet', asOfDate],
+    queryFn: () => apiClient.get<BalanceSheetReport>('/api/v1/accounting/reports/balance-sheet', { params: { asOfDate } }).then(r => r.data),
+    enabled: !!asOfDate,
+  });
+}

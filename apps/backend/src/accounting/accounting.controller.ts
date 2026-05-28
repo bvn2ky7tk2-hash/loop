@@ -46,4 +46,18 @@ export class AccountingController {
   createJournal(@Body() dto: CreateJournalDto, @CurrentUser('sub') userId: string) {
     return this.svc.createJournal(dto, userId);
   }
+
+  // ── Financial Reports ───────────────────────────────────────────────────────
+
+  @Get('reports/profit-loss')
+  @RequirePermission('finance:read')
+  getProfitLoss(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
+    return this.svc.getProfitLoss(startDate, endDate);
+  }
+
+  @Get('reports/balance-sheet')
+  @RequirePermission('finance:read')
+  getBalanceSheet(@Query('asOfDate') asOfDate: string) {
+    return this.svc.getBalanceSheet(asOfDate);
+  }
 }

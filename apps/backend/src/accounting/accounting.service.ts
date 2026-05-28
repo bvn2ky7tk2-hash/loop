@@ -177,6 +177,95 @@ export class AccountingService implements OnModuleInit {
     return paginate(data, total, page, limit);
   }
 
+  // ── Financial Reports ────────────────────────────────────────────────────────
+
+  async getProfitLoss(startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    const end   = new Date(endDate);
+
+    const rows = await this.prisma.$queryRaw<Array<{ code: string; name: string; type: string; balance: number }>>`
+      SELECT ca.code, ca.name, ca.type::text,
+             COALESCE(SUM(CAST(jl.debit AS NUMERIC) - CAST(jl.credit AS NUMERIC)), 0) AS balance
+      FROM chart_of_accounts ca
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_entries je ON je.id = jl.entry_id
+        AND je.date >= ${start} AND je.date <= ${end}
+      WHERE ca.type IN ('REVENUE','EXPENSE')
+      GROUP BY ca.code, ca.name, ca.type
+      ORDER BY ca.code
+    `;
+
+    const revenue: typeof rows = [];
+    const expenses: typeof rows = [];
+    let totalRevenue = 0;
+    let totalExpenses = 0;
+
+    for (const r of rows) {
+      const balance = Number(r.balance);
+      if (r.type === 'REVENUE') {
+        // Revenue: credit > debit → balance negative in our calc → negate
+        const amount = -balance;
+        revenue.push({ ...r, balance: amount });
+        totalRevenue += amount;
+      } else {
+        expenses.push({ ...r, balance });
+        totalExpenses += balance;
+      }
+    }
+
+    return {
+      startDate, endDate,
+      revenue, totalRevenue,
+      expenses, totalExpenses,
+      netIncome: totalRevenue - totalExpenses,
+    };
+  }
+
+  async getBalanceSheet(asOfDate: string) {
+    const asOf = new Date(asOfDate);
+
+    const rows = await this.prisma.$queryRaw<Array<{ code: string; name: string; type: string; balance: number }>>`
+      SELECT ca.code, ca.name, ca.type::text,
+             COALESCE(SUM(CAST(jl.debit AS NUMERIC) - CAST(jl.credit AS NUMERIC)), 0) AS balance
+      FROM chart_of_accounts ca
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_entries je ON je.id = jl.entry_id
+        AND je.date <= ${asOf}
+      WHERE ca.type IN ('ASSET','LIABILITY','EQUITY')
+      GROUP BY ca.code, ca.name, ca.type
+      ORDER BY ca.code
+    `;
+
+    const assets: typeof rows      = [];
+    const liabilities: typeof rows = [];
+    const equity: typeof rows      = [];
+    let totalAssets = 0, totalLiabilities = 0, totalEquity = 0;
+
+    for (const r of rows) {
+      const balance = Number(r.balance);
+      if (r.type === 'ASSET') {
+        assets.push(r);
+        totalAssets += balance;
+      } else if (r.type === 'LIABILITY') {
+        const amount = -balance; // liability: credit > debit
+        liabilities.push({ ...r, balance: amount });
+        totalLiabilities += amount;
+      } else {
+        const amount = -balance; // equity: credit > debit
+        equity.push({ ...r, balance: amount });
+        totalEquity += amount;
+      }
+    }
+
+    return {
+      asOfDate,
+      assets, totalAssets,
+      liabilities, totalLiabilities,
+      equity, totalEquity,
+      totalLiabilitiesAndEquity: totalLiabilities + totalEquity,
+    };
+  }
+
   async createJournal(dto: CreateJournalDto, userId: string) {
     const debitSum  = dto.lines.reduce((s, l) => s + l.debit,  0);
     const creditSum = dto.lines.reduce((s, l) => s + l.credit, 0);

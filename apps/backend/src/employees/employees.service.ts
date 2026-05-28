@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { CreateRateDto } from './dto/create-rate.dto';
+import * as ExcelJS from 'exceljs';
 
 @Injectable()
 export class EmployeesService {
@@ -127,6 +128,43 @@ export class EmployeesService {
       include: { project: { select: { id: true, name: true, code: true, type: true } } },
       orderBy: { startDate: 'desc' },
     });
+  }
+
+  async exportExcel(): Promise<Buffer> {
+    const employees = await this.prisma.employee.findMany({
+      include: { orgUnit: { select: { name: true } } },
+      orderBy: { fullName: 'asc' },
+      take: 5000,
+    });
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Nhân viên');
+
+    ws.columns = [
+      { header: 'Họ tên',        key: 'fullName',  width: 28 },
+      { header: 'Email',         key: 'email',     width: 30 },
+      { header: 'Phòng ban',     key: 'orgUnit',   width: 22 },
+      { header: 'Cấp độ',       key: 'level',     width: 12 },
+      { header: 'Ngày vào làm', key: 'startDate', width: 14 },
+      { header: 'Trạng thái',   key: 'status',    width: 12 },
+    ];
+
+    // Style header row
+    ws.getRow(1).font = { bold: true };
+
+    employees.forEach((e) => {
+      ws.addRow({
+        fullName:  e.fullName,
+        email:     e.email ?? '',
+        orgUnit:   e.orgUnit?.name ?? '',
+        level:     e.level,
+        startDate: e.startDate ? new Date(e.startDate).toLocaleDateString('vi-VN') : '',
+        status:    (e as { status?: string }).status ?? 'ACTIVE',
+      });
+    });
+
+    const buf = await wb.xlsx.writeBuffer();
+    return Buffer.from(buf);
   }
 
   async getRateAtDate(employeeId: string, date: Date): Promise<EmployeeRate | null> {
