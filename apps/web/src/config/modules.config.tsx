@@ -43,6 +43,7 @@ import {
   BookOutlined,
   ReadOutlined,
   PhoneOutlined,
+  AimOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -194,6 +195,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/hr/training',      label: 'Training',           visible: true },
           { key: '/hr/performance',   label: 'Performance Review', visible: true },
           { key: '/hr/skill-matrix',  label: 'Skill Matrix',       visible: true },
+          { key: '/hr/okr',           label: 'OKR & KPI',          visible: true },
         ],
       },
       {
@@ -414,4 +416,5 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/training':           <ReadOutlined />,
   '/hr/performance':        <TrophyOutlined />,
   '/hr/skill-matrix':       <ApartmentOutlined />,
+  '/hr/okr':               <AimOutlined />,
 };

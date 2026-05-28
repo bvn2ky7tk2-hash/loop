@@ -413,6 +413,26 @@ export type EmployeeAllowance = $Result.DefaultSelection<Prisma.$EmployeeAllowan
  * 
  */
 export type SalaryColumn = $Result.DefaultSelection<Prisma.$SalaryColumnPayload>
+/**
+ * Model OkrObjective
+ * 
+ */
+export type OkrObjective = $Result.DefaultSelection<Prisma.$OkrObjectivePayload>
+/**
+ * Model OkrKeyResult
+ * 
+ */
+export type OkrKeyResult = $Result.DefaultSelection<Prisma.$OkrKeyResultPayload>
+/**
+ * Model KpiMetric
+ * 
+ */
+export type KpiMetric = $Result.DefaultSelection<Prisma.$KpiMetricPayload>
+/**
+ * Model KpiRecord
+ * 
+ */
+export type KpiRecord = $Result.DefaultSelection<Prisma.$KpiRecordPayload>
 
 /**
  * Enums
@@ -912,6 +932,38 @@ export const SalaryColumnSource: {
 
 export type SalaryColumnSource = (typeof SalaryColumnSource)[keyof typeof SalaryColumnSource]
 
+
+export const OkrStatus: {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type OkrStatus = (typeof OkrStatus)[keyof typeof OkrStatus]
+
+
+export const OkrCycle: {
+  Q1: 'Q1',
+  Q2: 'Q2',
+  Q3: 'Q3',
+  Q4: 'Q4',
+  H1: 'H1',
+  H2: 'H2',
+  ANNUAL: 'ANNUAL'
+};
+
+export type OkrCycle = (typeof OkrCycle)[keyof typeof OkrCycle]
+
+
+export const KpiFrequency: {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY'
+};
+
+export type KpiFrequency = (typeof KpiFrequency)[keyof typeof KpiFrequency]
+
 }
 
 export type SkillCategory = $Enums.SkillCategory
@@ -1097,6 +1149,18 @@ export const SalaryColumnType: typeof $Enums.SalaryColumnType
 export type SalaryColumnSource = $Enums.SalaryColumnSource
 
 export const SalaryColumnSource: typeof $Enums.SalaryColumnSource
+
+export type OkrStatus = $Enums.OkrStatus
+
+export const OkrStatus: typeof $Enums.OkrStatus
+
+export type OkrCycle = $Enums.OkrCycle
+
+export const OkrCycle: typeof $Enums.OkrCycle
+
+export type KpiFrequency = $Enums.KpiFrequency
+
+export const KpiFrequency: typeof $Enums.KpiFrequency
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2018,6 +2082,46 @@ export class PrismaClient<
     * ```
     */
   get salaryColumn(): Prisma.SalaryColumnDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.okrObjective`: Exposes CRUD operations for the **OkrObjective** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OkrObjectives
+    * const okrObjectives = await prisma.okrObjective.findMany()
+    * ```
+    */
+  get okrObjective(): Prisma.OkrObjectiveDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.okrKeyResult`: Exposes CRUD operations for the **OkrKeyResult** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OkrKeyResults
+    * const okrKeyResults = await prisma.okrKeyResult.findMany()
+    * ```
+    */
+  get okrKeyResult(): Prisma.OkrKeyResultDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.kpiMetric`: Exposes CRUD operations for the **KpiMetric** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KpiMetrics
+    * const kpiMetrics = await prisma.kpiMetric.findMany()
+    * ```
+    */
+  get kpiMetric(): Prisma.KpiMetricDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.kpiRecord`: Exposes CRUD operations for the **KpiRecord** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more KpiRecords
+    * const kpiRecords = await prisma.kpiRecord.findMany()
+    * ```
+    */
+  get kpiRecord(): Prisma.KpiRecordDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -2531,7 +2635,11 @@ export namespace Prisma {
     EmployeeBonus: 'EmployeeBonus',
     EmployeeYearlyTaxSummary: 'EmployeeYearlyTaxSummary',
     EmployeeAllowance: 'EmployeeAllowance',
-    SalaryColumn: 'SalaryColumn'
+    SalaryColumn: 'SalaryColumn',
+    OkrObjective: 'OkrObjective',
+    OkrKeyResult: 'OkrKeyResult',
+    KpiMetric: 'KpiMetric',
+    KpiRecord: 'KpiRecord'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2547,7 +2655,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -8471,6 +8579,302 @@ export namespace Prisma {
           }
         }
       }
+      OkrObjective: {
+        payload: Prisma.$OkrObjectivePayload<ExtArgs>
+        fields: Prisma.OkrObjectiveFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OkrObjectiveFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OkrObjectiveFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          findFirst: {
+            args: Prisma.OkrObjectiveFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OkrObjectiveFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          findMany: {
+            args: Prisma.OkrObjectiveFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>[]
+          }
+          create: {
+            args: Prisma.OkrObjectiveCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          createMany: {
+            args: Prisma.OkrObjectiveCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OkrObjectiveCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>[]
+          }
+          delete: {
+            args: Prisma.OkrObjectiveDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          update: {
+            args: Prisma.OkrObjectiveUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          deleteMany: {
+            args: Prisma.OkrObjectiveDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OkrObjectiveUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OkrObjectiveUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>[]
+          }
+          upsert: {
+            args: Prisma.OkrObjectiveUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrObjectivePayload>
+          }
+          aggregate: {
+            args: Prisma.OkrObjectiveAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOkrObjective>
+          }
+          groupBy: {
+            args: Prisma.OkrObjectiveGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OkrObjectiveGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OkrObjectiveCountArgs<ExtArgs>
+            result: $Utils.Optional<OkrObjectiveCountAggregateOutputType> | number
+          }
+        }
+      }
+      OkrKeyResult: {
+        payload: Prisma.$OkrKeyResultPayload<ExtArgs>
+        fields: Prisma.OkrKeyResultFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OkrKeyResultFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OkrKeyResultFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          findFirst: {
+            args: Prisma.OkrKeyResultFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OkrKeyResultFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          findMany: {
+            args: Prisma.OkrKeyResultFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>[]
+          }
+          create: {
+            args: Prisma.OkrKeyResultCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          createMany: {
+            args: Prisma.OkrKeyResultCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OkrKeyResultCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>[]
+          }
+          delete: {
+            args: Prisma.OkrKeyResultDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          update: {
+            args: Prisma.OkrKeyResultUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          deleteMany: {
+            args: Prisma.OkrKeyResultDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OkrKeyResultUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OkrKeyResultUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>[]
+          }
+          upsert: {
+            args: Prisma.OkrKeyResultUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OkrKeyResultPayload>
+          }
+          aggregate: {
+            args: Prisma.OkrKeyResultAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOkrKeyResult>
+          }
+          groupBy: {
+            args: Prisma.OkrKeyResultGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OkrKeyResultGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OkrKeyResultCountArgs<ExtArgs>
+            result: $Utils.Optional<OkrKeyResultCountAggregateOutputType> | number
+          }
+        }
+      }
+      KpiMetric: {
+        payload: Prisma.$KpiMetricPayload<ExtArgs>
+        fields: Prisma.KpiMetricFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KpiMetricFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KpiMetricFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          findFirst: {
+            args: Prisma.KpiMetricFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KpiMetricFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          findMany: {
+            args: Prisma.KpiMetricFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>[]
+          }
+          create: {
+            args: Prisma.KpiMetricCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          createMany: {
+            args: Prisma.KpiMetricCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KpiMetricCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>[]
+          }
+          delete: {
+            args: Prisma.KpiMetricDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          update: {
+            args: Prisma.KpiMetricUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          deleteMany: {
+            args: Prisma.KpiMetricDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KpiMetricUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KpiMetricUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>[]
+          }
+          upsert: {
+            args: Prisma.KpiMetricUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiMetricPayload>
+          }
+          aggregate: {
+            args: Prisma.KpiMetricAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKpiMetric>
+          }
+          groupBy: {
+            args: Prisma.KpiMetricGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KpiMetricGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KpiMetricCountArgs<ExtArgs>
+            result: $Utils.Optional<KpiMetricCountAggregateOutputType> | number
+          }
+        }
+      }
+      KpiRecord: {
+        payload: Prisma.$KpiRecordPayload<ExtArgs>
+        fields: Prisma.KpiRecordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.KpiRecordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.KpiRecordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          findFirst: {
+            args: Prisma.KpiRecordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.KpiRecordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          findMany: {
+            args: Prisma.KpiRecordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>[]
+          }
+          create: {
+            args: Prisma.KpiRecordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          createMany: {
+            args: Prisma.KpiRecordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.KpiRecordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>[]
+          }
+          delete: {
+            args: Prisma.KpiRecordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          update: {
+            args: Prisma.KpiRecordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          deleteMany: {
+            args: Prisma.KpiRecordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.KpiRecordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.KpiRecordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>[]
+          }
+          upsert: {
+            args: Prisma.KpiRecordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$KpiRecordPayload>
+          }
+          aggregate: {
+            args: Prisma.KpiRecordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateKpiRecord>
+          }
+          groupBy: {
+            args: Prisma.KpiRecordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<KpiRecordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.KpiRecordCountArgs<ExtArgs>
+            result: $Utils.Optional<KpiRecordCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -8659,6 +9063,10 @@ export namespace Prisma {
     employeeYearlyTaxSummary?: EmployeeYearlyTaxSummaryOmit
     employeeAllowance?: EmployeeAllowanceOmit
     salaryColumn?: SalaryColumnOmit
+    okrObjective?: OkrObjectiveOmit
+    okrKeyResult?: OkrKeyResultOmit
+    kpiMetric?: KpiMetricOmit
+    kpiRecord?: KpiRecordOmit
   }
 
   /* Types for Logging */
@@ -8764,6 +9172,7 @@ export namespace Prisma {
     workStatuses: number
     auditLogs: number
     crmActivities: number
+    okrObjectives: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8792,6 +9201,7 @@ export namespace Prisma {
     workStatuses?: boolean | UserCountOutputTypeCountWorkStatusesArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
     crmActivities?: boolean | UserCountOutputTypeCountCrmActivitiesArgs
+    okrObjectives?: boolean | UserCountOutputTypeCountOkrObjectivesArgs
   }
 
   // Custom InputTypes
@@ -8978,6 +9388,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCrmActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CrmActivityWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountOkrObjectivesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OkrObjectiveWhereInput
   }
 
 
@@ -10273,6 +10690,68 @@ export namespace Prisma {
 
 
   /**
+   * Count Type OkrObjectiveCountOutputType
+   */
+
+  export type OkrObjectiveCountOutputType = {
+    keyResults: number
+  }
+
+  export type OkrObjectiveCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    keyResults?: boolean | OkrObjectiveCountOutputTypeCountKeyResultsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * OkrObjectiveCountOutputType without action
+   */
+  export type OkrObjectiveCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjectiveCountOutputType
+     */
+    select?: OkrObjectiveCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * OkrObjectiveCountOutputType without action
+   */
+  export type OkrObjectiveCountOutputTypeCountKeyResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OkrKeyResultWhereInput
+  }
+
+
+  /**
+   * Count Type KpiMetricCountOutputType
+   */
+
+  export type KpiMetricCountOutputType = {
+    records: number
+  }
+
+  export type KpiMetricCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    records?: boolean | KpiMetricCountOutputTypeCountRecordsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * KpiMetricCountOutputType without action
+   */
+  export type KpiMetricCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetricCountOutputType
+     */
+    select?: KpiMetricCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * KpiMetricCountOutputType without action
+   */
+  export type KpiMetricCountOutputTypeCountRecordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KpiRecordWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -10507,6 +10986,7 @@ export namespace Prisma {
     workStatuses?: boolean | User$workStatusesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     crmActivities?: boolean | User$crmActivitiesArgs<ExtArgs>
+    okrObjectives?: boolean | User$okrObjectivesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -10580,6 +11060,7 @@ export namespace Prisma {
     workStatuses?: boolean | User$workStatusesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     crmActivities?: boolean | User$crmActivitiesArgs<ExtArgs>
+    okrObjectives?: boolean | User$okrObjectivesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10619,6 +11100,7 @@ export namespace Prisma {
       workStatuses: Prisma.$WorkStatusPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
       crmActivities: Prisma.$CrmActivityPayload<ExtArgs>[]
+      okrObjectives: Prisma.$OkrObjectivePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11052,6 +11534,7 @@ export namespace Prisma {
     workStatuses<T extends User$workStatusesArgs<ExtArgs> = {}>(args?: Subset<T, User$workStatusesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     crmActivities<T extends User$crmActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$crmActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    okrObjectives<T extends User$okrObjectivesArgs<ExtArgs> = {}>(args?: Subset<T, User$okrObjectivesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12127,6 +12610,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
+  }
+
+  /**
+   * User.okrObjectives
+   */
+  export type User$okrObjectivesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    where?: OkrObjectiveWhereInput
+    orderBy?: OkrObjectiveOrderByWithRelationInput | OkrObjectiveOrderByWithRelationInput[]
+    cursor?: OkrObjectiveWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OkrObjectiveScalarFieldEnum | OkrObjectiveScalarFieldEnum[]
   }
 
   /**
@@ -104841,6 +105348,4652 @@ export namespace Prisma {
 
 
   /**
+   * Model OkrObjective
+   */
+
+  export type AggregateOkrObjective = {
+    _count: OkrObjectiveCountAggregateOutputType | null
+    _avg: OkrObjectiveAvgAggregateOutputType | null
+    _sum: OkrObjectiveSumAggregateOutputType | null
+    _min: OkrObjectiveMinAggregateOutputType | null
+    _max: OkrObjectiveMaxAggregateOutputType | null
+  }
+
+  export type OkrObjectiveAvgAggregateOutputType = {
+    year: number | null
+  }
+
+  export type OkrObjectiveSumAggregateOutputType = {
+    year: number | null
+  }
+
+  export type OkrObjectiveMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    cycle: $Enums.OkrCycle | null
+    year: number | null
+    ownerId: string | null
+    orgUnitId: string | null
+    status: $Enums.OkrStatus | null
+    processInstanceId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OkrObjectiveMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    cycle: $Enums.OkrCycle | null
+    year: number | null
+    ownerId: string | null
+    orgUnitId: string | null
+    status: $Enums.OkrStatus | null
+    processInstanceId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OkrObjectiveCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    cycle: number
+    year: number
+    ownerId: number
+    orgUnitId: number
+    status: number
+    processInstanceId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type OkrObjectiveAvgAggregateInputType = {
+    year?: true
+  }
+
+  export type OkrObjectiveSumAggregateInputType = {
+    year?: true
+  }
+
+  export type OkrObjectiveMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    cycle?: true
+    year?: true
+    ownerId?: true
+    orgUnitId?: true
+    status?: true
+    processInstanceId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OkrObjectiveMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    cycle?: true
+    year?: true
+    ownerId?: true
+    orgUnitId?: true
+    status?: true
+    processInstanceId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OkrObjectiveCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    cycle?: true
+    year?: true
+    ownerId?: true
+    orgUnitId?: true
+    status?: true
+    processInstanceId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type OkrObjectiveAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OkrObjective to aggregate.
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrObjectives to fetch.
+     */
+    orderBy?: OkrObjectiveOrderByWithRelationInput | OkrObjectiveOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OkrObjectiveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrObjectives from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrObjectives.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OkrObjectives
+    **/
+    _count?: true | OkrObjectiveCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OkrObjectiveAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OkrObjectiveSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OkrObjectiveMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OkrObjectiveMaxAggregateInputType
+  }
+
+  export type GetOkrObjectiveAggregateType<T extends OkrObjectiveAggregateArgs> = {
+        [P in keyof T & keyof AggregateOkrObjective]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOkrObjective[P]>
+      : GetScalarType<T[P], AggregateOkrObjective[P]>
+  }
+
+
+
+
+  export type OkrObjectiveGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OkrObjectiveWhereInput
+    orderBy?: OkrObjectiveOrderByWithAggregationInput | OkrObjectiveOrderByWithAggregationInput[]
+    by: OkrObjectiveScalarFieldEnum[] | OkrObjectiveScalarFieldEnum
+    having?: OkrObjectiveScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OkrObjectiveCountAggregateInputType | true
+    _avg?: OkrObjectiveAvgAggregateInputType
+    _sum?: OkrObjectiveSumAggregateInputType
+    _min?: OkrObjectiveMinAggregateInputType
+    _max?: OkrObjectiveMaxAggregateInputType
+  }
+
+  export type OkrObjectiveGroupByOutputType = {
+    id: string
+    title: string
+    description: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    ownerId: string
+    orgUnitId: string | null
+    status: $Enums.OkrStatus
+    processInstanceId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: OkrObjectiveCountAggregateOutputType | null
+    _avg: OkrObjectiveAvgAggregateOutputType | null
+    _sum: OkrObjectiveSumAggregateOutputType | null
+    _min: OkrObjectiveMinAggregateOutputType | null
+    _max: OkrObjectiveMaxAggregateOutputType | null
+  }
+
+  type GetOkrObjectiveGroupByPayload<T extends OkrObjectiveGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OkrObjectiveGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OkrObjectiveGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OkrObjectiveGroupByOutputType[P]>
+            : GetScalarType<T[P], OkrObjectiveGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OkrObjectiveSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    cycle?: boolean
+    year?: boolean
+    ownerId?: boolean
+    orgUnitId?: boolean
+    status?: boolean
+    processInstanceId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+    keyResults?: boolean | OkrObjective$keyResultsArgs<ExtArgs>
+    _count?: boolean | OkrObjectiveCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrObjective"]>
+
+  export type OkrObjectiveSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    cycle?: boolean
+    year?: boolean
+    ownerId?: boolean
+    orgUnitId?: boolean
+    status?: boolean
+    processInstanceId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrObjective"]>
+
+  export type OkrObjectiveSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    cycle?: boolean
+    year?: boolean
+    ownerId?: boolean
+    orgUnitId?: boolean
+    status?: boolean
+    processInstanceId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrObjective"]>
+
+  export type OkrObjectiveSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    cycle?: boolean
+    year?: boolean
+    ownerId?: boolean
+    orgUnitId?: boolean
+    status?: boolean
+    processInstanceId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type OkrObjectiveOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "cycle" | "year" | "ownerId" | "orgUnitId" | "status" | "processInstanceId" | "createdAt" | "updatedAt", ExtArgs["result"]["okrObjective"]>
+  export type OkrObjectiveInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+    keyResults?: boolean | OkrObjective$keyResultsArgs<ExtArgs>
+    _count?: boolean | OkrObjectiveCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type OkrObjectiveIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type OkrObjectiveIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    owner?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $OkrObjectivePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OkrObjective"
+    objects: {
+      owner: Prisma.$UserPayload<ExtArgs>
+      keyResults: Prisma.$OkrKeyResultPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string | null
+      cycle: $Enums.OkrCycle
+      year: number
+      ownerId: string
+      orgUnitId: string | null
+      status: $Enums.OkrStatus
+      processInstanceId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["okrObjective"]>
+    composites: {}
+  }
+
+  type OkrObjectiveGetPayload<S extends boolean | null | undefined | OkrObjectiveDefaultArgs> = $Result.GetResult<Prisma.$OkrObjectivePayload, S>
+
+  type OkrObjectiveCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OkrObjectiveFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OkrObjectiveCountAggregateInputType | true
+    }
+
+  export interface OkrObjectiveDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OkrObjective'], meta: { name: 'OkrObjective' } }
+    /**
+     * Find zero or one OkrObjective that matches the filter.
+     * @param {OkrObjectiveFindUniqueArgs} args - Arguments to find a OkrObjective
+     * @example
+     * // Get one OkrObjective
+     * const okrObjective = await prisma.okrObjective.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OkrObjectiveFindUniqueArgs>(args: SelectSubset<T, OkrObjectiveFindUniqueArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OkrObjective that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OkrObjectiveFindUniqueOrThrowArgs} args - Arguments to find a OkrObjective
+     * @example
+     * // Get one OkrObjective
+     * const okrObjective = await prisma.okrObjective.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OkrObjectiveFindUniqueOrThrowArgs>(args: SelectSubset<T, OkrObjectiveFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OkrObjective that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveFindFirstArgs} args - Arguments to find a OkrObjective
+     * @example
+     * // Get one OkrObjective
+     * const okrObjective = await prisma.okrObjective.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OkrObjectiveFindFirstArgs>(args?: SelectSubset<T, OkrObjectiveFindFirstArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OkrObjective that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveFindFirstOrThrowArgs} args - Arguments to find a OkrObjective
+     * @example
+     * // Get one OkrObjective
+     * const okrObjective = await prisma.okrObjective.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OkrObjectiveFindFirstOrThrowArgs>(args?: SelectSubset<T, OkrObjectiveFindFirstOrThrowArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OkrObjectives that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OkrObjectives
+     * const okrObjectives = await prisma.okrObjective.findMany()
+     * 
+     * // Get first 10 OkrObjectives
+     * const okrObjectives = await prisma.okrObjective.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const okrObjectiveWithIdOnly = await prisma.okrObjective.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OkrObjectiveFindManyArgs>(args?: SelectSubset<T, OkrObjectiveFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OkrObjective.
+     * @param {OkrObjectiveCreateArgs} args - Arguments to create a OkrObjective.
+     * @example
+     * // Create one OkrObjective
+     * const OkrObjective = await prisma.okrObjective.create({
+     *   data: {
+     *     // ... data to create a OkrObjective
+     *   }
+     * })
+     * 
+     */
+    create<T extends OkrObjectiveCreateArgs>(args: SelectSubset<T, OkrObjectiveCreateArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OkrObjectives.
+     * @param {OkrObjectiveCreateManyArgs} args - Arguments to create many OkrObjectives.
+     * @example
+     * // Create many OkrObjectives
+     * const okrObjective = await prisma.okrObjective.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OkrObjectiveCreateManyArgs>(args?: SelectSubset<T, OkrObjectiveCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OkrObjectives and returns the data saved in the database.
+     * @param {OkrObjectiveCreateManyAndReturnArgs} args - Arguments to create many OkrObjectives.
+     * @example
+     * // Create many OkrObjectives
+     * const okrObjective = await prisma.okrObjective.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OkrObjectives and only return the `id`
+     * const okrObjectiveWithIdOnly = await prisma.okrObjective.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OkrObjectiveCreateManyAndReturnArgs>(args?: SelectSubset<T, OkrObjectiveCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OkrObjective.
+     * @param {OkrObjectiveDeleteArgs} args - Arguments to delete one OkrObjective.
+     * @example
+     * // Delete one OkrObjective
+     * const OkrObjective = await prisma.okrObjective.delete({
+     *   where: {
+     *     // ... filter to delete one OkrObjective
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OkrObjectiveDeleteArgs>(args: SelectSubset<T, OkrObjectiveDeleteArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OkrObjective.
+     * @param {OkrObjectiveUpdateArgs} args - Arguments to update one OkrObjective.
+     * @example
+     * // Update one OkrObjective
+     * const okrObjective = await prisma.okrObjective.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OkrObjectiveUpdateArgs>(args: SelectSubset<T, OkrObjectiveUpdateArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OkrObjectives.
+     * @param {OkrObjectiveDeleteManyArgs} args - Arguments to filter OkrObjectives to delete.
+     * @example
+     * // Delete a few OkrObjectives
+     * const { count } = await prisma.okrObjective.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OkrObjectiveDeleteManyArgs>(args?: SelectSubset<T, OkrObjectiveDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OkrObjectives.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OkrObjectives
+     * const okrObjective = await prisma.okrObjective.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OkrObjectiveUpdateManyArgs>(args: SelectSubset<T, OkrObjectiveUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OkrObjectives and returns the data updated in the database.
+     * @param {OkrObjectiveUpdateManyAndReturnArgs} args - Arguments to update many OkrObjectives.
+     * @example
+     * // Update many OkrObjectives
+     * const okrObjective = await prisma.okrObjective.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OkrObjectives and only return the `id`
+     * const okrObjectiveWithIdOnly = await prisma.okrObjective.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OkrObjectiveUpdateManyAndReturnArgs>(args: SelectSubset<T, OkrObjectiveUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OkrObjective.
+     * @param {OkrObjectiveUpsertArgs} args - Arguments to update or create a OkrObjective.
+     * @example
+     * // Update or create a OkrObjective
+     * const okrObjective = await prisma.okrObjective.upsert({
+     *   create: {
+     *     // ... data to create a OkrObjective
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OkrObjective we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OkrObjectiveUpsertArgs>(args: SelectSubset<T, OkrObjectiveUpsertArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OkrObjectives.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveCountArgs} args - Arguments to filter OkrObjectives to count.
+     * @example
+     * // Count the number of OkrObjectives
+     * const count = await prisma.okrObjective.count({
+     *   where: {
+     *     // ... the filter for the OkrObjectives we want to count
+     *   }
+     * })
+    **/
+    count<T extends OkrObjectiveCountArgs>(
+      args?: Subset<T, OkrObjectiveCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OkrObjectiveCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OkrObjective.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OkrObjectiveAggregateArgs>(args: Subset<T, OkrObjectiveAggregateArgs>): Prisma.PrismaPromise<GetOkrObjectiveAggregateType<T>>
+
+    /**
+     * Group by OkrObjective.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrObjectiveGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OkrObjectiveGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OkrObjectiveGroupByArgs['orderBy'] }
+        : { orderBy?: OkrObjectiveGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OkrObjectiveGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOkrObjectiveGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OkrObjective model
+   */
+  readonly fields: OkrObjectiveFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OkrObjective.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OkrObjectiveClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    keyResults<T extends OkrObjective$keyResultsArgs<ExtArgs> = {}>(args?: Subset<T, OkrObjective$keyResultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OkrObjective model
+   */
+  interface OkrObjectiveFieldRefs {
+    readonly id: FieldRef<"OkrObjective", 'String'>
+    readonly title: FieldRef<"OkrObjective", 'String'>
+    readonly description: FieldRef<"OkrObjective", 'String'>
+    readonly cycle: FieldRef<"OkrObjective", 'OkrCycle'>
+    readonly year: FieldRef<"OkrObjective", 'Int'>
+    readonly ownerId: FieldRef<"OkrObjective", 'String'>
+    readonly orgUnitId: FieldRef<"OkrObjective", 'String'>
+    readonly status: FieldRef<"OkrObjective", 'OkrStatus'>
+    readonly processInstanceId: FieldRef<"OkrObjective", 'String'>
+    readonly createdAt: FieldRef<"OkrObjective", 'DateTime'>
+    readonly updatedAt: FieldRef<"OkrObjective", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OkrObjective findUnique
+   */
+  export type OkrObjectiveFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrObjective to fetch.
+     */
+    where: OkrObjectiveWhereUniqueInput
+  }
+
+  /**
+   * OkrObjective findUniqueOrThrow
+   */
+  export type OkrObjectiveFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrObjective to fetch.
+     */
+    where: OkrObjectiveWhereUniqueInput
+  }
+
+  /**
+   * OkrObjective findFirst
+   */
+  export type OkrObjectiveFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrObjective to fetch.
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrObjectives to fetch.
+     */
+    orderBy?: OkrObjectiveOrderByWithRelationInput | OkrObjectiveOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OkrObjectives.
+     */
+    cursor?: OkrObjectiveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrObjectives from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrObjectives.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrObjectives.
+     */
+    distinct?: OkrObjectiveScalarFieldEnum | OkrObjectiveScalarFieldEnum[]
+  }
+
+  /**
+   * OkrObjective findFirstOrThrow
+   */
+  export type OkrObjectiveFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrObjective to fetch.
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrObjectives to fetch.
+     */
+    orderBy?: OkrObjectiveOrderByWithRelationInput | OkrObjectiveOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OkrObjectives.
+     */
+    cursor?: OkrObjectiveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrObjectives from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrObjectives.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrObjectives.
+     */
+    distinct?: OkrObjectiveScalarFieldEnum | OkrObjectiveScalarFieldEnum[]
+  }
+
+  /**
+   * OkrObjective findMany
+   */
+  export type OkrObjectiveFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrObjectives to fetch.
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrObjectives to fetch.
+     */
+    orderBy?: OkrObjectiveOrderByWithRelationInput | OkrObjectiveOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OkrObjectives.
+     */
+    cursor?: OkrObjectiveWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrObjectives from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrObjectives.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrObjectives.
+     */
+    distinct?: OkrObjectiveScalarFieldEnum | OkrObjectiveScalarFieldEnum[]
+  }
+
+  /**
+   * OkrObjective create
+   */
+  export type OkrObjectiveCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OkrObjective.
+     */
+    data: XOR<OkrObjectiveCreateInput, OkrObjectiveUncheckedCreateInput>
+  }
+
+  /**
+   * OkrObjective createMany
+   */
+  export type OkrObjectiveCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OkrObjectives.
+     */
+    data: OkrObjectiveCreateManyInput | OkrObjectiveCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OkrObjective createManyAndReturn
+   */
+  export type OkrObjectiveCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * The data used to create many OkrObjectives.
+     */
+    data: OkrObjectiveCreateManyInput | OkrObjectiveCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OkrObjective update
+   */
+  export type OkrObjectiveUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OkrObjective.
+     */
+    data: XOR<OkrObjectiveUpdateInput, OkrObjectiveUncheckedUpdateInput>
+    /**
+     * Choose, which OkrObjective to update.
+     */
+    where: OkrObjectiveWhereUniqueInput
+  }
+
+  /**
+   * OkrObjective updateMany
+   */
+  export type OkrObjectiveUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OkrObjectives.
+     */
+    data: XOR<OkrObjectiveUpdateManyMutationInput, OkrObjectiveUncheckedUpdateManyInput>
+    /**
+     * Filter which OkrObjectives to update
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * Limit how many OkrObjectives to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OkrObjective updateManyAndReturn
+   */
+  export type OkrObjectiveUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * The data used to update OkrObjectives.
+     */
+    data: XOR<OkrObjectiveUpdateManyMutationInput, OkrObjectiveUncheckedUpdateManyInput>
+    /**
+     * Filter which OkrObjectives to update
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * Limit how many OkrObjectives to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OkrObjective upsert
+   */
+  export type OkrObjectiveUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OkrObjective to update in case it exists.
+     */
+    where: OkrObjectiveWhereUniqueInput
+    /**
+     * In case the OkrObjective found by the `where` argument doesn't exist, create a new OkrObjective with this data.
+     */
+    create: XOR<OkrObjectiveCreateInput, OkrObjectiveUncheckedCreateInput>
+    /**
+     * In case the OkrObjective was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OkrObjectiveUpdateInput, OkrObjectiveUncheckedUpdateInput>
+  }
+
+  /**
+   * OkrObjective delete
+   */
+  export type OkrObjectiveDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+    /**
+     * Filter which OkrObjective to delete.
+     */
+    where: OkrObjectiveWhereUniqueInput
+  }
+
+  /**
+   * OkrObjective deleteMany
+   */
+  export type OkrObjectiveDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OkrObjectives to delete
+     */
+    where?: OkrObjectiveWhereInput
+    /**
+     * Limit how many OkrObjectives to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OkrObjective.keyResults
+   */
+  export type OkrObjective$keyResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    where?: OkrKeyResultWhereInput
+    orderBy?: OkrKeyResultOrderByWithRelationInput | OkrKeyResultOrderByWithRelationInput[]
+    cursor?: OkrKeyResultWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OkrKeyResultScalarFieldEnum | OkrKeyResultScalarFieldEnum[]
+  }
+
+  /**
+   * OkrObjective without action
+   */
+  export type OkrObjectiveDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrObjective
+     */
+    select?: OkrObjectiveSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrObjective
+     */
+    omit?: OkrObjectiveOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrObjectiveInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model OkrKeyResult
+   */
+
+  export type AggregateOkrKeyResult = {
+    _count: OkrKeyResultCountAggregateOutputType | null
+    _avg: OkrKeyResultAvgAggregateOutputType | null
+    _sum: OkrKeyResultSumAggregateOutputType | null
+    _min: OkrKeyResultMinAggregateOutputType | null
+    _max: OkrKeyResultMaxAggregateOutputType | null
+  }
+
+  export type OkrKeyResultAvgAggregateOutputType = {
+    startValue: Decimal | null
+    targetValue: Decimal | null
+    currentValue: Decimal | null
+  }
+
+  export type OkrKeyResultSumAggregateOutputType = {
+    startValue: Decimal | null
+    targetValue: Decimal | null
+    currentValue: Decimal | null
+  }
+
+  export type OkrKeyResultMinAggregateOutputType = {
+    id: string | null
+    objectiveId: string | null
+    title: string | null
+    unit: string | null
+    startValue: Decimal | null
+    targetValue: Decimal | null
+    currentValue: Decimal | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OkrKeyResultMaxAggregateOutputType = {
+    id: string | null
+    objectiveId: string | null
+    title: string | null
+    unit: string | null
+    startValue: Decimal | null
+    targetValue: Decimal | null
+    currentValue: Decimal | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type OkrKeyResultCountAggregateOutputType = {
+    id: number
+    objectiveId: number
+    title: number
+    unit: number
+    startValue: number
+    targetValue: number
+    currentValue: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type OkrKeyResultAvgAggregateInputType = {
+    startValue?: true
+    targetValue?: true
+    currentValue?: true
+  }
+
+  export type OkrKeyResultSumAggregateInputType = {
+    startValue?: true
+    targetValue?: true
+    currentValue?: true
+  }
+
+  export type OkrKeyResultMinAggregateInputType = {
+    id?: true
+    objectiveId?: true
+    title?: true
+    unit?: true
+    startValue?: true
+    targetValue?: true
+    currentValue?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OkrKeyResultMaxAggregateInputType = {
+    id?: true
+    objectiveId?: true
+    title?: true
+    unit?: true
+    startValue?: true
+    targetValue?: true
+    currentValue?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type OkrKeyResultCountAggregateInputType = {
+    id?: true
+    objectiveId?: true
+    title?: true
+    unit?: true
+    startValue?: true
+    targetValue?: true
+    currentValue?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type OkrKeyResultAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OkrKeyResult to aggregate.
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrKeyResults to fetch.
+     */
+    orderBy?: OkrKeyResultOrderByWithRelationInput | OkrKeyResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OkrKeyResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrKeyResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrKeyResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OkrKeyResults
+    **/
+    _count?: true | OkrKeyResultCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: OkrKeyResultAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: OkrKeyResultSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OkrKeyResultMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OkrKeyResultMaxAggregateInputType
+  }
+
+  export type GetOkrKeyResultAggregateType<T extends OkrKeyResultAggregateArgs> = {
+        [P in keyof T & keyof AggregateOkrKeyResult]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOkrKeyResult[P]>
+      : GetScalarType<T[P], AggregateOkrKeyResult[P]>
+  }
+
+
+
+
+  export type OkrKeyResultGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OkrKeyResultWhereInput
+    orderBy?: OkrKeyResultOrderByWithAggregationInput | OkrKeyResultOrderByWithAggregationInput[]
+    by: OkrKeyResultScalarFieldEnum[] | OkrKeyResultScalarFieldEnum
+    having?: OkrKeyResultScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OkrKeyResultCountAggregateInputType | true
+    _avg?: OkrKeyResultAvgAggregateInputType
+    _sum?: OkrKeyResultSumAggregateInputType
+    _min?: OkrKeyResultMinAggregateInputType
+    _max?: OkrKeyResultMaxAggregateInputType
+  }
+
+  export type OkrKeyResultGroupByOutputType = {
+    id: string
+    objectiveId: string
+    title: string
+    unit: string
+    startValue: Decimal
+    targetValue: Decimal
+    currentValue: Decimal
+    createdAt: Date
+    updatedAt: Date
+    _count: OkrKeyResultCountAggregateOutputType | null
+    _avg: OkrKeyResultAvgAggregateOutputType | null
+    _sum: OkrKeyResultSumAggregateOutputType | null
+    _min: OkrKeyResultMinAggregateOutputType | null
+    _max: OkrKeyResultMaxAggregateOutputType | null
+  }
+
+  type GetOkrKeyResultGroupByPayload<T extends OkrKeyResultGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OkrKeyResultGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OkrKeyResultGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OkrKeyResultGroupByOutputType[P]>
+            : GetScalarType<T[P], OkrKeyResultGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OkrKeyResultSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    objectiveId?: boolean
+    title?: boolean
+    unit?: boolean
+    startValue?: boolean
+    targetValue?: boolean
+    currentValue?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrKeyResult"]>
+
+  export type OkrKeyResultSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    objectiveId?: boolean
+    title?: boolean
+    unit?: boolean
+    startValue?: boolean
+    targetValue?: boolean
+    currentValue?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrKeyResult"]>
+
+  export type OkrKeyResultSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    objectiveId?: boolean
+    title?: boolean
+    unit?: boolean
+    startValue?: boolean
+    targetValue?: boolean
+    currentValue?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["okrKeyResult"]>
+
+  export type OkrKeyResultSelectScalar = {
+    id?: boolean
+    objectiveId?: boolean
+    title?: boolean
+    unit?: boolean
+    startValue?: boolean
+    targetValue?: boolean
+    currentValue?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type OkrKeyResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "objectiveId" | "title" | "unit" | "startValue" | "targetValue" | "currentValue" | "createdAt" | "updatedAt", ExtArgs["result"]["okrKeyResult"]>
+  export type OkrKeyResultInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }
+  export type OkrKeyResultIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }
+  export type OkrKeyResultIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    objective?: boolean | OkrObjectiveDefaultArgs<ExtArgs>
+  }
+
+  export type $OkrKeyResultPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OkrKeyResult"
+    objects: {
+      objective: Prisma.$OkrObjectivePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      objectiveId: string
+      title: string
+      unit: string
+      startValue: Prisma.Decimal
+      targetValue: Prisma.Decimal
+      currentValue: Prisma.Decimal
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["okrKeyResult"]>
+    composites: {}
+  }
+
+  type OkrKeyResultGetPayload<S extends boolean | null | undefined | OkrKeyResultDefaultArgs> = $Result.GetResult<Prisma.$OkrKeyResultPayload, S>
+
+  type OkrKeyResultCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OkrKeyResultFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OkrKeyResultCountAggregateInputType | true
+    }
+
+  export interface OkrKeyResultDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OkrKeyResult'], meta: { name: 'OkrKeyResult' } }
+    /**
+     * Find zero or one OkrKeyResult that matches the filter.
+     * @param {OkrKeyResultFindUniqueArgs} args - Arguments to find a OkrKeyResult
+     * @example
+     * // Get one OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OkrKeyResultFindUniqueArgs>(args: SelectSubset<T, OkrKeyResultFindUniqueArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OkrKeyResult that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OkrKeyResultFindUniqueOrThrowArgs} args - Arguments to find a OkrKeyResult
+     * @example
+     * // Get one OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OkrKeyResultFindUniqueOrThrowArgs>(args: SelectSubset<T, OkrKeyResultFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OkrKeyResult that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultFindFirstArgs} args - Arguments to find a OkrKeyResult
+     * @example
+     * // Get one OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OkrKeyResultFindFirstArgs>(args?: SelectSubset<T, OkrKeyResultFindFirstArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OkrKeyResult that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultFindFirstOrThrowArgs} args - Arguments to find a OkrKeyResult
+     * @example
+     * // Get one OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OkrKeyResultFindFirstOrThrowArgs>(args?: SelectSubset<T, OkrKeyResultFindFirstOrThrowArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OkrKeyResults that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OkrKeyResults
+     * const okrKeyResults = await prisma.okrKeyResult.findMany()
+     * 
+     * // Get first 10 OkrKeyResults
+     * const okrKeyResults = await prisma.okrKeyResult.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const okrKeyResultWithIdOnly = await prisma.okrKeyResult.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OkrKeyResultFindManyArgs>(args?: SelectSubset<T, OkrKeyResultFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OkrKeyResult.
+     * @param {OkrKeyResultCreateArgs} args - Arguments to create a OkrKeyResult.
+     * @example
+     * // Create one OkrKeyResult
+     * const OkrKeyResult = await prisma.okrKeyResult.create({
+     *   data: {
+     *     // ... data to create a OkrKeyResult
+     *   }
+     * })
+     * 
+     */
+    create<T extends OkrKeyResultCreateArgs>(args: SelectSubset<T, OkrKeyResultCreateArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OkrKeyResults.
+     * @param {OkrKeyResultCreateManyArgs} args - Arguments to create many OkrKeyResults.
+     * @example
+     * // Create many OkrKeyResults
+     * const okrKeyResult = await prisma.okrKeyResult.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OkrKeyResultCreateManyArgs>(args?: SelectSubset<T, OkrKeyResultCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OkrKeyResults and returns the data saved in the database.
+     * @param {OkrKeyResultCreateManyAndReturnArgs} args - Arguments to create many OkrKeyResults.
+     * @example
+     * // Create many OkrKeyResults
+     * const okrKeyResult = await prisma.okrKeyResult.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OkrKeyResults and only return the `id`
+     * const okrKeyResultWithIdOnly = await prisma.okrKeyResult.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OkrKeyResultCreateManyAndReturnArgs>(args?: SelectSubset<T, OkrKeyResultCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OkrKeyResult.
+     * @param {OkrKeyResultDeleteArgs} args - Arguments to delete one OkrKeyResult.
+     * @example
+     * // Delete one OkrKeyResult
+     * const OkrKeyResult = await prisma.okrKeyResult.delete({
+     *   where: {
+     *     // ... filter to delete one OkrKeyResult
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OkrKeyResultDeleteArgs>(args: SelectSubset<T, OkrKeyResultDeleteArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OkrKeyResult.
+     * @param {OkrKeyResultUpdateArgs} args - Arguments to update one OkrKeyResult.
+     * @example
+     * // Update one OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OkrKeyResultUpdateArgs>(args: SelectSubset<T, OkrKeyResultUpdateArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OkrKeyResults.
+     * @param {OkrKeyResultDeleteManyArgs} args - Arguments to filter OkrKeyResults to delete.
+     * @example
+     * // Delete a few OkrKeyResults
+     * const { count } = await prisma.okrKeyResult.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OkrKeyResultDeleteManyArgs>(args?: SelectSubset<T, OkrKeyResultDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OkrKeyResults.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OkrKeyResults
+     * const okrKeyResult = await prisma.okrKeyResult.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OkrKeyResultUpdateManyArgs>(args: SelectSubset<T, OkrKeyResultUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OkrKeyResults and returns the data updated in the database.
+     * @param {OkrKeyResultUpdateManyAndReturnArgs} args - Arguments to update many OkrKeyResults.
+     * @example
+     * // Update many OkrKeyResults
+     * const okrKeyResult = await prisma.okrKeyResult.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OkrKeyResults and only return the `id`
+     * const okrKeyResultWithIdOnly = await prisma.okrKeyResult.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OkrKeyResultUpdateManyAndReturnArgs>(args: SelectSubset<T, OkrKeyResultUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OkrKeyResult.
+     * @param {OkrKeyResultUpsertArgs} args - Arguments to update or create a OkrKeyResult.
+     * @example
+     * // Update or create a OkrKeyResult
+     * const okrKeyResult = await prisma.okrKeyResult.upsert({
+     *   create: {
+     *     // ... data to create a OkrKeyResult
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OkrKeyResult we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OkrKeyResultUpsertArgs>(args: SelectSubset<T, OkrKeyResultUpsertArgs<ExtArgs>>): Prisma__OkrKeyResultClient<$Result.GetResult<Prisma.$OkrKeyResultPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OkrKeyResults.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultCountArgs} args - Arguments to filter OkrKeyResults to count.
+     * @example
+     * // Count the number of OkrKeyResults
+     * const count = await prisma.okrKeyResult.count({
+     *   where: {
+     *     // ... the filter for the OkrKeyResults we want to count
+     *   }
+     * })
+    **/
+    count<T extends OkrKeyResultCountArgs>(
+      args?: Subset<T, OkrKeyResultCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OkrKeyResultCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OkrKeyResult.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OkrKeyResultAggregateArgs>(args: Subset<T, OkrKeyResultAggregateArgs>): Prisma.PrismaPromise<GetOkrKeyResultAggregateType<T>>
+
+    /**
+     * Group by OkrKeyResult.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OkrKeyResultGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OkrKeyResultGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OkrKeyResultGroupByArgs['orderBy'] }
+        : { orderBy?: OkrKeyResultGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OkrKeyResultGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOkrKeyResultGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OkrKeyResult model
+   */
+  readonly fields: OkrKeyResultFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OkrKeyResult.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OkrKeyResultClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    objective<T extends OkrObjectiveDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OkrObjectiveDefaultArgs<ExtArgs>>): Prisma__OkrObjectiveClient<$Result.GetResult<Prisma.$OkrObjectivePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OkrKeyResult model
+   */
+  interface OkrKeyResultFieldRefs {
+    readonly id: FieldRef<"OkrKeyResult", 'String'>
+    readonly objectiveId: FieldRef<"OkrKeyResult", 'String'>
+    readonly title: FieldRef<"OkrKeyResult", 'String'>
+    readonly unit: FieldRef<"OkrKeyResult", 'String'>
+    readonly startValue: FieldRef<"OkrKeyResult", 'Decimal'>
+    readonly targetValue: FieldRef<"OkrKeyResult", 'Decimal'>
+    readonly currentValue: FieldRef<"OkrKeyResult", 'Decimal'>
+    readonly createdAt: FieldRef<"OkrKeyResult", 'DateTime'>
+    readonly updatedAt: FieldRef<"OkrKeyResult", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OkrKeyResult findUnique
+   */
+  export type OkrKeyResultFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrKeyResult to fetch.
+     */
+    where: OkrKeyResultWhereUniqueInput
+  }
+
+  /**
+   * OkrKeyResult findUniqueOrThrow
+   */
+  export type OkrKeyResultFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrKeyResult to fetch.
+     */
+    where: OkrKeyResultWhereUniqueInput
+  }
+
+  /**
+   * OkrKeyResult findFirst
+   */
+  export type OkrKeyResultFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrKeyResult to fetch.
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrKeyResults to fetch.
+     */
+    orderBy?: OkrKeyResultOrderByWithRelationInput | OkrKeyResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OkrKeyResults.
+     */
+    cursor?: OkrKeyResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrKeyResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrKeyResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrKeyResults.
+     */
+    distinct?: OkrKeyResultScalarFieldEnum | OkrKeyResultScalarFieldEnum[]
+  }
+
+  /**
+   * OkrKeyResult findFirstOrThrow
+   */
+  export type OkrKeyResultFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrKeyResult to fetch.
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrKeyResults to fetch.
+     */
+    orderBy?: OkrKeyResultOrderByWithRelationInput | OkrKeyResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OkrKeyResults.
+     */
+    cursor?: OkrKeyResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrKeyResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrKeyResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrKeyResults.
+     */
+    distinct?: OkrKeyResultScalarFieldEnum | OkrKeyResultScalarFieldEnum[]
+  }
+
+  /**
+   * OkrKeyResult findMany
+   */
+  export type OkrKeyResultFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter, which OkrKeyResults to fetch.
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OkrKeyResults to fetch.
+     */
+    orderBy?: OkrKeyResultOrderByWithRelationInput | OkrKeyResultOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OkrKeyResults.
+     */
+    cursor?: OkrKeyResultWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OkrKeyResults from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OkrKeyResults.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OkrKeyResults.
+     */
+    distinct?: OkrKeyResultScalarFieldEnum | OkrKeyResultScalarFieldEnum[]
+  }
+
+  /**
+   * OkrKeyResult create
+   */
+  export type OkrKeyResultCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OkrKeyResult.
+     */
+    data: XOR<OkrKeyResultCreateInput, OkrKeyResultUncheckedCreateInput>
+  }
+
+  /**
+   * OkrKeyResult createMany
+   */
+  export type OkrKeyResultCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OkrKeyResults.
+     */
+    data: OkrKeyResultCreateManyInput | OkrKeyResultCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OkrKeyResult createManyAndReturn
+   */
+  export type OkrKeyResultCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * The data used to create many OkrKeyResults.
+     */
+    data: OkrKeyResultCreateManyInput | OkrKeyResultCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OkrKeyResult update
+   */
+  export type OkrKeyResultUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OkrKeyResult.
+     */
+    data: XOR<OkrKeyResultUpdateInput, OkrKeyResultUncheckedUpdateInput>
+    /**
+     * Choose, which OkrKeyResult to update.
+     */
+    where: OkrKeyResultWhereUniqueInput
+  }
+
+  /**
+   * OkrKeyResult updateMany
+   */
+  export type OkrKeyResultUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OkrKeyResults.
+     */
+    data: XOR<OkrKeyResultUpdateManyMutationInput, OkrKeyResultUncheckedUpdateManyInput>
+    /**
+     * Filter which OkrKeyResults to update
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * Limit how many OkrKeyResults to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OkrKeyResult updateManyAndReturn
+   */
+  export type OkrKeyResultUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * The data used to update OkrKeyResults.
+     */
+    data: XOR<OkrKeyResultUpdateManyMutationInput, OkrKeyResultUncheckedUpdateManyInput>
+    /**
+     * Filter which OkrKeyResults to update
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * Limit how many OkrKeyResults to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OkrKeyResult upsert
+   */
+  export type OkrKeyResultUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OkrKeyResult to update in case it exists.
+     */
+    where: OkrKeyResultWhereUniqueInput
+    /**
+     * In case the OkrKeyResult found by the `where` argument doesn't exist, create a new OkrKeyResult with this data.
+     */
+    create: XOR<OkrKeyResultCreateInput, OkrKeyResultUncheckedCreateInput>
+    /**
+     * In case the OkrKeyResult was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OkrKeyResultUpdateInput, OkrKeyResultUncheckedUpdateInput>
+  }
+
+  /**
+   * OkrKeyResult delete
+   */
+  export type OkrKeyResultDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+    /**
+     * Filter which OkrKeyResult to delete.
+     */
+    where: OkrKeyResultWhereUniqueInput
+  }
+
+  /**
+   * OkrKeyResult deleteMany
+   */
+  export type OkrKeyResultDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OkrKeyResults to delete
+     */
+    where?: OkrKeyResultWhereInput
+    /**
+     * Limit how many OkrKeyResults to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OkrKeyResult without action
+   */
+  export type OkrKeyResultDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OkrKeyResult
+     */
+    select?: OkrKeyResultSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OkrKeyResult
+     */
+    omit?: OkrKeyResultOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OkrKeyResultInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KpiMetric
+   */
+
+  export type AggregateKpiMetric = {
+    _count: KpiMetricCountAggregateOutputType | null
+    _avg: KpiMetricAvgAggregateOutputType | null
+    _sum: KpiMetricSumAggregateOutputType | null
+    _min: KpiMetricMinAggregateOutputType | null
+    _max: KpiMetricMaxAggregateOutputType | null
+  }
+
+  export type KpiMetricAvgAggregateOutputType = {
+    targetValue: Decimal | null
+  }
+
+  export type KpiMetricSumAggregateOutputType = {
+    targetValue: Decimal | null
+  }
+
+  export type KpiMetricMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    unit: string | null
+    targetValue: Decimal | null
+    frequency: $Enums.KpiFrequency | null
+    orgUnitId: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KpiMetricMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    description: string | null
+    unit: string | null
+    targetValue: Decimal | null
+    frequency: $Enums.KpiFrequency | null
+    orgUnitId: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type KpiMetricCountAggregateOutputType = {
+    id: number
+    name: number
+    description: number
+    unit: number
+    targetValue: number
+    frequency: number
+    orgUnitId: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type KpiMetricAvgAggregateInputType = {
+    targetValue?: true
+  }
+
+  export type KpiMetricSumAggregateInputType = {
+    targetValue?: true
+  }
+
+  export type KpiMetricMinAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    unit?: true
+    targetValue?: true
+    frequency?: true
+    orgUnitId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KpiMetricMaxAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    unit?: true
+    targetValue?: true
+    frequency?: true
+    orgUnitId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type KpiMetricCountAggregateInputType = {
+    id?: true
+    name?: true
+    description?: true
+    unit?: true
+    targetValue?: true
+    frequency?: true
+    orgUnitId?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type KpiMetricAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KpiMetric to aggregate.
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiMetrics to fetch.
+     */
+    orderBy?: KpiMetricOrderByWithRelationInput | KpiMetricOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KpiMetricWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiMetrics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiMetrics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KpiMetrics
+    **/
+    _count?: true | KpiMetricCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KpiMetricAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KpiMetricSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KpiMetricMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KpiMetricMaxAggregateInputType
+  }
+
+  export type GetKpiMetricAggregateType<T extends KpiMetricAggregateArgs> = {
+        [P in keyof T & keyof AggregateKpiMetric]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKpiMetric[P]>
+      : GetScalarType<T[P], AggregateKpiMetric[P]>
+  }
+
+
+
+
+  export type KpiMetricGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KpiMetricWhereInput
+    orderBy?: KpiMetricOrderByWithAggregationInput | KpiMetricOrderByWithAggregationInput[]
+    by: KpiMetricScalarFieldEnum[] | KpiMetricScalarFieldEnum
+    having?: KpiMetricScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KpiMetricCountAggregateInputType | true
+    _avg?: KpiMetricAvgAggregateInputType
+    _sum?: KpiMetricSumAggregateInputType
+    _min?: KpiMetricMinAggregateInputType
+    _max?: KpiMetricMaxAggregateInputType
+  }
+
+  export type KpiMetricGroupByOutputType = {
+    id: string
+    name: string
+    description: string | null
+    unit: string
+    targetValue: Decimal | null
+    frequency: $Enums.KpiFrequency
+    orgUnitId: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: KpiMetricCountAggregateOutputType | null
+    _avg: KpiMetricAvgAggregateOutputType | null
+    _sum: KpiMetricSumAggregateOutputType | null
+    _min: KpiMetricMinAggregateOutputType | null
+    _max: KpiMetricMaxAggregateOutputType | null
+  }
+
+  type GetKpiMetricGroupByPayload<T extends KpiMetricGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KpiMetricGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KpiMetricGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KpiMetricGroupByOutputType[P]>
+            : GetScalarType<T[P], KpiMetricGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KpiMetricSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    unit?: boolean
+    targetValue?: boolean
+    frequency?: boolean
+    orgUnitId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    records?: boolean | KpiMetric$recordsArgs<ExtArgs>
+    _count?: boolean | KpiMetricCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kpiMetric"]>
+
+  export type KpiMetricSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    unit?: boolean
+    targetValue?: boolean
+    frequency?: boolean
+    orgUnitId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["kpiMetric"]>
+
+  export type KpiMetricSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    unit?: boolean
+    targetValue?: boolean
+    frequency?: boolean
+    orgUnitId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["kpiMetric"]>
+
+  export type KpiMetricSelectScalar = {
+    id?: boolean
+    name?: boolean
+    description?: boolean
+    unit?: boolean
+    targetValue?: boolean
+    frequency?: boolean
+    orgUnitId?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type KpiMetricOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "unit" | "targetValue" | "frequency" | "orgUnitId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["kpiMetric"]>
+  export type KpiMetricInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    records?: boolean | KpiMetric$recordsArgs<ExtArgs>
+    _count?: boolean | KpiMetricCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type KpiMetricIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type KpiMetricIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $KpiMetricPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KpiMetric"
+    objects: {
+      records: Prisma.$KpiRecordPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      description: string | null
+      unit: string
+      targetValue: Prisma.Decimal | null
+      frequency: $Enums.KpiFrequency
+      orgUnitId: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["kpiMetric"]>
+    composites: {}
+  }
+
+  type KpiMetricGetPayload<S extends boolean | null | undefined | KpiMetricDefaultArgs> = $Result.GetResult<Prisma.$KpiMetricPayload, S>
+
+  type KpiMetricCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KpiMetricFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KpiMetricCountAggregateInputType | true
+    }
+
+  export interface KpiMetricDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KpiMetric'], meta: { name: 'KpiMetric' } }
+    /**
+     * Find zero or one KpiMetric that matches the filter.
+     * @param {KpiMetricFindUniqueArgs} args - Arguments to find a KpiMetric
+     * @example
+     * // Get one KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KpiMetricFindUniqueArgs>(args: SelectSubset<T, KpiMetricFindUniqueArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KpiMetric that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KpiMetricFindUniqueOrThrowArgs} args - Arguments to find a KpiMetric
+     * @example
+     * // Get one KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KpiMetricFindUniqueOrThrowArgs>(args: SelectSubset<T, KpiMetricFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KpiMetric that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricFindFirstArgs} args - Arguments to find a KpiMetric
+     * @example
+     * // Get one KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KpiMetricFindFirstArgs>(args?: SelectSubset<T, KpiMetricFindFirstArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KpiMetric that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricFindFirstOrThrowArgs} args - Arguments to find a KpiMetric
+     * @example
+     * // Get one KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KpiMetricFindFirstOrThrowArgs>(args?: SelectSubset<T, KpiMetricFindFirstOrThrowArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KpiMetrics that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KpiMetrics
+     * const kpiMetrics = await prisma.kpiMetric.findMany()
+     * 
+     * // Get first 10 KpiMetrics
+     * const kpiMetrics = await prisma.kpiMetric.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kpiMetricWithIdOnly = await prisma.kpiMetric.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KpiMetricFindManyArgs>(args?: SelectSubset<T, KpiMetricFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KpiMetric.
+     * @param {KpiMetricCreateArgs} args - Arguments to create a KpiMetric.
+     * @example
+     * // Create one KpiMetric
+     * const KpiMetric = await prisma.kpiMetric.create({
+     *   data: {
+     *     // ... data to create a KpiMetric
+     *   }
+     * })
+     * 
+     */
+    create<T extends KpiMetricCreateArgs>(args: SelectSubset<T, KpiMetricCreateArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KpiMetrics.
+     * @param {KpiMetricCreateManyArgs} args - Arguments to create many KpiMetrics.
+     * @example
+     * // Create many KpiMetrics
+     * const kpiMetric = await prisma.kpiMetric.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KpiMetricCreateManyArgs>(args?: SelectSubset<T, KpiMetricCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KpiMetrics and returns the data saved in the database.
+     * @param {KpiMetricCreateManyAndReturnArgs} args - Arguments to create many KpiMetrics.
+     * @example
+     * // Create many KpiMetrics
+     * const kpiMetric = await prisma.kpiMetric.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KpiMetrics and only return the `id`
+     * const kpiMetricWithIdOnly = await prisma.kpiMetric.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KpiMetricCreateManyAndReturnArgs>(args?: SelectSubset<T, KpiMetricCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KpiMetric.
+     * @param {KpiMetricDeleteArgs} args - Arguments to delete one KpiMetric.
+     * @example
+     * // Delete one KpiMetric
+     * const KpiMetric = await prisma.kpiMetric.delete({
+     *   where: {
+     *     // ... filter to delete one KpiMetric
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KpiMetricDeleteArgs>(args: SelectSubset<T, KpiMetricDeleteArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KpiMetric.
+     * @param {KpiMetricUpdateArgs} args - Arguments to update one KpiMetric.
+     * @example
+     * // Update one KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KpiMetricUpdateArgs>(args: SelectSubset<T, KpiMetricUpdateArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KpiMetrics.
+     * @param {KpiMetricDeleteManyArgs} args - Arguments to filter KpiMetrics to delete.
+     * @example
+     * // Delete a few KpiMetrics
+     * const { count } = await prisma.kpiMetric.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KpiMetricDeleteManyArgs>(args?: SelectSubset<T, KpiMetricDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KpiMetrics.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KpiMetrics
+     * const kpiMetric = await prisma.kpiMetric.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KpiMetricUpdateManyArgs>(args: SelectSubset<T, KpiMetricUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KpiMetrics and returns the data updated in the database.
+     * @param {KpiMetricUpdateManyAndReturnArgs} args - Arguments to update many KpiMetrics.
+     * @example
+     * // Update many KpiMetrics
+     * const kpiMetric = await prisma.kpiMetric.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KpiMetrics and only return the `id`
+     * const kpiMetricWithIdOnly = await prisma.kpiMetric.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KpiMetricUpdateManyAndReturnArgs>(args: SelectSubset<T, KpiMetricUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KpiMetric.
+     * @param {KpiMetricUpsertArgs} args - Arguments to update or create a KpiMetric.
+     * @example
+     * // Update or create a KpiMetric
+     * const kpiMetric = await prisma.kpiMetric.upsert({
+     *   create: {
+     *     // ... data to create a KpiMetric
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KpiMetric we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KpiMetricUpsertArgs>(args: SelectSubset<T, KpiMetricUpsertArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KpiMetrics.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricCountArgs} args - Arguments to filter KpiMetrics to count.
+     * @example
+     * // Count the number of KpiMetrics
+     * const count = await prisma.kpiMetric.count({
+     *   where: {
+     *     // ... the filter for the KpiMetrics we want to count
+     *   }
+     * })
+    **/
+    count<T extends KpiMetricCountArgs>(
+      args?: Subset<T, KpiMetricCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KpiMetricCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KpiMetric.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KpiMetricAggregateArgs>(args: Subset<T, KpiMetricAggregateArgs>): Prisma.PrismaPromise<GetKpiMetricAggregateType<T>>
+
+    /**
+     * Group by KpiMetric.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiMetricGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KpiMetricGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KpiMetricGroupByArgs['orderBy'] }
+        : { orderBy?: KpiMetricGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KpiMetricGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKpiMetricGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KpiMetric model
+   */
+  readonly fields: KpiMetricFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KpiMetric.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KpiMetricClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    records<T extends KpiMetric$recordsArgs<ExtArgs> = {}>(args?: Subset<T, KpiMetric$recordsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KpiMetric model
+   */
+  interface KpiMetricFieldRefs {
+    readonly id: FieldRef<"KpiMetric", 'String'>
+    readonly name: FieldRef<"KpiMetric", 'String'>
+    readonly description: FieldRef<"KpiMetric", 'String'>
+    readonly unit: FieldRef<"KpiMetric", 'String'>
+    readonly targetValue: FieldRef<"KpiMetric", 'Decimal'>
+    readonly frequency: FieldRef<"KpiMetric", 'KpiFrequency'>
+    readonly orgUnitId: FieldRef<"KpiMetric", 'String'>
+    readonly isActive: FieldRef<"KpiMetric", 'Boolean'>
+    readonly createdAt: FieldRef<"KpiMetric", 'DateTime'>
+    readonly updatedAt: FieldRef<"KpiMetric", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KpiMetric findUnique
+   */
+  export type KpiMetricFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiMetric to fetch.
+     */
+    where: KpiMetricWhereUniqueInput
+  }
+
+  /**
+   * KpiMetric findUniqueOrThrow
+   */
+  export type KpiMetricFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiMetric to fetch.
+     */
+    where: KpiMetricWhereUniqueInput
+  }
+
+  /**
+   * KpiMetric findFirst
+   */
+  export type KpiMetricFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiMetric to fetch.
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiMetrics to fetch.
+     */
+    orderBy?: KpiMetricOrderByWithRelationInput | KpiMetricOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KpiMetrics.
+     */
+    cursor?: KpiMetricWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiMetrics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiMetrics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiMetrics.
+     */
+    distinct?: KpiMetricScalarFieldEnum | KpiMetricScalarFieldEnum[]
+  }
+
+  /**
+   * KpiMetric findFirstOrThrow
+   */
+  export type KpiMetricFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiMetric to fetch.
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiMetrics to fetch.
+     */
+    orderBy?: KpiMetricOrderByWithRelationInput | KpiMetricOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KpiMetrics.
+     */
+    cursor?: KpiMetricWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiMetrics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiMetrics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiMetrics.
+     */
+    distinct?: KpiMetricScalarFieldEnum | KpiMetricScalarFieldEnum[]
+  }
+
+  /**
+   * KpiMetric findMany
+   */
+  export type KpiMetricFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiMetrics to fetch.
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiMetrics to fetch.
+     */
+    orderBy?: KpiMetricOrderByWithRelationInput | KpiMetricOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KpiMetrics.
+     */
+    cursor?: KpiMetricWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiMetrics from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiMetrics.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiMetrics.
+     */
+    distinct?: KpiMetricScalarFieldEnum | KpiMetricScalarFieldEnum[]
+  }
+
+  /**
+   * KpiMetric create
+   */
+  export type KpiMetricCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * The data needed to create a KpiMetric.
+     */
+    data: XOR<KpiMetricCreateInput, KpiMetricUncheckedCreateInput>
+  }
+
+  /**
+   * KpiMetric createMany
+   */
+  export type KpiMetricCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KpiMetrics.
+     */
+    data: KpiMetricCreateManyInput | KpiMetricCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KpiMetric createManyAndReturn
+   */
+  export type KpiMetricCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * The data used to create many KpiMetrics.
+     */
+    data: KpiMetricCreateManyInput | KpiMetricCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KpiMetric update
+   */
+  export type KpiMetricUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * The data needed to update a KpiMetric.
+     */
+    data: XOR<KpiMetricUpdateInput, KpiMetricUncheckedUpdateInput>
+    /**
+     * Choose, which KpiMetric to update.
+     */
+    where: KpiMetricWhereUniqueInput
+  }
+
+  /**
+   * KpiMetric updateMany
+   */
+  export type KpiMetricUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KpiMetrics.
+     */
+    data: XOR<KpiMetricUpdateManyMutationInput, KpiMetricUncheckedUpdateManyInput>
+    /**
+     * Filter which KpiMetrics to update
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * Limit how many KpiMetrics to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KpiMetric updateManyAndReturn
+   */
+  export type KpiMetricUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * The data used to update KpiMetrics.
+     */
+    data: XOR<KpiMetricUpdateManyMutationInput, KpiMetricUncheckedUpdateManyInput>
+    /**
+     * Filter which KpiMetrics to update
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * Limit how many KpiMetrics to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KpiMetric upsert
+   */
+  export type KpiMetricUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * The filter to search for the KpiMetric to update in case it exists.
+     */
+    where: KpiMetricWhereUniqueInput
+    /**
+     * In case the KpiMetric found by the `where` argument doesn't exist, create a new KpiMetric with this data.
+     */
+    create: XOR<KpiMetricCreateInput, KpiMetricUncheckedCreateInput>
+    /**
+     * In case the KpiMetric was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KpiMetricUpdateInput, KpiMetricUncheckedUpdateInput>
+  }
+
+  /**
+   * KpiMetric delete
+   */
+  export type KpiMetricDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+    /**
+     * Filter which KpiMetric to delete.
+     */
+    where: KpiMetricWhereUniqueInput
+  }
+
+  /**
+   * KpiMetric deleteMany
+   */
+  export type KpiMetricDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KpiMetrics to delete
+     */
+    where?: KpiMetricWhereInput
+    /**
+     * Limit how many KpiMetrics to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KpiMetric.records
+   */
+  export type KpiMetric$recordsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    where?: KpiRecordWhereInput
+    orderBy?: KpiRecordOrderByWithRelationInput | KpiRecordOrderByWithRelationInput[]
+    cursor?: KpiRecordWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: KpiRecordScalarFieldEnum | KpiRecordScalarFieldEnum[]
+  }
+
+  /**
+   * KpiMetric without action
+   */
+  export type KpiMetricDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiMetric
+     */
+    select?: KpiMetricSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiMetric
+     */
+    omit?: KpiMetricOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiMetricInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model KpiRecord
+   */
+
+  export type AggregateKpiRecord = {
+    _count: KpiRecordCountAggregateOutputType | null
+    _avg: KpiRecordAvgAggregateOutputType | null
+    _sum: KpiRecordSumAggregateOutputType | null
+    _min: KpiRecordMinAggregateOutputType | null
+    _max: KpiRecordMaxAggregateOutputType | null
+  }
+
+  export type KpiRecordAvgAggregateOutputType = {
+    value: Decimal | null
+  }
+
+  export type KpiRecordSumAggregateOutputType = {
+    value: Decimal | null
+  }
+
+  export type KpiRecordMinAggregateOutputType = {
+    id: string | null
+    metricId: string | null
+    period: string | null
+    value: Decimal | null
+    notes: string | null
+    createdAt: Date | null
+  }
+
+  export type KpiRecordMaxAggregateOutputType = {
+    id: string | null
+    metricId: string | null
+    period: string | null
+    value: Decimal | null
+    notes: string | null
+    createdAt: Date | null
+  }
+
+  export type KpiRecordCountAggregateOutputType = {
+    id: number
+    metricId: number
+    period: number
+    value: number
+    notes: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type KpiRecordAvgAggregateInputType = {
+    value?: true
+  }
+
+  export type KpiRecordSumAggregateInputType = {
+    value?: true
+  }
+
+  export type KpiRecordMinAggregateInputType = {
+    id?: true
+    metricId?: true
+    period?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+  }
+
+  export type KpiRecordMaxAggregateInputType = {
+    id?: true
+    metricId?: true
+    period?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+  }
+
+  export type KpiRecordCountAggregateInputType = {
+    id?: true
+    metricId?: true
+    period?: true
+    value?: true
+    notes?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type KpiRecordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KpiRecord to aggregate.
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiRecords to fetch.
+     */
+    orderBy?: KpiRecordOrderByWithRelationInput | KpiRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: KpiRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned KpiRecords
+    **/
+    _count?: true | KpiRecordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: KpiRecordAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: KpiRecordSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: KpiRecordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: KpiRecordMaxAggregateInputType
+  }
+
+  export type GetKpiRecordAggregateType<T extends KpiRecordAggregateArgs> = {
+        [P in keyof T & keyof AggregateKpiRecord]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateKpiRecord[P]>
+      : GetScalarType<T[P], AggregateKpiRecord[P]>
+  }
+
+
+
+
+  export type KpiRecordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: KpiRecordWhereInput
+    orderBy?: KpiRecordOrderByWithAggregationInput | KpiRecordOrderByWithAggregationInput[]
+    by: KpiRecordScalarFieldEnum[] | KpiRecordScalarFieldEnum
+    having?: KpiRecordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: KpiRecordCountAggregateInputType | true
+    _avg?: KpiRecordAvgAggregateInputType
+    _sum?: KpiRecordSumAggregateInputType
+    _min?: KpiRecordMinAggregateInputType
+    _max?: KpiRecordMaxAggregateInputType
+  }
+
+  export type KpiRecordGroupByOutputType = {
+    id: string
+    metricId: string
+    period: string
+    value: Decimal
+    notes: string | null
+    createdAt: Date
+    _count: KpiRecordCountAggregateOutputType | null
+    _avg: KpiRecordAvgAggregateOutputType | null
+    _sum: KpiRecordSumAggregateOutputType | null
+    _min: KpiRecordMinAggregateOutputType | null
+    _max: KpiRecordMaxAggregateOutputType | null
+  }
+
+  type GetKpiRecordGroupByPayload<T extends KpiRecordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<KpiRecordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof KpiRecordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], KpiRecordGroupByOutputType[P]>
+            : GetScalarType<T[P], KpiRecordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type KpiRecordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    metricId?: boolean
+    period?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kpiRecord"]>
+
+  export type KpiRecordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    metricId?: boolean
+    period?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kpiRecord"]>
+
+  export type KpiRecordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    metricId?: boolean
+    period?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["kpiRecord"]>
+
+  export type KpiRecordSelectScalar = {
+    id?: boolean
+    metricId?: boolean
+    period?: boolean
+    value?: boolean
+    notes?: boolean
+    createdAt?: boolean
+  }
+
+  export type KpiRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "metricId" | "period" | "value" | "notes" | "createdAt", ExtArgs["result"]["kpiRecord"]>
+  export type KpiRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }
+  export type KpiRecordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }
+  export type KpiRecordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    metric?: boolean | KpiMetricDefaultArgs<ExtArgs>
+  }
+
+  export type $KpiRecordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "KpiRecord"
+    objects: {
+      metric: Prisma.$KpiMetricPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      metricId: string
+      period: string
+      value: Prisma.Decimal
+      notes: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["kpiRecord"]>
+    composites: {}
+  }
+
+  type KpiRecordGetPayload<S extends boolean | null | undefined | KpiRecordDefaultArgs> = $Result.GetResult<Prisma.$KpiRecordPayload, S>
+
+  type KpiRecordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<KpiRecordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: KpiRecordCountAggregateInputType | true
+    }
+
+  export interface KpiRecordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['KpiRecord'], meta: { name: 'KpiRecord' } }
+    /**
+     * Find zero or one KpiRecord that matches the filter.
+     * @param {KpiRecordFindUniqueArgs} args - Arguments to find a KpiRecord
+     * @example
+     * // Get one KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends KpiRecordFindUniqueArgs>(args: SelectSubset<T, KpiRecordFindUniqueArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one KpiRecord that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {KpiRecordFindUniqueOrThrowArgs} args - Arguments to find a KpiRecord
+     * @example
+     * // Get one KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends KpiRecordFindUniqueOrThrowArgs>(args: SelectSubset<T, KpiRecordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KpiRecord that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordFindFirstArgs} args - Arguments to find a KpiRecord
+     * @example
+     * // Get one KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends KpiRecordFindFirstArgs>(args?: SelectSubset<T, KpiRecordFindFirstArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first KpiRecord that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordFindFirstOrThrowArgs} args - Arguments to find a KpiRecord
+     * @example
+     * // Get one KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends KpiRecordFindFirstOrThrowArgs>(args?: SelectSubset<T, KpiRecordFindFirstOrThrowArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more KpiRecords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all KpiRecords
+     * const kpiRecords = await prisma.kpiRecord.findMany()
+     * 
+     * // Get first 10 KpiRecords
+     * const kpiRecords = await prisma.kpiRecord.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const kpiRecordWithIdOnly = await prisma.kpiRecord.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends KpiRecordFindManyArgs>(args?: SelectSubset<T, KpiRecordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a KpiRecord.
+     * @param {KpiRecordCreateArgs} args - Arguments to create a KpiRecord.
+     * @example
+     * // Create one KpiRecord
+     * const KpiRecord = await prisma.kpiRecord.create({
+     *   data: {
+     *     // ... data to create a KpiRecord
+     *   }
+     * })
+     * 
+     */
+    create<T extends KpiRecordCreateArgs>(args: SelectSubset<T, KpiRecordCreateArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many KpiRecords.
+     * @param {KpiRecordCreateManyArgs} args - Arguments to create many KpiRecords.
+     * @example
+     * // Create many KpiRecords
+     * const kpiRecord = await prisma.kpiRecord.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends KpiRecordCreateManyArgs>(args?: SelectSubset<T, KpiRecordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many KpiRecords and returns the data saved in the database.
+     * @param {KpiRecordCreateManyAndReturnArgs} args - Arguments to create many KpiRecords.
+     * @example
+     * // Create many KpiRecords
+     * const kpiRecord = await prisma.kpiRecord.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many KpiRecords and only return the `id`
+     * const kpiRecordWithIdOnly = await prisma.kpiRecord.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends KpiRecordCreateManyAndReturnArgs>(args?: SelectSubset<T, KpiRecordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a KpiRecord.
+     * @param {KpiRecordDeleteArgs} args - Arguments to delete one KpiRecord.
+     * @example
+     * // Delete one KpiRecord
+     * const KpiRecord = await prisma.kpiRecord.delete({
+     *   where: {
+     *     // ... filter to delete one KpiRecord
+     *   }
+     * })
+     * 
+     */
+    delete<T extends KpiRecordDeleteArgs>(args: SelectSubset<T, KpiRecordDeleteArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one KpiRecord.
+     * @param {KpiRecordUpdateArgs} args - Arguments to update one KpiRecord.
+     * @example
+     * // Update one KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends KpiRecordUpdateArgs>(args: SelectSubset<T, KpiRecordUpdateArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more KpiRecords.
+     * @param {KpiRecordDeleteManyArgs} args - Arguments to filter KpiRecords to delete.
+     * @example
+     * // Delete a few KpiRecords
+     * const { count } = await prisma.kpiRecord.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends KpiRecordDeleteManyArgs>(args?: SelectSubset<T, KpiRecordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KpiRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many KpiRecords
+     * const kpiRecord = await prisma.kpiRecord.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends KpiRecordUpdateManyArgs>(args: SelectSubset<T, KpiRecordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more KpiRecords and returns the data updated in the database.
+     * @param {KpiRecordUpdateManyAndReturnArgs} args - Arguments to update many KpiRecords.
+     * @example
+     * // Update many KpiRecords
+     * const kpiRecord = await prisma.kpiRecord.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more KpiRecords and only return the `id`
+     * const kpiRecordWithIdOnly = await prisma.kpiRecord.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends KpiRecordUpdateManyAndReturnArgs>(args: SelectSubset<T, KpiRecordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one KpiRecord.
+     * @param {KpiRecordUpsertArgs} args - Arguments to update or create a KpiRecord.
+     * @example
+     * // Update or create a KpiRecord
+     * const kpiRecord = await prisma.kpiRecord.upsert({
+     *   create: {
+     *     // ... data to create a KpiRecord
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the KpiRecord we want to update
+     *   }
+     * })
+     */
+    upsert<T extends KpiRecordUpsertArgs>(args: SelectSubset<T, KpiRecordUpsertArgs<ExtArgs>>): Prisma__KpiRecordClient<$Result.GetResult<Prisma.$KpiRecordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of KpiRecords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordCountArgs} args - Arguments to filter KpiRecords to count.
+     * @example
+     * // Count the number of KpiRecords
+     * const count = await prisma.kpiRecord.count({
+     *   where: {
+     *     // ... the filter for the KpiRecords we want to count
+     *   }
+     * })
+    **/
+    count<T extends KpiRecordCountArgs>(
+      args?: Subset<T, KpiRecordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], KpiRecordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a KpiRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends KpiRecordAggregateArgs>(args: Subset<T, KpiRecordAggregateArgs>): Prisma.PrismaPromise<GetKpiRecordAggregateType<T>>
+
+    /**
+     * Group by KpiRecord.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {KpiRecordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends KpiRecordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: KpiRecordGroupByArgs['orderBy'] }
+        : { orderBy?: KpiRecordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, KpiRecordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetKpiRecordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the KpiRecord model
+   */
+  readonly fields: KpiRecordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for KpiRecord.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__KpiRecordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    metric<T extends KpiMetricDefaultArgs<ExtArgs> = {}>(args?: Subset<T, KpiMetricDefaultArgs<ExtArgs>>): Prisma__KpiMetricClient<$Result.GetResult<Prisma.$KpiMetricPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the KpiRecord model
+   */
+  interface KpiRecordFieldRefs {
+    readonly id: FieldRef<"KpiRecord", 'String'>
+    readonly metricId: FieldRef<"KpiRecord", 'String'>
+    readonly period: FieldRef<"KpiRecord", 'String'>
+    readonly value: FieldRef<"KpiRecord", 'Decimal'>
+    readonly notes: FieldRef<"KpiRecord", 'String'>
+    readonly createdAt: FieldRef<"KpiRecord", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * KpiRecord findUnique
+   */
+  export type KpiRecordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiRecord to fetch.
+     */
+    where: KpiRecordWhereUniqueInput
+  }
+
+  /**
+   * KpiRecord findUniqueOrThrow
+   */
+  export type KpiRecordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiRecord to fetch.
+     */
+    where: KpiRecordWhereUniqueInput
+  }
+
+  /**
+   * KpiRecord findFirst
+   */
+  export type KpiRecordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiRecord to fetch.
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiRecords to fetch.
+     */
+    orderBy?: KpiRecordOrderByWithRelationInput | KpiRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KpiRecords.
+     */
+    cursor?: KpiRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiRecords.
+     */
+    distinct?: KpiRecordScalarFieldEnum | KpiRecordScalarFieldEnum[]
+  }
+
+  /**
+   * KpiRecord findFirstOrThrow
+   */
+  export type KpiRecordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiRecord to fetch.
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiRecords to fetch.
+     */
+    orderBy?: KpiRecordOrderByWithRelationInput | KpiRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for KpiRecords.
+     */
+    cursor?: KpiRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiRecords.
+     */
+    distinct?: KpiRecordScalarFieldEnum | KpiRecordScalarFieldEnum[]
+  }
+
+  /**
+   * KpiRecord findMany
+   */
+  export type KpiRecordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter, which KpiRecords to fetch.
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of KpiRecords to fetch.
+     */
+    orderBy?: KpiRecordOrderByWithRelationInput | KpiRecordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing KpiRecords.
+     */
+    cursor?: KpiRecordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` KpiRecords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` KpiRecords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of KpiRecords.
+     */
+    distinct?: KpiRecordScalarFieldEnum | KpiRecordScalarFieldEnum[]
+  }
+
+  /**
+   * KpiRecord create
+   */
+  export type KpiRecordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to create a KpiRecord.
+     */
+    data: XOR<KpiRecordCreateInput, KpiRecordUncheckedCreateInput>
+  }
+
+  /**
+   * KpiRecord createMany
+   */
+  export type KpiRecordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many KpiRecords.
+     */
+    data: KpiRecordCreateManyInput | KpiRecordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * KpiRecord createManyAndReturn
+   */
+  export type KpiRecordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * The data used to create many KpiRecords.
+     */
+    data: KpiRecordCreateManyInput | KpiRecordCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KpiRecord update
+   */
+  export type KpiRecordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * The data needed to update a KpiRecord.
+     */
+    data: XOR<KpiRecordUpdateInput, KpiRecordUncheckedUpdateInput>
+    /**
+     * Choose, which KpiRecord to update.
+     */
+    where: KpiRecordWhereUniqueInput
+  }
+
+  /**
+   * KpiRecord updateMany
+   */
+  export type KpiRecordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update KpiRecords.
+     */
+    data: XOR<KpiRecordUpdateManyMutationInput, KpiRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which KpiRecords to update
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * Limit how many KpiRecords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * KpiRecord updateManyAndReturn
+   */
+  export type KpiRecordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * The data used to update KpiRecords.
+     */
+    data: XOR<KpiRecordUpdateManyMutationInput, KpiRecordUncheckedUpdateManyInput>
+    /**
+     * Filter which KpiRecords to update
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * Limit how many KpiRecords to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * KpiRecord upsert
+   */
+  export type KpiRecordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * The filter to search for the KpiRecord to update in case it exists.
+     */
+    where: KpiRecordWhereUniqueInput
+    /**
+     * In case the KpiRecord found by the `where` argument doesn't exist, create a new KpiRecord with this data.
+     */
+    create: XOR<KpiRecordCreateInput, KpiRecordUncheckedCreateInput>
+    /**
+     * In case the KpiRecord was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<KpiRecordUpdateInput, KpiRecordUncheckedUpdateInput>
+  }
+
+  /**
+   * KpiRecord delete
+   */
+  export type KpiRecordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+    /**
+     * Filter which KpiRecord to delete.
+     */
+    where: KpiRecordWhereUniqueInput
+  }
+
+  /**
+   * KpiRecord deleteMany
+   */
+  export type KpiRecordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which KpiRecords to delete
+     */
+    where?: KpiRecordWhereInput
+    /**
+     * Limit how many KpiRecords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * KpiRecord without action
+   */
+  export type KpiRecordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the KpiRecord
+     */
+    select?: KpiRecordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the KpiRecord
+     */
+    omit?: KpiRecordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: KpiRecordInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -106081,6 +111234,66 @@ export namespace Prisma {
   export type SalaryColumnScalarFieldEnum = (typeof SalaryColumnScalarFieldEnum)[keyof typeof SalaryColumnScalarFieldEnum]
 
 
+  export const OkrObjectiveScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    cycle: 'cycle',
+    year: 'year',
+    ownerId: 'ownerId',
+    orgUnitId: 'orgUnitId',
+    status: 'status',
+    processInstanceId: 'processInstanceId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type OkrObjectiveScalarFieldEnum = (typeof OkrObjectiveScalarFieldEnum)[keyof typeof OkrObjectiveScalarFieldEnum]
+
+
+  export const OkrKeyResultScalarFieldEnum: {
+    id: 'id',
+    objectiveId: 'objectiveId',
+    title: 'title',
+    unit: 'unit',
+    startValue: 'startValue',
+    targetValue: 'targetValue',
+    currentValue: 'currentValue',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type OkrKeyResultScalarFieldEnum = (typeof OkrKeyResultScalarFieldEnum)[keyof typeof OkrKeyResultScalarFieldEnum]
+
+
+  export const KpiMetricScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    description: 'description',
+    unit: 'unit',
+    targetValue: 'targetValue',
+    frequency: 'frequency',
+    orgUnitId: 'orgUnitId',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type KpiMetricScalarFieldEnum = (typeof KpiMetricScalarFieldEnum)[keyof typeof KpiMetricScalarFieldEnum]
+
+
+  export const KpiRecordScalarFieldEnum: {
+    id: 'id',
+    metricId: 'metricId',
+    period: 'period',
+    value: 'value',
+    notes: 'notes',
+    createdAt: 'createdAt'
+  };
+
+  export type KpiRecordScalarFieldEnum = (typeof KpiRecordScalarFieldEnum)[keyof typeof KpiRecordScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -106867,6 +112080,48 @@ export namespace Prisma {
    */
   export type ListEnumSalaryColumnSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryColumnSource[]'>
     
+
+
+  /**
+   * Reference to a field of type 'OkrCycle'
+   */
+  export type EnumOkrCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OkrCycle'>
+    
+
+
+  /**
+   * Reference to a field of type 'OkrCycle[]'
+   */
+  export type ListEnumOkrCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OkrCycle[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'OkrStatus'
+   */
+  export type EnumOkrStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OkrStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'OkrStatus[]'
+   */
+  export type ListEnumOkrStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OkrStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'KpiFrequency'
+   */
+  export type EnumKpiFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KpiFrequency'>
+    
+
+
+  /**
+   * Reference to a field of type 'KpiFrequency[]'
+   */
+  export type ListEnumKpiFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KpiFrequency[]'>
+    
   /**
    * Deep Input Types
    */
@@ -106913,6 +112168,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusListRelationFilter
     auditLogs?: AuditLogListRelationFilter
     crmActivities?: CrmActivityListRelationFilter
+    okrObjectives?: OkrObjectiveListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -106953,6 +112209,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
     crmActivities?: CrmActivityOrderByRelationAggregateInput
+    okrObjectives?: OkrObjectiveOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -106996,6 +112253,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusListRelationFilter
     auditLogs?: AuditLogListRelationFilter
     crmActivities?: CrmActivityListRelationFilter
+    okrObjectives?: OkrObjectiveListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -113499,6 +118757,318 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SalaryColumn"> | Date | string
   }
 
+  export type OkrObjectiveWhereInput = {
+    AND?: OkrObjectiveWhereInput | OkrObjectiveWhereInput[]
+    OR?: OkrObjectiveWhereInput[]
+    NOT?: OkrObjectiveWhereInput | OkrObjectiveWhereInput[]
+    id?: StringFilter<"OkrObjective"> | string
+    title?: StringFilter<"OkrObjective"> | string
+    description?: StringNullableFilter<"OkrObjective"> | string | null
+    cycle?: EnumOkrCycleFilter<"OkrObjective"> | $Enums.OkrCycle
+    year?: IntFilter<"OkrObjective"> | number
+    ownerId?: StringFilter<"OkrObjective"> | string
+    orgUnitId?: StringNullableFilter<"OkrObjective"> | string | null
+    status?: EnumOkrStatusFilter<"OkrObjective"> | $Enums.OkrStatus
+    processInstanceId?: StringNullableFilter<"OkrObjective"> | string | null
+    createdAt?: DateTimeFilter<"OkrObjective"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrObjective"> | Date | string
+    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    keyResults?: OkrKeyResultListRelationFilter
+  }
+
+  export type OkrObjectiveOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    cycle?: SortOrder
+    year?: SortOrder
+    ownerId?: SortOrder
+    orgUnitId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    processInstanceId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    owner?: UserOrderByWithRelationInput
+    keyResults?: OkrKeyResultOrderByRelationAggregateInput
+  }
+
+  export type OkrObjectiveWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OkrObjectiveWhereInput | OkrObjectiveWhereInput[]
+    OR?: OkrObjectiveWhereInput[]
+    NOT?: OkrObjectiveWhereInput | OkrObjectiveWhereInput[]
+    title?: StringFilter<"OkrObjective"> | string
+    description?: StringNullableFilter<"OkrObjective"> | string | null
+    cycle?: EnumOkrCycleFilter<"OkrObjective"> | $Enums.OkrCycle
+    year?: IntFilter<"OkrObjective"> | number
+    ownerId?: StringFilter<"OkrObjective"> | string
+    orgUnitId?: StringNullableFilter<"OkrObjective"> | string | null
+    status?: EnumOkrStatusFilter<"OkrObjective"> | $Enums.OkrStatus
+    processInstanceId?: StringNullableFilter<"OkrObjective"> | string | null
+    createdAt?: DateTimeFilter<"OkrObjective"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrObjective"> | Date | string
+    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    keyResults?: OkrKeyResultListRelationFilter
+  }, "id">
+
+  export type OkrObjectiveOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    cycle?: SortOrder
+    year?: SortOrder
+    ownerId?: SortOrder
+    orgUnitId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    processInstanceId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: OkrObjectiveCountOrderByAggregateInput
+    _avg?: OkrObjectiveAvgOrderByAggregateInput
+    _max?: OkrObjectiveMaxOrderByAggregateInput
+    _min?: OkrObjectiveMinOrderByAggregateInput
+    _sum?: OkrObjectiveSumOrderByAggregateInput
+  }
+
+  export type OkrObjectiveScalarWhereWithAggregatesInput = {
+    AND?: OkrObjectiveScalarWhereWithAggregatesInput | OkrObjectiveScalarWhereWithAggregatesInput[]
+    OR?: OkrObjectiveScalarWhereWithAggregatesInput[]
+    NOT?: OkrObjectiveScalarWhereWithAggregatesInput | OkrObjectiveScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OkrObjective"> | string
+    title?: StringWithAggregatesFilter<"OkrObjective"> | string
+    description?: StringNullableWithAggregatesFilter<"OkrObjective"> | string | null
+    cycle?: EnumOkrCycleWithAggregatesFilter<"OkrObjective"> | $Enums.OkrCycle
+    year?: IntWithAggregatesFilter<"OkrObjective"> | number
+    ownerId?: StringWithAggregatesFilter<"OkrObjective"> | string
+    orgUnitId?: StringNullableWithAggregatesFilter<"OkrObjective"> | string | null
+    status?: EnumOkrStatusWithAggregatesFilter<"OkrObjective"> | $Enums.OkrStatus
+    processInstanceId?: StringNullableWithAggregatesFilter<"OkrObjective"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"OkrObjective"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"OkrObjective"> | Date | string
+  }
+
+  export type OkrKeyResultWhereInput = {
+    AND?: OkrKeyResultWhereInput | OkrKeyResultWhereInput[]
+    OR?: OkrKeyResultWhereInput[]
+    NOT?: OkrKeyResultWhereInput | OkrKeyResultWhereInput[]
+    id?: StringFilter<"OkrKeyResult"> | string
+    objectiveId?: StringFilter<"OkrKeyResult"> | string
+    title?: StringFilter<"OkrKeyResult"> | string
+    unit?: StringFilter<"OkrKeyResult"> | string
+    startValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+    objective?: XOR<OkrObjectiveScalarRelationFilter, OkrObjectiveWhereInput>
+  }
+
+  export type OkrKeyResultOrderByWithRelationInput = {
+    id?: SortOrder
+    objectiveId?: SortOrder
+    title?: SortOrder
+    unit?: SortOrder
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    objective?: OkrObjectiveOrderByWithRelationInput
+  }
+
+  export type OkrKeyResultWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OkrKeyResultWhereInput | OkrKeyResultWhereInput[]
+    OR?: OkrKeyResultWhereInput[]
+    NOT?: OkrKeyResultWhereInput | OkrKeyResultWhereInput[]
+    objectiveId?: StringFilter<"OkrKeyResult"> | string
+    title?: StringFilter<"OkrKeyResult"> | string
+    unit?: StringFilter<"OkrKeyResult"> | string
+    startValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+    objective?: XOR<OkrObjectiveScalarRelationFilter, OkrObjectiveWhereInput>
+  }, "id">
+
+  export type OkrKeyResultOrderByWithAggregationInput = {
+    id?: SortOrder
+    objectiveId?: SortOrder
+    title?: SortOrder
+    unit?: SortOrder
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: OkrKeyResultCountOrderByAggregateInput
+    _avg?: OkrKeyResultAvgOrderByAggregateInput
+    _max?: OkrKeyResultMaxOrderByAggregateInput
+    _min?: OkrKeyResultMinOrderByAggregateInput
+    _sum?: OkrKeyResultSumOrderByAggregateInput
+  }
+
+  export type OkrKeyResultScalarWhereWithAggregatesInput = {
+    AND?: OkrKeyResultScalarWhereWithAggregatesInput | OkrKeyResultScalarWhereWithAggregatesInput[]
+    OR?: OkrKeyResultScalarWhereWithAggregatesInput[]
+    NOT?: OkrKeyResultScalarWhereWithAggregatesInput | OkrKeyResultScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OkrKeyResult"> | string
+    objectiveId?: StringWithAggregatesFilter<"OkrKeyResult"> | string
+    title?: StringWithAggregatesFilter<"OkrKeyResult"> | string
+    unit?: StringWithAggregatesFilter<"OkrKeyResult"> | string
+    startValue?: DecimalWithAggregatesFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalWithAggregatesFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalWithAggregatesFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeWithAggregatesFilter<"OkrKeyResult"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"OkrKeyResult"> | Date | string
+  }
+
+  export type KpiMetricWhereInput = {
+    AND?: KpiMetricWhereInput | KpiMetricWhereInput[]
+    OR?: KpiMetricWhereInput[]
+    NOT?: KpiMetricWhereInput | KpiMetricWhereInput[]
+    id?: StringFilter<"KpiMetric"> | string
+    name?: StringFilter<"KpiMetric"> | string
+    description?: StringNullableFilter<"KpiMetric"> | string | null
+    unit?: StringFilter<"KpiMetric"> | string
+    targetValue?: DecimalNullableFilter<"KpiMetric"> | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFilter<"KpiMetric"> | $Enums.KpiFrequency
+    orgUnitId?: StringNullableFilter<"KpiMetric"> | string | null
+    isActive?: BoolFilter<"KpiMetric"> | boolean
+    createdAt?: DateTimeFilter<"KpiMetric"> | Date | string
+    updatedAt?: DateTimeFilter<"KpiMetric"> | Date | string
+    records?: KpiRecordListRelationFilter
+  }
+
+  export type KpiMetricOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    unit?: SortOrder
+    targetValue?: SortOrderInput | SortOrder
+    frequency?: SortOrder
+    orgUnitId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    records?: KpiRecordOrderByRelationAggregateInput
+  }
+
+  export type KpiMetricWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: KpiMetricWhereInput | KpiMetricWhereInput[]
+    OR?: KpiMetricWhereInput[]
+    NOT?: KpiMetricWhereInput | KpiMetricWhereInput[]
+    name?: StringFilter<"KpiMetric"> | string
+    description?: StringNullableFilter<"KpiMetric"> | string | null
+    unit?: StringFilter<"KpiMetric"> | string
+    targetValue?: DecimalNullableFilter<"KpiMetric"> | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFilter<"KpiMetric"> | $Enums.KpiFrequency
+    orgUnitId?: StringNullableFilter<"KpiMetric"> | string | null
+    isActive?: BoolFilter<"KpiMetric"> | boolean
+    createdAt?: DateTimeFilter<"KpiMetric"> | Date | string
+    updatedAt?: DateTimeFilter<"KpiMetric"> | Date | string
+    records?: KpiRecordListRelationFilter
+  }, "id">
+
+  export type KpiMetricOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    unit?: SortOrder
+    targetValue?: SortOrderInput | SortOrder
+    frequency?: SortOrder
+    orgUnitId?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: KpiMetricCountOrderByAggregateInput
+    _avg?: KpiMetricAvgOrderByAggregateInput
+    _max?: KpiMetricMaxOrderByAggregateInput
+    _min?: KpiMetricMinOrderByAggregateInput
+    _sum?: KpiMetricSumOrderByAggregateInput
+  }
+
+  export type KpiMetricScalarWhereWithAggregatesInput = {
+    AND?: KpiMetricScalarWhereWithAggregatesInput | KpiMetricScalarWhereWithAggregatesInput[]
+    OR?: KpiMetricScalarWhereWithAggregatesInput[]
+    NOT?: KpiMetricScalarWhereWithAggregatesInput | KpiMetricScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KpiMetric"> | string
+    name?: StringWithAggregatesFilter<"KpiMetric"> | string
+    description?: StringNullableWithAggregatesFilter<"KpiMetric"> | string | null
+    unit?: StringWithAggregatesFilter<"KpiMetric"> | string
+    targetValue?: DecimalNullableWithAggregatesFilter<"KpiMetric"> | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyWithAggregatesFilter<"KpiMetric"> | $Enums.KpiFrequency
+    orgUnitId?: StringNullableWithAggregatesFilter<"KpiMetric"> | string | null
+    isActive?: BoolWithAggregatesFilter<"KpiMetric"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"KpiMetric"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"KpiMetric"> | Date | string
+  }
+
+  export type KpiRecordWhereInput = {
+    AND?: KpiRecordWhereInput | KpiRecordWhereInput[]
+    OR?: KpiRecordWhereInput[]
+    NOT?: KpiRecordWhereInput | KpiRecordWhereInput[]
+    id?: StringFilter<"KpiRecord"> | string
+    metricId?: StringFilter<"KpiRecord"> | string
+    period?: StringFilter<"KpiRecord"> | string
+    value?: DecimalFilter<"KpiRecord"> | Decimal | DecimalJsLike | number | string
+    notes?: StringNullableFilter<"KpiRecord"> | string | null
+    createdAt?: DateTimeFilter<"KpiRecord"> | Date | string
+    metric?: XOR<KpiMetricScalarRelationFilter, KpiMetricWhereInput>
+  }
+
+  export type KpiRecordOrderByWithRelationInput = {
+    id?: SortOrder
+    metricId?: SortOrder
+    period?: SortOrder
+    value?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    metric?: KpiMetricOrderByWithRelationInput
+  }
+
+  export type KpiRecordWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    metricId_period?: KpiRecordMetricIdPeriodCompoundUniqueInput
+    AND?: KpiRecordWhereInput | KpiRecordWhereInput[]
+    OR?: KpiRecordWhereInput[]
+    NOT?: KpiRecordWhereInput | KpiRecordWhereInput[]
+    metricId?: StringFilter<"KpiRecord"> | string
+    period?: StringFilter<"KpiRecord"> | string
+    value?: DecimalFilter<"KpiRecord"> | Decimal | DecimalJsLike | number | string
+    notes?: StringNullableFilter<"KpiRecord"> | string | null
+    createdAt?: DateTimeFilter<"KpiRecord"> | Date | string
+    metric?: XOR<KpiMetricScalarRelationFilter, KpiMetricWhereInput>
+  }, "id" | "metricId_period">
+
+  export type KpiRecordOrderByWithAggregationInput = {
+    id?: SortOrder
+    metricId?: SortOrder
+    period?: SortOrder
+    value?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: KpiRecordCountOrderByAggregateInput
+    _avg?: KpiRecordAvgOrderByAggregateInput
+    _max?: KpiRecordMaxOrderByAggregateInput
+    _min?: KpiRecordMinOrderByAggregateInput
+    _sum?: KpiRecordSumOrderByAggregateInput
+  }
+
+  export type KpiRecordScalarWhereWithAggregatesInput = {
+    AND?: KpiRecordScalarWhereWithAggregatesInput | KpiRecordScalarWhereWithAggregatesInput[]
+    OR?: KpiRecordScalarWhereWithAggregatesInput[]
+    NOT?: KpiRecordScalarWhereWithAggregatesInput | KpiRecordScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"KpiRecord"> | string
+    metricId?: StringWithAggregatesFilter<"KpiRecord"> | string
+    period?: StringWithAggregatesFilter<"KpiRecord"> | string
+    value?: DecimalWithAggregatesFilter<"KpiRecord"> | Decimal | DecimalJsLike | number | string
+    notes?: StringNullableWithAggregatesFilter<"KpiRecord"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"KpiRecord"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -113536,6 +119106,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -113575,6 +119146,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUpdateInput = {
@@ -113614,6 +119186,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -113653,6 +119226,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -120716,6 +126290,347 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OkrObjectiveCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    owner: UserCreateNestedOneWithoutOkrObjectivesInput
+    keyResults?: OkrKeyResultCreateNestedManyWithoutObjectiveInput
+  }
+
+  export type OkrObjectiveUncheckedCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    ownerId: string
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    keyResults?: OkrKeyResultUncheckedCreateNestedManyWithoutObjectiveInput
+  }
+
+  export type OkrObjectiveUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutOkrObjectivesNestedInput
+    keyResults?: OkrKeyResultUpdateManyWithoutObjectiveNestedInput
+  }
+
+  export type OkrObjectiveUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    ownerId?: StringFieldUpdateOperationsInput | string
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    keyResults?: OkrKeyResultUncheckedUpdateManyWithoutObjectiveNestedInput
+  }
+
+  export type OkrObjectiveCreateManyInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    ownerId: string
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrObjectiveUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrObjectiveUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    ownerId?: StringFieldUpdateOperationsInput | string
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrKeyResultCreateInput = {
+    id?: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    objective: OkrObjectiveCreateNestedOneWithoutKeyResultsInput
+  }
+
+  export type OkrKeyResultUncheckedCreateInput = {
+    id?: string
+    objectiveId: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrKeyResultUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    objective?: OkrObjectiveUpdateOneRequiredWithoutKeyResultsNestedInput
+  }
+
+  export type OkrKeyResultUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    objectiveId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrKeyResultCreateManyInput = {
+    id?: string
+    objectiveId: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrKeyResultUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrKeyResultUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    objectiveId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiMetricCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    unit?: string
+    targetValue?: Decimal | DecimalJsLike | number | string | null
+    frequency?: $Enums.KpiFrequency
+    orgUnitId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    records?: KpiRecordCreateNestedManyWithoutMetricInput
+  }
+
+  export type KpiMetricUncheckedCreateInput = {
+    id?: string
+    name: string
+    description?: string | null
+    unit?: string
+    targetValue?: Decimal | DecimalJsLike | number | string | null
+    frequency?: $Enums.KpiFrequency
+    orgUnitId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    records?: KpiRecordUncheckedCreateNestedManyWithoutMetricInput
+  }
+
+  export type KpiMetricUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: KpiRecordUpdateManyWithoutMetricNestedInput
+  }
+
+  export type KpiMetricUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    records?: KpiRecordUncheckedUpdateManyWithoutMetricNestedInput
+  }
+
+  export type KpiMetricCreateManyInput = {
+    id?: string
+    name: string
+    description?: string | null
+    unit?: string
+    targetValue?: Decimal | DecimalJsLike | number | string | null
+    frequency?: $Enums.KpiFrequency
+    orgUnitId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KpiMetricUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiMetricUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordCreateInput = {
+    id?: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+    metric: KpiMetricCreateNestedOneWithoutRecordsInput
+  }
+
+  export type KpiRecordUncheckedCreateInput = {
+    id?: string
+    metricId: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type KpiRecordUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    metric?: KpiMetricUpdateOneRequiredWithoutRecordsNestedInput
+  }
+
+  export type KpiRecordUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    metricId?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordCreateManyInput = {
+    id?: string
+    metricId: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type KpiRecordUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    metricId?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -120905,6 +126820,12 @@ export namespace Prisma {
     none?: CrmActivityWhereInput
   }
 
+  export type OkrObjectiveListRelationFilter = {
+    every?: OkrObjectiveWhereInput
+    some?: OkrObjectiveWhereInput
+    none?: OkrObjectiveWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -120991,6 +126912,10 @@ export namespace Prisma {
   }
 
   export type CrmActivityOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OkrObjectiveOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -126298,6 +132223,272 @@ export namespace Prisma {
     _max?: NestedEnumSalaryColumnSourceFilter<$PrismaModel>
   }
 
+  export type EnumOkrCycleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrCycle | EnumOkrCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrCycleFilter<$PrismaModel> | $Enums.OkrCycle
+  }
+
+  export type EnumOkrStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrStatus | EnumOkrStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrStatusFilter<$PrismaModel> | $Enums.OkrStatus
+  }
+
+  export type OkrKeyResultListRelationFilter = {
+    every?: OkrKeyResultWhereInput
+    some?: OkrKeyResultWhereInput
+    none?: OkrKeyResultWhereInput
+  }
+
+  export type OkrKeyResultOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type OkrObjectiveCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    cycle?: SortOrder
+    year?: SortOrder
+    ownerId?: SortOrder
+    orgUnitId?: SortOrder
+    status?: SortOrder
+    processInstanceId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrObjectiveAvgOrderByAggregateInput = {
+    year?: SortOrder
+  }
+
+  export type OkrObjectiveMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    cycle?: SortOrder
+    year?: SortOrder
+    ownerId?: SortOrder
+    orgUnitId?: SortOrder
+    status?: SortOrder
+    processInstanceId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrObjectiveMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    cycle?: SortOrder
+    year?: SortOrder
+    ownerId?: SortOrder
+    orgUnitId?: SortOrder
+    status?: SortOrder
+    processInstanceId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrObjectiveSumOrderByAggregateInput = {
+    year?: SortOrder
+  }
+
+  export type EnumOkrCycleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrCycle | EnumOkrCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrCycleWithAggregatesFilter<$PrismaModel> | $Enums.OkrCycle
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOkrCycleFilter<$PrismaModel>
+    _max?: NestedEnumOkrCycleFilter<$PrismaModel>
+  }
+
+  export type EnumOkrStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrStatus | EnumOkrStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrStatusWithAggregatesFilter<$PrismaModel> | $Enums.OkrStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOkrStatusFilter<$PrismaModel>
+    _max?: NestedEnumOkrStatusFilter<$PrismaModel>
+  }
+
+  export type OkrObjectiveScalarRelationFilter = {
+    is?: OkrObjectiveWhereInput
+    isNot?: OkrObjectiveWhereInput
+  }
+
+  export type OkrKeyResultCountOrderByAggregateInput = {
+    id?: SortOrder
+    objectiveId?: SortOrder
+    title?: SortOrder
+    unit?: SortOrder
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrKeyResultAvgOrderByAggregateInput = {
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+  }
+
+  export type OkrKeyResultMaxOrderByAggregateInput = {
+    id?: SortOrder
+    objectiveId?: SortOrder
+    title?: SortOrder
+    unit?: SortOrder
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrKeyResultMinOrderByAggregateInput = {
+    id?: SortOrder
+    objectiveId?: SortOrder
+    title?: SortOrder
+    unit?: SortOrder
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type OkrKeyResultSumOrderByAggregateInput = {
+    startValue?: SortOrder
+    targetValue?: SortOrder
+    currentValue?: SortOrder
+  }
+
+  export type EnumKpiFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.KpiFrequency | EnumKpiFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumKpiFrequencyFilter<$PrismaModel> | $Enums.KpiFrequency
+  }
+
+  export type KpiRecordListRelationFilter = {
+    every?: KpiRecordWhereInput
+    some?: KpiRecordWhereInput
+    none?: KpiRecordWhereInput
+  }
+
+  export type KpiRecordOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type KpiMetricCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unit?: SortOrder
+    targetValue?: SortOrder
+    frequency?: SortOrder
+    orgUnitId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KpiMetricAvgOrderByAggregateInput = {
+    targetValue?: SortOrder
+  }
+
+  export type KpiMetricMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unit?: SortOrder
+    targetValue?: SortOrder
+    frequency?: SortOrder
+    orgUnitId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KpiMetricMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    unit?: SortOrder
+    targetValue?: SortOrder
+    frequency?: SortOrder
+    orgUnitId?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type KpiMetricSumOrderByAggregateInput = {
+    targetValue?: SortOrder
+  }
+
+  export type EnumKpiFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.KpiFrequency | EnumKpiFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumKpiFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.KpiFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumKpiFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumKpiFrequencyFilter<$PrismaModel>
+  }
+
+  export type KpiMetricScalarRelationFilter = {
+    is?: KpiMetricWhereInput
+    isNot?: KpiMetricWhereInput
+  }
+
+  export type KpiRecordMetricIdPeriodCompoundUniqueInput = {
+    metricId: string
+    period: string
+  }
+
+  export type KpiRecordCountOrderByAggregateInput = {
+    id?: SortOrder
+    metricId?: SortOrder
+    period?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KpiRecordAvgOrderByAggregateInput = {
+    value?: SortOrder
+  }
+
+  export type KpiRecordMaxOrderByAggregateInput = {
+    id?: SortOrder
+    metricId?: SortOrder
+    period?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KpiRecordMinOrderByAggregateInput = {
+    id?: SortOrder
+    metricId?: SortOrder
+    period?: SortOrder
+    value?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type KpiRecordSumOrderByAggregateInput = {
+    value?: SortOrder
+  }
+
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -126485,6 +132676,13 @@ export namespace Prisma {
     connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
   }
 
+  export type OkrObjectiveCreateNestedManyWithoutOwnerInput = {
+    create?: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput> | OkrObjectiveCreateWithoutOwnerInput[] | OkrObjectiveUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutOwnerInput | OkrObjectiveCreateOrConnectWithoutOwnerInput[]
+    createMany?: OkrObjectiveCreateManyOwnerInputEnvelope
+    connect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+  }
+
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -126664,6 +132862,13 @@ export namespace Prisma {
     connectOrCreate?: CrmActivityCreateOrConnectWithoutCreatedByInput | CrmActivityCreateOrConnectWithoutCreatedByInput[]
     createMany?: CrmActivityCreateManyCreatedByInputEnvelope
     connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+  }
+
+  export type OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput = {
+    create?: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput> | OkrObjectiveCreateWithoutOwnerInput[] | OkrObjectiveUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutOwnerInput | OkrObjectiveCreateOrConnectWithoutOwnerInput[]
+    createMany?: OkrObjectiveCreateManyOwnerInputEnvelope
+    connect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -127056,6 +133261,20 @@ export namespace Prisma {
     deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
   }
 
+  export type OkrObjectiveUpdateManyWithoutOwnerNestedInput = {
+    create?: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput> | OkrObjectiveCreateWithoutOwnerInput[] | OkrObjectiveUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutOwnerInput | OkrObjectiveCreateOrConnectWithoutOwnerInput[]
+    upsert?: OkrObjectiveUpsertWithWhereUniqueWithoutOwnerInput | OkrObjectiveUpsertWithWhereUniqueWithoutOwnerInput[]
+    createMany?: OkrObjectiveCreateManyOwnerInputEnvelope
+    set?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    disconnect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    delete?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    connect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    update?: OkrObjectiveUpdateWithWhereUniqueWithoutOwnerInput | OkrObjectiveUpdateWithWhereUniqueWithoutOwnerInput[]
+    updateMany?: OkrObjectiveUpdateManyWithWhereWithoutOwnerInput | OkrObjectiveUpdateManyWithWhereWithoutOwnerInput[]
+    deleteMany?: OkrObjectiveScalarWhereInput | OkrObjectiveScalarWhereInput[]
+  }
+
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -127414,6 +133633,20 @@ export namespace Prisma {
     update?: CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput | CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: CrmActivityUpdateManyWithWhereWithoutCreatedByInput | CrmActivityUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
+  }
+
+  export type OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput = {
+    create?: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput> | OkrObjectiveCreateWithoutOwnerInput[] | OkrObjectiveUncheckedCreateWithoutOwnerInput[]
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutOwnerInput | OkrObjectiveCreateOrConnectWithoutOwnerInput[]
+    upsert?: OkrObjectiveUpsertWithWhereUniqueWithoutOwnerInput | OkrObjectiveUpsertWithWhereUniqueWithoutOwnerInput[]
+    createMany?: OkrObjectiveCreateManyOwnerInputEnvelope
+    set?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    disconnect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    delete?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    connect?: OkrObjectiveWhereUniqueInput | OkrObjectiveWhereUniqueInput[]
+    update?: OkrObjectiveUpdateWithWhereUniqueWithoutOwnerInput | OkrObjectiveUpdateWithWhereUniqueWithoutOwnerInput[]
+    updateMany?: OkrObjectiveUpdateManyWithWhereWithoutOwnerInput | OkrObjectiveUpdateManyWithWhereWithoutOwnerInput[]
+    deleteMany?: OkrObjectiveScalarWhereInput | OkrObjectiveScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedManyWithoutOrgUnitInput = {
@@ -132317,6 +138550,144 @@ export namespace Prisma {
     update?: XOR<XOR<AllowanceTypeUpdateToOneWithWhereWithoutSalaryColumnsInput, AllowanceTypeUpdateWithoutSalaryColumnsInput>, AllowanceTypeUncheckedUpdateWithoutSalaryColumnsInput>
   }
 
+  export type UserCreateNestedOneWithoutOkrObjectivesInput = {
+    create?: XOR<UserCreateWithoutOkrObjectivesInput, UserUncheckedCreateWithoutOkrObjectivesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOkrObjectivesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type OkrKeyResultCreateNestedManyWithoutObjectiveInput = {
+    create?: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput> | OkrKeyResultCreateWithoutObjectiveInput[] | OkrKeyResultUncheckedCreateWithoutObjectiveInput[]
+    connectOrCreate?: OkrKeyResultCreateOrConnectWithoutObjectiveInput | OkrKeyResultCreateOrConnectWithoutObjectiveInput[]
+    createMany?: OkrKeyResultCreateManyObjectiveInputEnvelope
+    connect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+  }
+
+  export type OkrKeyResultUncheckedCreateNestedManyWithoutObjectiveInput = {
+    create?: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput> | OkrKeyResultCreateWithoutObjectiveInput[] | OkrKeyResultUncheckedCreateWithoutObjectiveInput[]
+    connectOrCreate?: OkrKeyResultCreateOrConnectWithoutObjectiveInput | OkrKeyResultCreateOrConnectWithoutObjectiveInput[]
+    createMany?: OkrKeyResultCreateManyObjectiveInputEnvelope
+    connect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+  }
+
+  export type EnumOkrCycleFieldUpdateOperationsInput = {
+    set?: $Enums.OkrCycle
+  }
+
+  export type EnumOkrStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OkrStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutOkrObjectivesNestedInput = {
+    create?: XOR<UserCreateWithoutOkrObjectivesInput, UserUncheckedCreateWithoutOkrObjectivesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutOkrObjectivesInput
+    upsert?: UserUpsertWithoutOkrObjectivesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOkrObjectivesInput, UserUpdateWithoutOkrObjectivesInput>, UserUncheckedUpdateWithoutOkrObjectivesInput>
+  }
+
+  export type OkrKeyResultUpdateManyWithoutObjectiveNestedInput = {
+    create?: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput> | OkrKeyResultCreateWithoutObjectiveInput[] | OkrKeyResultUncheckedCreateWithoutObjectiveInput[]
+    connectOrCreate?: OkrKeyResultCreateOrConnectWithoutObjectiveInput | OkrKeyResultCreateOrConnectWithoutObjectiveInput[]
+    upsert?: OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput | OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput[]
+    createMany?: OkrKeyResultCreateManyObjectiveInputEnvelope
+    set?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    disconnect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    delete?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    connect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    update?: OkrKeyResultUpdateWithWhereUniqueWithoutObjectiveInput | OkrKeyResultUpdateWithWhereUniqueWithoutObjectiveInput[]
+    updateMany?: OkrKeyResultUpdateManyWithWhereWithoutObjectiveInput | OkrKeyResultUpdateManyWithWhereWithoutObjectiveInput[]
+    deleteMany?: OkrKeyResultScalarWhereInput | OkrKeyResultScalarWhereInput[]
+  }
+
+  export type OkrKeyResultUncheckedUpdateManyWithoutObjectiveNestedInput = {
+    create?: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput> | OkrKeyResultCreateWithoutObjectiveInput[] | OkrKeyResultUncheckedCreateWithoutObjectiveInput[]
+    connectOrCreate?: OkrKeyResultCreateOrConnectWithoutObjectiveInput | OkrKeyResultCreateOrConnectWithoutObjectiveInput[]
+    upsert?: OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput | OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput[]
+    createMany?: OkrKeyResultCreateManyObjectiveInputEnvelope
+    set?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    disconnect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    delete?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    connect?: OkrKeyResultWhereUniqueInput | OkrKeyResultWhereUniqueInput[]
+    update?: OkrKeyResultUpdateWithWhereUniqueWithoutObjectiveInput | OkrKeyResultUpdateWithWhereUniqueWithoutObjectiveInput[]
+    updateMany?: OkrKeyResultUpdateManyWithWhereWithoutObjectiveInput | OkrKeyResultUpdateManyWithWhereWithoutObjectiveInput[]
+    deleteMany?: OkrKeyResultScalarWhereInput | OkrKeyResultScalarWhereInput[]
+  }
+
+  export type OkrObjectiveCreateNestedOneWithoutKeyResultsInput = {
+    create?: XOR<OkrObjectiveCreateWithoutKeyResultsInput, OkrObjectiveUncheckedCreateWithoutKeyResultsInput>
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutKeyResultsInput
+    connect?: OkrObjectiveWhereUniqueInput
+  }
+
+  export type OkrObjectiveUpdateOneRequiredWithoutKeyResultsNestedInput = {
+    create?: XOR<OkrObjectiveCreateWithoutKeyResultsInput, OkrObjectiveUncheckedCreateWithoutKeyResultsInput>
+    connectOrCreate?: OkrObjectiveCreateOrConnectWithoutKeyResultsInput
+    upsert?: OkrObjectiveUpsertWithoutKeyResultsInput
+    connect?: OkrObjectiveWhereUniqueInput
+    update?: XOR<XOR<OkrObjectiveUpdateToOneWithWhereWithoutKeyResultsInput, OkrObjectiveUpdateWithoutKeyResultsInput>, OkrObjectiveUncheckedUpdateWithoutKeyResultsInput>
+  }
+
+  export type KpiRecordCreateNestedManyWithoutMetricInput = {
+    create?: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput> | KpiRecordCreateWithoutMetricInput[] | KpiRecordUncheckedCreateWithoutMetricInput[]
+    connectOrCreate?: KpiRecordCreateOrConnectWithoutMetricInput | KpiRecordCreateOrConnectWithoutMetricInput[]
+    createMany?: KpiRecordCreateManyMetricInputEnvelope
+    connect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+  }
+
+  export type KpiRecordUncheckedCreateNestedManyWithoutMetricInput = {
+    create?: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput> | KpiRecordCreateWithoutMetricInput[] | KpiRecordUncheckedCreateWithoutMetricInput[]
+    connectOrCreate?: KpiRecordCreateOrConnectWithoutMetricInput | KpiRecordCreateOrConnectWithoutMetricInput[]
+    createMany?: KpiRecordCreateManyMetricInputEnvelope
+    connect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+  }
+
+  export type EnumKpiFrequencyFieldUpdateOperationsInput = {
+    set?: $Enums.KpiFrequency
+  }
+
+  export type KpiRecordUpdateManyWithoutMetricNestedInput = {
+    create?: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput> | KpiRecordCreateWithoutMetricInput[] | KpiRecordUncheckedCreateWithoutMetricInput[]
+    connectOrCreate?: KpiRecordCreateOrConnectWithoutMetricInput | KpiRecordCreateOrConnectWithoutMetricInput[]
+    upsert?: KpiRecordUpsertWithWhereUniqueWithoutMetricInput | KpiRecordUpsertWithWhereUniqueWithoutMetricInput[]
+    createMany?: KpiRecordCreateManyMetricInputEnvelope
+    set?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    disconnect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    delete?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    connect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    update?: KpiRecordUpdateWithWhereUniqueWithoutMetricInput | KpiRecordUpdateWithWhereUniqueWithoutMetricInput[]
+    updateMany?: KpiRecordUpdateManyWithWhereWithoutMetricInput | KpiRecordUpdateManyWithWhereWithoutMetricInput[]
+    deleteMany?: KpiRecordScalarWhereInput | KpiRecordScalarWhereInput[]
+  }
+
+  export type KpiRecordUncheckedUpdateManyWithoutMetricNestedInput = {
+    create?: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput> | KpiRecordCreateWithoutMetricInput[] | KpiRecordUncheckedCreateWithoutMetricInput[]
+    connectOrCreate?: KpiRecordCreateOrConnectWithoutMetricInput | KpiRecordCreateOrConnectWithoutMetricInput[]
+    upsert?: KpiRecordUpsertWithWhereUniqueWithoutMetricInput | KpiRecordUpsertWithWhereUniqueWithoutMetricInput[]
+    createMany?: KpiRecordCreateManyMetricInputEnvelope
+    set?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    disconnect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    delete?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    connect?: KpiRecordWhereUniqueInput | KpiRecordWhereUniqueInput[]
+    update?: KpiRecordUpdateWithWhereUniqueWithoutMetricInput | KpiRecordUpdateWithWhereUniqueWithoutMetricInput[]
+    updateMany?: KpiRecordUpdateManyWithWhereWithoutMetricInput | KpiRecordUpdateManyWithWhereWithoutMetricInput[]
+    deleteMany?: KpiRecordScalarWhereInput | KpiRecordScalarWhereInput[]
+  }
+
+  export type KpiMetricCreateNestedOneWithoutRecordsInput = {
+    create?: XOR<KpiMetricCreateWithoutRecordsInput, KpiMetricUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: KpiMetricCreateOrConnectWithoutRecordsInput
+    connect?: KpiMetricWhereUniqueInput
+  }
+
+  export type KpiMetricUpdateOneRequiredWithoutRecordsNestedInput = {
+    create?: XOR<KpiMetricCreateWithoutRecordsInput, KpiMetricUncheckedCreateWithoutRecordsInput>
+    connectOrCreate?: KpiMetricCreateOrConnectWithoutRecordsInput
+    upsert?: KpiMetricUpsertWithoutRecordsInput
+    connect?: KpiMetricWhereUniqueInput
+    update?: XOR<XOR<KpiMetricUpdateToOneWithWhereWithoutRecordsInput, KpiMetricUpdateWithoutRecordsInput>, KpiMetricUncheckedUpdateWithoutRecordsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -133431,6 +139802,57 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumSalaryColumnSourceFilter<$PrismaModel>
     _max?: NestedEnumSalaryColumnSourceFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOkrCycleFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrCycle | EnumOkrCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrCycleFilter<$PrismaModel> | $Enums.OkrCycle
+  }
+
+  export type NestedEnumOkrStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrStatus | EnumOkrStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrStatusFilter<$PrismaModel> | $Enums.OkrStatus
+  }
+
+  export type NestedEnumOkrCycleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrCycle | EnumOkrCycleFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrCycle[] | ListEnumOkrCycleFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrCycleWithAggregatesFilter<$PrismaModel> | $Enums.OkrCycle
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOkrCycleFilter<$PrismaModel>
+    _max?: NestedEnumOkrCycleFilter<$PrismaModel>
+  }
+
+  export type NestedEnumOkrStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OkrStatus | EnumOkrStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OkrStatus[] | ListEnumOkrStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOkrStatusWithAggregatesFilter<$PrismaModel> | $Enums.OkrStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOkrStatusFilter<$PrismaModel>
+    _max?: NestedEnumOkrStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumKpiFrequencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.KpiFrequency | EnumKpiFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumKpiFrequencyFilter<$PrismaModel> | $Enums.KpiFrequency
+  }
+
+  export type NestedEnumKpiFrequencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.KpiFrequency | EnumKpiFrequencyFieldRefInput<$PrismaModel>
+    in?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.KpiFrequency[] | ListEnumKpiFrequencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumKpiFrequencyWithAggregatesFilter<$PrismaModel> | $Enums.KpiFrequency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumKpiFrequencyFilter<$PrismaModel>
+    _max?: NestedEnumKpiFrequencyFilter<$PrismaModel>
   }
 
   export type BugAttachmentCreateWithoutUploaderInput = {
@@ -134567,6 +140989,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type OkrObjectiveCreateWithoutOwnerInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    keyResults?: OkrKeyResultCreateNestedManyWithoutObjectiveInput
+  }
+
+  export type OkrObjectiveUncheckedCreateWithoutOwnerInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    keyResults?: OkrKeyResultUncheckedCreateNestedManyWithoutObjectiveInput
+  }
+
+  export type OkrObjectiveCreateOrConnectWithoutOwnerInput = {
+    where: OkrObjectiveWhereUniqueInput
+    create: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput>
+  }
+
+  export type OkrObjectiveCreateManyOwnerInputEnvelope = {
+    data: OkrObjectiveCreateManyOwnerInput | OkrObjectiveCreateManyOwnerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BugAttachmentUpsertWithWhereUniqueWithoutUploaderInput = {
     where: BugAttachmentWhereUniqueInput
     update: XOR<BugAttachmentUpdateWithoutUploaderInput, BugAttachmentUncheckedUpdateWithoutUploaderInput>
@@ -135442,6 +141902,39 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"CrmActivity"> | Date | string
   }
 
+  export type OkrObjectiveUpsertWithWhereUniqueWithoutOwnerInput = {
+    where: OkrObjectiveWhereUniqueInput
+    update: XOR<OkrObjectiveUpdateWithoutOwnerInput, OkrObjectiveUncheckedUpdateWithoutOwnerInput>
+    create: XOR<OkrObjectiveCreateWithoutOwnerInput, OkrObjectiveUncheckedCreateWithoutOwnerInput>
+  }
+
+  export type OkrObjectiveUpdateWithWhereUniqueWithoutOwnerInput = {
+    where: OkrObjectiveWhereUniqueInput
+    data: XOR<OkrObjectiveUpdateWithoutOwnerInput, OkrObjectiveUncheckedUpdateWithoutOwnerInput>
+  }
+
+  export type OkrObjectiveUpdateManyWithWhereWithoutOwnerInput = {
+    where: OkrObjectiveScalarWhereInput
+    data: XOR<OkrObjectiveUpdateManyMutationInput, OkrObjectiveUncheckedUpdateManyWithoutOwnerInput>
+  }
+
+  export type OkrObjectiveScalarWhereInput = {
+    AND?: OkrObjectiveScalarWhereInput | OkrObjectiveScalarWhereInput[]
+    OR?: OkrObjectiveScalarWhereInput[]
+    NOT?: OkrObjectiveScalarWhereInput | OkrObjectiveScalarWhereInput[]
+    id?: StringFilter<"OkrObjective"> | string
+    title?: StringFilter<"OkrObjective"> | string
+    description?: StringNullableFilter<"OkrObjective"> | string | null
+    cycle?: EnumOkrCycleFilter<"OkrObjective"> | $Enums.OkrCycle
+    year?: IntFilter<"OkrObjective"> | number
+    ownerId?: StringFilter<"OkrObjective"> | string
+    orgUnitId?: StringNullableFilter<"OkrObjective"> | string | null
+    status?: EnumOkrStatusFilter<"OkrObjective"> | $Enums.OkrStatus
+    processInstanceId?: StringNullableFilter<"OkrObjective"> | string | null
+    createdAt?: DateTimeFilter<"OkrObjective"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrObjective"> | Date | string
+  }
+
   export type EmployeeCreateWithoutOrgUnitInput = {
     id?: string
     code: string
@@ -135737,6 +142230,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -135775,6 +142269,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutOrgUnitInput = {
@@ -136436,6 +142931,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -136474,6 +142970,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -137050,6 +143547,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -137088,6 +143586,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -137992,6 +144491,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -138030,6 +144530,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutLedProjectsInput = {
@@ -138277,6 +144778,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -138315,6 +144817,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutProjectInput = {
@@ -138655,6 +145158,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -138693,6 +145197,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutTaskApprovalsInput = {
@@ -139060,6 +145565,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -139098,6 +145604,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type EmployeeUpsertWithoutTasksInput = {
@@ -139444,6 +145951,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -139482,6 +145990,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutTimeLogsInput = {
@@ -139593,6 +146102,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -139631,6 +146141,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutWorkStatusesInput = {
@@ -139669,6 +146180,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -139707,6 +146219,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutWorkStatusesInput = {
@@ -139761,6 +146274,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -139799,6 +146313,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutTimeEntriesInput = {
@@ -139837,6 +146352,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -139875,6 +146391,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -139929,6 +146446,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -139967,6 +146485,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -140005,6 +146524,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -140043,6 +146563,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutApprovedTimesheetsInput = {
@@ -140086,6 +146607,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -140124,6 +146646,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutTimesheetsInput = {
@@ -140178,6 +146701,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -140216,6 +146740,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUpsertWithoutTimesheetsInput = {
@@ -140265,6 +146790,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -140303,6 +146829,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProjectCreateWithoutAlertConfigsInput = {
@@ -140461,6 +146988,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -140499,6 +147027,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -140553,6 +147082,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -140591,6 +147121,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutPushTokensInput = {
@@ -140629,6 +147160,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -140667,6 +147199,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutPushTokensInput = {
@@ -140721,6 +147254,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -140759,6 +147293,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type TaskCreateWithoutTelegramMessagesInput = {
@@ -141165,6 +147700,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -141203,6 +147739,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutStartedProcessesInput = {
@@ -141515,6 +148052,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -141553,6 +148091,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProcessUserTaskUpsertWithWhereUniqueWithoutInstanceInput = {
@@ -141639,6 +148178,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -141677,6 +148217,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProcessTasksInput = {
@@ -141766,6 +148307,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -141804,6 +148346,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutUserTasksInput = {
@@ -142051,6 +148594,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -142089,6 +148633,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutAssignedBugsInput = {
@@ -142132,6 +148677,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -142170,6 +148716,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutPmApprovedBugsInput = {
@@ -142270,6 +148817,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -142308,6 +148856,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutReportedBugsInput = {
@@ -142434,6 +148983,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -142472,6 +149022,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUpsertWithoutPmApprovedBugsInput = {
@@ -142521,6 +149072,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -142559,6 +149111,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProjectUpsertWithoutBugsInput = {
@@ -142671,6 +149224,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -142709,6 +149263,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -143044,6 +149599,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -143082,6 +149638,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutBugAttachmentsInput = {
@@ -143203,6 +149760,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -143241,6 +149799,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutBugCommentsInput = {
@@ -143279,6 +149838,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -143317,6 +149877,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutBugCommentsInput = {
@@ -143432,6 +149993,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -143470,6 +150032,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type BugUpsertWithoutCommentsInput = {
@@ -144044,6 +150607,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -144082,6 +150646,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -144169,6 +150734,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -144207,6 +150773,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ModuleRolePermissionCreateWithoutRoleInput = {
@@ -144458,6 +151025,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -144496,6 +151064,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutModuleRolesInput = {
@@ -144581,6 +151150,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -144619,6 +151189,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -144657,6 +151228,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -144695,6 +151267,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -144749,6 +151322,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -144787,6 +151361,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type GroupPermissionCreateWithoutGroupInput = {
@@ -144997,6 +151572,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -145035,6 +151611,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -145116,6 +151693,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -145154,6 +151732,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserGroupUpsertWithoutMembersInput = {
@@ -145713,6 +152292,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -145751,6 +152331,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutApprovedLeavesInput = {
@@ -145952,6 +152533,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -145990,6 +152572,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutLeaveRequestsInput = {
@@ -146365,6 +152948,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -146403,6 +152987,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutProcessedPayrollsInput = {
@@ -146548,6 +153133,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -146586,6 +153172,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type PayrollPeriodUpsertWithoutAdjustmentsInput = {
@@ -147086,6 +153673,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -147124,6 +153712,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutSubmittedExpensesInput = {
@@ -147167,6 +153756,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -147205,6 +153795,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
     crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutApprovedExpensesInput = {
@@ -147383,6 +153974,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -147421,6 +154013,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUpsertWithoutApprovedExpensesInput = {
@@ -147470,6 +154063,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -147508,6 +154102,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutExpensesInput = {
@@ -148385,6 +154980,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutCrmActivitiesInput = {
@@ -148423,6 +155019,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutCrmActivitiesInput = {
@@ -148518,6 +155115,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -148556,6 +155154,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -151679,6 +158278,435 @@ export namespace Prisma {
     employeeAllowances?: EmployeeAllowanceUncheckedUpdateManyWithoutAllowanceTypeNestedInput
   }
 
+  export type UserCreateWithoutOkrObjectivesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutOkrObjectivesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutOkrObjectivesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutOkrObjectivesInput, UserUncheckedCreateWithoutOkrObjectivesInput>
+  }
+
+  export type OkrKeyResultCreateWithoutObjectiveInput = {
+    id?: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrKeyResultUncheckedCreateWithoutObjectiveInput = {
+    id?: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrKeyResultCreateOrConnectWithoutObjectiveInput = {
+    where: OkrKeyResultWhereUniqueInput
+    create: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput>
+  }
+
+  export type OkrKeyResultCreateManyObjectiveInputEnvelope = {
+    data: OkrKeyResultCreateManyObjectiveInput | OkrKeyResultCreateManyObjectiveInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutOkrObjectivesInput = {
+    update: XOR<UserUpdateWithoutOkrObjectivesInput, UserUncheckedUpdateWithoutOkrObjectivesInput>
+    create: XOR<UserCreateWithoutOkrObjectivesInput, UserUncheckedCreateWithoutOkrObjectivesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutOkrObjectivesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutOkrObjectivesInput, UserUncheckedUpdateWithoutOkrObjectivesInput>
+  }
+
+  export type UserUpdateWithoutOkrObjectivesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutOkrObjectivesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput = {
+    where: OkrKeyResultWhereUniqueInput
+    update: XOR<OkrKeyResultUpdateWithoutObjectiveInput, OkrKeyResultUncheckedUpdateWithoutObjectiveInput>
+    create: XOR<OkrKeyResultCreateWithoutObjectiveInput, OkrKeyResultUncheckedCreateWithoutObjectiveInput>
+  }
+
+  export type OkrKeyResultUpdateWithWhereUniqueWithoutObjectiveInput = {
+    where: OkrKeyResultWhereUniqueInput
+    data: XOR<OkrKeyResultUpdateWithoutObjectiveInput, OkrKeyResultUncheckedUpdateWithoutObjectiveInput>
+  }
+
+  export type OkrKeyResultUpdateManyWithWhereWithoutObjectiveInput = {
+    where: OkrKeyResultScalarWhereInput
+    data: XOR<OkrKeyResultUpdateManyMutationInput, OkrKeyResultUncheckedUpdateManyWithoutObjectiveInput>
+  }
+
+  export type OkrKeyResultScalarWhereInput = {
+    AND?: OkrKeyResultScalarWhereInput | OkrKeyResultScalarWhereInput[]
+    OR?: OkrKeyResultScalarWhereInput[]
+    NOT?: OkrKeyResultScalarWhereInput | OkrKeyResultScalarWhereInput[]
+    id?: StringFilter<"OkrKeyResult"> | string
+    objectiveId?: StringFilter<"OkrKeyResult"> | string
+    title?: StringFilter<"OkrKeyResult"> | string
+    unit?: StringFilter<"OkrKeyResult"> | string
+    startValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFilter<"OkrKeyResult"> | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+    updatedAt?: DateTimeFilter<"OkrKeyResult"> | Date | string
+  }
+
+  export type OkrObjectiveCreateWithoutKeyResultsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    owner: UserCreateNestedOneWithoutOkrObjectivesInput
+  }
+
+  export type OkrObjectiveUncheckedCreateWithoutKeyResultsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    ownerId: string
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrObjectiveCreateOrConnectWithoutKeyResultsInput = {
+    where: OkrObjectiveWhereUniqueInput
+    create: XOR<OkrObjectiveCreateWithoutKeyResultsInput, OkrObjectiveUncheckedCreateWithoutKeyResultsInput>
+  }
+
+  export type OkrObjectiveUpsertWithoutKeyResultsInput = {
+    update: XOR<OkrObjectiveUpdateWithoutKeyResultsInput, OkrObjectiveUncheckedUpdateWithoutKeyResultsInput>
+    create: XOR<OkrObjectiveCreateWithoutKeyResultsInput, OkrObjectiveUncheckedCreateWithoutKeyResultsInput>
+    where?: OkrObjectiveWhereInput
+  }
+
+  export type OkrObjectiveUpdateToOneWithWhereWithoutKeyResultsInput = {
+    where?: OkrObjectiveWhereInput
+    data: XOR<OkrObjectiveUpdateWithoutKeyResultsInput, OkrObjectiveUncheckedUpdateWithoutKeyResultsInput>
+  }
+
+  export type OkrObjectiveUpdateWithoutKeyResultsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutOkrObjectivesNestedInput
+  }
+
+  export type OkrObjectiveUncheckedUpdateWithoutKeyResultsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    ownerId?: StringFieldUpdateOperationsInput | string
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordCreateWithoutMetricInput = {
+    id?: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type KpiRecordUncheckedCreateWithoutMetricInput = {
+    id?: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type KpiRecordCreateOrConnectWithoutMetricInput = {
+    where: KpiRecordWhereUniqueInput
+    create: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput>
+  }
+
+  export type KpiRecordCreateManyMetricInputEnvelope = {
+    data: KpiRecordCreateManyMetricInput | KpiRecordCreateManyMetricInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type KpiRecordUpsertWithWhereUniqueWithoutMetricInput = {
+    where: KpiRecordWhereUniqueInput
+    update: XOR<KpiRecordUpdateWithoutMetricInput, KpiRecordUncheckedUpdateWithoutMetricInput>
+    create: XOR<KpiRecordCreateWithoutMetricInput, KpiRecordUncheckedCreateWithoutMetricInput>
+  }
+
+  export type KpiRecordUpdateWithWhereUniqueWithoutMetricInput = {
+    where: KpiRecordWhereUniqueInput
+    data: XOR<KpiRecordUpdateWithoutMetricInput, KpiRecordUncheckedUpdateWithoutMetricInput>
+  }
+
+  export type KpiRecordUpdateManyWithWhereWithoutMetricInput = {
+    where: KpiRecordScalarWhereInput
+    data: XOR<KpiRecordUpdateManyMutationInput, KpiRecordUncheckedUpdateManyWithoutMetricInput>
+  }
+
+  export type KpiRecordScalarWhereInput = {
+    AND?: KpiRecordScalarWhereInput | KpiRecordScalarWhereInput[]
+    OR?: KpiRecordScalarWhereInput[]
+    NOT?: KpiRecordScalarWhereInput | KpiRecordScalarWhereInput[]
+    id?: StringFilter<"KpiRecord"> | string
+    metricId?: StringFilter<"KpiRecord"> | string
+    period?: StringFilter<"KpiRecord"> | string
+    value?: DecimalFilter<"KpiRecord"> | Decimal | DecimalJsLike | number | string
+    notes?: StringNullableFilter<"KpiRecord"> | string | null
+    createdAt?: DateTimeFilter<"KpiRecord"> | Date | string
+  }
+
+  export type KpiMetricCreateWithoutRecordsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    unit?: string
+    targetValue?: Decimal | DecimalJsLike | number | string | null
+    frequency?: $Enums.KpiFrequency
+    orgUnitId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KpiMetricUncheckedCreateWithoutRecordsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    unit?: string
+    targetValue?: Decimal | DecimalJsLike | number | string | null
+    frequency?: $Enums.KpiFrequency
+    orgUnitId?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type KpiMetricCreateOrConnectWithoutRecordsInput = {
+    where: KpiMetricWhereUniqueInput
+    create: XOR<KpiMetricCreateWithoutRecordsInput, KpiMetricUncheckedCreateWithoutRecordsInput>
+  }
+
+  export type KpiMetricUpsertWithoutRecordsInput = {
+    update: XOR<KpiMetricUpdateWithoutRecordsInput, KpiMetricUncheckedUpdateWithoutRecordsInput>
+    create: XOR<KpiMetricCreateWithoutRecordsInput, KpiMetricUncheckedCreateWithoutRecordsInput>
+    where?: KpiMetricWhereInput
+  }
+
+  export type KpiMetricUpdateToOneWithWhereWithoutRecordsInput = {
+    where?: KpiMetricWhereInput
+    data: XOR<KpiMetricUpdateWithoutRecordsInput, KpiMetricUncheckedUpdateWithoutRecordsInput>
+  }
+
+  export type KpiMetricUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiMetricUncheckedUpdateWithoutRecordsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    unit?: StringFieldUpdateOperationsInput | string
+    targetValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    frequency?: EnumKpiFrequencyFieldUpdateOperationsInput | $Enums.KpiFrequency
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BugAttachmentCreateManyUploaderInput = {
     id?: string
     bugId: string
@@ -152033,6 +159061,19 @@ export namespace Prisma {
     outcome?: string | null
     nextAction?: string | null
     nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrObjectiveCreateManyOwnerInput = {
+    id?: string
+    title: string
+    description?: string | null
+    cycle: $Enums.OkrCycle
+    year: number
+    orgUnitId?: string | null
+    status?: $Enums.OkrStatus
+    processInstanceId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -153171,6 +160212,47 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OkrObjectiveUpdateWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    keyResults?: OkrKeyResultUpdateManyWithoutObjectiveNestedInput
+  }
+
+  export type OkrObjectiveUncheckedUpdateWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    keyResults?: OkrKeyResultUncheckedUpdateManyWithoutObjectiveNestedInput
+  }
+
+  export type OkrObjectiveUncheckedUpdateManyWithoutOwnerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    cycle?: EnumOkrCycleFieldUpdateOperationsInput | $Enums.OkrCycle
+    year?: IntFieldUpdateOperationsInput | number
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumOkrStatusFieldUpdateOperationsInput | $Enums.OkrStatus
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateManyOrgUnitInput = {
     id?: string
     code: string
@@ -153549,6 +160631,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -153587,6 +160670,7 @@ export namespace Prisma {
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
     crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -156961,6 +164045,82 @@ export namespace Prisma {
     payrollRecordId?: StringFieldUpdateOperationsInput | string
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     note?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OkrKeyResultCreateManyObjectiveInput = {
+    id?: string
+    title: string
+    unit?: string
+    startValue?: Decimal | DecimalJsLike | number | string
+    targetValue: Decimal | DecimalJsLike | number | string
+    currentValue?: Decimal | DecimalJsLike | number | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OkrKeyResultUpdateWithoutObjectiveInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrKeyResultUncheckedUpdateWithoutObjectiveInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OkrKeyResultUncheckedUpdateManyWithoutObjectiveInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    unit?: StringFieldUpdateOperationsInput | string
+    startValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    targetValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currentValue?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordCreateManyMetricInput = {
+    id?: string
+    period: string
+    value: Decimal | DecimalJsLike | number | string
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type KpiRecordUpdateWithoutMetricInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordUncheckedUpdateWithoutMetricInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type KpiRecordUncheckedUpdateManyWithoutMetricInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    period?: StringFieldUpdateOperationsInput | string
+    value?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

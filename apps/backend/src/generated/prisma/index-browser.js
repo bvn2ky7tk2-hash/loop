@@ -1107,6 +1107,54 @@ exports.Prisma.SalaryColumnScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.OkrObjectiveScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  cycle: 'cycle',
+  year: 'year',
+  ownerId: 'ownerId',
+  orgUnitId: 'orgUnitId',
+  status: 'status',
+  processInstanceId: 'processInstanceId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OkrKeyResultScalarFieldEnum = {
+  id: 'id',
+  objectiveId: 'objectiveId',
+  title: 'title',
+  unit: 'unit',
+  startValue: 'startValue',
+  targetValue: 'targetValue',
+  currentValue: 'currentValue',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KpiMetricScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  unit: 'unit',
+  targetValue: 'targetValue',
+  frequency: 'frequency',
+  orgUnitId: 'orgUnitId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KpiRecordScalarFieldEnum = {
+  id: 'id',
+  metricId: 'metricId',
+  period: 'period',
+  value: 'value',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1493,6 +1541,29 @@ exports.SalaryColumnSource = exports.$Enums.SalaryColumnSource = {
   FORMULA: 'FORMULA'
 };
 
+exports.OkrCycle = exports.$Enums.OkrCycle = {
+  Q1: 'Q1',
+  Q2: 'Q2',
+  Q3: 'Q3',
+  Q4: 'Q4',
+  H1: 'H1',
+  H2: 'H2',
+  ANNUAL: 'ANNUAL'
+};
+
+exports.OkrStatus = exports.$Enums.OkrStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.KpiFrequency = exports.$Enums.KpiFrequency = {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1573,7 +1644,11 @@ exports.Prisma.ModelName = {
   EmployeeBonus: 'EmployeeBonus',
   EmployeeYearlyTaxSummary: 'EmployeeYearlyTaxSummary',
   EmployeeAllowance: 'EmployeeAllowance',
-  SalaryColumn: 'SalaryColumn'
+  SalaryColumn: 'SalaryColumn',
+  OkrObjective: 'OkrObjective',
+  OkrKeyResult: 'OkrKeyResult',
+  KpiMetric: 'KpiMetric',
+  KpiRecord: 'KpiRecord'
 };
 
 /**

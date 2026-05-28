@@ -1943,18 +1943,19 @@ enum KpiFrequency {
 }
 
 model OkrObjective {
-  id          String      @id @default(uuid())
-  title       String      @db.VarChar(300)
-  description String?     @db.Text
-  cycle       OkrCycle
-  year        Int
-  ownerId     String      @map("owner_id")
-  owner       User        @relation("OkrObjectiveOwner", fields: [ownerId], references: [id])
-  orgUnitId   String?     @map("org_unit_id")
-  status      OkrStatus   @default(DRAFT)
-  keyResults  OkrKeyResult[]
-  createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt      @map("updated_at")
+  id                String      @id @default(uuid())
+  title             String      @db.VarChar(300)
+  description       String?     @db.Text
+  cycle             OkrCycle
+  year              Int
+  ownerId           String      @map("owner_id")
+  owner             User        @relation("OkrObjectiveOwner", fields: [ownerId], references: [id])
+  orgUnitId         String?     @map("org_unit_id")
+  status            OkrStatus   @default(DRAFT)
+  processInstanceId String?     @map("process_instance_id")
+  keyResults        OkrKeyResult[]
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt      @map("updated_at")
 
   @@index([ownerId])
   @@index([year, cycle])

@@ -45,6 +45,7 @@ model User {
   workStatuses         WorkStatus[]
   auditLogs            AuditLog[]
   crmActivities        CrmActivity[]     @relation("CrmActivityCreator")
+  okrObjectives        OkrObjective[]    @relation("OkrObjectiveOwner")
 
   @@map("users")
 }
@@ -1908,4 +1909,101 @@ enum SalaryColumnSource {
   FORMULA
 
   @@map("salary_column_source")
+}
+
+// ─── OKR / KPI ───────────────────────────────────────────────────────────────
+
+enum OkrStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+
+  @@map("okr_status")
+}
+
+enum OkrCycle {
+  Q1
+  Q2
+  Q3
+  Q4
+  H1
+  H2
+  ANNUAL
+
+  @@map("okr_cycle")
+}
+
+enum KpiFrequency {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+
+  @@map("kpi_frequency")
+}
+
+model OkrObjective {
+  id                String         @id @default(uuid())
+  title             String         @db.VarChar(300)
+  description       String?        @db.Text
+  cycle             OkrCycle
+  year              Int
+  ownerId           String         @map("owner_id")
+  owner             User           @relation("OkrObjectiveOwner", fields: [ownerId], references: [id])
+  orgUnitId         String?        @map("org_unit_id")
+  status            OkrStatus      @default(DRAFT)
+  processInstanceId String?        @map("process_instance_id")
+  keyResults        OkrKeyResult[]
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  @@index([ownerId])
+  @@index([year, cycle])
+  @@map("okr_objectives")
+}
+
+model OkrKeyResult {
+  id           String       @id @default(uuid())
+  objectiveId  String       @map("objective_id")
+  objective    OkrObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  title        String       @db.VarChar(300)
+  unit         String       @default("")
+  startValue   Decimal      @default(0) @map("start_value") @db.Decimal(18, 2)
+  targetValue  Decimal      @map("target_value") @db.Decimal(18, 2)
+  currentValue Decimal      @default(0) @map("current_value") @db.Decimal(18, 2)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@index([objectiveId])
+  @@map("okr_key_results")
+}
+
+model KpiMetric {
+  id          String       @id @default(uuid())
+  name        String       @db.VarChar(200)
+  description String?      @db.Text
+  unit        String       @default("")
+  targetValue Decimal?     @map("target_value") @db.Decimal(18, 2)
+  frequency   KpiFrequency @default(MONTHLY)
+  orgUnitId   String?      @map("org_unit_id")
+  isActive    Boolean      @default(true) @map("is_active")
+  records     KpiRecord[]
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  @@map("kpi_metrics")
+}
+
+model KpiRecord {
+  id        String    @id @default(uuid())
+  metricId  String    @map("metric_id")
+  metric    KpiMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
+  period    String    @db.VarChar(20)
+  value     Decimal   @db.Decimal(18, 2)
+  notes     String?   @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@unique([metricId, period])
+  @@index([metricId])
+  @@map("kpi_records")
 }
