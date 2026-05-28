@@ -1,0 +1,138 @@
+/* bpmn-js base CSS */
+@import 'bpmn-js/dist/assets/diagram-js.css';
+@import 'bpmn-js/dist/assets/bpmn-js.css';
+@import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
+
+/* ── Dark mode overrides ── */
+
+/* Canvas background */
+.bpmn-dark .djs-container {
+  background: #1e293b;
+}
+.bpmn-dark svg.djs-drag-active,
+.bpmn-dark .djs-container > svg {
+  background: #1e293b;
+}
+
+/* Grid dots */
+.bpmn-dark .djs-grid-line {
+  stroke: #334155;
+}
+
+/* Shape fill / stroke defaults */
+.bpmn-dark .djs-element .djs-visual > :is(rect, circle, ellipse, polygon, path, polyline) {
+  fill: #0f172a !important;
+  stroke: #64748b !important;
+}
+
+/* Shape label text */
+.bpmn-dark .djs-element .djs-label {
+  fill: #e2e8f0 !important;
+}
+
+/* Selected / hover highlight */
+.bpmn-dark .djs-element.selected .djs-visual > * {
+  stroke: #6366f1 !important;
+}
+.bpmn-dark .djs-element:hover .djs-visual > * {
+  stroke: #818cf8 !important;
+}
+
+/* Sequence flow (arrow) */
+.bpmn-dark .djs-connection .djs-visual path {
+  stroke: #94a3b8 !important;
+  fill: none !important;
+}
+.bpmn-dark .djs-connection.selected .djs-visual path {
+  stroke: #6366f1 !important;
+}
+
+/* Palette */
+.bpmn-dark .djs-palette {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+}
+.bpmn-dark .djs-palette .entry {
+  color: #94a3b8;
+}
+.bpmn-dark .djs-palette .entry:hover {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+.bpmn-dark .djs-palette .separator {
+  border-color: #334155;
+}
+
+/* Context pad (right-click menu on element) */
+.bpmn-dark .djs-context-pad {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 4px;
+}
+.bpmn-dark .djs-context-pad .entry {
+  color: #94a3b8;
+}
+.bpmn-dark .djs-context-pad .entry:hover {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+/* Popup menu (change type menu) */
+.bpmn-dark .djs-popup {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 6px;
+}
+.bpmn-dark .djs-popup .entry {
+  color: #e2e8f0;
+}
+.bpmn-dark .djs-popup .entry:hover {
+  background: #1e293b;
+}
+.bpmn-dark .djs-popup-header {
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  color: #94a3b8;
+}
+
+/* Tooltip */
+.bpmn-dark .djs-tooltip-container {
+  color: #e2e8f0;
+  background: #0f172a;
+  border-color: #334155;
+}
+
+/* Scroll / zoom controls */
+.bpmn-dark .djs-minimap {
+  background: #0f172a;
+  border: 1px solid #334155;
+}
+
+/* Lasso selection box */
+.bpmn-dark .djs-lasso-overlay {
+  background: rgba(99, 102, 241, 0.1);
+  border: 2px solid #6366f1;
+}
+
+/* Drop zone highlight */
+.bpmn-dark .djs-shape.drop-ok .djs-visual > * {
+  fill: rgba(99, 102, 241, 0.15) !important;
+  stroke: #6366f1 !important;
+}
+
+/* Start event green tint */
+.bpmn-dark .djs-element[data-element-id^="StartEvent"] .djs-visual > circle {
+  stroke: #22c55e !important;
+}
+
+/* End event red tint */
+.bpmn-dark .djs-element[data-element-id^="EndEvent"] .djs-visual > circle {
+  stroke: #ef4444 !important;
+}
+
+/* User task blue tint */
+.bpmn-dark .djs-element .djs-visual .djs-task-marker {
+  fill: #6366f1 !important;
+}

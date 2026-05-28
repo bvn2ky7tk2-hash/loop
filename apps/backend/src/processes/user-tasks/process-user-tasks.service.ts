@@ -1,0 +1,222 @@
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { BpmnEngineService } from '../engine/bpmn-engine.service';
+import { UserTaskStatus } from '../../generated/prisma';
+import { CompleteTaskDto } from './dto/complete-task.dto';
+import { ReturnTaskDto } from './dto/return-task.dto';
+
+@Injectable()
+export class ProcessUserTasksService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly engineService: BpmnEngineService,
+  ) {}
+
+  async countAll() {
+    const total = await this.prisma.processUserTask.count({
+      where: { status: { in: [UserTaskStatus.PENDING, UserTaskStatus.IN_PROGRESS] } },
+    });
+    return { total };
+  }
+
+  async findAll(userId: string, page = 1, pageSize = 20, instanceId?: string) {
+    // When viewing an instance's tasks (monitor page): show all tasks for that instance.
+    // When browsing inbox (no instanceId): show only actionable tasks — exclude COMPLETED/SKIPPED.
+    const where = instanceId
+      ? { instanceId }
+      : {
+          OR: [
+            { assigneeId: userId, status: { in: [UserTaskStatus.PENDING, UserTaskStatus.IN_PROGRESS] } },
+            { assigneeId: null,   status: UserTaskStatus.PENDING },
+          ],
+        };
+
+    const [items, total] = await Promise.all([
+      this.prisma.processUserTask.findMany({
+        where,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { dueDate: 'asc' },
+        include: {
+          instance: {
+            select: {
+              id: true,
+              status: true,
+              variables: true,
+              startedByUser: { select: { id: true, name: true } },
+              definition: {
+                select: {
+                  id: true,
+                  name: true,
+                  version: true,
+                  taskFormFields: true,
+                },
+              },
+            },
+          },
+          assignee: { select: { id: true, name: true } },
+        },
+      }),
+      this.prisma.processUserTask.count({ where }),
+    ]);
+
+    return { data: items, meta: { total, page, pageSize } };
+  }
+
+  async findOne(id: string) {
+    const task = await this.prisma.processUserTask.findUnique({
+      where: { id },
+      include: {
+        instance: {
+          include: {
+            definition: {
+              select: {
+                id: true,
+                name: true,
+                version: true,
+                taskFormFields: true,
+              },
+            },
+          },
+        },
+        assignee: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!task) throw new NotFoundException('Không tìm thấy user task');
+    return { data: task };
+  }
+
+  async claim(id: string, userId: string) {
+    const task = await this.prisma.processUserTask.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy user task');
+
+    if (task.status !== UserTaskStatus.PENDING) {
+      throw new BadRequestException('Chỉ task ở trạng thái PENDING mới có thể claim');
+    }
+
+    // Nếu đã có assignee khác → không cho claim
+    if (task.assigneeId && task.assigneeId !== userId) {
+      throw new ForbiddenException('Task đã được giao cho người khác');
+    }
+
+    const updated = await this.prisma.processUserTask.update({
+      where: { id },
+      data: { assigneeId: userId, status: UserTaskStatus.IN_PROGRESS },
+    });
+
+    return { data: updated };
+  }
+
+  async complete(id: string, userId: string, dto: CompleteTaskDto) {
+    const task = await this.prisma.processUserTask.findUnique({
+      where: { id },
+      include: { instance: true },
+    });
+
+    if (!task) throw new NotFoundException('Không tìm thấy user task');
+
+    if (task.status === UserTaskStatus.COMPLETED) {
+      throw new BadRequestException('Task đã hoàn thành');
+    }
+
+    if (task.status === UserTaskStatus.SKIPPED) {
+      throw new BadRequestException('Task đã bị bỏ qua');
+    }
+
+    if (task.assigneeId && task.assigneeId !== userId) {
+      throw new ForbiddenException('Chỉ người được giao task mới có thể hoàn thành');
+    }
+
+    // Cập nhật task status + lưu form data vào task record
+    const hasVars = dto.variables && Object.keys(dto.variables).length > 0;
+    const updated = await this.prisma.processUserTask.update({
+      where: { id },
+      data: {
+        status: UserTaskStatus.COMPLETED,
+        completedAt: new Date(),
+        ...(hasVars ? { formData: dto.variables as never } : {}),
+      },
+    });
+
+    // Merge variables vào instance để các bước sau có thể xem lại
+    if (hasVars) {
+      const inst = await this.prisma.processInstance.findUnique({
+        where: { id: task.instanceId },
+        select: { variables: true },
+      });
+      const merged = {
+        ...(inst?.variables as Record<string, unknown> ?? {}),
+        ...dto.variables,
+      };
+      await this.prisma.processInstance.update({
+        where: { id: task.instanceId },
+        data: { variables: merged as never },
+      });
+    }
+
+    // Ghi activity log
+    await this.prisma.processActivityLog.create({
+      data: {
+        instanceId: task.instanceId,
+        activityId: task.activityId,
+        activityName: task.name,
+        activityType: 'bpmn:UserTask',
+        performedBy: userId,
+        completedAt: new Date(),
+      },
+    });
+
+    // Tiếp tục engine execution (tokenState được persist bên trong engineService)
+    try {
+      await this.engineService.completeUserTask(
+        task.instanceId,
+        task.activityId,
+        dto.variables ?? {},
+      );
+    } catch {
+      // Engine error đã được log trong BpmnEngineService
+    }
+
+    return { data: updated };
+  }
+
+  async returnTask(id: string, userId: string, dto: ReturnTaskDto) {
+    const task = await this.prisma.processUserTask.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy user task');
+
+    if (task.status !== UserTaskStatus.IN_PROGRESS) {
+      throw new BadRequestException('Chỉ task đang IN_PROGRESS mới có thể trả lại');
+    }
+
+    if (task.assigneeId !== userId) {
+      throw new ForbiddenException('Chỉ người đang xử lý task mới có thể trả lại');
+    }
+
+    const updated = await this.prisma.processUserTask.update({
+      where: { id },
+      data: {
+        status: UserTaskStatus.PENDING,
+        assigneeId: null,
+      },
+    });
+
+    await this.prisma.processActivityLog.create({
+      data: {
+        instanceId: task.instanceId,
+        activityId: task.activityId,
+        activityName: task.name + ' (returned)',
+        activityType: 'bpmn:UserTask',
+        performedBy: userId,
+        completedAt: new Date(),
+      },
+    });
+
+    return { data: updated };
+  }
+}

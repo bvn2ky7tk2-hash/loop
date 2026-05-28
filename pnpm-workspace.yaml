@@ -1,0 +1,17 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  '@nestjs/core': true
+  unrs-resolver: true
+  esbuild: true
+  bcrypt: true
+  sharp: true
+  '@firebase/util': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  msgpackr-extract: true
+  prisma: true
+  protobufjs: true
+  '@carbon/icons': set this to true or false

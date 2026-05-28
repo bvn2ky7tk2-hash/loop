@@ -1,0 +1,122 @@
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { Spin } from 'antd';
+import { AppLayout } from './components/layout/AppLayout';
+
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
+const OrgPage = lazy(() => import('./pages/org/OrgPage'));
+const UsersPage = lazy(() => import('./pages/users/UsersPage'));
+const PersonnelPage = lazy(() => import('./pages/personnel/PersonnelPage'));
+const ProjectsPage = lazy(() => import('./pages/projects/ProjectsPage'));
+const TasksPage = lazy(() => import('./pages/tasks/TasksPage'));
+const GanttPage = lazy(() => import('./pages/gantt/GanttPage'));
+const CostPage = lazy(() => import('./pages/cost/CostPage'));
+const AlertsPage = lazy(() => import('./pages/alerts/AlertsPage'));
+const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
+const TimesheetPage = lazy(() => import('./pages/timesheet/TimesheetPage'));
+const TimesheetApprovalsPage = lazy(() => import('./pages/timesheet/TimesheetApprovalsPage'));
+const TimesheetManagerPage = lazy(() => import('./pages/timesheet/TimesheetManagerPage'));
+const ProjectTimesheetPage = lazy(() => import('./pages/timesheet/ProjectTimesheetPage'));
+const MyTasksPage = lazy(() => import('./pages/my-tasks/MyTasksPage'));
+const SettingsPage = lazy(() => import('./pages/settings/SettingsPage'));
+const IntegrationsPage = lazy(() => import('./pages/settings/IntegrationsPage'));
+const ProcessListPage = lazy(() => import('./pages/processes/ProcessListPage'));
+const ProcessModelerPage = lazy(() => import('./pages/processes/ProcessModelerPage'));
+const ProcessInstancesPage = lazy(() => import('./pages/processes/ProcessInstancesPage'));
+const ProcessMonitorPage = lazy(() => import('./pages/processes/ProcessMonitorPage'));
+const ProcessInboxPage = lazy(() => import('./pages/processes/ProcessInboxPage'));
+const BugListPage = lazy(() => import('./pages/bugs/BugListPage'));
+const MyBugsPage = lazy(() => import('./pages/bugs/MyBugsPage'));
+const BugDashboardPage = lazy(() => import('./pages/bugs/BugDashboardPage'));
+const PermissionsPage = lazy(() => import('./pages/permissions/PermissionsPage'));
+const OrgChartPage = lazy(() => import('./pages/org/OrgChartPage'));
+const ContractsPage = lazy(() => import('./pages/contracts/ContractsPage'));
+const LeavePage = lazy(() => import('./pages/leaves/LeavePage'));
+const ExpensePage = lazy(() => import('./pages/expenses/ExpensePage'));
+const BudgetPage = lazy(() => import('./pages/budget/BudgetPage'));
+const PayrollPage = lazy(() => import('./pages/payroll/PayrollPage'));
+const InvoicesPage          = lazy(() => import('./pages/invoices/InvoicesPage'));
+const RecruitJobsPage       = lazy(() => import('./pages/recruit/JobsPage'));
+const RecruitCandidatesPage = lazy(() => import('./pages/recruit/CandidatesPage'));
+const RecruitInterviewsPage = lazy(() => import('./pages/recruit/InterviewsPage'));
+const RecruitPipelinePage   = lazy(() => import('./pages/recruit/PipelinePage'));
+const CrmCustomersPage = lazy(() => import('./pages/crm/CustomersPage'));
+const CrmContactsPage  = lazy(() => import('./pages/crm/ContactsPage'));
+const CrmLeadsPage     = lazy(() => import('./pages/crm/LeadsPage'));
+const CrmDealsPage     = lazy(() => import('./pages/crm/DealsPage'));
+const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
+const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
+const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
+
+const Loader = () => (
+  <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Spin size="large" />
+  </div>
+);
+
+function wrap(Component: React.ComponentType) {
+  return (
+    <Suspense fallback={<Loader />}>
+      <Component />
+    </Suspense>
+  );
+}
+
+export const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: wrap(LoginPage),
+  },
+  {
+    path: '/',
+    element: <AppLayout />,
+    children: [
+      { index: true, element: wrap(DashboardPage) },
+      { path: 'org', element: <Navigate to="/personnel" replace /> },
+      { path: 'personnel', element: wrap(PersonnelPage) },
+      { path: 'projects', element: wrap(ProjectsPage) },
+      { path: 'tasks', element: wrap(TasksPage) },
+      { path: 'my-tasks', element: wrap(MyTasksPage) },
+      { path: 'timeline', element: wrap(GanttPage) },
+      { path: 'cost', element: wrap(CostPage) },
+      { path: 'alerts', element: wrap(AlertsPage) },
+      { path: 'reports', element: wrap(ReportsPage) },
+      { path: 'timesheet', element: wrap(TimesheetPage) },
+      { path: 'timesheet/approvals', element: wrap(TimesheetApprovalsPage) },
+      { path: 'timesheet/manager', element: wrap(TimesheetManagerPage) },
+      { path: 'timesheet/project', element: wrap(ProjectTimesheetPage) },
+      { path: 'settings',      element: wrap(SettingsPage) },
+      { path: 'integrations', element: wrap(IntegrationsPage) },
+      { path: 'users', element: wrap(UsersPage) },
+      { path: 'processes', element: wrap(ProcessListPage) },
+      { path: 'processes/modeler/:id', element: wrap(ProcessModelerPage) },
+      { path: 'processes/instances', element: wrap(ProcessInstancesPage) },
+      { path: 'processes/instances/:id', element: wrap(ProcessMonitorPage) },
+      { path: 'processes/inbox', element: wrap(ProcessInboxPage) },
+      { path: 'bugs',             element: wrap(BugListPage) },
+      { path: 'bugs/dashboard',  element: wrap(BugDashboardPage) },
+      { path: 'my-bugs',         element: wrap(MyBugsPage) },
+      { path: 'permissions',     element: wrap(PermissionsPage) },
+      { path: 'org-chart',       element: wrap(OrgChartPage) },
+      { path: 'contracts',       element: wrap(ContractsPage) },
+      { path: 'leaves',          element: wrap(LeavePage) },
+      { path: 'expenses',        element: wrap(ExpensePage) },
+      { path: 'budget',          element: wrap(BudgetPage) },
+      { path: 'payroll',         element: wrap(PayrollPage) },
+      { path: 'invoices',             element: wrap(InvoicesPage) },
+      { path: 'recruit/jobs',         element: wrap(RecruitJobsPage) },
+      { path: 'recruit/candidates',   element: wrap(RecruitCandidatesPage) },
+      { path: 'recruit/interviews',   element: wrap(RecruitInterviewsPage) },
+      { path: 'recruit/pipeline',     element: wrap(RecruitPipelinePage) },
+      { path: 'crm/customers',  element: wrap(CrmCustomersPage) },
+      { path: 'crm/contacts',   element: wrap(CrmContactsPage) },
+      { path: 'crm/leads',      element: wrap(CrmLeadsPage) },
+      { path: 'crm/deals',      element: wrap(CrmDealsPage) },
+      { path: 'assets',             element: wrap(AssetsPage) },
+      { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
+      { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },
+    ],
+  },
+  { path: '*', element: <Navigate to="/" replace /> },
+]);

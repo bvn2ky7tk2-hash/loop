@@ -1,0 +1,83 @@
+import {
+  Controller, Get, Post, Patch,
+  Body, Param, Query,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { PERMISSIONS } from '../permissions/permissions.constants';
+import { PaginationDto } from '../common/dto/pagination.dto';
+import { LeaveStatus } from '../generated/prisma';
+import type { User } from '../generated/prisma';
+import { LeavesService } from './leaves.service';
+import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
+import { ApproveLeaveDto } from './dto/approve-leave.dto';
+
+@ApiTags('leaves')
+@ApiBearerAuth()
+@Controller('api/v1/leaves')
+export class LeavesController {
+  constructor(private readonly service: LeavesService) {}
+
+  // /balance và /types phải đứng trước /:id để NestJS không parse là UUID
+
+  @Get('types')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Danh sách loại nghỉ phép đang hoạt động' })
+  listTypes() {
+    return this.service.listTypes();
+  }
+
+  @Get('balance/:employeeId')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Số ngày nghỉ còn lại của nhân viên theo năm' })
+  getBalance(
+    @Param('employeeId') employeeId: string,
+    @Query('year') year?: string,
+  ) {
+    return this.service.getBalance(employeeId, year ? parseInt(year, 10) : undefined);
+  }
+
+  @Get()
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Danh sách yêu cầu nghỉ phép (phân trang, lọc)' })
+  findAll(
+    @Query('employeeId') employeeId: string | undefined,
+    @Query('status') status: LeaveStatus | undefined,
+    @Query() pagination: PaginationDto,
+  ) {
+    return this.service.listRequests(employeeId, status, pagination.page, pagination.limit);
+  }
+
+  @Get(':id')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Chi tiết yêu cầu nghỉ phép' })
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Post()
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Tạo yêu cầu nghỉ phép' })
+  create(@Body() dto: CreateLeaveRequestDto, @CurrentUser() user: User) {
+    return this.service.createRequest(dto, user.id);
+  }
+
+  @Patch(':id/approve')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @RequirePermission(PERMISSIONS.TIMESHEETS_APPROVE)
+  @ApiOperation({ summary: 'Phê duyệt hoặc từ chối yêu cầu nghỉ phép' })
+  approve(
+    @Param('id') id: string,
+    @Body() dto: ApproveLeaveDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.service.approveReject(id, dto, user.id);
+  }
+}

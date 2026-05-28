@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c \"SELECT COUNT\\(*\\) as total, status FROM process_user_tasks GROUP BY status;\")",
+      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c ' *)",
+      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c \"\\\\d process_user_tasks\")",
+      "Bash(grep -E \"\\\\.\\(ts|tsx|js\\)$\")",
+      "Bash(node -e ' *)"
+    ]
+  }
+}

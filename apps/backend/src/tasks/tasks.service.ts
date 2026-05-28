@@ -1,0 +1,357 @@
+import {
+  Injectable, NotFoundException, BadRequestException, ForbiddenException,
+} from '@nestjs/common';
+import { Prisma, TaskStatus } from '../generated/prisma';
+import type { Task, User } from '../generated/prisma';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { paginate, type PaginatedResult } from '../common/dto/pagination.dto';
+import { TelegramService } from '../integrations/telegram/telegram.service';
+import { TelegramCardBuilder } from '../integrations/telegram/telegram-card.builder';
+
+const MAX_TASK_LEVELS = 5;
+const DEFAULT_MAX_ESTIMATE_HOURS = 4;
+
+@Injectable()
+export class TasksService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly telegramService: TelegramService,
+    private readonly telegramCardBuilder: TelegramCardBuilder,
+  ) {}
+
+  async create(projectId: string, dto: CreateTaskDto, caller: User): Promise<Task & { warning?: string }> {
+    const isMember = caller.role === 'MEMBER';
+    const status: TaskStatus = isMember ? 'PENDING_APPROVAL' : 'TODO';
+
+    let level = 1;
+    if (dto.parentId) {
+      const parent = await this.prisma.task.findUnique({ where: { id: dto.parentId } });
+      if (!parent) throw new NotFoundException('Task cha không tồn tại');
+      if (parent.level >= MAX_TASK_LEVELS) {
+        throw new BadRequestException('Đã đạt giới hạn 5 cấp');
+      }
+      level = parent.level + 1;
+    }
+
+    const task = await this.prisma.task.create({
+      data: {
+        projectId,
+        parentId: dto.parentId ?? null,
+        level,
+        title: dto.title,
+        description: dto.description,
+        assigneeId: dto.assigneeId,
+        approverId: dto.approverId,
+        startDate: dto.startDate ? new Date(dto.startDate) : null,
+        dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
+        estimateHours: dto.estimateHours ?? 0,
+        position: dto.position ?? 0,
+        status,
+      },
+    });
+
+    const warning =
+      (dto.estimateHours ?? 0) > DEFAULT_MAX_ESTIMATE_HOURS
+        ? `Estimate vượt quá ${DEFAULT_MAX_ESTIMATE_HOURS}h mặc định`
+        : undefined;
+
+    if (task.assigneeId) {
+      this.sendTelegramCardAsync(task).catch(() => {});
+    }
+
+    return { ...task, ...(warning ? { warning } : {}) };
+  }
+
+  private async sendTelegramCardAsync(task: Task): Promise<void> {
+    try {
+      const taskWithDetails = await this.prisma.task.findUnique({
+        where: { id: task.id },
+        include: {
+          assignee: { select: { fullName: true } },
+          project: { select: { name: true } },
+        },
+      });
+      if (!taskWithDetails) return;
+
+      const card = this.telegramCardBuilder.buildTaskCard(
+        {
+          id: taskWithDetails.id,
+          title: taskWithDetails.title,
+          dueDate: taskWithDetails.dueDate,
+          estimateHours: taskWithDetails.estimateHours as unknown as number,
+          assigneeName: (taskWithDetails as unknown as { assignee?: { fullName: string } }).assignee?.fullName ?? null,
+          projectName: (taskWithDetails as unknown as { project?: { name: string } }).project?.name ?? null,
+        },
+        'NEW_TASK',
+      );
+
+      const messageId = await this.telegramService.sendMessageWithId(card.text, card.reply_markup);
+      if (messageId) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        await this.prisma.telegramMessage.create({
+          data: {
+            taskId: task.id,
+            eventType: 'NEW_TASK',
+            messageId,
+            sentDate: today,
+          },
+        });
+      }
+    } catch {
+      // fire-and-forget — ignore all errors
+    }
+  }
+
+  async getProjectTaskTree(projectId: string): Promise<unknown[]> {
+    const tasks = await this.prisma.task.findMany({
+      where: { projectId },
+      orderBy: [{ level: 'asc' }, { position: 'asc' }],
+      include: {
+        assignee: { select: { id: true, fullName: true } },
+      },
+    });
+
+    return this.buildTree(tasks as unknown as Task[]);
+  }
+
+  private buildTree(tasks: Task[], parentId: string | null = null): unknown[] {
+    return tasks
+      .filter((t) => t.parentId === parentId)
+      .map((t) => {
+        const children = this.buildTree(tasks, t.id);
+        return children.length > 0 ? { ...t, children } : { ...t };
+      });
+  }
+
+  async findOne(id: string) {
+    const task = await this.prisma.task.findUnique({
+      where: { id },
+      include: {
+        parent: { select: { id: true, title: true } },
+        children: true,
+        assignee: { include: { user: { select: { name: true } } } },
+      },
+    });
+    if (!task) throw new NotFoundException('Không tìm thấy task');
+    return task;
+  }
+
+  async update(id: string, dto: Partial<CreateTaskDto>) {
+    const task = await this.prisma.task.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy task');
+    if (task.status === 'CANCELLED') throw new ForbiddenException('Task đã bị huỷ, không thể chỉnh sửa');
+
+    return this.prisma.task.update({
+      where: { id },
+      data: {
+        title: dto.title,
+        description: dto.description,
+        assigneeId: dto.assigneeId,
+        startDate: dto.startDate ? new Date(dto.startDate) : undefined,
+        dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
+        estimateHours: dto.estimateHours,
+      },
+    });
+  }
+
+  async approve(id: string, callerId: string) {
+    const task = await this.findOrThrow(id);
+    if (task.status !== 'PENDING_APPROVAL') throw new BadRequestException('Task không ở trạng thái chờ duyệt');
+
+    const updated = await this.prisma.task.update({ where: { id }, data: { status: 'TODO' } });
+    await this.createNotification(task, 'TASK_APPROVED', `Task "${task.title}" đã được duyệt`);
+    return updated;
+  }
+
+  async returnTask(id: string, reason: string) {
+    const task = await this.findOrThrow(id);
+    if (task.status !== 'PENDING_APPROVAL') throw new BadRequestException('Task không ở trạng thái chờ duyệt');
+
+    const updated = await this.prisma.task.update({ where: { id }, data: { status: 'RETURNED' } });
+    await this.createNotification(task, 'TASK_RETURNED', `Task "${task.title}" bị trả lại: ${reason}`);
+    return updated;
+  }
+
+  async resubmit(id: string) {
+    const task = await this.findOrThrow(id);
+    if (task.status !== 'RETURNED') throw new BadRequestException('Task không ở trạng thái bị trả lại');
+    return this.prisma.task.update({ where: { id }, data: { status: 'PENDING_APPROVAL' } });
+  }
+
+  async cancel(id: string) {
+    const task = await this.findOrThrow(id);
+    const updated = await this.prisma.task.update({ where: { id }, data: { status: 'CANCELLED' } });
+    await this.createNotification(task, 'TASK_CANCELLED', `Task "${task.title}" đã bị huỷ`);
+    return updated;
+  }
+
+  async updateProgress(id: string, progressPct: number) {
+    const task = await this.findOrThrow(id);
+    const hasChildren = await this.prisma.task.count({ where: { parentId: id } });
+    if (hasChildren > 0) throw new BadRequestException('Task có subtask — tiến độ được tính tự động');
+
+    if (progressPct >= 100 && !task.dueDate) {
+      throw new BadRequestException('Vui lòng nhập deadline trước khi hoàn thành task');
+    }
+
+    const newStatus: TaskStatus = progressPct >= 100 && task.status === 'IN_PROGRESS' ? 'DONE' : task.status;
+    await this.prisma.task.update({ where: { id }, data: { progress: progressPct, status: newStatus } });
+
+    if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+
+    return this.prisma.task.findUnique({ where: { id } });
+  }
+
+  async getPendingApprovalTasks(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
+    const where = { status: 'PENDING_APPROVAL' as TaskStatus };
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.task.findMany({
+        where,
+        include: {
+          assignee: { select: { id: true, fullName: true } },
+          project: { select: { id: true, code: true, name: true } },
+        },
+        orderBy: [{ createdAt: 'asc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.task.count({ where }),
+    ]);
+    return paginate(data, total, page, limit);
+  }
+
+  async getMyTasksCount(userId: string, role: string) {
+    let assigneeFilter: { assigneeId?: string } = {};
+    if (role === 'MEMBER') {
+      const employee = await this.prisma.employee.findFirst({
+        where: { userId },
+        select: { id: true },
+      });
+      if (!employee) return { total: 0 };
+      assigneeFilter = { assigneeId: employee.id };
+    }
+    const total = await this.prisma.task.count({
+      where: { ...assigneeFilter, status: { notIn: ['DONE', 'CANCELLED'] } },
+    });
+    return { total };
+  }
+
+  async getMyTasks(
+    userId: string,
+    role: string,
+    projectId?: string,
+    employeeId?: string,
+    page = 1,
+    limit = 50,
+  ): Promise<PaginatedResult<unknown>> {
+    let assigneeFilter: { assigneeId?: string } = {};
+
+    if (role === 'MEMBER') {
+      const employee = await this.prisma.employee.findFirst({
+        where: { userId },
+        select: { id: true },
+      });
+      if (!employee) return paginate([], 0, page, limit);
+      assigneeFilter = { assigneeId: employee.id };
+    } else if (employeeId) {
+      assigneeFilter = { assigneeId: employeeId };
+    }
+
+    const where = {
+      ...assigneeFilter,
+      ...(projectId ? { projectId } : {}),
+      status: { not: 'CANCELLED' as TaskStatus },
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.task.findMany({
+        where,
+        include: {
+          project: { select: { id: true, code: true, name: true } },
+          assignee: { select: { id: true, fullName: true } },
+        },
+        orderBy: [{ dueDate: 'asc' }, { createdAt: 'desc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.task.count({ where }),
+    ]);
+
+    return paginate(data, total, page, limit);
+  }
+
+  async moveStatus(id: string, status: TaskStatus, dueDate?: string) {
+    const task = await this.findOrThrow(id);
+    if (task.status === 'CANCELLED') throw new ForbiddenException('Task đã bị huỷ');
+
+    const resolvedDueDate = dueDate ? new Date(dueDate) : task.dueDate;
+    if (status === 'DONE' && !resolvedDueDate) {
+      throw new BadRequestException('Vui lòng nhập deadline trước khi hoàn thành task');
+    }
+
+    const data: Prisma.TaskUpdateInput = { status };
+    if (status === 'DONE') {
+      data.progress = 100;
+      if (dueDate) data.dueDate = new Date(dueDate);
+    }
+
+    const updated = await this.prisma.task.update({ where: { id }, data });
+    if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+    return updated;
+  }
+
+  async logEffort(id: string, userId: string, hours: number, logDate: string, note?: string) {
+    await this.findOrThrow(id);
+    await this.prisma.timeLog.create({
+      data: { taskId: id, userId, hours, logDate: new Date(logDate), note },
+    });
+    return this.prisma.task.update({
+      where: { id },
+      data: { actualHours: { increment: hours } },
+    });
+  }
+
+  private async rollUpProgress(taskId: string, projectId: string): Promise<void> {
+    const children = await this.prisma.task.findMany({ where: { parentId: taskId } });
+    if (!children.length) return;
+
+    const totalEstimate = children.reduce((s, c) => s + Number(c.estimateHours), 0);
+    const weightedProgress = children.reduce(
+      (s, c) => s + (Number(c.progress) * (totalEstimate > 0 ? Number(c.estimateHours) / totalEstimate : 1 / children.length)),
+      0,
+    );
+
+    const updated = await this.prisma.task.update({
+      where: { id: taskId },
+      data: { progress: Math.round(weightedProgress) },
+    });
+    if (updated.parentId) await this.rollUpProgress(updated.parentId, projectId);
+  }
+
+  private async findOrThrow(id: string): Promise<Task> {
+    const task = await this.prisma.task.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy task');
+    return task;
+  }
+
+  private async createNotification(task: Task, type: string, body: string) {
+    if (!task.assigneeId) return;
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: task.assigneeId },
+      select: { userId: true },
+    });
+    if (!employee?.userId) return;
+
+    await this.prisma.notification.create({
+      data: {
+        userId: employee.userId,
+        type: type as never,
+        title: 'Cập nhật Task',
+        body,
+        payload: { taskId: task.id },
+      },
+    });
+  }
+}

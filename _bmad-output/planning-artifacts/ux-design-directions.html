@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop v2 — Design Direction Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --indigo:#4F46E5;--indigo-light:#EEF2FF;--indigo-dark:#4338CA;
+  --sl9:#0F172A;--sl8:#1E293B;--sl7:#334155;--sl6:#475569;--sl4:#94A3B8;--sl2:#E2E8F0;--sl1:#F1F5F9;--sl0:#F8FAFC;
+  --em:#10B981;--am:#F59E0B;--rd:#EF4444;
+  --card:#FFFFFF;--border:#E2E8F0;
+  --sh1:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --sh3:0 8px 32px rgba(0,0,0,.16);
+  --r:8px;--rl:12px;--rp:9999px
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:#111827;color:#0F172A}
+.wrap{min-height:100vh;padding:24px}
+.hd{text-align:center;margin-bottom:20px;color:#fff}
+.hd h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.hd p{font-size:13px;color:#94A3B8}
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.tb{padding:7px 18px;border-radius:var(--rp);border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#94A3B8;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;font-family:inherit}
+.tb:hover{background:rgba(255,255,255,.1);color:#fff}
+.tb.on{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.br{background:#2d2d2d;border-radius:12px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);max-width:1280px;margin:0 auto}
+.bar{background:#3d3d3d;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%}
+.url{flex:1;background:rgba(255,255,255,.1);border-radius:6px;padding:4px 12px;font-size:12px;color:#94A3B8;text-align:center}
+.app{display:flex;height:600px;overflow:hidden}
+.sb{width:56px;background:var(--sl9);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:2px;border-right:1px solid rgba(255,255,255,.05);flex-shrink:0}
+.sb.exp{width:216px;align-items:stretch}
+.logo{width:30px;height:30px;background:var(--indigo);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;margin-bottom:10px;flex-shrink:0}
+.sb.exp .logo{margin:0 14px 10px}
+.slabel{font-size:10px;font-weight:600;color:#334155;text-transform:uppercase;letter-spacing:.08em;padding:4px 14px;display:none}
+.sb.exp .slabel{display:block}
+.si{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:7px;margin:0 10px;cursor:pointer;color:var(--sl4);transition:.15s;position:relative}
+.sb.exp .si{width:auto;justify-content:flex-start;padding:0 10px;margin:0 8px;gap:9px}
+.si:hover{background:var(--sl8);color:#fff}
+.si.on{background:#312E81;color:#fff}
+.si svg{width:16px;height:16px;flex-shrink:0}
+.si-lbl{font-size:13px;font-weight:500;white-space:nowrap;display:none}
+.sb.exp .si-lbl{display:block}
+.sb-badge{background:var(--rd);color:#fff;font-size:9px;font-weight:700;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:absolute;top:3px;right:3px}
+.sb.exp .sb-badge{position:static;width:auto;padding:0 5px;border-radius:8px}
+.proj{display:flex;align-items:center;justify-content:center;width:36px;height:32px;border-radius:7px;margin:0 10px;cursor:pointer;color:var(--sl4);transition:.15s}
+.sb.exp .proj{width:auto;justify-content:flex-start;padding:0 10px;margin:0 8px;gap:9px}
+.proj:hover{background:var(--sl8)}
+.proj.on{background:#312E81}
+.pav{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.pnm{font-size:12px;font-weight:500;color:#CBD5E1;display:none;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb.exp .pnm{display:block}
+.hdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hdot.g{background:var(--em)}.hdot.r{background:var(--rd)}.hdot.y{background:var(--am)}
+.sbuser{margin-top:auto;display:flex;align-items:center;justify-content:center;padding:8px}
+.uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),#818CF8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--sl0)}
+.tnav{height:52px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0}
+.bc{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--sl6)}
+.bc .cur{color:var(--sl9);font-weight:600}
+.bc .sep{color:var(--sl4)}
+.tsrch{flex:1;max-width:260px;height:30px;background:var(--sl0);border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;padding:0 9px;gap:5px;color:var(--sl4);font-size:12px;margin-left:auto}
+.ibtn{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sl6);background:none;border:none}
+.bw{position:relative}
+.bb{position:absolute;top:2px;right:2px;width:13px;height:13px;background:var(--rd);border-radius:50%;font-size:8px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.cnt{flex:1;overflow-y:auto;padding:20px;display:flex;gap:18px}
+.cmain{flex:1;display:flex;flex-direction:column;gap:18px;min-width:0}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.ptitle{font-size:19px;font-weight:600;color:var(--sl9)}
+.psub{font-size:12px;color:var(--sl6);margin-bottom:16px}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sc{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:var(--sh1);border:1px solid var(--border)}
+.sch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.sclbl{font-size:11px;font-weight:500;color:var(--sl6);text-transform:uppercase;letter-spacing:.05em}
+.tr{font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px}
+.tr.up{color:var(--rd);background:#FEF2F2}
+.tr.dn{color:var(--em);background:#ECFDF5}
+.tr.nt{color:var(--sl6);background:var(--sl0)}
+.scv{font-size:22px;font-weight:700;color:var(--sl9);margin-bottom:3px}
+.scsb{font-size:11px;color:var(--sl6);margin-bottom:10px}
+.spk{width:100%;height:36px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pcard{background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--sh1);border:1px solid var(--border);display:flex;gap:10px;align-items:center;cursor:pointer;transition:.15s}
+.pcard:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.pinfo{flex:1;min-width:0}
+.pcn{font-size:12px;font-weight:600;color:var(--sl9);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcm{font-size:11px;color:var(--sl6);margin-bottom:5px}
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:var(--rp)}
+.pg{background:#ECFDF5;color:#065F46}.py{background:#FFFBEB;color:#92400E}
+.pb{background:#EEF2FF;color:#4338CA}.pr{background:#FEF2F2;color:#991B1B}
+.pn{background:var(--sl1);color:var(--sl6)}
+.am-wrap{background:var(--card);border-radius:var(--r);box-shadow:var(--sh1);border:1px solid var(--border);overflow:hidden}
+.am-hd{padding:12px 14px 9px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.am-item{padding:9px 14px;border-bottom:1px solid #F8FAFC;display:flex;gap:9px;align-items:flex-start;cursor:pointer;transition:.1s}
+.am-item:hover{background:var(--sl0)}
+.am-item:last-child{border-bottom:none}
+.adot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.at{font-size:12px;font-weight:500;color:var(--sl9);margin-bottom:1px}
+.am-m{font-size:11px;color:var(--sl6)}
+.ttbar{display:flex;gap:7px;align-items:center;margin-bottom:10px}
+.fbtn{display:flex;align-items:center;gap:3px;padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--sl6);background:var(--card);cursor:pointer;font-family:inherit}
+.fbtn.on{background:var(--indigo-light);border-color:#C7D2FE;color:var(--indigo-dark)}
+.ftag{background:var(--indigo-light);border:1px solid #C7D2FE;color:var(--indigo-dark);padding:4px 7px;border-radius:5px;font-size:11px;display:flex;align-items:center;gap:3px}
+.tt{background:var(--card);border-radius:var(--r);box-shadow:var(--sh1);border:1px solid var(--border);overflow:hidden}
+.tth{display:grid;grid-template-columns:1fr 90px 72px 90px 110px;padding:8px 14px;background:var(--sl0);border-bottom:1px solid var(--border)}
+.thd{font-size:10px;font-weight:600;color:var(--sl6);text-transform:uppercase;letter-spacing:.05em}
+.tr2{display:grid;grid-template-columns:1fr 90px 72px 90px 110px;padding:0 14px;height:44px;align-items:center;border-bottom:1px solid #F8FAFC;cursor:pointer;transition:.1s}
+.tr2:hover{background:var(--sl0)}
+.tr2.on{background:#EEF2FF}
+.tr2:last-child{border-bottom:none}
+.tr2.l2 .tnm{padding-left:18px}
+.tnm{display:flex;align-items:center;gap:7px;font-size:12px}
+.tex{color:var(--sl4);width:12px;flex-shrink:0}
+.ttl{font-weight:500;color:var(--sl9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aav{width:18px;height:18px;border-radius:50%;font-size:8px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pmini{width:56px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.pmf{height:100%;border-radius:2px;background:var(--indigo)}
+.pmf.done{background:var(--em)}.pmf.warn{background:var(--am)}
+.ptabs{display:flex;padding:0 20px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0}
+.ptab{padding:11px 14px;font-size:12px;font-weight:500;color:var(--sl6);cursor:pointer}
+.ptab.on{color:var(--indigo);border-bottom:2px solid var(--indigo);font-weight:600}
+.spanel{background:var(--card);border-left:1px solid var(--border);height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:-4px 0 12px rgba(0,0,0,.06)}
+.sph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.spt{font-size:14px;font-weight:600;color:var(--sl9);margin-bottom:5px}
+.spm{font-size:11px;color:var(--sl6);display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.spb{padding:14px 18px;overflow-y:auto;flex:1}
+.sfl{margin-bottom:12px}
+.sfll{font-size:10px;font-weight:600;color:var(--sl6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.sflv{font-size:12px;color:var(--sl9)}
+.spdesc{font-size:12px;color:var(--sl6);line-height:1.6}
+.spfoot{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:7px}
+.btn1{background:var(--indigo);color:#fff;border:none;padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn1:hover{background:var(--indigo-dark)}
+.btn2{background:none;color:var(--sl6);border:1px solid var(--border);padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.btnd{background:none;color:#991B1B;border:1px solid #FCA5A5;padding:6px 14px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+.sec-t{font-size:13px;font-weight:600;color:var(--sl9);margin-bottom:10px}
+.mob-wrap{display:flex;gap:36px;justify-content:center;align-items:flex-start;padding:24px}
+.pf{width:340px;background:#1C1C1E;border-radius:44px;padding:12px;box-shadow:0 24px 64px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.1)}
+.ps{background:var(--card);border-radius:36px;overflow:hidden;height:580px;display:flex;flex-direction:column}
+.pstatus{background:var(--card);padding:12px 18px 5px;display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--sl9)}
+.phdr{padding:8px 18px 14px;border-bottom:1px solid var(--border)}
+.phtitle{font-size:21px;font-weight:700;color:var(--sl9)}
+.phsub{font-size:12px;color:var(--sl6);margin-top:1px}
+.ptabs2{display:flex;padding:0 18px;border-bottom:1px solid var(--border)}
+.ptab2{padding:9px 10px;font-size:12px;font-weight:500;color:var(--sl6);cursor:pointer}
+.ptab2.on{color:var(--indigo);border-bottom:2px solid var(--indigo)}
+.pc{flex:1;overflow-y:auto;padding:10px 0}
+.ti{padding:11px 18px;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid #F8FAFC}
+.tck{width:18px;height:18px;border:2px solid var(--border);border-radius:50%;flex-shrink:0;margin-top:1px}
+.tck.done{background:var(--em);border-color:var(--em);display:flex;align-items:center;justify-content:center}
+.tib{flex:1;min-width:0}
+.tit{font-size:13px;font-weight:500;color:var(--sl9);margin-bottom:3px}
+.tim{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.db{font-size:10px;font-weight:500;padding:1px 5px;border-radius:3px}
+.dt{background:#FFFBEB;color:#92400E}.do{background:#FEF2F2;color:#991B1B}.dn{background:var(--sl0);color:var(--sl6)}
+.pbnav{border-top:1px solid var(--border);padding:6px 0 18px;display:flex}
+.pni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 0}
+.pni svg{width:20px;height:20px;color:var(--sl4)}
+.pni svg.on{color:var(--indigo)}
+.pni span{font-size:9px;font-weight:500;color:var(--sl4)}
+.pni span.on{color:var(--indigo)}
+.sh-handle{width:32px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 14px}
+.sl-lbl{font-size:11px;font-weight:600;color:var(--sl6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;justify-content:space-between}
+.sl-track{width:100%;height:5px;background:var(--border);border-radius:3px;position:relative;margin-bottom:16px}
+.sl-fill{height:100%;background:var(--indigo);border-radius:3px;width:65%}
+.sl-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid var(--indigo);box-shadow:0 2px 6px rgba(79,70,229,.3);position:absolute;top:-6px;left:calc(65% - 9px)}
+.eff-row{display:flex;gap:10px;margin-bottom:12px}
+.eff-inp{flex:1;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;background:var(--sl0);color:var(--sl9);font-family:inherit}
+.mov{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100}
+.mod{background:var(--card);border-radius:var(--rl);width:520px;box-shadow:var(--sh3);overflow:hidden}
+.modh{padding:18px 22px 14px;border-bottom:1px solid var(--border)}
+.modt{font-size:15px;font-weight:600;color:var(--sl9);margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.mods{font-size:12px;color:var(--sl6)}
+.modb{padding:18px 22px}
+.cinfo{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:10px 12px;margin-bottom:14px;font-size:12px;color:#92400E;display:flex;gap:7px}
+.ctable{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.ctable th{background:var(--sl0);padding:7px 10px;text-align:left;font-weight:600;color:var(--sl6);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--border)}
+.ctable td{padding:9px 10px;border-bottom:1px solid #F8FAFC;color:var(--sl9)}
+.ctable tr:last-child td{border-bottom:none}
+.ctot{font-weight:700;color:var(--rd)}
+.cbadge{display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px;background:#FEF2F2;color:var(--rd);margin-left:4px}
+.modf{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end}
+.scr{display:none}.scr.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd"><h1>Loop — Design Direction Showcase</h1><p>Revision 2 · Modern Clean Enterprise · Dark Sidebar + Indigo + Sparklines</p></div>
+  <div class="tabs">
+    <button class="tb on" onclick="show(1)">📊 Dashboard PM</button>
+    <button class="tb" onclick="show(2)">📋 Project Tasks</button>
+    <button class="tb" onclick="show(3)">📱 Mobile Member</button>
+    <button class="tb" onclick="show(4)">⚠️ Allocation Conflict</button>
+  </div>
+
+  <!-- S1: Dashboard -->
+  <div class="scr on" id="s1">
+    <div class="br">
+      <div class="bar"><div class="dots"><div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div></div><div class="url">loop.internal / dashboard</div></div>
+      <div class="app">
+        <div class="sb exp">
+          <div class="logo">L</div>
+          <div class="slabel">Menu</div>
+          <div class="si on"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg><span class="si-lbl">Dashboard</span></div>
+          <div class="si"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" stroke-width="2" stroke-linecap="round"/></svg><span class="si-lbl">Dự án</span><div class="sb-badge">3</div></div>
+          <div class="si"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round"/></svg><span class="si-lbl">Nhân sự</span></div>
+          <div class="si"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-width="2" stroke-linecap="round"/></svg><span class="si-lbl">Báo cáo</span></div>
+          <div class="slabel" style="margin-top:8px">Dự án của tôi</div>
+          <div class="proj on"><div class="pav" style="background:#7C3AED">P1</div><span class="pnm">Portal Khách hàng</span><div class="hdot r"></div></div>
+          <div class="proj"><div class="pav" style="background:#0891B2">P2</div><span class="pnm">App Nội bộ HR</span><div class="hdot g"></div></div>
+          <div class="proj"><div class="pav" style="background:#059669">P3</div><span class="pnm">Loop Platform</span><div class="hdot y"></div></div>
+          <div class="proj"><div class="pav" style="background:#DC2626">P4</div><span class="pnm">Mobile App v2</span><div class="hdot g"></div></div>
+          <div class="sbuser"><div class="uav">TA</div></div>
+        </div>
+        <div class="main">
+          <div class="tnav">
+            <div class="bc"><span class="cur">Dashboard</span></div>
+            <div class="tsrch"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>Tìm kiếm...</div>
+            <div class="bw"><button class="ibtn"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-width="2" stroke-linecap="round"/></svg></button><div class="bb">5</div></div>
+          </div>
+          <div class="cnt">
+            <div class="cmain">
+              <div><div class="ph"><div class="ptitle">Xin chào, Tuan Anh 👋</div><span class="pill py">3 task chờ duyệt</span></div><div class="psub">Thứ Hai, 26/05/2026 · Portal Khách hàng cần xử lý</div></div>
+              <div class="cgrid">
+                <div class="sc"><div class="sch"><div class="sclbl">Chi phí thực tế</div><div class="tr up">+12%</div></div><div class="scv">₫847M</div><div class="scsb">Ngân sách ₫1.2B (70.6%)</div><svg class="spk" viewBox="0 0 120 36" preserveAspectRatio="none"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EF4444" stop-opacity=".2"/><stop offset="100%" stop-color="#EF4444" stop-opacity="0"/></linearGradient></defs><path d="M0,30 L17,26 L34,28 L51,20 L68,16 L85,12 L102,8 L120,6" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,30 L17,26 L34,28 L51,20 L68,16 L85,12 L102,8 L120,6 L120,36 L0,36Z" fill="url(#g1)"/></svg></div>
+                <div class="sc"><div class="sch"><div class="sclbl">Effort thực tế</div><div class="tr nt">+2%</div></div><div class="scv">342 MD</div><div class="scsb">Estimate 480 MD (71.3%)</div><svg class="spk" viewBox="0 0 120 36" preserveAspectRatio="none"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F46E5" stop-opacity=".2"/><stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/></linearGradient></defs><path d="M0,22 L17,18 L34,20 L51,16 L68,18 L85,14 L102,16 L120,13" fill="none" stroke="#4F46E5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,22 L17,18 L34,20 L51,16 L68,18 L85,14 L102,16 L120,13 L120,36 L0,36Z" fill="url(#g2)"/></svg></div>
+                <div class="sc"><div class="sch"><div class="sclbl">Task hoàn thành</div><div class="tr dn">↑ tốt</div></div><div class="scv">68%</div><div class="scsb">127 / 187 tasks</div><svg class="spk" viewBox="0 0 120 36" preserveAspectRatio="none"><defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" stop-opacity=".2"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/></linearGradient></defs><path d="M0,34 L17,30 L34,28 L51,24 L68,20 L85,16 L102,12 L120,9" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,34 L17,30 L34,28 L51,24 L68,20 L85,16 L102,12 L120,9 L120,36 L0,36Z" fill="url(#g3)"/></svg></div>
+                <div class="sc"><div class="sch"><div class="sclbl">Cảnh báo</div><div class="tr up">5 mới</div></div><div class="scv">8</div><div class="scsb">3 nghiêm trọng cần xử lý</div><svg class="spk" viewBox="0 0 120 36" preserveAspectRatio="none"><defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F59E0B" stop-opacity=".2"/><stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/></linearGradient></defs><path d="M0,28 L17,24 L34,18 L51,6 L68,10 L85,4 L102,12 L120,8" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M0,28 L17,24 L34,18 L51,6 L68,10 L85,4 L102,12 L120,8 L120,36 L0,36Z" fill="url(#g4)"/></svg></div>
+              </div>
+              <div>
+                <div class="sec-t">Tiến độ dự án</div>
+                <div class="pgrid">
+                  <div class="pcard"><svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0"><circle cx="24" cy="24" r="20" fill="none" stroke="#E2E8F0" stroke-width="4"/><circle cx="24" cy="24" r="20" fill="none" stroke="#EF4444" stroke-width="4" stroke-dasharray="125.6 125.6" stroke-dashoffset="37.7" stroke-linecap="round" transform="rotate(-90 24 24)"/><text x="24" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">70%</text></svg><div class="pinfo"><div class="pcn">Portal Khách hàng</div><div class="pcm">Hết 30/06 · 12 pending</div><span class="pill pr">Nguy hiểm</span></div></div>
+                  <div class="pcard"><svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0"><circle cx="24" cy="24" r="20" fill="none" stroke="#E2E8F0" stroke-width="4"/><circle cx="24" cy="24" r="20" fill="none" stroke="#10B981" stroke-width="4" stroke-dasharray="125.6 125.6" stroke-dashoffset="62.8" stroke-linecap="round" transform="rotate(-90 24 24)"/><text x="24" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">50%</text></svg><div class="pinfo"><div class="pcn">App Nội bộ HR</div><div class="pcm">Hết 15/08 · On track</div><span class="pill pg">On track</span></div></div>
+                  <div class="pcard"><svg width="48" height="48" viewBox="0 0 48 48" style="flex-shrink:0"><circle cx="24" cy="24" r="20" fill="none" stroke="#E2E8F0" stroke-width="4"/><circle cx="24" cy="24" r="20" fill="none" stroke="#F59E0B" stroke-width="4" stroke-dasharray="125.6 125.6" stroke-dashoffset="25.1" stroke-linecap="round" transform="rotate(-90 24 24)"/><text x="24" y="28" text-anchor="middle" font-size="10" font-weight="700" fill="#0F172A">80%</text></svg><div class="pinfo"><div class="pcn">Loop Platform</div><div class="pcm">Hết 10/06 · Gần hạn</div><span class="pill py">Cần theo dõi</span></div></div>
+                </div>
+              </div>
+            </div>
+            <div style="width:272px;flex-shrink:0">
+              <div class="sec-t">Cảnh báo cần xử lý</div>
+              <div class="am-wrap">
+                <div class="am-hd"><span style="font-size:12px;font-weight:600;color:var(--sl9)">8 cảnh báo</span><span class="pill pr" style="font-size:10px">3 nghiêm trọng</span></div>
+                <div class="am-item"><div class="adot" style="background:#EF4444"></div><div><div class="at">Task quá hạn 3 ngày</div><div class="am-m">Portal KH · Thiết kế UI Login</div></div></div>
+                <div class="am-item"><div class="adot" style="background:#EF4444"></div><div><div class="at">Ngân sách vượt 85%</div><div class="am-m">Portal KH · ₫1.02B / ₫1.2B</div></div></div>
+                <div class="am-item"><div class="adot" style="background:#F59E0B"></div><div><div class="at">Allocation hết hạn 5 ngày</div><div class="am-m">Trần T.B · Portal KH · 30/05</div></div></div>
+                <div class="am-item"><div class="adot" style="background:#F59E0B"></div><div><div class="at">3 task chờ duyệt</div><div class="am-m">Loop Platform · Hôm nay</div></div></div>
+                <div class="am-item"><div class="adot" style="background:#94A3B8"></div><div><div class="at">Effort vượt estimate 10%</div><div class="am-m">HR App · Module Payroll</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: Project Tasks -->
+  <div class="scr" id="s2">
+    <div class="br">
+      <div class="bar"><div class="dots"><div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div></div><div class="url">loop.internal / projects / portal-kh / tasks</div></div>
+      <div class="app">
+        <div class="sb">
+          <div class="logo">L</div>
+          <div class="si"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg></div>
+          <div class="si on"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="si"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="sbuser" style="margin-top:auto"><div class="uav">TA</div></div>
+        </div>
+        <div class="main">
+          <div class="tnav"><div class="bc"><span>Dự án</span><span class="sep">›</span><span>Portal Khách hàng</span><span class="sep">›</span><span class="cur">Tasks</span></div><div class="bw" style="margin-left:auto"><button class="ibtn"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-width="2" stroke-linecap="round"/></svg></button><div class="bb">3</div></div></div>
+          <div class="ptabs"><div class="ptab">Tổng quan</div><div class="ptab on">Tasks</div><div class="ptab">Thành viên</div><div class="ptab">Chi phí</div><div class="ptab">Cảnh báo <span style="background:#FEF2F2;color:#991B1B;font-size:9px;padding:1px 4px;border-radius:9999px;margin-left:3px">3</span></div></div>
+          <div class="cnt">
+            <div class="cmain">
+              <div class="ttbar">
+                <button class="fbtn on"><svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 4h18M7 12h10M11 20h2" stroke-width="2" stroke-linecap="round"/></svg>Lọc</button>
+                <div class="ftag">Trạng thái: Đang làm ✕</div>
+                <button class="fbtn">Nhóm theo</button>
+                <button class="fbtn" style="margin-left:auto"><svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="2" stroke-linecap="round"/></svg>Tạo task</button>
+              </div>
+              <div class="tt">
+                <div class="tth"><div class="thd">Tên task</div><div class="thd">Trạng thái</div><div class="thd" style="text-align:center">Tiến độ</div><div class="thd">Người thực hiện</div><div class="thd">Hạn</div></div>
+                <div class="tr2"><div class="tnm"><svg class="tex" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg><span class="ttl" style="font-weight:600">🏗 Authentication Module</span></div><div><span class="pill pb">Đang làm</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="pmini"><div class="pmf" style="width:75%"></div></div><span style="font-size:9px;color:#94A3B8">75%</span></div><div style="display:flex;align-items:center;gap:3px"><div class="aav" style="background:#7C3AED">NV</div><span style="font-size:11px;color:#475569">Nguyễn V.</span></div><div style="font-size:11px;color:#475569">15/06</div></div>
+                <div class="tr2 l2"><div class="tnm"><svg class="tex" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg><span class="ttl">Login screen UI</span></div><div><span class="pill pr">Trả lại</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="pmini"><div class="pmf warn" style="width:40%"></div></div><span style="font-size:9px;color:#94A3B8">40%</span></div><div style="display:flex;align-items:center;gap:3px"><div class="aav" style="background:#DC2626">TA</div><span style="font-size:11px;color:#475569">Trần A.</span></div><div style="font-size:11px;color:#EF4444;font-weight:600">⚠ 23/05</div></div>
+                <div class="tr2 l2 on"><div class="tnm"><svg class="tex" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg><span class="ttl" style="color:#4F46E5">API Integration</span></div><div><span class="pill py">Chờ duyệt</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="pmini"><div class="pmf" style="width:90%"></div></div><span style="font-size:9px;color:#94A3B8">90%</span></div><div style="display:flex;align-items:center;gap:3px"><div class="aav" style="background:#0891B2">LH</div><span style="font-size:11px;color:#475569">Lê H.</span></div><div style="font-size:11px;color:#475569">10/06</div></div>
+                <div class="tr2"><div class="tnm"><svg class="tex" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg><span class="ttl" style="font-weight:600">🎨 UI Components Library</span></div><div><span class="pill pg">Hoàn thành</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="pmini"><div class="pmf done" style="width:100%"></div></div><span style="font-size:9px;color:#10B981">100%</span></div><div style="display:flex;align-items:center;gap:3px"><div class="aav" style="background:#059669">PH</div><span style="font-size:11px;color:#475569">Phạm H.</span></div><div style="font-size:11px;color:#475569">20/05</div></div>
+                <div class="tr2"><div class="tnm"><svg class="tex" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg><span class="ttl" style="font-weight:600">🔧 Backend API Services</span></div><div><span class="pill pb">Đang làm</span></div><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div class="pmini"><div class="pmf" style="width:55%"></div></div><span style="font-size:9px;color:#94A3B8">55%</span></div><div style="display:flex;align-items:center;gap:3px"><div class="aav" style="background:#7C3AED">NH</div><span style="font-size:11px;color:#475569">Nhóm BE</span></div><div style="font-size:11px;color:#475569">30/06</div></div>
+              </div>
+            </div>
+            <div style="width:340px;flex-shrink:0">
+              <div class="spanel">
+                <div class="sph"><div><div class="spt">API Integration</div><div class="spm"><span class="pill py">Chờ duyệt</span><span>Auth Module</span></div></div><button class="ibtn">✕</button></div>
+                <div class="spb">
+                  <div class="sfl"><div class="sfll">Mô tả</div><div class="spdesc">Tích hợp Authentication API với Node.js. JWT token handling, refresh token logic và error handling.</div></div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <div class="sfl"><div class="sfll">Người thực hiện</div><div style="display:flex;align-items:center;gap:5px"><div class="aav" style="background:#0891B2;width:22px;height:22px;font-size:9px">LH</div><span style="font-size:12px">Lê Hùng</span></div></div>
+                    <div class="sfl"><div class="sfll">Hạn hoàn thành</div><div class="sflv">10/06/2026</div></div>
+                    <div class="sfl"><div class="sfll">Estimate</div><div class="sflv">16 giờ</div></div>
+                    <div class="sfl"><div class="sfll">Thực tế</div><div class="sflv">14.5 giờ</div></div>
+                  </div>
+                  <div class="sfl"><div class="sfll">Tiến độ</div><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:5px;background:#E2E8F0;border-radius:3px"><div style="width:90%;height:100%;background:#4F46E5;border-radius:3px"></div></div><span style="font-size:12px;font-weight:600;color:#0F172A">90%</span></div></div>
+                  <div class="sfl"><div class="sfll">Lý do gửi duyệt</div><div class="spdesc" style="background:#F8FAFC;padding:9px;border-radius:6px;border:1px solid #E2E8F0">"Đã hoàn thành integration và unit test đầy đủ. Cần PM review logic refresh token trước khi merge."</div></div>
+                </div>
+                <div class="spfoot"><button class="btn1">✓ Duyệt</button><button class="btn2">↩ Trả lại</button><button class="btnd">✕ Huỷ</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: Mobile -->
+  <div class="scr" id="s3">
+    <div class="mob-wrap">
+      <div><p style="color:#94A3B8;font-size:11px;text-align:center;margin-bottom:10px">My Tasks — Danh sách</p>
+        <div class="pf"><div class="ps">
+          <div class="pstatus"><span>9:41</span><span>●●●</span></div>
+          <div class="phdr"><div class="phtitle">My Tasks</div><div class="phsub">Thứ Hai, 26/05/2026</div></div>
+          <div class="ptabs2"><div class="ptab2 on">Hôm nay (3)</div><div class="ptab2">Quá hạn <span style="background:#FEF2F2;color:#991B1B;font-size:9px;padding:1px 4px;border-radius:4px;margin-left:2px">1</span></div><div class="ptab2">Tất cả</div></div>
+          <div class="pc">
+            <div style="padding:7px 18px 3px;font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em">Cần làm hôm nay</div>
+            <div class="ti"><div class="tck"></div><div class="tib"><div class="tit">Thiết kế màn hình Dashboard PM</div><div class="tim"><span class="db dt">Hôm nay</span><span style="font-size:10px;color:#94A3B8">Portal KH · 65%</span></div></div><div style="width:28px;height:28px;background:#EEF2FF;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#4F46E5"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg></div></div>
+            <div class="ti"><div class="tck"></div><div class="tib"><div class="tit">Review code API authentication</div><div class="tim"><span class="db dt">Hôm nay</span><span style="font-size:10px;color:#94A3B8">Portal KH · 30%</span></div></div><div style="width:28px;height:28px;background:#EEF2FF;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#4F46E5"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg></div></div>
+            <div class="ti" style="opacity:.5"><div class="tck done"><svg width="9" height="9" fill="none" stroke="white" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="3" stroke-linecap="round"/></svg></div><div class="tib"><div class="tit" style="text-decoration:line-through">Viết unit test cho module login</div><div class="tim"><span class="db" style="background:#ECFDF5;color:#065F46">Xong</span></div></div></div>
+            <div style="padding:12px 18px 3px;font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em">Tuần này</div>
+            <div class="ti"><div class="tck"></div><div class="tib"><div class="tit">Tích hợp Notification Service</div><div class="tim"><span class="db dn">28/05</span><span style="font-size:10px;color:#94A3B8">Loop Platform · 20%</span></div></div><div style="width:28px;height:28px;background:#EEF2FF;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#4F46E5"><svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg></div></div>
+          </div>
+          <div class="pbnav">
+            <div class="pni"><svg class="on" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" stroke-width="2" stroke-linecap="round"/></svg><span class="on">Tasks</span></div>
+            <div class="pni"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-width="2" stroke-linecap="round"/></svg><span>Alerts</span></div>
+            <div class="pni"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2" stroke-linecap="round"/></svg><span>Hồ sơ</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div><p style="color:#94A3B8;font-size:11px;text-align:center;margin-bottom:10px">Task Detail — Cập nhật tiến độ</p>
+        <div class="pf"><div class="ps" style="position:relative">
+          <div class="pstatus"><span>9:41</span><span>●●●</span></div>
+          <div style="flex:1;filter:blur(2px);opacity:.35;padding:14px 18px"><div style="font-size:17px;font-weight:700;margin-bottom:14px">My Tasks</div><div style="height:52px;background:#F8FAFC;border-radius:8px;margin-bottom:7px"></div><div style="height:52px;background:#F8FAFC;border-radius:8px;margin-bottom:7px"></div><div style="height:52px;background:#F8FAFC;border-radius:8px"></div></div>
+          <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:18px 18px 30px;box-shadow:0 -8px 32px rgba(0,0,0,.12)">
+            <div class="sh-handle"></div>
+            <div style="font-size:15px;font-weight:600;color:var(--sl9);margin-bottom:5px">Thiết kế màn hình Dashboard PM</div>
+            <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap"><span class="pill pb">Đang làm</span><span class="db dt">Hôm nay</span><span style="font-size:10px;color:#94A3B8">Portal KH</span></div>
+            <div class="sl-lbl"><span>Tiến độ</span><span style="color:#4F46E5;font-size:13px">65%</span></div>
+            <div class="sl-track"><div class="sl-fill"></div><div class="sl-thumb"></div></div>
+            <div class="sl-lbl" style="margin-top:4px"><span>Effort hôm nay (giờ)</span></div>
+            <div class="eff-row"><input class="eff-inp" type="text" value="2.5" readonly><button class="btn1" style="flex:1;font-size:13px">Lưu</button></div>
+            <button class="btn2" style="width:100%;font-size:12px;color:#10B981;border-color:#A7F3D0">✓ Đánh dấu hoàn thành</button>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: Allocation Conflict -->
+  <div class="scr" id="s4">
+    <div class="br">
+      <div class="bar"><div class="dots"><div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div></div><div class="url">loop.internal / projects / portal-kh / members / add</div></div>
+      <div class="app" style="position:relative">
+        <div class="sb"><div class="logo">L</div><div class="si on"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" stroke-width="2" stroke-linecap="round"/></svg></div><div class="sbuser" style="margin-top:auto"><div class="uav">TA</div></div></div>
+        <div class="main" style="filter:blur(2px)">
+          <div class="tnav"><div class="bc"><span>Dự án</span><span class="sep">›</span><span>Portal KH</span><span class="sep">›</span><span class="cur">Thêm thành viên</span></div></div>
+          <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px"><div style="height:48px;background:#F8FAFC;border-radius:8px"></div><div style="height:48px;background:#F8FAFC;border-radius:8px"></div><div style="height:48px;background:#F8FAFC;border-radius:8px"></div><div style="height:48px;background:#F8FAFC;border-radius:8px"></div></div>
+        </div>
+        <div class="mov">
+          <div class="mod">
+            <div class="modh"><div class="modt"><span style="font-size:17px">⚠️</span>Xung đột Allocation — Trần Thị Bình</div><div class="mods">Phát hiện 3 ngày có tổng allocation vượt 100%</div></div>
+            <div class="modb">
+              <div class="cinfo"><span>ℹ️</span><div>Trần Thị Bình đang <strong>80% tại HR App</strong>. Thêm 50% vào Portal KH sẽ vượt giới hạn trong các ngày sau:</div></div>
+              <table class="ctable">
+                <thead><tr><th>Ngày</th><th>HR App (hiện tại)</th><th>Portal KH (mới)</th><th>Tổng</th></tr></thead>
+                <tbody>
+                  <tr><td>02/06 (T2)</td><td>80%</td><td>50%</td><td><span class="ctot">130%<span class="cbadge">⚠ Vượt</span></span></td></tr>
+                  <tr><td>03/06 (T3)</td><td>80%</td><td>50%</td><td><span class="ctot">130%<span class="cbadge">⚠ Vượt</span></span></td></tr>
+                  <tr><td>04/06 (T4)</td><td>80%</td><td>50%</td><td><span class="ctot">130%<span class="cbadge">⚠ Vượt</span></span></td></tr>
+                </tbody>
+              </table>
+              <div style="font-size:12px;color:var(--sl6)">💡 Gợi ý: Giảm xuống <strong style="color:#4F46E5">≤ 20%</strong> để tránh xung đột, hoặc bắt đầu từ <strong style="color:#4F46E5">sau 07/06</strong></div>
+            </div>
+            <div class="modf"><button class="btn2">Huỷ</button><button class="btn2" style="color:#4338CA;border-color:#C7D2FE;background:#EEF2FF">↩ Điều chỉnh</button><button class="btn1" style="background:#F59E0B">Vẫn lưu — Xác nhận</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function show(n){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));document.getElementById('s'+n).classList.add('on');document.querySelectorAll('.tb')[n-1].classList.add('on');}
+</script>
+</body>
+</html>
