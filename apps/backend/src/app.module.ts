@@ -53,6 +53,8 @@ import { HealthModule } from './admin/health/health.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { ModuleConfigModule } from './module-config/module-config.module';
 import { RoomBookingModule } from './room-booking/room-booking.module';
+import { VehicleBookingModule } from './vehicle-booking/vehicle-booking.module';
+import { CalendarModule } from './calendar/calendar.module';
 
 @Module({
   providers: [
@@ -128,6 +130,8 @@ import { RoomBookingModule } from './room-booking/room-booking.module';
     WebhooksModule,
     ModuleConfigModule,
     RoomBookingModule,
+    VehicleBookingModule,
+    CalendarModule,
   ],
 })
 export class AppModule {}

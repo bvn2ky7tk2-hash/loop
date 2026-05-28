@@ -60,4 +60,22 @@ export class AccountingController {
   getBalanceSheet(@Query('asOfDate') asOfDate: string) {
     return this.svc.getBalanceSheet(asOfDate);
   }
+
+  @Get('reports/income-statement')
+  @RequirePermission('finance:read')
+  getIncomeStatement(
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    return this.svc.getIncomeStatement(from, to);
+  }
+
+  @Get('reports/cash-flow')
+  @RequirePermission('finance:read')
+  getCashFlowStatement(
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    return this.svc.getCashFlowStatement(from, to);
+  }
 }

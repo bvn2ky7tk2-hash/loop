@@ -54,6 +54,7 @@ import {
   AppstoreAddOutlined as ModuleConfigIcon,
   RocketOutlined,
   CalendarOutlined as RoomCalendarIcon,
+  CarOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -107,6 +108,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/projects',       label: 'Tất cả dự án',   visible: true },
           { key: '/knowledge-base', label: 'Cơ sở tri thức', visible: true },
           { key: '/feed',           label: 'Bảng tin công ty', visible: true },
+          { key: '/calendar',       label: 'Lịch công ty',      visible: true },
         ],
       },
     ],
@@ -362,6 +364,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/assets/assignments',   label: 'Cấp phát tài sản', visible: true },
           { key: '/assets/maintenance',   label: 'Bảo trì',          visible: true },
           { key: '/assets/room-booking',  label: 'Đặt phòng họp',    visible: true },
+          { key: '/assets/vehicles',      label: 'Đặt xe công ty',    visible: true },
         ],
       },
     ],
@@ -479,4 +482,6 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/module-config':                 <ModuleConfigIcon />,
   '/onboarding':                    <RocketOutlined />,
   '/assets/room-booking':           <RoomCalendarIcon />,
+  '/assets/vehicles':               <CarOutlined />,
+  '/calendar':                      <RoomCalendarIcon />,
 };

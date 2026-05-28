@@ -1394,6 +1394,52 @@ exports.Prisma.RoomBookingScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.VehicleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  plateNumber: 'plateNumber',
+  type: 'type',
+  seats: 'seats',
+  status: 'status',
+  driverId: 'driverId',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VehicleRequestScalarFieldEnum = {
+  id: 'id',
+  vehicleId: 'vehicleId',
+  requestedById: 'requestedById',
+  approvedById: 'approvedById',
+  purpose: 'purpose',
+  destination: 'destination',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  passengerCount: 'passengerCount',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CalendarEventScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  eventType: 'eventType',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  isAllDay: 'isAllDay',
+  location: 'location',
+  color: 'color',
+  createdById: 'createdById',
+  attendees: 'attendees',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1881,6 +1927,30 @@ exports.BookingStatus = exports.$Enums.BookingStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.VehicleStatus = exports.$Enums.VehicleStatus = {
+  AVAILABLE: 'AVAILABLE',
+  IN_USE: 'IN_USE',
+  MAINTENANCE: 'MAINTENANCE',
+  RETIRED: 'RETIRED'
+};
+
+exports.VehicleRequestStatus = exports.$Enums.VehicleRequestStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.CalendarEventType = exports.$Enums.CalendarEventType = {
+  MEETING: 'MEETING',
+  HOLIDAY: 'HOLIDAY',
+  TRAINING: 'TRAINING',
+  DEADLINE: 'DEADLINE',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1983,7 +2053,10 @@ exports.Prisma.ModelName = {
   WebhookLog: 'WebhookLog',
   ModuleConfig: 'ModuleConfig',
   MeetingRoom: 'MeetingRoom',
-  RoomBooking: 'RoomBooking'
+  RoomBooking: 'RoomBooking',
+  Vehicle: 'Vehicle',
+  VehicleRequest: 'VehicleRequest',
+  CalendarEvent: 'CalendarEvent'
 };
 
 /**

@@ -84,6 +84,8 @@ const OpsDashboard          = lazy(() => import('./pages/dashboard/OpsDashboard'
 const MeDashboard           = lazy(() => import('./pages/dashboard/MeDashboard'));
 const AdminDashboard        = lazy(() => import('./pages/dashboard/AdminDashboard'));
 const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'));
+const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPage'));
+const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -187,6 +189,8 @@ export const router = createBrowserRouter([
       { path: 'dashboard/me',         element: wrap(MeDashboard) },
       { path: 'dashboard/admin',      element: wrap(AdminDashboard) },
       { path: 'assets/room-booking',  element: wrap(RoomBookingPage) },
+      { path: 'assets/vehicles',      element: wrap(VehicleBookingPage) },
+      { path: 'calendar',             element: wrap(CalendarPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

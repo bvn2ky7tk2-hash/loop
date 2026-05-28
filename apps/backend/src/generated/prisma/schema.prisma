@@ -53,6 +53,10 @@ model User {
   feedPosts            FeedPost[]        @relation("FeedPostAuthor")
   feedReactions        FeedReaction[]    @relation("FeedReactions")
   roomBookings         RoomBooking[]     @relation("RoomBooker")
+  vehicles             Vehicle[]         @relation("VehicleDriver")
+  vehicleRequests      VehicleRequest[]  @relation("VehicleRequester")
+  vehicleApprovals     VehicleRequest[]  @relation("VehicleApprover")
+  calendarEvents       CalendarEvent[]   @relation("CalendarEventCreator")
 
   @@map("users")
 }
@@ -2451,4 +2455,100 @@ model RoomBooking {
   @@index([roomId, startTime, endTime])
   @@index([bookedById])
   @@map("room_bookings")
+}
+
+// ─── Vehicle Booking ──────────────────────────────────────────────────────────
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  RETIRED
+
+  @@map("vehicle_status")
+}
+
+enum VehicleRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("vehicle_request_status")
+}
+
+model Vehicle {
+  id          String           @id @default(uuid())
+  name        String           @db.VarChar(200)
+  plateNumber String           @unique @map("plate_number") @db.VarChar(20)
+  type        String           @db.VarChar(50)
+  seats       Int              @default(4)
+  status      VehicleStatus    @default(AVAILABLE)
+  driverId    String?          @map("driver_id")
+  imageUrl    String?          @map("image_url") @db.VarChar(500)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  requests    VehicleRequest[]
+  driver      User?            @relation("VehicleDriver", fields: [driverId], references: [id])
+
+  @@map("vehicles")
+}
+
+model VehicleRequest {
+  id              String               @id @default(uuid())
+  vehicleId       String               @map("vehicle_id")
+  requestedById   String               @map("requested_by_id")
+  approvedById    String?              @map("approved_by_id")
+  purpose         String               @db.VarChar(500)
+  destination     String               @db.VarChar(300)
+  startTime       DateTime             @map("start_time")
+  endTime         DateTime             @map("end_time")
+  passengerCount  Int                  @default(1) @map("passenger_count")
+  status          VehicleRequestStatus @default(PENDING)
+  rejectionReason String?              @map("rejection_reason") @db.Text
+  note            String?              @db.Text
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+  vehicle         Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  requestedBy     User                 @relation("VehicleRequester", fields: [requestedById], references: [id])
+  approvedBy      User?                @relation("VehicleApprover", fields: [approvedById], references: [id])
+
+  @@index([vehicleId, startTime, endTime])
+  @@index([requestedById])
+  @@index([status])
+  @@map("vehicle_requests")
+}
+
+// ─── Company Calendar ──────────────────────────────────────────────────────────
+
+enum CalendarEventType {
+  MEETING
+  HOLIDAY
+  TRAINING
+  DEADLINE
+  OTHER
+
+  @@map("calendar_event_type")
+}
+
+model CalendarEvent {
+  id          String            @id @default(uuid())
+  title       String            @db.VarChar(300)
+  description String?           @db.Text
+  eventType   CalendarEventType @default(MEETING) @map("event_type")
+  startTime   DateTime          @map("start_time")
+  endTime     DateTime          @map("end_time")
+  isAllDay    Boolean           @default(false) @map("is_all_day")
+  location    String?           @db.VarChar(300)
+  color       String?           @db.VarChar(20)
+  createdById String            @map("created_by_id")
+  attendees   String[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  createdBy   User              @relation("CalendarEventCreator", fields: [createdById], references: [id])
+
+  @@index([startTime, endTime])
+  @@map("calendar_events")
 }

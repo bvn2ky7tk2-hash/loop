@@ -136,3 +136,70 @@ export function useGetBalanceSheet(asOfDate: string) {
     enabled: !!asOfDate,
   });
 }
+
+// ─── TT200: Báo cáo KQKD (Income Statement) ──────────────────────────────────
+
+export interface IncomeStatementLineItem {
+  code:       string;
+  name:       string;
+  amount:     number;
+  isSubtotal: boolean;
+}
+
+export interface IncomeStatementReport {
+  fromDate:         string;
+  toDate:           string;
+  lineItems:        IncomeStatementLineItem[];
+  totalRevenue:     number;
+  grossProfit:      number;
+  operatingProfit:  number;
+  ebt:              number;
+  netIncome:        number;
+}
+
+export function useGetIncomeStatement(from: string, to: string) {
+  return useQuery({
+    queryKey: ['accounting', 'income-statement', from, to],
+    queryFn: () =>
+      apiClient
+        .get<IncomeStatementReport>('/api/v1/accounting/reports/income-statement', { params: { from, to } })
+        .then(r => r.data),
+    enabled: !!from && !!to,
+  });
+}
+
+// ─── TT200: Lưu chuyển tiền tệ (Cash Flow) ───────────────────────────────────
+
+export interface CashFlowItem {
+  code:   string;
+  name:   string;
+  amount: number;
+}
+
+export interface CashFlowSection {
+  key:      string;
+  title:    string;
+  items:    CashFlowItem[];
+  subtotal: number;
+}
+
+export interface CashFlowReport {
+  fromDate:      string;
+  toDate:        string;
+  sections:      CashFlowSection[];
+  netCashChange: number;
+  operatingCF:   number;
+  investingCF:   number;
+  financingCF:   number;
+}
+
+export function useGetCashFlow(from: string, to: string) {
+  return useQuery({
+    queryKey: ['accounting', 'cash-flow', from, to],
+    queryFn: () =>
+      apiClient
+        .get<CashFlowReport>('/api/v1/accounting/reports/cash-flow', { params: { from, to } })
+        .then(r => r.data),
+    enabled: !!from && !!to,
+  });
+}

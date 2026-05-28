@@ -99,6 +99,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/assets/assignments',   module: 'asset', label: 'Cấp phát tài sản', icon: 'SwapOutlined',     permCode: 'asset:read',         sortOrder: 1 },
   { route: '/assets/maintenance',   module: 'asset', label: 'Bảo trì tài sản',  icon: 'ToolOutlined',     permCode: 'asset:read',         sortOrder: 2 },
   { route: '/assets/room-booking',  module: 'asset', label: 'Đặt phòng họp',    icon: 'CalendarOutlined', permCode: 'room_booking:read',   sortOrder: 3 },
+  { route: '/assets/vehicles',      module: 'asset', label: 'Đặt xe công ty',    icon: 'CarOutlined',      permCode: 'asset:read',          sortOrder: 4 },
+  { route: '/calendar',             module: 'pm',    label: 'Lịch công ty',       icon: 'CalendarOutlined', permCode: 'dashboard:read',      sortOrder: 11 },
 
   // ─── Procurement ──────────────────────────────────────────────────────────
   { route: '/procurement/vendors', module: 'procurement', label: 'Nhà cung cấp', icon: 'ShopOutlined',     permCode: 'procurement:read', sortOrder: 0 },

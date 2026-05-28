@@ -523,6 +523,21 @@ export type MeetingRoom = $Result.DefaultSelection<Prisma.$MeetingRoomPayload>
  * 
  */
 export type RoomBooking = $Result.DefaultSelection<Prisma.$RoomBookingPayload>
+/**
+ * Model Vehicle
+ * 
+ */
+export type Vehicle = $Result.DefaultSelection<Prisma.$VehiclePayload>
+/**
+ * Model VehicleRequest
+ * 
+ */
+export type VehicleRequest = $Result.DefaultSelection<Prisma.$VehicleRequestPayload>
+/**
+ * Model CalendarEvent
+ * 
+ */
+export type CalendarEvent = $Result.DefaultSelection<Prisma.$CalendarEventPayload>
 
 /**
  * Enums
@@ -1165,6 +1180,39 @@ export const BookingStatus: {
 
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
 
+
+export const VehicleStatus: {
+  AVAILABLE: 'AVAILABLE',
+  IN_USE: 'IN_USE',
+  MAINTENANCE: 'MAINTENANCE',
+  RETIRED: 'RETIRED'
+};
+
+export type VehicleStatus = (typeof VehicleStatus)[keyof typeof VehicleStatus]
+
+
+export const VehicleRequestStatus: {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type VehicleRequestStatus = (typeof VehicleRequestStatus)[keyof typeof VehicleRequestStatus]
+
+
+export const CalendarEventType: {
+  MEETING: 'MEETING',
+  HOLIDAY: 'HOLIDAY',
+  TRAINING: 'TRAINING',
+  DEADLINE: 'DEADLINE',
+  OTHER: 'OTHER'
+};
+
+export type CalendarEventType = (typeof CalendarEventType)[keyof typeof CalendarEventType]
+
 }
 
 export type SkillCategory = $Enums.SkillCategory
@@ -1406,6 +1454,18 @@ export const RoomStatus: typeof $Enums.RoomStatus
 export type BookingStatus = $Enums.BookingStatus
 
 export const BookingStatus: typeof $Enums.BookingStatus
+
+export type VehicleStatus = $Enums.VehicleStatus
+
+export const VehicleStatus: typeof $Enums.VehicleStatus
+
+export type VehicleRequestStatus = $Enums.VehicleRequestStatus
+
+export const VehicleRequestStatus: typeof $Enums.VehicleRequestStatus
+
+export type CalendarEventType = $Enums.CalendarEventType
+
+export const CalendarEventType: typeof $Enums.CalendarEventType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -2547,6 +2607,36 @@ export class PrismaClient<
     * ```
     */
   get roomBooking(): Prisma.RoomBookingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.vehicle`: Exposes CRUD operations for the **Vehicle** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Vehicles
+    * const vehicles = await prisma.vehicle.findMany()
+    * ```
+    */
+  get vehicle(): Prisma.VehicleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.vehicleRequest`: Exposes CRUD operations for the **VehicleRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VehicleRequests
+    * const vehicleRequests = await prisma.vehicleRequest.findMany()
+    * ```
+    */
+  get vehicleRequest(): Prisma.VehicleRequestDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.calendarEvent`: Exposes CRUD operations for the **CalendarEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CalendarEvents
+    * const calendarEvents = await prisma.calendarEvent.findMany()
+    * ```
+    */
+  get calendarEvent(): Prisma.CalendarEventDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -3082,7 +3172,10 @@ export namespace Prisma {
     WebhookLog: 'WebhookLog',
     ModuleConfig: 'ModuleConfig',
     MeetingRoom: 'MeetingRoom',
-    RoomBooking: 'RoomBooking'
+    RoomBooking: 'RoomBooking',
+    Vehicle: 'Vehicle',
+    VehicleRequest: 'VehicleRequest',
+    CalendarEvent: 'CalendarEvent'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -3098,7 +3191,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "calendarEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -10650,6 +10743,228 @@ export namespace Prisma {
           }
         }
       }
+      Vehicle: {
+        payload: Prisma.$VehiclePayload<ExtArgs>
+        fields: Prisma.VehicleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VehicleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VehicleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          findFirst: {
+            args: Prisma.VehicleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VehicleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          findMany: {
+            args: Prisma.VehicleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>[]
+          }
+          create: {
+            args: Prisma.VehicleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          createMany: {
+            args: Prisma.VehicleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VehicleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>[]
+          }
+          delete: {
+            args: Prisma.VehicleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          update: {
+            args: Prisma.VehicleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          deleteMany: {
+            args: Prisma.VehicleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VehicleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VehicleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>[]
+          }
+          upsert: {
+            args: Prisma.VehicleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehiclePayload>
+          }
+          aggregate: {
+            args: Prisma.VehicleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVehicle>
+          }
+          groupBy: {
+            args: Prisma.VehicleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VehicleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VehicleCountArgs<ExtArgs>
+            result: $Utils.Optional<VehicleCountAggregateOutputType> | number
+          }
+        }
+      }
+      VehicleRequest: {
+        payload: Prisma.$VehicleRequestPayload<ExtArgs>
+        fields: Prisma.VehicleRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VehicleRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VehicleRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.VehicleRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VehicleRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          findMany: {
+            args: Prisma.VehicleRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>[]
+          }
+          create: {
+            args: Prisma.VehicleRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          createMany: {
+            args: Prisma.VehicleRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VehicleRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.VehicleRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          update: {
+            args: Prisma.VehicleRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.VehicleRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VehicleRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VehicleRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.VehicleRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VehicleRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.VehicleRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVehicleRequest>
+          }
+          groupBy: {
+            args: Prisma.VehicleRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VehicleRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VehicleRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<VehicleRequestCountAggregateOutputType> | number
+          }
+        }
+      }
+      CalendarEvent: {
+        payload: Prisma.$CalendarEventPayload<ExtArgs>
+        fields: Prisma.CalendarEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CalendarEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CalendarEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          findFirst: {
+            args: Prisma.CalendarEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CalendarEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          findMany: {
+            args: Prisma.CalendarEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+          }
+          create: {
+            args: Prisma.CalendarEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          createMany: {
+            args: Prisma.CalendarEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CalendarEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+          }
+          delete: {
+            args: Prisma.CalendarEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          update: {
+            args: Prisma.CalendarEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.CalendarEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CalendarEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CalendarEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.CalendarEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CalendarEventPayload>
+          }
+          aggregate: {
+            args: Prisma.CalendarEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCalendarEvent>
+          }
+          groupBy: {
+            args: Prisma.CalendarEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CalendarEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CalendarEventCountArgs<ExtArgs>
+            result: $Utils.Optional<CalendarEventCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -10860,6 +11175,9 @@ export namespace Prisma {
     moduleConfig?: ModuleConfigOmit
     meetingRoom?: MeetingRoomOmit
     roomBooking?: RoomBookingOmit
+    vehicle?: VehicleOmit
+    vehicleRequest?: VehicleRequestOmit
+    calendarEvent?: CalendarEventOmit
   }
 
   /* Types for Logging */
@@ -10973,6 +11291,10 @@ export namespace Prisma {
     feedPosts: number
     feedReactions: number
     roomBookings: number
+    vehicles: number
+    vehicleRequests: number
+    vehicleApprovals: number
+    calendarEvents: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11009,6 +11331,10 @@ export namespace Prisma {
     feedPosts?: boolean | UserCountOutputTypeCountFeedPostsArgs
     feedReactions?: boolean | UserCountOutputTypeCountFeedReactionsArgs
     roomBookings?: boolean | UserCountOutputTypeCountRoomBookingsArgs
+    vehicles?: boolean | UserCountOutputTypeCountVehiclesArgs
+    vehicleRequests?: boolean | UserCountOutputTypeCountVehicleRequestsArgs
+    vehicleApprovals?: boolean | UserCountOutputTypeCountVehicleApprovalsArgs
+    calendarEvents?: boolean | UserCountOutputTypeCountCalendarEventsArgs
   }
 
   // Custom InputTypes
@@ -11251,6 +11577,34 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRoomBookingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RoomBookingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVehiclesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVehicleRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVehicleApprovalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCalendarEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CalendarEventWhereInput
   }
 
 
@@ -12865,6 +13219,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type VehicleCountOutputType
+   */
+
+  export type VehicleCountOutputType = {
+    requests: number
+  }
+
+  export type VehicleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    requests?: boolean | VehicleCountOutputTypeCountRequestsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * VehicleCountOutputType without action
+   */
+  export type VehicleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleCountOutputType
+     */
+    select?: VehicleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * VehicleCountOutputType without action
+   */
+  export type VehicleCountOutputTypeCountRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleRequestWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -13107,6 +13492,10 @@ export namespace Prisma {
     feedPosts?: boolean | User$feedPostsArgs<ExtArgs>
     feedReactions?: boolean | User$feedReactionsArgs<ExtArgs>
     roomBookings?: boolean | User$roomBookingsArgs<ExtArgs>
+    vehicles?: boolean | User$vehiclesArgs<ExtArgs>
+    vehicleRequests?: boolean | User$vehicleRequestsArgs<ExtArgs>
+    vehicleApprovals?: boolean | User$vehicleApprovalsArgs<ExtArgs>
+    calendarEvents?: boolean | User$calendarEventsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -13188,6 +13577,10 @@ export namespace Prisma {
     feedPosts?: boolean | User$feedPostsArgs<ExtArgs>
     feedReactions?: boolean | User$feedReactionsArgs<ExtArgs>
     roomBookings?: boolean | User$roomBookingsArgs<ExtArgs>
+    vehicles?: boolean | User$vehiclesArgs<ExtArgs>
+    vehicleRequests?: boolean | User$vehicleRequestsArgs<ExtArgs>
+    vehicleApprovals?: boolean | User$vehicleApprovalsArgs<ExtArgs>
+    calendarEvents?: boolean | User$calendarEventsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13235,6 +13628,10 @@ export namespace Prisma {
       feedPosts: Prisma.$FeedPostPayload<ExtArgs>[]
       feedReactions: Prisma.$FeedReactionPayload<ExtArgs>[]
       roomBookings: Prisma.$RoomBookingPayload<ExtArgs>[]
+      vehicles: Prisma.$VehiclePayload<ExtArgs>[]
+      vehicleRequests: Prisma.$VehicleRequestPayload<ExtArgs>[]
+      vehicleApprovals: Prisma.$VehicleRequestPayload<ExtArgs>[]
+      calendarEvents: Prisma.$CalendarEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13676,6 +14073,10 @@ export namespace Prisma {
     feedPosts<T extends User$feedPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$feedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     feedReactions<T extends User$feedReactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$feedReactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     roomBookings<T extends User$roomBookingsArgs<ExtArgs> = {}>(args?: Subset<T, User$roomBookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoomBookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    vehicles<T extends User$vehiclesArgs<ExtArgs> = {}>(args?: Subset<T, User$vehiclesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    vehicleRequests<T extends User$vehicleRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$vehicleRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    vehicleApprovals<T extends User$vehicleApprovalsArgs<ExtArgs> = {}>(args?: Subset<T, User$vehicleApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    calendarEvents<T extends User$calendarEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14943,6 +15344,102 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: RoomBookingScalarFieldEnum | RoomBookingScalarFieldEnum[]
+  }
+
+  /**
+   * User.vehicles
+   */
+  export type User$vehiclesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    where?: VehicleWhereInput
+    orderBy?: VehicleOrderByWithRelationInput | VehicleOrderByWithRelationInput[]
+    cursor?: VehicleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VehicleScalarFieldEnum | VehicleScalarFieldEnum[]
+  }
+
+  /**
+   * User.vehicleRequests
+   */
+  export type User$vehicleRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    where?: VehicleRequestWhereInput
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    cursor?: VehicleRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.vehicleApprovals
+   */
+  export type User$vehicleApprovalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    where?: VehicleRequestWhereInput
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    cursor?: VehicleRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.calendarEvents
+   */
+  export type User$calendarEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    where?: CalendarEventWhereInput
+    orderBy?: CalendarEventOrderByWithRelationInput | CalendarEventOrderByWithRelationInput[]
+    cursor?: CalendarEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CalendarEventScalarFieldEnum | CalendarEventScalarFieldEnum[]
   }
 
   /**
@@ -133046,6 +133543,3629 @@ export namespace Prisma {
 
 
   /**
+   * Model Vehicle
+   */
+
+  export type AggregateVehicle = {
+    _count: VehicleCountAggregateOutputType | null
+    _avg: VehicleAvgAggregateOutputType | null
+    _sum: VehicleSumAggregateOutputType | null
+    _min: VehicleMinAggregateOutputType | null
+    _max: VehicleMaxAggregateOutputType | null
+  }
+
+  export type VehicleAvgAggregateOutputType = {
+    seats: number | null
+  }
+
+  export type VehicleSumAggregateOutputType = {
+    seats: number | null
+  }
+
+  export type VehicleMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    plateNumber: string | null
+    type: string | null
+    seats: number | null
+    status: $Enums.VehicleStatus | null
+    driverId: string | null
+    imageUrl: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VehicleMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    plateNumber: string | null
+    type: string | null
+    seats: number | null
+    status: $Enums.VehicleStatus | null
+    driverId: string | null
+    imageUrl: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VehicleCountAggregateOutputType = {
+    id: number
+    name: number
+    plateNumber: number
+    type: number
+    seats: number
+    status: number
+    driverId: number
+    imageUrl: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type VehicleAvgAggregateInputType = {
+    seats?: true
+  }
+
+  export type VehicleSumAggregateInputType = {
+    seats?: true
+  }
+
+  export type VehicleMinAggregateInputType = {
+    id?: true
+    name?: true
+    plateNumber?: true
+    type?: true
+    seats?: true
+    status?: true
+    driverId?: true
+    imageUrl?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VehicleMaxAggregateInputType = {
+    id?: true
+    name?: true
+    plateNumber?: true
+    type?: true
+    seats?: true
+    status?: true
+    driverId?: true
+    imageUrl?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VehicleCountAggregateInputType = {
+    id?: true
+    name?: true
+    plateNumber?: true
+    type?: true
+    seats?: true
+    status?: true
+    driverId?: true
+    imageUrl?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type VehicleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Vehicle to aggregate.
+     */
+    where?: VehicleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vehicles to fetch.
+     */
+    orderBy?: VehicleOrderByWithRelationInput | VehicleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VehicleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vehicles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vehicles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Vehicles
+    **/
+    _count?: true | VehicleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VehicleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VehicleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VehicleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VehicleMaxAggregateInputType
+  }
+
+  export type GetVehicleAggregateType<T extends VehicleAggregateArgs> = {
+        [P in keyof T & keyof AggregateVehicle]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVehicle[P]>
+      : GetScalarType<T[P], AggregateVehicle[P]>
+  }
+
+
+
+
+  export type VehicleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleWhereInput
+    orderBy?: VehicleOrderByWithAggregationInput | VehicleOrderByWithAggregationInput[]
+    by: VehicleScalarFieldEnum[] | VehicleScalarFieldEnum
+    having?: VehicleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VehicleCountAggregateInputType | true
+    _avg?: VehicleAvgAggregateInputType
+    _sum?: VehicleSumAggregateInputType
+    _min?: VehicleMinAggregateInputType
+    _max?: VehicleMaxAggregateInputType
+  }
+
+  export type VehicleGroupByOutputType = {
+    id: string
+    name: string
+    plateNumber: string
+    type: string
+    seats: number
+    status: $Enums.VehicleStatus
+    driverId: string | null
+    imageUrl: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: VehicleCountAggregateOutputType | null
+    _avg: VehicleAvgAggregateOutputType | null
+    _sum: VehicleSumAggregateOutputType | null
+    _min: VehicleMinAggregateOutputType | null
+    _max: VehicleMaxAggregateOutputType | null
+  }
+
+  type GetVehicleGroupByPayload<T extends VehicleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VehicleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VehicleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VehicleGroupByOutputType[P]>
+            : GetScalarType<T[P], VehicleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VehicleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    plateNumber?: boolean
+    type?: boolean
+    seats?: boolean
+    status?: boolean
+    driverId?: boolean
+    imageUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    requests?: boolean | Vehicle$requestsArgs<ExtArgs>
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+    _count?: boolean | VehicleCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicle"]>
+
+  export type VehicleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    plateNumber?: boolean
+    type?: boolean
+    seats?: boolean
+    status?: boolean
+    driverId?: boolean
+    imageUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicle"]>
+
+  export type VehicleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    plateNumber?: boolean
+    type?: boolean
+    seats?: boolean
+    status?: boolean
+    driverId?: boolean
+    imageUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicle"]>
+
+  export type VehicleSelectScalar = {
+    id?: boolean
+    name?: boolean
+    plateNumber?: boolean
+    type?: boolean
+    seats?: boolean
+    status?: boolean
+    driverId?: boolean
+    imageUrl?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type VehicleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "plateNumber" | "type" | "seats" | "status" | "driverId" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["vehicle"]>
+  export type VehicleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    requests?: boolean | Vehicle$requestsArgs<ExtArgs>
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+    _count?: boolean | VehicleCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type VehicleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+  }
+  export type VehicleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    driver?: boolean | Vehicle$driverArgs<ExtArgs>
+  }
+
+  export type $VehiclePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Vehicle"
+    objects: {
+      requests: Prisma.$VehicleRequestPayload<ExtArgs>[]
+      driver: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      plateNumber: string
+      type: string
+      seats: number
+      status: $Enums.VehicleStatus
+      driverId: string | null
+      imageUrl: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["vehicle"]>
+    composites: {}
+  }
+
+  type VehicleGetPayload<S extends boolean | null | undefined | VehicleDefaultArgs> = $Result.GetResult<Prisma.$VehiclePayload, S>
+
+  type VehicleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VehicleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VehicleCountAggregateInputType | true
+    }
+
+  export interface VehicleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Vehicle'], meta: { name: 'Vehicle' } }
+    /**
+     * Find zero or one Vehicle that matches the filter.
+     * @param {VehicleFindUniqueArgs} args - Arguments to find a Vehicle
+     * @example
+     * // Get one Vehicle
+     * const vehicle = await prisma.vehicle.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VehicleFindUniqueArgs>(args: SelectSubset<T, VehicleFindUniqueArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Vehicle that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VehicleFindUniqueOrThrowArgs} args - Arguments to find a Vehicle
+     * @example
+     * // Get one Vehicle
+     * const vehicle = await prisma.vehicle.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VehicleFindUniqueOrThrowArgs>(args: SelectSubset<T, VehicleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Vehicle that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleFindFirstArgs} args - Arguments to find a Vehicle
+     * @example
+     * // Get one Vehicle
+     * const vehicle = await prisma.vehicle.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VehicleFindFirstArgs>(args?: SelectSubset<T, VehicleFindFirstArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Vehicle that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleFindFirstOrThrowArgs} args - Arguments to find a Vehicle
+     * @example
+     * // Get one Vehicle
+     * const vehicle = await prisma.vehicle.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VehicleFindFirstOrThrowArgs>(args?: SelectSubset<T, VehicleFindFirstOrThrowArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Vehicles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Vehicles
+     * const vehicles = await prisma.vehicle.findMany()
+     * 
+     * // Get first 10 Vehicles
+     * const vehicles = await prisma.vehicle.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const vehicleWithIdOnly = await prisma.vehicle.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VehicleFindManyArgs>(args?: SelectSubset<T, VehicleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Vehicle.
+     * @param {VehicleCreateArgs} args - Arguments to create a Vehicle.
+     * @example
+     * // Create one Vehicle
+     * const Vehicle = await prisma.vehicle.create({
+     *   data: {
+     *     // ... data to create a Vehicle
+     *   }
+     * })
+     * 
+     */
+    create<T extends VehicleCreateArgs>(args: SelectSubset<T, VehicleCreateArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Vehicles.
+     * @param {VehicleCreateManyArgs} args - Arguments to create many Vehicles.
+     * @example
+     * // Create many Vehicles
+     * const vehicle = await prisma.vehicle.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VehicleCreateManyArgs>(args?: SelectSubset<T, VehicleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Vehicles and returns the data saved in the database.
+     * @param {VehicleCreateManyAndReturnArgs} args - Arguments to create many Vehicles.
+     * @example
+     * // Create many Vehicles
+     * const vehicle = await prisma.vehicle.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Vehicles and only return the `id`
+     * const vehicleWithIdOnly = await prisma.vehicle.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VehicleCreateManyAndReturnArgs>(args?: SelectSubset<T, VehicleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Vehicle.
+     * @param {VehicleDeleteArgs} args - Arguments to delete one Vehicle.
+     * @example
+     * // Delete one Vehicle
+     * const Vehicle = await prisma.vehicle.delete({
+     *   where: {
+     *     // ... filter to delete one Vehicle
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VehicleDeleteArgs>(args: SelectSubset<T, VehicleDeleteArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Vehicle.
+     * @param {VehicleUpdateArgs} args - Arguments to update one Vehicle.
+     * @example
+     * // Update one Vehicle
+     * const vehicle = await prisma.vehicle.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VehicleUpdateArgs>(args: SelectSubset<T, VehicleUpdateArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Vehicles.
+     * @param {VehicleDeleteManyArgs} args - Arguments to filter Vehicles to delete.
+     * @example
+     * // Delete a few Vehicles
+     * const { count } = await prisma.vehicle.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VehicleDeleteManyArgs>(args?: SelectSubset<T, VehicleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Vehicles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Vehicles
+     * const vehicle = await prisma.vehicle.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VehicleUpdateManyArgs>(args: SelectSubset<T, VehicleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Vehicles and returns the data updated in the database.
+     * @param {VehicleUpdateManyAndReturnArgs} args - Arguments to update many Vehicles.
+     * @example
+     * // Update many Vehicles
+     * const vehicle = await prisma.vehicle.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Vehicles and only return the `id`
+     * const vehicleWithIdOnly = await prisma.vehicle.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VehicleUpdateManyAndReturnArgs>(args: SelectSubset<T, VehicleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Vehicle.
+     * @param {VehicleUpsertArgs} args - Arguments to update or create a Vehicle.
+     * @example
+     * // Update or create a Vehicle
+     * const vehicle = await prisma.vehicle.upsert({
+     *   create: {
+     *     // ... data to create a Vehicle
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Vehicle we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VehicleUpsertArgs>(args: SelectSubset<T, VehicleUpsertArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Vehicles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleCountArgs} args - Arguments to filter Vehicles to count.
+     * @example
+     * // Count the number of Vehicles
+     * const count = await prisma.vehicle.count({
+     *   where: {
+     *     // ... the filter for the Vehicles we want to count
+     *   }
+     * })
+    **/
+    count<T extends VehicleCountArgs>(
+      args?: Subset<T, VehicleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VehicleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Vehicle.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VehicleAggregateArgs>(args: Subset<T, VehicleAggregateArgs>): Prisma.PrismaPromise<GetVehicleAggregateType<T>>
+
+    /**
+     * Group by Vehicle.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VehicleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VehicleGroupByArgs['orderBy'] }
+        : { orderBy?: VehicleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VehicleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVehicleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Vehicle model
+   */
+  readonly fields: VehicleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Vehicle.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VehicleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    requests<T extends Vehicle$requestsArgs<ExtArgs> = {}>(args?: Subset<T, Vehicle$requestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    driver<T extends Vehicle$driverArgs<ExtArgs> = {}>(args?: Subset<T, Vehicle$driverArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Vehicle model
+   */
+  interface VehicleFieldRefs {
+    readonly id: FieldRef<"Vehicle", 'String'>
+    readonly name: FieldRef<"Vehicle", 'String'>
+    readonly plateNumber: FieldRef<"Vehicle", 'String'>
+    readonly type: FieldRef<"Vehicle", 'String'>
+    readonly seats: FieldRef<"Vehicle", 'Int'>
+    readonly status: FieldRef<"Vehicle", 'VehicleStatus'>
+    readonly driverId: FieldRef<"Vehicle", 'String'>
+    readonly imageUrl: FieldRef<"Vehicle", 'String'>
+    readonly createdAt: FieldRef<"Vehicle", 'DateTime'>
+    readonly updatedAt: FieldRef<"Vehicle", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Vehicle findUnique
+   */
+  export type VehicleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter, which Vehicle to fetch.
+     */
+    where: VehicleWhereUniqueInput
+  }
+
+  /**
+   * Vehicle findUniqueOrThrow
+   */
+  export type VehicleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter, which Vehicle to fetch.
+     */
+    where: VehicleWhereUniqueInput
+  }
+
+  /**
+   * Vehicle findFirst
+   */
+  export type VehicleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter, which Vehicle to fetch.
+     */
+    where?: VehicleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vehicles to fetch.
+     */
+    orderBy?: VehicleOrderByWithRelationInput | VehicleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Vehicles.
+     */
+    cursor?: VehicleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vehicles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vehicles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Vehicles.
+     */
+    distinct?: VehicleScalarFieldEnum | VehicleScalarFieldEnum[]
+  }
+
+  /**
+   * Vehicle findFirstOrThrow
+   */
+  export type VehicleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter, which Vehicle to fetch.
+     */
+    where?: VehicleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vehicles to fetch.
+     */
+    orderBy?: VehicleOrderByWithRelationInput | VehicleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Vehicles.
+     */
+    cursor?: VehicleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vehicles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vehicles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Vehicles.
+     */
+    distinct?: VehicleScalarFieldEnum | VehicleScalarFieldEnum[]
+  }
+
+  /**
+   * Vehicle findMany
+   */
+  export type VehicleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter, which Vehicles to fetch.
+     */
+    where?: VehicleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vehicles to fetch.
+     */
+    orderBy?: VehicleOrderByWithRelationInput | VehicleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Vehicles.
+     */
+    cursor?: VehicleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vehicles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vehicles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Vehicles.
+     */
+    distinct?: VehicleScalarFieldEnum | VehicleScalarFieldEnum[]
+  }
+
+  /**
+   * Vehicle create
+   */
+  export type VehicleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Vehicle.
+     */
+    data: XOR<VehicleCreateInput, VehicleUncheckedCreateInput>
+  }
+
+  /**
+   * Vehicle createMany
+   */
+  export type VehicleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Vehicles.
+     */
+    data: VehicleCreateManyInput | VehicleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Vehicle createManyAndReturn
+   */
+  export type VehicleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * The data used to create many Vehicles.
+     */
+    data: VehicleCreateManyInput | VehicleCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Vehicle update
+   */
+  export type VehicleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Vehicle.
+     */
+    data: XOR<VehicleUpdateInput, VehicleUncheckedUpdateInput>
+    /**
+     * Choose, which Vehicle to update.
+     */
+    where: VehicleWhereUniqueInput
+  }
+
+  /**
+   * Vehicle updateMany
+   */
+  export type VehicleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Vehicles.
+     */
+    data: XOR<VehicleUpdateManyMutationInput, VehicleUncheckedUpdateManyInput>
+    /**
+     * Filter which Vehicles to update
+     */
+    where?: VehicleWhereInput
+    /**
+     * Limit how many Vehicles to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Vehicle updateManyAndReturn
+   */
+  export type VehicleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * The data used to update Vehicles.
+     */
+    data: XOR<VehicleUpdateManyMutationInput, VehicleUncheckedUpdateManyInput>
+    /**
+     * Filter which Vehicles to update
+     */
+    where?: VehicleWhereInput
+    /**
+     * Limit how many Vehicles to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Vehicle upsert
+   */
+  export type VehicleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Vehicle to update in case it exists.
+     */
+    where: VehicleWhereUniqueInput
+    /**
+     * In case the Vehicle found by the `where` argument doesn't exist, create a new Vehicle with this data.
+     */
+    create: XOR<VehicleCreateInput, VehicleUncheckedCreateInput>
+    /**
+     * In case the Vehicle was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VehicleUpdateInput, VehicleUncheckedUpdateInput>
+  }
+
+  /**
+   * Vehicle delete
+   */
+  export type VehicleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    /**
+     * Filter which Vehicle to delete.
+     */
+    where: VehicleWhereUniqueInput
+  }
+
+  /**
+   * Vehicle deleteMany
+   */
+  export type VehicleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Vehicles to delete
+     */
+    where?: VehicleWhereInput
+    /**
+     * Limit how many Vehicles to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Vehicle.requests
+   */
+  export type Vehicle$requestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    where?: VehicleRequestWhereInput
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    cursor?: VehicleRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Vehicle.driver
+   */
+  export type Vehicle$driverArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Vehicle without action
+   */
+  export type VehicleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model VehicleRequest
+   */
+
+  export type AggregateVehicleRequest = {
+    _count: VehicleRequestCountAggregateOutputType | null
+    _avg: VehicleRequestAvgAggregateOutputType | null
+    _sum: VehicleRequestSumAggregateOutputType | null
+    _min: VehicleRequestMinAggregateOutputType | null
+    _max: VehicleRequestMaxAggregateOutputType | null
+  }
+
+  export type VehicleRequestAvgAggregateOutputType = {
+    passengerCount: number | null
+  }
+
+  export type VehicleRequestSumAggregateOutputType = {
+    passengerCount: number | null
+  }
+
+  export type VehicleRequestMinAggregateOutputType = {
+    id: string | null
+    vehicleId: string | null
+    requestedById: string | null
+    approvedById: string | null
+    purpose: string | null
+    destination: string | null
+    startTime: Date | null
+    endTime: Date | null
+    passengerCount: number | null
+    status: $Enums.VehicleRequestStatus | null
+    rejectionReason: string | null
+    note: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VehicleRequestMaxAggregateOutputType = {
+    id: string | null
+    vehicleId: string | null
+    requestedById: string | null
+    approvedById: string | null
+    purpose: string | null
+    destination: string | null
+    startTime: Date | null
+    endTime: Date | null
+    passengerCount: number | null
+    status: $Enums.VehicleRequestStatus | null
+    rejectionReason: string | null
+    note: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VehicleRequestCountAggregateOutputType = {
+    id: number
+    vehicleId: number
+    requestedById: number
+    approvedById: number
+    purpose: number
+    destination: number
+    startTime: number
+    endTime: number
+    passengerCount: number
+    status: number
+    rejectionReason: number
+    note: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type VehicleRequestAvgAggregateInputType = {
+    passengerCount?: true
+  }
+
+  export type VehicleRequestSumAggregateInputType = {
+    passengerCount?: true
+  }
+
+  export type VehicleRequestMinAggregateInputType = {
+    id?: true
+    vehicleId?: true
+    requestedById?: true
+    approvedById?: true
+    purpose?: true
+    destination?: true
+    startTime?: true
+    endTime?: true
+    passengerCount?: true
+    status?: true
+    rejectionReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VehicleRequestMaxAggregateInputType = {
+    id?: true
+    vehicleId?: true
+    requestedById?: true
+    approvedById?: true
+    purpose?: true
+    destination?: true
+    startTime?: true
+    endTime?: true
+    passengerCount?: true
+    status?: true
+    rejectionReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VehicleRequestCountAggregateInputType = {
+    id?: true
+    vehicleId?: true
+    requestedById?: true
+    approvedById?: true
+    purpose?: true
+    destination?: true
+    startTime?: true
+    endTime?: true
+    passengerCount?: true
+    status?: true
+    rejectionReason?: true
+    note?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type VehicleRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VehicleRequest to aggregate.
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VehicleRequests to fetch.
+     */
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VehicleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VehicleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VehicleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VehicleRequests
+    **/
+    _count?: true | VehicleRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VehicleRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VehicleRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VehicleRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VehicleRequestMaxAggregateInputType
+  }
+
+  export type GetVehicleRequestAggregateType<T extends VehicleRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateVehicleRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVehicleRequest[P]>
+      : GetScalarType<T[P], AggregateVehicleRequest[P]>
+  }
+
+
+
+
+  export type VehicleRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VehicleRequestWhereInput
+    orderBy?: VehicleRequestOrderByWithAggregationInput | VehicleRequestOrderByWithAggregationInput[]
+    by: VehicleRequestScalarFieldEnum[] | VehicleRequestScalarFieldEnum
+    having?: VehicleRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VehicleRequestCountAggregateInputType | true
+    _avg?: VehicleRequestAvgAggregateInputType
+    _sum?: VehicleRequestSumAggregateInputType
+    _min?: VehicleRequestMinAggregateInputType
+    _max?: VehicleRequestMaxAggregateInputType
+  }
+
+  export type VehicleRequestGroupByOutputType = {
+    id: string
+    vehicleId: string
+    requestedById: string
+    approvedById: string | null
+    purpose: string
+    destination: string
+    startTime: Date
+    endTime: Date
+    passengerCount: number
+    status: $Enums.VehicleRequestStatus
+    rejectionReason: string | null
+    note: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: VehicleRequestCountAggregateOutputType | null
+    _avg: VehicleRequestAvgAggregateOutputType | null
+    _sum: VehicleRequestSumAggregateOutputType | null
+    _min: VehicleRequestMinAggregateOutputType | null
+    _max: VehicleRequestMaxAggregateOutputType | null
+  }
+
+  type GetVehicleRequestGroupByPayload<T extends VehicleRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VehicleRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VehicleRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VehicleRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], VehicleRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VehicleRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    vehicleId?: boolean
+    requestedById?: boolean
+    approvedById?: boolean
+    purpose?: boolean
+    destination?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    passengerCount?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicleRequest"]>
+
+  export type VehicleRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    vehicleId?: boolean
+    requestedById?: boolean
+    approvedById?: boolean
+    purpose?: boolean
+    destination?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    passengerCount?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicleRequest"]>
+
+  export type VehicleRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    vehicleId?: boolean
+    requestedById?: boolean
+    approvedById?: boolean
+    purpose?: boolean
+    destination?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    passengerCount?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }, ExtArgs["result"]["vehicleRequest"]>
+
+  export type VehicleRequestSelectScalar = {
+    id?: boolean
+    vehicleId?: boolean
+    requestedById?: boolean
+    approvedById?: boolean
+    purpose?: boolean
+    destination?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    passengerCount?: boolean
+    status?: boolean
+    rejectionReason?: boolean
+    note?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type VehicleRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "vehicleId" | "requestedById" | "approvedById" | "purpose" | "destination" | "startTime" | "endTime" | "passengerCount" | "status" | "rejectionReason" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["vehicleRequest"]>
+  export type VehicleRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }
+  export type VehicleRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }
+  export type VehicleRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    vehicle?: boolean | VehicleDefaultArgs<ExtArgs>
+    requestedBy?: boolean | UserDefaultArgs<ExtArgs>
+    approvedBy?: boolean | VehicleRequest$approvedByArgs<ExtArgs>
+  }
+
+  export type $VehicleRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VehicleRequest"
+    objects: {
+      vehicle: Prisma.$VehiclePayload<ExtArgs>
+      requestedBy: Prisma.$UserPayload<ExtArgs>
+      approvedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      vehicleId: string
+      requestedById: string
+      approvedById: string | null
+      purpose: string
+      destination: string
+      startTime: Date
+      endTime: Date
+      passengerCount: number
+      status: $Enums.VehicleRequestStatus
+      rejectionReason: string | null
+      note: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["vehicleRequest"]>
+    composites: {}
+  }
+
+  type VehicleRequestGetPayload<S extends boolean | null | undefined | VehicleRequestDefaultArgs> = $Result.GetResult<Prisma.$VehicleRequestPayload, S>
+
+  type VehicleRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VehicleRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VehicleRequestCountAggregateInputType | true
+    }
+
+  export interface VehicleRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VehicleRequest'], meta: { name: 'VehicleRequest' } }
+    /**
+     * Find zero or one VehicleRequest that matches the filter.
+     * @param {VehicleRequestFindUniqueArgs} args - Arguments to find a VehicleRequest
+     * @example
+     * // Get one VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VehicleRequestFindUniqueArgs>(args: SelectSubset<T, VehicleRequestFindUniqueArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one VehicleRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VehicleRequestFindUniqueOrThrowArgs} args - Arguments to find a VehicleRequest
+     * @example
+     * // Get one VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VehicleRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, VehicleRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VehicleRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestFindFirstArgs} args - Arguments to find a VehicleRequest
+     * @example
+     * // Get one VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VehicleRequestFindFirstArgs>(args?: SelectSubset<T, VehicleRequestFindFirstArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first VehicleRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestFindFirstOrThrowArgs} args - Arguments to find a VehicleRequest
+     * @example
+     * // Get one VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VehicleRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, VehicleRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more VehicleRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VehicleRequests
+     * const vehicleRequests = await prisma.vehicleRequest.findMany()
+     * 
+     * // Get first 10 VehicleRequests
+     * const vehicleRequests = await prisma.vehicleRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const vehicleRequestWithIdOnly = await prisma.vehicleRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VehicleRequestFindManyArgs>(args?: SelectSubset<T, VehicleRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a VehicleRequest.
+     * @param {VehicleRequestCreateArgs} args - Arguments to create a VehicleRequest.
+     * @example
+     * // Create one VehicleRequest
+     * const VehicleRequest = await prisma.vehicleRequest.create({
+     *   data: {
+     *     // ... data to create a VehicleRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends VehicleRequestCreateArgs>(args: SelectSubset<T, VehicleRequestCreateArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many VehicleRequests.
+     * @param {VehicleRequestCreateManyArgs} args - Arguments to create many VehicleRequests.
+     * @example
+     * // Create many VehicleRequests
+     * const vehicleRequest = await prisma.vehicleRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VehicleRequestCreateManyArgs>(args?: SelectSubset<T, VehicleRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VehicleRequests and returns the data saved in the database.
+     * @param {VehicleRequestCreateManyAndReturnArgs} args - Arguments to create many VehicleRequests.
+     * @example
+     * // Create many VehicleRequests
+     * const vehicleRequest = await prisma.vehicleRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VehicleRequests and only return the `id`
+     * const vehicleRequestWithIdOnly = await prisma.vehicleRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VehicleRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, VehicleRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a VehicleRequest.
+     * @param {VehicleRequestDeleteArgs} args - Arguments to delete one VehicleRequest.
+     * @example
+     * // Delete one VehicleRequest
+     * const VehicleRequest = await prisma.vehicleRequest.delete({
+     *   where: {
+     *     // ... filter to delete one VehicleRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VehicleRequestDeleteArgs>(args: SelectSubset<T, VehicleRequestDeleteArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one VehicleRequest.
+     * @param {VehicleRequestUpdateArgs} args - Arguments to update one VehicleRequest.
+     * @example
+     * // Update one VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VehicleRequestUpdateArgs>(args: SelectSubset<T, VehicleRequestUpdateArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more VehicleRequests.
+     * @param {VehicleRequestDeleteManyArgs} args - Arguments to filter VehicleRequests to delete.
+     * @example
+     * // Delete a few VehicleRequests
+     * const { count } = await prisma.vehicleRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VehicleRequestDeleteManyArgs>(args?: SelectSubset<T, VehicleRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VehicleRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VehicleRequests
+     * const vehicleRequest = await prisma.vehicleRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VehicleRequestUpdateManyArgs>(args: SelectSubset<T, VehicleRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VehicleRequests and returns the data updated in the database.
+     * @param {VehicleRequestUpdateManyAndReturnArgs} args - Arguments to update many VehicleRequests.
+     * @example
+     * // Update many VehicleRequests
+     * const vehicleRequest = await prisma.vehicleRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more VehicleRequests and only return the `id`
+     * const vehicleRequestWithIdOnly = await prisma.vehicleRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VehicleRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, VehicleRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one VehicleRequest.
+     * @param {VehicleRequestUpsertArgs} args - Arguments to update or create a VehicleRequest.
+     * @example
+     * // Update or create a VehicleRequest
+     * const vehicleRequest = await prisma.vehicleRequest.upsert({
+     *   create: {
+     *     // ... data to create a VehicleRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VehicleRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VehicleRequestUpsertArgs>(args: SelectSubset<T, VehicleRequestUpsertArgs<ExtArgs>>): Prisma__VehicleRequestClient<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of VehicleRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestCountArgs} args - Arguments to filter VehicleRequests to count.
+     * @example
+     * // Count the number of VehicleRequests
+     * const count = await prisma.vehicleRequest.count({
+     *   where: {
+     *     // ... the filter for the VehicleRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends VehicleRequestCountArgs>(
+      args?: Subset<T, VehicleRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VehicleRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VehicleRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VehicleRequestAggregateArgs>(args: Subset<T, VehicleRequestAggregateArgs>): Prisma.PrismaPromise<GetVehicleRequestAggregateType<T>>
+
+    /**
+     * Group by VehicleRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VehicleRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VehicleRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VehicleRequestGroupByArgs['orderBy'] }
+        : { orderBy?: VehicleRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VehicleRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVehicleRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VehicleRequest model
+   */
+  readonly fields: VehicleRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VehicleRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VehicleRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    vehicle<T extends VehicleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, VehicleDefaultArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    requestedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    approvedBy<T extends VehicleRequest$approvedByArgs<ExtArgs> = {}>(args?: Subset<T, VehicleRequest$approvedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VehicleRequest model
+   */
+  interface VehicleRequestFieldRefs {
+    readonly id: FieldRef<"VehicleRequest", 'String'>
+    readonly vehicleId: FieldRef<"VehicleRequest", 'String'>
+    readonly requestedById: FieldRef<"VehicleRequest", 'String'>
+    readonly approvedById: FieldRef<"VehicleRequest", 'String'>
+    readonly purpose: FieldRef<"VehicleRequest", 'String'>
+    readonly destination: FieldRef<"VehicleRequest", 'String'>
+    readonly startTime: FieldRef<"VehicleRequest", 'DateTime'>
+    readonly endTime: FieldRef<"VehicleRequest", 'DateTime'>
+    readonly passengerCount: FieldRef<"VehicleRequest", 'Int'>
+    readonly status: FieldRef<"VehicleRequest", 'VehicleRequestStatus'>
+    readonly rejectionReason: FieldRef<"VehicleRequest", 'String'>
+    readonly note: FieldRef<"VehicleRequest", 'String'>
+    readonly createdAt: FieldRef<"VehicleRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"VehicleRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VehicleRequest findUnique
+   */
+  export type VehicleRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which VehicleRequest to fetch.
+     */
+    where: VehicleRequestWhereUniqueInput
+  }
+
+  /**
+   * VehicleRequest findUniqueOrThrow
+   */
+  export type VehicleRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which VehicleRequest to fetch.
+     */
+    where: VehicleRequestWhereUniqueInput
+  }
+
+  /**
+   * VehicleRequest findFirst
+   */
+  export type VehicleRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which VehicleRequest to fetch.
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VehicleRequests to fetch.
+     */
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VehicleRequests.
+     */
+    cursor?: VehicleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VehicleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VehicleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VehicleRequests.
+     */
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * VehicleRequest findFirstOrThrow
+   */
+  export type VehicleRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which VehicleRequest to fetch.
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VehicleRequests to fetch.
+     */
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VehicleRequests.
+     */
+    cursor?: VehicleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VehicleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VehicleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VehicleRequests.
+     */
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * VehicleRequest findMany
+   */
+  export type VehicleRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which VehicleRequests to fetch.
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VehicleRequests to fetch.
+     */
+    orderBy?: VehicleRequestOrderByWithRelationInput | VehicleRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VehicleRequests.
+     */
+    cursor?: VehicleRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VehicleRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VehicleRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VehicleRequests.
+     */
+    distinct?: VehicleRequestScalarFieldEnum | VehicleRequestScalarFieldEnum[]
+  }
+
+  /**
+   * VehicleRequest create
+   */
+  export type VehicleRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VehicleRequest.
+     */
+    data: XOR<VehicleRequestCreateInput, VehicleRequestUncheckedCreateInput>
+  }
+
+  /**
+   * VehicleRequest createMany
+   */
+  export type VehicleRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VehicleRequests.
+     */
+    data: VehicleRequestCreateManyInput | VehicleRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VehicleRequest createManyAndReturn
+   */
+  export type VehicleRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many VehicleRequests.
+     */
+    data: VehicleRequestCreateManyInput | VehicleRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VehicleRequest update
+   */
+  export type VehicleRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VehicleRequest.
+     */
+    data: XOR<VehicleRequestUpdateInput, VehicleRequestUncheckedUpdateInput>
+    /**
+     * Choose, which VehicleRequest to update.
+     */
+    where: VehicleRequestWhereUniqueInput
+  }
+
+  /**
+   * VehicleRequest updateMany
+   */
+  export type VehicleRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VehicleRequests.
+     */
+    data: XOR<VehicleRequestUpdateManyMutationInput, VehicleRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which VehicleRequests to update
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * Limit how many VehicleRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * VehicleRequest updateManyAndReturn
+   */
+  export type VehicleRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update VehicleRequests.
+     */
+    data: XOR<VehicleRequestUpdateManyMutationInput, VehicleRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which VehicleRequests to update
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * Limit how many VehicleRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VehicleRequest upsert
+   */
+  export type VehicleRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VehicleRequest to update in case it exists.
+     */
+    where: VehicleRequestWhereUniqueInput
+    /**
+     * In case the VehicleRequest found by the `where` argument doesn't exist, create a new VehicleRequest with this data.
+     */
+    create: XOR<VehicleRequestCreateInput, VehicleRequestUncheckedCreateInput>
+    /**
+     * In case the VehicleRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VehicleRequestUpdateInput, VehicleRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * VehicleRequest delete
+   */
+  export type VehicleRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+    /**
+     * Filter which VehicleRequest to delete.
+     */
+    where: VehicleRequestWhereUniqueInput
+  }
+
+  /**
+   * VehicleRequest deleteMany
+   */
+  export type VehicleRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VehicleRequests to delete
+     */
+    where?: VehicleRequestWhereInput
+    /**
+     * Limit how many VehicleRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * VehicleRequest.approvedBy
+   */
+  export type VehicleRequest$approvedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * VehicleRequest without action
+   */
+  export type VehicleRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VehicleRequest
+     */
+    select?: VehicleRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VehicleRequest
+     */
+    omit?: VehicleRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleRequestInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CalendarEvent
+   */
+
+  export type AggregateCalendarEvent = {
+    _count: CalendarEventCountAggregateOutputType | null
+    _min: CalendarEventMinAggregateOutputType | null
+    _max: CalendarEventMaxAggregateOutputType | null
+  }
+
+  export type CalendarEventMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    eventType: $Enums.CalendarEventType | null
+    startTime: Date | null
+    endTime: Date | null
+    isAllDay: boolean | null
+    location: string | null
+    color: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CalendarEventMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    eventType: $Enums.CalendarEventType | null
+    startTime: Date | null
+    endTime: Date | null
+    isAllDay: boolean | null
+    location: string | null
+    color: string | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CalendarEventCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    eventType: number
+    startTime: number
+    endTime: number
+    isAllDay: number
+    location: number
+    color: number
+    createdById: number
+    attendees: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CalendarEventMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    eventType?: true
+    startTime?: true
+    endTime?: true
+    isAllDay?: true
+    location?: true
+    color?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CalendarEventMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    eventType?: true
+    startTime?: true
+    endTime?: true
+    isAllDay?: true
+    location?: true
+    color?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CalendarEventCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    eventType?: true
+    startTime?: true
+    endTime?: true
+    isAllDay?: true
+    location?: true
+    color?: true
+    createdById?: true
+    attendees?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CalendarEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CalendarEvent to aggregate.
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarEvents to fetch.
+     */
+    orderBy?: CalendarEventOrderByWithRelationInput | CalendarEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CalendarEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CalendarEvents
+    **/
+    _count?: true | CalendarEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CalendarEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CalendarEventMaxAggregateInputType
+  }
+
+  export type GetCalendarEventAggregateType<T extends CalendarEventAggregateArgs> = {
+        [P in keyof T & keyof AggregateCalendarEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCalendarEvent[P]>
+      : GetScalarType<T[P], AggregateCalendarEvent[P]>
+  }
+
+
+
+
+  export type CalendarEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CalendarEventWhereInput
+    orderBy?: CalendarEventOrderByWithAggregationInput | CalendarEventOrderByWithAggregationInput[]
+    by: CalendarEventScalarFieldEnum[] | CalendarEventScalarFieldEnum
+    having?: CalendarEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CalendarEventCountAggregateInputType | true
+    _min?: CalendarEventMinAggregateInputType
+    _max?: CalendarEventMaxAggregateInputType
+  }
+
+  export type CalendarEventGroupByOutputType = {
+    id: string
+    title: string
+    description: string | null
+    eventType: $Enums.CalendarEventType
+    startTime: Date
+    endTime: Date
+    isAllDay: boolean
+    location: string | null
+    color: string | null
+    createdById: string
+    attendees: string[]
+    createdAt: Date
+    updatedAt: Date
+    _count: CalendarEventCountAggregateOutputType | null
+    _min: CalendarEventMinAggregateOutputType | null
+    _max: CalendarEventMaxAggregateOutputType | null
+  }
+
+  type GetCalendarEventGroupByPayload<T extends CalendarEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CalendarEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CalendarEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CalendarEventGroupByOutputType[P]>
+            : GetScalarType<T[P], CalendarEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CalendarEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isAllDay?: boolean
+    location?: boolean
+    color?: boolean
+    createdById?: boolean
+    attendees?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["calendarEvent"]>
+
+  export type CalendarEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isAllDay?: boolean
+    location?: boolean
+    color?: boolean
+    createdById?: boolean
+    attendees?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["calendarEvent"]>
+
+  export type CalendarEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isAllDay?: boolean
+    location?: boolean
+    color?: boolean
+    createdById?: boolean
+    attendees?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["calendarEvent"]>
+
+  export type CalendarEventSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    eventType?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    isAllDay?: boolean
+    location?: boolean
+    color?: boolean
+    createdById?: boolean
+    attendees?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CalendarEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "eventType" | "startTime" | "endTime" | "isAllDay" | "location" | "color" | "createdById" | "attendees" | "createdAt" | "updatedAt", ExtArgs["result"]["calendarEvent"]>
+  export type CalendarEventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CalendarEventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CalendarEventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CalendarEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CalendarEvent"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      description: string | null
+      eventType: $Enums.CalendarEventType
+      startTime: Date
+      endTime: Date
+      isAllDay: boolean
+      location: string | null
+      color: string | null
+      createdById: string
+      attendees: string[]
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["calendarEvent"]>
+    composites: {}
+  }
+
+  type CalendarEventGetPayload<S extends boolean | null | undefined | CalendarEventDefaultArgs> = $Result.GetResult<Prisma.$CalendarEventPayload, S>
+
+  type CalendarEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CalendarEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CalendarEventCountAggregateInputType | true
+    }
+
+  export interface CalendarEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CalendarEvent'], meta: { name: 'CalendarEvent' } }
+    /**
+     * Find zero or one CalendarEvent that matches the filter.
+     * @param {CalendarEventFindUniqueArgs} args - Arguments to find a CalendarEvent
+     * @example
+     * // Get one CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CalendarEventFindUniqueArgs>(args: SelectSubset<T, CalendarEventFindUniqueArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CalendarEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CalendarEventFindUniqueOrThrowArgs} args - Arguments to find a CalendarEvent
+     * @example
+     * // Get one CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CalendarEventFindUniqueOrThrowArgs>(args: SelectSubset<T, CalendarEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CalendarEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventFindFirstArgs} args - Arguments to find a CalendarEvent
+     * @example
+     * // Get one CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CalendarEventFindFirstArgs>(args?: SelectSubset<T, CalendarEventFindFirstArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CalendarEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventFindFirstOrThrowArgs} args - Arguments to find a CalendarEvent
+     * @example
+     * // Get one CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CalendarEventFindFirstOrThrowArgs>(args?: SelectSubset<T, CalendarEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CalendarEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CalendarEvents
+     * const calendarEvents = await prisma.calendarEvent.findMany()
+     * 
+     * // Get first 10 CalendarEvents
+     * const calendarEvents = await prisma.calendarEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const calendarEventWithIdOnly = await prisma.calendarEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CalendarEventFindManyArgs>(args?: SelectSubset<T, CalendarEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CalendarEvent.
+     * @param {CalendarEventCreateArgs} args - Arguments to create a CalendarEvent.
+     * @example
+     * // Create one CalendarEvent
+     * const CalendarEvent = await prisma.calendarEvent.create({
+     *   data: {
+     *     // ... data to create a CalendarEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends CalendarEventCreateArgs>(args: SelectSubset<T, CalendarEventCreateArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CalendarEvents.
+     * @param {CalendarEventCreateManyArgs} args - Arguments to create many CalendarEvents.
+     * @example
+     * // Create many CalendarEvents
+     * const calendarEvent = await prisma.calendarEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CalendarEventCreateManyArgs>(args?: SelectSubset<T, CalendarEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CalendarEvents and returns the data saved in the database.
+     * @param {CalendarEventCreateManyAndReturnArgs} args - Arguments to create many CalendarEvents.
+     * @example
+     * // Create many CalendarEvents
+     * const calendarEvent = await prisma.calendarEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CalendarEvents and only return the `id`
+     * const calendarEventWithIdOnly = await prisma.calendarEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CalendarEventCreateManyAndReturnArgs>(args?: SelectSubset<T, CalendarEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CalendarEvent.
+     * @param {CalendarEventDeleteArgs} args - Arguments to delete one CalendarEvent.
+     * @example
+     * // Delete one CalendarEvent
+     * const CalendarEvent = await prisma.calendarEvent.delete({
+     *   where: {
+     *     // ... filter to delete one CalendarEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CalendarEventDeleteArgs>(args: SelectSubset<T, CalendarEventDeleteArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CalendarEvent.
+     * @param {CalendarEventUpdateArgs} args - Arguments to update one CalendarEvent.
+     * @example
+     * // Update one CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CalendarEventUpdateArgs>(args: SelectSubset<T, CalendarEventUpdateArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CalendarEvents.
+     * @param {CalendarEventDeleteManyArgs} args - Arguments to filter CalendarEvents to delete.
+     * @example
+     * // Delete a few CalendarEvents
+     * const { count } = await prisma.calendarEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CalendarEventDeleteManyArgs>(args?: SelectSubset<T, CalendarEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CalendarEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CalendarEvents
+     * const calendarEvent = await prisma.calendarEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CalendarEventUpdateManyArgs>(args: SelectSubset<T, CalendarEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CalendarEvents and returns the data updated in the database.
+     * @param {CalendarEventUpdateManyAndReturnArgs} args - Arguments to update many CalendarEvents.
+     * @example
+     * // Update many CalendarEvents
+     * const calendarEvent = await prisma.calendarEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CalendarEvents and only return the `id`
+     * const calendarEventWithIdOnly = await prisma.calendarEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CalendarEventUpdateManyAndReturnArgs>(args: SelectSubset<T, CalendarEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CalendarEvent.
+     * @param {CalendarEventUpsertArgs} args - Arguments to update or create a CalendarEvent.
+     * @example
+     * // Update or create a CalendarEvent
+     * const calendarEvent = await prisma.calendarEvent.upsert({
+     *   create: {
+     *     // ... data to create a CalendarEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CalendarEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CalendarEventUpsertArgs>(args: SelectSubset<T, CalendarEventUpsertArgs<ExtArgs>>): Prisma__CalendarEventClient<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CalendarEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventCountArgs} args - Arguments to filter CalendarEvents to count.
+     * @example
+     * // Count the number of CalendarEvents
+     * const count = await prisma.calendarEvent.count({
+     *   where: {
+     *     // ... the filter for the CalendarEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends CalendarEventCountArgs>(
+      args?: Subset<T, CalendarEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CalendarEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CalendarEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CalendarEventAggregateArgs>(args: Subset<T, CalendarEventAggregateArgs>): Prisma.PrismaPromise<GetCalendarEventAggregateType<T>>
+
+    /**
+     * Group by CalendarEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CalendarEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CalendarEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CalendarEventGroupByArgs['orderBy'] }
+        : { orderBy?: CalendarEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CalendarEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCalendarEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CalendarEvent model
+   */
+  readonly fields: CalendarEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CalendarEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CalendarEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CalendarEvent model
+   */
+  interface CalendarEventFieldRefs {
+    readonly id: FieldRef<"CalendarEvent", 'String'>
+    readonly title: FieldRef<"CalendarEvent", 'String'>
+    readonly description: FieldRef<"CalendarEvent", 'String'>
+    readonly eventType: FieldRef<"CalendarEvent", 'CalendarEventType'>
+    readonly startTime: FieldRef<"CalendarEvent", 'DateTime'>
+    readonly endTime: FieldRef<"CalendarEvent", 'DateTime'>
+    readonly isAllDay: FieldRef<"CalendarEvent", 'Boolean'>
+    readonly location: FieldRef<"CalendarEvent", 'String'>
+    readonly color: FieldRef<"CalendarEvent", 'String'>
+    readonly createdById: FieldRef<"CalendarEvent", 'String'>
+    readonly attendees: FieldRef<"CalendarEvent", 'String[]'>
+    readonly createdAt: FieldRef<"CalendarEvent", 'DateTime'>
+    readonly updatedAt: FieldRef<"CalendarEvent", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CalendarEvent findUnique
+   */
+  export type CalendarEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter, which CalendarEvent to fetch.
+     */
+    where: CalendarEventWhereUniqueInput
+  }
+
+  /**
+   * CalendarEvent findUniqueOrThrow
+   */
+  export type CalendarEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter, which CalendarEvent to fetch.
+     */
+    where: CalendarEventWhereUniqueInput
+  }
+
+  /**
+   * CalendarEvent findFirst
+   */
+  export type CalendarEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter, which CalendarEvent to fetch.
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarEvents to fetch.
+     */
+    orderBy?: CalendarEventOrderByWithRelationInput | CalendarEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CalendarEvents.
+     */
+    cursor?: CalendarEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CalendarEvents.
+     */
+    distinct?: CalendarEventScalarFieldEnum | CalendarEventScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarEvent findFirstOrThrow
+   */
+  export type CalendarEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter, which CalendarEvent to fetch.
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarEvents to fetch.
+     */
+    orderBy?: CalendarEventOrderByWithRelationInput | CalendarEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CalendarEvents.
+     */
+    cursor?: CalendarEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CalendarEvents.
+     */
+    distinct?: CalendarEventScalarFieldEnum | CalendarEventScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarEvent findMany
+   */
+  export type CalendarEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter, which CalendarEvents to fetch.
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CalendarEvents to fetch.
+     */
+    orderBy?: CalendarEventOrderByWithRelationInput | CalendarEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CalendarEvents.
+     */
+    cursor?: CalendarEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CalendarEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CalendarEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CalendarEvents.
+     */
+    distinct?: CalendarEventScalarFieldEnum | CalendarEventScalarFieldEnum[]
+  }
+
+  /**
+   * CalendarEvent create
+   */
+  export type CalendarEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CalendarEvent.
+     */
+    data: XOR<CalendarEventCreateInput, CalendarEventUncheckedCreateInput>
+  }
+
+  /**
+   * CalendarEvent createMany
+   */
+  export type CalendarEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CalendarEvents.
+     */
+    data: CalendarEventCreateManyInput | CalendarEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CalendarEvent createManyAndReturn
+   */
+  export type CalendarEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many CalendarEvents.
+     */
+    data: CalendarEventCreateManyInput | CalendarEventCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CalendarEvent update
+   */
+  export type CalendarEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CalendarEvent.
+     */
+    data: XOR<CalendarEventUpdateInput, CalendarEventUncheckedUpdateInput>
+    /**
+     * Choose, which CalendarEvent to update.
+     */
+    where: CalendarEventWhereUniqueInput
+  }
+
+  /**
+   * CalendarEvent updateMany
+   */
+  export type CalendarEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CalendarEvents.
+     */
+    data: XOR<CalendarEventUpdateManyMutationInput, CalendarEventUncheckedUpdateManyInput>
+    /**
+     * Filter which CalendarEvents to update
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * Limit how many CalendarEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CalendarEvent updateManyAndReturn
+   */
+  export type CalendarEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * The data used to update CalendarEvents.
+     */
+    data: XOR<CalendarEventUpdateManyMutationInput, CalendarEventUncheckedUpdateManyInput>
+    /**
+     * Filter which CalendarEvents to update
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * Limit how many CalendarEvents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CalendarEvent upsert
+   */
+  export type CalendarEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CalendarEvent to update in case it exists.
+     */
+    where: CalendarEventWhereUniqueInput
+    /**
+     * In case the CalendarEvent found by the `where` argument doesn't exist, create a new CalendarEvent with this data.
+     */
+    create: XOR<CalendarEventCreateInput, CalendarEventUncheckedCreateInput>
+    /**
+     * In case the CalendarEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CalendarEventUpdateInput, CalendarEventUncheckedUpdateInput>
+  }
+
+  /**
+   * CalendarEvent delete
+   */
+  export type CalendarEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+    /**
+     * Filter which CalendarEvent to delete.
+     */
+    where: CalendarEventWhereUniqueInput
+  }
+
+  /**
+   * CalendarEvent deleteMany
+   */
+  export type CalendarEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CalendarEvents to delete
+     */
+    where?: CalendarEventWhereInput
+    /**
+     * Limit how many CalendarEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CalendarEvent without action
+   */
+  export type CalendarEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CalendarEvent
+     */
+    select?: CalendarEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CalendarEvent
+     */
+    omit?: CalendarEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CalendarEventInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -134639,6 +138759,61 @@ export namespace Prisma {
   export type RoomBookingScalarFieldEnum = (typeof RoomBookingScalarFieldEnum)[keyof typeof RoomBookingScalarFieldEnum]
 
 
+  export const VehicleScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    plateNumber: 'plateNumber',
+    type: 'type',
+    seats: 'seats',
+    status: 'status',
+    driverId: 'driverId',
+    imageUrl: 'imageUrl',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type VehicleScalarFieldEnum = (typeof VehicleScalarFieldEnum)[keyof typeof VehicleScalarFieldEnum]
+
+
+  export const VehicleRequestScalarFieldEnum: {
+    id: 'id',
+    vehicleId: 'vehicleId',
+    requestedById: 'requestedById',
+    approvedById: 'approvedById',
+    purpose: 'purpose',
+    destination: 'destination',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    passengerCount: 'passengerCount',
+    status: 'status',
+    rejectionReason: 'rejectionReason',
+    note: 'note',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type VehicleRequestScalarFieldEnum = (typeof VehicleRequestScalarFieldEnum)[keyof typeof VehicleRequestScalarFieldEnum]
+
+
+  export const CalendarEventScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    eventType: 'eventType',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    isAllDay: 'isAllDay',
+    location: 'location',
+    color: 'color',
+    createdById: 'createdById',
+    attendees: 'attendees',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -135621,6 +139796,48 @@ export namespace Prisma {
    */
   export type ListEnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookingStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'VehicleStatus'
+   */
+  export type EnumVehicleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VehicleStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'VehicleStatus[]'
+   */
+  export type ListEnumVehicleStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VehicleStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'VehicleRequestStatus'
+   */
+  export type EnumVehicleRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VehicleRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'VehicleRequestStatus[]'
+   */
+  export type ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VehicleRequestStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CalendarEventType'
+   */
+  export type EnumCalendarEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CalendarEventType[]'
+   */
+  export type ListEnumCalendarEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CalendarEventType[]'>
+    
   /**
    * Deep Input Types
    */
@@ -135675,6 +139892,10 @@ export namespace Prisma {
     feedPosts?: FeedPostListRelationFilter
     feedReactions?: FeedReactionListRelationFilter
     roomBookings?: RoomBookingListRelationFilter
+    vehicles?: VehicleListRelationFilter
+    vehicleRequests?: VehicleRequestListRelationFilter
+    vehicleApprovals?: VehicleRequestListRelationFilter
+    calendarEvents?: CalendarEventListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -135723,6 +139944,10 @@ export namespace Prisma {
     feedPosts?: FeedPostOrderByRelationAggregateInput
     feedReactions?: FeedReactionOrderByRelationAggregateInput
     roomBookings?: RoomBookingOrderByRelationAggregateInput
+    vehicles?: VehicleOrderByRelationAggregateInput
+    vehicleRequests?: VehicleRequestOrderByRelationAggregateInput
+    vehicleApprovals?: VehicleRequestOrderByRelationAggregateInput
+    calendarEvents?: CalendarEventOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -135774,6 +139999,10 @@ export namespace Prisma {
     feedPosts?: FeedPostListRelationFilter
     feedReactions?: FeedReactionListRelationFilter
     roomBookings?: RoomBookingListRelationFilter
+    vehicles?: VehicleListRelationFilter
+    vehicleRequests?: VehicleRequestListRelationFilter
+    vehicleApprovals?: VehicleRequestListRelationFilter
+    calendarEvents?: CalendarEventListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -144097,6 +148326,294 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"RoomBooking"> | Date | string
   }
 
+  export type VehicleWhereInput = {
+    AND?: VehicleWhereInput | VehicleWhereInput[]
+    OR?: VehicleWhereInput[]
+    NOT?: VehicleWhereInput | VehicleWhereInput[]
+    id?: StringFilter<"Vehicle"> | string
+    name?: StringFilter<"Vehicle"> | string
+    plateNumber?: StringFilter<"Vehicle"> | string
+    type?: StringFilter<"Vehicle"> | string
+    seats?: IntFilter<"Vehicle"> | number
+    status?: EnumVehicleStatusFilter<"Vehicle"> | $Enums.VehicleStatus
+    driverId?: StringNullableFilter<"Vehicle"> | string | null
+    imageUrl?: StringNullableFilter<"Vehicle"> | string | null
+    createdAt?: DateTimeFilter<"Vehicle"> | Date | string
+    updatedAt?: DateTimeFilter<"Vehicle"> | Date | string
+    requests?: VehicleRequestListRelationFilter
+    driver?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type VehicleOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    plateNumber?: SortOrder
+    type?: SortOrder
+    seats?: SortOrder
+    status?: SortOrder
+    driverId?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    requests?: VehicleRequestOrderByRelationAggregateInput
+    driver?: UserOrderByWithRelationInput
+  }
+
+  export type VehicleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    plateNumber?: string
+    AND?: VehicleWhereInput | VehicleWhereInput[]
+    OR?: VehicleWhereInput[]
+    NOT?: VehicleWhereInput | VehicleWhereInput[]
+    name?: StringFilter<"Vehicle"> | string
+    type?: StringFilter<"Vehicle"> | string
+    seats?: IntFilter<"Vehicle"> | number
+    status?: EnumVehicleStatusFilter<"Vehicle"> | $Enums.VehicleStatus
+    driverId?: StringNullableFilter<"Vehicle"> | string | null
+    imageUrl?: StringNullableFilter<"Vehicle"> | string | null
+    createdAt?: DateTimeFilter<"Vehicle"> | Date | string
+    updatedAt?: DateTimeFilter<"Vehicle"> | Date | string
+    requests?: VehicleRequestListRelationFilter
+    driver?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "plateNumber">
+
+  export type VehicleOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    plateNumber?: SortOrder
+    type?: SortOrder
+    seats?: SortOrder
+    status?: SortOrder
+    driverId?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: VehicleCountOrderByAggregateInput
+    _avg?: VehicleAvgOrderByAggregateInput
+    _max?: VehicleMaxOrderByAggregateInput
+    _min?: VehicleMinOrderByAggregateInput
+    _sum?: VehicleSumOrderByAggregateInput
+  }
+
+  export type VehicleScalarWhereWithAggregatesInput = {
+    AND?: VehicleScalarWhereWithAggregatesInput | VehicleScalarWhereWithAggregatesInput[]
+    OR?: VehicleScalarWhereWithAggregatesInput[]
+    NOT?: VehicleScalarWhereWithAggregatesInput | VehicleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Vehicle"> | string
+    name?: StringWithAggregatesFilter<"Vehicle"> | string
+    plateNumber?: StringWithAggregatesFilter<"Vehicle"> | string
+    type?: StringWithAggregatesFilter<"Vehicle"> | string
+    seats?: IntWithAggregatesFilter<"Vehicle"> | number
+    status?: EnumVehicleStatusWithAggregatesFilter<"Vehicle"> | $Enums.VehicleStatus
+    driverId?: StringNullableWithAggregatesFilter<"Vehicle"> | string | null
+    imageUrl?: StringNullableWithAggregatesFilter<"Vehicle"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Vehicle"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Vehicle"> | Date | string
+  }
+
+  export type VehicleRequestWhereInput = {
+    AND?: VehicleRequestWhereInput | VehicleRequestWhereInput[]
+    OR?: VehicleRequestWhereInput[]
+    NOT?: VehicleRequestWhereInput | VehicleRequestWhereInput[]
+    id?: StringFilter<"VehicleRequest"> | string
+    vehicleId?: StringFilter<"VehicleRequest"> | string
+    requestedById?: StringFilter<"VehicleRequest"> | string
+    approvedById?: StringNullableFilter<"VehicleRequest"> | string | null
+    purpose?: StringFilter<"VehicleRequest"> | string
+    destination?: StringFilter<"VehicleRequest"> | string
+    startTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    endTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    passengerCount?: IntFilter<"VehicleRequest"> | number
+    status?: EnumVehicleRequestStatusFilter<"VehicleRequest"> | $Enums.VehicleRequestStatus
+    rejectionReason?: StringNullableFilter<"VehicleRequest"> | string | null
+    note?: StringNullableFilter<"VehicleRequest"> | string | null
+    createdAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+    vehicle?: XOR<VehicleScalarRelationFilter, VehicleWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type VehicleRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    vehicleId?: SortOrder
+    requestedById?: SortOrder
+    approvedById?: SortOrderInput | SortOrder
+    purpose?: SortOrder
+    destination?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    passengerCount?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    vehicle?: VehicleOrderByWithRelationInput
+    requestedBy?: UserOrderByWithRelationInput
+    approvedBy?: UserOrderByWithRelationInput
+  }
+
+  export type VehicleRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: VehicleRequestWhereInput | VehicleRequestWhereInput[]
+    OR?: VehicleRequestWhereInput[]
+    NOT?: VehicleRequestWhereInput | VehicleRequestWhereInput[]
+    vehicleId?: StringFilter<"VehicleRequest"> | string
+    requestedById?: StringFilter<"VehicleRequest"> | string
+    approvedById?: StringNullableFilter<"VehicleRequest"> | string | null
+    purpose?: StringFilter<"VehicleRequest"> | string
+    destination?: StringFilter<"VehicleRequest"> | string
+    startTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    endTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    passengerCount?: IntFilter<"VehicleRequest"> | number
+    status?: EnumVehicleRequestStatusFilter<"VehicleRequest"> | $Enums.VehicleRequestStatus
+    rejectionReason?: StringNullableFilter<"VehicleRequest"> | string | null
+    note?: StringNullableFilter<"VehicleRequest"> | string | null
+    createdAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+    vehicle?: XOR<VehicleScalarRelationFilter, VehicleWhereInput>
+    requestedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type VehicleRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    vehicleId?: SortOrder
+    requestedById?: SortOrder
+    approvedById?: SortOrderInput | SortOrder
+    purpose?: SortOrder
+    destination?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    passengerCount?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: VehicleRequestCountOrderByAggregateInput
+    _avg?: VehicleRequestAvgOrderByAggregateInput
+    _max?: VehicleRequestMaxOrderByAggregateInput
+    _min?: VehicleRequestMinOrderByAggregateInput
+    _sum?: VehicleRequestSumOrderByAggregateInput
+  }
+
+  export type VehicleRequestScalarWhereWithAggregatesInput = {
+    AND?: VehicleRequestScalarWhereWithAggregatesInput | VehicleRequestScalarWhereWithAggregatesInput[]
+    OR?: VehicleRequestScalarWhereWithAggregatesInput[]
+    NOT?: VehicleRequestScalarWhereWithAggregatesInput | VehicleRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"VehicleRequest"> | string
+    vehicleId?: StringWithAggregatesFilter<"VehicleRequest"> | string
+    requestedById?: StringWithAggregatesFilter<"VehicleRequest"> | string
+    approvedById?: StringNullableWithAggregatesFilter<"VehicleRequest"> | string | null
+    purpose?: StringWithAggregatesFilter<"VehicleRequest"> | string
+    destination?: StringWithAggregatesFilter<"VehicleRequest"> | string
+    startTime?: DateTimeWithAggregatesFilter<"VehicleRequest"> | Date | string
+    endTime?: DateTimeWithAggregatesFilter<"VehicleRequest"> | Date | string
+    passengerCount?: IntWithAggregatesFilter<"VehicleRequest"> | number
+    status?: EnumVehicleRequestStatusWithAggregatesFilter<"VehicleRequest"> | $Enums.VehicleRequestStatus
+    rejectionReason?: StringNullableWithAggregatesFilter<"VehicleRequest"> | string | null
+    note?: StringNullableWithAggregatesFilter<"VehicleRequest"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"VehicleRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"VehicleRequest"> | Date | string
+  }
+
+  export type CalendarEventWhereInput = {
+    AND?: CalendarEventWhereInput | CalendarEventWhereInput[]
+    OR?: CalendarEventWhereInput[]
+    NOT?: CalendarEventWhereInput | CalendarEventWhereInput[]
+    id?: StringFilter<"CalendarEvent"> | string
+    title?: StringFilter<"CalendarEvent"> | string
+    description?: StringNullableFilter<"CalendarEvent"> | string | null
+    eventType?: EnumCalendarEventTypeFilter<"CalendarEvent"> | $Enums.CalendarEventType
+    startTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    endTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    isAllDay?: BoolFilter<"CalendarEvent"> | boolean
+    location?: StringNullableFilter<"CalendarEvent"> | string | null
+    color?: StringNullableFilter<"CalendarEvent"> | string | null
+    createdById?: StringFilter<"CalendarEvent"> | string
+    attendees?: StringNullableListFilter<"CalendarEvent">
+    createdAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CalendarEventOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isAllDay?: SortOrder
+    location?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    attendees?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CalendarEventWhereInput | CalendarEventWhereInput[]
+    OR?: CalendarEventWhereInput[]
+    NOT?: CalendarEventWhereInput | CalendarEventWhereInput[]
+    title?: StringFilter<"CalendarEvent"> | string
+    description?: StringNullableFilter<"CalendarEvent"> | string | null
+    eventType?: EnumCalendarEventTypeFilter<"CalendarEvent"> | $Enums.CalendarEventType
+    startTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    endTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    isAllDay?: BoolFilter<"CalendarEvent"> | boolean
+    location?: StringNullableFilter<"CalendarEvent"> | string | null
+    color?: StringNullableFilter<"CalendarEvent"> | string | null
+    createdById?: StringFilter<"CalendarEvent"> | string
+    attendees?: StringNullableListFilter<"CalendarEvent">
+    createdAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type CalendarEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    eventType?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isAllDay?: SortOrder
+    location?: SortOrderInput | SortOrder
+    color?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    attendees?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CalendarEventCountOrderByAggregateInput
+    _max?: CalendarEventMaxOrderByAggregateInput
+    _min?: CalendarEventMinOrderByAggregateInput
+  }
+
+  export type CalendarEventScalarWhereWithAggregatesInput = {
+    AND?: CalendarEventScalarWhereWithAggregatesInput | CalendarEventScalarWhereWithAggregatesInput[]
+    OR?: CalendarEventScalarWhereWithAggregatesInput[]
+    NOT?: CalendarEventScalarWhereWithAggregatesInput | CalendarEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CalendarEvent"> | string
+    title?: StringWithAggregatesFilter<"CalendarEvent"> | string
+    description?: StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
+    eventType?: EnumCalendarEventTypeWithAggregatesFilter<"CalendarEvent"> | $Enums.CalendarEventType
+    startTime?: DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
+    endTime?: DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
+    isAllDay?: BoolWithAggregatesFilter<"CalendarEvent"> | boolean
+    location?: StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
+    color?: StringNullableWithAggregatesFilter<"CalendarEvent"> | string | null
+    createdById?: StringWithAggregatesFilter<"CalendarEvent"> | string
+    attendees?: StringNullableListFilter<"CalendarEvent">
+    createdAt?: DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -144142,6 +148659,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -144189,6 +148710,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -144236,6 +148761,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -144283,6 +148812,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -153380,6 +157913,327 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VehicleCreateInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requests?: VehicleRequestCreateNestedManyWithoutVehicleInput
+    driver?: UserCreateNestedOneWithoutVehiclesInput
+  }
+
+  export type VehicleUncheckedCreateInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    driverId?: string | null
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requests?: VehicleRequestUncheckedCreateNestedManyWithoutVehicleInput
+  }
+
+  export type VehicleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requests?: VehicleRequestUpdateManyWithoutVehicleNestedInput
+    driver?: UserUpdateOneWithoutVehiclesNestedInput
+  }
+
+  export type VehicleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    driverId?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requests?: VehicleRequestUncheckedUpdateManyWithoutVehicleNestedInput
+  }
+
+  export type VehicleCreateManyInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    driverId?: string | null
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    driverId?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestCreateInput = {
+    id?: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    vehicle: VehicleCreateNestedOneWithoutRequestsInput
+    requestedBy: UserCreateNestedOneWithoutVehicleRequestsInput
+    approvedBy?: UserCreateNestedOneWithoutVehicleApprovalsInput
+  }
+
+  export type VehicleRequestUncheckedCreateInput = {
+    id?: string
+    vehicleId: string
+    requestedById: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vehicle?: VehicleUpdateOneRequiredWithoutRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutVehicleRequestsNestedInput
+    approvedBy?: UserUpdateOneWithoutVehicleApprovalsNestedInput
+  }
+
+  export type VehicleRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestCreateManyInput = {
+    id?: string
+    vehicleId: string
+    requestedById: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    attendees?: CalendarEventCreateattendeesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCalendarEventsInput
+  }
+
+  export type CalendarEventUncheckedCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    createdById: string
+    attendees?: CalendarEventCreateattendeesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCalendarEventsNestedInput
+  }
+
+  export type CalendarEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventCreateManyInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    createdById: string
+    attendees?: CalendarEventCreateattendeesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -153611,6 +158465,24 @@ export namespace Prisma {
     none?: RoomBookingWhereInput
   }
 
+  export type VehicleListRelationFilter = {
+    every?: VehicleWhereInput
+    some?: VehicleWhereInput
+    none?: VehicleWhereInput
+  }
+
+  export type VehicleRequestListRelationFilter = {
+    every?: VehicleRequestWhereInput
+    some?: VehicleRequestWhereInput
+    none?: VehicleRequestWhereInput
+  }
+
+  export type CalendarEventListRelationFilter = {
+    every?: CalendarEventWhereInput
+    some?: CalendarEventWhereInput
+    none?: CalendarEventWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -153725,6 +158597,18 @@ export namespace Prisma {
   }
 
   export type RoomBookingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VehicleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VehicleRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CalendarEventOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -160375,6 +165259,214 @@ export namespace Prisma {
     _max?: NestedEnumBookingStatusFilter<$PrismaModel>
   }
 
+  export type EnumVehicleStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleStatus | EnumVehicleStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleStatusFilter<$PrismaModel> | $Enums.VehicleStatus
+  }
+
+  export type VehicleCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    plateNumber?: SortOrder
+    type?: SortOrder
+    seats?: SortOrder
+    status?: SortOrder
+    driverId?: SortOrder
+    imageUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleAvgOrderByAggregateInput = {
+    seats?: SortOrder
+  }
+
+  export type VehicleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    plateNumber?: SortOrder
+    type?: SortOrder
+    seats?: SortOrder
+    status?: SortOrder
+    driverId?: SortOrder
+    imageUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    plateNumber?: SortOrder
+    type?: SortOrder
+    seats?: SortOrder
+    status?: SortOrder
+    driverId?: SortOrder
+    imageUrl?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleSumOrderByAggregateInput = {
+    seats?: SortOrder
+  }
+
+  export type EnumVehicleStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleStatus | EnumVehicleStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleStatusWithAggregatesFilter<$PrismaModel> | $Enums.VehicleStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVehicleStatusFilter<$PrismaModel>
+    _max?: NestedEnumVehicleStatusFilter<$PrismaModel>
+  }
+
+  export type EnumVehicleRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleRequestStatus | EnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleRequestStatusFilter<$PrismaModel> | $Enums.VehicleRequestStatus
+  }
+
+  export type VehicleScalarRelationFilter = {
+    is?: VehicleWhereInput
+    isNot?: VehicleWhereInput
+  }
+
+  export type VehicleRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    vehicleId?: SortOrder
+    requestedById?: SortOrder
+    approvedById?: SortOrder
+    purpose?: SortOrder
+    destination?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    passengerCount?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleRequestAvgOrderByAggregateInput = {
+    passengerCount?: SortOrder
+  }
+
+  export type VehicleRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    vehicleId?: SortOrder
+    requestedById?: SortOrder
+    approvedById?: SortOrder
+    purpose?: SortOrder
+    destination?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    passengerCount?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    vehicleId?: SortOrder
+    requestedById?: SortOrder
+    approvedById?: SortOrder
+    purpose?: SortOrder
+    destination?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    passengerCount?: SortOrder
+    status?: SortOrder
+    rejectionReason?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VehicleRequestSumOrderByAggregateInput = {
+    passengerCount?: SortOrder
+  }
+
+  export type EnumVehicleRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleRequestStatus | EnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.VehicleRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVehicleRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumVehicleRequestStatusFilter<$PrismaModel>
+  }
+
+  export type EnumCalendarEventTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarEventType | EnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarEventTypeFilter<$PrismaModel> | $Enums.CalendarEventType
+  }
+
+  export type CalendarEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isAllDay?: SortOrder
+    location?: SortOrder
+    color?: SortOrder
+    createdById?: SortOrder
+    attendees?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isAllDay?: SortOrder
+    location?: SortOrder
+    color?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CalendarEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    eventType?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    isAllDay?: SortOrder
+    location?: SortOrder
+    color?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumCalendarEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarEventType | EnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.CalendarEventType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCalendarEventTypeFilter<$PrismaModel>
+    _max?: NestedEnumCalendarEventTypeFilter<$PrismaModel>
+  }
+
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -160618,6 +165710,34 @@ export namespace Prisma {
     connect?: RoomBookingWhereUniqueInput | RoomBookingWhereUniqueInput[]
   }
 
+  export type VehicleCreateNestedManyWithoutDriverInput = {
+    create?: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput> | VehicleCreateWithoutDriverInput[] | VehicleUncheckedCreateWithoutDriverInput[]
+    connectOrCreate?: VehicleCreateOrConnectWithoutDriverInput | VehicleCreateOrConnectWithoutDriverInput[]
+    createMany?: VehicleCreateManyDriverInputEnvelope
+    connect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+  }
+
+  export type VehicleRequestCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput> | VehicleRequestCreateWithoutRequestedByInput[] | VehicleRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutRequestedByInput | VehicleRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: VehicleRequestCreateManyRequestedByInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type VehicleRequestCreateNestedManyWithoutApprovedByInput = {
+    create?: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput> | VehicleRequestCreateWithoutApprovedByInput[] | VehicleRequestUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutApprovedByInput | VehicleRequestCreateOrConnectWithoutApprovedByInput[]
+    createMany?: VehicleRequestCreateManyApprovedByInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type CalendarEventCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput> | CalendarEventCreateWithoutCreatedByInput[] | CalendarEventUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarEventCreateOrConnectWithoutCreatedByInput | CalendarEventCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CalendarEventCreateManyCreatedByInputEnvelope
+    connect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+  }
+
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -160853,6 +165973,34 @@ export namespace Prisma {
     connectOrCreate?: RoomBookingCreateOrConnectWithoutBookedByInput | RoomBookingCreateOrConnectWithoutBookedByInput[]
     createMany?: RoomBookingCreateManyBookedByInputEnvelope
     connect?: RoomBookingWhereUniqueInput | RoomBookingWhereUniqueInput[]
+  }
+
+  export type VehicleUncheckedCreateNestedManyWithoutDriverInput = {
+    create?: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput> | VehicleCreateWithoutDriverInput[] | VehicleUncheckedCreateWithoutDriverInput[]
+    connectOrCreate?: VehicleCreateOrConnectWithoutDriverInput | VehicleCreateOrConnectWithoutDriverInput[]
+    createMany?: VehicleCreateManyDriverInputEnvelope
+    connect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+  }
+
+  export type VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput = {
+    create?: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput> | VehicleRequestCreateWithoutRequestedByInput[] | VehicleRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutRequestedByInput | VehicleRequestCreateOrConnectWithoutRequestedByInput[]
+    createMany?: VehicleRequestCreateManyRequestedByInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput = {
+    create?: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput> | VehicleRequestCreateWithoutApprovedByInput[] | VehicleRequestUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutApprovedByInput | VehicleRequestCreateOrConnectWithoutApprovedByInput[]
+    createMany?: VehicleRequestCreateManyApprovedByInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput> | CalendarEventCreateWithoutCreatedByInput[] | CalendarEventUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarEventCreateOrConnectWithoutCreatedByInput | CalendarEventCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CalendarEventCreateManyCreatedByInputEnvelope
+    connect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -161357,6 +166505,62 @@ export namespace Prisma {
     deleteMany?: RoomBookingScalarWhereInput | RoomBookingScalarWhereInput[]
   }
 
+  export type VehicleUpdateManyWithoutDriverNestedInput = {
+    create?: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput> | VehicleCreateWithoutDriverInput[] | VehicleUncheckedCreateWithoutDriverInput[]
+    connectOrCreate?: VehicleCreateOrConnectWithoutDriverInput | VehicleCreateOrConnectWithoutDriverInput[]
+    upsert?: VehicleUpsertWithWhereUniqueWithoutDriverInput | VehicleUpsertWithWhereUniqueWithoutDriverInput[]
+    createMany?: VehicleCreateManyDriverInputEnvelope
+    set?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    disconnect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    delete?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    connect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    update?: VehicleUpdateWithWhereUniqueWithoutDriverInput | VehicleUpdateWithWhereUniqueWithoutDriverInput[]
+    updateMany?: VehicleUpdateManyWithWhereWithoutDriverInput | VehicleUpdateManyWithWhereWithoutDriverInput[]
+    deleteMany?: VehicleScalarWhereInput | VehicleScalarWhereInput[]
+  }
+
+  export type VehicleRequestUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput> | VehicleRequestCreateWithoutRequestedByInput[] | VehicleRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutRequestedByInput | VehicleRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutRequestedByInput | VehicleRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: VehicleRequestCreateManyRequestedByInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutRequestedByInput | VehicleRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutRequestedByInput | VehicleRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type VehicleRequestUpdateManyWithoutApprovedByNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput> | VehicleRequestCreateWithoutApprovedByInput[] | VehicleRequestUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutApprovedByInput | VehicleRequestCreateOrConnectWithoutApprovedByInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutApprovedByInput | VehicleRequestUpsertWithWhereUniqueWithoutApprovedByInput[]
+    createMany?: VehicleRequestCreateManyApprovedByInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutApprovedByInput | VehicleRequestUpdateWithWhereUniqueWithoutApprovedByInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutApprovedByInput | VehicleRequestUpdateManyWithWhereWithoutApprovedByInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type CalendarEventUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput> | CalendarEventCreateWithoutCreatedByInput[] | CalendarEventUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarEventCreateOrConnectWithoutCreatedByInput | CalendarEventCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CalendarEventUpsertWithWhereUniqueWithoutCreatedByInput | CalendarEventUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CalendarEventCreateManyCreatedByInputEnvelope
+    set?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    disconnect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    delete?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    connect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    update?: CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput | CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CalendarEventUpdateManyWithWhereWithoutCreatedByInput | CalendarEventUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CalendarEventScalarWhereInput | CalendarEventScalarWhereInput[]
+  }
+
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -161827,6 +167031,62 @@ export namespace Prisma {
     update?: RoomBookingUpdateWithWhereUniqueWithoutBookedByInput | RoomBookingUpdateWithWhereUniqueWithoutBookedByInput[]
     updateMany?: RoomBookingUpdateManyWithWhereWithoutBookedByInput | RoomBookingUpdateManyWithWhereWithoutBookedByInput[]
     deleteMany?: RoomBookingScalarWhereInput | RoomBookingScalarWhereInput[]
+  }
+
+  export type VehicleUncheckedUpdateManyWithoutDriverNestedInput = {
+    create?: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput> | VehicleCreateWithoutDriverInput[] | VehicleUncheckedCreateWithoutDriverInput[]
+    connectOrCreate?: VehicleCreateOrConnectWithoutDriverInput | VehicleCreateOrConnectWithoutDriverInput[]
+    upsert?: VehicleUpsertWithWhereUniqueWithoutDriverInput | VehicleUpsertWithWhereUniqueWithoutDriverInput[]
+    createMany?: VehicleCreateManyDriverInputEnvelope
+    set?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    disconnect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    delete?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    connect?: VehicleWhereUniqueInput | VehicleWhereUniqueInput[]
+    update?: VehicleUpdateWithWhereUniqueWithoutDriverInput | VehicleUpdateWithWhereUniqueWithoutDriverInput[]
+    updateMany?: VehicleUpdateManyWithWhereWithoutDriverInput | VehicleUpdateManyWithWhereWithoutDriverInput[]
+    deleteMany?: VehicleScalarWhereInput | VehicleScalarWhereInput[]
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput> | VehicleRequestCreateWithoutRequestedByInput[] | VehicleRequestUncheckedCreateWithoutRequestedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutRequestedByInput | VehicleRequestCreateOrConnectWithoutRequestedByInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutRequestedByInput | VehicleRequestUpsertWithWhereUniqueWithoutRequestedByInput[]
+    createMany?: VehicleRequestCreateManyRequestedByInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutRequestedByInput | VehicleRequestUpdateWithWhereUniqueWithoutRequestedByInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutRequestedByInput | VehicleRequestUpdateManyWithWhereWithoutRequestedByInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput> | VehicleRequestCreateWithoutApprovedByInput[] | VehicleRequestUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutApprovedByInput | VehicleRequestCreateOrConnectWithoutApprovedByInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutApprovedByInput | VehicleRequestUpsertWithWhereUniqueWithoutApprovedByInput[]
+    createMany?: VehicleRequestCreateManyApprovedByInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutApprovedByInput | VehicleRequestUpdateWithWhereUniqueWithoutApprovedByInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutApprovedByInput | VehicleRequestUpdateManyWithWhereWithoutApprovedByInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput> | CalendarEventCreateWithoutCreatedByInput[] | CalendarEventUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CalendarEventCreateOrConnectWithoutCreatedByInput | CalendarEventCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CalendarEventUpsertWithWhereUniqueWithoutCreatedByInput | CalendarEventUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CalendarEventCreateManyCreatedByInputEnvelope
+    set?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    disconnect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    delete?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    connect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+    update?: CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput | CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CalendarEventUpdateManyWithWhereWithoutCreatedByInput | CalendarEventUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CalendarEventScalarWhereInput | CalendarEventScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedManyWithoutOrgUnitInput = {
@@ -167572,6 +172832,143 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRoomBookingsInput, UserUpdateWithoutRoomBookingsInput>, UserUncheckedUpdateWithoutRoomBookingsInput>
   }
 
+  export type VehicleRequestCreateNestedManyWithoutVehicleInput = {
+    create?: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput> | VehicleRequestCreateWithoutVehicleInput[] | VehicleRequestUncheckedCreateWithoutVehicleInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutVehicleInput | VehicleRequestCreateOrConnectWithoutVehicleInput[]
+    createMany?: VehicleRequestCreateManyVehicleInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedOneWithoutVehiclesInput = {
+    create?: XOR<UserCreateWithoutVehiclesInput, UserUncheckedCreateWithoutVehiclesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehiclesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type VehicleRequestUncheckedCreateNestedManyWithoutVehicleInput = {
+    create?: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput> | VehicleRequestCreateWithoutVehicleInput[] | VehicleRequestUncheckedCreateWithoutVehicleInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutVehicleInput | VehicleRequestCreateOrConnectWithoutVehicleInput[]
+    createMany?: VehicleRequestCreateManyVehicleInputEnvelope
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+  }
+
+  export type EnumVehicleStatusFieldUpdateOperationsInput = {
+    set?: $Enums.VehicleStatus
+  }
+
+  export type VehicleRequestUpdateManyWithoutVehicleNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput> | VehicleRequestCreateWithoutVehicleInput[] | VehicleRequestUncheckedCreateWithoutVehicleInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutVehicleInput | VehicleRequestCreateOrConnectWithoutVehicleInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutVehicleInput | VehicleRequestUpsertWithWhereUniqueWithoutVehicleInput[]
+    createMany?: VehicleRequestCreateManyVehicleInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutVehicleInput | VehicleRequestUpdateWithWhereUniqueWithoutVehicleInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutVehicleInput | VehicleRequestUpdateManyWithWhereWithoutVehicleInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type UserUpdateOneWithoutVehiclesNestedInput = {
+    create?: XOR<UserCreateWithoutVehiclesInput, UserUncheckedCreateWithoutVehiclesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehiclesInput
+    upsert?: UserUpsertWithoutVehiclesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVehiclesInput, UserUpdateWithoutVehiclesInput>, UserUncheckedUpdateWithoutVehiclesInput>
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutVehicleNestedInput = {
+    create?: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput> | VehicleRequestCreateWithoutVehicleInput[] | VehicleRequestUncheckedCreateWithoutVehicleInput[]
+    connectOrCreate?: VehicleRequestCreateOrConnectWithoutVehicleInput | VehicleRequestCreateOrConnectWithoutVehicleInput[]
+    upsert?: VehicleRequestUpsertWithWhereUniqueWithoutVehicleInput | VehicleRequestUpsertWithWhereUniqueWithoutVehicleInput[]
+    createMany?: VehicleRequestCreateManyVehicleInputEnvelope
+    set?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    disconnect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    delete?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    connect?: VehicleRequestWhereUniqueInput | VehicleRequestWhereUniqueInput[]
+    update?: VehicleRequestUpdateWithWhereUniqueWithoutVehicleInput | VehicleRequestUpdateWithWhereUniqueWithoutVehicleInput[]
+    updateMany?: VehicleRequestUpdateManyWithWhereWithoutVehicleInput | VehicleRequestUpdateManyWithWhereWithoutVehicleInput[]
+    deleteMany?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+  }
+
+  export type VehicleCreateNestedOneWithoutRequestsInput = {
+    create?: XOR<VehicleCreateWithoutRequestsInput, VehicleUncheckedCreateWithoutRequestsInput>
+    connectOrCreate?: VehicleCreateOrConnectWithoutRequestsInput
+    connect?: VehicleWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutVehicleRequestsInput = {
+    create?: XOR<UserCreateWithoutVehicleRequestsInput, UserUncheckedCreateWithoutVehicleRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehicleRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutVehicleApprovalsInput = {
+    create?: XOR<UserCreateWithoutVehicleApprovalsInput, UserUncheckedCreateWithoutVehicleApprovalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehicleApprovalsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumVehicleRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.VehicleRequestStatus
+  }
+
+  export type VehicleUpdateOneRequiredWithoutRequestsNestedInput = {
+    create?: XOR<VehicleCreateWithoutRequestsInput, VehicleUncheckedCreateWithoutRequestsInput>
+    connectOrCreate?: VehicleCreateOrConnectWithoutRequestsInput
+    upsert?: VehicleUpsertWithoutRequestsInput
+    connect?: VehicleWhereUniqueInput
+    update?: XOR<XOR<VehicleUpdateToOneWithWhereWithoutRequestsInput, VehicleUpdateWithoutRequestsInput>, VehicleUncheckedUpdateWithoutRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutVehicleRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutVehicleRequestsInput, UserUncheckedCreateWithoutVehicleRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehicleRequestsInput
+    upsert?: UserUpsertWithoutVehicleRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVehicleRequestsInput, UserUpdateWithoutVehicleRequestsInput>, UserUncheckedUpdateWithoutVehicleRequestsInput>
+  }
+
+  export type UserUpdateOneWithoutVehicleApprovalsNestedInput = {
+    create?: XOR<UserCreateWithoutVehicleApprovalsInput, UserUncheckedCreateWithoutVehicleApprovalsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVehicleApprovalsInput
+    upsert?: UserUpsertWithoutVehicleApprovalsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVehicleApprovalsInput, UserUpdateWithoutVehicleApprovalsInput>, UserUncheckedUpdateWithoutVehicleApprovalsInput>
+  }
+
+  export type CalendarEventCreateattendeesInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutCalendarEventsInput = {
+    create?: XOR<UserCreateWithoutCalendarEventsInput, UserUncheckedCreateWithoutCalendarEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarEventsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumCalendarEventTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CalendarEventType
+  }
+
+  export type CalendarEventUpdateattendeesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutCalendarEventsNestedInput = {
+    create?: XOR<UserCreateWithoutCalendarEventsInput, UserUncheckedCreateWithoutCalendarEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCalendarEventsInput
+    upsert?: UserUpsertWithoutCalendarEventsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCalendarEventsInput, UserUpdateWithoutCalendarEventsInput>, UserUncheckedUpdateWithoutCalendarEventsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -168924,6 +174321,57 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumBookingStatusFilter<$PrismaModel>
     _max?: NestedEnumBookingStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumVehicleStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleStatus | EnumVehicleStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleStatusFilter<$PrismaModel> | $Enums.VehicleStatus
+  }
+
+  export type NestedEnumVehicleStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleStatus | EnumVehicleStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleStatus[] | ListEnumVehicleStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleStatusWithAggregatesFilter<$PrismaModel> | $Enums.VehicleStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVehicleStatusFilter<$PrismaModel>
+    _max?: NestedEnumVehicleStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumVehicleRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleRequestStatus | EnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleRequestStatusFilter<$PrismaModel> | $Enums.VehicleRequestStatus
+  }
+
+  export type NestedEnumVehicleRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.VehicleRequestStatus | EnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.VehicleRequestStatus[] | ListEnumVehicleRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumVehicleRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.VehicleRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumVehicleRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumVehicleRequestStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCalendarEventTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarEventType | EnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarEventTypeFilter<$PrismaModel> | $Enums.CalendarEventType
+  }
+
+  export type NestedEnumCalendarEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CalendarEventType | EnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CalendarEventType[] | ListEnumCalendarEventTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCalendarEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.CalendarEventType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCalendarEventTypeFilter<$PrismaModel>
+    _max?: NestedEnumCalendarEventTypeFilter<$PrismaModel>
   }
 
   export type BugAttachmentCreateWithoutUploaderInput = {
@@ -170362,6 +175810,166 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type VehicleCreateWithoutDriverInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requests?: VehicleRequestCreateNestedManyWithoutVehicleInput
+  }
+
+  export type VehicleUncheckedCreateWithoutDriverInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requests?: VehicleRequestUncheckedCreateNestedManyWithoutVehicleInput
+  }
+
+  export type VehicleCreateOrConnectWithoutDriverInput = {
+    where: VehicleWhereUniqueInput
+    create: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput>
+  }
+
+  export type VehicleCreateManyDriverInputEnvelope = {
+    data: VehicleCreateManyDriverInput | VehicleCreateManyDriverInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VehicleRequestCreateWithoutRequestedByInput = {
+    id?: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    vehicle: VehicleCreateNestedOneWithoutRequestsInput
+    approvedBy?: UserCreateNestedOneWithoutVehicleApprovalsInput
+  }
+
+  export type VehicleRequestUncheckedCreateWithoutRequestedByInput = {
+    id?: string
+    vehicleId: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestCreateOrConnectWithoutRequestedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    create: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type VehicleRequestCreateManyRequestedByInputEnvelope = {
+    data: VehicleRequestCreateManyRequestedByInput | VehicleRequestCreateManyRequestedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VehicleRequestCreateWithoutApprovedByInput = {
+    id?: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    vehicle: VehicleCreateNestedOneWithoutRequestsInput
+    requestedBy: UserCreateNestedOneWithoutVehicleRequestsInput
+  }
+
+  export type VehicleRequestUncheckedCreateWithoutApprovedByInput = {
+    id?: string
+    vehicleId: string
+    requestedById: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestCreateOrConnectWithoutApprovedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    create: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput>
+  }
+
+  export type VehicleRequestCreateManyApprovedByInputEnvelope = {
+    data: VehicleRequestCreateManyApprovedByInput | VehicleRequestCreateManyApprovedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CalendarEventCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    attendees?: CalendarEventCreateattendeesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarEventUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    attendees?: CalendarEventCreateattendeesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarEventCreateOrConnectWithoutCreatedByInput = {
+    where: CalendarEventWhereUniqueInput
+    create: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CalendarEventCreateManyCreatedByInputEnvelope = {
+    data: CalendarEventCreateManyCreatedByInput | CalendarEventCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BugAttachmentUpsertWithWhereUniqueWithoutUploaderInput = {
     where: BugAttachmentWhereUniqueInput
     update: XOR<BugAttachmentUpdateWithoutUploaderInput, BugAttachmentUncheckedUpdateWithoutUploaderInput>
@@ -171482,6 +177090,125 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"RoomBooking"> | Date | string
   }
 
+  export type VehicleUpsertWithWhereUniqueWithoutDriverInput = {
+    where: VehicleWhereUniqueInput
+    update: XOR<VehicleUpdateWithoutDriverInput, VehicleUncheckedUpdateWithoutDriverInput>
+    create: XOR<VehicleCreateWithoutDriverInput, VehicleUncheckedCreateWithoutDriverInput>
+  }
+
+  export type VehicleUpdateWithWhereUniqueWithoutDriverInput = {
+    where: VehicleWhereUniqueInput
+    data: XOR<VehicleUpdateWithoutDriverInput, VehicleUncheckedUpdateWithoutDriverInput>
+  }
+
+  export type VehicleUpdateManyWithWhereWithoutDriverInput = {
+    where: VehicleScalarWhereInput
+    data: XOR<VehicleUpdateManyMutationInput, VehicleUncheckedUpdateManyWithoutDriverInput>
+  }
+
+  export type VehicleScalarWhereInput = {
+    AND?: VehicleScalarWhereInput | VehicleScalarWhereInput[]
+    OR?: VehicleScalarWhereInput[]
+    NOT?: VehicleScalarWhereInput | VehicleScalarWhereInput[]
+    id?: StringFilter<"Vehicle"> | string
+    name?: StringFilter<"Vehicle"> | string
+    plateNumber?: StringFilter<"Vehicle"> | string
+    type?: StringFilter<"Vehicle"> | string
+    seats?: IntFilter<"Vehicle"> | number
+    status?: EnumVehicleStatusFilter<"Vehicle"> | $Enums.VehicleStatus
+    driverId?: StringNullableFilter<"Vehicle"> | string | null
+    imageUrl?: StringNullableFilter<"Vehicle"> | string | null
+    createdAt?: DateTimeFilter<"Vehicle"> | Date | string
+    updatedAt?: DateTimeFilter<"Vehicle"> | Date | string
+  }
+
+  export type VehicleRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    update: XOR<VehicleRequestUpdateWithoutRequestedByInput, VehicleRequestUncheckedUpdateWithoutRequestedByInput>
+    create: XOR<VehicleRequestCreateWithoutRequestedByInput, VehicleRequestUncheckedCreateWithoutRequestedByInput>
+  }
+
+  export type VehicleRequestUpdateWithWhereUniqueWithoutRequestedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    data: XOR<VehicleRequestUpdateWithoutRequestedByInput, VehicleRequestUncheckedUpdateWithoutRequestedByInput>
+  }
+
+  export type VehicleRequestUpdateManyWithWhereWithoutRequestedByInput = {
+    where: VehicleRequestScalarWhereInput
+    data: XOR<VehicleRequestUpdateManyMutationInput, VehicleRequestUncheckedUpdateManyWithoutRequestedByInput>
+  }
+
+  export type VehicleRequestScalarWhereInput = {
+    AND?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+    OR?: VehicleRequestScalarWhereInput[]
+    NOT?: VehicleRequestScalarWhereInput | VehicleRequestScalarWhereInput[]
+    id?: StringFilter<"VehicleRequest"> | string
+    vehicleId?: StringFilter<"VehicleRequest"> | string
+    requestedById?: StringFilter<"VehicleRequest"> | string
+    approvedById?: StringNullableFilter<"VehicleRequest"> | string | null
+    purpose?: StringFilter<"VehicleRequest"> | string
+    destination?: StringFilter<"VehicleRequest"> | string
+    startTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    endTime?: DateTimeFilter<"VehicleRequest"> | Date | string
+    passengerCount?: IntFilter<"VehicleRequest"> | number
+    status?: EnumVehicleRequestStatusFilter<"VehicleRequest"> | $Enums.VehicleRequestStatus
+    rejectionReason?: StringNullableFilter<"VehicleRequest"> | string | null
+    note?: StringNullableFilter<"VehicleRequest"> | string | null
+    createdAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"VehicleRequest"> | Date | string
+  }
+
+  export type VehicleRequestUpsertWithWhereUniqueWithoutApprovedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    update: XOR<VehicleRequestUpdateWithoutApprovedByInput, VehicleRequestUncheckedUpdateWithoutApprovedByInput>
+    create: XOR<VehicleRequestCreateWithoutApprovedByInput, VehicleRequestUncheckedCreateWithoutApprovedByInput>
+  }
+
+  export type VehicleRequestUpdateWithWhereUniqueWithoutApprovedByInput = {
+    where: VehicleRequestWhereUniqueInput
+    data: XOR<VehicleRequestUpdateWithoutApprovedByInput, VehicleRequestUncheckedUpdateWithoutApprovedByInput>
+  }
+
+  export type VehicleRequestUpdateManyWithWhereWithoutApprovedByInput = {
+    where: VehicleRequestScalarWhereInput
+    data: XOR<VehicleRequestUpdateManyMutationInput, VehicleRequestUncheckedUpdateManyWithoutApprovedByInput>
+  }
+
+  export type CalendarEventUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: CalendarEventWhereUniqueInput
+    update: XOR<CalendarEventUpdateWithoutCreatedByInput, CalendarEventUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<CalendarEventCreateWithoutCreatedByInput, CalendarEventUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: CalendarEventWhereUniqueInput
+    data: XOR<CalendarEventUpdateWithoutCreatedByInput, CalendarEventUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type CalendarEventUpdateManyWithWhereWithoutCreatedByInput = {
+    where: CalendarEventScalarWhereInput
+    data: XOR<CalendarEventUpdateManyMutationInput, CalendarEventUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type CalendarEventScalarWhereInput = {
+    AND?: CalendarEventScalarWhereInput | CalendarEventScalarWhereInput[]
+    OR?: CalendarEventScalarWhereInput[]
+    NOT?: CalendarEventScalarWhereInput | CalendarEventScalarWhereInput[]
+    id?: StringFilter<"CalendarEvent"> | string
+    title?: StringFilter<"CalendarEvent"> | string
+    description?: StringNullableFilter<"CalendarEvent"> | string | null
+    eventType?: EnumCalendarEventTypeFilter<"CalendarEvent"> | $Enums.CalendarEventType
+    startTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    endTime?: DateTimeFilter<"CalendarEvent"> | Date | string
+    isAllDay?: BoolFilter<"CalendarEvent"> | boolean
+    location?: StringNullableFilter<"CalendarEvent"> | string | null
+    color?: StringNullableFilter<"CalendarEvent"> | string | null
+    createdById?: StringFilter<"CalendarEvent"> | string
+    attendees?: StringNullableListFilter<"CalendarEvent">
+    createdAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+  }
+
   export type EmployeeCreateWithoutOrgUnitInput = {
     id?: string
     code: string
@@ -171785,6 +177512,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -171831,6 +177562,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOrgUnitInput = {
@@ -172500,6 +178235,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -172546,6 +178285,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -173130,6 +178873,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -173176,6 +178923,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -174088,6 +179839,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -174134,6 +179889,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutLedProjectsInput = {
@@ -174389,6 +180148,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -174435,6 +180198,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutProjectInput = {
@@ -174783,6 +180550,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -174829,6 +180600,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskApprovalsInput = {
@@ -175204,6 +180979,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -175250,6 +181029,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type EmployeeUpsertWithoutTasksInput = {
@@ -175604,6 +181387,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -175650,6 +181437,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeLogsInput = {
@@ -175769,6 +181560,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -175815,6 +181610,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutWorkStatusesInput = {
@@ -175861,6 +181660,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -175907,6 +181710,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkStatusesInput = {
@@ -175969,6 +181776,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -176015,6 +181826,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTimeEntriesInput = {
@@ -176061,6 +181876,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -176107,6 +181926,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -176169,6 +181992,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -176215,6 +182042,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -176261,6 +182092,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -176307,6 +182142,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedTimesheetsInput = {
@@ -176358,6 +182197,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -176404,6 +182247,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimesheetsInput = {
@@ -176466,6 +182313,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -176512,6 +182363,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTimesheetsInput = {
@@ -176569,6 +182424,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -176615,6 +182474,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutAlertConfigsInput = {
@@ -176781,6 +182644,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -176827,6 +182694,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -176889,6 +182760,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -176935,6 +182810,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPushTokensInput = {
@@ -176981,6 +182860,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -177027,6 +182910,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPushTokensInput = {
@@ -177089,6 +182976,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -177135,6 +183026,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskCreateWithoutTelegramMessagesInput = {
@@ -177549,6 +183444,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -177595,6 +183494,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutStartedProcessesInput = {
@@ -177915,6 +183818,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -177961,6 +183868,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessUserTaskUpsertWithWhereUniqueWithoutInstanceInput = {
@@ -178055,6 +183966,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -178101,6 +184016,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProcessTasksInput = {
@@ -178198,6 +184117,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -178244,6 +184167,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutUserTasksInput = {
@@ -178499,6 +184426,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -178545,6 +184476,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedBugsInput = {
@@ -178596,6 +184531,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -178642,6 +184581,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPmApprovedBugsInput = {
@@ -178750,6 +184693,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -178796,6 +184743,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReportedBugsInput = {
@@ -178930,6 +184881,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -178976,6 +184931,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutPmApprovedBugsInput = {
@@ -179033,6 +184992,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -179079,6 +185042,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectUpsertWithoutBugsInput = {
@@ -179199,6 +185166,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -179245,6 +185216,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -179588,6 +185563,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -179634,6 +185613,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugAttachmentsInput = {
@@ -179763,6 +185746,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -179809,6 +185796,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutBugCommentsInput = {
@@ -179855,6 +185846,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -179901,6 +185896,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugCommentsInput = {
@@ -180024,6 +186023,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -180070,6 +186073,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BugUpsertWithoutCommentsInput = {
@@ -180652,6 +186659,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -180698,6 +186709,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -180793,6 +186808,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -180839,6 +186858,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ModuleRolePermissionCreateWithoutRoleInput = {
@@ -181098,6 +187121,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -181144,6 +187171,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutModuleRolesInput = {
@@ -181237,6 +187268,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -181283,6 +187318,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -181329,6 +187368,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -181375,6 +187418,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -181437,6 +187484,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -181483,6 +187534,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type GroupPermissionCreateWithoutGroupInput = {
@@ -181701,6 +187756,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -181747,6 +187806,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -181836,6 +187899,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -181882,6 +187949,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserGroupUpsertWithoutMembersInput = {
@@ -182449,6 +188520,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -182495,6 +188570,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedLeavesInput = {
@@ -182704,6 +188783,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -182750,6 +188833,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutLeaveRequestsInput = {
@@ -183133,6 +189220,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -183179,6 +189270,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProcessedPayrollsInput = {
@@ -183332,6 +189427,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -183378,6 +189477,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PayrollPeriodUpsertWithoutAdjustmentsInput = {
@@ -183886,6 +189989,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -183932,6 +190039,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSubmittedExpensesInput = {
@@ -183983,6 +190094,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -184029,6 +190144,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedExpensesInput = {
@@ -184215,6 +190334,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -184261,6 +190384,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutApprovedExpensesInput = {
@@ -184318,6 +190445,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -184364,6 +190495,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutExpensesInput = {
@@ -185327,6 +191462,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCrmActivitiesInput = {
@@ -185373,6 +191512,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCrmActivitiesInput = {
@@ -185478,6 +191621,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -185524,6 +191671,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -188699,6 +194850,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOkrObjectivesInput = {
@@ -188745,6 +194900,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOkrObjectivesInput = {
@@ -188839,6 +194998,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -188885,6 +195048,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput = {
@@ -189241,6 +195408,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutKbArticlesInput = {
@@ -189287,6 +195458,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutKbArticlesInput = {
@@ -189382,6 +195557,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutKbArticlesInput = {
@@ -189428,6 +195607,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CustomerCreateWithoutPortalsInput = {
@@ -189796,6 +195979,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPoRequestsInput = {
@@ -189842,6 +196029,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPoRequestsInput = {
@@ -189893,6 +196084,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPoApprovalsInput = {
@@ -189939,6 +196134,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPoApprovalsInput = {
@@ -190086,6 +196285,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoRequestsInput = {
@@ -190132,6 +196335,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutPoApprovalsInput = {
@@ -190189,6 +196396,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoApprovalsInput = {
@@ -190235,6 +196446,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PurchaseOrderItemUpsertWithWhereUniqueWithoutPoInput = {
@@ -190402,6 +196617,10 @@ export namespace Prisma {
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -190448,6 +196667,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -190569,6 +196792,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -190615,6 +196842,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CommentUpsertWithoutRepliesInput = {
@@ -190710,6 +196941,10 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutFeedPostsInput = {
@@ -190756,6 +196991,10 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutFeedPostsInput = {
@@ -190842,6 +197081,10 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedPostsInput = {
@@ -190888,6 +197131,10 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type FeedReactionUpsertWithWhereUniqueWithoutPostInput = {
@@ -190979,6 +197226,10 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutFeedReactionsInput = {
@@ -191025,6 +197276,10 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutFeedReactionsInput = {
@@ -191122,6 +197377,10 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedReactionsInput = {
@@ -191168,6 +197427,10 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type WebhookLogCreateWithoutEndpointInput = {
@@ -191418,6 +197681,10 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutAuthorInput
     feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutRoomBookingsInput = {
@@ -191464,6 +197731,10 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
     feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutRoomBookingsInput = {
@@ -191561,6 +197832,10 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoomBookingsInput = {
@@ -191607,6 +197882,1000 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type VehicleRequestCreateWithoutVehicleInput = {
+    id?: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    requestedBy: UserCreateNestedOneWithoutVehicleRequestsInput
+    approvedBy?: UserCreateNestedOneWithoutVehicleApprovalsInput
+  }
+
+  export type VehicleRequestUncheckedCreateWithoutVehicleInput = {
+    id?: string
+    requestedById: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestCreateOrConnectWithoutVehicleInput = {
+    where: VehicleRequestWhereUniqueInput
+    create: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput>
+  }
+
+  export type VehicleRequestCreateManyVehicleInputEnvelope = {
+    data: VehicleRequestCreateManyVehicleInput | VehicleRequestCreateManyVehicleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserCreateWithoutVehiclesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutVehiclesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutVehiclesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVehiclesInput, UserUncheckedCreateWithoutVehiclesInput>
+  }
+
+  export type VehicleRequestUpsertWithWhereUniqueWithoutVehicleInput = {
+    where: VehicleRequestWhereUniqueInput
+    update: XOR<VehicleRequestUpdateWithoutVehicleInput, VehicleRequestUncheckedUpdateWithoutVehicleInput>
+    create: XOR<VehicleRequestCreateWithoutVehicleInput, VehicleRequestUncheckedCreateWithoutVehicleInput>
+  }
+
+  export type VehicleRequestUpdateWithWhereUniqueWithoutVehicleInput = {
+    where: VehicleRequestWhereUniqueInput
+    data: XOR<VehicleRequestUpdateWithoutVehicleInput, VehicleRequestUncheckedUpdateWithoutVehicleInput>
+  }
+
+  export type VehicleRequestUpdateManyWithWhereWithoutVehicleInput = {
+    where: VehicleRequestScalarWhereInput
+    data: XOR<VehicleRequestUpdateManyMutationInput, VehicleRequestUncheckedUpdateManyWithoutVehicleInput>
+  }
+
+  export type UserUpsertWithoutVehiclesInput = {
+    update: XOR<UserUpdateWithoutVehiclesInput, UserUncheckedUpdateWithoutVehiclesInput>
+    create: XOR<UserCreateWithoutVehiclesInput, UserUncheckedCreateWithoutVehiclesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVehiclesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVehiclesInput, UserUncheckedUpdateWithoutVehiclesInput>
+  }
+
+  export type UserUpdateWithoutVehiclesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVehiclesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type VehicleCreateWithoutRequestsInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    driver?: UserCreateNestedOneWithoutVehiclesInput
+  }
+
+  export type VehicleUncheckedCreateWithoutRequestsInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    driverId?: string | null
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleCreateOrConnectWithoutRequestsInput = {
+    where: VehicleWhereUniqueInput
+    create: XOR<VehicleCreateWithoutRequestsInput, VehicleUncheckedCreateWithoutRequestsInput>
+  }
+
+  export type UserCreateWithoutVehicleRequestsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutVehicleRequestsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutVehicleRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVehicleRequestsInput, UserUncheckedCreateWithoutVehicleRequestsInput>
+  }
+
+  export type UserCreateWithoutVehicleApprovalsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutVehicleApprovalsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutVehicleApprovalsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVehicleApprovalsInput, UserUncheckedCreateWithoutVehicleApprovalsInput>
+  }
+
+  export type VehicleUpsertWithoutRequestsInput = {
+    update: XOR<VehicleUpdateWithoutRequestsInput, VehicleUncheckedUpdateWithoutRequestsInput>
+    create: XOR<VehicleCreateWithoutRequestsInput, VehicleUncheckedCreateWithoutRequestsInput>
+    where?: VehicleWhereInput
+  }
+
+  export type VehicleUpdateToOneWithWhereWithoutRequestsInput = {
+    where?: VehicleWhereInput
+    data: XOR<VehicleUpdateWithoutRequestsInput, VehicleUncheckedUpdateWithoutRequestsInput>
+  }
+
+  export type VehicleUpdateWithoutRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    driver?: UserUpdateOneWithoutVehiclesNestedInput
+  }
+
+  export type VehicleUncheckedUpdateWithoutRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    driverId?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutVehicleRequestsInput = {
+    update: XOR<UserUpdateWithoutVehicleRequestsInput, UserUncheckedUpdateWithoutVehicleRequestsInput>
+    create: XOR<UserCreateWithoutVehicleRequestsInput, UserUncheckedCreateWithoutVehicleRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVehicleRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVehicleRequestsInput, UserUncheckedUpdateWithoutVehicleRequestsInput>
+  }
+
+  export type UserUpdateWithoutVehicleRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVehicleRequestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUpsertWithoutVehicleApprovalsInput = {
+    update: XOR<UserUpdateWithoutVehicleApprovalsInput, UserUncheckedUpdateWithoutVehicleApprovalsInput>
+    create: XOR<UserCreateWithoutVehicleApprovalsInput, UserUncheckedCreateWithoutVehicleApprovalsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVehicleApprovalsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVehicleApprovalsInput, UserUncheckedUpdateWithoutVehicleApprovalsInput>
+  }
+
+  export type UserUpdateWithoutVehicleApprovalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVehicleApprovalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutCalendarEventsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCalendarEventsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCalendarEventsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCalendarEventsInput, UserUncheckedCreateWithoutCalendarEventsInput>
+  }
+
+  export type UserUpsertWithoutCalendarEventsInput = {
+    update: XOR<UserUpdateWithoutCalendarEventsInput, UserUncheckedUpdateWithoutCalendarEventsInput>
+    create: XOR<UserCreateWithoutCalendarEventsInput, UserUncheckedCreateWithoutCalendarEventsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCalendarEventsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCalendarEventsInput, UserUncheckedUpdateWithoutCalendarEventsInput>
+  }
+
+  export type UserUpdateWithoutCalendarEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCalendarEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
   }
 
   export type BugAttachmentCreateManyUploaderInput = {
@@ -192069,6 +199338,65 @@ export namespace Prisma {
     attendees?: RoomBookingCreateattendeesInput | string[]
     status?: $Enums.BookingStatus
     note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleCreateManyDriverInput = {
+    id?: string
+    name: string
+    plateNumber: string
+    type: string
+    seats?: number
+    status?: $Enums.VehicleStatus
+    imageUrl?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestCreateManyRequestedByInput = {
+    id?: string
+    vehicleId: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestCreateManyApprovedByInput = {
+    id?: string
+    vehicleId: string
+    requestedById: string
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CalendarEventCreateManyCreatedByInput = {
+    id?: string
+    title: string
+    description?: string | null
+    eventType?: $Enums.CalendarEventType
+    startTime: Date | string
+    endTime: Date | string
+    isAllDay?: boolean
+    location?: string | null
+    color?: string | null
+    attendees?: CalendarEventCreateattendeesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -193535,6 +200863,185 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VehicleUpdateWithoutDriverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requests?: VehicleRequestUpdateManyWithoutVehicleNestedInput
+  }
+
+  export type VehicleUncheckedUpdateWithoutDriverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requests?: VehicleRequestUncheckedUpdateManyWithoutVehicleNestedInput
+  }
+
+  export type VehicleUncheckedUpdateManyWithoutDriverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    plateNumber?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    seats?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleStatusFieldUpdateOperationsInput | $Enums.VehicleStatus
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vehicle?: VehicleUpdateOneRequiredWithoutRequestsNestedInput
+    approvedBy?: UserUpdateOneWithoutVehicleApprovalsNestedInput
+  }
+
+  export type VehicleRequestUncheckedUpdateWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutRequestedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUpdateWithoutApprovedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vehicle?: VehicleUpdateOneRequiredWithoutRequestsNestedInput
+    requestedBy?: UserUpdateOneRequiredWithoutVehicleRequestsNestedInput
+  }
+
+  export type VehicleRequestUncheckedUpdateWithoutApprovedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutApprovedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vehicleId?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CalendarEventUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    eventType?: EnumCalendarEventTypeFieldUpdateOperationsInput | $Enums.CalendarEventType
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    isAllDay?: BoolFieldUpdateOperationsInput | boolean
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    attendees?: CalendarEventUpdateattendeesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateManyOrgUnitInput = {
     id?: string
     code: string
@@ -193921,6 +201428,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -193967,6 +201478,10 @@ export namespace Prisma {
     feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
     feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
     roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -197868,6 +205383,70 @@ export namespace Prisma {
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     attendees?: RoomBookingUpdateattendeesInput | string[]
     status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestCreateManyVehicleInput = {
+    id?: string
+    requestedById: string
+    approvedById?: string | null
+    purpose: string
+    destination: string
+    startTime: Date | string
+    endTime: Date | string
+    passengerCount?: number
+    status?: $Enums.VehicleRequestStatus
+    rejectionReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VehicleRequestUpdateWithoutVehicleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    requestedBy?: UserUpdateOneRequiredWithoutVehicleRequestsNestedInput
+    approvedBy?: UserUpdateOneWithoutVehicleApprovalsNestedInput
+  }
+
+  export type VehicleRequestUncheckedUpdateWithoutVehicleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VehicleRequestUncheckedUpdateManyWithoutVehicleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requestedById?: StringFieldUpdateOperationsInput | string
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    purpose?: StringFieldUpdateOperationsInput | string
+    destination?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    passengerCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
+    rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
