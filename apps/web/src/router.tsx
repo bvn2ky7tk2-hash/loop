@@ -4,7 +4,6 @@ import { Spin } from 'antd';
 import { AppLayout } from './components/layout/AppLayout';
 
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
 const OrgPage = lazy(() => import('./pages/org/OrgPage'));
 const UsersPage = lazy(() => import('./pages/users/UsersPage'));
 const PersonnelPage = lazy(() => import('./pages/personnel/PersonnelPage'));
@@ -110,7 +109,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: wrap(DashboardPage) },
+      { index: true, element: <Navigate to="/dashboard/work" replace /> },
       { path: 'org', element: <Navigate to="/personnel" replace /> },
       { path: 'personnel', element: wrap(PersonnelPage) },
       { path: 'projects', element: wrap(ProjectsPage) },

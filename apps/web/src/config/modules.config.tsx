@@ -56,7 +56,6 @@ import {
   CalendarOutlined as RoomCalendarIcon,
   CarOutlined,
   BuildOutlined,
-  SmileOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -85,7 +84,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#2563EB',
     gatePermission: 'projects:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/work', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -127,6 +126,13 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/reports', label: 'Báo cáo tổng hợp', visible: true },
         ],
       },
+      {
+        key: 'g-work-me', label: 'Thông tin cá nhân', visible: true,
+        items: [
+          { key: '/self-service',        label: 'Thông tin của tôi', visible: true },
+          { key: '/payroll/my-payslips', label: 'Phiếu lương',       visible: true },
+        ],
+      },
     ],
   },
 
@@ -139,7 +145,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#059669',
     gatePermission: 'employees:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/people', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -190,7 +196,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#0D9488',
     gatePermission: 'finance:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/finance', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -222,7 +228,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#DC2626',
     gatePermission: 'crm:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/crm', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -265,7 +271,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#D97706',
     gatePermission: 'asset:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/asset', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -302,7 +308,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#7C3AED',
     gatePermission: 'bpm:read',
     topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/ops', label: 'Tổng quan', visible: true },
     ],
     groups: [
       {
@@ -310,25 +316,6 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/processes',           label: 'Định nghĩa quy trình', visible: true },
           { key: '/processes/instances', label: 'Giám sát quy trình',   visible: true },
-        ],
-      },
-    ],
-  },
-
-  // ─── Me (Self-service) ────────────────────────────────────────────────────
-  {
-    id: 'me',
-    label: 'Của tôi',
-    description: 'Thông tin cá nhân, phiếu lương và tự phục vụ',
-    icon: <SmileOutlined />,
-    color: '#0EA5E9',
-    topItems: [],
-    groups: [
-      {
-        key: 'g-me-personal', label: 'Thông tin cá nhân', visible: true,
-        items: [
-          { key: '/self-service',        label: 'Thông tin của tôi', visible: true },
-          { key: '/payroll/my-payslips', label: 'Phiếu lương',       visible: true },
         ],
       },
     ],
@@ -342,7 +329,9 @@ export const MODULES: ModuleDefinition[] = [
     icon: <SettingOutlined />,
     color: '#475569',
     gatePermission: ['admin:users', 'admin:permissions', 'admin:settings'],
-    topItems: [],
+    topItems: [
+      { key: '/dashboard/admin', label: 'Tổng quan', visible: true },
+    ],
     groups: [
       {
         key: 'g-admin-system', label: 'Hệ thống', visible: true,
@@ -388,7 +377,13 @@ export const ROUTE_PERMISSION_MAP: Record<string, string | undefined> = {
 
 // Icon map shared across all sidebar items
 export const ICON_MAP: Record<string, ReactNode> = {
-  '/':                      <DashboardOutlined />,
+  '/dashboard/work':    <DashboardOutlined />,
+  '/dashboard/people':  <DashboardOutlined />,
+  '/dashboard/finance': <DashboardOutlined />,
+  '/dashboard/crm':     <DashboardOutlined />,
+  '/dashboard/asset':   <DashboardOutlined />,
+  '/dashboard/ops':     <DashboardOutlined />,
+  '/dashboard/admin':   <DashboardOutlined />,
   '/my-tasks':              <AppstoreOutlined />,
   '/tasks':                 <CheckSquareOutlined />,
   '/timeline':              <ScheduleOutlined />,

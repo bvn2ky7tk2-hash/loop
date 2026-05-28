@@ -6,7 +6,8 @@
  *   - Bảng phân quyền UI   → derive từ registry (nhóm theo module)
  *   - DB screens table      → synced từ seed.ts khi deploy
  *
- * Module IDs v3.0: work | people | finance | crm | asset | ops | me | admin
+ * Module IDs v3.0: work | people | finance | crm | asset | ops | admin
+ * (me đã gộp vào work)
  */
 
 export interface ScreenDef {
@@ -19,8 +20,16 @@ export interface ScreenDef {
 }
 
 export const SCREEN_REGISTRY: ScreenDef[] = [
+  // ─── Persona Dashboards — mỗi module có dashboard riêng ───────────────────
+  { route: '/dashboard/work',    module: 'work',    label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'dashboard:read',  sortOrder: 0 },
+  { route: '/dashboard/people',  module: 'people',  label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'dashboard:read',  sortOrder: 0 },
+  { route: '/dashboard/finance', module: 'finance', label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'finance:read',    sortOrder: 0 },
+  { route: '/dashboard/crm',     module: 'crm',     label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'crm:read',        sortOrder: 0 },
+  { route: '/dashboard/asset',   module: 'asset',   label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'asset:read',      sortOrder: 0 },
+  { route: '/dashboard/ops',     module: 'ops',     label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'bpm:manage',      sortOrder: 0 },
+  { route: '/dashboard/admin',   module: 'admin',   label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'admin:settings',  sortOrder: 0 },
+
   // ─── Work — Công việc ──────────────────────────────────────────────────────
-  { route: '/',               module: 'work', label: 'Tổng quan',            icon: 'DashboardOutlined',    permCode: 'dashboard:read',     sortOrder: 0 },
   { route: '/my-tasks',       module: 'work', label: 'Bảng Kanban',           icon: 'AppstoreOutlined',     permCode: 'tasks:read',         sortOrder: 1 },
   { route: '/tasks',          module: 'work', label: 'Việc của tôi',          icon: 'CheckSquareOutlined',  permCode: 'tasks:read',         sortOrder: 2 },
   { route: '/timeline',       module: 'work', label: 'Lịch trình',            icon: 'ScheduleOutlined',     permCode: 'projects:read',      sortOrder: 3 },
@@ -35,6 +44,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/feed',              module: 'work', label: 'Bảng tin công ty',    icon: 'MessageOutlined',      permCode: 'dashboard:read',     sortOrder: 12 },
   { route: '/calendar',          module: 'work', label: 'Lịch công ty',        icon: 'CalendarOutlined',     permCode: 'dashboard:read',     sortOrder: 13 },
   { route: '/reports',           module: 'work', label: 'Báo cáo',             icon: 'BarChartOutlined',     permCode: 'reports:read',       sortOrder: 14 },
+  { route: '/self-service',        module: 'work', label: 'Thông tin của tôi', icon: 'UserOutlined',     permCode: 'hr:read',    sortOrder: 15 },
+  { route: '/payroll/my-payslips', module: 'work', label: 'Phiếu lương',       icon: 'FileTextOutlined', permCode: 'hr:read',    sortOrder: 16 },
 
   // ─── Ops — Vận hành (BPM Design + Monitor) ────────────────────────────────
   { route: '/processes',           module: 'ops', label: 'Định nghĩa quy trình', icon: 'UnorderedListOutlined', permCode: 'bpm:manage', sortOrder: 0 },
@@ -86,10 +97,6 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/procurement/vendors',   module: 'asset', label: 'Nhà cung cấp',     icon: 'ShopOutlined',     permCode: 'procurement:read',  sortOrder: 5 },
   { route: '/procurement/orders',    module: 'asset', label: 'Đơn mua hàng',     icon: 'FileTextOutlined', permCode: 'procurement:read',  sortOrder: 6 },
 
-  // ─── Me — Của tôi (Self-service) ──────────────────────────────────────────
-  { route: '/self-service',        module: 'me', label: 'Thông tin của tôi', icon: 'UserOutlined',     permCode: 'hr:read',         sortOrder: 0 },
-  { route: '/payroll/my-payslips', module: 'me', label: 'Phiếu lương',       icon: 'FileTextOutlined', permCode: 'hr:read',         sortOrder: 1 },
-
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',               module: 'admin', label: 'Người dùng',        icon: 'UserOutlined',              permCode: 'admin:users',       sortOrder: 0 },
   { route: '/permissions',         module: 'admin', label: 'Phân quyền',         icon: 'SafetyCertificateOutlined', permCode: 'admin:permissions', sortOrder: 1 },
@@ -124,7 +131,6 @@ export const MODULE_LABELS: Record<string, string> = {
   crm:     'CRM',
   asset:   'Tài sản',
   ops:     'Vận hành',
-  me:      'Của tôi',
   admin:   'Quản trị',
 };
 
@@ -225,7 +231,7 @@ export const PERM_DOMAIN_MODULE: Record<string, string> = {
   okr:          'people',
   skills:       'people',
   training:     'people',
-  hr:           'me',
+  hr:           'work',
   timesheets:   'people',
   timelogs:     'work',
   finance:      'finance',
