@@ -41,7 +41,7 @@ export interface ContractStats {
   activeValue: number;
 }
 
-const BASE = '/api/v1/crm/client-contracts';
+const BASE = '/crm/client-contracts';
 
 export const clientContractsApi = {
   stats: () =>

@@ -32,6 +32,7 @@ import { ContractsModule } from './contracts/contracts.module';
 import { LeavesModule } from './leaves/leaves.module';
 import { PayrollModule } from './payroll/payroll.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { SkillsModule } from './skills/skills.module';
 import { CrmModule } from './crm/crm.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { ScreensModule } from './screens/screens.module';
@@ -93,6 +94,7 @@ import { HrExtModule } from './hr-ext/hr-ext.module';
     LeavesModule,
     PayrollModule,
     ExpensesModule,
+    SkillsModule,
     CrmModule,
     InvoicesModule,
     ScreensModule,

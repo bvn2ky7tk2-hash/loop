@@ -15,7 +15,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CrmActivitiesService } from './crm-activities.service';
 import { CreateActivityDto, UpdateActivityDto } from './dto/crm-activity.dto';
 
-@Controller('crm/activities')
+@Controller('api/v1/crm/activities')
 @Roles('ADMIN', 'PM', 'MEMBER')
 export class CrmActivitiesController {
   constructor(private readonly svc: CrmActivitiesService) {}

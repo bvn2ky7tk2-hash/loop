@@ -191,14 +191,16 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-hr-dev', label: 'Development', visible: true,
         items: [
-          { key: '/hr/training',    label: 'Training',           visible: true },
-          { key: '/hr/performance', label: 'Performance Review', visible: true },
+          { key: '/hr/training',      label: 'Training',           visible: true },
+          { key: '/hr/performance',   label: 'Performance Review', visible: true },
+          { key: '/hr/skill-matrix',  label: 'Skill Matrix',       visible: true },
         ],
       },
       {
         key: 'g-hr-self', label: 'Self Service', visible: true,
         items: [
-          { key: '/payroll/my-payslips', label: 'My Payslips', visible: true },
+          { key: '/self-service',        label: 'My Dashboard',  visible: true },
+          { key: '/payroll/my-payslips', label: 'My Payslips',   visible: true },
         ],
       },
     ],
@@ -392,6 +394,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/payroll':               <CreditCardOutlined />,
   '/payroll/settings':       <SettingOutlined />,
   '/payroll/my-payslips':    <FileTextOutlined />,
+  '/self-service':           <UserOutlined />,
   '/invoices':              <FileTextOutlined />,
   '/crm/leads':             <FunnelPlotOutlined />,
   '/crm/deals':             <TrophyOutlined />,
@@ -410,4 +413,5 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/accounting/journal':    <BookOutlined />,
   '/hr/training':           <ReadOutlined />,
   '/hr/performance':        <TrophyOutlined />,
+  '/hr/skill-matrix':       <ApartmentOutlined />,
 };

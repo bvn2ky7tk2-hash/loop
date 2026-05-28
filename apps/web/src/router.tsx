@@ -57,6 +57,7 @@ const ChartOfAccountsPage   = lazy(() => import('./pages/accounting/ChartOfAccou
 const JournalPage           = lazy(() => import('./pages/accounting/JournalPage'));
 const HrTrainingPage        = lazy(() => import('./pages/hr/TrainingPage'));
 const HrPerformancePage     = lazy(() => import('./pages/hr/PerformancePage'));
+const SkillMatrixPage       = lazy(() => import('./pages/hr/SkillMatrixPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -86,7 +87,8 @@ export const router = createBrowserRouter([
       { path: 'personnel', element: wrap(PersonnelPage) },
       { path: 'projects', element: wrap(ProjectsPage) },
       { path: 'tasks', element: wrap(TasksPage) },
-      { path: 'my-tasks', element: wrap(MyTasksPage) },
+      { path: 'my-tasks',      element: wrap(MyTasksPage) },
+      { path: 'self-service',  element: wrap(SelfServicePage) },
       { path: 'timeline', element: wrap(GanttPage) },
       { path: 'cost', element: wrap(CostPage) },
       { path: 'alerts', element: wrap(AlertsPage) },
@@ -133,6 +135,7 @@ export const router = createBrowserRouter([
       { path: 'accounting/journal',  element: wrap(JournalPage) },
       { path: 'hr/training',         element: wrap(HrTrainingPage) },
       { path: 'hr/performance',      element: wrap(HrPerformancePage) },
+      { path: 'hr/skill-matrix',     element: wrap(SkillMatrixPage) },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

@@ -103,7 +103,56 @@ model Employee {
   taxProfile         EmployeeTaxProfile?
   yearlySummaries    EmployeeYearlyTaxSummary[]
 
+  skills EmployeeSkill[]
+
   @@map("employees")
+}
+
+model Skill {
+  id          String          @id @default(uuid())
+  name        String          @unique
+  category    SkillCategory   @default(TECHNICAL)
+  description String?
+  isActive    Boolean         @default(true) @map("is_active")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  employees   EmployeeSkill[]
+
+  @@map("skills")
+}
+
+model EmployeeSkill {
+  id          String     @id @default(uuid())
+  employeeId  String     @map("employee_id")
+  skillId     String     @map("skill_id")
+  level       SkillLevel @default(BEGINNER)
+  yearsExp    Float      @default(0) @map("years_exp")
+  notes       String?
+  certifiedAt DateTime?  @map("certified_at") @db.Date
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  employee    Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  skill       Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, skillId])
+  @@map("employee_skills")
+}
+
+enum SkillCategory {
+  TECHNICAL
+  SOFT
+  LANGUAGE
+  DOMAIN
+  CERTIFICATION
+
+  @@map("skill_category")
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+
+  @@map("skill_level")
 }
 
 model EmployeeRate {

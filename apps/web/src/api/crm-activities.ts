@@ -29,7 +29,7 @@ export interface ActivityStats {
   todayDue: number;
 }
 
-const BASE = '/api/v1/crm/activities';
+const BASE = '/crm/activities';
 
 export const crmActivitiesApi = {
   stats: () =>

@@ -163,6 +163,26 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   email: 'email'
 };
 
+exports.Prisma.SkillScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  category: 'category',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EmployeeSkillScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  skillId: 'skillId',
+  level: 'level',
+  yearsExp: 'yearsExp',
+  notes: 'notes',
+  certifiedAt: 'certifiedAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.EmployeeRateScalarFieldEnum = {
   id: 'id',
   employeeId: 'employeeId',
@@ -1130,6 +1150,21 @@ exports.EmployeeLevel = exports.$Enums.EmployeeLevel = {
   EXPERT: 'EXPERT'
 };
 
+exports.SkillCategory = exports.$Enums.SkillCategory = {
+  TECHNICAL: 'TECHNICAL',
+  SOFT: 'SOFT',
+  LANGUAGE: 'LANGUAGE',
+  DOMAIN: 'DOMAIN',
+  CERTIFICATION: 'CERTIFICATION'
+};
+
+exports.SkillLevel = exports.$Enums.SkillLevel = {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  ADVANCED: 'ADVANCED',
+  EXPERT: 'EXPERT'
+};
+
 exports.BudgetCurrency = exports.$Enums.BudgetCurrency = {
   VND: 'VND',
   USD: 'USD'
@@ -1462,6 +1497,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
   Employee: 'Employee',
+  Skill: 'Skill',
+  EmployeeSkill: 'EmployeeSkill',
   EmployeeRate: 'EmployeeRate',
   Project: 'Project',
   Allocation: 'Allocation',

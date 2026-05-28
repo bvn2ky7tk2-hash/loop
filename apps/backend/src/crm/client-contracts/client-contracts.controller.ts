@@ -9,7 +9,7 @@ import {
   CreateMilestoneDto, UpdateMilestoneDto,
 } from './dto/client-contract.dto';
 
-@Controller('crm/client-contracts')
+@Controller('api/v1/crm/client-contracts')
 @Roles('ADMIN', 'PM', 'MEMBER')
 export class ClientContractsController {
   constructor(private readonly svc: ClientContractsService) {}

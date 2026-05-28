@@ -29,6 +29,16 @@ export type OrgUnit = $Result.DefaultSelection<Prisma.$OrgUnitPayload>
  */
 export type Employee = $Result.DefaultSelection<Prisma.$EmployeePayload>
 /**
+ * Model Skill
+ * 
+ */
+export type Skill = $Result.DefaultSelection<Prisma.$SkillPayload>
+/**
+ * Model EmployeeSkill
+ * 
+ */
+export type EmployeeSkill = $Result.DefaultSelection<Prisma.$EmployeeSkillPayload>
+/**
  * Model EmployeeRate
  * 
  */
@@ -408,7 +418,28 @@ export type SalaryColumn = $Result.DefaultSelection<Prisma.$SalaryColumnPayload>
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const SkillCategory: {
+  TECHNICAL: 'TECHNICAL',
+  SOFT: 'SOFT',
+  LANGUAGE: 'LANGUAGE',
+  DOMAIN: 'DOMAIN',
+  CERTIFICATION: 'CERTIFICATION'
+};
+
+export type SkillCategory = (typeof SkillCategory)[keyof typeof SkillCategory]
+
+
+export const SkillLevel: {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  ADVANCED: 'ADVANCED',
+  EXPERT: 'EXPERT'
+};
+
+export type SkillLevel = (typeof SkillLevel)[keyof typeof SkillLevel]
+
+
+export const Role: {
   ADMIN: 'ADMIN',
   PM: 'PM',
   MEMBER: 'MEMBER',
@@ -883,6 +914,14 @@ export type SalaryColumnSource = (typeof SalaryColumnSource)[keyof typeof Salary
 
 }
 
+export type SkillCategory = $Enums.SkillCategory
+
+export const SkillCategory: typeof $Enums.SkillCategory
+
+export type SkillLevel = $Enums.SkillLevel
+
+export const SkillLevel: typeof $Enums.SkillLevel
+
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
@@ -1209,6 +1248,26 @@ export class PrismaClient<
     * ```
     */
   get employee(): Prisma.EmployeeDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.skill`: Exposes CRUD operations for the **Skill** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Skills
+    * const skills = await prisma.skill.findMany()
+    * ```
+    */
+  get skill(): Prisma.SkillDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.employeeSkill`: Exposes CRUD operations for the **EmployeeSkill** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EmployeeSkills
+    * const employeeSkills = await prisma.employeeSkill.findMany()
+    * ```
+    */
+  get employeeSkill(): Prisma.EmployeeSkillDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.employeeRate`: Exposes CRUD operations for the **EmployeeRate** model.
@@ -2396,6 +2455,8 @@ export namespace Prisma {
     User: 'User',
     OrgUnit: 'OrgUnit',
     Employee: 'Employee',
+    Skill: 'Skill',
+    EmployeeSkill: 'EmployeeSkill',
     EmployeeRate: 'EmployeeRate',
     Project: 'Project',
     Allocation: 'Allocation',
@@ -2486,7 +2547,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2709,6 +2770,154 @@ export namespace Prisma {
           count: {
             args: Prisma.EmployeeCountArgs<ExtArgs>
             result: $Utils.Optional<EmployeeCountAggregateOutputType> | number
+          }
+        }
+      }
+      Skill: {
+        payload: Prisma.$SkillPayload<ExtArgs>
+        fields: Prisma.SkillFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SkillFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SkillFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          findFirst: {
+            args: Prisma.SkillFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SkillFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          findMany: {
+            args: Prisma.SkillFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          create: {
+            args: Prisma.SkillCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          createMany: {
+            args: Prisma.SkillCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SkillCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          delete: {
+            args: Prisma.SkillDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          update: {
+            args: Prisma.SkillUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          deleteMany: {
+            args: Prisma.SkillDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SkillUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SkillUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>[]
+          }
+          upsert: {
+            args: Prisma.SkillUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SkillPayload>
+          }
+          aggregate: {
+            args: Prisma.SkillAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSkill>
+          }
+          groupBy: {
+            args: Prisma.SkillGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SkillGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SkillCountArgs<ExtArgs>
+            result: $Utils.Optional<SkillCountAggregateOutputType> | number
+          }
+        }
+      }
+      EmployeeSkill: {
+        payload: Prisma.$EmployeeSkillPayload<ExtArgs>
+        fields: Prisma.EmployeeSkillFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EmployeeSkillFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EmployeeSkillFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          findFirst: {
+            args: Prisma.EmployeeSkillFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EmployeeSkillFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          findMany: {
+            args: Prisma.EmployeeSkillFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>[]
+          }
+          create: {
+            args: Prisma.EmployeeSkillCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          createMany: {
+            args: Prisma.EmployeeSkillCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EmployeeSkillCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>[]
+          }
+          delete: {
+            args: Prisma.EmployeeSkillDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          update: {
+            args: Prisma.EmployeeSkillUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          deleteMany: {
+            args: Prisma.EmployeeSkillDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EmployeeSkillUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EmployeeSkillUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>[]
+          }
+          upsert: {
+            args: Prisma.EmployeeSkillUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmployeeSkillPayload>
+          }
+          aggregate: {
+            args: Prisma.EmployeeSkillAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEmployeeSkill>
+          }
+          groupBy: {
+            args: Prisma.EmployeeSkillGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EmployeeSkillGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EmployeeSkillCountArgs<ExtArgs>
+            result: $Utils.Optional<EmployeeSkillCountAggregateOutputType> | number
           }
         }
       }
@@ -8373,6 +8582,8 @@ export namespace Prisma {
     user?: UserOmit
     orgUnit?: OrgUnitOmit
     employee?: EmployeeOmit
+    skill?: SkillOmit
+    employeeSkill?: EmployeeSkillOmit
     employeeRate?: EmployeeRateOmit
     project?: ProjectOmit
     allocation?: AllocationOmit
@@ -8872,6 +9083,7 @@ export namespace Prisma {
     performanceReviews: number
     reviewsAsReviewer: number
     yearlySummaries: number
+    skills: number
   }
 
   export type EmployeeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8887,6 +9099,7 @@ export namespace Prisma {
     performanceReviews?: boolean | EmployeeCountOutputTypeCountPerformanceReviewsArgs
     reviewsAsReviewer?: boolean | EmployeeCountOutputTypeCountReviewsAsReviewerArgs
     yearlySummaries?: boolean | EmployeeCountOutputTypeCountYearlySummariesArgs
+    skills?: boolean | EmployeeCountOutputTypeCountSkillsArgs
   }
 
   // Custom InputTypes
@@ -8982,6 +9195,44 @@ export namespace Prisma {
    */
   export type EmployeeCountOutputTypeCountYearlySummariesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: EmployeeYearlyTaxSummaryWhereInput
+  }
+
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountSkillsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmployeeSkillWhereInput
+  }
+
+
+  /**
+   * Count Type SkillCountOutputType
+   */
+
+  export type SkillCountOutputType = {
+    employees: number
+  }
+
+  export type SkillCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employees?: boolean | SkillCountOutputTypeCountEmployeesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SkillCountOutputType without action
+   */
+  export type SkillCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SkillCountOutputType
+     */
+    select?: SkillCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SkillCountOutputType without action
+   */
+  export type SkillCountOutputTypeCountEmployeesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmployeeSkillWhereInput
   }
 
 
@@ -13508,6 +13759,7 @@ export namespace Prisma {
     reviewsAsReviewer?: boolean | Employee$reviewsAsReviewerArgs<ExtArgs>
     taxProfile?: boolean | Employee$taxProfileArgs<ExtArgs>
     yearlySummaries?: boolean | Employee$yearlySummariesArgs<ExtArgs>
+    skills?: boolean | Employee$skillsArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
@@ -13592,6 +13844,7 @@ export namespace Prisma {
     reviewsAsReviewer?: boolean | Employee$reviewsAsReviewerArgs<ExtArgs>
     taxProfile?: boolean | Employee$taxProfileArgs<ExtArgs>
     yearlySummaries?: boolean | Employee$yearlySummariesArgs<ExtArgs>
+    skills?: boolean | Employee$skillsArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EmployeeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13621,6 +13874,7 @@ export namespace Prisma {
       reviewsAsReviewer: Prisma.$PerformanceReviewPayload<ExtArgs>[]
       taxProfile: Prisma.$EmployeeTaxProfilePayload<ExtArgs> | null
       yearlySummaries: Prisma.$EmployeeYearlyTaxSummaryPayload<ExtArgs>[]
+      skills: Prisma.$EmployeeSkillPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14049,6 +14303,7 @@ export namespace Prisma {
     reviewsAsReviewer<T extends Employee$reviewsAsReviewerArgs<ExtArgs> = {}>(args?: Subset<T, Employee$reviewsAsReviewerArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PerformanceReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     taxProfile<T extends Employee$taxProfileArgs<ExtArgs> = {}>(args?: Subset<T, Employee$taxProfileArgs<ExtArgs>>): Prisma__EmployeeTaxProfileClient<$Result.GetResult<Prisma.$EmployeeTaxProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     yearlySummaries<T extends Employee$yearlySummariesArgs<ExtArgs> = {}>(args?: Subset<T, Employee$yearlySummariesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeYearlyTaxSummaryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    skills<T extends Employee$skillsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$skillsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14822,6 +15077,30 @@ export namespace Prisma {
   }
 
   /**
+   * Employee.skills
+   */
+  export type Employee$skillsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    where?: EmployeeSkillWhereInput
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    cursor?: EmployeeSkillWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmployeeSkillScalarFieldEnum | EmployeeSkillScalarFieldEnum[]
+  }
+
+  /**
    * Employee without action
    */
   export type EmployeeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14837,6 +15116,2238 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: EmployeeInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Skill
+   */
+
+  export type AggregateSkill = {
+    _count: SkillCountAggregateOutputType | null
+    _min: SkillMinAggregateOutputType | null
+    _max: SkillMaxAggregateOutputType | null
+  }
+
+  export type SkillMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    category: $Enums.SkillCategory | null
+    description: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SkillMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    category: $Enums.SkillCategory | null
+    description: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type SkillCountAggregateOutputType = {
+    id: number
+    name: number
+    category: number
+    description: number
+    isActive: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SkillMinAggregateInputType = {
+    id?: true
+    name?: true
+    category?: true
+    description?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type SkillMaxAggregateInputType = {
+    id?: true
+    name?: true
+    category?: true
+    description?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type SkillCountAggregateInputType = {
+    id?: true
+    name?: true
+    category?: true
+    description?: true
+    isActive?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SkillAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Skill to aggregate.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Skills
+    **/
+    _count?: true | SkillCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SkillMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SkillMaxAggregateInputType
+  }
+
+  export type GetSkillAggregateType<T extends SkillAggregateArgs> = {
+        [P in keyof T & keyof AggregateSkill]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSkill[P]>
+      : GetScalarType<T[P], AggregateSkill[P]>
+  }
+
+
+
+
+  export type SkillGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SkillWhereInput
+    orderBy?: SkillOrderByWithAggregationInput | SkillOrderByWithAggregationInput[]
+    by: SkillScalarFieldEnum[] | SkillScalarFieldEnum
+    having?: SkillScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SkillCountAggregateInputType | true
+    _min?: SkillMinAggregateInputType
+    _max?: SkillMaxAggregateInputType
+  }
+
+  export type SkillGroupByOutputType = {
+    id: string
+    name: string
+    category: $Enums.SkillCategory
+    description: string | null
+    isActive: boolean
+    createdAt: Date
+    _count: SkillCountAggregateOutputType | null
+    _min: SkillMinAggregateOutputType | null
+    _max: SkillMaxAggregateOutputType | null
+  }
+
+  type GetSkillGroupByPayload<T extends SkillGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SkillGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SkillGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SkillGroupByOutputType[P]>
+            : GetScalarType<T[P], SkillGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SkillSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    description?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    employees?: boolean | Skill$employeesArgs<ExtArgs>
+    _count?: boolean | SkillCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    description?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    description?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["skill"]>
+
+  export type SkillSelectScalar = {
+    id?: boolean
+    name?: boolean
+    category?: boolean
+    description?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }
+
+  export type SkillOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "category" | "description" | "isActive" | "createdAt", ExtArgs["result"]["skill"]>
+  export type SkillInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employees?: boolean | Skill$employeesArgs<ExtArgs>
+    _count?: boolean | SkillCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SkillIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SkillIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $SkillPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Skill"
+    objects: {
+      employees: Prisma.$EmployeeSkillPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      category: $Enums.SkillCategory
+      description: string | null
+      isActive: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["skill"]>
+    composites: {}
+  }
+
+  type SkillGetPayload<S extends boolean | null | undefined | SkillDefaultArgs> = $Result.GetResult<Prisma.$SkillPayload, S>
+
+  type SkillCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SkillFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SkillCountAggregateInputType | true
+    }
+
+  export interface SkillDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Skill'], meta: { name: 'Skill' } }
+    /**
+     * Find zero or one Skill that matches the filter.
+     * @param {SkillFindUniqueArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SkillFindUniqueArgs>(args: SelectSubset<T, SkillFindUniqueArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Skill that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SkillFindUniqueOrThrowArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SkillFindUniqueOrThrowArgs>(args: SelectSubset<T, SkillFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Skill that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindFirstArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SkillFindFirstArgs>(args?: SelectSubset<T, SkillFindFirstArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Skill that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindFirstOrThrowArgs} args - Arguments to find a Skill
+     * @example
+     * // Get one Skill
+     * const skill = await prisma.skill.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SkillFindFirstOrThrowArgs>(args?: SelectSubset<T, SkillFindFirstOrThrowArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Skills that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Skills
+     * const skills = await prisma.skill.findMany()
+     * 
+     * // Get first 10 Skills
+     * const skills = await prisma.skill.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const skillWithIdOnly = await prisma.skill.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SkillFindManyArgs>(args?: SelectSubset<T, SkillFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Skill.
+     * @param {SkillCreateArgs} args - Arguments to create a Skill.
+     * @example
+     * // Create one Skill
+     * const Skill = await prisma.skill.create({
+     *   data: {
+     *     // ... data to create a Skill
+     *   }
+     * })
+     * 
+     */
+    create<T extends SkillCreateArgs>(args: SelectSubset<T, SkillCreateArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Skills.
+     * @param {SkillCreateManyArgs} args - Arguments to create many Skills.
+     * @example
+     * // Create many Skills
+     * const skill = await prisma.skill.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SkillCreateManyArgs>(args?: SelectSubset<T, SkillCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Skills and returns the data saved in the database.
+     * @param {SkillCreateManyAndReturnArgs} args - Arguments to create many Skills.
+     * @example
+     * // Create many Skills
+     * const skill = await prisma.skill.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Skills and only return the `id`
+     * const skillWithIdOnly = await prisma.skill.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SkillCreateManyAndReturnArgs>(args?: SelectSubset<T, SkillCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Skill.
+     * @param {SkillDeleteArgs} args - Arguments to delete one Skill.
+     * @example
+     * // Delete one Skill
+     * const Skill = await prisma.skill.delete({
+     *   where: {
+     *     // ... filter to delete one Skill
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SkillDeleteArgs>(args: SelectSubset<T, SkillDeleteArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Skill.
+     * @param {SkillUpdateArgs} args - Arguments to update one Skill.
+     * @example
+     * // Update one Skill
+     * const skill = await prisma.skill.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SkillUpdateArgs>(args: SelectSubset<T, SkillUpdateArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Skills.
+     * @param {SkillDeleteManyArgs} args - Arguments to filter Skills to delete.
+     * @example
+     * // Delete a few Skills
+     * const { count } = await prisma.skill.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SkillDeleteManyArgs>(args?: SelectSubset<T, SkillDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Skills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Skills
+     * const skill = await prisma.skill.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SkillUpdateManyArgs>(args: SelectSubset<T, SkillUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Skills and returns the data updated in the database.
+     * @param {SkillUpdateManyAndReturnArgs} args - Arguments to update many Skills.
+     * @example
+     * // Update many Skills
+     * const skill = await prisma.skill.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Skills and only return the `id`
+     * const skillWithIdOnly = await prisma.skill.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SkillUpdateManyAndReturnArgs>(args: SelectSubset<T, SkillUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Skill.
+     * @param {SkillUpsertArgs} args - Arguments to update or create a Skill.
+     * @example
+     * // Update or create a Skill
+     * const skill = await prisma.skill.upsert({
+     *   create: {
+     *     // ... data to create a Skill
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Skill we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SkillUpsertArgs>(args: SelectSubset<T, SkillUpsertArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Skills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillCountArgs} args - Arguments to filter Skills to count.
+     * @example
+     * // Count the number of Skills
+     * const count = await prisma.skill.count({
+     *   where: {
+     *     // ... the filter for the Skills we want to count
+     *   }
+     * })
+    **/
+    count<T extends SkillCountArgs>(
+      args?: Subset<T, SkillCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SkillCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Skill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SkillAggregateArgs>(args: Subset<T, SkillAggregateArgs>): Prisma.PrismaPromise<GetSkillAggregateType<T>>
+
+    /**
+     * Group by Skill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SkillGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SkillGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SkillGroupByArgs['orderBy'] }
+        : { orderBy?: SkillGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SkillGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSkillGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Skill model
+   */
+  readonly fields: SkillFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Skill.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SkillClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    employees<T extends Skill$employeesArgs<ExtArgs> = {}>(args?: Subset<T, Skill$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Skill model
+   */
+  interface SkillFieldRefs {
+    readonly id: FieldRef<"Skill", 'String'>
+    readonly name: FieldRef<"Skill", 'String'>
+    readonly category: FieldRef<"Skill", 'SkillCategory'>
+    readonly description: FieldRef<"Skill", 'String'>
+    readonly isActive: FieldRef<"Skill", 'Boolean'>
+    readonly createdAt: FieldRef<"Skill", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Skill findUnique
+   */
+  export type SkillFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill findUniqueOrThrow
+   */
+  export type SkillFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill findFirst
+   */
+  export type SkillFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Skills.
+     */
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill findFirstOrThrow
+   */
+  export type SkillFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter, which Skill to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Skills.
+     */
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill findMany
+   */
+  export type SkillFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter, which Skills to fetch.
+     */
+    where?: SkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Skills to fetch.
+     */
+    orderBy?: SkillOrderByWithRelationInput | SkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Skills.
+     */
+    cursor?: SkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Skills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Skills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Skills.
+     */
+    distinct?: SkillScalarFieldEnum | SkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill create
+   */
+  export type SkillCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Skill.
+     */
+    data: XOR<SkillCreateInput, SkillUncheckedCreateInput>
+  }
+
+  /**
+   * Skill createMany
+   */
+  export type SkillCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Skills.
+     */
+    data: SkillCreateManyInput | SkillCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Skill createManyAndReturn
+   */
+  export type SkillCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data used to create many Skills.
+     */
+    data: SkillCreateManyInput | SkillCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Skill update
+   */
+  export type SkillUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Skill.
+     */
+    data: XOR<SkillUpdateInput, SkillUncheckedUpdateInput>
+    /**
+     * Choose, which Skill to update.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill updateMany
+   */
+  export type SkillUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Skills.
+     */
+    data: XOR<SkillUpdateManyMutationInput, SkillUncheckedUpdateManyInput>
+    /**
+     * Filter which Skills to update
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill updateManyAndReturn
+   */
+  export type SkillUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * The data used to update Skills.
+     */
+    data: XOR<SkillUpdateManyMutationInput, SkillUncheckedUpdateManyInput>
+    /**
+     * Filter which Skills to update
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill upsert
+   */
+  export type SkillUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Skill to update in case it exists.
+     */
+    where: SkillWhereUniqueInput
+    /**
+     * In case the Skill found by the `where` argument doesn't exist, create a new Skill with this data.
+     */
+    create: XOR<SkillCreateInput, SkillUncheckedCreateInput>
+    /**
+     * In case the Skill was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SkillUpdateInput, SkillUncheckedUpdateInput>
+  }
+
+  /**
+   * Skill delete
+   */
+  export type SkillDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+    /**
+     * Filter which Skill to delete.
+     */
+    where: SkillWhereUniqueInput
+  }
+
+  /**
+   * Skill deleteMany
+   */
+  export type SkillDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Skills to delete
+     */
+    where?: SkillWhereInput
+    /**
+     * Limit how many Skills to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Skill.employees
+   */
+  export type Skill$employeesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    where?: EmployeeSkillWhereInput
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    cursor?: EmployeeSkillWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: EmployeeSkillScalarFieldEnum | EmployeeSkillScalarFieldEnum[]
+  }
+
+  /**
+   * Skill without action
+   */
+  export type SkillDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Skill
+     */
+    select?: SkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Skill
+     */
+    omit?: SkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SkillInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EmployeeSkill
+   */
+
+  export type AggregateEmployeeSkill = {
+    _count: EmployeeSkillCountAggregateOutputType | null
+    _avg: EmployeeSkillAvgAggregateOutputType | null
+    _sum: EmployeeSkillSumAggregateOutputType | null
+    _min: EmployeeSkillMinAggregateOutputType | null
+    _max: EmployeeSkillMaxAggregateOutputType | null
+  }
+
+  export type EmployeeSkillAvgAggregateOutputType = {
+    yearsExp: number | null
+  }
+
+  export type EmployeeSkillSumAggregateOutputType = {
+    yearsExp: number | null
+  }
+
+  export type EmployeeSkillMinAggregateOutputType = {
+    id: string | null
+    employeeId: string | null
+    skillId: string | null
+    level: $Enums.SkillLevel | null
+    yearsExp: number | null
+    notes: string | null
+    certifiedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EmployeeSkillMaxAggregateOutputType = {
+    id: string | null
+    employeeId: string | null
+    skillId: string | null
+    level: $Enums.SkillLevel | null
+    yearsExp: number | null
+    notes: string | null
+    certifiedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type EmployeeSkillCountAggregateOutputType = {
+    id: number
+    employeeId: number
+    skillId: number
+    level: number
+    yearsExp: number
+    notes: number
+    certifiedAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type EmployeeSkillAvgAggregateInputType = {
+    yearsExp?: true
+  }
+
+  export type EmployeeSkillSumAggregateInputType = {
+    yearsExp?: true
+  }
+
+  export type EmployeeSkillMinAggregateInputType = {
+    id?: true
+    employeeId?: true
+    skillId?: true
+    level?: true
+    yearsExp?: true
+    notes?: true
+    certifiedAt?: true
+    updatedAt?: true
+  }
+
+  export type EmployeeSkillMaxAggregateInputType = {
+    id?: true
+    employeeId?: true
+    skillId?: true
+    level?: true
+    yearsExp?: true
+    notes?: true
+    certifiedAt?: true
+    updatedAt?: true
+  }
+
+  export type EmployeeSkillCountAggregateInputType = {
+    id?: true
+    employeeId?: true
+    skillId?: true
+    level?: true
+    yearsExp?: true
+    notes?: true
+    certifiedAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type EmployeeSkillAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmployeeSkill to aggregate.
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmployeeSkills to fetch.
+     */
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EmployeeSkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmployeeSkills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmployeeSkills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EmployeeSkills
+    **/
+    _count?: true | EmployeeSkillCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: EmployeeSkillAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: EmployeeSkillSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EmployeeSkillMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EmployeeSkillMaxAggregateInputType
+  }
+
+  export type GetEmployeeSkillAggregateType<T extends EmployeeSkillAggregateArgs> = {
+        [P in keyof T & keyof AggregateEmployeeSkill]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEmployeeSkill[P]>
+      : GetScalarType<T[P], AggregateEmployeeSkill[P]>
+  }
+
+
+
+
+  export type EmployeeSkillGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmployeeSkillWhereInput
+    orderBy?: EmployeeSkillOrderByWithAggregationInput | EmployeeSkillOrderByWithAggregationInput[]
+    by: EmployeeSkillScalarFieldEnum[] | EmployeeSkillScalarFieldEnum
+    having?: EmployeeSkillScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EmployeeSkillCountAggregateInputType | true
+    _avg?: EmployeeSkillAvgAggregateInputType
+    _sum?: EmployeeSkillSumAggregateInputType
+    _min?: EmployeeSkillMinAggregateInputType
+    _max?: EmployeeSkillMaxAggregateInputType
+  }
+
+  export type EmployeeSkillGroupByOutputType = {
+    id: string
+    employeeId: string
+    skillId: string
+    level: $Enums.SkillLevel
+    yearsExp: number
+    notes: string | null
+    certifiedAt: Date | null
+    updatedAt: Date
+    _count: EmployeeSkillCountAggregateOutputType | null
+    _avg: EmployeeSkillAvgAggregateOutputType | null
+    _sum: EmployeeSkillSumAggregateOutputType | null
+    _min: EmployeeSkillMinAggregateOutputType | null
+    _max: EmployeeSkillMaxAggregateOutputType | null
+  }
+
+  type GetEmployeeSkillGroupByPayload<T extends EmployeeSkillGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EmployeeSkillGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EmployeeSkillGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EmployeeSkillGroupByOutputType[P]>
+            : GetScalarType<T[P], EmployeeSkillGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EmployeeSkillSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    employeeId?: boolean
+    skillId?: boolean
+    level?: boolean
+    yearsExp?: boolean
+    notes?: boolean
+    certifiedAt?: boolean
+    updatedAt?: boolean
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["employeeSkill"]>
+
+  export type EmployeeSkillSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    employeeId?: boolean
+    skillId?: boolean
+    level?: boolean
+    yearsExp?: boolean
+    notes?: boolean
+    certifiedAt?: boolean
+    updatedAt?: boolean
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["employeeSkill"]>
+
+  export type EmployeeSkillSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    employeeId?: boolean
+    skillId?: boolean
+    level?: boolean
+    yearsExp?: boolean
+    notes?: boolean
+    certifiedAt?: boolean
+    updatedAt?: boolean
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["employeeSkill"]>
+
+  export type EmployeeSkillSelectScalar = {
+    id?: boolean
+    employeeId?: boolean
+    skillId?: boolean
+    level?: boolean
+    yearsExp?: boolean
+    notes?: boolean
+    certifiedAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type EmployeeSkillOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "skillId" | "level" | "yearsExp" | "notes" | "certifiedAt" | "updatedAt", ExtArgs["result"]["employeeSkill"]>
+  export type EmployeeSkillInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }
+  export type EmployeeSkillIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }
+  export type EmployeeSkillIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    employee?: boolean | EmployeeDefaultArgs<ExtArgs>
+    skill?: boolean | SkillDefaultArgs<ExtArgs>
+  }
+
+  export type $EmployeeSkillPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EmployeeSkill"
+    objects: {
+      employee: Prisma.$EmployeePayload<ExtArgs>
+      skill: Prisma.$SkillPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      employeeId: string
+      skillId: string
+      level: $Enums.SkillLevel
+      yearsExp: number
+      notes: string | null
+      certifiedAt: Date | null
+      updatedAt: Date
+    }, ExtArgs["result"]["employeeSkill"]>
+    composites: {}
+  }
+
+  type EmployeeSkillGetPayload<S extends boolean | null | undefined | EmployeeSkillDefaultArgs> = $Result.GetResult<Prisma.$EmployeeSkillPayload, S>
+
+  type EmployeeSkillCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmployeeSkillFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EmployeeSkillCountAggregateInputType | true
+    }
+
+  export interface EmployeeSkillDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmployeeSkill'], meta: { name: 'EmployeeSkill' } }
+    /**
+     * Find zero or one EmployeeSkill that matches the filter.
+     * @param {EmployeeSkillFindUniqueArgs} args - Arguments to find a EmployeeSkill
+     * @example
+     * // Get one EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EmployeeSkillFindUniqueArgs>(args: SelectSubset<T, EmployeeSkillFindUniqueArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EmployeeSkill that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EmployeeSkillFindUniqueOrThrowArgs} args - Arguments to find a EmployeeSkill
+     * @example
+     * // Get one EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EmployeeSkillFindUniqueOrThrowArgs>(args: SelectSubset<T, EmployeeSkillFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmployeeSkill that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillFindFirstArgs} args - Arguments to find a EmployeeSkill
+     * @example
+     * // Get one EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EmployeeSkillFindFirstArgs>(args?: SelectSubset<T, EmployeeSkillFindFirstArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmployeeSkill that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillFindFirstOrThrowArgs} args - Arguments to find a EmployeeSkill
+     * @example
+     * // Get one EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EmployeeSkillFindFirstOrThrowArgs>(args?: SelectSubset<T, EmployeeSkillFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EmployeeSkills that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EmployeeSkills
+     * const employeeSkills = await prisma.employeeSkill.findMany()
+     * 
+     * // Get first 10 EmployeeSkills
+     * const employeeSkills = await prisma.employeeSkill.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const employeeSkillWithIdOnly = await prisma.employeeSkill.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EmployeeSkillFindManyArgs>(args?: SelectSubset<T, EmployeeSkillFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EmployeeSkill.
+     * @param {EmployeeSkillCreateArgs} args - Arguments to create a EmployeeSkill.
+     * @example
+     * // Create one EmployeeSkill
+     * const EmployeeSkill = await prisma.employeeSkill.create({
+     *   data: {
+     *     // ... data to create a EmployeeSkill
+     *   }
+     * })
+     * 
+     */
+    create<T extends EmployeeSkillCreateArgs>(args: SelectSubset<T, EmployeeSkillCreateArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EmployeeSkills.
+     * @param {EmployeeSkillCreateManyArgs} args - Arguments to create many EmployeeSkills.
+     * @example
+     * // Create many EmployeeSkills
+     * const employeeSkill = await prisma.employeeSkill.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EmployeeSkillCreateManyArgs>(args?: SelectSubset<T, EmployeeSkillCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EmployeeSkills and returns the data saved in the database.
+     * @param {EmployeeSkillCreateManyAndReturnArgs} args - Arguments to create many EmployeeSkills.
+     * @example
+     * // Create many EmployeeSkills
+     * const employeeSkill = await prisma.employeeSkill.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EmployeeSkills and only return the `id`
+     * const employeeSkillWithIdOnly = await prisma.employeeSkill.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EmployeeSkillCreateManyAndReturnArgs>(args?: SelectSubset<T, EmployeeSkillCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EmployeeSkill.
+     * @param {EmployeeSkillDeleteArgs} args - Arguments to delete one EmployeeSkill.
+     * @example
+     * // Delete one EmployeeSkill
+     * const EmployeeSkill = await prisma.employeeSkill.delete({
+     *   where: {
+     *     // ... filter to delete one EmployeeSkill
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EmployeeSkillDeleteArgs>(args: SelectSubset<T, EmployeeSkillDeleteArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EmployeeSkill.
+     * @param {EmployeeSkillUpdateArgs} args - Arguments to update one EmployeeSkill.
+     * @example
+     * // Update one EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EmployeeSkillUpdateArgs>(args: SelectSubset<T, EmployeeSkillUpdateArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EmployeeSkills.
+     * @param {EmployeeSkillDeleteManyArgs} args - Arguments to filter EmployeeSkills to delete.
+     * @example
+     * // Delete a few EmployeeSkills
+     * const { count } = await prisma.employeeSkill.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EmployeeSkillDeleteManyArgs>(args?: SelectSubset<T, EmployeeSkillDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmployeeSkills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EmployeeSkills
+     * const employeeSkill = await prisma.employeeSkill.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EmployeeSkillUpdateManyArgs>(args: SelectSubset<T, EmployeeSkillUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmployeeSkills and returns the data updated in the database.
+     * @param {EmployeeSkillUpdateManyAndReturnArgs} args - Arguments to update many EmployeeSkills.
+     * @example
+     * // Update many EmployeeSkills
+     * const employeeSkill = await prisma.employeeSkill.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EmployeeSkills and only return the `id`
+     * const employeeSkillWithIdOnly = await prisma.employeeSkill.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EmployeeSkillUpdateManyAndReturnArgs>(args: SelectSubset<T, EmployeeSkillUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EmployeeSkill.
+     * @param {EmployeeSkillUpsertArgs} args - Arguments to update or create a EmployeeSkill.
+     * @example
+     * // Update or create a EmployeeSkill
+     * const employeeSkill = await prisma.employeeSkill.upsert({
+     *   create: {
+     *     // ... data to create a EmployeeSkill
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EmployeeSkill we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EmployeeSkillUpsertArgs>(args: SelectSubset<T, EmployeeSkillUpsertArgs<ExtArgs>>): Prisma__EmployeeSkillClient<$Result.GetResult<Prisma.$EmployeeSkillPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EmployeeSkills.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillCountArgs} args - Arguments to filter EmployeeSkills to count.
+     * @example
+     * // Count the number of EmployeeSkills
+     * const count = await prisma.employeeSkill.count({
+     *   where: {
+     *     // ... the filter for the EmployeeSkills we want to count
+     *   }
+     * })
+    **/
+    count<T extends EmployeeSkillCountArgs>(
+      args?: Subset<T, EmployeeSkillCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EmployeeSkillCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EmployeeSkill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EmployeeSkillAggregateArgs>(args: Subset<T, EmployeeSkillAggregateArgs>): Prisma.PrismaPromise<GetEmployeeSkillAggregateType<T>>
+
+    /**
+     * Group by EmployeeSkill.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmployeeSkillGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EmployeeSkillGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EmployeeSkillGroupByArgs['orderBy'] }
+        : { orderBy?: EmployeeSkillGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EmployeeSkillGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEmployeeSkillGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EmployeeSkill model
+   */
+  readonly fields: EmployeeSkillFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EmployeeSkill.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EmployeeSkillClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    employee<T extends EmployeeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeDefaultArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    skill<T extends SkillDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SkillDefaultArgs<ExtArgs>>): Prisma__SkillClient<$Result.GetResult<Prisma.$SkillPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EmployeeSkill model
+   */
+  interface EmployeeSkillFieldRefs {
+    readonly id: FieldRef<"EmployeeSkill", 'String'>
+    readonly employeeId: FieldRef<"EmployeeSkill", 'String'>
+    readonly skillId: FieldRef<"EmployeeSkill", 'String'>
+    readonly level: FieldRef<"EmployeeSkill", 'SkillLevel'>
+    readonly yearsExp: FieldRef<"EmployeeSkill", 'Float'>
+    readonly notes: FieldRef<"EmployeeSkill", 'String'>
+    readonly certifiedAt: FieldRef<"EmployeeSkill", 'DateTime'>
+    readonly updatedAt: FieldRef<"EmployeeSkill", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EmployeeSkill findUnique
+   */
+  export type EmployeeSkillFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter, which EmployeeSkill to fetch.
+     */
+    where: EmployeeSkillWhereUniqueInput
+  }
+
+  /**
+   * EmployeeSkill findUniqueOrThrow
+   */
+  export type EmployeeSkillFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter, which EmployeeSkill to fetch.
+     */
+    where: EmployeeSkillWhereUniqueInput
+  }
+
+  /**
+   * EmployeeSkill findFirst
+   */
+  export type EmployeeSkillFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter, which EmployeeSkill to fetch.
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmployeeSkills to fetch.
+     */
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmployeeSkills.
+     */
+    cursor?: EmployeeSkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmployeeSkills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmployeeSkills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmployeeSkills.
+     */
+    distinct?: EmployeeSkillScalarFieldEnum | EmployeeSkillScalarFieldEnum[]
+  }
+
+  /**
+   * EmployeeSkill findFirstOrThrow
+   */
+  export type EmployeeSkillFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter, which EmployeeSkill to fetch.
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmployeeSkills to fetch.
+     */
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmployeeSkills.
+     */
+    cursor?: EmployeeSkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmployeeSkills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmployeeSkills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmployeeSkills.
+     */
+    distinct?: EmployeeSkillScalarFieldEnum | EmployeeSkillScalarFieldEnum[]
+  }
+
+  /**
+   * EmployeeSkill findMany
+   */
+  export type EmployeeSkillFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter, which EmployeeSkills to fetch.
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmployeeSkills to fetch.
+     */
+    orderBy?: EmployeeSkillOrderByWithRelationInput | EmployeeSkillOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EmployeeSkills.
+     */
+    cursor?: EmployeeSkillWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmployeeSkills from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmployeeSkills.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmployeeSkills.
+     */
+    distinct?: EmployeeSkillScalarFieldEnum | EmployeeSkillScalarFieldEnum[]
+  }
+
+  /**
+   * EmployeeSkill create
+   */
+  export type EmployeeSkillCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * The data needed to create a EmployeeSkill.
+     */
+    data: XOR<EmployeeSkillCreateInput, EmployeeSkillUncheckedCreateInput>
+  }
+
+  /**
+   * EmployeeSkill createMany
+   */
+  export type EmployeeSkillCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EmployeeSkills.
+     */
+    data: EmployeeSkillCreateManyInput | EmployeeSkillCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmployeeSkill createManyAndReturn
+   */
+  export type EmployeeSkillCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * The data used to create many EmployeeSkills.
+     */
+    data: EmployeeSkillCreateManyInput | EmployeeSkillCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmployeeSkill update
+   */
+  export type EmployeeSkillUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * The data needed to update a EmployeeSkill.
+     */
+    data: XOR<EmployeeSkillUpdateInput, EmployeeSkillUncheckedUpdateInput>
+    /**
+     * Choose, which EmployeeSkill to update.
+     */
+    where: EmployeeSkillWhereUniqueInput
+  }
+
+  /**
+   * EmployeeSkill updateMany
+   */
+  export type EmployeeSkillUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EmployeeSkills.
+     */
+    data: XOR<EmployeeSkillUpdateManyMutationInput, EmployeeSkillUncheckedUpdateManyInput>
+    /**
+     * Filter which EmployeeSkills to update
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * Limit how many EmployeeSkills to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmployeeSkill updateManyAndReturn
+   */
+  export type EmployeeSkillUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * The data used to update EmployeeSkills.
+     */
+    data: XOR<EmployeeSkillUpdateManyMutationInput, EmployeeSkillUncheckedUpdateManyInput>
+    /**
+     * Filter which EmployeeSkills to update
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * Limit how many EmployeeSkills to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * EmployeeSkill upsert
+   */
+  export type EmployeeSkillUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * The filter to search for the EmployeeSkill to update in case it exists.
+     */
+    where: EmployeeSkillWhereUniqueInput
+    /**
+     * In case the EmployeeSkill found by the `where` argument doesn't exist, create a new EmployeeSkill with this data.
+     */
+    create: XOR<EmployeeSkillCreateInput, EmployeeSkillUncheckedCreateInput>
+    /**
+     * In case the EmployeeSkill was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EmployeeSkillUpdateInput, EmployeeSkillUncheckedUpdateInput>
+  }
+
+  /**
+   * EmployeeSkill delete
+   */
+  export type EmployeeSkillDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
+    /**
+     * Filter which EmployeeSkill to delete.
+     */
+    where: EmployeeSkillWhereUniqueInput
+  }
+
+  /**
+   * EmployeeSkill deleteMany
+   */
+  export type EmployeeSkillDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmployeeSkills to delete
+     */
+    where?: EmployeeSkillWhereInput
+    /**
+     * Limit how many EmployeeSkills to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmployeeSkill without action
+   */
+  export type EmployeeSkillDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmployeeSkill
+     */
+    select?: EmployeeSkillSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmployeeSkill
+     */
+    omit?: EmployeeSkillOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeSkillInclude<ExtArgs> | null
   }
 
 
@@ -102395,6 +104906,32 @@ export namespace Prisma {
   export type EmployeeScalarFieldEnum = (typeof EmployeeScalarFieldEnum)[keyof typeof EmployeeScalarFieldEnum]
 
 
+  export const SkillScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    category: 'category',
+    description: 'description',
+    isActive: 'isActive',
+    createdAt: 'createdAt'
+  };
+
+  export type SkillScalarFieldEnum = (typeof SkillScalarFieldEnum)[keyof typeof SkillScalarFieldEnum]
+
+
+  export const EmployeeSkillScalarFieldEnum: {
+    id: 'id',
+    employeeId: 'employeeId',
+    skillId: 'skillId',
+    level: 'level',
+    yearsExp: 'yearsExp',
+    notes: 'notes',
+    certifiedAt: 'certifiedAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type EmployeeSkillScalarFieldEnum = (typeof EmployeeSkillScalarFieldEnum)[keyof typeof EmployeeSkillScalarFieldEnum]
+
+
   export const EmployeeRateScalarFieldEnum: {
     id: 'id',
     employeeId: 'employeeId',
@@ -103675,6 +106212,48 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'SkillCategory'
+   */
+  export type EnumSkillCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SkillCategory'>
+    
+
+
+  /**
+   * Reference to a field of type 'SkillCategory[]'
+   */
+  export type ListEnumSkillCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SkillCategory[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SkillLevel'
+   */
+  export type EnumSkillLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SkillLevel'>
+    
+
+
+  /**
+   * Reference to a field of type 'SkillLevel[]'
+   */
+  export type ListEnumSkillLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SkillLevel[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Decimal'
    */
   export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -104288,20 +106867,6 @@ export namespace Prisma {
    */
   export type ListEnumSalaryColumnSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SalaryColumnSource[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -104589,6 +107154,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewListRelationFilter
     taxProfile?: XOR<EmployeeTaxProfileNullableScalarRelationFilter, EmployeeTaxProfileWhereInput> | null
     yearlySummaries?: EmployeeYearlyTaxSummaryListRelationFilter
+    skills?: EmployeeSkillListRelationFilter
   }
 
   export type EmployeeOrderByWithRelationInput = {
@@ -104624,6 +107190,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewOrderByRelationAggregateInput
     taxProfile?: EmployeeTaxProfileOrderByWithRelationInput
     yearlySummaries?: EmployeeYearlyTaxSummaryOrderByRelationAggregateInput
+    skills?: EmployeeSkillOrderByRelationAggregateInput
   }
 
   export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
@@ -104662,6 +107229,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewListRelationFilter
     taxProfile?: XOR<EmployeeTaxProfileNullableScalarRelationFilter, EmployeeTaxProfileWhereInput> | null
     yearlySummaries?: EmployeeYearlyTaxSummaryListRelationFilter
+    skills?: EmployeeSkillListRelationFilter
   }, "id" | "code" | "userId" | "email">
 
   export type EmployeeOrderByWithAggregationInput = {
@@ -104708,6 +107276,142 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Employee"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Employee"> | Date | string
     email?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+  }
+
+  export type SkillWhereInput = {
+    AND?: SkillWhereInput | SkillWhereInput[]
+    OR?: SkillWhereInput[]
+    NOT?: SkillWhereInput | SkillWhereInput[]
+    id?: StringFilter<"Skill"> | string
+    name?: StringFilter<"Skill"> | string
+    category?: EnumSkillCategoryFilter<"Skill"> | $Enums.SkillCategory
+    description?: StringNullableFilter<"Skill"> | string | null
+    isActive?: BoolFilter<"Skill"> | boolean
+    createdAt?: DateTimeFilter<"Skill"> | Date | string
+    employees?: EmployeeSkillListRelationFilter
+  }
+
+  export type SkillOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    employees?: EmployeeSkillOrderByRelationAggregateInput
+  }
+
+  export type SkillWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: SkillWhereInput | SkillWhereInput[]
+    OR?: SkillWhereInput[]
+    NOT?: SkillWhereInput | SkillWhereInput[]
+    category?: EnumSkillCategoryFilter<"Skill"> | $Enums.SkillCategory
+    description?: StringNullableFilter<"Skill"> | string | null
+    isActive?: BoolFilter<"Skill"> | boolean
+    createdAt?: DateTimeFilter<"Skill"> | Date | string
+    employees?: EmployeeSkillListRelationFilter
+  }, "id" | "name">
+
+  export type SkillOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    description?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    _count?: SkillCountOrderByAggregateInput
+    _max?: SkillMaxOrderByAggregateInput
+    _min?: SkillMinOrderByAggregateInput
+  }
+
+  export type SkillScalarWhereWithAggregatesInput = {
+    AND?: SkillScalarWhereWithAggregatesInput | SkillScalarWhereWithAggregatesInput[]
+    OR?: SkillScalarWhereWithAggregatesInput[]
+    NOT?: SkillScalarWhereWithAggregatesInput | SkillScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Skill"> | string
+    name?: StringWithAggregatesFilter<"Skill"> | string
+    category?: EnumSkillCategoryWithAggregatesFilter<"Skill"> | $Enums.SkillCategory
+    description?: StringNullableWithAggregatesFilter<"Skill"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Skill"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Skill"> | Date | string
+  }
+
+  export type EmployeeSkillWhereInput = {
+    AND?: EmployeeSkillWhereInput | EmployeeSkillWhereInput[]
+    OR?: EmployeeSkillWhereInput[]
+    NOT?: EmployeeSkillWhereInput | EmployeeSkillWhereInput[]
+    id?: StringFilter<"EmployeeSkill"> | string
+    employeeId?: StringFilter<"EmployeeSkill"> | string
+    skillId?: StringFilter<"EmployeeSkill"> | string
+    level?: EnumSkillLevelFilter<"EmployeeSkill"> | $Enums.SkillLevel
+    yearsExp?: FloatFilter<"EmployeeSkill"> | number
+    notes?: StringNullableFilter<"EmployeeSkill"> | string | null
+    certifiedAt?: DateTimeNullableFilter<"EmployeeSkill"> | Date | string | null
+    updatedAt?: DateTimeFilter<"EmployeeSkill"> | Date | string
+    employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
+    skill?: XOR<SkillScalarRelationFilter, SkillWhereInput>
+  }
+
+  export type EmployeeSkillOrderByWithRelationInput = {
+    id?: SortOrder
+    employeeId?: SortOrder
+    skillId?: SortOrder
+    level?: SortOrder
+    yearsExp?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    certifiedAt?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    employee?: EmployeeOrderByWithRelationInput
+    skill?: SkillOrderByWithRelationInput
+  }
+
+  export type EmployeeSkillWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    employeeId_skillId?: EmployeeSkillEmployeeIdSkillIdCompoundUniqueInput
+    AND?: EmployeeSkillWhereInput | EmployeeSkillWhereInput[]
+    OR?: EmployeeSkillWhereInput[]
+    NOT?: EmployeeSkillWhereInput | EmployeeSkillWhereInput[]
+    employeeId?: StringFilter<"EmployeeSkill"> | string
+    skillId?: StringFilter<"EmployeeSkill"> | string
+    level?: EnumSkillLevelFilter<"EmployeeSkill"> | $Enums.SkillLevel
+    yearsExp?: FloatFilter<"EmployeeSkill"> | number
+    notes?: StringNullableFilter<"EmployeeSkill"> | string | null
+    certifiedAt?: DateTimeNullableFilter<"EmployeeSkill"> | Date | string | null
+    updatedAt?: DateTimeFilter<"EmployeeSkill"> | Date | string
+    employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
+    skill?: XOR<SkillScalarRelationFilter, SkillWhereInput>
+  }, "id" | "employeeId_skillId">
+
+  export type EmployeeSkillOrderByWithAggregationInput = {
+    id?: SortOrder
+    employeeId?: SortOrder
+    skillId?: SortOrder
+    level?: SortOrder
+    yearsExp?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    certifiedAt?: SortOrderInput | SortOrder
+    updatedAt?: SortOrder
+    _count?: EmployeeSkillCountOrderByAggregateInput
+    _avg?: EmployeeSkillAvgOrderByAggregateInput
+    _max?: EmployeeSkillMaxOrderByAggregateInput
+    _min?: EmployeeSkillMinOrderByAggregateInput
+    _sum?: EmployeeSkillSumOrderByAggregateInput
+  }
+
+  export type EmployeeSkillScalarWhereWithAggregatesInput = {
+    AND?: EmployeeSkillScalarWhereWithAggregatesInput | EmployeeSkillScalarWhereWithAggregatesInput[]
+    OR?: EmployeeSkillScalarWhereWithAggregatesInput[]
+    NOT?: EmployeeSkillScalarWhereWithAggregatesInput | EmployeeSkillScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EmployeeSkill"> | string
+    employeeId?: StringWithAggregatesFilter<"EmployeeSkill"> | string
+    skillId?: StringWithAggregatesFilter<"EmployeeSkill"> | string
+    level?: EnumSkillLevelWithAggregatesFilter<"EmployeeSkill"> | $Enums.SkillLevel
+    yearsExp?: FloatWithAggregatesFilter<"EmployeeSkill"> | number
+    notes?: StringNullableWithAggregatesFilter<"EmployeeSkill"> | string | null
+    certifiedAt?: DateTimeNullableWithAggregatesFilter<"EmployeeSkill"> | Date | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"EmployeeSkill"> | Date | string
   }
 
   export type EmployeeRateWhereInput = {
@@ -111117,6 +113821,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateInput = {
@@ -111150,6 +113855,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUpdateInput = {
@@ -111183,6 +113889,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateInput = {
@@ -111216,6 +113923,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateManyInput = {
@@ -111274,6 +113982,148 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SkillCreateInput = {
+    id?: string
+    name: string
+    category?: $Enums.SkillCategory
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    employees?: EmployeeSkillCreateNestedManyWithoutSkillInput
+  }
+
+  export type SkillUncheckedCreateInput = {
+    id?: string
+    name: string
+    category?: $Enums.SkillCategory
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    employees?: EmployeeSkillUncheckedCreateNestedManyWithoutSkillInput
+  }
+
+  export type SkillUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeSkillUpdateManyWithoutSkillNestedInput
+  }
+
+  export type SkillUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeSkillUncheckedUpdateManyWithoutSkillNestedInput
+  }
+
+  export type SkillCreateManyInput = {
+    id?: string
+    name: string
+    category?: $Enums.SkillCategory
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillCreateInput = {
+    id?: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+    employee: EmployeeCreateNestedOneWithoutSkillsInput
+    skill: SkillCreateNestedOneWithoutEmployeesInput
+  }
+
+  export type EmployeeSkillUncheckedCreateInput = {
+    id?: string
+    employeeId: string
+    skillId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employee?: EmployeeUpdateOneRequiredWithoutSkillsNestedInput
+    skill?: SkillUpdateOneRequiredWithoutEmployeesNestedInput
+  }
+
+  export type EmployeeSkillUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    skillId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillCreateManyInput = {
+    id?: string
+    employeeId: string
+    skillId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    skillId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EmployeeRateCreateInput = {
@@ -118471,6 +121321,12 @@ export namespace Prisma {
     none?: EmployeeYearlyTaxSummaryWhereInput
   }
 
+  export type EmployeeSkillListRelationFilter = {
+    every?: EmployeeSkillWhereInput
+    some?: EmployeeSkillWhereInput
+    none?: EmployeeSkillWhereInput
+  }
+
   export type AllocationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -118504,6 +121360,10 @@ export namespace Prisma {
   }
 
   export type EmployeeYearlyTaxSummaryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type EmployeeSkillOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -118589,6 +121449,150 @@ export namespace Prisma {
     _max?: NestedEnumEmployeeLevelFilter<$PrismaModel>
   }
 
+  export type EnumSkillCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillCategory | EnumSkillCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillCategoryFilter<$PrismaModel> | $Enums.SkillCategory
+  }
+
+  export type SkillCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SkillMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SkillMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    description?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumSkillCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillCategory | EnumSkillCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillCategoryWithAggregatesFilter<$PrismaModel> | $Enums.SkillCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSkillCategoryFilter<$PrismaModel>
+    _max?: NestedEnumSkillCategoryFilter<$PrismaModel>
+  }
+
+  export type EnumSkillLevelFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillLevel | EnumSkillLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillLevelFilter<$PrismaModel> | $Enums.SkillLevel
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type EmployeeScalarRelationFilter = {
+    is?: EmployeeWhereInput
+    isNot?: EmployeeWhereInput
+  }
+
+  export type SkillScalarRelationFilter = {
+    is?: SkillWhereInput
+    isNot?: SkillWhereInput
+  }
+
+  export type EmployeeSkillEmployeeIdSkillIdCompoundUniqueInput = {
+    employeeId: string
+    skillId: string
+  }
+
+  export type EmployeeSkillCountOrderByAggregateInput = {
+    id?: SortOrder
+    employeeId?: SortOrder
+    skillId?: SortOrder
+    level?: SortOrder
+    yearsExp?: SortOrder
+    notes?: SortOrder
+    certifiedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EmployeeSkillAvgOrderByAggregateInput = {
+    yearsExp?: SortOrder
+  }
+
+  export type EmployeeSkillMaxOrderByAggregateInput = {
+    id?: SortOrder
+    employeeId?: SortOrder
+    skillId?: SortOrder
+    level?: SortOrder
+    yearsExp?: SortOrder
+    notes?: SortOrder
+    certifiedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EmployeeSkillMinOrderByAggregateInput = {
+    id?: SortOrder
+    employeeId?: SortOrder
+    skillId?: SortOrder
+    level?: SortOrder
+    yearsExp?: SortOrder
+    notes?: SortOrder
+    certifiedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EmployeeSkillSumOrderByAggregateInput = {
+    yearsExp?: SortOrder
+  }
+
+  export type EnumSkillLevelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillLevel | EnumSkillLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillLevelWithAggregatesFilter<$PrismaModel> | $Enums.SkillLevel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSkillLevelFilter<$PrismaModel>
+    _max?: NestedEnumSkillLevelFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -118605,11 +121609,6 @@ export namespace Prisma {
     in?: $Enums.BudgetCurrency[] | ListEnumBudgetCurrencyFieldRefInput<$PrismaModel>
     notIn?: $Enums.BudgetCurrency[] | ListEnumBudgetCurrencyFieldRefInput<$PrismaModel>
     not?: NestedEnumBudgetCurrencyFilter<$PrismaModel> | $Enums.BudgetCurrency
-  }
-
-  export type EmployeeScalarRelationFilter = {
-    is?: EmployeeWhereInput
-    isNot?: EmployeeWhereInput
   }
 
   export type EmployeeRateEmployeeIdEffectiveDateCompoundUniqueInput = {
@@ -124841,6 +127840,13 @@ export namespace Prisma {
     connect?: EmployeeYearlyTaxSummaryWhereUniqueInput | EmployeeYearlyTaxSummaryWhereUniqueInput[]
   }
 
+  export type EmployeeSkillCreateNestedManyWithoutEmployeeInput = {
+    create?: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput> | EmployeeSkillCreateWithoutEmployeeInput[] | EmployeeSkillUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutEmployeeInput | EmployeeSkillCreateOrConnectWithoutEmployeeInput[]
+    createMany?: EmployeeSkillCreateManyEmployeeInputEnvelope
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+  }
+
   export type AllocationUncheckedCreateNestedManyWithoutEmployeeInput = {
     create?: XOR<AllocationCreateWithoutEmployeeInput, AllocationUncheckedCreateWithoutEmployeeInput> | AllocationCreateWithoutEmployeeInput[] | AllocationUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutEmployeeInput | AllocationCreateOrConnectWithoutEmployeeInput[]
@@ -124929,6 +127935,13 @@ export namespace Prisma {
     connectOrCreate?: EmployeeYearlyTaxSummaryCreateOrConnectWithoutEmployeeInput | EmployeeYearlyTaxSummaryCreateOrConnectWithoutEmployeeInput[]
     createMany?: EmployeeYearlyTaxSummaryCreateManyEmployeeInputEnvelope
     connect?: EmployeeYearlyTaxSummaryWhereUniqueInput | EmployeeYearlyTaxSummaryWhereUniqueInput[]
+  }
+
+  export type EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput = {
+    create?: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput> | EmployeeSkillCreateWithoutEmployeeInput[] | EmployeeSkillUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutEmployeeInput | EmployeeSkillCreateOrConnectWithoutEmployeeInput[]
+    createMany?: EmployeeSkillCreateManyEmployeeInputEnvelope
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -125140,6 +128153,20 @@ export namespace Prisma {
     deleteMany?: EmployeeYearlyTaxSummaryScalarWhereInput | EmployeeYearlyTaxSummaryScalarWhereInput[]
   }
 
+  export type EmployeeSkillUpdateManyWithoutEmployeeNestedInput = {
+    create?: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput> | EmployeeSkillCreateWithoutEmployeeInput[] | EmployeeSkillUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutEmployeeInput | EmployeeSkillCreateOrConnectWithoutEmployeeInput[]
+    upsert?: EmployeeSkillUpsertWithWhereUniqueWithoutEmployeeInput | EmployeeSkillUpsertWithWhereUniqueWithoutEmployeeInput[]
+    createMany?: EmployeeSkillCreateManyEmployeeInputEnvelope
+    set?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    disconnect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    delete?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    update?: EmployeeSkillUpdateWithWhereUniqueWithoutEmployeeInput | EmployeeSkillUpdateWithWhereUniqueWithoutEmployeeInput[]
+    updateMany?: EmployeeSkillUpdateManyWithWhereWithoutEmployeeInput | EmployeeSkillUpdateManyWithWhereWithoutEmployeeInput[]
+    deleteMany?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+  }
+
   export type AllocationUncheckedUpdateManyWithoutEmployeeNestedInput = {
     create?: XOR<AllocationCreateWithoutEmployeeInput, AllocationUncheckedCreateWithoutEmployeeInput> | AllocationCreateWithoutEmployeeInput[] | AllocationUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutEmployeeInput | AllocationCreateOrConnectWithoutEmployeeInput[]
@@ -125316,6 +128343,106 @@ export namespace Prisma {
     update?: EmployeeYearlyTaxSummaryUpdateWithWhereUniqueWithoutEmployeeInput | EmployeeYearlyTaxSummaryUpdateWithWhereUniqueWithoutEmployeeInput[]
     updateMany?: EmployeeYearlyTaxSummaryUpdateManyWithWhereWithoutEmployeeInput | EmployeeYearlyTaxSummaryUpdateManyWithWhereWithoutEmployeeInput[]
     deleteMany?: EmployeeYearlyTaxSummaryScalarWhereInput | EmployeeYearlyTaxSummaryScalarWhereInput[]
+  }
+
+  export type EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput = {
+    create?: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput> | EmployeeSkillCreateWithoutEmployeeInput[] | EmployeeSkillUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutEmployeeInput | EmployeeSkillCreateOrConnectWithoutEmployeeInput[]
+    upsert?: EmployeeSkillUpsertWithWhereUniqueWithoutEmployeeInput | EmployeeSkillUpsertWithWhereUniqueWithoutEmployeeInput[]
+    createMany?: EmployeeSkillCreateManyEmployeeInputEnvelope
+    set?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    disconnect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    delete?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    update?: EmployeeSkillUpdateWithWhereUniqueWithoutEmployeeInput | EmployeeSkillUpdateWithWhereUniqueWithoutEmployeeInput[]
+    updateMany?: EmployeeSkillUpdateManyWithWhereWithoutEmployeeInput | EmployeeSkillUpdateManyWithWhereWithoutEmployeeInput[]
+    deleteMany?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+  }
+
+  export type EmployeeSkillCreateNestedManyWithoutSkillInput = {
+    create?: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput> | EmployeeSkillCreateWithoutSkillInput[] | EmployeeSkillUncheckedCreateWithoutSkillInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutSkillInput | EmployeeSkillCreateOrConnectWithoutSkillInput[]
+    createMany?: EmployeeSkillCreateManySkillInputEnvelope
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+  }
+
+  export type EmployeeSkillUncheckedCreateNestedManyWithoutSkillInput = {
+    create?: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput> | EmployeeSkillCreateWithoutSkillInput[] | EmployeeSkillUncheckedCreateWithoutSkillInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutSkillInput | EmployeeSkillCreateOrConnectWithoutSkillInput[]
+    createMany?: EmployeeSkillCreateManySkillInputEnvelope
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+  }
+
+  export type EnumSkillCategoryFieldUpdateOperationsInput = {
+    set?: $Enums.SkillCategory
+  }
+
+  export type EmployeeSkillUpdateManyWithoutSkillNestedInput = {
+    create?: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput> | EmployeeSkillCreateWithoutSkillInput[] | EmployeeSkillUncheckedCreateWithoutSkillInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutSkillInput | EmployeeSkillCreateOrConnectWithoutSkillInput[]
+    upsert?: EmployeeSkillUpsertWithWhereUniqueWithoutSkillInput | EmployeeSkillUpsertWithWhereUniqueWithoutSkillInput[]
+    createMany?: EmployeeSkillCreateManySkillInputEnvelope
+    set?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    disconnect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    delete?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    update?: EmployeeSkillUpdateWithWhereUniqueWithoutSkillInput | EmployeeSkillUpdateWithWhereUniqueWithoutSkillInput[]
+    updateMany?: EmployeeSkillUpdateManyWithWhereWithoutSkillInput | EmployeeSkillUpdateManyWithWhereWithoutSkillInput[]
+    deleteMany?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+  }
+
+  export type EmployeeSkillUncheckedUpdateManyWithoutSkillNestedInput = {
+    create?: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput> | EmployeeSkillCreateWithoutSkillInput[] | EmployeeSkillUncheckedCreateWithoutSkillInput[]
+    connectOrCreate?: EmployeeSkillCreateOrConnectWithoutSkillInput | EmployeeSkillCreateOrConnectWithoutSkillInput[]
+    upsert?: EmployeeSkillUpsertWithWhereUniqueWithoutSkillInput | EmployeeSkillUpsertWithWhereUniqueWithoutSkillInput[]
+    createMany?: EmployeeSkillCreateManySkillInputEnvelope
+    set?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    disconnect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    delete?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    connect?: EmployeeSkillWhereUniqueInput | EmployeeSkillWhereUniqueInput[]
+    update?: EmployeeSkillUpdateWithWhereUniqueWithoutSkillInput | EmployeeSkillUpdateWithWhereUniqueWithoutSkillInput[]
+    updateMany?: EmployeeSkillUpdateManyWithWhereWithoutSkillInput | EmployeeSkillUpdateManyWithWhereWithoutSkillInput[]
+    deleteMany?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+  }
+
+  export type EmployeeCreateNestedOneWithoutSkillsInput = {
+    create?: XOR<EmployeeCreateWithoutSkillsInput, EmployeeUncheckedCreateWithoutSkillsInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutSkillsInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
+  export type SkillCreateNestedOneWithoutEmployeesInput = {
+    create?: XOR<SkillCreateWithoutEmployeesInput, SkillUncheckedCreateWithoutEmployeesInput>
+    connectOrCreate?: SkillCreateOrConnectWithoutEmployeesInput
+    connect?: SkillWhereUniqueInput
+  }
+
+  export type EnumSkillLevelFieldUpdateOperationsInput = {
+    set?: $Enums.SkillLevel
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type EmployeeUpdateOneRequiredWithoutSkillsNestedInput = {
+    create?: XOR<EmployeeCreateWithoutSkillsInput, EmployeeUncheckedCreateWithoutSkillsInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutSkillsInput
+    upsert?: EmployeeUpsertWithoutSkillsInput
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutSkillsInput, EmployeeUpdateWithoutSkillsInput>, EmployeeUncheckedUpdateWithoutSkillsInput>
+  }
+
+  export type SkillUpdateOneRequiredWithoutEmployeesNestedInput = {
+    create?: XOR<SkillCreateWithoutEmployeesInput, SkillUncheckedCreateWithoutEmployeesInput>
+    connectOrCreate?: SkillCreateOrConnectWithoutEmployeesInput
+    upsert?: SkillUpsertWithoutEmployeesInput
+    connect?: SkillWhereUniqueInput
+    update?: XOR<XOR<SkillUpdateToOneWithWhereWithoutEmployeesInput, SkillUpdateWithoutEmployeesInput>, SkillUncheckedUpdateWithoutEmployeesInput>
   }
 
   export type EmployeeCreateNestedOneWithoutRatesInput = {
@@ -129398,6 +132525,56 @@ export namespace Prisma {
     _max?: NestedEnumEmployeeLevelFilter<$PrismaModel>
   }
 
+  export type NestedEnumSkillCategoryFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillCategory | EnumSkillCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillCategoryFilter<$PrismaModel> | $Enums.SkillCategory
+  }
+
+  export type NestedEnumSkillCategoryWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillCategory | EnumSkillCategoryFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillCategory[] | ListEnumSkillCategoryFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillCategoryWithAggregatesFilter<$PrismaModel> | $Enums.SkillCategory
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSkillCategoryFilter<$PrismaModel>
+    _max?: NestedEnumSkillCategoryFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSkillLevelFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillLevel | EnumSkillLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillLevelFilter<$PrismaModel> | $Enums.SkillLevel
+  }
+
+  export type NestedEnumSkillLevelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SkillLevel | EnumSkillLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SkillLevel[] | ListEnumSkillLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSkillLevelWithAggregatesFilter<$PrismaModel> | $Enums.SkillLevel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSkillLevelFilter<$PrismaModel>
+    _max?: NestedEnumSkillLevelFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -130540,6 +133717,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutUserInput = {
@@ -130572,6 +133750,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutUserInput = {
@@ -131563,6 +134742,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutUserInput = {
@@ -131595,6 +134775,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
@@ -132291,6 +135472,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutOrgUnitInput = {
@@ -132323,6 +135505,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutOrgUnitInput = {
@@ -133553,6 +136736,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type EmployeeSkillCreateWithoutEmployeeInput = {
+    id?: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+    skill: SkillCreateNestedOneWithoutEmployeesInput
+  }
+
+  export type EmployeeSkillUncheckedCreateWithoutEmployeeInput = {
+    id?: string
+    skillId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillCreateOrConnectWithoutEmployeeInput = {
+    where: EmployeeSkillWhereUniqueInput
+    create: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput>
+  }
+
+  export type EmployeeSkillCreateManyEmployeeInputEnvelope = {
+    data: EmployeeSkillCreateManyEmployeeInput | EmployeeSkillCreateManyEmployeeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationUpsertWithWhereUniqueWithoutEmployeeInput = {
     where: AllocationWhereUniqueInput
     update: XOR<AllocationUpdateWithoutEmployeeInput, AllocationUncheckedUpdateWithoutEmployeeInput>
@@ -134064,6 +137277,282 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"EmployeeYearlyTaxSummary"> | Date | string
   }
 
+  export type EmployeeSkillUpsertWithWhereUniqueWithoutEmployeeInput = {
+    where: EmployeeSkillWhereUniqueInput
+    update: XOR<EmployeeSkillUpdateWithoutEmployeeInput, EmployeeSkillUncheckedUpdateWithoutEmployeeInput>
+    create: XOR<EmployeeSkillCreateWithoutEmployeeInput, EmployeeSkillUncheckedCreateWithoutEmployeeInput>
+  }
+
+  export type EmployeeSkillUpdateWithWhereUniqueWithoutEmployeeInput = {
+    where: EmployeeSkillWhereUniqueInput
+    data: XOR<EmployeeSkillUpdateWithoutEmployeeInput, EmployeeSkillUncheckedUpdateWithoutEmployeeInput>
+  }
+
+  export type EmployeeSkillUpdateManyWithWhereWithoutEmployeeInput = {
+    where: EmployeeSkillScalarWhereInput
+    data: XOR<EmployeeSkillUpdateManyMutationInput, EmployeeSkillUncheckedUpdateManyWithoutEmployeeInput>
+  }
+
+  export type EmployeeSkillScalarWhereInput = {
+    AND?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+    OR?: EmployeeSkillScalarWhereInput[]
+    NOT?: EmployeeSkillScalarWhereInput | EmployeeSkillScalarWhereInput[]
+    id?: StringFilter<"EmployeeSkill"> | string
+    employeeId?: StringFilter<"EmployeeSkill"> | string
+    skillId?: StringFilter<"EmployeeSkill"> | string
+    level?: EnumSkillLevelFilter<"EmployeeSkill"> | $Enums.SkillLevel
+    yearsExp?: FloatFilter<"EmployeeSkill"> | number
+    notes?: StringNullableFilter<"EmployeeSkill"> | string | null
+    certifiedAt?: DateTimeNullableFilter<"EmployeeSkill"> | Date | string | null
+    updatedAt?: DateTimeFilter<"EmployeeSkill"> | Date | string
+  }
+
+  export type EmployeeSkillCreateWithoutSkillInput = {
+    id?: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+    employee: EmployeeCreateNestedOneWithoutSkillsInput
+  }
+
+  export type EmployeeSkillUncheckedCreateWithoutSkillInput = {
+    id?: string
+    employeeId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillCreateOrConnectWithoutSkillInput = {
+    where: EmployeeSkillWhereUniqueInput
+    create: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput>
+  }
+
+  export type EmployeeSkillCreateManySkillInputEnvelope = {
+    data: EmployeeSkillCreateManySkillInput | EmployeeSkillCreateManySkillInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type EmployeeSkillUpsertWithWhereUniqueWithoutSkillInput = {
+    where: EmployeeSkillWhereUniqueInput
+    update: XOR<EmployeeSkillUpdateWithoutSkillInput, EmployeeSkillUncheckedUpdateWithoutSkillInput>
+    create: XOR<EmployeeSkillCreateWithoutSkillInput, EmployeeSkillUncheckedCreateWithoutSkillInput>
+  }
+
+  export type EmployeeSkillUpdateWithWhereUniqueWithoutSkillInput = {
+    where: EmployeeSkillWhereUniqueInput
+    data: XOR<EmployeeSkillUpdateWithoutSkillInput, EmployeeSkillUncheckedUpdateWithoutSkillInput>
+  }
+
+  export type EmployeeSkillUpdateManyWithWhereWithoutSkillInput = {
+    where: EmployeeSkillScalarWhereInput
+    data: XOR<EmployeeSkillUpdateManyMutationInput, EmployeeSkillUncheckedUpdateManyWithoutSkillInput>
+  }
+
+  export type EmployeeCreateWithoutSkillsInput = {
+    id?: string
+    code: string
+    fullName: string
+    birthdate?: Date | string | null
+    techStack?: EmployeeCreatetechStackInput | string[]
+    level?: $Enums.EmployeeLevel
+    cccd?: string | null
+    cccdIssueDate?: Date | string | null
+    cccdIssuePlace?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    email?: string | null
+    allocations?: AllocationCreateNestedManyWithoutEmployeeInput
+    contracts?: ContractCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutEmployeeInput
+    rates?: EmployeeRateCreateNestedManyWithoutEmployeeInput
+    orgUnit: OrgUnitCreateNestedOneWithoutEmployeesInput
+    user?: UserCreateNestedOneWithoutEmployeeInput
+    tasks?: TaskCreateNestedManyWithoutAssigneeInput
+    assetAssignments?: AssetAssignmentCreateNestedManyWithoutEmployeeInput
+    trainingRecords?: TrainingRecordCreateNestedManyWithoutEmployeeInput
+    performanceReviews?: PerformanceReviewCreateNestedManyWithoutEmployeeInput
+    reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
+    taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutSkillsInput = {
+    id?: string
+    code: string
+    userId?: string | null
+    orgUnitId: string
+    fullName: string
+    birthdate?: Date | string | null
+    techStack?: EmployeeCreatetechStackInput | string[]
+    level?: $Enums.EmployeeLevel
+    cccd?: string | null
+    cccdIssueDate?: Date | string | null
+    cccdIssuePlace?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    email?: string | null
+    allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    rates?: EmployeeRateUncheckedCreateNestedManyWithoutEmployeeInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    assetAssignments?: AssetAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+    trainingRecords?: TrainingRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    performanceReviews?: PerformanceReviewUncheckedCreateNestedManyWithoutEmployeeInput
+    reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
+    taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutSkillsInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutSkillsInput, EmployeeUncheckedCreateWithoutSkillsInput>
+  }
+
+  export type SkillCreateWithoutEmployeesInput = {
+    id?: string
+    name: string
+    category?: $Enums.SkillCategory
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillUncheckedCreateWithoutEmployeesInput = {
+    id?: string
+    name: string
+    category?: $Enums.SkillCategory
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type SkillCreateOrConnectWithoutEmployeesInput = {
+    where: SkillWhereUniqueInput
+    create: XOR<SkillCreateWithoutEmployeesInput, SkillUncheckedCreateWithoutEmployeesInput>
+  }
+
+  export type EmployeeUpsertWithoutSkillsInput = {
+    update: XOR<EmployeeUpdateWithoutSkillsInput, EmployeeUncheckedUpdateWithoutSkillsInput>
+    create: XOR<EmployeeCreateWithoutSkillsInput, EmployeeUncheckedCreateWithoutSkillsInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutSkillsInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutSkillsInput, EmployeeUncheckedUpdateWithoutSkillsInput>
+  }
+
+  export type EmployeeUpdateWithoutSkillsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    techStack?: EmployeeUpdatetechStackInput | string[]
+    level?: EnumEmployeeLevelFieldUpdateOperationsInput | $Enums.EmployeeLevel
+    cccd?: NullableStringFieldUpdateOperationsInput | string | null
+    cccdIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cccdIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
+    contracts?: ContractUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutEmployeeNestedInput
+    rates?: EmployeeRateUpdateManyWithoutEmployeeNestedInput
+    orgUnit?: OrgUnitUpdateOneRequiredWithoutEmployeesNestedInput
+    user?: UserUpdateOneWithoutEmployeeNestedInput
+    tasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    assetAssignments?: AssetAssignmentUpdateManyWithoutEmployeeNestedInput
+    trainingRecords?: TrainingRecordUpdateManyWithoutEmployeeNestedInput
+    performanceReviews?: PerformanceReviewUpdateManyWithoutEmployeeNestedInput
+    reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
+    taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutSkillsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    orgUnitId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    techStack?: EmployeeUpdatetechStackInput | string[]
+    level?: EnumEmployeeLevelFieldUpdateOperationsInput | $Enums.EmployeeLevel
+    cccd?: NullableStringFieldUpdateOperationsInput | string | null
+    cccdIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cccdIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    rates?: EmployeeRateUncheckedUpdateManyWithoutEmployeeNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    assetAssignments?: AssetAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    trainingRecords?: TrainingRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    performanceReviews?: PerformanceReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+    reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+  }
+
+  export type SkillUpsertWithoutEmployeesInput = {
+    update: XOR<SkillUpdateWithoutEmployeesInput, SkillUncheckedUpdateWithoutEmployeesInput>
+    create: XOR<SkillCreateWithoutEmployeesInput, SkillUncheckedCreateWithoutEmployeesInput>
+    where?: SkillWhereInput
+  }
+
+  export type SkillUpdateToOneWithWhereWithoutEmployeesInput = {
+    where?: SkillWhereInput
+    data: XOR<SkillUpdateWithoutEmployeesInput, SkillUncheckedUpdateWithoutEmployeesInput>
+  }
+
+  export type SkillUpdateWithoutEmployeesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SkillUncheckedUpdateWithoutEmployeesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumSkillCategoryFieldUpdateOperationsInput | $Enums.SkillCategory
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateWithoutRatesInput = {
     id?: string
     code: string
@@ -134094,6 +137583,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutRatesInput = {
@@ -134126,6 +137616,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutRatesInput = {
@@ -134174,6 +137665,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutRatesInput = {
@@ -134206,6 +137698,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type AlertConfigCreateWithoutProjectInput = {
@@ -134870,6 +138363,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutAllocationsInput = {
@@ -134902,6 +138396,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutAllocationsInput = {
@@ -135007,6 +138502,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAllocationsInput = {
@@ -135039,6 +138535,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type ProjectUpsertWithoutMembersInput = {
@@ -135233,6 +138730,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTasksInput = {
@@ -135265,6 +138763,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTasksInput = {
@@ -135642,6 +139141,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTasksInput = {
@@ -135674,6 +139174,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type TaskUpsertWithoutChildrenInput = {
@@ -141858,6 +145359,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutContractsInput = {
@@ -141890,6 +145392,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutContractsInput = {
@@ -141938,6 +145441,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutContractsInput = {
@@ -141970,6 +145474,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type LeaveRequestCreateWithoutLeaveTypeInput = {
@@ -142102,6 +145607,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
@@ -142134,6 +145640,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveRequestsInput = {
@@ -142327,6 +145834,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -142359,6 +145867,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type LeaveTypeUpsertWithoutRequestsInput = {
@@ -142554,6 +146063,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
@@ -142586,6 +146096,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveBalancesInput = {
@@ -142663,6 +146174,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
@@ -142695,6 +146207,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type LeaveTypeUpsertWithoutBalancesInput = {
@@ -143197,6 +146710,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPayrollRecordsInput = {
@@ -143229,6 +146743,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPayrollRecordsInput = {
@@ -143366,6 +146881,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPayrollRecordsInput = {
@@ -143398,6 +146914,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeAllowanceUpsertWithWhereUniqueWithoutPayrollRecordInput = {
@@ -146081,6 +149598,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutAssetAssignmentsInput = {
@@ -146113,6 +149631,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutAssetAssignmentsInput = {
@@ -146210,6 +149729,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAssetAssignmentsInput = {
@@ -146242,6 +149762,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type AssetCreateWithoutMaintenanceLogsInput = {
@@ -146647,6 +150168,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTrainingRecordsInput = {
@@ -146679,6 +150201,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTrainingRecordsInput = {
@@ -146758,6 +150281,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTrainingRecordsInput = {
@@ -146790,6 +150314,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateWithoutPerformanceReviewsInput = {
@@ -146822,6 +150347,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPerformanceReviewsInput = {
@@ -146854,6 +150380,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPerformanceReviewsInput = {
@@ -146891,6 +150418,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewCreateNestedManyWithoutEmployeeInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutReviewsAsReviewerInput = {
@@ -146923,6 +150451,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedCreateNestedManyWithoutEmployeeInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutReviewsAsReviewerInput = {
@@ -146971,6 +150500,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPerformanceReviewsInput = {
@@ -147003,6 +150533,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUpsertWithoutReviewsAsReviewerInput = {
@@ -147046,6 +150577,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUpdateManyWithoutEmployeeNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutReviewsAsReviewerInput = {
@@ -147078,6 +150610,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedUpdateManyWithoutEmployeeNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateWithoutTaxProfileInput = {
@@ -147110,6 +150643,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewCreateNestedManyWithoutEmployeeInput
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTaxProfileInput = {
@@ -147142,6 +150676,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedCreateNestedManyWithoutEmployeeInput
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTaxProfileInput = {
@@ -147220,6 +150755,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUpdateManyWithoutEmployeeNestedInput
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTaxProfileInput = {
@@ -147252,6 +150788,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedUpdateManyWithoutEmployeeNestedInput
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type DependentUpsertWithWhereUniqueWithoutTaxProfileInput = {
@@ -147732,6 +151269,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewCreateNestedManyWithoutEmployeeInput
     reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutYearlySummariesInput = {
@@ -147764,6 +151302,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedCreateNestedManyWithoutEmployeeInput
     reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
     taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutYearlySummariesInput = {
@@ -147812,6 +151351,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUpdateManyWithoutEmployeeNestedInput
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutYearlySummariesInput = {
@@ -147844,6 +151384,7 @@ export namespace Prisma {
     performanceReviews?: PerformanceReviewUncheckedUpdateManyWithoutEmployeeNestedInput
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type PayrollRecordCreateWithoutEmployeeAllowancesInput = {
@@ -149757,6 +153298,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutOrgUnitInput = {
@@ -149789,6 +153331,7 @@ export namespace Prisma {
     reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
     taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
     yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -150302,6 +153845,16 @@ export namespace Prisma {
     ytdTaxableIncome?: Decimal | DecimalJsLike | number | string
     ytdPitPaid?: Decimal | DecimalJsLike | number | string
     ytdBhxhEmployee?: Decimal | DecimalJsLike | number | string
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillCreateManyEmployeeInput = {
+    id?: string
+    skillId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
     updatedAt?: Date | string
   }
 
@@ -150845,6 +154398,76 @@ export namespace Prisma {
     ytdTaxableIncome?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     ytdPitPaid?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     ytdBhxhEmployee?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillUpdateWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    skill?: SkillUpdateOneRequiredWithoutEmployeesNestedInput
+  }
+
+  export type EmployeeSkillUncheckedUpdateWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    skillId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillUncheckedUpdateManyWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    skillId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillCreateManySkillInput = {
+    id?: string
+    employeeId: string
+    level?: $Enums.SkillLevel
+    yearsExp?: number
+    notes?: string | null
+    certifiedAt?: Date | string | null
+    updatedAt?: Date | string
+  }
+
+  export type EmployeeSkillUpdateWithoutSkillInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employee?: EmployeeUpdateOneRequiredWithoutSkillsNestedInput
+  }
+
+  export type EmployeeSkillUncheckedUpdateWithoutSkillInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmployeeSkillUncheckedUpdateManyWithoutSkillInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    level?: EnumSkillLevelFieldUpdateOperationsInput | $Enums.SkillLevel
+    yearsExp?: FloatFieldUpdateOperationsInput | number
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    certifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
