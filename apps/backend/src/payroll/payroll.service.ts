@@ -12,6 +12,7 @@ import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { PayrollEngineService } from './payroll-engine.service';
 import { PayslipQueueService } from './payslip-queue.service';
 import { StorageService } from '../storage/storage.service';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 @Injectable()
 export class PayrollService {
@@ -21,6 +22,7 @@ export class PayrollService {
     private readonly engine: PayrollEngineService,
     private readonly payslipQueue: PayslipQueueService,
     private readonly storage: StorageService,
+    private readonly auditLog: AuditLogService,
   ) {}
 
   // ── List kỳ lương ──────────────────────────────────────────────────────────
@@ -105,7 +107,7 @@ export class PayrollService {
     const deductions = dto.deductions !== undefined ? dto.deductions : Number(record.deductions);
     const netSalary = Number(record.baseSalary) - deductions + bonus;
 
-    return this.prisma.payrollRecord.update({
+    const result = await this.prisma.payrollRecord.update({
       where: { id: recordId },
       data: {
         ...(dto.bonus !== undefined ? { bonus: dto.bonus } : {}),
@@ -114,6 +116,18 @@ export class PayrollService {
         netSalary,
       },
     });
+
+    // Ghi audit log — chỉnh sửa bản ghi lương
+    this.auditLog.log({
+      action: 'UPDATE',
+      module: 'finance',
+      entity: 'Payroll',
+      entityId: recordId,
+      oldValues: { bonus: Number(record.bonus), deductions: Number(record.deductions) },
+      newValues:  { bonus: dto.bonus, deductions: dto.deductions, note: dto.note },
+    }).catch(() => {});
+
+    return result;
   }
 
   // ── Chuyển PROCESSING → REVIEWED ─────────────────────────────────────────
@@ -178,6 +192,17 @@ export class PayrollService {
       amount: totalSalary,
       userId,
     });
+
+    // Ghi audit log — phê duyệt kỳ lương
+    this.auditLog.log({
+      userId,
+      action: 'APPROVE',
+      module: 'finance',
+      entity: 'Payroll',
+      entityId: periodId,
+      newValues: { status: PayrollStatus.APPROVED, name: period.name },
+    }).catch(() => {});
+
     return updated;
   }
 

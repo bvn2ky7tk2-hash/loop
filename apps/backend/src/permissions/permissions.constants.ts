@@ -104,6 +104,27 @@ export const PERMISSIONS = {
   ASSET_UPDATE: 'asset:update',
   ASSET_ASSIGN: 'asset:assign',
   ASSET_MANAGE: 'asset:manage',
+
+  // OKR & KPI
+  OKR_READ:   'okr:read',
+  OKR_CREATE: 'okr:create',
+  OKR_UPDATE: 'okr:update',
+  OKR_MANAGE: 'okr:manage',
+
+  // Skill Matrix
+  SKILLS_READ:   'skills:read',
+  SKILLS_MANAGE: 'skills:manage',
+
+  // Training
+  TRAINING_READ:   'training:read',
+  TRAINING_CREATE: 'training:create',
+  TRAINING_MANAGE: 'training:manage',
+
+  // Timelogs — đọc (bổ sung bên cạnh create/update đã có)
+  TIMELOGS_READ: 'timelogs:read',
+
+  // HR Self-service
+  HR_READ: 'hr:read',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -199,6 +220,22 @@ export const ALL_PERMISSIONS: PermissionDef[] = [
   { code: PERMISSIONS.ASSET_UPDATE, module: 'asset', action: 'update', description: 'Cập nhật thông tin tài sản' },
   { code: PERMISSIONS.ASSET_ASSIGN, module: 'asset', action: 'assign', description: 'Cấp phát / thu hồi tài sản' },
   { code: PERMISSIONS.ASSET_MANAGE, module: 'asset', action: 'manage', description: 'Quản lý bảo trì, xoá tài sản' },
+
+  { code: PERMISSIONS.OKR_READ,   module: 'okr', action: 'read',   description: 'Xem mục tiêu và kết quả then chốt' },
+  { code: PERMISSIONS.OKR_CREATE, module: 'okr', action: 'create', description: 'Tạo OKR mới' },
+  { code: PERMISSIONS.OKR_UPDATE, module: 'okr', action: 'update', description: 'Cập nhật tiến độ OKR' },
+  { code: PERMISSIONS.OKR_MANAGE, module: 'okr', action: 'manage', description: 'Quản lý OKR toàn tổ chức' },
+
+  { code: PERMISSIONS.SKILLS_READ,   module: 'skills', action: 'read',   description: 'Xem ma trận kỹ năng' },
+  { code: PERMISSIONS.SKILLS_MANAGE, module: 'skills', action: 'manage', description: 'Cập nhật và quản lý ma trận kỹ năng' },
+
+  { code: PERMISSIONS.TRAINING_READ,   module: 'training', action: 'read',   description: 'Xem chương trình đào tạo' },
+  { code: PERMISSIONS.TRAINING_CREATE, module: 'training', action: 'create', description: 'Tạo khoá đào tạo mới' },
+  { code: PERMISSIONS.TRAINING_MANAGE, module: 'training', action: 'manage', description: 'Quản lý toàn bộ đào tạo' },
+
+  { code: PERMISSIONS.TIMELOGS_READ, module: 'timelogs', action: 'read', description: 'Xem nhật ký ghi giờ của nhân viên' },
+
+  { code: PERMISSIONS.HR_READ, module: 'hr', action: 'read', description: 'Xem thông tin cá nhân (self-service)' },
 ];
 
 // ─── Default Role → Permission Mapping ───────────────────────────────────────
@@ -214,7 +251,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.FINANCE_READ, PERMISSIONS.FINANCE_CREATE, PERMISSIONS.FINANCE_APPROVE,
     PERMISSIONS.FINANCE_MANAGE, PERMISSIONS.FINANCE_EXPORT,
     PERMISSIONS.TIMESHEETS_READ, PERMISSIONS.TIMESHEETS_APPROVE,
-    PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
+    PERMISSIONS.TIMELOGS_READ, PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
     PERMISSIONS.BUGS_READ, PERMISSIONS.BUGS_UPDATE, PERMISSIONS.BUGS_ASSIGN, PERMISSIONS.BUGS_CLOSE,
     PERMISSIONS.ISSUES_READ, PERMISSIONS.ISSUES_UPDATE, PERMISSIONS.ISSUES_APPROVE,
     PERMISSIONS.BPM_READ,
@@ -227,6 +264,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.ADMIN_ORG,
     PERMISSIONS.ASSET_READ, PERMISSIONS.ASSET_CREATE, PERMISSIONS.ASSET_UPDATE,
     PERMISSIONS.ASSET_ASSIGN, PERMISSIONS.ASSET_MANAGE,
+    PERMISSIONS.OKR_READ, PERMISSIONS.OKR_CREATE, PERMISSIONS.OKR_UPDATE, PERMISSIONS.OKR_MANAGE,
+    PERMISSIONS.SKILLS_READ, PERMISSIONS.SKILLS_MANAGE,
+    PERMISSIONS.TRAINING_READ, PERMISSIONS.TRAINING_CREATE, PERMISSIONS.TRAINING_MANAGE,
+    PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
   ],
 
@@ -237,7 +278,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.EMPLOYEES_READ,
     PERMISSIONS.REPORTS_READ, PERMISSIONS.REPORTS_EXPORT,
     PERMISSIONS.TIMESHEETS_READ, PERMISSIONS.TIMESHEETS_APPROVE,
-    PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
+    PERMISSIONS.TIMELOGS_READ, PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
     PERMISSIONS.BUGS_READ, PERMISSIONS.BUGS_CREATE, PERMISSIONS.BUGS_UPDATE,
     PERMISSIONS.BUGS_ASSIGN, PERMISSIONS.BUGS_CLOSE,
     PERMISSIONS.ISSUES_READ, PERMISSIONS.ISSUES_CREATE, PERMISSIONS.ISSUES_UPDATE,
@@ -247,6 +288,10 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.LEAVES_READ, PERMISSIONS.LEAVES_CREATE,
     PERMISSIONS.CONTRACTS_READ,
     PERMISSIONS.RECRUIT_READ, PERMISSIONS.RECRUIT_CREATE, PERMISSIONS.RECRUIT_UPDATE,
+    PERMISSIONS.OKR_READ, PERMISSIONS.OKR_CREATE, PERMISSIONS.OKR_UPDATE,
+    PERMISSIONS.SKILLS_READ,
+    PERMISSIONS.TRAINING_READ,
+    PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
   ],
 
@@ -255,10 +300,14 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.TASKS_READ, PERMISSIONS.TASKS_CREATE, PERMISSIONS.TASKS_UPDATE,
     PERMISSIONS.EMPLOYEES_READ,
     PERMISSIONS.TIMESHEETS_READ,
-    PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
+    PERMISSIONS.TIMELOGS_READ, PERMISSIONS.TIMELOGS_CREATE, PERMISSIONS.TIMELOGS_UPDATE,
     PERMISSIONS.BUGS_READ, PERMISSIONS.BUGS_CREATE, PERMISSIONS.BUGS_UPDATE,
     PERMISSIONS.ISSUES_READ, PERMISSIONS.ISSUES_CREATE,
     PERMISSIONS.LEAVES_READ, PERMISSIONS.LEAVES_CREATE,
+    PERMISSIONS.OKR_READ, PERMISSIONS.OKR_CREATE, PERMISSIONS.OKR_UPDATE,
+    PERMISSIONS.SKILLS_READ,
+    PERMISSIONS.TRAINING_READ,
+    PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
   ],
 };

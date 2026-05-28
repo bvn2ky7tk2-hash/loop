@@ -44,6 +44,8 @@ import {
   ReadOutlined,
   PhoneOutlined,
   AimOutlined,
+  GlobalOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -94,7 +96,8 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-projects', label: 'Projects', visible: true,
         items: [
-          { key: '/projects', label: 'All Projects', visible: true },
+          { key: '/projects',        label: 'All Projects',  visible: true },
+          { key: '/knowledge-base',  label: 'Knowledge Base', visible: true },
         ],
       },
     ],
@@ -229,8 +232,9 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/payroll',          label: 'Payroll',           visible: true },
           { key: '/payroll/settings', label: 'Payroll Settings',   visible: true },
           { key: '/invoices',              label: 'Invoices',          visible: true },
-          { key: '/accounting/accounts',   label: 'Chart of Accounts', visible: true },
-          { key: '/accounting/journal',    label: 'Journal',           visible: true },
+          { key: '/accounting/accounts',          label: 'Chart of Accounts',   visible: true },
+          { key: '/accounting/journal',           label: 'Journal',             visible: true },
+          { key: '/accounting/financial-reports', label: 'Financial Reports',   visible: true },
         ],
       },
     ],
@@ -259,13 +263,15 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-crm-activities', label: 'Activities', visible: true,
         items: [
-          { key: '/crm/activities', label: 'Activity Log', visible: true },
+          { key: '/crm/activities', label: 'Activity Log',      visible: true },
+          { key: '/crm/forecast',   label: 'Sales Forecasting', visible: true },
         ],
       },
       {
         key: 'g-crm-customers', label: 'Customers', visible: true,
         items: [
           { key: '/crm/customers', label: 'All Customers', visible: true },
+          { key: '/crm/portal',    label: 'Customer Portal', visible: true },
         ],
       },
       {
@@ -301,6 +307,28 @@ export const MODULES: ModuleDefinition[] = [
         key: 'g-recruit-jobs', label: 'Jobs', visible: true,
         items: [
           { key: '/recruit/jobs', label: 'Job Openings', visible: true },
+        ],
+      },
+    ],
+  },
+
+  // ─── Procurement ──────────────────────────────────────────────────────────
+  {
+    id: 'procurement',
+    label: 'Procurement',
+    description: 'Nhà cung cấp và đơn mua hàng',
+    icon: <ShopOutlined />,
+    color: '#F97316',
+    gatePermission: 'procurement:read',
+    topItems: [
+      { key: '/', label: 'Dashboard', visible: true },
+    ],
+    groups: [
+      {
+        key: 'g-procurement-main', label: 'Mua hàng', visible: true,
+        items: [
+          { key: '/procurement/vendors', label: 'Nhà cung cấp', visible: true },
+          { key: '/procurement/orders',  label: 'Đơn mua hàng', visible: true },
         ],
       },
     ],
@@ -347,6 +375,8 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/alerts',       label: 'Alerts',       visible: true },
           { key: '/settings',     label: 'Menu Config',  visible: true },
           { key: '/integrations', label: 'Integrations', visible: true },
+          { key: '/import',       label: 'Import Data',  visible: true },
+          { key: '/audit-log',    label: 'Audit Log',    visible: true },
         ],
       },
     ],
@@ -404,6 +434,10 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/crm/customers':         <ShopOutlined />,
   '/crm/client-contracts':  <AuditOutlined />,
   '/crm/activities':        <PhoneOutlined />,
+  '/crm/forecast':          <RiseOutlined />,
+  '/crm/portal':            <GlobalOutlined />,
+  '/procurement/vendors':   <ShopOutlined />,
+  '/procurement/orders':    <FileTextOutlined />,
   '/recruit/pipeline':      <AppstoreAddOutlined />,
   '/recruit/candidates':    <UsergroupAddOutlined />,
   '/recruit/interviews':    <ScheduleFilled />,
@@ -416,5 +450,9 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/training':           <ReadOutlined />,
   '/hr/performance':        <TrophyOutlined />,
   '/hr/skill-matrix':       <ApartmentOutlined />,
-  '/hr/okr':               <AimOutlined />,
+  '/hr/okr':                        <AimOutlined />,
+  '/knowledge-base':                <BookOutlined />,
+  '/accounting/financial-reports':  <FundOutlined />,
+  '/import':                        <UploadOutlined />,
+  '/audit-log':                     <AuditOutlined />,
 };

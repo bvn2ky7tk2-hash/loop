@@ -325,6 +325,7 @@ exports.Prisma.NotificationScalarFieldEnum = {
   title: 'title',
   body: 'body',
   isRead: 'isRead',
+  link: 'link',
   payload: 'payload',
   createdAt: 'createdAt',
   entityId: 'entityId',
@@ -523,6 +524,7 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   action: 'action',
+  module: 'module',
   entity: 'entity',
   entityId: 'entityId',
   oldValues: 'oldValues',
@@ -1155,6 +1157,123 @@ exports.Prisma.KpiRecordScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.RevenueTargetScalarFieldEnum = {
+  id: 'id',
+  period: 'period',
+  periodType: 'periodType',
+  target: 'target',
+  currency: 'currency',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KbCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  icon: 'icon',
+  color: 'color',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.KbArticleScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  summary: 'summary',
+  categoryId: 'categoryId',
+  authorId: 'authorId',
+  status: 'status',
+  tags: 'tags',
+  viewCount: 'viewCount',
+  isPinned: 'isPinned',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CustomerPortalScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  customerId: 'customerId',
+  token: 'token',
+  allowedContractIds: 'allowedContractIds',
+  isActive: 'isActive',
+  expiresAt: 'expiresAt',
+  welcomeMessage: 'welcomeMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CustomerTicketScalarFieldEnum = {
+  id: 'id',
+  portalId: 'portalId',
+  title: 'title',
+  description: 'description',
+  priority: 'priority',
+  status: 'status',
+  submittedBy: 'submittedBy',
+  response: 'response',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VendorScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  category: 'category',
+  contactName: 'contactName',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  taxCode: 'taxCode',
+  bankAccount: 'bankAccount',
+  bankName: 'bankName',
+  rating: 'rating',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PurchaseOrderScalarFieldEnum = {
+  id: 'id',
+  poNumber: 'poNumber',
+  vendorId: 'vendorId',
+  requesterId: 'requesterId',
+  approverId: 'approverId',
+  status: 'status',
+  currency: 'currency',
+  totalAmount: 'totalAmount',
+  taxAmount: 'taxAmount',
+  notes: 'notes',
+  deliveryDate: 'deliveryDate',
+  approvedAt: 'approvedAt',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PurchaseOrderItemScalarFieldEnum = {
+  id: 'id',
+  poId: 'poId',
+  description: 'description',
+  unit: 'unit',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  totalPrice: 'totalPrice',
+  receivedQty: 'receivedQty',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1292,7 +1411,12 @@ exports.NotificationType = exports.$Enums.NotificationType = {
   ISSUE_CLOSED: 'ISSUE_CLOSED',
   ISSUE_CRITICAL: 'ISSUE_CRITICAL',
   ISSUE_OVERDUE: 'ISSUE_OVERDUE',
-  PAYSLIP_ISSUED: 'PAYSLIP_ISSUED'
+  PAYSLIP_ISSUED: 'PAYSLIP_ISSUED',
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  LEAVE_APPROVED: 'LEAVE_APPROVED',
+  LEAVE_REJECTED: 'LEAVE_REJECTED',
+  EXPENSE_APPROVED: 'EXPENSE_APPROVED',
+  EXPENSE_REJECTED: 'EXPENSE_REJECTED'
 };
 
 exports.DefinitionStatus = exports.$Enums.DefinitionStatus = {
@@ -1564,6 +1688,50 @@ exports.KpiFrequency = exports.$Enums.KpiFrequency = {
   YEARLY: 'YEARLY'
 };
 
+exports.KbStatus = exports.$Enums.KbStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+exports.TicketPriority = exports.$Enums.TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
+exports.TicketStatus = exports.$Enums.TicketStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+exports.VendorStatus = exports.$Enums.VendorStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  BLOCKED: 'BLOCKED'
+};
+
+exports.PoStatus = exports.$Enums.PoStatus = {
+  DRAFT: 'DRAFT',
+  SUBMITTED: 'SUBMITTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  ORDERED: 'ORDERED',
+  PARTIALLY_RECEIVED: 'PARTIALLY_RECEIVED',
+  RECEIVED: 'RECEIVED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PoItemStatus = exports.$Enums.PoItemStatus = {
+  PENDING: 'PENDING',
+  RECEIVED: 'RECEIVED',
+  PARTIALLY_RECEIVED: 'PARTIALLY_RECEIVED',
+  RETURNED: 'RETURNED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1648,7 +1816,15 @@ exports.Prisma.ModelName = {
   OkrObjective: 'OkrObjective',
   OkrKeyResult: 'OkrKeyResult',
   KpiMetric: 'KpiMetric',
-  KpiRecord: 'KpiRecord'
+  KpiRecord: 'KpiRecord',
+  RevenueTarget: 'RevenueTarget',
+  KbCategory: 'KbCategory',
+  KbArticle: 'KbArticle',
+  CustomerPortal: 'CustomerPortal',
+  CustomerTicket: 'CustomerTicket',
+  Vendor: 'Vendor',
+  PurchaseOrder: 'PurchaseOrder',
+  PurchaseOrderItem: 'PurchaseOrderItem'
 };
 
 /**

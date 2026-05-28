@@ -49,16 +49,25 @@ const CrmLeadsPage           = lazy(() => import('./pages/crm/LeadsPage'));
 const CrmDealsPage           = lazy(() => import('./pages/crm/DealsPage'));
 const CrmClientContractsPage = lazy(() => import('./pages/crm/ClientContractsPage'));
 const CrmActivitiesPage      = lazy(() => import('./pages/crm/ActivitiesPage'));
+const CrmForecastPage        = lazy(() => import('./pages/crm/ForecastPage'));
 const SelfServicePage        = lazy(() => import('./pages/self-service/SelfServicePage'));
 const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
 const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
 const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
 const ChartOfAccountsPage   = lazy(() => import('./pages/accounting/ChartOfAccountsPage'));
 const JournalPage           = lazy(() => import('./pages/accounting/JournalPage'));
+const FinancialReportsPage  = lazy(() => import('./pages/accounting/FinancialReportsPage'));
 const HrTrainingPage        = lazy(() => import('./pages/hr/TrainingPage'));
 const HrPerformancePage     = lazy(() => import('./pages/hr/PerformancePage'));
 const SkillMatrixPage       = lazy(() => import('./pages/hr/SkillMatrixPage'));
 const OkrPage               = lazy(() => import('./pages/hr/OkrPage'));
+const KnowledgeBasePage     = lazy(() => import('./pages/knowledge-base/KnowledgeBasePage'));
+const PortalManagePage      = lazy(() => import('./pages/crm/PortalManagePage'));
+const CustomerPortalPage    = lazy(() => import('./pages/portal/CustomerPortalPage'));
+const VendorsPage           = lazy(() => import('./pages/procurement/VendorsPage'));
+const PurchaseOrdersPage    = lazy(() => import('./pages/procurement/PurchaseOrdersPage'));
+const ImportPage            = lazy(() => import('./pages/admin/ImportPage'));
+const AuditLogPage          = lazy(() => import('./pages/audit-log/AuditLogPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -129,16 +138,25 @@ export const router = createBrowserRouter([
       { path: 'crm/deals',             element: wrap(CrmDealsPage) },
       { path: 'crm/client-contracts',  element: wrap(CrmClientContractsPage) },
       { path: 'crm/activities',        element: wrap(CrmActivitiesPage) },
+      { path: 'crm/forecast',          element: wrap(CrmForecastPage) },
+      { path: 'crm/portal',            element: wrap(PortalManagePage) },
       { path: 'assets',             element: wrap(AssetsPage) },
       { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
       { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },
       { path: 'accounting/accounts', element: wrap(ChartOfAccountsPage) },
-      { path: 'accounting/journal',  element: wrap(JournalPage) },
+      { path: 'accounting/journal',        element: wrap(JournalPage) },
+      { path: 'accounting/financial-reports', element: wrap(FinancialReportsPage) },
       { path: 'hr/training',         element: wrap(HrTrainingPage) },
       { path: 'hr/performance',      element: wrap(HrPerformancePage) },
       { path: 'hr/skill-matrix',     element: wrap(SkillMatrixPage) },
       { path: 'hr/okr',             element: wrap(OkrPage) },
+      { path: 'knowledge-base',       element: wrap(KnowledgeBasePage) },
+      { path: 'procurement/vendors',  element: wrap(VendorsPage) },
+      { path: 'procurement/orders',   element: wrap(PurchaseOrdersPage) },
+      { path: 'import',               element: wrap(ImportPage) },
+      { path: 'audit-log',            element: wrap(AuditLogPage) },
     ],
   },
+  { path: 'portal/:token', element: wrap(CustomerPortalPage) },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);

@@ -9,12 +9,14 @@ import {
   CreateModuleRoleDto,
   SetModuleRolePermissionsDto,
 } from './dto/permissions-admin.dto';
+import { AuditLogService } from '../audit-log/audit-log.service';
 
 @Injectable()
 export class PermissionsAdminService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly permissions: PermissionsService,
+    private readonly auditLog: AuditLogService,
   ) {}
 
   // ── All permissions ──────────────────────────────────────────────────────────
@@ -110,6 +112,15 @@ export class PermissionsAdminService {
       create: { userId, roleCode: dto.roleCode },
     });
     await this.permissions.invalidateUser(userId);
+
+    // Ghi audit log — gán module role
+    this.auditLog.log({
+      action: 'UPDATE',
+      module: 'admin',
+      entity: 'Permission',
+      entityId: userId,
+      newValues: { roleCode: dto.roleCode, action: 'assign' },
+    }).catch(() => {});
   }
 
   async removeModuleRole(userId: string, roleCode: string) {
@@ -133,6 +144,15 @@ export class PermissionsAdminService {
       create: { userId, permissionCode: dto.permissionCode, granted: dto.granted },
     });
     await this.permissions.invalidateUser(userId);
+
+    // Ghi audit log — gán/thu hồi permission cho user
+    this.auditLog.log({
+      action: 'UPDATE',
+      module: 'admin',
+      entity: 'Permission',
+      entityId: userId,
+      newValues: { permissionCode: dto.permissionCode, granted: dto.granted },
+    }).catch(() => {});
   }
 
   async deleteUserOverride(userId: string, permissionCode: string) {

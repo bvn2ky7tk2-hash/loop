@@ -46,6 +46,9 @@ model User {
   auditLogs            AuditLog[]
   crmActivities        CrmActivity[]     @relation("CrmActivityCreator")
   okrObjectives        OkrObjective[]    @relation("OkrObjectiveOwner")
+  kbArticles           KbArticle[]       @relation("KbArticleAuthor")
+  poRequests           PurchaseOrder[]   @relation("PoRequester")
+  poApprovals          PurchaseOrder[]   @relation("PoApprover")
 
   @@map("users")
 }
@@ -349,6 +352,7 @@ model Notification {
   title      String
   body       String
   isRead     Boolean          @default(false) @map("is_read")
+  link       String?          @db.VarChar(500)
   payload    Json?
   createdAt  DateTime         @default(now()) @map("created_at")
   entityId   String?          @map("entity_id")
@@ -749,6 +753,11 @@ enum NotificationType {
   ISSUE_CRITICAL
   ISSUE_OVERDUE
   PAYSLIP_ISSUED
+  TASK_ASSIGNED
+  LEAVE_APPROVED
+  LEAVE_REJECTED
+  EXPENSE_APPROVED
+  EXPENSE_REJECTED
 }
 
 enum DefinitionStatus {
@@ -802,6 +811,7 @@ model AuditLog {
   id        String   @id @default(uuid())
   userId    String?  @map("user_id")
   action    String
+  module    String?
   entity    String
   entityId  String?  @map("entity_id")
   oldValues Json?    @map("old_values")
@@ -814,6 +824,8 @@ model AuditLog {
 
   @@index([userId])
   @@index([entity, entityId])
+  @@index([module])
+  @@index([action])
   @@index([createdAt])
   @@map("audit_logs")
 }
@@ -1125,6 +1137,7 @@ model Customer {
   invoices        Invoice[]
   clientContracts ClientContract[]
   activities      CrmActivity[]
+  portals         CustomerPortal[]
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
 
@@ -2006,4 +2019,221 @@ model KpiRecord {
   @@unique([metricId, period])
   @@index([metricId])
   @@map("kpi_records")
+}
+
+model RevenueTarget {
+  id         String   @id @default(uuid())
+  period     String   @db.VarChar(20) // "2026-05" | "2026-Q2"
+  periodType String   @default("MONTHLY") @map("period_type") @db.VarChar(20)
+  target     Decimal  @db.Decimal(18, 2)
+  currency   String   @default("VND") @db.VarChar(10)
+  notes      String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([period, periodType])
+  @@map("revenue_targets")
+}
+
+// ─── Knowledge Base ───────────────────────────────────────────────────────────
+
+enum KbStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+
+  @@map("kb_status")
+}
+
+model KbCategory {
+  id          String      @id @default(uuid())
+  name        String      @db.VarChar(100)
+  description String?     @db.Text
+  icon        String?     @db.VarChar(50)
+  color       String?     @db.VarChar(20)
+  sortOrder   Int         @default(0) @map("sort_order")
+  articles    KbArticle[]
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@map("kb_categories")
+}
+
+model KbArticle {
+  id          String     @id @default(uuid())
+  title       String     @db.VarChar(300)
+  slug        String     @unique @db.VarChar(300)
+  content     String     @db.Text
+  summary     String?    @db.Text
+  categoryId  String     @map("category_id")
+  category    KbCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  authorId    String     @map("author_id")
+  author      User       @relation("KbArticleAuthor", fields: [authorId], references: [id])
+  status      KbStatus   @default(DRAFT)
+  tags        String[]
+  viewCount   Int        @default(0) @map("view_count")
+  isPinned    Boolean    @default(false) @map("is_pinned")
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([status])
+  @@map("kb_articles")
+}
+
+// ─── Customer Portal ──────────────────────────────────────────────────────────
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@map("ticket_priority")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+
+  @@map("ticket_status")
+}
+
+model CustomerPortal {
+  id                 String           @id @default(uuid())
+  name               String           @db.VarChar(200)
+  customerId         String           @map("customer_id")
+  customer           Customer         @relation(fields: [customerId], references: [id])
+  token              String           @unique @default(uuid())
+  allowedContractIds String[]         @map("allowed_contract_ids")
+  isActive           Boolean          @default(true) @map("is_active")
+  expiresAt          DateTime?        @map("expires_at")
+  welcomeMessage     String?          @map("welcome_message") @db.Text
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  tickets            CustomerTicket[]
+
+  @@index([customerId])
+  @@map("customer_portals")
+}
+
+model CustomerTicket {
+  id          String         @id @default(uuid())
+  portalId    String         @map("portal_id")
+  portal      CustomerPortal @relation(fields: [portalId], references: [id], onDelete: Cascade)
+  title       String         @db.VarChar(300)
+  description String         @db.Text
+  priority    TicketPriority @default(MEDIUM)
+  status      TicketStatus   @default(OPEN)
+  submittedBy String?        @map("submitted_by") @db.VarChar(100)
+  response    String?        @db.Text
+  resolvedAt  DateTime?      @map("resolved_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  @@index([portalId])
+  @@map("customer_tickets")
+}
+
+// ─── Procurement & Vendor Management ─────────────────────────────────────────
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+
+  @@map("vendor_status")
+}
+
+enum PoStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+
+  @@map("po_status")
+}
+
+enum PoItemStatus {
+  PENDING
+  RECEIVED
+  PARTIALLY_RECEIVED
+  RETURNED
+
+  @@map("po_item_status")
+}
+
+model Vendor {
+  id             String          @id @default(uuid())
+  code           String          @unique @db.VarChar(50)
+  name           String          @db.VarChar(200)
+  category       String?         @db.VarChar(100)
+  contactName    String?         @map("contact_name") @db.VarChar(100)
+  email          String?         @db.VarChar(200)
+  phone          String?         @db.VarChar(50)
+  address        String?         @db.Text
+  taxCode        String?         @map("tax_code") @db.VarChar(30)
+  bankAccount    String?         @map("bank_account") @db.VarChar(50)
+  bankName       String?         @map("bank_name") @db.VarChar(100)
+  rating         Int?
+  status         VendorStatus    @default(ACTIVE)
+  notes          String?         @db.Text
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  purchaseOrders PurchaseOrder[]
+
+  @@map("vendors")
+}
+
+model PurchaseOrder {
+  id           String              @id @default(uuid())
+  poNumber     String              @unique @map("po_number") @db.VarChar(50)
+  vendorId     String              @map("vendor_id")
+  vendor       Vendor              @relation(fields: [vendorId], references: [id])
+  requesterId  String              @map("requester_id")
+  requester    User                @relation("PoRequester", fields: [requesterId], references: [id])
+  approverId   String?             @map("approver_id")
+  approver     User?               @relation("PoApprover", fields: [approverId], references: [id])
+  status       PoStatus            @default(DRAFT)
+  currency     String              @default("VND") @db.VarChar(10)
+  totalAmount  Decimal             @default(0) @map("total_amount") @db.Decimal(18, 2)
+  taxAmount    Decimal             @default(0) @map("tax_amount") @db.Decimal(18, 2)
+  notes        String?             @db.Text
+  deliveryDate DateTime?           @map("delivery_date")
+  approvedAt   DateTime?           @map("approved_at")
+  receivedAt   DateTime?           @map("received_at")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  items        PurchaseOrderItem[]
+
+  @@index([vendorId])
+  @@index([requesterId])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id          String        @id @default(uuid())
+  poId        String        @map("po_id")
+  po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+  description String        @db.VarChar(300)
+  unit        String?       @db.VarChar(50)
+  quantity    Decimal       @db.Decimal(12, 3)
+  unitPrice   Decimal       @map("unit_price") @db.Decimal(18, 2)
+  totalPrice  Decimal       @map("total_price") @db.Decimal(18, 2)
+  receivedQty Decimal       @default(0) @map("received_qty") @db.Decimal(12, 3)
+  status      PoItemStatus  @default(PENDING)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@index([poId])
+  @@map("purchase_order_items")
 }

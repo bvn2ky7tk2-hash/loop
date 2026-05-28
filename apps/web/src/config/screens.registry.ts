@@ -26,7 +26,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/cost',           module: 'finance', label: 'Cost',       icon: 'DollarOutlined',       permCode: 'finance:read',    sortOrder: 5 },
   { route: '/my-bugs',        module: 'pm', label: 'My Bugs',         icon: 'BugOutlined',          permCode: 'bugs:read',       sortOrder: 6 },
   { route: '/bugs',           module: 'pm', label: 'Bug Management',  icon: 'BugFilled',            permCode: 'bugs:read',       sortOrder: 7 },
-  { route: '/bugs/dashboard', module: 'pm', label: 'Bug Dashboard',   icon: 'FundOutlined',         permCode: 'bugs:read',       sortOrder: 8 },
+  { route: '/bugs/dashboard',   module: 'pm', label: 'Bug Dashboard',   icon: 'FundOutlined',   permCode: 'bugs:read',    sortOrder: 8 },
+  { route: '/knowledge-base',   module: 'pm', label: 'Knowledge Base',  icon: 'BookOutlined',   permCode: 'projects:read', sortOrder: 9 },
 
   // ─── BPM — Quy trình ───────────────────────────────────────────────────────
   { route: '/processes/inbox',     module: 'bpm', label: 'Inbox',     icon: 'InboxOutlined',          permCode: 'bpm:read',   sortOrder: 0 },
@@ -54,7 +55,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/budget',   module: 'finance', label: 'Budget',   icon: 'PieChartOutlined',   permCode: 'finance:read', sortOrder: 2 },
   { route: '/invoices',                module: 'finance', label: 'Invoices',           icon: 'FileTextOutlined',   permCode: 'finance:read',   sortOrder: 3 },
   { route: '/accounting/accounts',     module: 'finance', label: 'Chart of Accounts',  icon: 'BankOutlined',       permCode: 'finance:read',   sortOrder: 4 },
-  { route: '/accounting/journal',      module: 'finance', label: 'Journal',            icon: 'BookOutlined',       permCode: 'finance:manage', sortOrder: 5 },
+  { route: '/accounting/journal',            module: 'finance', label: 'Journal',            icon: 'BookOutlined',  permCode: 'finance:manage', sortOrder: 5 },
+  { route: '/accounting/financial-reports', module: 'finance', label: 'Financial Reports',  icon: 'FundOutlined',  permCode: 'finance:read',   sortOrder: 6 },
 
   // ─── CRM ───────────────────────────────────────────────────────────────────
   { route: '/crm/leads',            module: 'crm', label: 'Leads',         icon: 'FunnelPlotOutlined', permCode: 'crm:read', sortOrder: 0 },
@@ -62,7 +64,12 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/crm/contacts',         module: 'crm', label: 'Contacts',      icon: 'ContactsOutlined',   permCode: 'crm:read', sortOrder: 2 },
   { route: '/crm/customers',        module: 'crm', label: 'All Customers', icon: 'ShopOutlined',       permCode: 'crm:read', sortOrder: 3 },
   { route: '/crm/client-contracts', module: 'crm', label: 'Hợp đồng KH',  icon: 'AuditOutlined',      permCode: 'crm:read', sortOrder: 4 },
-  { route: '/crm/activities',       module: 'crm', label: 'Activity Log', icon: 'PhoneOutlined',      permCode: 'crm:read', sortOrder: 5 },
+  { route: '/crm/activities',       module: 'crm', label: 'Activity Log',      icon: 'PhoneOutlined', permCode: 'crm:read', sortOrder: 5 },
+  { route: '/crm/forecast',         module: 'crm', label: 'Sales Forecasting', icon: 'RiseOutlined',    permCode: 'crm:read', sortOrder: 6 },
+  { route: '/crm/portal',           module: 'crm', label: 'Customer Portal',   icon: 'GlobalOutlined',  permCode: 'crm:read', sortOrder: 7 },
+
+  // ─── Self Service ──────────────────────────────────────────────────────────
+  { route: '/self-service', module: 'hr', label: 'My Dashboard', icon: 'UserOutlined', permCode: 'hr:read', sortOrder: 10 },
 
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',        module: 'admin', label: 'Users',        icon: 'UserOutlined',              permCode: 'admin:users',       sortOrder: 0 },
@@ -70,6 +77,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/settings',     module: 'admin', label: 'Menu Config',  icon: 'SettingOutlined',           permCode: 'admin:settings',    sortOrder: 2 },
   { route: '/permissions',  module: 'admin', label: 'Permissions',  icon: 'SafetyCertificateOutlined', permCode: 'admin:permissions', sortOrder: 3 },
   { route: '/integrations', module: 'admin', label: 'Integrations', icon: 'ApiOutlined',               permCode: 'admin:settings',    sortOrder: 4 },
+  { route: '/audit-log',   module: 'admin', label: 'Audit Log',    icon: 'AuditOutlined',             permCode: 'admin:settings',    sortOrder: 5 },
+  { route: '/import',      module: 'admin', label: 'Import Data',  icon: 'UploadOutlined',             permCode: 'admin:settings',    sortOrder: 6 },
 
   // ─── Recruitment — Tuyển dụng ──────────────────────────────────────────────
   { route: '/recruit/pipeline',   module: 'recruit', label: 'Pipeline',    icon: 'AppstoreAddOutlined',  permCode: 'recruit:read', sortOrder: 0 },
@@ -82,9 +91,15 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/assets/assignments',  module: 'asset', label: 'Assignments', icon: 'SwapOutlined',   permCode: 'asset:read', sortOrder: 1 },
   { route: '/assets/maintenance',  module: 'asset', label: 'Maintenance', icon: 'ToolOutlined',   permCode: 'asset:read', sortOrder: 2 },
 
+  // ─── Procurement ──────────────────────────────────────────────────────────
+  { route: '/procurement/vendors', module: 'procurement', label: 'Nhà cung cấp',  icon: 'ShopOutlined',     permCode: 'procurement:read', sortOrder: 0 },
+  { route: '/procurement/orders',  module: 'procurement', label: 'Đơn mua hàng',  icon: 'FileTextOutlined', permCode: 'procurement:read', sortOrder: 1 },
+
   // ─── HR Extensions — Đào tạo & Hiệu suất ─────────────────────────────────
-  { route: '/hr/training',   module: 'hr', label: 'Training',           icon: 'ReadOutlined',  permCode: 'employees:read', sortOrder: 4 },
-  { route: '/hr/performance', module: 'hr', label: 'Performance Review', icon: 'TrophyOutlined', permCode: 'employees:read', sortOrder: 5 },
+  { route: '/hr/training',     module: 'hr', label: 'Training',           icon: 'ReadOutlined',      permCode: 'employees:read', sortOrder: 4 },
+  { route: '/hr/performance',  module: 'hr', label: 'Performance Review', icon: 'TrophyOutlined',    permCode: 'employees:read', sortOrder: 5 },
+  { route: '/hr/skill-matrix', module: 'hr', label: 'Skill Matrix',       icon: 'ApartmentOutlined', permCode: 'employees:read', sortOrder: 6 },
+  { route: '/hr/okr',          module: 'hr', label: 'OKR & KPI',          icon: 'AimOutlined',       permCode: 'employees:read', sortOrder: 7 },
 ];
 
 /**
@@ -108,8 +123,9 @@ export const MODULE_LABELS: Record<string, string> = {
   finance:   'Finance',
   crm:       'CRM',
   recruit:   'Recruitment',
-  asset:     'Assets',
-  admin:     'Admin',
+  asset:        'Assets',
+  procurement:  'Procurement',
+  admin:        'Admin',
 };
 
 /**
@@ -153,7 +169,8 @@ export const PERM_DOMAIN_COLOR: Record<string, string> = {
   admin:     '#475569',
   crm:       '#DC2626',
   recruit:   '#0EA5E9',
-  asset:     '#B45309',
+  asset:        '#B45309',
+  procurement:  '#F97316',
 };
 
 /**
@@ -177,7 +194,8 @@ export const PERM_DOMAIN_LABEL: Record<string, string> = {
   admin:     'Quản trị',
   crm:       'CRM',
   recruit:   'Tuyển dụng',
-  asset:     'Tài sản',
+  asset:        'Tài sản',
+  procurement:  'Mua hàng',
 };
 
 /**
@@ -199,7 +217,8 @@ export const PERM_DOMAIN_MODULE: Record<string, string> = {
   bpm:       'bpm',
   alerts:    'admin',
   admin:     'admin',
-  crm:       'crm',
-  recruit:   'recruit',
-  asset:     'asset',
+  crm:          'crm',
+  recruit:      'recruit',
+  asset:        'asset',
+  procurement:  'procurement',
 };
