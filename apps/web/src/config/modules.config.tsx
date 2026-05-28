@@ -40,6 +40,8 @@ import {
   LaptopOutlined,
   ToolOutlined,
   SwapOutlined,
+  BookOutlined,
+  ReadOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -51,8 +53,9 @@ export interface ModuleDefinition {
   description: string;
   icon: ReactNode;
   color: string;
-  /** Permission bắt buộc để truy cập module này. Admin luôn bypass. */
-  gatePermission?: string;
+  /** Permission bắt buộc để truy cập module này. Admin luôn bypass.
+   *  Truyền array để check any-of (user có BẤT KỲ 1 trong các perms là được vào). */
+  gatePermission?: string | string[];
   topItems: MenuTopItemCfg[];
   groups: MenuGroupCfg[];
 }
@@ -101,7 +104,7 @@ export const MODULES: ModuleDefinition[] = [
     label: 'Workflow',
     description: 'Thiết kế và vận hành quy trình nghiệp vụ',
     icon: <ApartmentOutlined />,
-    color: '#7C3AED',
+    color: '#1D4ED8',
     gatePermission: 'bpm:read',
     topItems: [
       { key: '/', label: 'Dashboard', visible: true },
@@ -149,7 +152,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Phân tích, thống kê và báo cáo dự án',
     icon: <FundOutlined />,
     color: '#0891B2',
-    gatePermission: 'reports:export',
+    gatePermission: 'reports:read',
     topItems: [
       { key: '/', label: 'Dashboard', visible: true },
     ],
@@ -170,7 +173,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Nhân sự, sơ đồ tổ chức và quản lý nghỉ phép',
     icon: <IdcardOutlined />,
     color: '#059669',
-    gatePermission: 'employees:create',
+    gatePermission: 'employees:read',
     topItems: [
       { key: '/', label: 'Dashboard', visible: true },
     ],
@@ -182,6 +185,13 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/org-chart',  label: 'Org Chart',     visible: true },
           { key: '/contracts',  label: 'Contracts',     visible: true },
           { key: '/leaves',     label: 'Leave Requests', visible: true },
+        ],
+      },
+      {
+        key: 'g-hr-dev', label: 'Development', visible: true,
+        items: [
+          { key: '/hr/training',    label: 'Training',           visible: true },
+          { key: '/hr/performance', label: 'Performance Review', visible: true },
         ],
       },
     ],
@@ -206,7 +216,9 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/budget',   label: 'Budget',   visible: true },
           { key: '/expenses', label: 'Expenses', visible: true },
           { key: '/payroll',  label: 'Payroll',  visible: true },
-          { key: '/invoices', label: 'Invoices', visible: true },
+          { key: '/invoices',              label: 'Invoices',          visible: true },
+          { key: '/accounting/accounts',   label: 'Chart of Accounts', visible: true },
+          { key: '/accounting/journal',    label: 'Journal',           visible: true },
         ],
       },
     ],
@@ -300,7 +312,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Cài đặt hệ thống, người dùng và phân quyền',
     icon: <SettingOutlined />,
     color: '#475569',
-    gatePermission: 'admin:users',
+    gatePermission: ['admin:users', 'admin:permissions', 'admin:settings'],
     topItems: [],
     groups: [
       {
@@ -370,4 +382,8 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/assets':                <LaptopOutlined />,
   '/assets/assignments':    <SwapOutlined />,
   '/assets/maintenance':    <ToolOutlined />,
+  '/accounting/accounts':   <BankOutlined />,
+  '/accounting/journal':    <BookOutlined />,
+  '/hr/training':           <ReadOutlined />,
+  '/hr/performance':        <TrophyOutlined />,
 };

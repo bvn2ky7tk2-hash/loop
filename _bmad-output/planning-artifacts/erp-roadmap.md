@@ -1,10 +1,11 @@
 # Loop ERP Roadmap
 
-> Cập nhật 2026-05-27 — Căn cứ trên `modules.config.tsx`, `router.tsx`, Prisma schema thực tế.
+> Cập nhật 2026-05-28 — Căn cứ trên `modules.config.tsx`, `router.tsx`, Prisma schema thực tế.
+> **Phase 3 hoàn thành toàn bộ:** 10 module, 44 Prisma models, auto-journal FinanceEventBus, HR Training + Performance Review, Reports Phase 3 tabs (CRM/Recruitment/Asset).
 
 ---
 
-## Cấu trúc module hiện tại (7 module — đã thống nhất)
+## Cấu trúc module hiện tại (10 module — đã hoàn thành Phase 3)
 
 > Tất cả label trong sidebar đồng bộ **tiếng Anh**.
 
@@ -181,13 +182,13 @@ Top item: **Dashboard** (`/`)
 
 ---
 
-### Phase 3 — CRM, Tuyển dụng, Tài sản & Finance+ (9–18 tháng)
+### Phase 3 — CRM, Tuyển dụng, Tài sản & Finance+ ✅ HOÀN THÀNH
 
-> Tổng quan: 3 module **mới** (crm / recruit / asset) + mở rộng 2 module hiện tại (finance / hr). Kết thúc Phase 3: **10 module**.
+> Tổng quan: 3 module **mới** (crm / recruit / asset) + mở rộng 2 module hiện tại (finance / hr). **10 module tổng cộng — tất cả đã xây xong.**
 
 ---
 
-#### Phase 3A (tháng 9–12): CRM + Invoice
+#### Phase 3A ✅: CRM + Invoice
 
 **Module mới: crm · CRM `#DC2626`**
 - `gatePermission`: `crm:read`
@@ -232,7 +233,7 @@ BPM integration: Invoice approval qua processDefinitionKey `invoice-approval`
 
 ---
 
-#### Phase 3B (tháng 12–15): Recruitment + Accounting
+#### Phase 3B ✅: Recruitment + Accounting
 
 **Module mới: recruit · Recruitment `#0EA5E9`**
 - `gatePermission`: `employees:create` (HR quản lý)
@@ -282,7 +283,7 @@ Auto-journal khi:
 
 ---
 
-#### Phase 3C (tháng 15–18): Asset + HR+
+#### Phase 3C ✅: Asset + HR+
 
 **Module mới: asset · Assets `#B45309`**
 - `gatePermission`: `admin:org`
@@ -321,12 +322,12 @@ Enums mới: `TrainingStatus` (SCHEDULED / IN_PROGRESS / COMPLETED / CANCELLED),
 
 ---
 
-**Mở rộng reports — Phase 3 analytics**
+**Mở rộng reports — Phase 3 analytics ✅**
 
-Thêm tabs vào ReportsPage:
-- **CRM** tab: funnel theo stage, deal value theo tháng, tỷ lệ win/lose
-- **Recruitment** tab: time-to-hire, funnel stage, hired vs target headcount
-- **Asset** tab: số lượng theo category, depreciation estimate
+Đã thêm 3 tabs vào ReportsPage:
+- ✅ **CRM** tab: funnel theo stage, deal value theo tháng, tỷ lệ win/lose
+- ✅ **Recruitment** tab: time-to-hire, funnel stage, hired vs target headcount
+- ✅ **Asset** tab: số lượng theo category, depreciation estimate
 
 ---
 

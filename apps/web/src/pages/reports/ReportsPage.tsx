@@ -3,7 +3,7 @@ import {
   Row, Col, Card, Table, Typography, Select, Tabs, Space,
   Form, DatePicker, Button, App, Divider,
 } from 'antd';
-import { DownloadOutlined, ClockCircleOutlined, CheckCircleOutlined, BugOutlined, TeamOutlined } from '@ant-design/icons';
+import { DownloadOutlined, ClockCircleOutlined, CheckCircleOutlined, BugOutlined, TeamOutlined, ShopOutlined, UsergroupAddOutlined, LaptopOutlined } from '@ant-design/icons';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import type { ReportType } from '../../api/reports';
 import { ProgressRing } from '../../components/ui/ProgressRing';
@@ -15,6 +15,9 @@ import { useQuery } from '@tanstack/react-query';
 import { reportsApi } from '../../api/reports';
 import { projectsApi } from '../../api/projects';
 import { useThemeStore } from '../../store/theme.store';
+import { useGetDeals } from '../../api/crm';
+import { useGetCandidates, useGetJobs } from '../../api/recruit';
+import { useGetAssets } from '../../api/assets';
 import dayjs from 'dayjs';
 
 const { Text } = Typography;
@@ -25,6 +28,214 @@ const LEVEL_BADGE: Record<string, { bg: string; color: string }> = {
   SENIOR:  { bg: '#FFFBEB', color: '#92400E' },
   EXPERT:  { bg: '#FEF2F2', color: '#991B1B' },
 };
+
+// ─── Phase 3 Report Tabs ──────────────────────────────────────────────────────
+
+interface ChartProps {
+  axisColor: string;
+  gridColor: string;
+  tooltipBg: string;
+  primary: string;
+  chartCardStyle: React.CSSProperties;
+}
+
+const DEAL_STAGE_COLORS: Record<string, string> = {
+  QUALIFICATION: '#6366F1', PROPOSAL: '#3B82F6', NEGOTIATION: '#F59E0B', WON: '#10B981', LOST: '#EF4444',
+};
+
+const CANDIDATE_STAGE_COLORS: Record<string, string> = {
+  APPLIED: '#94A3B8', SCREENING: '#6366F1', INTERVIEW: '#3B82F6', OFFER: '#F59E0B', HIRED: '#10B981', REJECTED: '#EF4444',
+};
+
+function CrmReportTab({ axisColor, gridColor, tooltipBg, primary, chartCardStyle }: ChartProps) {
+  const { data: dealsData } = useGetDeals({ limit: 500 });
+  const deals = dealsData?.data ?? [];
+
+  const stageCounts = Object.entries(
+    deals.reduce((acc, d) => { acc[d.stage] = (acc[d.stage] ?? 0) + 1; return acc; }, {} as Record<string, number>)
+  ).map(([stage, count]) => ({ stage, count }));
+
+  const monthlyWon = deals
+    .filter(d => d.stage === 'WON' && d.wonAt)
+    .reduce((acc, d) => {
+      const m = dayjs(d.wonAt!).format('MM/YYYY');
+      acc[m] = (acc[m] ?? 0) + Number(d.value ?? 0);
+      return acc;
+    }, {} as Record<string, number>);
+  const monthlyWonData = Object.entries(monthlyWon).slice(-6).map(([month, value]) => ({ month, value }));
+
+  const total = deals.length || 1;
+  const won   = deals.filter(d => d.stage === 'WON').length;
+  const lost  = deals.filter(d => d.stage === 'LOST').length;
+
+  return (
+    <Row gutter={[16, 16]}>
+      <Col xs={24} md={8}>
+        <Card title="Win / Lose Ratio" style={chartCardStyle}>
+          <div style={{ textAlign: 'center', padding: '16px 0' }}>
+            <div style={{ fontSize: 36, fontWeight: 700, color: '#10B981' }}>{Math.round(won / total * 100)}%</div>
+            <div style={{ color: axisColor }}>Win rate</div>
+            <div style={{ marginTop: 8 }}>
+              <span style={{ color: '#10B981', marginRight: 16 }}>✓ Won: {won}</span>
+              <span style={{ color: '#EF4444' }}>✗ Lost: {lost}</span>
+            </div>
+          </div>
+        </Card>
+      </Col>
+      <Col xs={24} md={16}>
+        <Card title="Deal funnel theo stage" style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={stageCounts} layout="vertical" margin={{ left: 80, right: 20 }}>
+              <XAxis type="number" tick={{ fill: axisColor, fontSize: 12 }} />
+              <YAxis type="category" dataKey="stage" tick={{ fill: axisColor, fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+              <RTooltip contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                {stageCounts.map(s => <Cell key={s.stage} fill={DEAL_STAGE_COLORS[s.stage] ?? primary} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </Col>
+      <Col xs={24}>
+        <Card title="Deal value WON theo tháng (6 tháng gần nhất)" style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={monthlyWonData} margin={{ top: 8, right: 20, left: 16, bottom: 0 }}>
+              <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 12 }} />
+              <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={(v: number) => v >= 1e9 ? `${(v/1e9).toFixed(1)}B` : v >= 1e6 ? `${(v/1e6).toFixed(0)}M` : String(v)} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <RTooltip formatter={(v: number) => [new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v), 'Value']} contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+              <Bar dataKey="value" fill="#10B981" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </Col>
+    </Row>
+  );
+}
+
+function RecruitmentReportTab({ axisColor, gridColor, tooltipBg, primary, chartCardStyle }: ChartProps) {
+  const { data: candidatesData } = useGetCandidates({ limit: 500 });
+  const { data: jobsData }       = useGetJobs({ limit: 200 });
+  const candidates = candidatesData?.data ?? [];
+  const jobs       = jobsData?.data ?? [];
+
+  const stageCounts = Object.entries(
+    candidates.reduce((acc, c) => { acc[c.stage] = (acc[c.stage] ?? 0) + 1; return acc; }, {} as Record<string, number>)
+  ).map(([stage, count]) => ({ stage, count }));
+
+  const openJobs    = jobs.filter(j => j.status === 'OPEN').length;
+  const totalHC     = jobs.reduce((s, j) => s + (j.headcount ?? 0), 0);
+  const hired       = candidates.filter(c => c.stage === 'HIRED').length;
+
+  return (
+    <Row gutter={[16, 16]}>
+      <Col xs={24} md={8}>
+        <Card title="Tổng quan tuyển dụng" style={chartCardStyle}>
+          <div style={{ padding: '12px 0' }}>
+            {[
+              { label: 'Vị trí đang mở', value: openJobs, color: primary },
+              { label: 'Tổng chỉ tiêu', value: totalHC, color: '#6366F1' },
+              { label: 'Đã tuyển', value: hired, color: '#10B981' },
+              { label: 'Tổng ứng viên', value: candidates.length, color: '#F59E0B' },
+            ].map(item => (
+              <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                <span style={{ color: axisColor }}>{item.label}</span>
+                <span style={{ fontWeight: 700, fontSize: 18, color: item.color }}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </Col>
+      <Col xs={24} md={16}>
+        <Card title="Ứng viên theo stage" style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={stageCounts} layout="vertical" margin={{ left: 80, right: 20 }}>
+              <XAxis type="number" tick={{ fill: axisColor, fontSize: 12 }} />
+              <YAxis type="category" dataKey="stage" tick={{ fill: axisColor, fontSize: 12 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+              <RTooltip contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                {stageCounts.map(s => <Cell key={s.stage} fill={CANDIDATE_STAGE_COLORS[s.stage] ?? primary} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </Col>
+    </Row>
+  );
+}
+
+function AssetReportTab({ axisColor, gridColor, tooltipBg, primary, chartCardStyle }: ChartProps) {
+  const { data: assetsData } = useGetAssets({ limit: 500 });
+  const assets = assetsData?.data ?? [];
+
+  const byCategory = Object.entries(
+    assets.reduce((acc, a) => { acc[a.category] = (acc[a.category] ?? 0) + 1; return acc; }, {} as Record<string, number>)
+  ).map(([category, count]) => ({ category, count }));
+
+  const byStatus = Object.entries(
+    assets.reduce((acc, a) => { acc[a.status] = (acc[a.status] ?? 0) + 1; return acc; }, {} as Record<string, number>)
+  ).map(([status, count]) => ({ status, count }));
+
+  const totalValue = assets.reduce((s, a) => s + Number(a.purchasePrice ?? 0), 0);
+  const deprecEst  = assets.reduce((a, asset) => {
+    const years = asset.depreciationYears ?? 5;
+    return a + Number(asset.purchasePrice ?? 0) / years;
+  }, 0);
+
+  const STATUS_COLORS: Record<string, string> = {
+    AVAILABLE: '#10B981', ASSIGNED: '#3B82F6', UNDER_MAINTENANCE: '#F59E0B', RETIRED: '#94A3B8',
+  };
+
+  return (
+    <Row gutter={[16, 16]}>
+      <Col xs={24} md={8}>
+        <Card title="Tổng quan tài sản" style={chartCardStyle}>
+          <div style={{ padding: '12px 0' }}>
+            {[
+              { label: 'Tổng tài sản', value: assets.length, color: primary },
+              { label: 'Tổng giá trị mua', value: totalValue.toLocaleString('vi-VN') + ' ₫', color: '#10B981' },
+              { label: 'Khấu hao ước tính/năm', value: deprecEst.toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' ₫', color: '#F59E0B' },
+            ].map(item => (
+              <div key={item.label} style={{ marginBottom: 12 }}>
+                <div style={{ color: axisColor, fontSize: 12 }}>{item.label}</div>
+                <div style={{ fontWeight: 700, color: item.color }}>{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </Col>
+      <Col xs={24} md={8}>
+        <Card title="Số lượng theo danh mục" style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={200}>
+            <PieChart>
+              <Pie data={byCategory} dataKey="count" nameKey="category" cx="50%" cy="50%" outerRadius={70} label={({ category, count }) => `${category}:${count}`}>
+                {byCategory.map((_, i) => <Cell key={i} fill={[primary, '#6366F1', '#F59E0B', '#10B981', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899', '#0EA5E9'][i % 9]} />)}
+              </Pie>
+              <RTooltip contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </Card>
+      </Col>
+      <Col xs={24} md={8}>
+        <Card title="Theo trạng thái" style={chartCardStyle}>
+          <ResponsiveContainer width="100%" height={200}>
+            <BarChart data={byStatus} layout="vertical" margin={{ left: 120, right: 16 }}>
+              <XAxis type="number" tick={{ fill: axisColor, fontSize: 11 }} />
+              <YAxis type="category" dataKey="status" tick={{ fill: axisColor, fontSize: 11 }} width={110} />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+              <RTooltip contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+              <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                {byStatus.map(s => <Cell key={s.status} fill={STATUS_COLORS[s.status] ?? primary} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      </Col>
+    </Row>
+  );
+}
 
 export default function ReportsPage() {
   const { message } = App.useApp();
@@ -573,6 +784,21 @@ export default function ReportsPage() {
                 </Col>
               </Row>
             ),
+          },
+          {
+            key: 'crm-report',
+            label: <><ShopOutlined /> CRM</>,
+            children: <CrmReportTab axisColor={axisColor} gridColor={gridColor} tooltipBg={tooltipBg} primary={primary} chartCardStyle={chartCardStyle} />,
+          },
+          {
+            key: 'recruitment-report',
+            label: <><UsergroupAddOutlined /> Recruitment</>,
+            children: <RecruitmentReportTab axisColor={axisColor} gridColor={gridColor} tooltipBg={tooltipBg} primary={primary} chartCardStyle={chartCardStyle} />,
+          },
+          {
+            key: 'asset-report',
+            label: <><LaptopOutlined /> Assets</>,
+            children: <AssetReportTab axisColor={axisColor} gridColor={gridColor} tooltipBg={tooltipBg} primary={primary} chartCardStyle={chartCardStyle} />,
           },
         ]}
       />

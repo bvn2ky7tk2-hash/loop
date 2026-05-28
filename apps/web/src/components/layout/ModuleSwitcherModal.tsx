@@ -20,7 +20,8 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
   const canAccessModule = (mod: typeof MODULES[number]) => {
     if (isAdmin) return true;
     if (!mod.gatePermission) return true;
-    return user?.permissions.includes(mod.gatePermission) ?? false;
+    const gates = Array.isArray(mod.gatePermission) ? mod.gatePermission : [mod.gatePermission];
+    return gates.some(p => user?.permissions.includes(p) ?? false);
   };
 
   const accessibleModules = MODULES.filter(canAccessModule);

@@ -8,10 +8,14 @@ import { PayrollStatus } from '../generated/prisma';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
+import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 
 @Injectable()
 export class PayrollService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly financeEventBus: FinanceEventBus,
+  ) {}
 
   // ── List kỳ lương ──────────────────────────────────────────────────────────
   async listPeriods(page = 1, limit = 20): Promise<PaginatedResult<any>> {
@@ -203,14 +207,24 @@ export class PayrollService {
       throw new BadRequestException('Chỉ có thể phê duyệt kỳ lương ở trạng thái PROCESSING');
     }
 
-    return this.prisma.payrollPeriod.update({
+    const updated = await this.prisma.payrollPeriod.update({
       where: { id: periodId },
       data: {
         status: PayrollStatus.APPROVED,
         processedById: userId,
         processedAt: new Date(),
       },
+      include: { records: { select: { baseSalary: true } } },
     });
+
+    const totalSalary = updated.records.reduce((s, r) => s + Number(r.baseSalary), 0);
+    this.financeEventBus.emit({
+      type: 'payroll.approved',
+      refId: periodId,
+      amount: totalSalary,
+      userId,
+    });
+    return updated;
   }
 
   // ── Đánh dấu đã thanh toán ─────────────────────────────────────────────────

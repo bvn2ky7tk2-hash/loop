@@ -8,6 +8,7 @@ import { InvoiceStatus } from '../generated/prisma';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { FilterInvoiceDto } from './dto/filter-invoice.dto';
+import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 
 // Transitions hợp lệ
 const VALID_TRANSITIONS: Partial<Record<InvoiceStatus, InvoiceStatus[]>> = {
@@ -45,7 +46,10 @@ function calcTotals(items: { quantity: number; unitPrice: number; taxRate?: numb
 export class InvoicesService {
   private readonly logger = new Logger(InvoicesService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly financeEventBus: FinanceEventBus,
+  ) {}
 
   async create(dto: CreateInvoiceDto, userId: string) {
     const code   = await generateCode(this.prisma);
@@ -177,7 +181,7 @@ export class InvoicesService {
         `Không thể chuyển từ ${inv.status} sang ${toStatus}`,
       );
     }
-    return this.prisma.invoice.update({
+    const updated = await this.prisma.invoice.update({
       where: { id },
       data: {
         status: toStatus,
@@ -185,6 +189,17 @@ export class InvoicesService {
       },
       include: { items: true, customer: { select: { id: true, name: true } } },
     });
+
+    if (toStatus === 'PAID') {
+      this.financeEventBus.emit({
+        type: 'invoice.paid',
+        refId: id,
+        amount: Number(updated.totalAmount),
+        currency: updated.currency,
+        userId: updated.createdById,
+      });
+    }
+    return updated;
   }
 
   async remove(id: string) {

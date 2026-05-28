@@ -812,6 +812,75 @@ exports.Prisma.AssetMaintenanceScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ChartOfAccountScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  type: 'type',
+  parentCode: 'parentCode',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.JournalEntryScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  description: 'description',
+  reference: 'reference',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.JournalLineScalarFieldEnum = {
+  id: 'id',
+  entryId: 'entryId',
+  accountCode: 'accountCode',
+  debit: 'debit',
+  credit: 'credit',
+  description: 'description'
+};
+
+exports.Prisma.TrainingProgramScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  type: 'type',
+  durationHours: 'durationHours',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TrainingRecordScalarFieldEnum = {
+  id: 'id',
+  programId: 'programId',
+  employeeId: 'employeeId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  score: 'score',
+  certificate: 'certificate',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PerformanceReviewScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  reviewerId: 'reviewerId',
+  period: 'period',
+  score: 'score',
+  strengths: 'strengths',
+  improvements: 'improvements',
+  goals: 'goals',
+  status: 'status',
+  processInstanceId: 'processInstanceId',
+  submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1110,6 +1179,27 @@ exports.AssetStatus = exports.$Enums.AssetStatus = {
   RETIRED: 'RETIRED'
 };
 
+exports.AccountType = exports.$Enums.AccountType = {
+  ASSET: 'ASSET',
+  LIABILITY: 'LIABILITY',
+  EQUITY: 'EQUITY',
+  REVENUE: 'REVENUE',
+  EXPENSE: 'EXPENSE'
+};
+
+exports.TrainingStatus = exports.$Enums.TrainingStatus = {
+  SCHEDULED: 'SCHEDULED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.ReviewStatus = exports.$Enums.ReviewStatus = {
+  DRAFT: 'DRAFT',
+  SUBMITTED: 'SUBMITTED',
+  APPROVED: 'APPROVED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1167,7 +1257,13 @@ exports.Prisma.ModelName = {
   Interview: 'Interview',
   Asset: 'Asset',
   AssetAssignment: 'AssetAssignment',
-  AssetMaintenance: 'AssetMaintenance'
+  AssetMaintenance: 'AssetMaintenance',
+  ChartOfAccount: 'ChartOfAccount',
+  JournalEntry: 'JournalEntry',
+  JournalLine: 'JournalLine',
+  TrainingProgram: 'TrainingProgram',
+  TrainingRecord: 'TrainingRecord',
+  PerformanceReview: 'PerformanceReview'
 };
 
 /**

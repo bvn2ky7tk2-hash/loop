@@ -10,6 +10,7 @@ import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ApproveExpenseDto } from './dto/approve-expense.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 
 const EXPENSE_INCLUDE = {
   submittedBy: { select: { id: true, name: true } },
@@ -22,6 +23,7 @@ export class ExpensesService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
+    private readonly financeEventBus: FinanceEventBus,
   ) {}
 
   onModuleInit() {
@@ -178,7 +180,7 @@ export class ExpensesService implements OnModuleInit {
       throw new BadRequestException('Lý do từ chối là bắt buộc khi từ chối phiếu chi');
     }
 
-    return this.prisma.expense.update({
+    const updated = await this.prisma.expense.update({
       where: { id },
       data: {
         status:         dto.status,
@@ -186,11 +188,18 @@ export class ExpensesService implements OnModuleInit {
         approvedAt:     new Date(),
         rejectedReason: dto.rejectedReason ?? null,
       },
-      include: {
-        ...EXPENSE_INCLUDE,
-        items: true,
-      },
+      include: { ...EXPENSE_INCLUDE, items: true },
     });
+
+    if (dto.status === ExpenseStatus.APPROVED) {
+      this.financeEventBus.emit({
+        type: 'expense.approved',
+        refId: id,
+        amount: Number(updated.totalAmount),
+        userId: approverId,
+      });
+    }
+    return updated;
   }
 
   // ── Xóa phiếu chi (chỉ khi PENDING) ───────────────────────────────────────

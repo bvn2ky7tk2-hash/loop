@@ -48,6 +48,10 @@ const CrmDealsPage     = lazy(() => import('./pages/crm/DealsPage'));
 const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
 const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
 const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
+const ChartOfAccountsPage   = lazy(() => import('./pages/accounting/ChartOfAccountsPage'));
+const JournalPage           = lazy(() => import('./pages/accounting/JournalPage'));
+const HrTrainingPage        = lazy(() => import('./pages/hr/TrainingPage'));
+const HrPerformancePage     = lazy(() => import('./pages/hr/PerformancePage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -116,6 +120,10 @@ export const router = createBrowserRouter([
       { path: 'assets',             element: wrap(AssetsPage) },
       { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
       { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },
+      { path: 'accounting/accounts', element: wrap(ChartOfAccountsPage) },
+      { path: 'accounting/journal',  element: wrap(JournalPage) },
+      { path: 'hr/training',         element: wrap(HrTrainingPage) },
+      { path: 'hr/performance',      element: wrap(HrPerformancePage) },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

@@ -69,33 +69,36 @@ model OrgUnit {
 }
 
 model Employee {
-  id               String            @id @default(uuid())
-  code             String            @unique
-  userId           String?           @unique @map("user_id")
-  orgUnitId        String            @map("org_unit_id")
-  fullName         String            @map("full_name")
-  birthdate        DateTime?         @db.Date
-  techStack        String[]          @map("tech_stack")
-  level            EmployeeLevel     @default(JUNIOR)
-  cccd             String?
-  cccdIssueDate    DateTime?         @map("cccd_issue_date") @db.Date
-  cccdIssuePlace   String?           @map("cccd_issue_place")
-  startDate        DateTime          @map("start_date") @db.Date
-  endDate          DateTime?         @map("end_date") @db.Date
-  isActive         Boolean           @default(true) @map("is_active")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
-  email            String?           @unique
-  allocations      Allocation[]
-  contracts        Contract[]
-  leaveRequests    LeaveRequest[]
-  leaveBalances    LeaveBalance[]
-  payrollRecords   PayrollRecord[]
-  rates            EmployeeRate[]
-  orgUnit          OrgUnit           @relation(fields: [orgUnitId], references: [id])
-  user             User?             @relation(fields: [userId], references: [id])
-  tasks            Task[]            @relation("TaskAssignee")
-  assetAssignments AssetAssignment[]
+  id                 String              @id @default(uuid())
+  code               String              @unique
+  userId             String?             @unique @map("user_id")
+  orgUnitId          String              @map("org_unit_id")
+  fullName           String              @map("full_name")
+  birthdate          DateTime?           @db.Date
+  techStack          String[]            @map("tech_stack")
+  level              EmployeeLevel       @default(JUNIOR)
+  cccd               String?
+  cccdIssueDate      DateTime?           @map("cccd_issue_date") @db.Date
+  cccdIssuePlace     String?             @map("cccd_issue_place")
+  startDate          DateTime            @map("start_date") @db.Date
+  endDate            DateTime?           @map("end_date") @db.Date
+  isActive           Boolean             @default(true) @map("is_active")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  email              String?             @unique
+  allocations        Allocation[]
+  contracts          Contract[]
+  leaveRequests      LeaveRequest[]
+  leaveBalances      LeaveBalance[]
+  payrollRecords     PayrollRecord[]
+  rates              EmployeeRate[]
+  orgUnit            OrgUnit             @relation(fields: [orgUnitId], references: [id])
+  user               User?               @relation(fields: [userId], references: [id])
+  tasks              Task[]              @relation("TaskAssignee")
+  assetAssignments   AssetAssignment[]
+  trainingRecords    TrainingRecord[]
+  performanceReviews PerformanceReview[] @relation("ReviewSubject")
+  reviewsAsReviewer  PerformanceReview[] @relation("Reviewer")
 
   @@map("employees")
 }
@@ -1371,4 +1374,134 @@ enum AssetStatus {
   RETIRED
 
   @@map("asset_status")
+}
+
+// ─── Accounting (double-entry) ────────────────────────────────────────────────
+
+model ChartOfAccount {
+  id           String        @id @default(uuid())
+  code         String        @unique @db.VarChar(20)
+  name         String        @db.VarChar(200)
+  type         AccountType
+  parentCode   String?       @map("parent_code") @db.VarChar(20)
+  isActive     Boolean       @default(true) @map("is_active")
+  journalLines JournalLine[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  @@index([type])
+  @@map("chart_of_accounts")
+}
+
+model JournalEntry {
+  id          String        @id @default(uuid())
+  date        DateTime      @db.Date
+  description String        @db.VarChar(500)
+  reference   String?       @db.VarChar(100)
+  lines       JournalLine[]
+  createdById String        @map("created_by_id")
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  @@index([date])
+  @@map("journal_entries")
+}
+
+model JournalLine {
+  id          String         @id @default(uuid())
+  entryId     String         @map("entry_id")
+  entry       JournalEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  accountCode String         @map("account_code") @db.VarChar(20)
+  account     ChartOfAccount @relation(fields: [accountCode], references: [code])
+  debit       Decimal        @default(0) @db.Decimal(18, 2)
+  credit      Decimal        @default(0) @db.Decimal(18, 2)
+  description String?        @db.VarChar(200)
+
+  @@index([entryId])
+  @@index([accountCode])
+  @@map("journal_lines")
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+
+  @@map("account_type")
+}
+
+// ─── HR Extensions: Training + Performance Review ────────────────────────────
+
+model TrainingProgram {
+  id            String           @id @default(uuid())
+  title         String           @db.VarChar(200)
+  type          String           @db.VarChar(50)
+  durationHours Int              @map("duration_hours")
+  description   String?          @db.Text
+  records       TrainingRecord[]
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@map("training_programs")
+}
+
+model TrainingRecord {
+  id          String          @id @default(uuid())
+  programId   String          @map("program_id")
+  program     TrainingProgram @relation(fields: [programId], references: [id], onDelete: Restrict)
+  employeeId  String          @map("employee_id")
+  employee    Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  startDate   DateTime        @map("start_date") @db.Date
+  endDate     DateTime?       @map("end_date") @db.Date
+  status      TrainingStatus  @default(SCHEDULED)
+  score       Decimal?        @db.Decimal(5, 2)
+  certificate String?         @db.VarChar(500)
+  notes       String?         @db.Text
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+
+  @@index([employeeId, status])
+  @@index([programId])
+  @@map("training_records")
+}
+
+model PerformanceReview {
+  id                String       @id @default(uuid())
+  employeeId        String       @map("employee_id")
+  employee          Employee     @relation("ReviewSubject", fields: [employeeId], references: [id], onDelete: Restrict)
+  reviewerId        String       @map("reviewer_id")
+  reviewer          Employee     @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Restrict)
+  period            String       @db.VarChar(20)
+  score             Decimal?     @db.Decimal(3, 1)
+  strengths         String?      @db.Text
+  improvements      String?      @db.Text
+  goals             String?      @db.Text
+  status            ReviewStatus @default(DRAFT)
+  processInstanceId String?      @map("process_instance_id")
+  submittedAt       DateTime?    @map("submitted_at")
+  approvedAt        DateTime?    @map("approved_at")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  @@unique([employeeId, period])
+  @@index([reviewerId])
+  @@index([status])
+  @@map("performance_reviews")
+}
+
+enum TrainingStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("training_status")
+}
+
+enum ReviewStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+
+  @@map("review_status")
 }

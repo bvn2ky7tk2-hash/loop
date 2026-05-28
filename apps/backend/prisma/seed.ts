@@ -312,6 +312,12 @@ async function main() {
   console.log('Seeding Recruitment enriched demo data...');
   await seedRecruitEnriched();
 
+  console.log('Seeding Accounting Chart of Accounts (TT200)...');
+  await seedChartOfAccounts();
+
+  console.log('Seeding HR Training & Performance demo data...');
+  await seedHrExtDemo();
+
   console.log('✅ Seed xong: admin@loop.vn / admin | pm@loop.vn / admin | user.demo@loop.vn / Demo@1234');
 }
 
@@ -2597,6 +2603,156 @@ async function seedRecruitEnriched() {
 
   } catch (err) {
     console.error('  ✗ seedRecruitEnriched error:', err);
+  }
+}
+
+async function seedChartOfAccounts() {
+  try {
+    const accounts = [
+      // Loại 1 — Tài sản ngắn hạn
+      { code: '111',  name: 'Tiền mặt',                              type: 'ASSET',     parentCode: null },
+      { code: '1111', name: 'Tiền Việt Nam',                         type: 'ASSET',     parentCode: '111' },
+      { code: '1112', name: 'Ngoại tệ',                              type: 'ASSET',     parentCode: '111' },
+      { code: '112',  name: 'Tiền gửi ngân hàng',                    type: 'ASSET',     parentCode: null },
+      { code: '1121', name: 'Tiền gửi ngân hàng VND',                type: 'ASSET',     parentCode: '112' },
+      { code: '1122', name: 'Tiền gửi ngân hàng ngoại tệ',           type: 'ASSET',     parentCode: '112' },
+      { code: '131',  name: 'Phải thu của khách hàng',               type: 'ASSET',     parentCode: null },
+      { code: '133',  name: 'Thuế GTGT được khấu trừ',               type: 'ASSET',     parentCode: null },
+      { code: '1331', name: 'Thuế GTGT hàng hóa dịch vụ',            type: 'ASSET',     parentCode: '133' },
+      { code: '141',  name: 'Tạm ứng',                               type: 'ASSET',     parentCode: null },
+      { code: '152',  name: 'Nguyên liệu, vật liệu',                 type: 'ASSET',     parentCode: null },
+      { code: '153',  name: 'Công cụ, dụng cụ',                      type: 'ASSET',     parentCode: null },
+      { code: '156',  name: 'Hàng hóa',                              type: 'ASSET',     parentCode: null },
+      // Loại 2 — Tài sản dài hạn
+      { code: '211',  name: 'Tài sản cố định hữu hình',              type: 'ASSET',     parentCode: null },
+      { code: '2141', name: 'Hao mòn TSCĐ hữu hình',                 type: 'ASSET',     parentCode: null },
+      { code: '242',  name: 'Chi phí trả trước dài hạn',             type: 'ASSET',     parentCode: null },
+      // Loại 3 — Nợ phải trả
+      { code: '311',  name: 'Vay và nợ thuê tài chính ngắn hạn',     type: 'LIABILITY', parentCode: null },
+      { code: '331',  name: 'Phải trả cho người bán',                 type: 'LIABILITY', parentCode: null },
+      { code: '3311', name: 'Phải trả người bán trong nước',          type: 'LIABILITY', parentCode: '331' },
+      { code: '333',  name: 'Thuế và các khoản phải nộp nhà nước',   type: 'LIABILITY', parentCode: null },
+      { code: '3331', name: 'Thuế GTGT phải nộp',                    type: 'LIABILITY', parentCode: '333' },
+      { code: '3334', name: 'Thuế thu nhập doanh nghiệp',             type: 'LIABILITY', parentCode: '333' },
+      { code: '334',  name: 'Phải trả người lao động',               type: 'LIABILITY', parentCode: null },
+      { code: '3341', name: 'Phải trả công nhân viên',               type: 'LIABILITY', parentCode: '334' },
+      { code: '335',  name: 'Chi phí phải trả ngắn hạn',             type: 'LIABILITY', parentCode: null },
+      { code: '338',  name: 'Phải trả, phải nộp khác',               type: 'LIABILITY', parentCode: null },
+      { code: '3382', name: 'Kinh phí công đoàn',                    type: 'LIABILITY', parentCode: '338' },
+      { code: '3383', name: 'Bảo hiểm xã hội',                       type: 'LIABILITY', parentCode: '338' },
+      { code: '3384', name: 'Bảo hiểm y tế',                         type: 'LIABILITY', parentCode: '338' },
+      // Loại 4 — Vốn chủ sở hữu
+      { code: '411',  name: 'Vốn đầu tư của chủ sở hữu',            type: 'EQUITY',    parentCode: null },
+      { code: '4111', name: 'Vốn góp của chủ sở hữu',               type: 'EQUITY',    parentCode: '411' },
+      { code: '421',  name: 'Lợi nhuận sau thuế chưa phân phối',     type: 'EQUITY',    parentCode: null },
+      { code: '4211', name: 'LNST chưa PP năm trước',                type: 'EQUITY',    parentCode: '421' },
+      { code: '4212', name: 'LNST chưa PP năm nay',                  type: 'EQUITY',    parentCode: '421' },
+      // Loại 5 — Doanh thu
+      { code: '511',  name: 'Doanh thu bán hàng và cung cấp dịch vụ', type: 'REVENUE',  parentCode: null },
+      { code: '5111', name: 'Doanh thu bán hàng hóa',                type: 'REVENUE',   parentCode: '511' },
+      { code: '5113', name: 'Doanh thu cung cấp dịch vụ',            type: 'REVENUE',   parentCode: '511' },
+      { code: '515',  name: 'Doanh thu hoạt động tài chính',         type: 'REVENUE',   parentCode: null },
+      // Loại 6 — Chi phí sản xuất kinh doanh
+      { code: '621',  name: 'Chi phí nguyên liệu, vật liệu trực tiếp', type: 'EXPENSE', parentCode: null },
+      { code: '622',  name: 'Chi phí nhân công trực tiếp',           type: 'EXPENSE',   parentCode: null },
+      { code: '627',  name: 'Chi phí sản xuất chung',                type: 'EXPENSE',   parentCode: null },
+      { code: '641',  name: 'Chi phí bán hàng',                      type: 'EXPENSE',   parentCode: null },
+      { code: '6411', name: 'Chi phí nhân viên bán hàng',            type: 'EXPENSE',   parentCode: '641' },
+      { code: '642',  name: 'Chi phí quản lý doanh nghiệp',          type: 'EXPENSE',   parentCode: null },
+      { code: '6421', name: 'Chi phí nhân viên quản lý',             type: 'EXPENSE',   parentCode: '642' },
+      { code: '6422', name: 'Chi phí vật liệu văn phòng',            type: 'EXPENSE',   parentCode: '642' },
+      { code: '6423', name: 'Chi phí dịch vụ mua ngoài',             type: 'EXPENSE',   parentCode: '642' },
+      { code: '635',  name: 'Chi phí tài chính',                     type: 'EXPENSE',   parentCode: null },
+    ];
+
+    let count = 0;
+    for (const acc of accounts) {
+      await (prisma as any).chartOfAccount.upsert({
+        where: { code: acc.code },
+        update: { name: acc.name, type: acc.type as any, parentCode: acc.parentCode, isActive: true },
+        create: { code: acc.code, name: acc.name, type: acc.type as any, parentCode: acc.parentCode, isActive: true },
+      });
+      count++;
+    }
+    console.log(`  ✓ ${count} tài khoản kế toán TT200 đã seed`);
+  } catch (err) {
+    console.error('  ✗ seedChartOfAccounts error:', err);
+  }
+}
+
+async function seedHrExtDemo() {
+  try {
+    const employees = await prisma.employee.findMany({ take: 6, orderBy: { createdAt: 'asc' } });
+    if (employees.length < 2) { console.log('  ⚠ Không đủ nhân viên để seed HR ext demo'); return; }
+
+    // Training programs
+    const programs = [
+      { title: 'Kỹ năng lãnh đạo cơ bản', type: 'internal' as const, durationHours: 16, description: 'Chương trình nội bộ phát triển kỹ năng quản lý nhóm' },
+      { title: 'Chứng chỉ PMP', type: 'external' as const, durationHours: 40, description: 'Chứng chỉ quản lý dự án quốc tế PMI' },
+      { title: 'AWS Cloud Practitioner', type: 'external' as const, durationHours: 24, description: 'Nền tảng điện toán đám mây Amazon Web Services' },
+      { title: 'Quy trình nội bộ Loop ERP', type: 'internal' as const, durationHours: 8, description: 'Hướng dẫn sử dụng hệ thống Loop ERP cho nhân viên mới' },
+    ];
+
+    const createdPrograms: any[] = [];
+    for (const p of programs) {
+      const existing = await (prisma as any).trainingProgram.findFirst({ where: { title: p.title } });
+      if (existing) { createdPrograms.push(existing); continue; }
+      const created = await (prisma as any).trainingProgram.create({ data: p });
+      createdPrograms.push(created);
+    }
+    console.log(`  ✓ ${createdPrograms.length} training programs seeded`);
+
+    // Training records
+    const statuses = ['COMPLETED', 'IN_PROGRESS', 'SCHEDULED', 'COMPLETED'];
+    let recCount = 0;
+    for (let i = 0; i < Math.min(employees.length, 4); i++) {
+      const emp = employees[i];
+      const prog = createdPrograms[i % createdPrograms.length];
+      const existing = await (prisma as any).trainingRecord.findFirst({ where: { employeeId: emp.id, programId: prog.id } });
+      if (existing) continue;
+      await (prisma as any).trainingRecord.create({
+        data: {
+          employeeId: emp.id,
+          programId: prog.id,
+          startDate: new Date('2026-01-15'),
+          endDate: statuses[i] === 'COMPLETED' ? new Date('2026-02-28') : null,
+          status: statuses[i],
+          score: statuses[i] === 'COMPLETED' ? 85 + i * 3 : null,
+        },
+      });
+      recCount++;
+    }
+    console.log(`  ✓ ${recCount} training records seeded`);
+
+    // Performance reviews
+    const reviewer = employees[0];
+    const periods = ['2025-H2', '2026-H1'];
+    let revCount = 0;
+    for (let i = 1; i < Math.min(employees.length, 5); i++) {
+      const emp = employees[i];
+      const period = periods[i % 2];
+      const existing = await (prisma as any).performanceReview.findFirst({ where: { employeeId: emp.id, period } });
+      if (existing) continue;
+      const score = 3 + (i % 3) * 0.5;
+      await (prisma as any).performanceReview.create({
+        data: {
+          employeeId: emp.id,
+          reviewerId: reviewer.id,
+          period,
+          score,
+          strengths: 'Chủ động, hoàn thành đúng tiến độ, giao tiếp tốt với team.',
+          improvements: 'Cần cải thiện kỹ năng báo cáo và quản lý thời gian.',
+          goals: 'Đạt chứng chỉ chuyên môn, lead 1 dự án trong kỳ tiếp theo.',
+          status: i < 3 ? 'APPROVED' : 'SUBMITTED',
+          submittedAt: new Date('2026-01-10'),
+          approvedAt: i < 3 ? new Date('2026-01-20') : null,
+        },
+      });
+      revCount++;
+    }
+    console.log(`  ✓ ${revCount} performance reviews seeded`);
+  } catch (err) {
+    console.error('  ✗ seedHrExtDemo error:', err);
   }
 }
 

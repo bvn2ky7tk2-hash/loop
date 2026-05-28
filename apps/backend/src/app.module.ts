@@ -37,6 +37,8 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { ScreensModule } from './screens/screens.module';
 import { RecruitModule } from './recruit/recruit.module';
 import { AssetsModule } from './assets/assets.module';
+import { AccountingModule } from './accounting/accounting.module';
+import { HrExtModule } from './hr-ext/hr-ext.module';
 
 @Module({
   providers: [
@@ -96,6 +98,8 @@ import { AssetsModule } from './assets/assets.module';
     ScreensModule,
     RecruitModule,
     AssetsModule,
+    AccountingModule,
+    HrExtModule,
   ],
 })
 export class AppModule {}

@@ -52,7 +52,9 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/payroll',  module: 'finance', label: 'Payroll',  icon: 'CreditCardOutlined', permCode: 'finance:read', sortOrder: 0 },
   { route: '/expenses', module: 'finance', label: 'Expenses', icon: 'WalletOutlined',     permCode: 'finance:read', sortOrder: 1 },
   { route: '/budget',   module: 'finance', label: 'Budget',   icon: 'PieChartOutlined',   permCode: 'finance:read', sortOrder: 2 },
-  { route: '/invoices', module: 'finance', label: 'Invoices', icon: 'FileTextOutlined',   permCode: 'finance:read', sortOrder: 3 },
+  { route: '/invoices',                module: 'finance', label: 'Invoices',           icon: 'FileTextOutlined',   permCode: 'finance:read',   sortOrder: 3 },
+  { route: '/accounting/accounts',     module: 'finance', label: 'Chart of Accounts',  icon: 'BankOutlined',       permCode: 'finance:read',   sortOrder: 4 },
+  { route: '/accounting/journal',      module: 'finance', label: 'Journal',            icon: 'BookOutlined',       permCode: 'finance:manage', sortOrder: 5 },
 
   // ─── CRM ───────────────────────────────────────────────────────────────────
   { route: '/crm/leads',     module: 'crm', label: 'Leads',         icon: 'FunnelPlotOutlined', permCode: 'crm:read', sortOrder: 0 },
@@ -77,6 +79,10 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/assets',              module: 'asset', label: 'All Assets',  icon: 'LaptopOutlined', permCode: 'asset:read', sortOrder: 0 },
   { route: '/assets/assignments',  module: 'asset', label: 'Assignments', icon: 'SwapOutlined',   permCode: 'asset:read', sortOrder: 1 },
   { route: '/assets/maintenance',  module: 'asset', label: 'Maintenance', icon: 'ToolOutlined',   permCode: 'asset:read', sortOrder: 2 },
+
+  // ─── HR Extensions — Đào tạo & Hiệu suất ─────────────────────────────────
+  { route: '/hr/training',   module: 'hr', label: 'Training',           icon: 'ReadOutlined',  permCode: 'employees:read', sortOrder: 4 },
+  { route: '/hr/performance', module: 'hr', label: 'Performance Review', icon: 'TrophyOutlined', permCode: 'employees:read', sortOrder: 5 },
 ];
 
 /**
@@ -92,16 +98,16 @@ export const ROUTE_PERMISSION_MAP: Record<string, string | undefined> =
  * Nhãn tiếng Việt cho từng module — dùng trong filter bảng phân quyền.
  */
 export const MODULE_LABELS: Record<string, string> = {
-  pm:        'Dự án',
-  bpm:       'Quy trình',
-  timesheet: 'Chấm công',
-  reports:   'Báo cáo',
-  hr:        'Nhân sự',
-  finance:   'Tài chính',
+  pm:        'Projects',
+  bpm:       'Workflow',
+  timesheet: 'Timesheet',
+  reports:   'Reports',
+  hr:        'HR',
+  finance:   'Finance',
   crm:       'CRM',
-  recruit:   'Tuyển dụng',
-  asset:     'Tài sản',
-  admin:     'Quản trị',
+  recruit:   'Recruitment',
+  asset:     'Assets',
+  admin:     'Admin',
 };
 
 /**
