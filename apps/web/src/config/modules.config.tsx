@@ -48,6 +48,12 @@ import {
   UploadOutlined,
   ThunderboltOutlined,
   MailOutlined,
+  MessageOutlined,
+  MonitorOutlined,
+  ExperimentOutlined,
+  AppstoreAddOutlined as ModuleConfigIcon,
+  RocketOutlined,
+  CalendarOutlined as RoomCalendarIcon,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -100,6 +106,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/projects',       label: 'Tất cả dự án',   visible: true },
           { key: '/knowledge-base', label: 'Cơ sở tri thức', visible: true },
+          { key: '/feed',           label: 'Bảng tin công ty', visible: true },
         ],
       },
     ],
@@ -351,9 +358,10 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-asset-main', label: 'Quản lý tài sản', visible: true,
         items: [
-          { key: '/assets',             label: 'Tất cả tài sản',  visible: true },
-          { key: '/assets/assignments', label: 'Cấp phát tài sản', visible: true },
-          { key: '/assets/maintenance', label: 'Bảo trì',          visible: true },
+          { key: '/assets',               label: 'Tất cả tài sản',  visible: true },
+          { key: '/assets/assignments',   label: 'Cấp phát tài sản', visible: true },
+          { key: '/assets/maintenance',   label: 'Bảo trì',          visible: true },
+          { key: '/assets/room-booking',  label: 'Đặt phòng họp',    visible: true },
         ],
       },
     ],
@@ -381,6 +389,10 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/audit-log',    label: 'Nhật ký hệ thống', visible: true },
           { key: '/automation',         label: 'Tự động hóa',      visible: true },
           { key: '/scheduled-reports',  label: 'Scheduled Reports', visible: true },
+          { key: '/module-config',      label: 'Cấu hình Module',   visible: true },
+          { key: '/admin/health',       label: 'Giám sát hệ thống', visible: true },
+          { key: '/admin/demo',         label: 'Demo Mode',          visible: true },
+          { key: '/onboarding',         label: 'Onboarding Wizard',  visible: true },
         ],
       },
     ],
@@ -461,4 +473,10 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/audit-log':                     <AuditOutlined />,
   '/automation':                    <ThunderboltOutlined />,
   '/scheduled-reports':             <MailOutlined />,
+  '/feed':                          <MessageOutlined />,
+  '/admin/health':                  <MonitorOutlined />,
+  '/admin/demo':                    <ExperimentOutlined />,
+  '/module-config':                 <ModuleConfigIcon />,
+  '/onboarding':                    <RocketOutlined />,
+  '/assets/room-booking':           <RoomCalendarIcon />,
 };

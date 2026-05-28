@@ -1358,6 +1358,42 @@ exports.Prisma.WebhookLogScalarFieldEnum = {
   sentAt: 'sentAt'
 };
 
+exports.Prisma.ModuleConfigScalarFieldEnum = {
+  id: 'id',
+  moduleId: 'moduleId',
+  isEnabled: 'isEnabled',
+  displayName: 'displayName',
+  description: 'description',
+  isCore: 'isCore',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MeetingRoomScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  floor: 'floor',
+  capacity: 'capacity',
+  amenities: 'amenities',
+  status: 'status',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RoomBookingScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  bookedById: 'bookedById',
+  title: 'title',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  attendees: 'attendees',
+  status: 'status',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1834,6 +1870,17 @@ exports.ReportFormat = exports.$Enums.ReportFormat = {
   PDF: 'PDF'
 };
 
+exports.RoomStatus = exports.$Enums.RoomStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  MAINTENANCE: 'MAINTENANCE'
+};
+
+exports.BookingStatus = exports.$Enums.BookingStatus = {
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1933,7 +1980,10 @@ exports.Prisma.ModelName = {
   AutomationRule: 'AutomationRule',
   ScheduledReport: 'ScheduledReport',
   WebhookEndpoint: 'WebhookEndpoint',
-  WebhookLog: 'WebhookLog'
+  WebhookLog: 'WebhookLog',
+  ModuleConfig: 'ModuleConfig',
+  MeetingRoom: 'MeetingRoom',
+  RoomBooking: 'RoomBooking'
 };
 
 /**

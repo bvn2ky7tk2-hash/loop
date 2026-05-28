@@ -82,6 +82,11 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/audit-log',    module: 'admin', label: 'Audit Log',         icon: 'AuditOutlined',             permCode: 'admin:settings',    sortOrder: 6 },
   { route: '/automation',         module: 'admin', label: 'Automation Rules',  icon: 'ThunderboltOutlined', permCode: 'admin:settings', sortOrder: 7 },
   { route: '/scheduled-reports',  module: 'admin', label: 'Báo cáo định kỳ',   icon: 'MailOutlined',        permCode: 'admin:settings', sortOrder: 8 },
+  { route: '/module-config',      module: 'admin', label: 'Cấu hình Module',    icon: 'AppstoreOutlined',    permCode: 'admin:settings', sortOrder: 9 },
+  { route: '/admin/health',       module: 'admin', label: 'Giám sát hệ thống',  icon: 'AppstoreOutlined',    permCode: 'admin:settings', sortOrder: 10 },
+  { route: '/admin/demo',         module: 'admin', label: 'Demo Mode',           icon: 'AppstoreOutlined',    permCode: 'admin:settings', sortOrder: 11 },
+  { route: '/onboarding',         module: 'admin', label: 'Onboarding Wizard',   icon: 'AppstoreOutlined',    permCode: 'admin:settings', sortOrder: 12 },
+  { route: '/feed',               module: 'pm',    label: 'Bảng tin công ty',    icon: 'AppstoreOutlined',    permCode: 'dashboard:read', sortOrder: 10 },
 
   // ─── Recruitment — Tuyển dụng ──────────────────────────────────────────────
   { route: '/recruit/pipeline',   module: 'recruit', label: 'Bảng tuyển dụng',  icon: 'AppstoreAddOutlined',  permCode: 'recruit:read', sortOrder: 0 },
@@ -90,9 +95,10 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/recruit/jobs',       module: 'recruit', label: 'Vị trí tuyển dụng', icon: 'SolutionOutlined',     permCode: 'recruit:read', sortOrder: 3 },
 
   // ─── Assets — Tài sản ──────────────────────────────────────────────────────
-  { route: '/assets',             module: 'asset', label: 'Tất cả tài sản',   icon: 'LaptopOutlined', permCode: 'asset:read', sortOrder: 0 },
-  { route: '/assets/assignments', module: 'asset', label: 'Cấp phát tài sản', icon: 'SwapOutlined',   permCode: 'asset:read', sortOrder: 1 },
-  { route: '/assets/maintenance', module: 'asset', label: 'Bảo trì tài sản',  icon: 'ToolOutlined',   permCode: 'asset:read', sortOrder: 2 },
+  { route: '/assets',               module: 'asset', label: 'Tất cả tài sản',   icon: 'LaptopOutlined',   permCode: 'asset:read',         sortOrder: 0 },
+  { route: '/assets/assignments',   module: 'asset', label: 'Cấp phát tài sản', icon: 'SwapOutlined',     permCode: 'asset:read',         sortOrder: 1 },
+  { route: '/assets/maintenance',   module: 'asset', label: 'Bảo trì tài sản',  icon: 'ToolOutlined',     permCode: 'asset:read',         sortOrder: 2 },
+  { route: '/assets/room-booking',  module: 'asset', label: 'Đặt phòng họp',    icon: 'CalendarOutlined', permCode: 'room_booking:read',   sortOrder: 3 },
 
   // ─── Procurement ──────────────────────────────────────────────────────────
   { route: '/procurement/vendors', module: 'procurement', label: 'Nhà cung cấp', icon: 'ShopOutlined',     permCode: 'procurement:read', sortOrder: 0 },

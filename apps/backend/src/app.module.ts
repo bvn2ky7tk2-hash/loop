@@ -51,6 +51,8 @@ import { CommentsModule } from './comments/comments.module';
 import { FeedModule } from './feed/feed.module';
 import { HealthModule } from './admin/health/health.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
+import { ModuleConfigModule } from './module-config/module-config.module';
+import { RoomBookingModule } from './room-booking/room-booking.module';
 
 @Module({
   providers: [
@@ -124,6 +126,8 @@ import { WebhooksModule } from './webhooks/webhooks.module';
     FeedModule,
     HealthModule,
     WebhooksModule,
+    ModuleConfigModule,
+    RoomBookingModule,
   ],
 })
 export class AppModule {}

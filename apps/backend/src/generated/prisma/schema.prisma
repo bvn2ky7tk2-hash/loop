@@ -52,6 +52,7 @@ model User {
   comments             Comment[]         @relation("CommentAuthor")
   feedPosts            FeedPost[]        @relation("FeedPostAuthor")
   feedReactions        FeedReaction[]    @relation("FeedReactions")
+  roomBookings         RoomBooking[]     @relation("RoomBooker")
 
   @@map("users")
 }
@@ -2384,4 +2385,70 @@ model WebhookLog {
   @@index([endpointId])
   @@index([event])
   @@map("webhook_logs")
+}
+
+// ─── Module Config (Feature Flags) ────────────────────────────────────────────
+
+model ModuleConfig {
+  id          String   @id @default(uuid())
+  moduleId    String   @unique @map("module_id") @db.VarChar(50)
+  isEnabled   Boolean  @default(true) @map("is_enabled")
+  displayName String   @map("display_name") @db.VarChar(100)
+  description String?  @db.Text
+  isCore      Boolean  @default(false) @map("is_core")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("module_configs")
+}
+
+// ─── Room Booking ─────────────────────────────────────────────────────────────
+
+enum RoomStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+
+  @@map("room_status")
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+
+  @@map("booking_status")
+}
+
+model MeetingRoom {
+  id        String        @id @default(uuid())
+  name      String        @db.VarChar(200)
+  floor     String?       @db.VarChar(100)
+  capacity  Int           @default(1)
+  amenities String[]
+  status    RoomStatus    @default(ACTIVE)
+  imageUrl  String?       @map("image_url") @db.VarChar(500)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  bookings  RoomBooking[]
+
+  @@map("meeting_rooms")
+}
+
+model RoomBooking {
+  id         String        @id @default(uuid())
+  roomId     String        @map("room_id")
+  bookedById String        @map("booked_by_id")
+  title      String        @db.VarChar(300)
+  startTime  DateTime      @map("start_time")
+  endTime    DateTime      @map("end_time")
+  attendees  String[]
+  status     BookingStatus @default(CONFIRMED)
+  note       String?       @db.Text
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime      @updatedAt @map("updated_at")
+  room       MeetingRoom   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  bookedBy   User          @relation("RoomBooker", fields: [bookedById], references: [id])
+
+  @@index([roomId, startTime, endTime])
+  @@index([bookedById])
+  @@map("room_bookings")
 }

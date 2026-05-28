@@ -70,6 +70,20 @@ const ImportPage            = lazy(() => import('./pages/admin/ImportPage'));
 const AuditLogPage          = lazy(() => import('./pages/audit-log/AuditLogPage'));
 const AutomationPage        = lazy(() => import('./pages/admin/AutomationPage'));
 const ScheduledReportsPage  = lazy(() => import('./pages/admin/ScheduledReportsPage'));
+const HealthPage            = lazy(() => import('./pages/admin/HealthPage'));
+const DemoModePage          = lazy(() => import('./pages/admin/DemoModePage'));
+const ModuleConfigPage      = lazy(() => import('./pages/admin/ModuleConfigPage'));
+const OnboardingWizardPage  = lazy(() => import('./pages/admin/OnboardingWizardPage'));
+const FeedPage              = lazy(() => import('./pages/feed/FeedPage'));
+const WorkDashboard         = lazy(() => import('./pages/dashboard/WorkDashboard'));
+const PeopleDashboard       = lazy(() => import('./pages/dashboard/PeopleDashboard'));
+const FinanceDashboard      = lazy(() => import('./pages/dashboard/FinanceDashboard'));
+const CrmDashboard          = lazy(() => import('./pages/dashboard/CrmDashboard'));
+const AssetDashboard        = lazy(() => import('./pages/dashboard/AssetDashboard'));
+const OpsDashboard          = lazy(() => import('./pages/dashboard/OpsDashboard'));
+const MeDashboard           = lazy(() => import('./pages/dashboard/MeDashboard'));
+const AdminDashboard        = lazy(() => import('./pages/dashboard/AdminDashboard'));
+const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -159,6 +173,20 @@ export const router = createBrowserRouter([
       { path: 'audit-log',            element: wrap(AuditLogPage) },
       { path: 'automation',           element: wrap(AutomationPage) },
       { path: 'scheduled-reports',    element: wrap(ScheduledReportsPage) },
+      { path: 'admin/health',         element: wrap(HealthPage) },
+      { path: 'admin/demo',           element: wrap(DemoModePage) },
+      { path: 'module-config',        element: wrap(ModuleConfigPage) },
+      { path: 'onboarding',           element: wrap(OnboardingWizardPage) },
+      { path: 'feed',                 element: wrap(FeedPage) },
+      { path: 'dashboard/work',       element: wrap(WorkDashboard) },
+      { path: 'dashboard/people',     element: wrap(PeopleDashboard) },
+      { path: 'dashboard/finance',    element: wrap(FinanceDashboard) },
+      { path: 'dashboard/crm',        element: wrap(CrmDashboard) },
+      { path: 'dashboard/asset',      element: wrap(AssetDashboard) },
+      { path: 'dashboard/ops',        element: wrap(OpsDashboard) },
+      { path: 'dashboard/me',         element: wrap(MeDashboard) },
+      { path: 'dashboard/admin',      element: wrap(AdminDashboard) },
+      { path: 'assets/room-booking',  element: wrap(RoomBookingPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

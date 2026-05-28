@@ -132,6 +132,11 @@ export const PERMISSIONS = {
 
   // HR Self-service
   HR_READ: 'hr:read',
+
+  // Room Booking
+  ROOM_BOOKING_READ:   'room_booking:read',
+  ROOM_BOOKING_CREATE: 'room_booking:create',
+  ROOM_BOOKING_MANAGE: 'room_booking:manage',
 } as const;
 
 export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -249,6 +254,10 @@ export const ALL_PERMISSIONS: PermissionDef[] = [
   { code: PERMISSIONS.TIMELOGS_READ, module: 'timelogs', action: 'read', description: 'Xem nhật ký ghi giờ của nhân viên' },
 
   { code: PERMISSIONS.HR_READ, module: 'hr', action: 'read', description: 'Xem thông tin cá nhân (self-service)' },
+
+  { code: PERMISSIONS.ROOM_BOOKING_READ,   module: 'room_booking', action: 'read',   description: 'Xem lịch đặt phòng họp' },
+  { code: PERMISSIONS.ROOM_BOOKING_CREATE, module: 'room_booking', action: 'create', description: 'Đặt phòng họp' },
+  { code: PERMISSIONS.ROOM_BOOKING_MANAGE, module: 'room_booking', action: 'manage', description: 'Quản lý phòng và lịch đặt phòng' },
 ];
 
 // ─── Default Role → Permission Mapping ───────────────────────────────────────
@@ -284,6 +293,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.TRAINING_READ, PERMISSIONS.TRAINING_CREATE, PERMISSIONS.TRAINING_MANAGE,
     PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
+    PERMISSIONS.ROOM_BOOKING_READ, PERMISSIONS.ROOM_BOOKING_CREATE, PERMISSIONS.ROOM_BOOKING_MANAGE,
   ],
 
   [Role.PM]: [
@@ -309,6 +319,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.TRAINING_READ,
     PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
+    PERMISSIONS.ROOM_BOOKING_READ, PERMISSIONS.ROOM_BOOKING_CREATE,
   ],
 
   [Role.MEMBER]: [
@@ -325,6 +336,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<Role, string[]> = {
     PERMISSIONS.TRAINING_READ,
     PERMISSIONS.HR_READ,
     PERMISSIONS.DASHBOARD_READ,
+    PERMISSIONS.ROOM_BOOKING_READ, PERMISSIONS.ROOM_BOOKING_CREATE,
   ],
 };
 
