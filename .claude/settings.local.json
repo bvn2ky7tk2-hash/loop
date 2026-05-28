@@ -295,7 +295,27 @@
       "Bash(chmod u+w /Users/leophan188/Downloads/Loop)",
       "Bash(xattr -r -d com.apple.macl /Users/leophan188/Downloads/Loop)",
       "Bash(xattr -d com.apple.macl /Users/leophan188/Downloads/Loop)",
-      "Bash(xattr /Users/leophan188/Downloads/Loop)"
+      "Bash(xattr /Users/leophan188/Downloads/Loop)",
+      "Bash(rm -rf /Users/leophan188/Downloads/Loop/apps/mobile/.git)",
+      "Bash(git rm *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(gh --version)",
+      "Bash(python3 /Users/leophan188/Downloads/Loop/_bmad/scripts/resolve_customization.py --skill /Users/leophan188/Downloads/Loop/.claude/skills/bmad-quick-dev --key workflow)",
+      "Bash(git -C /Users/leophan188/Downloads/Loop status --short)",
+      "Bash(git -C /Users/leophan188/Downloads/Loop diff --stat)",
+      "Bash(git -C /Users/leophan188/Downloads/Loop diff apps/web/src/config/modules.config.tsx)",
+      "Bash(git -C /Users/leophan188/Downloads/Loop diff apps/web/src/config/screens.registry.ts)",
+      "Bash(sed -n '46,60p' /Users/leophan188/Downloads/Loop/apps/backend/src/invoices/invoices.service.ts)",
+      "Bash(sed -n '1,30p' /Users/leophan188/Downloads/Loop/apps/backend/src/expenses/expenses.service.ts)",
+      "Bash(sed -n '192,215p' /Users/leophan188/Downloads/Loop/apps/backend/src/payroll/payroll.service.ts)",
+      "Bash(node prisma/seed-500.js)",
+      "Read(//Users/Leopold188/Downloads/Loop/apps/web/src/components/ui/**)",
+      "Bash(grep -rn \"isManager\\\\|MANAGER_ROLES\" /Users/Leopold188/Downloads/Loop/apps/web/src 2>/dev/null | head -5 *)",
+      "Read(//Users/Leopold188/Downloads/Loop/apps/web/**)",
+      "Bash(node prisma/seed-patch.js)"
     ],
     "additionalDirectories": [
       "/Users/leophan188/Downloads/Loop/_bmad-output/planning-artifacts/prds",
@@ -303,7 +323,8 @@
       "/Users/leophan188/Downloads/Loop/.claude",
       "/Users/Leopold/Downloads/Loop/apps/backend/prisma/migrations",
       "/Users/leophan188/Downloads/Loop",
-      "/Users/Leopold/Downloads/Loop/apps/web/src/config"
+      "/Users/Leopold/Downloads/Loop/apps/web/src/config",
+      "/Users/Leopold188/Downloads/Loop/apps/web/public"
     ]
   }
 }

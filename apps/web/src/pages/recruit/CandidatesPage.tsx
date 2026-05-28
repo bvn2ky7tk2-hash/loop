@@ -54,6 +54,7 @@ export default function CandidatesPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters]       = useState<CandidateFilterParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer]     = useState(false);
@@ -132,11 +133,11 @@ export default function CandidatesPage() {
     {
       title: 'Ứng viên', dataIndex: 'name',
       render: (n: string, row: Candidate) => (
-        <Button type="link" style={{ padding: 0, color: preset.primary }}
+        <Button type="link" style={{ padding: 0, color: linkColor }}
           onClick={() => { setSelected(row); setDetailOpen(true); }}>{n}</Button>
       ),
     },
-    { title: 'Email', dataIndex: 'email', width: 200, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Email', dataIndex: 'email', width: 200, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Vị trí', key: 'job', width: 200,
       render: (_: unknown, row: Candidate) => <Text style={{ color: textPrimary }}>{row.jobOpening?.title ?? '—'}</Text>,
@@ -147,9 +148,9 @@ export default function CandidatesPage() {
     },
     {
       title: 'Lương kỳ vọng', dataIndex: 'expectedSalary', width: 150, align: 'right',
-      render: (v?: string) => v ? `${(Number(v)/1_000_000).toFixed(0)}M ₫` : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{(Number(v)/1_000_000).toFixed(0)}M ₫</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
-    { title: 'Ngày nộp', dataIndex: 'createdAt', width: 110, render: (v: string) => dayjs(v).format('DD/MM/YYYY') },
+    { title: 'Ngày nộp', dataIndex: 'createdAt', width: 110, render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> },
     {
       title: '', key: 'actions', width: 130, align: 'right',
       render: (_: unknown, row: Candidate) => (
@@ -199,9 +200,6 @@ export default function CandidatesPage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
 

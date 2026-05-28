@@ -1,22 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="a" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4FC3F7"/>
-      <stop offset=".45" stop-color="#5C6BC0"/>
-      <stop offset="1" stop-color="#AB47BC"/>
-    </linearGradient>
-    <linearGradient id="b" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4FC3F7" stop-opacity="0.4"/>
-      <stop offset="1" stop-color="#AB47BC" stop-opacity="0.4"/>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0052CC"/>
+      <stop offset="100%" stop-color="#4C9AFF"/>
     </linearGradient>
   </defs>
-  <!-- Orbital ring -->
-  <circle cx="32" cy="32" r="28" stroke="url(#b)" stroke-width="1.2"/>
-  <!-- Top dot -->
-  <circle cx="32" cy="4" r="3" fill="#4FC3F7"/>
-  <!-- Bottom-left dot -->
-  <circle cx="24" cy="59.5" r="2.2" fill="#AB47BC"/>
-  <!-- Figure-8 / infinity shape -->
-  <path d="M32 32 C32 25.4 26.6 20 20 20 C13.4 20 8 25.4 8 32 C8 38.6 13.4 44 20 44 C26.6 44 32 38.6 32 32 C32 25.4 37.4 20 44 20 C50.6 20 56 25.4 56 32 C56 38.6 50.6 44 44 44 C37.4 44 32 38.6 32 32Z"
-        stroke="url(#a)" stroke-width="5" fill="none" stroke-linejoin="round"/>
+
+  <circle cx="256" cy="256" r="180"
+          stroke="url(#g)" stroke-width="28" fill="none"
+          stroke-dasharray="950 120" stroke-linecap="round"/>
+
+  <path d="M120 256
+           C120 180, 196 180, 256 256
+           C316 332, 392 332, 392 256
+           C392 180, 316 180, 256 256
+           C196 332, 120 332, 120 256Z"
+        fill="none" stroke="url(#g)"
+        stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="402" cy="116" r="18" fill="#2684FF"/>
+  <circle cx="428" cy="154" r="12" fill="#4C9AFF"/>
+  <circle cx="444" cy="188" r="8"  fill="#7AB8FF"/>
 </svg>

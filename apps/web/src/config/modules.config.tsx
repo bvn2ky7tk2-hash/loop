@@ -194,6 +194,12 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/hr/performance', label: 'Performance Review', visible: true },
         ],
       },
+      {
+        key: 'g-hr-self', label: 'Self Service', visible: true,
+        items: [
+          { key: '/payroll/my-payslips', label: 'My Payslips', visible: true },
+        ],
+      },
     ],
   },
 
@@ -215,7 +221,8 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/cost',     label: 'Cost',     visible: true },
           { key: '/budget',   label: 'Budget',   visible: true },
           { key: '/expenses', label: 'Expenses', visible: true },
-          { key: '/payroll',  label: 'Payroll',  visible: true },
+          { key: '/payroll',          label: 'Payroll',           visible: true },
+          { key: '/payroll/settings', label: 'Payroll Settings',   visible: true },
           { key: '/invoices',              label: 'Invoices',          visible: true },
           { key: '/accounting/accounts',   label: 'Chart of Accounts', visible: true },
           { key: '/accounting/journal',    label: 'Journal',           visible: true },
@@ -248,6 +255,12 @@ export const MODULES: ModuleDefinition[] = [
         key: 'g-crm-customers', label: 'Customers', visible: true,
         items: [
           { key: '/crm/customers', label: 'All Customers', visible: true },
+        ],
+      },
+      {
+        key: 'g-crm-contracts', label: 'Contracts', visible: true,
+        items: [
+          { key: '/crm/client-contracts', label: 'Hợp đồng KH', visible: true },
         ],
       },
     ],
@@ -370,11 +383,14 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/org-chart':             <ApartmentOutlined />,
   '/contracts':             <AuditOutlined />,
   '/payroll':               <CreditCardOutlined />,
+  '/payroll/settings':       <SettingOutlined />,
+  '/payroll/my-payslips':    <FileTextOutlined />,
   '/invoices':              <FileTextOutlined />,
   '/crm/leads':             <FunnelPlotOutlined />,
   '/crm/deals':             <TrophyOutlined />,
   '/crm/contacts':          <ContactsOutlined />,
   '/crm/customers':         <ShopOutlined />,
+  '/crm/client-contracts':  <AuditOutlined />,
   '/recruit/pipeline':      <AppstoreAddOutlined />,
   '/recruit/candidates':    <UsergroupAddOutlined />,
   '/recruit/interviews':    <ScheduleFilled />,

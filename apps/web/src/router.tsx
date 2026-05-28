@@ -36,15 +36,18 @@ const LeavePage = lazy(() => import('./pages/leaves/LeavePage'));
 const ExpensePage = lazy(() => import('./pages/expenses/ExpensePage'));
 const BudgetPage = lazy(() => import('./pages/budget/BudgetPage'));
 const PayrollPage = lazy(() => import('./pages/payroll/PayrollPage'));
+const PayrollSettingsPage = lazy(() => import('./pages/payroll/PayrollSettingsPage'));
+const MyPayslipsPage = lazy(() => import('./pages/payroll/MyPayslipsPage'));
 const InvoicesPage          = lazy(() => import('./pages/invoices/InvoicesPage'));
 const RecruitJobsPage       = lazy(() => import('./pages/recruit/JobsPage'));
 const RecruitCandidatesPage = lazy(() => import('./pages/recruit/CandidatesPage'));
 const RecruitInterviewsPage = lazy(() => import('./pages/recruit/InterviewsPage'));
 const RecruitPipelinePage   = lazy(() => import('./pages/recruit/PipelinePage'));
-const CrmCustomersPage = lazy(() => import('./pages/crm/CustomersPage'));
-const CrmContactsPage  = lazy(() => import('./pages/crm/ContactsPage'));
-const CrmLeadsPage     = lazy(() => import('./pages/crm/LeadsPage'));
-const CrmDealsPage     = lazy(() => import('./pages/crm/DealsPage'));
+const CrmCustomersPage       = lazy(() => import('./pages/crm/CustomersPage'));
+const CrmContactsPage        = lazy(() => import('./pages/crm/ContactsPage'));
+const CrmLeadsPage           = lazy(() => import('./pages/crm/LeadsPage'));
+const CrmDealsPage           = lazy(() => import('./pages/crm/DealsPage'));
+const CrmClientContractsPage = lazy(() => import('./pages/crm/ClientContractsPage'));
 const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
 const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
 const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
@@ -107,16 +110,19 @@ export const router = createBrowserRouter([
       { path: 'leaves',          element: wrap(LeavePage) },
       { path: 'expenses',        element: wrap(ExpensePage) },
       { path: 'budget',          element: wrap(BudgetPage) },
-      { path: 'payroll',         element: wrap(PayrollPage) },
+      { path: 'payroll',          element: wrap(PayrollPage) },
+      { path: 'payroll/settings',   element: wrap(PayrollSettingsPage) },
+      { path: 'payroll/my-payslips', element: wrap(MyPayslipsPage) },
       { path: 'invoices',             element: wrap(InvoicesPage) },
       { path: 'recruit/jobs',         element: wrap(RecruitJobsPage) },
       { path: 'recruit/candidates',   element: wrap(RecruitCandidatesPage) },
       { path: 'recruit/interviews',   element: wrap(RecruitInterviewsPage) },
       { path: 'recruit/pipeline',     element: wrap(RecruitPipelinePage) },
-      { path: 'crm/customers',  element: wrap(CrmCustomersPage) },
-      { path: 'crm/contacts',   element: wrap(CrmContactsPage) },
-      { path: 'crm/leads',      element: wrap(CrmLeadsPage) },
-      { path: 'crm/deals',      element: wrap(CrmDealsPage) },
+      { path: 'crm/customers',         element: wrap(CrmCustomersPage) },
+      { path: 'crm/contacts',          element: wrap(CrmContactsPage) },
+      { path: 'crm/leads',             element: wrap(CrmLeadsPage) },
+      { path: 'crm/deals',             element: wrap(CrmDealsPage) },
+      { path: 'crm/client-contracts',  element: wrap(CrmClientContractsPage) },
       { path: 'assets',             element: wrap(AssetsPage) },
       { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
       { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },

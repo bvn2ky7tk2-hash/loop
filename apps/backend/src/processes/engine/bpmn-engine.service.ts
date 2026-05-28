@@ -7,6 +7,7 @@ import { InstanceStatus, UserTaskStatus } from '../../generated/prisma';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { NotificationType } from '../../generated/prisma';
 import { ProcessEventBus } from '../process-event-bus.service';
+import type { AssigneeConfigDto, StepConfigItemDto, NotificationTriggerDto } from '../definitions/dto/create-definition.dto';
 
 export interface WaitEventApi {
   id: string;
@@ -23,6 +24,21 @@ export interface WaitEventApi {
     [key: string]: unknown;
   };
   signal?: (variables?: Record<string, unknown>) => void;
+}
+
+// ─── Internal types for stepConfig JSON from DB ───────────────────────────────
+
+interface StepConfigMap {
+  [activityId: string]: StepConfigItemDto;
+}
+
+interface TemplateContext {
+  process: { name: string };
+  task: { name: string; dueDate?: string };
+  requester: { name: string; email: string };
+  assignee: { name: string; email: string };
+  recipient: { name: string; email: string };
+  variables: Record<string, unknown>;
 }
 
 @Injectable()
@@ -61,9 +77,6 @@ export class BpmnEngineService {
 
       const state = await engine.getState();
 
-      // Persist state before creating user task records so a crash between
-      // handleWaitActivities and the caller's update doesn't leave orphaned tasks
-      // with no recoverable engine state.
       await this.prisma.processInstance.update({
         where: { id: instanceId },
         data: { tokenState: state as never },
@@ -143,17 +156,12 @@ export class BpmnEngineService {
     const bpmnXml = instance.definition.bpmnXml;
     const tokenState = instance.tokenState as unknown as BpmnEngineExecutionState;
 
-    // Merge variables into the serialised state BEFORE recovery so that
-    // gateway conditionExpressions can resolve them. bpmn-elements evaluates
-    // conditions against the process-execution environment, not engine.environment.
     const stateWithVars = mergeVariablesIntoState(tokenState, variables);
 
     const engine = new Engine({ name: instanceId, source: bpmnXml });
     engine.recover(stateWithVars);
 
     const listener = new EventEmitter();
-    // Only collect wait activities that occur AFTER signaling — pre-signal waits are
-    // already recorded in DB from a previous handleWaitActivities call.
     let postSignal = false;
     const newWaitActivities: WaitEventApi[] = [];
 
@@ -162,13 +170,10 @@ export class BpmnEngineService {
     });
 
     const execution = await engine.resume({ listener });
-    // Mark that from here, any 'wait' event is a new downstream task.
     postSignal = true;
 
-    // Signal the user task to advance execution.
     execution.signal({ id: activityId, ...variables });
 
-    // Wait for next user task (wait) or process end.
     let settledBy = 'timeout';
     await new Promise<void>((resolve) => {
       const timeout = setTimeout(() => { settledBy = 'timeout'; resolve(); }, 800);
@@ -237,6 +242,47 @@ export class BpmnEngineService {
     return newState;
   }
 
+  /**
+   * Gửi notification khi task hoàn thành — gọi từ ProcessUserTasksService.
+   */
+  async sendCompletionNotification(
+    taskId: string,
+    instanceId: string,
+    activityId: string,
+    taskName: string,
+  ): Promise<void> {
+    try {
+      const instance = await this.prisma.processInstance.findUnique({
+        where: { id: instanceId },
+        include: { definition: true, startedByUser: true },
+      });
+      if (!instance) return;
+
+      const stepConfig = (instance.definition.stepConfig as StepConfigMap | null)?.[activityId];
+      const trigger = stepConfig?.notificationConfig?.taskCompleted;
+      if (!trigger?.enabled || !trigger.recipients?.length) return;
+
+      const task = await this.prisma.processUserTask.findUnique({
+        where: { id: taskId },
+        include: { assignee: true },
+      });
+      if (!task) return;
+
+      await this.sendStepNotification(trigger, {
+        taskId,
+        instanceId,
+        taskName,
+        instance,
+        assignee: task.assignee ?? null,
+        dueDate: task.dueDate?.toISOString(),
+      });
+    } catch (err) {
+      this.logger.warn(`sendCompletionNotification failed taskId=${taskId}`, err);
+    }
+  }
+
+  // ─── Private helpers ─────────────────────────────────────────────────────────
+
   private async handleWaitActivities(
     instanceId: string,
     waitActivities: WaitEventApi[],
@@ -263,16 +309,33 @@ export class BpmnEngineService {
     name: string,
     content: Record<string, unknown>,
   ): Promise<void> {
-    // Kiểm tra đã tồn tại chưa
     const existing = await this.prisma.processUserTask.findFirst({
       where: { instanceId, activityId, status: { in: [UserTaskStatus.PENDING, UserTaskStatus.IN_PROGRESS] } },
     });
     if (existing) return;
 
     const formData = (content.formData ?? content.form ?? null) as Record<string, unknown> | null;
-    const assigneeId = (content.assigneeId ?? content.assignee ?? null) as string | null;
     const dueDateRaw = content.dueDate as string | null | undefined;
     const dueDate = dueDateRaw ? new Date(dueDateRaw) : null;
+
+    // Load definition stepConfig + instance để resolve assignee
+    const instance = await this.prisma.processInstance.findUnique({
+      where: { id: instanceId },
+      include: { definition: true, startedByUser: true },
+    });
+
+    // Resolve assignee theo stepConfig, fallback về content.assigneeId (BPMN property)
+    let assigneeId: string | null = (content.assigneeId ?? content.assignee ?? null) as string | null;
+    const stepConfig = (instance?.definition.stepConfig as StepConfigMap | null)?.[activityId];
+
+    if (stepConfig?.assigneeConfig && instance) {
+      const resolved = await this.resolveAssignee(stepConfig.assigneeConfig, {
+        startedBy: instance.startedBy,
+        variables: instance.variables,
+        startedByUser: instance.startedByUser,
+      });
+      if (resolved) assigneeId = resolved;
+    }
 
     const task = await this.prisma.processUserTask.create({
       data: {
@@ -286,7 +349,6 @@ export class BpmnEngineService {
       },
     });
 
-    // Ghi activity log
     await this.prisma.processActivityLog.create({
       data: {
         instanceId,
@@ -297,25 +359,251 @@ export class BpmnEngineService {
       },
     });
 
-    // Gửi notification nếu có assigneeId
-    if (assigneeId) {
+    // Notification qua stepConfig (ưu tiên) hoặc fallback notification cơ bản
+    if (instance) {
+      const trigger = stepConfig?.notificationConfig?.taskAssigned;
+      if (trigger?.enabled && trigger.recipients?.length) {
+        const assigneeUser = assigneeId
+          ? await this.prisma.user.findUnique({ where: { id: assigneeId } })
+          : null;
+
+        await this.sendStepNotification(trigger, {
+          taskId: task.id,
+          instanceId,
+          taskName: name,
+          instance: {
+            startedBy: instance.startedBy,
+            variables: instance.variables,
+            definition: { name: instance.definition.name },
+            startedByUser: {
+              name: instance.startedByUser.name,
+              email: instance.startedByUser.email ?? null,
+            },
+          },
+          assignee: assigneeUser,
+          dueDate: dueDate?.toISOString(),
+        });
+      } else if (assigneeId) {
+        // Fallback: notification cơ bản khi chưa cấu hình stepConfig
+        try {
+          await this.notificationsService.createAndDeliver(
+            assigneeId,
+            NotificationType.PROCESS_TASK_ASSIGNED,
+            'Bạn có task quy trình mới',
+            `Task "${name}" đang chờ bạn xử lý`,
+            { processUserTaskId: task.id, instanceId },
+          );
+        } catch (err) {
+          this.logger.warn(`Không thể gửi notification cho user task ${task.id}`, err);
+        }
+      }
+    }
+  }
+
+  /**
+   * Resolve assignee từ AssigneeConfigDto.
+   * Trả về userId hoặc null nếu không tìm được.
+   */
+  private async resolveAssignee(
+    config: AssigneeConfigDto,
+    instance: { startedBy: string; variables: unknown; startedByUser: { orgUnitId?: string | null } },
+  ): Promise<string | null> {
+    switch (config.mode) {
+      case 'fixed':
+        return config.userId ?? null;
+
+      case 'orgunit': {
+        if (!config.orgUnitId) return null;
+        const user = await this.prisma.user.findFirst({
+          where: {
+            orgUnitId: config.orgUnitId,
+            isActive: true,
+            ...(config.role ? { role: config.role as never } : {}),
+          },
+          select: { id: true },
+          orderBy: { createdAt: 'asc' },
+        });
+        return user?.id ?? null;
+      }
+
+      case 'requester_manager': {
+        const requester = await this.prisma.user.findUnique({
+          where: { id: instance.startedBy },
+          select: { orgUnitId: true },
+        });
+        if (!requester?.orgUnitId) return null;
+        // Tìm user có role LEADERSHIP hoặc PM trong cùng phòng ban
+        const manager = await this.prisma.user.findFirst({
+          where: {
+            orgUnitId: requester.orgUnitId,
+            isActive: true,
+            role: { in: ['LEADERSHIP', 'PM'] as never[] },
+            id: { not: instance.startedBy },
+          },
+          select: { id: true },
+          orderBy: { createdAt: 'asc' },
+        });
+        return manager?.id ?? null;
+      }
+
+      case 'variable': {
+        if (!config.variablePath) return null;
+        const vars = instance.variables as Record<string, unknown>;
+        const val = vars?.[config.variablePath];
+        return typeof val === 'string' ? val : null;
+      }
+
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Render template {{key.subkey}} với context object.
+   */
+  private renderTemplate(template: string, ctx: TemplateContext): string {
+    return template.replace(/\{\{([^}]+)\}\}/g, (_, path: string) => {
+      const parts = path.trim().split('.');
+      let val: unknown = ctx;
+      for (const part of parts) {
+        if (val && typeof val === 'object' && part in (val as Record<string, unknown>)) {
+          val = (val as Record<string, unknown>)[part];
+        } else {
+          val = undefined;
+          break;
+        }
+      }
+      return val != null ? String(val) : `{{${path}}}`;
+    });
+  }
+
+  /**
+   * Resolve danh sách userId từ recipients config.
+   */
+  private async resolveRecipientIds(
+    recipients: string[],
+    instanceId: string,
+    assigneeId: string | null,
+    startedBy: string,
+    instanceVariables: Record<string, unknown>,
+  ): Promise<string[]> {
+    const ids = new Set<string>();
+
+    for (const r of recipients) {
+      if (r === 'assignee' && assigneeId) {
+        ids.add(assigneeId);
+      } else if (r === 'requester') {
+        ids.add(startedBy);
+      } else if (r === 'requester_manager') {
+        const requester = await this.prisma.user.findUnique({
+          where: { id: startedBy },
+          select: { orgUnitId: true },
+        });
+        if (requester?.orgUnitId) {
+          const manager = await this.prisma.user.findFirst({
+            where: {
+              orgUnitId: requester.orgUnitId,
+              isActive: true,
+              role: { in: ['LEADERSHIP', 'PM'] as never[] },
+              id: { not: startedBy },
+            },
+            select: { id: true },
+          });
+          if (manager) ids.add(manager.id);
+        }
+      } else if (r.startsWith('user:')) {
+        const uid = r.slice(5);
+        if (uid) ids.add(uid);
+      } else if (r.startsWith('{{') && r.endsWith('}}')) {
+        // {{variables.fieldName}}
+        const path = r.slice(2, -2).trim();
+        const parts = path.split('.');
+        if (parts[0] === 'variables' && parts[1]) {
+          const val = instanceVariables[parts[1]];
+          if (typeof val === 'string') ids.add(val);
+        }
+      }
+    }
+
+    return Array.from(ids);
+  }
+
+  /**
+   * Gửi notification theo trigger config cho một bước quy trình.
+   */
+  private async sendStepNotification(
+    trigger: NotificationTriggerDto,
+    ctx: {
+      taskId: string;
+      instanceId: string;
+      taskName: string;
+      instance: {
+        startedBy: string;
+        variables: unknown;
+        definition: { name: string };
+        startedByUser: { name: string; email?: string | null };
+      };
+      assignee: { id: string; name: string; email?: string | null } | null;
+      dueDate?: string;
+    },
+  ): Promise<void> {
+    const { instance, assignee, taskName, dueDate } = ctx;
+    const instanceVars = (instance.variables ?? {}) as Record<string, unknown>;
+
+    const recipientIds = await this.resolveRecipientIds(
+      trigger.recipients,
+      ctx.instanceId,
+      assignee?.id ?? null,
+      instance.startedBy,
+      instanceVars,
+    );
+
+    if (!recipientIds.length) return;
+
+    // Load user info cho tất cả recipients một lần
+    const recipientUsers = await this.prisma.user.findMany({
+      where: { id: { in: recipientIds }, isActive: true },
+      select: { id: true, name: true, email: true },
+    });
+
+    for (const recipient of recipientUsers) {
+      const templateCtx: TemplateContext = {
+        process: { name: instance.definition.name },
+        task: { name: taskName, dueDate: dueDate ?? '' },
+        requester: {
+          name: instance.startedByUser.name,
+          email: instance.startedByUser.email ?? '',
+        },
+        assignee: {
+          name: assignee?.name ?? '',
+          email: assignee?.email ?? '',
+        },
+        recipient: {
+          name: recipient.name,
+          email: recipient.email ?? '',
+        },
+        variables: instanceVars,
+      };
+
+      const subject = this.renderTemplate(trigger.subject, templateCtx);
+      const body = this.renderTemplate(trigger.bodyTemplate, templateCtx);
+
       try {
         await this.notificationsService.createAndDeliver(
-          assigneeId,
+          recipient.id,
           NotificationType.PROCESS_TASK_ASSIGNED,
-          'Bạn có task quy trình mới',
-          `Task "${name}" đang chờ bạn xử lý`,
-          { processUserTaskId: task.id, instanceId },
+          subject,
+          body,
+          { processUserTaskId: ctx.taskId, instanceId: ctx.instanceId },
         );
       } catch (err) {
-        this.logger.warn(`Không thể gửi notification cho user task ${task.id}`, err);
+        this.logger.warn(`sendStepNotification failed recipient=${recipient.id}`, err);
       }
     }
   }
 
   private async checkCompletion(instanceId: string, executionState: string): Promise<void> {
     if (executionState === 'idle') {
-      // Đọc variables trước khi update để emit cùng payload
       const instance = await this.prisma.processInstance.findUnique({
         where: { id: instanceId },
         select: { variables: true },
@@ -335,8 +623,6 @@ export class BpmnEngineService {
 /**
  * Merge task output variables into the serialised bpmn-engine state so that
  * gateway conditionExpressions can evaluate them after engine.recover().
- * bpmn-elements stores variables at both the definition level and the
- * process-execution level; we update both to be safe.
  */
 function mergeVariablesIntoState(
   state: BpmnEngineExecutionState,
@@ -348,13 +634,11 @@ function mergeVariablesIntoState(
   const defs = (s.definitions as Record<string, unknown>[] | undefined) ?? [];
 
   for (const def of defs) {
-    // definition-level environment
     const defEnv = def.environment as Record<string, unknown> | undefined;
     if (defEnv?.variables && typeof defEnv.variables === 'object') {
       Object.assign(defEnv.variables as Record<string, unknown>, variables);
     }
 
-    // process-execution-level environments
     const execution = def.execution as Record<string, unknown> | undefined;
     const processes = (execution?.processes as Record<string, unknown>[] | undefined) ?? [];
     for (const proc of processes) {

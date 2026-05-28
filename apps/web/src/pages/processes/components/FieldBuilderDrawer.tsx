@@ -2,11 +2,12 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   Button, Table, Space, Modal, Form, Input,
   Select, Switch, InputNumber, App, Popconfirm, Tag, Tabs,
-  Typography, Divider,
+  Typography, Divider, Radio, Card,
 } from 'antd';
 import { CenteredModal } from '../../../components/ui/CenteredModal';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, HolderOutlined,
+  UserOutlined, BellOutlined, UnorderedListOutlined,
 } from '@ant-design/icons';
 import {
   processesApi,
@@ -14,8 +15,18 @@ import {
   type ProcessDefinition,
   type FormField,
   type CriterionConfig,
+  type StepConfigItem,
+  type StepConfigMap,
+  type AssigneeConfig,
+  type AssigneeMode,
+  type NotificationTrigger,
+  type SystemRole,
 } from '../../../api/processes.api';
 import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { usersApi, type UserRecord } from '../../../api/users';
+import { orgUnitsApi, type OrgUnitTree } from '../../../api/org-units';
+import { useThemeStore } from '../../../store/theme.store';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -30,6 +41,33 @@ const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   criteria_grid: 'Bảng tiêu chí',
 };
 
+const ASSIGNEE_MODE_LABELS: Record<AssigneeMode, string> = {
+  fixed: 'Người cố định',
+  orgunit: 'Theo phòng ban',
+  requester_manager: 'Quản lý của người yêu cầu',
+  variable: 'Từ biến quy trình',
+};
+
+const SYSTEM_ROLE_OPTIONS: { value: SystemRole; label: string }[] = [
+  { value: 'ADMIN', label: 'Admin' },
+  { value: 'LEADERSHIP', label: 'Leadership' },
+  { value: 'PM', label: 'PM' },
+  { value: 'MEMBER', label: 'Member' },
+];
+
+const TEMPLATE_VARS = [
+  '{{process.name}}', '{{task.name}}', '{{task.dueDate}}',
+  '{{requester.name}}', '{{requester.email}}',
+  '{{assignee.name}}', '{{assignee.email}}',
+  '{{recipient.name}}', '{{recipient.email}}',
+];
+
+const RECIPIENT_PRESETS = [
+  { value: 'assignee', label: 'Người xử lý' },
+  { value: 'requester', label: 'Người yêu cầu' },
+  { value: 'requester_manager', label: 'Quản lý người yêu cầu' },
+];
+
 interface UserTaskMeta {
   id: string;
   name: string;
@@ -43,7 +81,6 @@ function parseUserTasksFromBpmn(xml: string): UserTaskMeta[] {
       doc.getElementsByTagNameNS('http://www.omg.org/spec/BPMN/20100524/MODEL', 'userTask'),
     );
     if (!tasks.length) {
-      // fallback: no namespace
       const fallback = Array.from(doc.querySelectorAll('userTask'));
       return fallback.map((el) => ({
         id: el.getAttribute('id') ?? '',
@@ -59,6 +96,18 @@ function parseUserTasksFromBpmn(xml: string): UserTaskMeta[] {
   }
 }
 
+function flattenOrgUnits(nodes: OrgUnitTree[]): OrgUnitTree[] {
+  const result: OrgUnitTree[] = [];
+  function walk(arr: OrgUnitTree[]) {
+    for (const n of arr) {
+      result.push(n);
+      if (n.children?.length) walk(n.children);
+    }
+  }
+  walk(nodes);
+  return result;
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 interface Props {
@@ -70,6 +119,8 @@ interface Props {
 export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   const { message } = App.useApp();
   const qc = useQueryClient();
+  const { mode, preset } = useThemeStore();
+  const isDark = mode === 'dark';
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('__start__');
 
@@ -77,21 +128,37 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   const [startFields, setStartFields] = useState<FormField[]>([]);
   // Per-task fields: { [activityId]: FormField[] }
   const [taskFields, setTaskFields] = useState<Record<string, FormField[]>>({});
+  // Per-step config: { [activityId]: StepConfigItem }
+  const [stepConfig, setStepConfig] = useState<StepConfigMap>({});
 
   // Fetch full definition (needs bpmnXml to parse UserTasks)
   const { data: fullDefData } = useDefinition(definition?.id ?? '');
   const fullDef = fullDefData?.data;
+
+  // Load users + org units cho pickers
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['users-list'],
+    queryFn: () => usersApi.list(),
+    enabled: open,
+  });
+  const { data: orgTree = [] } = useQuery({
+    queryKey: ['org-units-tree'],
+    queryFn: () => orgUnitsApi.getTree(),
+    enabled: open,
+  });
+  const flatOrgUnits = useMemo(() => flattenOrgUnits(orgTree), [orgTree]);
 
   const userTasks: UserTaskMeta[] = useMemo(() => {
     if (!fullDef?.bpmnXml) return [];
     return parseUserTasksFromBpmn(fullDef.bpmnXml);
   }, [fullDef?.bpmnXml]);
 
-  // Sync fields khi drawer mở
+  // Sync fields + stepConfig khi drawer mở
   useEffect(() => {
     if (open && definition) {
       setStartFields((definition.formFields ?? []) as FormField[]);
       setTaskFields((definition.taskFormFields ?? {}) as Record<string, FormField[]>);
+      setStepConfig((definition.stepConfig ?? {}) as StepConfigMap);
       setActiveTab('__start__');
     }
   }, [open, definition]);
@@ -109,6 +176,13 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
     }
   };
 
+  const getStepConfig = (activityId: string): StepConfigItem =>
+    stepConfig[activityId] ?? {};
+
+  const setStepConfigItem = (activityId: string, item: StepConfigItem) => {
+    setStepConfig((prev) => ({ ...prev, [activityId]: item }));
+  };
+
   const handleSave = async () => {
     if (!definition) return;
     setSaving(true);
@@ -116,10 +190,11 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
       await processesApi.updateDefinition(definition.id, {
         formFields: startFields,
         taskFormFields: taskFields,
+        stepConfig,
       });
       await qc.invalidateQueries({ queryKey: ['process-definitions'] });
       await qc.invalidateQueries({ queryKey: ['process-definition', definition.id] });
-      message.success('Đã lưu cấu hình trường nhập liệu');
+      message.success('Đã lưu cấu hình');
       onClose();
     } catch {
       message.error('Không thể lưu');
@@ -128,16 +203,30 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
     }
   };
 
+  const cardStyle = {
+    background: isDark ? '#1A2744' : '#F8FAFC',
+    border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`,
+    borderRadius: 8,
+    marginBottom: 16,
+  };
+
   const tabItems = [
     {
       key: '__start__',
-      label: 'Form bắt đầu',
+      label: (
+        <Space size={4}>
+          <UnorderedListOutlined />
+          Form bắt đầu
+        </Space>
+      ),
       children: (
         <FieldTabContent
           tabKey="__start__"
           fields={getFields('__start__')}
           onChange={(fields) => setFields('__start__', fields)}
           description="Trường mà nhân viên điền khi TẠO yêu cầu mới (bước khởi động)."
+          isDark={isDark}
+          cardStyle={cardStyle}
         />
       ),
     },
@@ -145,11 +234,17 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
       key: ut.id,
       label: ut.name,
       children: (
-        <FieldTabContent
-          tabKey={ut.id}
+        <UserTaskTabContent
+          ut={ut}
           fields={getFields(ut.id)}
-          onChange={(fields) => setFields(ut.id, fields)}
-          description={`Trường nhập liệu khi người dùng XỬ LÝ task "${ut.name}".`}
+          onFieldsChange={(fields) => setFields(ut.id, fields)}
+          stepConfigItem={getStepConfig(ut.id)}
+          onStepConfigChange={(item) => setStepConfigItem(ut.id, item)}
+          allUsers={allUsers}
+          flatOrgUnits={flatOrgUnits}
+          isDark={isDark}
+          preset={preset}
+          cardStyle={cardStyle}
         />
       ),
     })),
@@ -157,10 +252,10 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
 
   return (
     <CenteredModal
-      title={`Cấu hình trường nhập liệu — ${definition?.name ?? ''}`}
+      title={`Cấu hình quy trình — ${definition?.name ?? ''}`}
       open={open}
       onClose={onClose}
-      width={720}
+      width={780}
       footer={
         <Space style={{ justifyContent: 'flex-end', display: 'flex' }}>
           <Button onClick={onClose}>Huỷ</Button>
@@ -185,16 +280,348 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   );
 }
 
-// ─── Tab Content ──────────────────────────────────────────────────────────────
+// ─── UserTask Tab (Fields + Assignee + Notification) ─────────────────────────
+
+interface UserTaskTabProps {
+  ut: UserTaskMeta;
+  fields: FormField[];
+  onFieldsChange: (fields: FormField[]) => void;
+  stepConfigItem: StepConfigItem;
+  onStepConfigChange: (item: StepConfigItem) => void;
+  allUsers: UserRecord[];
+  flatOrgUnits: OrgUnitTree[];
+  isDark: boolean;
+  preset: { primary: string };
+  cardStyle: React.CSSProperties;
+}
+
+function UserTaskTabContent({
+  ut, fields, onFieldsChange, stepConfigItem, onStepConfigChange,
+  allUsers, flatOrgUnits, isDark, preset, cardStyle,
+}: UserTaskTabProps) {
+  const [innerTab, setInnerTab] = useState('fields');
+
+  const innerTabs = [
+    {
+      key: 'fields',
+      label: <Space size={4}><UnorderedListOutlined />Trường nhập liệu</Space>,
+      children: (
+        <FieldTabContent
+          tabKey={ut.id}
+          fields={fields}
+          onChange={onFieldsChange}
+          description={`Trường nhập liệu khi người dùng XỬ LÝ task "${ut.name}".`}
+          isDark={isDark}
+          cardStyle={cardStyle}
+        />
+      ),
+    },
+    {
+      key: 'assignee',
+      label: <Space size={4}><UserOutlined />Người xử lý</Space>,
+      children: (
+        <AssigneeConfigSection
+          config={stepConfigItem.assigneeConfig}
+          onChange={(cfg) => onStepConfigChange({ ...stepConfigItem, assigneeConfig: cfg })}
+          allUsers={allUsers}
+          flatOrgUnits={flatOrgUnits}
+          isDark={isDark}
+          preset={preset}
+          cardStyle={cardStyle}
+        />
+      ),
+    },
+    {
+      key: 'notification',
+      label: <Space size={4}><BellOutlined />Thông báo</Space>,
+      children: (
+        <NotificationConfigSection
+          config={stepConfigItem.notificationConfig}
+          onChange={(cfg) => onStepConfigChange({ ...stepConfigItem, notificationConfig: cfg })}
+          allUsers={allUsers}
+          isDark={isDark}
+          cardStyle={cardStyle}
+        />
+      ),
+    },
+  ];
+
+  return (
+    <Tabs
+      activeKey={innerTab}
+      onChange={setInnerTab}
+      items={innerTabs}
+      size="small"
+      style={{ marginTop: 4 }}
+    />
+  );
+}
+
+// ─── Assignee Config Section ──────────────────────────────────────────────────
+
+interface AssigneeConfigSectionProps {
+  config?: AssigneeConfig;
+  onChange: (cfg: AssigneeConfig | undefined) => void;
+  allUsers: UserRecord[];
+  flatOrgUnits: OrgUnitTree[];
+  isDark: boolean;
+  preset: { primary: string };
+  cardStyle: React.CSSProperties;
+}
+
+function AssigneeConfigSection({
+  config, onChange, allUsers, flatOrgUnits, isDark, cardStyle,
+}: AssigneeConfigSectionProps) {
+  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const mode = config?.mode ?? 'fixed';
+
+  const userOptions = allUsers
+    .filter((u) => u.isActive)
+    .map((u) => ({ value: u.id, label: `${u.name} (${u.email})` }));
+
+  const orgOptions = flatOrgUnits.map((o) => ({ value: o.id, label: o.name }));
+
+  return (
+    <div style={{ paddingTop: 8 }}>
+      <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12, color: textSecondary }}>
+        Cấu hình cách hệ thống xác định người xử lý cho bước này khi quy trình chạy.
+        Nếu không cấu hình, hệ thống dùng giá trị từ BPMN.
+      </Typography.Text>
+
+      <Card style={cardStyle} bodyStyle={{ padding: 16 }}>
+        <Form layout="vertical" component="div">
+          <Form.Item label="Chế độ gán người xử lý">
+            <Radio.Group
+              value={mode}
+              onChange={(e) => onChange({ ...(config ?? {}), mode: e.target.value as AssigneeMode })}
+            >
+              <Space direction="vertical" size={6}>
+                {(Object.keys(ASSIGNEE_MODE_LABELS) as AssigneeMode[]).map((m) => (
+                  <Radio key={m} value={m}>{ASSIGNEE_MODE_LABELS[m]}</Radio>
+                ))}
+              </Space>
+            </Radio.Group>
+          </Form.Item>
+
+          {mode === 'fixed' && (
+            <Form.Item label="Chọn người xử lý">
+              <Select
+                showSearch
+                placeholder="Chọn người dùng..."
+                value={config?.userId}
+                onChange={(v) => onChange({ ...config!, mode: 'fixed', userId: v })}
+                options={userOptions}
+                filterOption={(input, opt) =>
+                  (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())
+                }
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          )}
+
+          {mode === 'orgunit' && (
+            <>
+              <Form.Item label="Phòng ban">
+                <Select
+                  showSearch
+                  placeholder="Chọn phòng ban..."
+                  value={config?.orgUnitId}
+                  onChange={(v) => onChange({ ...config!, mode: 'orgunit', orgUnitId: v })}
+                  options={orgOptions}
+                  filterOption={(input, opt) =>
+                    (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Lọc theo role hệ thống (tuỳ chọn)"
+                help="Nếu để trống, lấy bất kỳ user active nào trong phòng ban"
+              >
+                <Select
+                  allowClear
+                  placeholder="Không lọc theo role"
+                  value={config?.role}
+                  onChange={(v) => onChange({ ...config!, mode: 'orgunit', role: v as SystemRole })}
+                  options={SYSTEM_ROLE_OPTIONS}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
+            </>
+          )}
+
+          {mode === 'variable' && (
+            <Form.Item
+              label="Tên biến"
+              help='Tên field trong instance.variables chứa userId của người xử lý. Ví dụ: "approver_id"'
+            >
+              <Input
+                placeholder="approver_id"
+                value={config?.variablePath}
+                onChange={(e) => onChange({ ...config!, mode: 'variable', variablePath: e.target.value })}
+                style={{ fontFamily: 'monospace' }}
+              />
+            </Form.Item>
+          )}
+
+          {mode === 'requester_manager' && (
+            <Typography.Text type="secondary" style={{ color: textSecondary, fontSize: 13 }}>
+              Hệ thống tự động tìm user có role <strong>Leadership</strong> hoặc <strong>PM</strong>{' '}
+              trong cùng phòng ban với người tạo yêu cầu.
+            </Typography.Text>
+          )}
+        </Form>
+      </Card>
+    </div>
+  );
+}
+
+// ─── Notification Config Section ──────────────────────────────────────────────
+
+interface NotificationConfigSectionProps {
+  config?: { taskAssigned?: NotificationTrigger; taskCompleted?: NotificationTrigger };
+  onChange: (cfg: { taskAssigned?: NotificationTrigger; taskCompleted?: NotificationTrigger } | undefined) => void;
+  allUsers: UserRecord[];
+  isDark: boolean;
+  cardStyle: React.CSSProperties;
+}
+
+function NotificationConfigSection({ config, onChange, allUsers, isDark, cardStyle }: NotificationConfigSectionProps) {
+  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+
+  const fixedUserOptions = allUsers
+    .filter((u) => u.isActive)
+    .map((u) => ({ value: `user:${u.id}`, label: `${u.name} (cố định)` }));
+
+  const allRecipientOptions = [
+    ...RECIPIENT_PRESETS,
+    ...fixedUserOptions,
+  ];
+
+  const updateTrigger = (
+    key: 'taskAssigned' | 'taskCompleted',
+    patch: Partial<NotificationTrigger>,
+  ) => {
+    const current = config?.[key] ?? { enabled: false, recipients: [], subject: '', bodyTemplate: '' };
+    onChange({ ...config, [key]: { ...current, ...patch } });
+  };
+
+  return (
+    <div style={{ paddingTop: 8 }}>
+      <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12, color: textSecondary }}>
+        Cấu hình email + notification gửi theo từng sự kiện của bước này.
+        Dùng <code style={{ fontSize: 12 }}>{'{{biến}}'}</code> trong nội dung.
+      </Typography.Text>
+
+      {/* Template vars hint */}
+      <div style={{ marginBottom: 12 }}>
+        <Typography.Text type="secondary" style={{ fontSize: 12, color: textSecondary }}>
+          Biến khả dụng:{' '}
+        </Typography.Text>
+        {TEMPLATE_VARS.map((v) => (
+          <Tag key={v} style={{ fontFamily: 'monospace', fontSize: 11, marginBottom: 4 }}>{v}</Tag>
+        ))}
+      </div>
+
+      {/* Trigger: Khi nhận task */}
+      <NotificationTriggerCard
+        title="Khi nhận task (task assigned)"
+        trigger={config?.taskAssigned}
+        onUpdate={(patch) => updateTrigger('taskAssigned', patch)}
+        allRecipientOptions={allRecipientOptions}
+        isDark={isDark}
+        cardStyle={cardStyle}
+      />
+
+      {/* Trigger: Khi hoàn thành task */}
+      <NotificationTriggerCard
+        title="Khi hoàn thành task (task completed)"
+        trigger={config?.taskCompleted}
+        onUpdate={(patch) => updateTrigger('taskCompleted', patch)}
+        allRecipientOptions={allRecipientOptions}
+        isDark={isDark}
+        cardStyle={cardStyle}
+      />
+    </div>
+  );
+}
+
+interface NotificationTriggerCardProps {
+  title: string;
+  trigger?: NotificationTrigger;
+  onUpdate: (patch: Partial<NotificationTrigger>) => void;
+  allRecipientOptions: { value: string; label: string }[];
+  isDark: boolean;
+  cardStyle: React.CSSProperties;
+}
+
+function NotificationTriggerCard({
+  title, trigger, onUpdate, allRecipientOptions, cardStyle,
+}: NotificationTriggerCardProps) {
+  const enabled = trigger?.enabled ?? false;
+
+  return (
+    <Card
+      style={cardStyle}
+      bodyStyle={{ padding: 16 }}
+      title={
+        <Space>
+          <Switch
+            size="small"
+            checked={enabled}
+            onChange={(v) => onUpdate({ enabled: v })}
+          />
+          <Typography.Text style={{ fontSize: 13 }}>{title}</Typography.Text>
+        </Space>
+      }
+    >
+      {enabled && (
+        <Form layout="vertical" component="div">
+          <Form.Item label="Người nhận">
+            <Select
+              mode="multiple"
+              placeholder="Chọn người nhận..."
+              value={trigger?.recipients ?? []}
+              onChange={(v) => onUpdate({ recipients: v })}
+              options={allRecipientOptions}
+              style={{ width: '100%' }}
+            />
+          </Form.Item>
+          <Form.Item label="Tiêu đề email" help="Hỗ trợ {{process.name}}, {{task.name}}, ...">
+            <Input
+              value={trigger?.subject ?? ''}
+              onChange={(e) => onUpdate({ subject: e.target.value })}
+              placeholder="{{process.name}} — Bước {{task.name}} cần xử lý"
+            />
+          </Form.Item>
+          <Form.Item label="Nội dung email" help="Hỗ trợ {{recipient.name}}, {{requester.name}}, ...">
+            <Input.TextArea
+              rows={5}
+              value={trigger?.bodyTemplate ?? ''}
+              onChange={(e) => onUpdate({ bodyTemplate: e.target.value })}
+              placeholder={`Xin chào {{recipient.name}},\n\nYêu cầu "{{process.name}}" từ {{requester.name}} đang chờ bạn xử lý.\nBước: {{task.name}}\nHạn: {{task.dueDate}}\n\nVui lòng đăng nhập hệ thống để tiếp tục.`}
+              style={{ fontFamily: 'monospace', fontSize: 12 }}
+            />
+          </Form.Item>
+        </Form>
+      )}
+    </Card>
+  );
+}
+
+// ─── Field Tab Content ────────────────────────────────────────────────────────
 
 interface FieldTabContentProps {
   tabKey: string;
   fields: FormField[];
   onChange: (fields: FormField[]) => void;
   description: string;
+  isDark: boolean;
+  cardStyle: React.CSSProperties;
 }
 
 function FieldTabContent({ fields, onChange, description }: FieldTabContentProps) {
+  const { message } = App.useApp();
   const [addOpen, setAddOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<FormField | null>(null);
   const [fieldForm] = Form.useForm<FormField & { optionsRaw?: string; criteriaRaw?: string }>();
@@ -357,7 +784,6 @@ function FieldTabContent({ fields, onChange, description }: FieldTabContentProps
         Thêm trường nhập liệu
       </Button>
 
-      {/* Modal thêm/sửa field */}
       <Modal
         title={editTarget ? 'Sửa trường nhập liệu' : 'Thêm trường nhập liệu'}
         open={addOpen}
@@ -409,7 +835,6 @@ function FieldTabContent({ fields, onChange, description }: FieldTabContentProps
             </Form.Item>
           </Space>
 
-          {/* criteria_grid config */}
           {watchType === 'criteria_grid' && (
             <>
               <Divider orientation="left" plain style={{ fontSize: 12 }}>
@@ -441,7 +866,6 @@ function FieldTabContent({ fields, onChange, description }: FieldTabContentProps
             </>
           )}
 
-          {/* Standard field config */}
           {watchType !== 'criteria_grid' && (
             <Form.Item name="placeholder" label="Placeholder (tùy chọn)">
               <Input placeholder="Hướng dẫn nhập liệu..." />

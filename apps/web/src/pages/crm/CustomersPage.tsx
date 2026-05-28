@@ -25,6 +25,7 @@ export default function CustomersPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters] = useState<CustomerFilterDto>({ page: 1, limit: 20 });
   const [createOpen, setCreateOpen]   = useState(false);
@@ -79,14 +80,14 @@ export default function CustomersPage() {
     {
       title: 'Tên khách hàng', dataIndex: 'name',
       render: (name: string, row: Customer) => (
-        <Button type="link" style={{ padding: 0, color: preset.primary }} onClick={() => { setSelected(row); setDetailOpen(true); }}>
+        <Button type="link" style={{ padding: 0, color: linkColor }} onClick={() => { setSelected(row); setDetailOpen(true); }}>
           {name}
         </Button>
       ),
     },
-    { title: 'Ngành', dataIndex: 'industry', width: 160, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
-    { title: 'Website', dataIndex: 'website', width: 200, render: (v?: string) => v ? <a href={v} target="_blank" rel="noreferrer" style={{ color: preset.primary }}>{v}</a> : <Text style={{ color: textMuted }}>—</Text> },
-    { title: 'MST', dataIndex: 'taxCode', width: 140, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Ngành', dataIndex: 'industry', width: 160, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Website', dataIndex: 'website', width: 200, render: (v?: string) => v ? <a href={v} target="_blank" rel="noreferrer" style={{ color: linkColor }}>{v}</a> : <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'MST', dataIndex: 'taxCode', width: 140, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Liên hệ', key: 'contacts', width: 90, align: 'center',
       render: (_: unknown, row: Customer) => <Tag color="blue">{row._count?.contacts ?? 0}</Tag>,
@@ -161,18 +162,6 @@ export default function CustomersPage() {
             total: data?.total ?? 0,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
             showSizeChanger: true,
-          }}
-          components={{
-            header: {
-              cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-                <th {...props} style={{
-                  ...props.style,
-                  background: bgCard,
-                  color: textPrimary,
-                  borderBottom: `1px solid ${borderColor}`,
-                }} />
-              ),
-            },
           }}
         />
       </div>

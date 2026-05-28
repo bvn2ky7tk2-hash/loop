@@ -51,7 +51,7 @@ export default function AssetAssignmentsPage() {
     },
     {
       title: 'Ngày cấp phát', dataIndex: 'assignedAt', width: 140,
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Ngày trả', dataIndex: 'returnedAt', width: 140,
@@ -94,9 +94,6 @@ export default function AssetAssignmentsPage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
     </div>

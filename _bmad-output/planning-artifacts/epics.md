@@ -17,6 +17,8 @@ amendments:
     description: 'Epic 15 — Authorization & Permission Management (Dual-Track RBAC: system roles + ERP module roles + org-scope, 9 stories)'
   - date: '2026-05-27'
     description: 'Epic 16 — UI/UX Polish & Finance Module (table header, sparkline sync, status pill, sign-out UX, change password, format số, search bar, quick BPM, Finance module, admin settings refactor, việt hóa — 20 stories)'
+  - date: '2026-05-28'
+    description: 'Epic 22 — Payroll Compliance: Thuế TNCN & BHXH/BHYT/BHTN (13 stories, configurable-first, biểu thuế 5 bậc 2026, YTD tracking)'
 ---
 
 # Loop - Epic Breakdown
@@ -3867,3 +3869,569 @@ So that the frontend can gate UI correctly including future ERP module features 
 **When** an admin assigns or removes a module role from the current user
 **Then** `queryClient.invalidateQueries(['me'])` is called on the Permissions page after save
 **And** the user's effective permissions refresh without page reload
+
+---
+
+## Epic 22: Payroll Compliance — Thuế TNCN & BHXH/BHYT/BHTN
+
+**Mục tiêu:** Nâng cấp engine tính lương thành hệ thống tuân thủ pháp lý Việt Nam hoàn chỉnh: BHXH/BHYT/BHTN đúng luật, thuế TNCN biểu lũy tiến configurable, phiếu lương PDF, và file khai/quyết toán thuế. Toàn bộ cấu hình (biểu thuế, tỷ lệ BH, bảng lương) có `effectiveDate` và quản lý qua UI.
+
+---
+
+### Story 22.1: Data Foundation — Prisma Schema, Migration & Seed Data
+
+As a developer,
+I want all payroll compliance models created in the database with correct relationships and seed data,
+So that all other payroll stories have a stable, legally-compliant data foundation to build on.
+
+**Acceptance Criteria:**
+
+**Given** the Prisma migration is run on an existing Loop database
+**When** `prisma migrate deploy` executes
+**Then** the following new models are created without errors: `InsuranceConfig`, `TaxBracket`, `TaxDeductionConfig`, `WageZoneConfig`, `EmployeeTaxProfile`, `Dependent`, `AllowanceType`, `BonusType`, `EmployeeBonus`, `EmployeeYearlyTaxSummary`, `EmployeeAllowance`, `SalaryColumn`
+**And** `PayrollRecord` is extended with the following new nullable/defaulted columns: `grossSalary`, `overtimePay`, `allowances`, `bhxhEmployee`, `bhytEmployee`, `bhtnEmployee`, `bhxhEmployer`, `bhytEmployer`, `bhtnEmployer`, `tnldEmployer`, `taxableIncome`, `selfDeduction`, `dependentDeduction`, `dependentCount`, `pitAmount`, `totalLaborCost`, `unpaidLeaveDays`, `paidLeaveDays`, `overtimePayBreakdown`, `payslipPath`, `configSnapshot`, `overrideNote`, `periodType`
+**And** composite indexes `@@index([employeeId, periodId])` and `@@index([periodId])` are added to `PayrollRecord`
+**And** existing `PayrollRecord` rows are not affected (all new columns have defaults)
+
+**Given** the seed script runs after migration
+**When** `prisma db seed` executes
+**Then** the following seed data exists in the database:
+- 1 `InsuranceConfig` record: BHXH NLĐ=8%, BHYT NLĐ=1.5%, BHTN NLĐ=1%, BHXH NLĐ SD=17%, BHYT NLĐ SD=3%, BHTN NLĐ SD=1%, TNLĐ=0.5%, `effectiveFrom=2020-01-01`
+- 1 `TaxBracket` record: biểu 7 bậc `effectiveFrom=2020-01-01` với JSON brackets đúng tỷ lệ pháp định
+- 1 `TaxBracket` record: biểu 5 bậc `effectiveFrom=2026-01-01` (Luật 109/2025/QH15)
+- 1 `TaxDeductionConfig`: bản thân=11M, NPT=4.4M, `effectiveFrom=2020-01-01`
+- 1 `TaxDeductionConfig`: bản thân=15.5M, NPT=6.2M, `effectiveFrom=2026-01-01`
+- 1 `WageZoneConfig`: Vùng I=4.96M, Vùng II=4.41M, Vùng III=3.86M, Vùng IV=3.45M, `effectiveFrom=2024-07-01`
+- Default `AllowanceType` records: Ăn ca (730k, isBhxhExempt=true, isPitExempt=true, pitExemptCeiling=730000), Điện thoại (300k, isBhxhExempt=true, isPitExempt=true, pitExemptCeiling=null), Xăng xe (500k, isBhxhExempt=true, isPitExempt=false)
+- Default `SalaryColumn` records: Lương cơ bản (source=CONTRACT_SALARY, EARNING, sortOrder=1), Lương ngày công (source=FORMULA `{contractSalary}/{standardDays}*{workDays}`, EARNING, sortOrder=2), OT ngày thường (FORMULA, EARNING, sortOrder=5), OT cuối tuần (FORMULA, EARNING, sortOrder=6), OT lễ/Tết (FORMULA, EARNING, sortOrder=7)
+
+**Given** a developer runs `npm run test` in apps/backend
+**When** unit tests for payroll models execute
+**Then** all model relations resolve correctly (EmployeeTaxProfile → Dependent, PayrollRecord → EmployeeAllowance → AllowanceType, PayrollRecord → EmployeeBonus → BonusType)
+
+---
+
+### Story 22.2: Insurance Configuration API (FR-CF01–FR-CF05)
+
+As an Admin,
+I want to manage BHXH/BHYT/BHTN rate configurations via a versioned API with effective dates,
+So that insurance calculations always use the legally correct rates and historical configs are preserved for audit.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated Admin user with `PAYROLL_MANAGE` permission
+**When** `GET /api/v1/payroll/insurance-configs` is called
+**Then** the response returns a paginated list of all `InsuranceConfig` records ordered by `effectiveFrom` DESC
+**And** each record includes all rate fields, wageBase, bhxhCeilingMultiple, effectiveFrom, createdAt, and a computed `bhxhCeiling` = `wageBase × bhxhCeilingMultiple`
+
+**Given** an Admin with `PAYROLL_MANAGE` permission
+**When** `POST /api/v1/payroll/insurance-configs` is called with valid rate fields and a new effectiveFrom
+**Then** a new `InsuranceConfig` is created
+**And** `AuditLog` records the creation with actor, timestamp, and all field values
+
+**Given** an Admin attempts to POST a new InsuranceConfig
+**When** the effectiveFrom date duplicates an existing config for the same tenantId
+**Then** the API returns `409 Conflict`
+
+**Given** a PayrollRecord has been processed using an InsuranceConfig
+**When** an Admin calls `DELETE /api/v1/payroll/insurance-configs/:id`
+**Then** the API returns `409 Conflict` with message "Config đã được dùng trong kỳ lương, không thể xóa"
+**And** the config remains unchanged
+
+**Given** any authenticated user without `PAYROLL_MANAGE`
+**When** they call POST/DELETE on insurance config endpoints
+**Then** the API returns `403 Forbidden`
+
+**Given** `GET /api/v1/payroll/insurance-configs/active?date=2026-07-01`
+**When** called
+**Then** returns the InsuranceConfig with the highest effectiveFrom that is ≤ 2026-07-01
+
+---
+
+### Story 22.3: Tax Bracket & Deduction Config API (FR-TX01–FR-TX05)
+
+As an Admin,
+I want to manage progressive income tax brackets and personal deduction limits via API with effective dates,
+So that PIT calculations automatically use the correct rates when laws change.
+
+**Acceptance Criteria:**
+
+**Given** an Admin with `PAYROLL_MANAGE` permission
+**When** `GET /api/v1/payroll/tax-brackets` is called
+**Then** returns all TaxBracket records ordered by effectiveFrom DESC
+**And** each record includes id, name, effectiveFrom, brackets JSON (array of {from, to, rate}), and a `isInUse` flag
+
+**Given** an Admin
+**When** `POST /api/v1/payroll/tax-brackets` is called with name="Biểu 5 bậc 2026", effectiveFrom="2026-01-01", and a valid brackets array
+**Then** a new TaxBracket is created
+**And** brackets are validated: rates sum to ≤ 100%, `from` of each bracket = `to` of previous bracket
+
+**Given** a TaxBracket has `isInUse = true` (used by an APPROVED PayrollRecord)
+**When** Admin attempts to modify or delete it
+**Then** API returns `409 Conflict`
+
+**Given** `GET /api/v1/payroll/tax-brackets/active?date=2025-12-01`
+**When** called
+**Then** returns the TaxBracket with effectiveFrom ≤ 2025-12-01 and the latest date (the 7-bracket version)
+
+**Given** `GET /api/v1/payroll/tax-brackets/active?date=2026-01-15`
+**When** called
+**Then** returns the 5-bracket TaxBracket (effectiveFrom=2026-01-01)
+
+**Given** an Admin with `PAYROLL_MANAGE`
+**When** `GET /api/v1/payroll/tax-deductions` is called
+**Then** returns all TaxDeductionConfig records ordered by effectiveFrom DESC
+
+**When** `POST /api/v1/payroll/tax-deductions` is called with selfDeduction=15500000, dependentDeduction=6200000, effectiveFrom=2026-01-01
+**Then** a new TaxDeductionConfig is created and AuditLog records the change
+
+---
+
+### Story 22.4: Salary Column Configuration API (FR-SL01–FR-SL04)
+
+As an Admin,
+I want to define and manage salary table columns with sources and formulas via API,
+So that the gross salary calculation is configurable without code changes.
+
+**Acceptance Criteria:**
+
+**Given** an Admin with `PAYROLL_MANAGE`
+**When** `GET /api/v1/payroll/salary-columns` is called
+**Then** returns all SalaryColumn records ordered by sortOrder ASC, including both active and inactive
+
+**Given** an Admin
+**When** `POST /api/v1/payroll/salary-columns` is called with:
+  - name="OT ngày thường", type=EARNING, source=FORMULA, formula="{contractSalary}/{standardDays}/8*1.5*{otWeekday}", isBhxhExempt=false, isPitExempt=false, sortOrder=5
+**Then** a new SalaryColumn is created
+
+**Given** `source = FORMULA`
+**When** the formula contains a variable not in the allowed set (`{contractSalary}`, `{workDays}`, `{standardDays}`, `{overtimeHours}`, `{otWeekday}`, `{otWeekend}`, `{otHoliday}`)
+**Then** API returns `400 Bad Request` with message "Biến không hợp lệ trong công thức"
+
+**Given** `source = ALLOWANCE_TYPE`
+**When** POST is called without an `allowanceTypeId`
+**Then** API returns `400 Bad Request`
+
+**Given** a SalaryColumn exists
+**When** `PATCH /api/v1/payroll/salary-columns/:id` is called with `isActive=false`
+**Then** the column is deactivated (not deleted)
+**And** existing PayrollRecords are not affected (configSnapshot preserves the historical state)
+
+**Given** a new PayrollPeriod is processed after a SalaryColumn config change
+**When** the engine runs
+**Then** it uses the current active SalaryColumns
+**And** `PayrollRecord.configSnapshot` stores a snapshot with `snapshotVersion=1` and the full column list used
+
+---
+
+### Story 22.5: Employee Tax Profile & Allowance Management (FR-TE01–FR-TE06)
+
+As an HR Admin,
+I want to manage each employee's tax profile, MST, dependents, and allowance overrides,
+So that personal income tax is calculated correctly for each individual.
+
+**Acceptance Criteria:**
+
+**Given** an HR Admin with `PAYROLL_MANAGE`
+**When** `GET /api/v1/payroll/employees/:employeeId/tax-profile` is called
+**Then** returns the EmployeeTaxProfile (or 404 with suggestion to create one)
+**And** includes taxId, residencyStatus, wageZone, and a list of active Dependent records
+
+**When** `PUT /api/v1/payroll/employees/:employeeId/tax-profile` is called with taxId="123456789", residencyStatus=RESIDENT, wageZone=1
+**Then** the profile is created or updated (upsert)
+**And** AuditLog records the change
+
+**Given** an HR Admin
+**When** `POST /api/v1/payroll/employees/:employeeId/dependents` is called with name, relationship, registeredFrom="2026-03-01"
+**Then** a new Dependent is created
+**And** from the next payroll period with endDate ≥ 2026-03-01, the dependent deduction applies
+
+**When** `PATCH /api/v1/payroll/employees/:employeeId/dependents/:dependentId` is called with registeredTo="2026-12-31"
+**Then** the NPT is terminated from January 2027 onwards (registeredTo is set, not deleted)
+
+**Given** an Admin
+**When** `GET /api/v1/payroll/allowance-types` is called
+**Then** returns all AllowanceType records with isBhxhExempt, isPitExempt, pitExemptCeiling flags
+
+**When** `POST /api/v1/payroll/allowance-types` is called with name="Ăn ca", defaultAmount=730000, isBhxhExempt=true, isPitExempt=true, pitExemptCeiling=730000
+**Then** a new AllowanceType is created
+
+**Given** an employee with no EmployeeAllowance override for the current period
+**When** the payroll engine runs
+**Then** the AllowanceType.defaultAmount is used for that employee's allowance
+
+**Given** an HR Admin creates an EmployeeAllowance override via `POST /api/v1/payroll/records/:recordId/allowances`
+**When** amount=500000 and overrideNote="Giảm do nghỉ nửa tháng" are provided
+**Then** the engine uses 500000 instead of the AllowanceType default for that employee that period
+
+---
+
+### Story 22.6: Payroll Engine — Core Calculation (FR-PR01–FR-PR08, FR-PR12, FR-PR13)
+
+As an HR Admin,
+I want the payroll engine to automatically calculate gross, BHXH/BHYT/BHTN, PIT, and net salary in compliance with Vietnamese law when I trigger processing,
+So that I no longer need to manually calculate using Excel.
+
+**Acceptance Criteria:**
+
+**Given** a PayrollPeriod in DRAFT status with all employees having APPROVED TimesheetRecords
+**When** HR triggers `POST /api/v1/payroll/periods/:id/process`
+**Then** for each employee in the period, the engine syncs: `workDays` (actual working days), `paidLeaveDays` (APPROVED LeaveRequests marked as paid), `unpaidLeaveDays` (APPROVED LeaveRequests marked as unpaid), `overtimeHours` broken down by OvertimeCategory (WEEKDAY/WEEKEND/HOLIDAY)
+
+**Given** an employee with `Contract.type = PROBATION`
+**When** the engine calculates gross salary
+**Then** `baseSalary = Contract.salaryMonthly × 0.85`
+**And** the payslip breakdown shows "Lương thử việc (85% mức chính thức): [amount]"
+
+**Given** the SalaryColumn config contains FORMULA columns
+**When** the engine evaluates each column
+**Then** variables `{contractSalary}`, `{workDays}`, `{standardDays}`, `{otWeekday}`, `{otWeekend}`, `{otHoliday}` are resolved correctly
+**And** `grossSalary = Σ EARNING columns − Σ DEDUCTION columns`
+
+**Given** an employee with `unpaidLeaveDays = 14` or more in the period
+**When** BHXH/BHYT/BHTN is calculated
+**Then** `bhxhEmployee = bhytEmployee = bhtnEmployee = bhxhEmployer = bhytEmployer = bhtnEmployer = 0`
+
+**Given** an employee with `unpaidLeaveDays < 14`
+**When** BHXH is calculated
+**Then** `bhxhBase = MIN(Contract.salaryMonthly, InsuranceConfig.wageBase × InsuranceConfig.bhxhCeilingMultiple)`
+**And** NOT based on grossSalary
+**And** all BHXH/BHYT/BHTN amounts are rounded up to the nearest 100đ (Nghị định 115/2015)
+
+**Given** an employee is a resident (`residencyStatus = RESIDENT`)
+**When** PIT is calculated
+**Then** `taxableIncome = grossSalary - pitExemptAllowances - bhxhEmployee - bhytEmployee - bhtnEmployee - selfDeduction - (dependentCount × dependentDeduction)`
+**And** the engine applies the TaxBracket active at the last day of the period
+**And** `pitAmount` is calculated progressively across brackets and rounded down to the nearest đồng (Thông tư 111/2013)
+
+**Given** an employee with `Contract.type = FREELANCE`
+**When** gross salary is calculated
+**Then** bhxhEmployee = bhytEmployee = bhtnEmployee = bhxhEmployer = bhytEmployer = bhtnEmployer = 0
+**And** if `grossSalary >= 2000000`: `pitAmount = grossSalary × 0.10`
+**And** if `grossSalary < 2000000`: `pitAmount = 0` and a note is added "Dưới ngưỡng khấu trừ — NV tự kê khai"
+
+**Given** a PayrollPeriod transitions to `APPROVED`
+**When** the engine finalizes
+**Then** `EmployeeYearlyTaxSummary` for each employee is updated: `ytdGross += grossSalary`, `ytdTaxableIncome += taxableIncome`, `ytdPitPaid += pitAmount`, `ytdBhxhEmployee += bhxhEmployee`
+**And** if no record exists for that year, one is created
+
+**Given** a test case: employee with contractSalary=20,000,000, no NPT, resident, no unpaid leave, wageZone=1, 22 workDays out of 22 standardDays, period = March 2026 (biểu 5 bậc applies)
+**When** calculation runs
+**Then** BHXH NLĐ = 20,000,000 × 8% = 1,600,000 (rounded to 100đ)
+**And** taxableIncome = 20,000,000 − 1,600,000 − 1.5%×20M − 1%×20M − 15,500,000 = 20M − 1.6M − 300k − 200k − 15.5M = 2,400,000
+**And** pitAmount (2.4M is in bracket 1 at 5%) = 120,000 (rounded down to đồng)
+**And** netSalary = 20,000,000 − 1,600,000 − 300,000 − 200,000 − 120,000 = 17,780,000
+
+---
+
+### Story 22.7: Payroll Period Workflow & Preview (FR-PR09–FR-PR11)
+
+As an HR Admin,
+I want full control over the payroll period state machine with a detailed preview before approval,
+So that I can review, re-run, and approve payroll with confidence.
+
+**Acceptance Criteria:**
+
+**Given** an HR Admin with `PAYROLL_MANAGE`
+**When** `POST /api/v1/payroll/periods` is called with startDate, endDate, type=REGULAR
+**Then** a new PayrollPeriod with status=DRAFT is created
+**And** startDate must be the 1st of a month and endDate must be the last day of the same month (validation error otherwise)
+
+**When** `POST /api/v1/payroll/periods/:id/process` is called
+**Then** the system checks: all employees in the period have a finalized TimesheetRecord
+**And** if any employee is missing a TimesheetRecord, the API returns a list of blocking employee names and does NOT start processing
+**And** HR can manually mark employees as "override" (với lý do bắt buộc) to unblock
+**And** status transitions DRAFT → PROCESSING → REVIEWED
+
+**When** `GET /api/v1/payroll/periods/:id/preview` is called
+**Then** returns a paginated list of PayrollRecord breakdowns with required columns: employeeName, contractSalary, grossSalary, bhxhEmployee, bhytEmployee, bhtnEmployee, taxableIncome, dependentCount, pitAmount, netSalary
+**And** supports expand query param to include overtimePayBreakdown and allowance detail per employee
+
+**Given** a period in REVIEWED status
+**When** `POST /api/v1/payroll/periods/:id/revert-to-draft` is called by an HR Admin
+**Then** status changes REVIEWED → DRAFT
+**And** AuditLog records actor, timestamp, and reason
+**And** all PayrollRecords for the period are reset to recalculation state
+
+**Given** a period in REVIEWED status
+**When** `POST /api/v1/payroll/periods/:id/approve` is called by a user with `PAYROLL_APPROVE`
+**Then** status changes REVIEWED → APPROVED
+**And** YTD summaries are updated (FR-PR13)
+**And** payslip generation is queued in BullMQ
+
+**Given** a user without `PAYROLL_APPROVE`
+**When** they call the approve endpoint
+**Then** API returns `403 Forbidden`
+
+**Given** an APPROVED period
+**When** any edit is attempted on its PayrollRecords
+**Then** the API returns `409 Conflict` with "Kỳ lương đã được duyệt, không thể chỉnh sửa"
+
+**Given** `POST /api/v1/payroll/periods` with type=ADJUSTMENT, adjustmentForPeriodId pointing to an existing APPROVED period
+**When** the adjustment period is processed
+**Then** a delta payslip is generated with line "Điều chỉnh kỳ {tháng/năm}"
+**And** YTD is updated with the delta
+
+---
+
+### Story 22.8: Payslip PDF Generation & Delivery (FR-PS01–FR-PS06)
+
+As an employee,
+I want to automatically receive my payslip as a PDF after each payroll approval and be able to view it in the app,
+So that I can verify my salary breakdown at any time.
+
+**Acceptance Criteria:**
+
+**Given** a PayrollPeriod transitions to APPROVED status
+**When** BullMQ processes the `generate-payslips` job
+**Then** for each PayrollRecord in the period, a PDF is generated with:
+  - Header: company name "Loop.vn", kỳ lương (tháng/năm), employee name, MST, department
+  - Thu nhập section: breakdown by SalaryColumn (name, amount per column), gross total
+  - Khấu trừ section: BHXH NLĐ, BHYT NLĐ, BHTN NLĐ, thuế TNCN, tổng khấu trừ
+  - Tham khảo NSDLĐ section: BHXH/BHYT/BHTN/TNLĐ employer contribution (hiển thị tham khảo)
+  - Footer: net salary, payment date, HR manager signature line
+  - If PROBATION: explicit line "Lương thử việc (85% mức chính thức)"
+  - If FREELANCE with pitAmount=0: note "Dưới ngưỡng khấu trừ — NV tự kê khai"
+
+**Given** the PDF is generated
+**When** it is stored
+**Then** it is saved to MinIO bucket `loop-hr-files` at path `payslips/{year}/{month}/{employeeId}.pdf`
+**And** `PayrollRecord.payslipPath` is updated with the storage path (NOT a presigned URL)
+
+**Given** all PDFs for a period are generated
+**When** the job completes
+**Then** for each employee: a `PAYSLIP_ISSUED` in-app notification is created
+**And** an email is sent via Nodemailer with:
+  - Subject: `[Loop] Phiếu lương tháng {M}/{YYYY}`
+  - Body: employee name, net salary amount, and a deep link to `/payroll/my-payslips/{recordId}` (NOT a presigned URL)
+
+**Given** an employee calls `GET /api/v1/payroll/my-payslips`
+**When** they have `PAYROLL_VIEW_OWN` permission
+**Then** returns a list of their PayrollRecords ordered by period.endDate DESC (paginated)
+**And** the filter is enforced server-side: `employeeId = caller.employeeId`
+
+**Given** an employee calls `GET /api/v1/payroll/my-payslips/:recordId/download`
+**When** the payslipPath exists
+**Then** the server generates a presigned MinIO URL on-demand (valid 15 minutes)
+**And** the presigned URL is returned in the response (not stored)
+**And** if the employee tries to access another employee's record, 403 Forbidden is returned
+
+**Given** any value on the payslip PDF
+**When** verified against the corresponding PayrollRecord fields
+**Then** every monetary value matches exactly (0 discrepancy) — this must be covered by a unit test asserting PDF template renders PayrollRecord values correctly
+
+**Given** 200 employees in a period
+**When** BullMQ generates all PDFs
+**Then** the entire batch completes in under 60 seconds (NFR-PC04)
+
+---
+
+### Story 22.9: Tax Reports & Export (FR-QT01–FR-QT05)
+
+As an HR Admin,
+I want to export official Vietnamese tax report files (05-QTT-TNCN, 05-1/BK, 05-KK-TNCN, and labor cost),
+So that I can submit them to the tax authority without manual data entry.
+
+**Acceptance Criteria:**
+
+**Given** an HR Admin with `PAYROLL_VIEW_ALL`
+**When** `GET /api/v1/payroll/reports/tax-finalization?year=2026` is called
+**Then** returns an Excel file download (Content-Disposition: attachment; filename=05-QTT-TNCN-2026.xlsx)
+**And** the file follows the structure of Mẫu 05-QTT-TNCN (Thông tư 80/2021/TT-BTC, form HTKK hiện hành)
+**And** data is read from `EmployeeYearlyTaxSummary` for year=2026 (NOT from joining PayrollRecord directly)
+**And** includes all required columns per the official form
+
+**When** `GET /api/v1/payroll/reports/tax-finalization-annex?year=2026` is called
+**Then** returns an Excel file: Phụ lục 05-1/BK-QTT-TNCN — danh sách cá nhân có thu nhập từ tiền lương
+**And** each row contains: employeeId, name, taxId, ytdGross, ytdTaxableIncome, ytdPitPaid, ytdBhxhEmployee
+
+**When** `GET /api/v1/payroll/reports/tax-monthly?month=2026-05` is called
+**Then** returns an Excel file: Mẫu 05-KK-TNCN — tổng hợp TNCN đã khấu trừ trong tháng 5/2026
+**And** data is aggregated from PayrollRecords with periodType=REGULAR AND period month = 2026-05
+
+**When** `GET /api/v1/payroll/reports/labor-cost?from=2026-01-01&to=2026-05-31` is called
+**Then** returns an Excel file with columns: Kỳ lương | Tổng Gross | Tổng BHXH/BHYT/BHTN/TNLĐ NSDLĐ | Tổng chi phí nhân sự
+**And** supports optional `departmentId` filter
+
+**Given** any of the above reports
+**When** called by a user without `PAYROLL_VIEW_ALL`
+**Then** API returns `403 Forbidden`
+
+---
+
+### Story 22.10: Payroll Settings Frontend (FR-CF, FR-TX, FR-SL UI)
+
+As an Admin,
+I want a Payroll Settings page with tabs for insurance rates, tax brackets, and salary columns,
+So that I can manage all payroll configurations in one place without using the API directly.
+
+**Acceptance Criteria:**
+
+**Given** an Admin navigates to `/payroll/settings`
+**When** the page loads
+**Then** a tab-based layout renders with 3 tabs: "Bảo hiểm xã hội" | "Biểu thuế TNCN" | "Bảng lương"
+
+**Given** the "Bảo hiểm xã hội" tab is active
+**When** displayed
+**Then** shows a table of all InsuranceConfig records ordered by effectiveFrom DESC
+**And** each row shows: effectiveDate, BHXH NLĐ%, BHYT NLĐ%, BHTN NLĐ%, BHXH NSDLĐ%, BHYT NSDLĐ%, BHTN NSDLĐ%, TNLĐ%, wageBase, bhxhCeiling (computed), action buttons
+**And** a "Thêm cấu hình mới" button opens a form drawer to POST new config
+
+**Given** the "Biểu thuế TNCN" tab is active
+**When** displayed
+**Then** shows a timeline-style list of TaxBracket records
+**And** each bracket card shows: name, effectiveFrom, a table of brackets (ngưỡng từ | ngưỡng đến | thuế suất), isInUse badge
+**And** "Thêm biểu thuế" button opens a drawer where Admin can add/remove bracket rows dynamically
+
+**Given** the "Bảng lương" tab is active
+**When** displayed
+**Then** shows a sortable list of SalaryColumn records with drag-to-reorder (updates sortOrder)
+**And** each column shows: name, type (EARNING/DEDUCTION badge), source, formula (if applicable), isBhxhExempt, isPitExempt flags, active toggle
+**And** "Thêm cột" button opens a form drawer with: name, type selector, source selector, formula input (shown only if FORMULA), allowanceType selector (shown only if ALLOWANCE_TYPE)
+
+**Given** all UI components on this page
+**When** rendered in dark mode or with any theme preset
+**Then** all colors use `useThemePalette()` (no hardcoded colors)
+**And** EARNING columns use green tag style, DEDUCTION columns use red tag style (with explicit isDark style override per CLAUDE.md Nguyên tắc #6)
+**And** Table columns use `<Text style={{ color: textPrimary }}>` wrappers (no plain strings per Nguyên tắc #5)
+**And** StatCards if used must use the StatCard component from components/ui/StatCard.tsx
+
+**Given** a user without `PAYROLL_MANAGE` navigates to `/payroll/settings`
+**When** the page renders
+**Then** all form drawers and action buttons are hidden or disabled
+
+---
+
+### Story 22.11: Payroll Management Frontend (HR Period & Approval UI)
+
+As an HR Admin,
+I want a Payroll Management page to create periods, review breakdowns, override values, and approve payroll,
+So that I can complete the monthly payroll cycle entirely within the Loop app.
+
+**Acceptance Criteria:**
+
+**Given** an HR Admin navigates to `/payroll/periods`
+**When** the page loads
+**Then** shows a list of PayrollPeriod records with: kỳ lương, status badge (DRAFT/PROCESSING/REVIEWED/APPROVED/PAID with appropriate colors), total gross, total net, employee count
+**And** a StatCard header row shows: Tổng Gross (color #6366F1), Tổng Net (color #10B981), Tổng BHXH NLĐ (color #3B82F6), Tổng Chi phí NLĐ (color #F97316)
+
+**Given** HR Admin opens a PayrollPeriod in REVIEWED status
+**When** the detail page `/payroll/periods/:id` loads
+**Then** shows a table with columns: Họ tên | Gross | BHXH NLĐ | BHYT NLĐ | BHTN NLĐ | Thu nhập tính thuế | Số NPT | Thuế TNCN | Net
+**And** each row has an expand icon to show per-allowance and OT breakdown (WEEKDAY/WEEKEND/HOLIDAY hours + amounts)
+
+**Given** a PayrollRecord row in the preview
+**When** HR Admin clicks the edit icon for an employee
+**Then** an override modal opens with editable fields: workDays, overtimeHours (by category), overrideNote (required)
+**And** on save, `PATCH /api/v1/payroll/records/:id/override` is called
+**And** the row is re-highlighted to indicate manual override
+
+**Given** the period is in REVIEWED status and the user has `PAYROLL_APPROVE`
+**When** the Approve button is clicked
+**Then** a confirmation modal shows: "Xác nhận duyệt kỳ lương {tháng}? Sau khi duyệt sẽ phát phiếu lương tự động."
+**And** on confirm, the period status changes to APPROVED
+
+**Given** the period is in REVIEWED status
+**When** the "Chạy lại" button is clicked
+**Then** a modal requests a reason
+**And** on confirm, the period reverts to DRAFT for recalculation
+
+**Given** an employee in the period has no finalized Timesheet
+**When** the Process button is triggered
+**Then** a warning banner shows the list of employees missing Timesheet
+**And** each employee row has a "Override (ghi lý do)" button to manually unblock
+
+**Given** all UI components on this page
+**When** rendered in dark mode
+**Then** all colors use `useThemePalette()`, StatCard uses the StatCard component, no hardcoded colors
+**And** Table column renders return `<Text style={{ color: textPrimary/textMuted }}>` — no plain strings
+**And** Status badges use explicit isDark Tag styles (DRAFT=gray, PROCESSING=blue, REVIEWED=amber, APPROVED=green, PAID=green+bold)
+
+---
+
+### Story 22.12: Employee Self-Service Payslip Frontend (FR-PS06)
+
+As an employee,
+I want to view my payslip history and download PDFs from the Loop app,
+So that I can check my salary breakdown at any time without contacting HR.
+
+**Acceptance Criteria:**
+
+**Given** an authenticated employee navigates to `/payroll/my-payslips`
+**When** the page loads with `PAYROLL_VIEW_OWN` permission
+**Then** shows a list of their payslips ordered by date DESC
+**And** each card shows: kỳ lương, gross salary, net salary, status, date
+**And** a download icon on each card
+
+**Given** an employee clicks a payslip card
+**When** the detail view opens
+**Then** shows the full breakdown: thu nhập (SalaryColumn breakdown), khấu trừ (BHXH/BHYT/BHTN/PIT), và lương thực lĩnh
+**And** shows NPT count and giảm trừ amounts
+**And** all monetary values formatted as "1.234.567 đ" (vi-VN locale)
+
+**Given** an employee clicks the PDF download button
+**When** `GET /api/v1/payroll/my-payslips/:id/download` is called
+**Then** a presigned MinIO URL (15-minute TTL) is returned
+**And** the browser opens the PDF in a new tab
+
+**Given** any user tries to access another employee's payslip via `/payroll/my-payslips/:id`
+**When** the ID belongs to a different employee
+**Then** the backend returns `403 Forbidden`
+**And** the frontend shows a 403 error page
+
+**Given** no payslips exist for the employee
+**When** the page loads
+**Then** an empty state with message "Chưa có phiếu lương nào. Phiếu lương sẽ xuất hiện sau khi kỳ lương được duyệt." is shown
+
+**Given** all UI components on this page
+**When** rendered in dark mode or with any theme preset
+**Then** all colors use `useThemePalette()`, monetary values formatted as vi-VN
+
+---
+
+### Story 22.13: Permission Integration, Security & Sidebar Navigation
+
+As a system administrator,
+I want all payroll endpoints protected by proper permission codes and payroll navigation visible to authorized users in the sidebar,
+So that sensitive salary data is never accessible to unauthorized users.
+
+**Acceptance Criteria:**
+
+**Given** the `ROUTE_PERMISSION_MAP` in the frontend permission system
+**When** the app initializes
+**Then** the following entries exist:
+  - `/payroll` → `PAYROLL_VIEW_ALL` (HR Admin, Leadership)
+  - `/payroll/my-payslips` → `PAYROLL_VIEW_OWN` (any authenticated employee)
+  - `/payroll/settings` → `PAYROLL_MANAGE` (Admin)
+  - `/payroll/periods` → `PAYROLL_VIEW_ALL`
+
+**Given** the `ICON_MAP` for sidebar navigation
+**When** the payroll module is rendered
+**Then** `/payroll` uses `BankOutlined` (or similar financial icon)
+
+**Given** a MEMBER user without any payroll permissions
+**When** they navigate to the sidebar
+**Then** the Payroll section is not shown
+
+**Given** an employee with only `PAYROLL_VIEW_OWN`
+**When** they navigate to the sidebar
+**Then** only "Phiếu lương của tôi" link is shown, not the period management or settings
+
+**Given** all payroll API endpoints
+**When** a request is made without the required permission
+**Then** the backend returns `403 Forbidden`
+**And** no payroll data (salaries, tax IDs, benefit amounts) is included in any error response
+**And** salary data is never logged to stdout/stderr
+
+**Given** `GET /api/v1/payroll/records` is called by an HR Admin with `PAYROLL_VIEW_ALL`
+**When** a valid period filter is provided
+**Then** all employees' records are returned
+
+**Given** `GET /api/v1/payroll/records` is called by a regular employee
+**When** processed
+**Then** only records where `employeeId = caller.employeeId` are returned (row-level filter enforced)
+
+**Given** the role assignment UI in Admin module
+**When** an Admin assigns `PAYROLL_APPROVE` to a Kế toán user
+**Then** that user can access the approve button on period detail pages
+**And** `POST /api/v1/payroll/periods/:id/approve` returns 200 for that user

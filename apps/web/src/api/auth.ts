@@ -5,6 +5,8 @@ export interface UserProfile {
   name: string;
   email: string;
   role: string;
+  permissions: string[];
+  moduleRoles: string[];
 }
 
 export const authApi = {

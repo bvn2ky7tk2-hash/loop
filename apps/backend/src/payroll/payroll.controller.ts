@@ -63,10 +63,26 @@ export class PayrollController {
     return this.service.updateRecord(recordId, dto);
   }
 
+  // ── Chuyển kỳ lương sang REVIEWED ─────────────────────────────────────────
+  @Post('periods/:id/review')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @ApiOperation({ summary: 'Gửi kỳ lương để kiểm duyệt (PROCESSING → REVIEWED)' })
+  reviewPeriod(@Param('id') id: string) {
+    return this.service.reviewPeriod(id);
+  }
+
+  // ── Chạy lại kỳ lương (REVIEWED → DRAFT → PROCESSING) ────────────────────
+  @Post('periods/:id/rerun')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @ApiOperation({ summary: 'Chạy lại tính lương sau khi đã review' })
+  rerunPeriod(@Param('id') id: string) {
+    return this.service.rerunPeriod(id);
+  }
+
   // ── Phê duyệt kỳ lương ─────────────────────────────────────────────────────
   @Post('periods/:id/approve')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
-  @ApiOperation({ summary: 'Phê duyệt kỳ lương' })
+  @ApiOperation({ summary: 'Phê duyệt kỳ lương (REVIEWED → APPROVED)' })
   approvePeriod(@Param('id') id: string, @Req() req: { user: { id: string } }) {
     return this.service.approvePeriod(id, req.user.id);
   }

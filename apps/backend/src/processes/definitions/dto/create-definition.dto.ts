@@ -26,6 +26,10 @@ export class CreateDefinitionDto {
   @IsOptional()
   taskFormFields?: Record<string, FormFieldDto[]>;
 
+  @ApiPropertyOptional({ description: 'Per-step config (assignee + notification): { [activityId]: StepConfigItemDto }' })
+  @IsOptional()
+  stepConfig?: Record<string, StepConfigItemDto>;
+
   @ApiPropertyOptional({ description: 'Unique key để reference process (e.g. leave-approval, expense-approval)' })
   @IsOptional()
   @IsString()
@@ -33,6 +37,42 @@ export class CreateDefinitionDto {
   @MaxLength(100)
   key?: string;
 }
+
+// ─── Step Config ─────────────────────────────────────────────────────────────
+
+export type AssigneeMode = 'fixed' | 'orgunit' | 'requester_manager' | 'variable';
+export type SystemRole = 'ADMIN' | 'PM' | 'MEMBER' | 'LEADERSHIP';
+
+export class AssigneeConfigDto {
+  mode: AssigneeMode;
+  // mode=fixed
+  userId?: string;
+  // mode=orgunit
+  orgUnitId?: string;
+  role?: SystemRole;          // filter theo system role trong orgUnit
+  // mode=variable
+  variablePath?: string;      // tên biến trong instance.variables
+}
+
+export class NotificationTriggerDto {
+  enabled: boolean;
+  // Người nhận: 'assignee' | 'requester' | 'requester_manager' | 'user:{id}' | '{{variables.X}}'
+  recipients: string[];
+  subject: string;            // template với {{process.name}}, {{task.name}}, ...
+  bodyTemplate: string;       // template HTML/text
+}
+
+export class StepNotificationConfigDto {
+  taskAssigned?: NotificationTriggerDto;
+  taskCompleted?: NotificationTriggerDto;
+}
+
+export class StepConfigItemDto {
+  assigneeConfig?: AssigneeConfigDto;
+  notificationConfig?: StepNotificationConfigDto;
+}
+
+// ─── Form Fields ─────────────────────────────────────────────────────────────
 
 export class CriterionDto {
   key: string;

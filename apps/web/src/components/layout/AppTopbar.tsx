@@ -3,7 +3,7 @@ import { Layout, Button, Tooltip, Avatar, Dropdown, Popover, App, Form, Input, M
 import {
   MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, LogoutOutlined,
   BgColorsOutlined, PlusOutlined, CheckSquareOutlined, BugOutlined,
-  KeyOutlined, ApartmentOutlined,
+  KeyOutlined, PartitionOutlined,
 } from '@ant-design/icons';
 import { useThemeStore } from '../../store/theme.store';
 import { useAuthStore } from '../../store/auth.store';
@@ -16,6 +16,7 @@ import { ThemePanel } from '../ui/ThemePanel';
 import { BugCreateDrawer } from '../bugs/BugCreateDrawer';
 import { projectsApi } from '../../api/projects';
 import { tasksApi } from '../../api/tasks';
+import { useDefinitions, useStartInstance } from '../../api/processes.api';
 import { ChangePasswordModal } from '../ChangePasswordModal';
 import { GlobalSearch } from './GlobalSearch';
 
@@ -107,12 +108,71 @@ function QuickTaskModal({ open, onClose }: { open: boolean; onClose: () => void 
   );
 }
 
+function QuickProcessModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { message } = App.useApp();
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+
+  const { data: definitionsData } = useDefinitions({ page: 1, pageSize: 100 });
+  const activeDefinitions = (definitionsData?.data ?? []).filter((d) => d.status === 'ACTIVE');
+
+  const startMut = useStartInstance();
+
+  const handleFinish = async (values: { definitionId: string }) => {
+    try {
+      await startMut.mutateAsync({ definitionId: values.definitionId });
+      message.success('Đã khởi động công việc trong quy trình');
+      form.resetFields();
+      onClose();
+      navigate('/processes/inbox');
+    } catch {
+      message.error('Khởi động thất bại');
+    }
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    onClose();
+  };
+
+  return (
+    <Modal
+      open={open}
+      title={<><PartitionOutlined style={{ marginRight: 8, color: '#10B981' }} />Tạo công việc trong quy trình</>}
+      okText="Khởi động"
+      cancelText="Huỷ"
+      onCancel={handleCancel}
+      onOk={() => form.submit()}
+      confirmLoading={startMut.isPending}
+      width={480}
+    >
+      <Form form={form} layout="vertical" onFinish={handleFinish} style={{ marginTop: 12 }}>
+        <Form.Item name="definitionId" label="Chọn quy trình" rules={[{ required: true, message: 'Vui lòng chọn quy trình' }]}>
+          <Select
+            showSearch
+            placeholder={activeDefinitions.length ? 'Chọn quy trình đang hoạt động...' : 'Không có quy trình nào đang hoạt động'}
+            disabled={!activeDefinitions.length}
+            options={activeDefinitions.map((d) => ({ value: d.id, label: d.name }))}
+            optionFilterProp="label"
+          />
+        </Form.Item>
+        {!activeDefinitions.length && (
+          <div style={{ color: '#faad14', fontSize: 12 }}>
+            Chưa có quy trình nào được kích hoạt. Vào <a onClick={() => { onClose(); navigate('/processes'); }}>Quy trình</a> để kích hoạt trước.
+          </div>
+        )}
+      </Form>
+    </Modal>
+  );
+}
+
 export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
   const { mode, preset } = useThemeStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [quickTaskOpen,      setQuickTaskOpen]      = useState(false);
   const [quickBugOpen,       setQuickBugOpen]       = useState(false);
+  const [quickProcessOpen,   setQuickProcessOpen]   = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const { data: unreadCount = 0 } = useQuery({
@@ -128,13 +188,10 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
   };
 
   const isDark      = mode === 'dark';
+  const isNavLight  = !isDark && preset.navTheme === 'light';
   const topbarBg    = isDark ? '#0F172A' : preset.navBg;
-  const iconColor   = '#fff';
-  const borderColor = isDark ? '#1E293B' : 'transparent';
-
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Chào buổi sáng' : hour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
-  const firstName = user?.name?.split(' ').at(-1) ?? user?.name ?? '';
+  const iconColor   = isNavLight ? preset.navText : '#fff';
+  const borderColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : 'transparent';
 
   const userMenuItems = [
     {
@@ -166,22 +223,28 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
 
   const createMenuItems = [
     {
-      key: 'task',
-      icon: <CheckSquareOutlined />,
-      label: 'New Task',
-      onClick: () => setQuickTaskOpen(true),
-    },
-    {
-      key: 'bug',
-      icon: <BugOutlined />,
-      label: 'New Bug',
-      onClick: () => setQuickBugOpen(true),
-    },
-    {
-      key: 'process',
-      icon: <ApartmentOutlined />,
-      label: 'New Process',
-      onClick: () => navigate('/processes/modeler/new'),
+      type: 'group' as const,
+      label: <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.05em', opacity: 0.5, textTransform: 'uppercase' as const }}>Tạo mới nhanh</span>,
+      children: [
+        {
+          key: 'task',
+          icon: <CheckSquareOutlined style={{ color: '#6366F1' }} />,
+          label: 'Task mới',
+          onClick: () => setQuickTaskOpen(true),
+        },
+        {
+          key: 'bug',
+          icon: <BugOutlined style={{ color: '#EF4444' }} />,
+          label: 'Bug mới',
+          onClick: () => setQuickBugOpen(true),
+        },
+        {
+          key: 'process',
+          icon: <PartitionOutlined style={{ color: '#10B981' }} />,
+          label: 'Quy trình mới',
+          onClick: () => setQuickProcessOpen(true),
+        },
+      ],
     },
   ];
 
@@ -204,10 +267,11 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
           borderBottom: `1px solid ${borderColor}`,
           boxShadow: isDark
             ? '0 1px 4px rgba(0,0,0,0.25)'
+            : isNavLight ? '0 1px 4px rgba(0,0,0,0.08)'
             : '0 2px 12px rgba(57,73,171,0.22)',
         }}
       >
-        {/* Left: toggle + quick create */}
+        {/* Left: toggle only */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Button
             type="text"
@@ -219,24 +283,6 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
             size="large"
             aria-label="Toggle sidebar"
           />
-
-          <Dropdown menu={{ items: createMenuItems }} placement="bottomLeft" trigger={['click']}>
-            <Tooltip title="Quick create">
-              <Button
-                icon={<PlusOutlined />}
-                size="middle"
-                style={{
-                  borderRadius: 8,
-                  fontWeight: 600,
-                  background: 'rgba(255,255,255,0.15)',
-                  borderColor: 'rgba(255,255,255,0.35)',
-                  color: '#fff',
-                }}
-              >
-                Create
-              </Button>
-            </Tooltip>
-          </Dropdown>
         </div>
 
         {/* Center: global search inline */}
@@ -244,23 +290,43 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
           <GlobalSearch />
         </div>
 
-        {/* Right: greeting + actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          {/* Greeting */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            marginRight: 6,
-            whiteSpace: 'nowrap',
-          }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>
-              {greeting},
-            </span>
-            <span style={{ fontSize: 12, color: '#fff', fontWeight: 700 }}>
-              {firstName}
-            </span>
-          </div>
+        {/* Right: actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          {/* Quick create — nút tròn */}
+          <Dropdown menu={{ items: createMenuItems }} placement="bottomRight" trigger={['click']}>
+            <Tooltip title="Tạo mới nhanh" placement="bottom">
+              <button
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: preset.primary,
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: `0 2px 10px ${preset.primary}70`,
+                  transition: 'box-shadow 0.18s, transform 0.15s',
+                  color: '#fff',
+                  fontSize: 16,
+                  lineHeight: 1,
+                  flexShrink: 0,
+                  outline: 'none',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 4px 16px ${preset.primary}90`;
+                  (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 2px 10px ${preset.primary}70`;
+                  (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+                }}
+              >
+                <PlusOutlined />
+              </button>
+            </Tooltip>
+          </Dropdown>
 
           <NotificationBell unreadCount={unreadCount} />
 
@@ -280,7 +346,7 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
               <Button
                 type="text"
                 size="large"
-                icon={<BgColorsOutlined style={{ color: isDark ? preset.primary : iconColor, fontSize: 18 }} />}
+                icon={<BgColorsOutlined style={{ color: iconColor, fontSize: 18 }} />}
               />
             </Tooltip>
           </Popover>
@@ -291,9 +357,9 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
                 size={28}
                 icon={<UserOutlined />}
                 style={{
-                  backgroundColor: 'rgba(255,255,255,0.22)',
+                  backgroundColor: isNavLight ? 'rgba(23,43,77,0.08)' : 'rgba(255,255,255,0.22)',
                   cursor: 'pointer',
-                  border: '1.5px solid rgba(255,255,255,0.4)',
+                  border: isNavLight ? '1.5px solid rgba(23,43,77,0.2)' : '1.5px solid rgba(255,255,255,0.4)',
                 }}
               />
             </Button>
@@ -303,6 +369,7 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
 
       <QuickTaskModal open={quickTaskOpen} onClose={() => setQuickTaskOpen(false)} />
       <BugCreateDrawer open={quickBugOpen} onClose={() => setQuickBugOpen(false)} />
+      <QuickProcessModal open={quickProcessOpen} onClose={() => setQuickProcessOpen(false)} />
       <ChangePasswordModal open={changePasswordOpen} onClose={() => setChangePasswordOpen(false)} />
     </>
   );

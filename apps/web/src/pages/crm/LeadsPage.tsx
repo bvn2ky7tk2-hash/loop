@@ -151,7 +151,7 @@ export default function LeadsPage() {
     },
     {
       title: 'Phụ trách', dataIndex: ['assignee', 'name'], width: 150,
-      render: (_: unknown, row: Lead) => row.assignee?.name ?? <Text style={{ color: textMuted }}>—</Text>,
+      render: (_: unknown, row: Lead) => row.assignee?.name ? <Text style={{ color: textPrimary }}>{row.assignee.name}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: '', key: 'actions', width: 120, align: 'right',
@@ -224,18 +224,6 @@ export default function LeadsPage() {
             total: data?.total ?? 0,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
             showSizeChanger: true,
-          }}
-          components={{
-            header: {
-              cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-                <th {...props} style={{
-                  ...props.style,
-                  background: bgCard,
-                  color: textPrimary,
-                  borderBottom: `1px solid ${borderColor}`,
-                }} />
-              ),
-            },
           }}
         />
       </div>

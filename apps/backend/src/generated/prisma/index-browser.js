@@ -272,7 +272,11 @@ exports.Prisma.TimesheetRecordScalarFieldEnum = {
   workingDays: 'workingDays',
   standardDays: 'standardDays',
   overtimeHours: 'overtimeHours',
+  otWeekdayHours: 'otWeekdayHours',
+  otWeekendHours: 'otWeekendHours',
+  otHolidayHours: 'otHolidayHours',
   leaveDays: 'leaveDays',
+  unpaidLeaveDays: 'unpaidLeaveDays',
   status: 'status',
   submittedAt: 'submittedAt',
   approvedAt: 'approvedAt',
@@ -345,7 +349,8 @@ exports.Prisma.ProcessDefinitionScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   formFields: 'formFields',
-  taskFormFields: 'taskFormFields'
+  taskFormFields: 'taskFormFields',
+  stepConfig: 'stepConfig'
 };
 
 exports.Prisma.ProcessInstanceScalarFieldEnum = {
@@ -590,6 +595,8 @@ exports.Prisma.PayrollPeriodScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   status: 'status',
+  type: 'type',
+  adjustmentForPeriodId: 'adjustmentForPeriodId',
   processedById: 'processedById',
   processedAt: 'processedAt',
   createdAt: 'createdAt',
@@ -602,11 +609,33 @@ exports.Prisma.PayrollRecordScalarFieldEnum = {
   employeeId: 'employeeId',
   workDays: 'workDays',
   leaveDays: 'leaveDays',
+  paidLeaveDays: 'paidLeaveDays',
+  unpaidLeaveDays: 'unpaidLeaveDays',
   overtimeHours: 'overtimeHours',
+  overtimePayBreakdown: 'overtimePayBreakdown',
   baseSalary: 'baseSalary',
+  grossSalary: 'grossSalary',
+  overtimePay: 'overtimePay',
+  allowances: 'allowances',
   deductions: 'deductions',
   bonus: 'bonus',
+  bhxhEmployee: 'bhxhEmployee',
+  bhytEmployee: 'bhytEmployee',
+  bhtnEmployee: 'bhtnEmployee',
+  bhxhEmployer: 'bhxhEmployer',
+  bhytEmployer: 'bhytEmployer',
+  bhtnEmployer: 'bhtnEmployer',
+  tnldEmployer: 'tnldEmployer',
+  taxableIncome: 'taxableIncome',
+  selfDeduction: 'selfDeduction',
+  dependentDeduction: 'dependentDeduction',
+  dependentCount: 'dependentCount',
+  pitAmount: 'pitAmount',
+  totalLaborCost: 'totalLaborCost',
   netSalary: 'netSalary',
+  payslipPath: 'payslipPath',
+  configSnapshot: 'configSnapshot',
+  overrideNote: 'overrideNote',
   note: 'note'
 };
 
@@ -691,6 +720,36 @@ exports.Prisma.DealScalarFieldEnum = {
   processInstanceId: 'processInstanceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ClientContractScalarFieldEnum = {
+  id: 'id',
+  contractNo: 'contractNo',
+  title: 'title',
+  customerId: 'customerId',
+  dealId: 'dealId',
+  type: 'type',
+  value: 'value',
+  currency: 'currency',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  signedAt: 'signedAt',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ContractMilestoneScalarFieldEnum = {
+  id: 'id',
+  contractId: 'contractId',
+  name: 'name',
+  dueDate: 'dueDate',
+  amount: 'amount',
+  status: 'status',
+  paidAt: 'paidAt',
+  notes: 'notes',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.InvoiceScalarFieldEnum = {
@@ -881,6 +940,133 @@ exports.Prisma.PerformanceReviewScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.InsuranceConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  effectiveFrom: 'effectiveFrom',
+  bhxhEmployeeRate: 'bhxhEmployeeRate',
+  bhytEmployeeRate: 'bhytEmployeeRate',
+  bhtnEmployeeRate: 'bhtnEmployeeRate',
+  bhxhEmployerRate: 'bhxhEmployerRate',
+  bhytEmployerRate: 'bhytEmployerRate',
+  bhtnEmployerRate: 'bhtnEmployerRate',
+  tnldRate: 'tnldRate',
+  bhxhCeilingMultiple: 'bhxhCeilingMultiple',
+  wageBase: 'wageBase',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TaxBracketScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  effectiveFrom: 'effectiveFrom',
+  brackets: 'brackets',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TaxDeductionConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  effectiveFrom: 'effectiveFrom',
+  selfDeduction: 'selfDeduction',
+  dependentDeduction: 'dependentDeduction',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WageZoneConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  effectiveFrom: 'effectiveFrom',
+  zone1: 'zone1',
+  zone2: 'zone2',
+  zone3: 'zone3',
+  zone4: 'zone4',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EmployeeTaxProfileScalarFieldEnum = {
+  employeeId: 'employeeId',
+  taxId: 'taxId',
+  residencyStatus: 'residencyStatus',
+  wageZone: 'wageZone',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DependentScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  name: 'name',
+  relationship: 'relationship',
+  taxId: 'taxId',
+  registeredFrom: 'registeredFrom',
+  registeredTo: 'registeredTo',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AllowanceTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  defaultAmount: 'defaultAmount',
+  isBhxhExempt: 'isBhxhExempt',
+  isPitExempt: 'isPitExempt',
+  pitExemptCeiling: 'pitExemptCeiling',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BonusTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isBhxhExempt: 'isBhxhExempt',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EmployeeBonusScalarFieldEnum = {
+  id: 'id',
+  payrollRecordId: 'payrollRecordId',
+  bonusTypeId: 'bonusTypeId',
+  amount: 'amount',
+  note: 'note'
+};
+
+exports.Prisma.EmployeeYearlyTaxSummaryScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  year: 'year',
+  ytdGross: 'ytdGross',
+  ytdTaxableIncome: 'ytdTaxableIncome',
+  ytdPitPaid: 'ytdPitPaid',
+  ytdBhxhEmployee: 'ytdBhxhEmployee',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.EmployeeAllowanceScalarFieldEnum = {
+  id: 'id',
+  payrollRecordId: 'payrollRecordId',
+  allowanceTypeId: 'allowanceTypeId',
+  amount: 'amount',
+  overrideNote: 'overrideNote'
+};
+
+exports.Prisma.SalaryColumnScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  type: 'type',
+  source: 'source',
+  allowanceTypeId: 'allowanceTypeId',
+  fixedValue: 'fixedValue',
+  formula: 'formula',
+  isBhxhExempt: 'isBhxhExempt',
+  isPitExempt: 'isPitExempt',
+  pitExemptCeiling: 'pitExemptCeiling',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1002,7 +1188,8 @@ exports.NotificationType = exports.$Enums.NotificationType = {
   ISSUE_RESOLVED: 'ISSUE_RESOLVED',
   ISSUE_CLOSED: 'ISSUE_CLOSED',
   ISSUE_CRITICAL: 'ISSUE_CRITICAL',
-  ISSUE_OVERDUE: 'ISSUE_OVERDUE'
+  ISSUE_OVERDUE: 'ISSUE_OVERDUE',
+  PAYSLIP_ISSUED: 'PAYSLIP_ISSUED'
 };
 
 exports.DefinitionStatus = exports.$Enums.DefinitionStatus = {
@@ -1074,8 +1261,14 @@ exports.LeaveStatus = exports.$Enums.LeaveStatus = {
 exports.PayrollStatus = exports.$Enums.PayrollStatus = {
   DRAFT: 'DRAFT',
   PROCESSING: 'PROCESSING',
+  REVIEWED: 'REVIEWED',
   APPROVED: 'APPROVED',
   PAID: 'PAID'
+};
+
+exports.PayrollPeriodType = exports.$Enums.PayrollPeriodType = {
+  REGULAR: 'REGULAR',
+  ADJUSTMENT: 'ADJUSTMENT'
 };
 
 exports.ExpenseCategory = exports.$Enums.ExpenseCategory = {
@@ -1117,6 +1310,27 @@ exports.DealStage = exports.$Enums.DealStage = {
   NEGOTIATION: 'NEGOTIATION',
   WON: 'WON',
   LOST: 'LOST'
+};
+
+exports.ClientContractType = exports.$Enums.ClientContractType = {
+  SERVICE: 'SERVICE',
+  PRODUCT: 'PRODUCT',
+  SUPPORT: 'SUPPORT',
+  SLA: 'SLA',
+  OTHER: 'OTHER'
+};
+
+exports.ClientContractStatus = exports.$Enums.ClientContractStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.MilestoneStatus = exports.$Enums.MilestoneStatus = {
+  PENDING: 'PENDING',
+  INVOICED: 'INVOICED',
+  PAID: 'PAID'
 };
 
 exports.InvoiceType = exports.$Enums.InvoiceType = {
@@ -1200,6 +1414,23 @@ exports.ReviewStatus = exports.$Enums.ReviewStatus = {
   APPROVED: 'APPROVED'
 };
 
+exports.ResidencyStatus = exports.$Enums.ResidencyStatus = {
+  RESIDENT: 'RESIDENT',
+  NON_RESIDENT: 'NON_RESIDENT'
+};
+
+exports.SalaryColumnType = exports.$Enums.SalaryColumnType = {
+  EARNING: 'EARNING',
+  DEDUCTION: 'DEDUCTION'
+};
+
+exports.SalaryColumnSource = exports.$Enums.SalaryColumnSource = {
+  CONTRACT_SALARY: 'CONTRACT_SALARY',
+  ALLOWANCE_TYPE: 'ALLOWANCE_TYPE',
+  FIXED_VALUE: 'FIXED_VALUE',
+  FORMULA: 'FORMULA'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -1250,6 +1481,8 @@ exports.Prisma.ModelName = {
   Contact: 'Contact',
   Lead: 'Lead',
   Deal: 'Deal',
+  ClientContract: 'ClientContract',
+  ContractMilestone: 'ContractMilestone',
   Invoice: 'Invoice',
   InvoiceItem: 'InvoiceItem',
   JobOpening: 'JobOpening',
@@ -1263,7 +1496,19 @@ exports.Prisma.ModelName = {
   JournalLine: 'JournalLine',
   TrainingProgram: 'TrainingProgram',
   TrainingRecord: 'TrainingRecord',
-  PerformanceReview: 'PerformanceReview'
+  PerformanceReview: 'PerformanceReview',
+  InsuranceConfig: 'InsuranceConfig',
+  TaxBracket: 'TaxBracket',
+  TaxDeductionConfig: 'TaxDeductionConfig',
+  WageZoneConfig: 'WageZoneConfig',
+  EmployeeTaxProfile: 'EmployeeTaxProfile',
+  Dependent: 'Dependent',
+  AllowanceType: 'AllowanceType',
+  BonusType: 'BonusType',
+  EmployeeBonus: 'EmployeeBonus',
+  EmployeeYearlyTaxSummary: 'EmployeeYearlyTaxSummary',
+  EmployeeAllowance: 'EmployeeAllowance',
+  SalaryColumn: 'SalaryColumn'
 };
 
 /**

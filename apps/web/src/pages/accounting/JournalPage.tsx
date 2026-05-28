@@ -27,7 +27,9 @@ export default function JournalPage() {
   const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
   const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
   const borderColor  = isDark ? '#334155' : '#E2E8F0';
+  const linkColor    = isDark ? '#93C5FD' : preset.primary;
 
   const [filter, setFilter] = useState<JournalFilter>({ page: 1, limit: 50 });
   const [modalOpen, setModalOpen] = useState(false);
@@ -169,11 +171,11 @@ export default function JournalPage() {
                   size="small"
                   pagination={false}
                   columns={[
-                    { title: 'Tài khoản', dataIndex: 'accountCode', width: 100, render: (v: string, l) => <span style={{ fontFamily: 'monospace', color: preset.primary }}>{v}</span> },
-                    { title: 'Tên tài khoản', render: (_: unknown, l) => l.account?.name ?? '—' },
-                    { title: 'Nợ', dataIndex: 'debit', align: 'right' as const, render: (v: string) => Number(v) > 0 ? <span style={{ color: '#EF4444' }}>{formatMoney(v)}</span> : '—' },
-                    { title: 'Có', dataIndex: 'credit', align: 'right' as const, render: (v: string) => Number(v) > 0 ? <span style={{ color: '#10B981' }}>{formatMoney(v)}</span> : '—' },
-                    { title: 'Diễn giải', dataIndex: 'description', render: (v: string | null) => v ?? '—' },
+                    { title: 'Tài khoản', dataIndex: 'accountCode', width: 100, render: (v: string) => <span style={{ fontFamily: 'monospace', color: linkColor }}>{v}</span> },
+                    { title: 'Tên tài khoản', render: (_: unknown, l) => l.account?.name ? <Text style={{ color: textPrimary }}>{l.account.name}</Text> : <Text style={{ color: textMuted }}>—</Text> },
+                    { title: 'Nợ', dataIndex: 'debit', align: 'right' as const, render: (v: string) => Number(v) > 0 ? <span style={{ color: '#EF4444' }}>{formatMoney(v)}</span> : <Text style={{ color: textMuted }}>—</Text> },
+                    { title: 'Có', dataIndex: 'credit', align: 'right' as const, render: (v: string) => Number(v) > 0 ? <span style={{ color: '#10B981' }}>{formatMoney(v)}</span> : <Text style={{ color: textMuted }}>—</Text> },
+                    { title: 'Diễn giải', dataIndex: 'description', render: (v: string | null) => v ? <Text style={{ color: textMuted, fontSize: 12 }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
                   ]}
                 />
               </div>

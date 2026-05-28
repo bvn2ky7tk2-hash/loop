@@ -40,6 +40,7 @@ export default function InterviewsPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [page, setPage]                 = useState(1);
   const [limit, setLimit]               = useState(20);
@@ -107,10 +108,10 @@ export default function InterviewsPage() {
         </Space>
       ),
     },
-    { title: 'Địa điểm', dataIndex: 'location', width: 160, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Địa điểm', dataIndex: 'location', width: 160, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Điểm', dataIndex: 'score', width: 70, align: 'center',
-      render: (v?: number) => v != null ? <Text style={{ color: preset.primary, fontWeight: 600 }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: number) => v != null ? <Text style={{ color: linkColor, fontWeight: 600 }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     { title: 'Kết quả', dataIndex: 'result', width: 130, render: (v: InterviewResult) => <Tag color={RESULT_META[v].color}>{RESULT_META[v].label}</Tag> },
     {
@@ -141,9 +142,6 @@ export default function InterviewsPage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: page, pageSize: limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (p, l) => { setPage(p); setLimit(l); } }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
 

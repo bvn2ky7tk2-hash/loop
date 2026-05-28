@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
-  Input, Modal, Row, Col, Divider, Statistic, InputNumber, message,
+  Input, Modal, Row, Col, Divider, InputNumber, message,
   Tooltip,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, DeleteOutlined, CheckOutlined, CloseOutlined,
   WalletOutlined, PlusCircleOutlined, BranchesOutlined,
@@ -263,10 +264,12 @@ export default function ExpensePage() {
   const isDark = mode === 'dark';
   const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const textMuted     = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
   const bgContainer   = isDark ? '#1E293B' : '#ffffff';
   const bgCard        = isDark ? '#2D3F56' : '#FAFAFA';
   const bgSubPanel    = isDark ? '#1A2744' : '#F8FAFC';
   const borderColor   = isDark ? '#334155' : '#E2E8F0';
+  const linkColor     = isDark ? '#93C5FD' : preset.primary;
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -488,23 +491,12 @@ export default function ExpensePage() {
       {/* Summary cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
         {[
-          { label: 'Chờ duyệt', value: totalPending, color: '#FA8C16' },
-          { label: 'Đã duyệt', value: totalApproved, color: '#52C41A' },
-          { label: 'Đã thanh toán', value: totalPaid, color: '#1677ff' },
+          { label: 'Chờ duyệt',    value: formatCurrency(totalPending),  color: '#FA8C16' },
+          { label: 'Đã duyệt',     value: formatCurrency(totalApproved), color: '#52C41A' },
+          { label: 'Đã thanh toán', value: formatCurrency(totalPaid),    color: '#1677ff' },
         ].map((item) => (
           <Col key={item.label} xs={24} sm={8}>
-            <div style={{
-              background: bgCard,
-              border: `1px solid ${borderColor}`,
-              borderRadius: 10, padding: '16px 20px',
-            }}>
-              <Statistic
-                title={<span style={{ color: textSecondary, fontSize: 13 }}>{item.label}</span>}
-                value={item.value}
-                formatter={(v) => formatCurrency(Number(v))}
-                valueStyle={{ color: item.color, fontSize: 18 }}
-              />
-            </div>
+            <StatCard label={item.label} value={item.value} color={item.color} />
           </Col>
         ))}
       </Row>
@@ -561,7 +553,7 @@ export default function ExpensePage() {
               ))}
               <div style={{ textAlign: 'right', marginTop: 8, paddingTop: 8, borderTop: `1px solid ${borderColor}` }}>
                 <Text style={{ color: textSecondary }}>Tổng: </Text>
-                <Text strong style={{ color: preset.primary, fontSize: 15 }}>
+                <Text strong style={{ color: linkColor, fontSize: 15 }}>
                   {formatCurrency(record.totalAmount)}
                 </Text>
               </div>

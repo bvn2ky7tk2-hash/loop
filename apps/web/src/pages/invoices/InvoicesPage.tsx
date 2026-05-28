@@ -2,9 +2,9 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Select, DatePicker, Tag, Modal, message,
   Form, Input, InputNumber, Divider, Row, Col, Tooltip,
-  Statistic,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, FileTextOutlined, DeleteOutlined, SendOutlined,
   CheckCircleOutlined, CloseCircleOutlined, WarningOutlined, DollarOutlined,
@@ -50,30 +50,6 @@ function formatMoney(v?: string | number | null): string {
   return Number(v).toLocaleString('vi-VN') + ' ₫';
 }
 
-// ─── Summary Card ─────────────────────────────────────────────────────────────
-
-function SummaryCard({
-  title, count, total, color, icon, bgColor,
-}: {
-  title: string; count: number; total: number;
-  color: string; icon: React.ReactNode; bgColor: string;
-}) {
-  return (
-    <div style={{
-      background: bgColor, borderRadius: 10, padding: '14px 18px',
-      border: `1px solid ${color}30`,
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div>
-          <div style={{ fontSize: 12, color: color, fontWeight: 600, marginBottom: 4 }}>{title}</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: color }}>{count}</div>
-          <div style={{ fontSize: 12, color: color, opacity: 0.8, marginTop: 2 }}>{formatMoney(total)}</div>
-        </div>
-        <div style={{ fontSize: 24, color: color, opacity: 0.6 }}>{icon}</div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Line Items editor ────────────────────────────────────────────────────────
 
@@ -152,6 +128,7 @@ export default function InvoicesPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters]   = useState<FilterInvoiceParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);
@@ -212,7 +189,7 @@ export default function InvoicesPage() {
   const columns: ColumnsType<Invoice> = [
     {
       title: 'Mã HĐ', dataIndex: 'code', width: 160,
-      render: (v: string) => <Text code style={{ color: preset.primary }}>{v}</Text>,
+      render: (v: string) => <Text code style={{ color: linkColor }}>{v}</Text>,
     },
     {
       title: 'Loại', dataIndex: 'type', width: 100,
@@ -220,7 +197,7 @@ export default function InvoicesPage() {
     },
     {
       title: 'Khách hàng', dataIndex: ['customer', 'name'], width: 200,
-      render: (_: unknown, row: Invoice) => row.customer?.name ?? <Text style={{ color: textMuted }}>—</Text>,
+      render: (_: unknown, row: Invoice) => row.customer?.name ? <Text style={{ color: textPrimary }}>{row.customer.name}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Tổng tiền', dataIndex: 'totalAmount', width: 160, align: 'right',
@@ -294,24 +271,20 @@ export default function InvoicesPage() {
       {summary && (
         <Row gutter={12} style={{ marginBottom: 20 }}>
           <Col xs={24} sm={12} md={6}>
-            <SummaryCard title="Nháp" count={summary.draft.count} total={summary.draft.total}
-              color="#64748B" icon={<FileTextOutlined />}
-              bgColor={isDark ? '#1E293B' : '#F8FAFC'} />
+            <StatCard label="Nháp" value={summary.draft.count} subValue={formatMoney(summary.draft.total)}
+              color="#8B9EC5" icon={<FileTextOutlined />} />
           </Col>
           <Col xs={24} sm={12} md={6}>
-            <SummaryCard title="Chưa thu (Đã gửi)" count={summary.sent.count} total={summary.sent.total}
-              color="#3B82F6" icon={<SendOutlined />}
-              bgColor={isDark ? '#1E3A5F' : '#EFF6FF'} />
+            <StatCard label="Chưa thu (Đã gửi)" value={summary.sent.count} subValue={formatMoney(summary.sent.total)}
+              color="#3B82F6" icon={<SendOutlined />} />
           </Col>
           <Col xs={24} sm={12} md={6}>
-            <SummaryCard title="Đã thanh toán (tháng này)" count={summary.paidThisMonth.count} total={summary.paidThisMonth.total}
-              color="#10B981" icon={<DollarOutlined />}
-              bgColor={isDark ? '#064E3B' : '#F0FDF4'} />
+            <StatCard label="Đã thanh toán (tháng này)" value={summary.paidThisMonth.count} subValue={formatMoney(summary.paidThisMonth.total)}
+              color="#10B981" icon={<DollarOutlined />} />
           </Col>
           <Col xs={24} sm={12} md={6}>
-            <SummaryCard title="Quá hạn" count={summary.overdue.count} total={summary.overdue.total}
-              color="#EF4444" icon={<WarningOutlined />}
-              bgColor={isDark ? '#450A0A' : '#FEF2F2'} />
+            <StatCard label="Quá hạn" value={summary.overdue.count} subValue={formatMoney(summary.overdue.total)}
+              color="#EF4444" icon={<WarningOutlined />} />
           </Col>
         </Row>
       )}
@@ -347,18 +320,6 @@ export default function InvoicesPage() {
             total:       data?.total ?? 0,
             onChange:    (page, limit) => setFilters(f => ({ ...f, page, limit })),
             showSizeChanger: true,
-          }}
-          components={{
-            header: {
-              cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-                <th {...props} style={{
-                  ...props.style,
-                  background: bgCard,
-                  color: textPrimary,
-                  borderBottom: `1px solid ${borderColor}`,
-                }} />
-              ),
-            },
           }}
         />
       </div>

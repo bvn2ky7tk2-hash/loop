@@ -57,10 +57,11 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/accounting/journal',      module: 'finance', label: 'Journal',            icon: 'BookOutlined',       permCode: 'finance:manage', sortOrder: 5 },
 
   // ─── CRM ───────────────────────────────────────────────────────────────────
-  { route: '/crm/leads',     module: 'crm', label: 'Leads',         icon: 'FunnelPlotOutlined', permCode: 'crm:read', sortOrder: 0 },
-  { route: '/crm/deals',     module: 'crm', label: 'Deals',         icon: 'TrophyOutlined',     permCode: 'crm:read', sortOrder: 1 },
-  { route: '/crm/contacts',  module: 'crm', label: 'Contacts',      icon: 'ContactsOutlined',   permCode: 'crm:read', sortOrder: 2 },
-  { route: '/crm/customers', module: 'crm', label: 'All Customers', icon: 'ShopOutlined',       permCode: 'crm:read', sortOrder: 3 },
+  { route: '/crm/leads',            module: 'crm', label: 'Leads',         icon: 'FunnelPlotOutlined', permCode: 'crm:read', sortOrder: 0 },
+  { route: '/crm/deals',            module: 'crm', label: 'Deals',         icon: 'TrophyOutlined',     permCode: 'crm:read', sortOrder: 1 },
+  { route: '/crm/contacts',         module: 'crm', label: 'Contacts',      icon: 'ContactsOutlined',   permCode: 'crm:read', sortOrder: 2 },
+  { route: '/crm/customers',        module: 'crm', label: 'All Customers', icon: 'ShopOutlined',       permCode: 'crm:read', sortOrder: 3 },
+  { route: '/crm/client-contracts', module: 'crm', label: 'Hợp đồng KH',  icon: 'AuditOutlined',      permCode: 'crm:read', sortOrder: 4 },
 
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',        module: 'admin', label: 'Users',        icon: 'UserOutlined',              permCode: 'admin:users',       sortOrder: 0 },

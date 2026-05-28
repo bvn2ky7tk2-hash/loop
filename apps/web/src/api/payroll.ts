@@ -1,8 +1,10 @@
 import { apiClient } from './client';
 
-const BASE = '/payroll';
+const BASE = '/api/v1/payroll';
 
-export type PayrollStatus = 'DRAFT' | 'PROCESSING' | 'APPROVED' | 'PAID';
+export type PayrollStatus = 'DRAFT' | 'PROCESSING' | 'REVIEWED' | 'APPROVED' | 'PAID';
+export type SalaryColumnSource = 'CONTRACT_SALARY' | 'ALLOWANCE_TYPE' | 'FIXED_VALUE' | 'FORMULA';
+export type SalaryColumnType = 'EARNING' | 'DEDUCTION';
 
 export interface PayrollPeriod {
   id: string;
@@ -21,16 +23,100 @@ export interface PayrollRecord {
   employeeId: string;
   workDays: number;
   leaveDays: number;
+  paidLeaveDays: number;
+  unpaidLeaveDays: number;
   overtimeHours: number;
   baseSalary: number;
+  grossSalary: number;
+  overtimePay: number;
+  allowances: number;
   deductions: number;
   bonus: number;
+  bhxhEmployee: number;
+  bhytEmployee: number;
+  bhtnEmployee: number;
+  bhxhEmployer: number;
+  bhytEmployer: number;
+  bhtnEmployer: number;
+  tnldEmployer: number;
+  taxableIncome: number;
+  selfDeduction: number;
+  dependentDeduction: number;
+  dependentCount: number;
+  pitAmount: number;
   netSalary: number;
+  totalLaborCost: number;
   note?: string;
+  overrideNote?: string;
+  configSnapshot?: Record<string, any>;
   employee: {
     id: string;
     user: { id: string; name: string; email: string };
   };
+}
+
+export interface InsuranceConfig {
+  id: string;
+  tenantId?: string | null;
+  effectiveFrom: string;
+  bhxhEmployeeRate: number;
+  bhytEmployeeRate: number;
+  bhtnEmployeeRate: number;
+  bhxhEmployerRate: number;
+  bhytEmployerRate: number;
+  bhtnEmployerRate: number;
+  tnldRate: number;
+  bhxhCeilingMultiple: number;
+  wageBase: number;
+  bhxhCeiling?: number;
+  createdAt: string;
+}
+
+export interface TaxBracket {
+  id: string;
+  tenantId?: string | null;
+  name: string;
+  effectiveFrom: string;
+  brackets: Array<{ from: number; to: number | null; rate: number }>;
+  createdAt: string;
+}
+
+export interface TaxDeductionConfig {
+  id: string;
+  tenantId?: string | null;
+  effectiveFrom: string;
+  selfDeduction: number;
+  dependentDeduction: number;
+  createdAt: string;
+}
+
+export interface SalaryColumn {
+  id: string;
+  tenantId?: string | null;
+  name: string;
+  type: SalaryColumnType;
+  source: SalaryColumnSource;
+  allowanceTypeId?: string | null;
+  fixedValue?: number | null;
+  formula?: string | null;
+  isBhxhExempt: boolean;
+  isPitExempt: boolean;
+  pitExemptCeiling?: number | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+  allowanceType?: { id: string; name: string } | null;
+}
+
+export interface AllowanceType {
+  id: string;
+  name: string;
+  defaultAmount: number;
+  isBhxhExempt: boolean;
+  isPitExempt: boolean;
+  pitExemptCeiling?: number | null;
+  isActive: boolean;
+  createdAt: string;
 }
 
 export interface PaginatedResult<T> {
@@ -41,7 +127,26 @@ export interface PaginatedResult<T> {
   totalPages: number;
 }
 
+export interface Dependent {
+  id: string;
+  name: string;
+  relationship: string;
+  taxId?: string | null;
+  registeredFrom: string;
+  registeredTo?: string | null;
+}
+
+export interface EmployeeTaxProfile {
+  id: string;
+  employeeId: string;
+  taxId?: string | null;
+  residencyStatus: 'RESIDENT' | 'NON_RESIDENT';
+  wageZone: number;
+  dependents: Dependent[];
+}
+
 export const payrollApi = {
+  // ── Periods ────────────────────────────────────────────────────────────────
   listPeriods: (page = 1, limit = 20) =>
     apiClient.get<PaginatedResult<PayrollPeriod>>(`${BASE}/periods`, { params: { page, limit } }).then(r => r.data),
 
@@ -51,15 +156,92 @@ export const payrollApi = {
   generatePayroll: (periodId: string) =>
     apiClient.post<{ periodId: string; generated: number; status: string }>(`${BASE}/periods/${periodId}/generate`).then(r => r.data),
 
-  getPeriodRecords: (periodId: string, page = 1, limit = 50) =>
-    apiClient.get<PaginatedResult<PayrollRecord>>(`${BASE}/periods/${periodId}/records`, { params: { page, limit } }).then(r => r.data),
+  reviewPeriod: (periodId: string) =>
+    apiClient.post<PayrollPeriod>(`${BASE}/periods/${periodId}/review`).then(r => r.data),
 
-  updateRecord: (recordId: string, data: { bonus?: number; deductions?: number; note?: string }) =>
-    apiClient.patch<PayrollRecord>(`${BASE}/records/${recordId}`, data).then(r => r.data),
+  rerunPeriod: (periodId: string) =>
+    apiClient.post<{ periodId: string; generated: number; status: string }>(`${BASE}/periods/${periodId}/rerun`).then(r => r.data),
 
   approvePeriod: (periodId: string) =>
     apiClient.post<PayrollPeriod>(`${BASE}/periods/${periodId}/approve`).then(r => r.data),
 
   markPaid: (periodId: string) =>
     apiClient.post<PayrollPeriod>(`${BASE}/periods/${periodId}/pay`).then(r => r.data),
+
+  // ── Records ────────────────────────────────────────────────────────────────
+  getPeriodRecords: (periodId: string, page = 1, limit = 50) =>
+    apiClient.get<PaginatedResult<PayrollRecord>>(`${BASE}/periods/${periodId}/records`, { params: { page, limit } }).then(r => r.data),
+
+  updateRecord: (recordId: string, data: { bonus?: number; deductions?: number; note?: string }) =>
+    apiClient.patch<PayrollRecord>(`${BASE}/records/${recordId}`, data).then(r => r.data),
+
+  // ── Insurance Config ───────────────────────────────────────────────────────
+  listInsuranceConfigs: (page = 1, limit = 20) =>
+    apiClient.get<PaginatedResult<InsuranceConfig>>(`${BASE}/insurance-configs`, { params: { page, limit } }).then(r => r.data),
+
+  getActiveInsuranceConfig: () =>
+    apiClient.get<InsuranceConfig>(`${BASE}/insurance-configs/active`).then(r => r.data),
+
+  createInsuranceConfig: (data: Omit<InsuranceConfig, 'id' | 'createdAt' | 'bhxhCeiling'>) =>
+    apiClient.post<InsuranceConfig>(`${BASE}/insurance-configs`, data).then(r => r.data),
+
+  deleteInsuranceConfig: (id: string) =>
+    apiClient.delete(`${BASE}/insurance-configs/${id}`).then(r => r.data),
+
+  // ── Tax Bracket ────────────────────────────────────────────────────────────
+  listTaxBrackets: (page = 1, limit = 20) =>
+    apiClient.get<PaginatedResult<TaxBracket>>(`${BASE}/tax-brackets`, { params: { page, limit } }).then(r => r.data),
+
+  getActiveTaxBracket: () =>
+    apiClient.get<TaxBracket>(`${BASE}/tax-brackets/active`).then(r => r.data),
+
+  createTaxBracket: (data: { name: string; effectiveFrom: string; brackets: TaxBracket['brackets'] }) =>
+    apiClient.post<TaxBracket>(`${BASE}/tax-brackets`, data).then(r => r.data),
+
+  deleteTaxBracket: (id: string) =>
+    apiClient.delete(`${BASE}/tax-brackets/${id}`).then(r => r.data),
+
+  // ── Tax Deduction ──────────────────────────────────────────────────────────
+  listTaxDeductions: (page = 1, limit = 20) =>
+    apiClient.get<PaginatedResult<TaxDeductionConfig>>(`${BASE}/tax-deductions`, { params: { page, limit } }).then(r => r.data),
+
+  getActiveTaxDeduction: () =>
+    apiClient.get<TaxDeductionConfig>(`${BASE}/tax-deductions/active`).then(r => r.data),
+
+  createTaxDeduction: (data: { effectiveFrom: string; selfDeduction: number; dependentDeduction: number }) =>
+    apiClient.post<TaxDeductionConfig>(`${BASE}/tax-deductions`, data).then(r => r.data),
+
+  // ── Salary Columns ─────────────────────────────────────────────────────────
+  listSalaryColumns: (page = 1, limit = 50) =>
+    apiClient.get<PaginatedResult<SalaryColumn>>(`${BASE}/salary-columns`, { params: { page, limit } }).then(r => r.data),
+
+  createSalaryColumn: (data: Partial<SalaryColumn>) =>
+    apiClient.post<SalaryColumn>(`${BASE}/salary-columns`, data).then(r => r.data),
+
+  updateSalaryColumn: (id: string, data: Partial<SalaryColumn>) =>
+    apiClient.patch<SalaryColumn>(`${BASE}/salary-columns/${id}`, data).then(r => r.data),
+
+  // ── Allowance Types ────────────────────────────────────────────────────────
+  listAllowanceTypes: () =>
+    apiClient.get<AllowanceType[]>(`${BASE}/allowance-types`).then(r => r.data),
+
+  // ── Employee Tax Profile ───────────────────────────────────────────────────
+  getEmployeeTaxProfile: (employeeId: string) =>
+    apiClient.get<EmployeeTaxProfile>(`${BASE}/employees/${employeeId}/tax-profile`).then(r => r.data),
+
+  upsertEmployeeTaxProfile: (employeeId: string, data: { taxId?: string; residencyStatus: string; wageZone: number }) =>
+    apiClient.put<EmployeeTaxProfile>(`${BASE}/employees/${employeeId}/tax-profile`, data).then(r => r.data),
+
+  // ── Dependents ─────────────────────────────────────────────────────────────
+  listDependents: (employeeId: string) =>
+    apiClient.get<Dependent[]>(`${BASE}/employees/${employeeId}/dependents`).then(r => r.data),
+
+  addDependent: (employeeId: string, data: { name: string; relationship: string; taxId?: string; registeredFrom: string }) =>
+    apiClient.post<Dependent>(`${BASE}/employees/${employeeId}/dependents`, data).then(r => r.data),
+
+  terminateDependent: (employeeId: string, dependentId: string, data: { registeredTo: string }) =>
+    apiClient.patch<Dependent>(`${BASE}/employees/${employeeId}/dependents/${dependentId}/terminate`, data).then(r => r.data),
+
+  deleteDependent: (employeeId: string, dependentId: string) =>
+    apiClient.delete(`${BASE}/employees/${employeeId}/dependents/${dependentId}`).then(r => r.data),
 };

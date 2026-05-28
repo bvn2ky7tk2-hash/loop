@@ -74,6 +74,7 @@ export default function TasksPage() {
   const { token } = theme.useToken();
   const { mode, preset } = useThemeStore();
   const isDark = mode === 'dark';
+  const linkColor = isDark ? '#93C5FD' : preset.primary;
   const qc = useQueryClient();
 
   // ── Tab 1: Task list state ────────────────────────────────────────────────
@@ -361,7 +362,7 @@ export default function TasksPage() {
       title: 'Giờ (est / act)', width: 120,
       render: (_: unknown, r: Task) => (
         <span style={{ fontSize: 12 }}>
-          <span style={{ color: preset.primary, fontWeight: 500 }}>{Number(r.estimateHours)}h</span>
+          <span style={{ color: linkColor, fontWeight: 500 }}>{Number(r.estimateHours)}h</span>
           <span style={{ color: '#94A3B8' }}> / </span>
           <span style={{ color: Number(r.actualHours) > Number(r.estimateHours) ? '#EF4444' : '#10B981', fontWeight: 500 }}>
             {Number(r.actualHours)}h

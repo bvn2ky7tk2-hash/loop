@@ -33,7 +33,9 @@ export default function TrainingPage() {
   const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
   const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
   const borderColor  = isDark ? '#334155' : '#E2E8F0';
+  const linkColor    = isDark ? '#93C5FD' : preset.primary;
 
   const [progModalOpen, setProgModalOpen] = useState(false);
   const [recModalOpen, setRecModalOpen] = useState(false);
@@ -81,21 +83,21 @@ export default function TrainingPage() {
   const programColumns: ColumnsType<TrainingProgram> = [
     { title: 'Tên chương trình', dataIndex: 'title', render: v => <span style={{ color: textPrimary, fontWeight: 500 }}>{v}</span> },
     { title: 'Loại', dataIndex: 'type', width: 120, render: v => <Tag color={v === 'internal' ? 'blue' : 'purple'}>{v === 'internal' ? 'Nội bộ' : 'Bên ngoài'}</Tag> },
-    { title: 'Thời lượng (giờ)', dataIndex: 'durationHours', width: 140, align: 'right' as const },
-    { title: 'Mô tả', dataIndex: 'description', render: v => <span style={{ color: textSecondary }}>{v ?? '—'}</span> },
+    { title: 'Thời lượng (giờ)', dataIndex: 'durationHours', width: 140, align: 'right' as const, render: v => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Mô tả', dataIndex: 'description', render: v => v ? <span style={{ color: textSecondary }}>{v}</span> : <Text style={{ color: textMuted }}>—</Text> },
   ];
 
   const recordColumns: ColumnsType<TrainingRecord> = [
     { title: 'Nhân viên', render: (_, r) => <span style={{ color: textPrimary }}>{r.employee?.fullName ?? r.employeeId}</span> },
     { title: 'Chương trình', render: (_, r) => <span style={{ color: textPrimary }}>{r.program?.title ?? r.programId}</span> },
-    { title: 'Loại', render: (_, r) => r.program?.type ? <Tag color={r.program.type === 'internal' ? 'blue' : 'purple'}>{r.program.type === 'internal' ? 'Nội bộ' : 'Bên ngoài'}</Tag> : '—' },
-    { title: 'Bắt đầu', dataIndex: 'startDate', width: 110, render: v => dayjs(v).format('DD/MM/YYYY') },
-    { title: 'Kết thúc', dataIndex: 'endDate', width: 110, render: v => v ? dayjs(v).format('DD/MM/YYYY') : '—' },
+    { title: 'Loại', render: (_, r) => r.program?.type ? <Tag color={r.program.type === 'internal' ? 'blue' : 'purple'}>{r.program.type === 'internal' ? 'Nội bộ' : 'Bên ngoài'}</Tag> : <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Bắt đầu', dataIndex: 'startDate', width: 110, render: v => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> },
+    { title: 'Kết thúc', dataIndex: 'endDate', width: 110, render: v => v ? <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Trạng thái', dataIndex: 'status', width: 130,
       render: (v: TrainingStatus) => <Tag color={STATUS_META[v].color}>{STATUS_META[v].label}</Tag>,
     },
-    { title: 'Điểm', dataIndex: 'score', width: 70, align: 'right' as const, render: v => v ? <span style={{ color: preset.primary, fontWeight: 600 }}>{v}</span> : '—' },
+    { title: 'Điểm', dataIndex: 'score', width: 70, align: 'right' as const, render: v => v ? <span style={{ color: linkColor, fontWeight: 600 }}>{v}</span> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Hành động', width: 180,
       render: (_, r) => (

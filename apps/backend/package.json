@@ -21,7 +21,11 @@
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
     "seed:full": "node prisma/seed-full.js",
     "seed:timesheet": "node prisma/seed-timesheet.js",
-    "seed:mega": "node prisma/seed-mega.js"
+    "seed:mega": "node prisma/seed-mega.js",
+    "seed:500": "node prisma/seed-500.js",
+    "seed:patch": "node prisma/seed-patch.js",
+    "seed:payroll": "npx tsx prisma/seed-payroll.ts",
+    "seed:payroll-demo": "npx tsx prisma/seed-payroll-demo.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

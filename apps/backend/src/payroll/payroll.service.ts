@@ -9,12 +9,14 @@ import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
+import { PayrollEngineService } from './payroll-engine.service';
 
 @Injectable()
 export class PayrollService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
+    private readonly engine: PayrollEngineService,
   ) {}
 
   // ── List kỳ lương ──────────────────────────────────────────────────────────
@@ -54,95 +56,10 @@ export class PayrollService {
     });
   }
 
-  // ── Tính lương cho toàn bộ nhân viên active trong kỳ ─────────────────────
+  // ── Tính lương cho toàn bộ nhân viên active trong kỳ (delegate engine) ────
   async generatePayroll(periodId: string) {
-    const period = await this.prisma.payrollPeriod.findUnique({
-      where: { id: periodId },
-    });
-    if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
-
-    if (period.status === PayrollStatus.APPROVED || period.status === PayrollStatus.PAID) {
-      throw new BadRequestException('Không thể tính lại kỳ lương đã duyệt hoặc đã trả');
-    }
-
-    // Lấy tất cả nhân viên active (có userId — tức đang làm việc)
-    const employees = await this.prisma.employee.findMany({
-      where: { userId: { not: null } },
-      select: { id: true, userId: true },
-    });
-
-    const upsertResults: any[] = [];
-
-    for (const emp of employees) {
-      // 1. Lấy TimesheetRecord trong period
-      const timesheet = await this.prisma.timesheetRecord.findFirst({
-        where: {
-          userId: emp.userId!,
-          periodStart: { lte: period.endDate },
-          periodEnd: { gte: period.startDate },
-        },
-        orderBy: { periodStart: 'desc' },
-      });
-
-      const workingDays = timesheet ? Number(timesheet.workingDays) : 0;
-      const overtimeHours = timesheet ? Number(timesheet.overtimeHours) : 0;
-      const leaveDays = timesheet ? Number(timesheet.leaveDays) : 0;
-
-      // 2. Lấy EmployeeRate hiệu lực (effectiveDate <= endDate, mới nhất)
-      const rate = await this.prisma.employeeRate.findFirst({
-        where: {
-          employeeId: emp.id,
-          effectiveDate: { lte: period.endDate },
-        },
-        orderBy: { effectiveDate: 'desc' },
-      });
-
-      const ratePerDay = rate ? Number(rate.ratePerDay) : 0;
-
-      // 3. Tính lương
-      const baseSalary = workingDays * ratePerDay;
-      // netSalary mặc định = baseSalary; bonus/deductions có thể update sau
-      const netSalary = baseSalary;
-
-      // 4. Upsert PayrollRecord
-      const record = await this.prisma.payrollRecord.upsert({
-        where: {
-          periodId_employeeId: { periodId, employeeId: emp.id },
-        },
-        create: {
-          periodId,
-          employeeId: emp.id,
-          workDays: workingDays,
-          leaveDays,
-          overtimeHours,
-          baseSalary,
-          deductions: 0,
-          bonus: 0,
-          netSalary,
-        },
-        update: {
-          workDays: workingDays,
-          leaveDays,
-          overtimeHours,
-          baseSalary,
-          netSalary,
-        },
-      });
-
-      upsertResults.push(record);
-    }
-
-    // 5. Update period status → PROCESSING
-    await this.prisma.payrollPeriod.update({
-      where: { id: periodId },
-      data: { status: PayrollStatus.PROCESSING },
-    });
-
-    return {
-      periodId,
-      generated: upsertResults.length,
-      status: PayrollStatus.PROCESSING,
-    };
+    const { processed } = await this.engine.processPayrollPeriod(periodId);
+    return { periodId, generated: processed, status: PayrollStatus.PROCESSING };
   }
 
   // ── Danh sách bản ghi lương theo kỳ ───────────────────────────────────────
@@ -196,15 +113,47 @@ export class PayrollService {
     });
   }
 
-  // ── Phê duyệt kỳ lương ─────────────────────────────────────────────────────
+  // ── Chuyển PROCESSING → REVIEWED (gửi để kiểm duyệt) ────────────────────
+  async reviewPeriod(periodId: string) {
+    const period = await this.prisma.payrollPeriod.findUnique({ where: { id: periodId } });
+    if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
+    if (period.status !== PayrollStatus.PROCESSING) {
+      throw new BadRequestException('Chỉ có thể chuyển sang REVIEWED từ trạng thái PROCESSING');
+    }
+    return this.prisma.payrollPeriod.update({
+      where: { id: periodId },
+      data: { status: PayrollStatus.REVIEWED },
+    });
+  }
+
+  // ── REVIEWED → DRAFT: chạy lại (re-run) ──────────────────────────────────
+  async rerunPeriod(periodId: string) {
+    const period = await this.prisma.payrollPeriod.findUnique({ where: { id: periodId } });
+    if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
+    if (period.status !== PayrollStatus.REVIEWED) {
+      throw new BadRequestException('Chỉ có thể chạy lại kỳ lương ở trạng thái REVIEWED');
+    }
+    await this.prisma.payrollPeriod.update({
+      where: { id: periodId },
+      data: { status: PayrollStatus.DRAFT },
+    });
+    return this.generatePayroll(periodId);
+  }
+
+  // ── Phê duyệt kỳ lương (REVIEWED → APPROVED) ─────────────────────────────
   async approvePeriod(periodId: string, userId: string) {
     const period = await this.prisma.payrollPeriod.findUnique({
       where: { id: periodId },
     });
     if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
 
-    if (period.status !== PayrollStatus.PROCESSING) {
-      throw new BadRequestException('Chỉ có thể phê duyệt kỳ lương ở trạng thái PROCESSING');
+    if (
+      period.status !== PayrollStatus.PROCESSING &&
+      period.status !== PayrollStatus.REVIEWED
+    ) {
+      throw new BadRequestException(
+        'Chỉ có thể phê duyệt kỳ lương ở trạng thái PROCESSING hoặc REVIEWED',
+      );
     }
 
     const updated = await this.prisma.payrollPeriod.update({
@@ -214,10 +163,13 @@ export class PayrollService {
         processedById: userId,
         processedAt: new Date(),
       },
-      include: { records: { select: { baseSalary: true } } },
+      include: { records: { select: { grossSalary: true } } },
     });
 
-    const totalSalary = updated.records.reduce((s, r) => s + Number(r.baseSalary), 0);
+    // Cập nhật YTD sau khi approve
+    await this.engine.updateYtdAfterApproval(periodId);
+
+    const totalSalary = updated.records.reduce((s, r) => s + Number(r.grossSalary), 0);
     this.financeEventBus.emit({
       type: 'payroll.approved',
       refId: periodId,

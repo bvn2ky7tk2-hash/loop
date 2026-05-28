@@ -44,7 +44,7 @@ export function AppLayout() {
   if (isMobile) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, textAlign: 'center', fontSize: 16 }}>
-        Vui lòng dùng ứng dụng Loop trên điện thoại
+        Vui lòng dùng ứng dụng Loop 360 trên điện thoại
       </div>
     );
   }

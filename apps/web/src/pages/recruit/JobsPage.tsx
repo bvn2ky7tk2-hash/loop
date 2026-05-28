@@ -48,6 +48,7 @@ export default function JobsPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters] = useState<JobFilterParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);
@@ -110,7 +111,7 @@ export default function JobsPage() {
   };
 
   const columns: ColumnsType<JobOpening> = [
-    { title: 'Mã', dataIndex: 'code', width: 130, render: (v: string) => <Text code style={{ color: preset.primary }}>{v}</Text> },
+    { title: 'Mã', dataIndex: 'code', width: 130, render: (v: string) => <Text code style={{ color: linkColor }}>{v}</Text> },
     {
       title: 'Vị trí', dataIndex: 'title',
       render: (t: string, row: JobOpening) => (
@@ -121,7 +122,7 @@ export default function JobsPage() {
       ),
     },
     { title: 'Level', dataIndex: 'level', width: 90,  render: (v: EmployeeLevel) => <Tag color={LEVEL_META[v].color}>{LEVEL_META[v].label}</Tag> },
-    { title: 'HC',    dataIndex: 'headcount', width: 60, align: 'center' },
+    { title: 'HC',    dataIndex: 'headcount', width: 60, align: 'center', render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text> },
     { title: 'Lương', key: 'salary', width: 140, render: (_: unknown, r: JobOpening) => <Text style={{ color: textMuted }}>{fmtSalary(r.salaryFrom, r.salaryTo)}</Text> },
     { title: 'Ứng viên', key: 'cnt', width: 90, align: 'center', render: (_: unknown, r: JobOpening) => <Tag color="blue">{r._count?.candidates ?? 0}</Tag> },
     { title: 'Trạng thái', dataIndex: 'status', width: 120, render: (s: JobStatus) => <Tag color={STATUS_META[s].color}>{STATUS_META[s].label}</Tag> },
@@ -167,9 +168,6 @@ export default function JobsPage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
 

@@ -282,14 +282,17 @@ async function main() {
   console.log('Seeding user groups demo...');
   await seedUserGroupsDemo(orgUnit.id);
 
-  console.log('Seeding BPM process definitions...');
-  await seedProcessDefinitions(orgUnit.id);
-
   console.log('Seeding Phase 2 demo data...');
   await seedPhase2Demo();
 
+  console.log('Seeding BPM process definitions...');
+  await seedProcessDefinitions(orgUnit.id);
+
   console.log('Seeding Phase 3A CRM demo data...');
   await seedCrmDemo();
+
+  console.log('Seeding CRM Client Contracts demo data...');
+  await seedClientContractsDemo();
 
   console.log('Seeding Phase 3A Invoice demo data...');
   await seedInvoiceDemo();
@@ -321,157 +324,815 @@ async function main() {
   console.log('Seeding HR Training & Performance demo data...');
   await seedHrExtDemo();
 
+  console.log('Seeding Payroll Compliance config (BHXH, TNCN, giảm trừ, lương vùng)...');
+  await seedPayrollComplianceConfig();
+
   console.log('✅ Seed xong: admin@loop.vn / admin | pm@loop.vn / admin | user.demo@loop.vn / Demo@1234');
 }
 
 async function seedProcessDefinitions(orgUnitId: string) {
-  const taskFormFields = {
+  // Lookup specialized org units (created in seedPhase2Demo, now runs before us)
+  const orgHrd = await prisma.orgUnit.findFirst({ where: { code: 'HRD' } });
+  const orgFin = await prisma.orgUnit.findFirst({ where: { code: 'FIN' } });
+  const orgDev = await prisma.orgUnit.findFirst({ where: { code: 'DEV' } });
+  const hrdId  = orgHrd?.id ?? orgUnitId;
+  const finId  = orgFin?.id ?? orgUnitId;
+  const devId  = orgDev?.id ?? orgUnitId;
+
+  // ─── Shared notification templates ───────────────────────────────────────────
+  const notifyAssignee = (processHint: string, taskHint: string) => ({
+    enabled: true,
+    recipients: ['assignee'],
+    subject: `[Loop] {{process.name}} — Cần xử lý: {{task.name}}`,
+    bodyTemplate:
+      `Kính gửi {{recipient.name}},\n\n` +
+      `${processHint}\n\n` +
+      `Bước cần xử lý: {{task.name}}\n` +
+      `${taskHint}\n\n` +
+      `Vui lòng đăng nhập hệ thống Loop để xem xét và thực hiện.\n\n` +
+      `Trân trọng,\nHệ thống Loop ERP`,
+  });
+
+  const notifyRequester = (doneHint: string) => ({
+    enabled: true,
+    recipients: ['requester'],
+    subject: `[Loop] {{process.name}} — Bước "{{task.name}}" đã hoàn thành`,
+    bodyTemplate:
+      `Kính gửi {{recipient.name}},\n\n` +
+      `${doneHint}\n\n` +
+      `Người xử lý: {{assignee.name}}\n` +
+      `Quy trình: {{process.name}}\n\n` +
+      `Đăng nhập hệ thống Loop để xem kết quả chi tiết.\n\n` +
+      `Trân trọng,\nHệ thống Loop ERP`,
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 1. NGHỈ PHÉP — leave-approval
+  // ══════════════════════════════════════════════════════════════════════════════
+  const leaveApprovalXml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="leave-approval-defs" targetNamespace="http://loop.vn/processes">
+  <process id="leave-approval-process" name="Phê duyệt Nghỉ phép" isExecutable="true">
+    <startEvent id="start" name="Nộp đơn xin nghỉ">
+      <outgoing>to-review</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-review" sourceRef="start" targetRef="review-task"/>
+    <userTask id="review-task" name="Trưởng phòng xét duyệt">
+      <incoming>to-review</incoming>
+      <outgoing>to-hr-update</outgoing>
+    </userTask>
+    <sequenceFlow id="to-hr-update" sourceRef="review-task" targetRef="hr-update-task"/>
+    <userTask id="hr-update-task" name="HR cập nhật chấm công">
+      <incoming>to-hr-update</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="hr-update-task" targetRef="end"/>
+    <endEvent id="end" name="Hoàn tất"><incoming>to-end</incoming></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_leave">
+    <bpmndi:BPMNPlane id="BPMNPlane_leave" bpmnElement="leave-approval-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review-task_di" bpmnElement="review-task"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="hr-update-task_di" bpmnElement="hr-update-task"><dc:Bounds x="420" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="590" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-review_di" bpmnElement="to-review">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-hr-update_di" bpmnElement="to-hr-update">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="520" y="200"/><di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>`;
+
+  const leaveStepConfig = {
+    'review-task': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã nộp đơn xin nghỉ phép và đang chờ bạn xét duyệt.',
+          'Kiểm tra thông tin đơn và chọn Chấp thuận hoặc Từ chối.',
+        ),
+        taskCompleted: notifyRequester('Đơn nghỉ phép của bạn đã được trưởng phòng xem xét và xử lý.'),
+      },
+    },
+    'hr-update-task': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Đơn nghỉ phép của {{requester.name}} đã được trưởng phòng xét duyệt.',
+          'Vui lòng cập nhật bảng chấm công tương ứng.',
+        ),
+      },
+    },
+  };
+
+  const leaveTaskFormFields = {
     'review-task': [
       {
         name: 'decision',
-        label: 'Decision',
+        label: 'Quyết định',
         type: 'select',
         required: true,
         options: [
-          { label: 'Approve', value: 'APPROVED' },
-          { label: 'Reject', value: 'REJECTED' },
+          { label: 'Chấp thuận', value: 'APPROVED' },
+          { label: 'Từ chối',    value: 'REJECTED' },
         ],
       },
+      { name: 'reviewNotes', label: 'Ghi chú xét duyệt', type: 'textarea', placeholder: 'Lý do từ chối hoặc ghi chú bổ sung...' },
+    ],
+    'hr-update-task': [
       {
-        name: 'rejectedReason',
-        label: 'Rejection Reason',
-        type: 'textarea',
-        required: false,
+        name: 'updateStatus',
+        label: 'Xác nhận cập nhật',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Đã cập nhật chấm công', value: 'DONE' },
+          { label: 'Cần xem xét lại',       value: 'PENDING' },
+        ],
       },
+      { name: 'notes', label: 'Ghi chú', type: 'textarea' },
     ],
   };
 
-  const leaveApprovalXml = `<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="leave-approval-defs" targetNamespace="http://loop.vn/processes">
-  <process id="leave-approval-process" name="Leave Approval" isExecutable="true">
-    <startEvent id="start" name="Leave Submitted"><outgoing>to-review</outgoing></startEvent>
-    <sequenceFlow id="to-review" sourceRef="start" targetRef="review-task"/>
-    <userTask id="review-task" name="Review Leave Request"><incoming>to-review</incoming><outgoing>to-end</outgoing></userTask>
-    <sequenceFlow id="to-end" sourceRef="review-task" targetRef="end"/>
-    <endEvent id="end" name="Completed"><incoming>to-end</incoming></endEvent>
-  </process>
-</definitions>`;
-
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 2. CHI PHÍ — expense-approval
+  // ══════════════════════════════════════════════════════════════════════════════
   const expenseApprovalXml = `<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="expense-approval-defs" targetNamespace="http://loop.vn/processes">
-  <process id="expense-approval-process" name="Expense Approval" isExecutable="true">
-    <startEvent id="start" name="Expense Submitted"><outgoing>to-review</outgoing></startEvent>
-    <sequenceFlow id="to-review" sourceRef="start" targetRef="review-task"/>
-    <userTask id="review-task" name="Review Expense Request"><incoming>to-review</incoming><outgoing>to-end</outgoing></userTask>
-    <sequenceFlow id="to-end" sourceRef="review-task" targetRef="end"/>
-    <endEvent id="end" name="Completed"><incoming>to-end</incoming></endEvent>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="expense-approval-defs" targetNamespace="http://loop.vn/processes">
+  <process id="expense-approval-process" name="Phê duyệt Chi phí" isExecutable="true">
+    <startEvent id="start" name="Nộp phiếu chi">
+      <outgoing>to-accountant</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-accountant" sourceRef="start" targetRef="accountant-check"/>
+    <userTask id="accountant-check" name="Kế toán kiểm tra chứng từ">
+      <incoming>to-accountant</incoming>
+      <outgoing>to-manager</outgoing>
+    </userTask>
+    <sequenceFlow id="to-manager" sourceRef="accountant-check" targetRef="manager-approve"/>
+    <userTask id="manager-approve" name="Trưởng phòng phê duyệt">
+      <incoming>to-manager</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="manager-approve" targetRef="end"/>
+    <endEvent id="end" name="Hoàn tất"><incoming>to-end</incoming></endEvent>
   </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_expense">
+    <bpmndi:BPMNPlane id="BPMNPlane_expense" bpmnElement="expense-approval-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="accountant-check_di" bpmnElement="accountant-check"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="manager-approve_di" bpmnElement="manager-approve"><dc:Bounds x="420" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="590" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-accountant_di" bpmnElement="to-accountant">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-manager_di" bpmnElement="to-manager">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="520" y="200"/><di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 </definitions>`;
 
-  await prisma.processDefinition.upsert({
-    where: { key: 'leave-approval' },
-    update: {},
-    create: {
-      name: 'Leave Approval',
-      description: 'Quy trình phê duyệt đơn nghỉ phép',
-      bpmnXml: leaveApprovalXml,
-      key: 'leave-approval',
-      orgUnitId,
-      version: 1,
-      status: 'ACTIVE',
-      taskFormFields: taskFormFields as any,
+  const expenseStepConfig = {
+    'accountant-check': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: finId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã nộp phiếu chi phí và cần bạn kiểm tra chứng từ.',
+          'Xem xét hóa đơn, chứng từ và xác nhận tính hợp lệ.',
+        ),
+        taskCompleted: notifyRequester('Kế toán đã kiểm tra chứng từ phiếu chi của bạn.'),
+      },
     },
-  });
-  console.log('  ✓ Process definition leave-approval seeded');
-
-  await prisma.processDefinition.upsert({
-    where: { key: 'expense-approval' },
-    update: {},
-    create: {
-      name: 'Expense Approval',
-      description: 'Quy trình phê duyệt phiếu chi',
-      bpmnXml: expenseApprovalXml,
-      key: 'expense-approval',
-      orgUnitId,
-      version: 1,
-      status: 'ACTIVE',
-      taskFormFields: taskFormFields as any,
+    'manager-approve': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Phiếu chi của {{requester.name}} đã qua kiểm tra kế toán và đang chờ bạn phê duyệt.',
+          'Phê duyệt hoặc từ chối phiếu chi này.',
+        ),
+        taskCompleted: notifyRequester('Phiếu chi phí của bạn đã được trưởng phòng phê duyệt.'),
+      },
     },
-  });
-  console.log('  ✓ Process definition expense-approval seeded');
+  };
 
+  const expenseTaskFormFields = {
+    'accountant-check': [
+      {
+        name: 'voucherStatus',
+        label: 'Tình trạng chứng từ',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Hợp lệ, chuyển duyệt',        value: 'VALID' },
+          { label: 'Cần bổ sung chứng từ',          value: 'NEED_MORE_DOCS' },
+          { label: 'Không hợp lệ, trả về người nộp', value: 'INVALID' },
+        ],
+      },
+      { name: 'accountantNotes', label: 'Ghi chú kế toán', type: 'textarea' },
+    ],
+    'manager-approve': [
+      {
+        name: 'decision',
+        label: 'Quyết định',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Phê duyệt', value: 'APPROVED' },
+          { label: 'Từ chối',   value: 'REJECTED' },
+        ],
+      },
+      { name: 'approveNotes', label: 'Ghi chú phê duyệt', type: 'textarea' },
+    ],
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 3. ONBOARDING — employee-onboarding
+  // ══════════════════════════════════════════════════════════════════════════════
   const onboardingXml = `<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="onboarding-defs" targetNamespace="http://loop.vn/processes">
-  <process id="employee-onboarding-process" name="Employee Onboarding" isExecutable="true">
-    <startEvent id="start" name="Employee Joined"><outgoing>to-it</outgoing></startEvent>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="onboarding-defs" targetNamespace="http://loop.vn/processes">
+  <process id="employee-onboarding-process" name="Onboarding Nhân viên Mới" isExecutable="true">
+    <startEvent id="start" name="Nhân viên gia nhập">
+      <outgoing>to-it</outgoing>
+    </startEvent>
     <sequenceFlow id="to-it" sourceRef="start" targetRef="it-setup"/>
-    <userTask id="it-setup" name="IT Setup &amp; Account Creation"><incoming>to-it</incoming><outgoing>to-training</outgoing></userTask>
-    <sequenceFlow id="to-training" sourceRef="it-setup" targetRef="orientation"/>
-    <userTask id="orientation" name="Orientation &amp; Training"><incoming>to-training</incoming><outgoing>to-complete</outgoing></userTask>
-    <sequenceFlow id="to-complete" sourceRef="orientation" targetRef="confirm-task"/>
-    <userTask id="confirm-task" name="Onboarding Complete Confirmation"><incoming>to-complete</incoming><outgoing>to-end</outgoing></userTask>
+    <userTask id="it-setup" name="IT thiết lập tài khoản &amp; thiết bị">
+      <incoming>to-it</incoming>
+      <outgoing>to-orientation</outgoing>
+    </userTask>
+    <sequenceFlow id="to-orientation" sourceRef="it-setup" targetRef="orientation"/>
+    <userTask id="orientation" name="Đào tạo hội nhập &amp; văn hóa công ty">
+      <incoming>to-orientation</incoming>
+      <outgoing>to-confirm</outgoing>
+    </userTask>
+    <sequenceFlow id="to-confirm" sourceRef="orientation" targetRef="confirm-task"/>
+    <userTask id="confirm-task" name="HR xác nhận hoàn tất onboarding">
+      <incoming>to-confirm</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
     <sequenceFlow id="to-end" sourceRef="confirm-task" targetRef="end"/>
-    <endEvent id="end" name="Onboarding Done"><incoming>to-end</incoming></endEvent>
+    <endEvent id="end" name="Onboarding hoàn tất"><incoming>to-end</incoming></endEvent>
   </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_onboarding">
+    <bpmndi:BPMNPlane id="BPMNPlane_onboarding" bpmnElement="employee-onboarding-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="it-setup_di" bpmnElement="it-setup"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="orientation_di" bpmnElement="orientation"><dc:Bounds x="420" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="confirm-task_di" bpmnElement="confirm-task"><dc:Bounds x="590" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="760" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-it_di" bpmnElement="to-it">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-orientation_di" bpmnElement="to-orientation">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-confirm_di" bpmnElement="to-confirm">
+        <di:waypoint x="520" y="200"/><di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="690" y="200"/><di:waypoint x="760" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 </definitions>`;
 
-  const onboardingFormFields = {
+  const onboardingStepConfig = {
+    'it-setup': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: devId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Nhân viên mới {{requester.name}} sắp gia nhập công ty.',
+          'Vui lòng thiết lập tài khoản email, hệ thống, cấp thiết bị và hướng dẫn ban đầu.',
+        ),
+        taskCompleted: notifyRequester('IT đã hoàn tất thiết lập tài khoản và thiết bị cho bạn.'),
+      },
+    },
+    'orientation': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Nhân viên mới {{requester.name}} đã được IT thiết lập xong tài khoản.',
+          'Vui lòng thực hiện buổi đào tạo hội nhập và giới thiệu văn hóa công ty.',
+        ),
+        taskCompleted: notifyRequester('HR đã hoàn tất buổi đào tạo hội nhập của bạn.'),
+      },
+    },
+    'confirm-task': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã hoàn thành các bước onboarding.',
+          'Vui lòng xác nhận và đánh dấu hoàn tất hồ sơ nhân viên mới.',
+        ),
+        taskCompleted: notifyRequester('Quá trình onboarding của bạn đã hoàn tất. Chào mừng đến với Loop!'),
+      },
+    },
+  };
+
+  const onboardingTaskFormFields = {
     'it-setup': [
       {
         name: 'accountCreated',
-        label: 'Account Created',
+        label: 'Đã tạo tài khoản hệ thống',
         type: 'select',
         required: true,
         options: [
-          { label: 'Done', value: 'DONE' },
-          { label: 'Pending', value: 'PENDING' },
+          { label: 'Đã tạo đủ (email, Loop, Slack...)', value: 'DONE' },
+          { label: 'Chưa hoàn tất, cần theo dõi',       value: 'PARTIAL' },
         ],
       },
-      { name: 'notes', label: 'Notes', type: 'textarea' },
+      {
+        name: 'deviceAssigned',
+        label: 'Thiết bị đã cấp',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Đã cấp laptop & phụ kiện', value: 'DONE' },
+          { label: 'Chưa có thiết bị',          value: 'PENDING' },
+        ],
+      },
+      { name: 'itNotes', label: 'Ghi chú IT', type: 'textarea' },
     ],
     'orientation': [
       {
-        name: 'completed',
-        label: 'Training Completed',
+        name: 'orientationCompleted',
+        label: 'Đào tạo hội nhập',
         type: 'select',
         required: true,
         options: [
-          { label: 'Yes', value: 'YES' },
-          { label: 'No', value: 'NO' },
+          { label: 'Đã hoàn thành', value: 'DONE' },
+          { label: 'Cần thêm thời gian', value: 'NEED_MORE' },
         ],
       },
-      { name: 'notes', label: 'Notes', type: 'textarea' },
+      { name: 'orientationNotes', label: 'Nội dung đào tạo và ghi chú', type: 'textarea' },
     ],
     'confirm-task': [
       {
-        name: 'status',
-        label: 'Final Status',
+        name: 'onboardingStatus',
+        label: 'Trạng thái onboarding',
         type: 'select',
         required: true,
         options: [
-          { label: 'Completed', value: 'COMPLETED' },
-          { label: 'Needs Follow-up', value: 'FOLLOWUP' },
+          { label: 'Hoàn tất, hồ sơ đầy đủ',   value: 'COMPLETED' },
+          { label: 'Cần bổ sung hồ sơ',          value: 'NEED_DOCS' },
+          { label: 'Cần theo dõi thêm 30 ngày',  value: 'FOLLOWUP' },
         ],
       },
-      { name: 'notes', label: 'Notes', type: 'textarea' },
+      { name: 'hrNotes', label: 'Ghi chú HR', type: 'textarea' },
     ],
   };
 
-  await prisma.processDefinition.upsert({
-    where: { key: 'employee-onboarding' },
-    update: {},
-    create: {
-      name: 'Employee Onboarding',
-      description: 'Quy trình onboarding nhân viên mới',
-      bpmnXml: onboardingXml,
-      key: 'employee-onboarding',
-      orgUnitId,
-      version: 1,
-      status: 'ACTIVE',
-      taskFormFields: onboardingFormFields as any,
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 4. TUYỂN DỤNG — recruitment
+  // ══════════════════════════════════════════════════════════════════════════════
+  const recruitmentXml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="recruitment-defs" targetNamespace="http://loop.vn/processes">
+  <process id="recruitment-process" name="Quy trình Tuyển dụng" isExecutable="true">
+    <startEvent id="start" name="Tiếp nhận hồ sơ ứng viên">
+      <outgoing>to-screen</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-screen" sourceRef="start" targetRef="screen-cv"/>
+    <userTask id="screen-cv" name="HR sàng lọc hồ sơ">
+      <incoming>to-screen</incoming>
+      <outgoing>to-tech</outgoing>
+    </userTask>
+    <sequenceFlow id="to-tech" sourceRef="screen-cv" targetRef="tech-interview"/>
+    <userTask id="tech-interview" name="Phỏng vấn chuyên môn">
+      <incoming>to-tech</incoming>
+      <outgoing>to-bod</outgoing>
+    </userTask>
+    <sequenceFlow id="to-bod" sourceRef="tech-interview" targetRef="bod-interview"/>
+    <userTask id="bod-interview" name="Phỏng vấn ban lãnh đạo &amp; phê duyệt">
+      <incoming>to-bod</incoming>
+      <outgoing>to-offer</outgoing>
+    </userTask>
+    <sequenceFlow id="to-offer" sourceRef="bod-interview" targetRef="send-offer"/>
+    <userTask id="send-offer" name="HR gửi thư mời nhận việc">
+      <incoming>to-offer</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="send-offer" targetRef="end"/>
+    <endEvent id="end" name="Hoàn tất tuyển dụng"><incoming>to-end</incoming></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_recruit">
+    <bpmndi:BPMNPlane id="BPMNPlane_recruit" bpmnElement="recruitment-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="screen-cv_di" bpmnElement="screen-cv"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="tech-interview_di" bpmnElement="tech-interview"><dc:Bounds x="420" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="bod-interview_di" bpmnElement="bod-interview"><dc:Bounds x="590" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="send-offer_di" bpmnElement="send-offer"><dc:Bounds x="760" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="930" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-screen_di" bpmnElement="to-screen">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-tech_di" bpmnElement="to-tech">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-bod_di" bpmnElement="to-bod">
+        <di:waypoint x="520" y="200"/><di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-offer_di" bpmnElement="to-offer">
+        <di:waypoint x="690" y="200"/><di:waypoint x="760" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="860" y="200"/><di:waypoint x="930" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>`;
+
+  const recruitmentStepConfig = {
+    'screen-cv': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Có hồ sơ ứng viên mới cần sàng lọc cho vị trí tuyển dụng.',
+          'Xem xét CV, đánh giá sơ bộ và quyết định có tiến hành phỏng vấn hay không.',
+        ),
+        taskCompleted: notifyRequester('HR đã sàng lọc hồ sơ tuyển dụng của bạn.'),
+      },
     },
+    'tech-interview': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Ứng viên đã qua sàng lọc hồ sơ và cần được phỏng vấn chuyên môn.',
+          'Đánh giá năng lực chuyên môn và ghi nhận kết quả phỏng vấn.',
+        ),
+        taskCompleted: notifyRequester('Phỏng vấn chuyên môn đã hoàn tất.'),
+      },
+    },
+    'bod-interview': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Ứng viên đã vượt qua phỏng vấn chuyên môn và cần phỏng vấn ban lãnh đạo.',
+          'Đánh giá sự phù hợp về văn hóa, định hướng và ra quyết định tuyển dụng.',
+        ),
+        taskCompleted: notifyRequester('Phỏng vấn ban lãnh đạo đã hoàn tất.'),
+      },
+    },
+    'send-offer': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Ứng viên đã được ban lãnh đạo chấp thuận tuyển dụng.',
+          'Soạn và gửi thư mời nhận việc (offer letter) cho ứng viên.',
+        ),
+        taskCompleted: notifyRequester('Thư mời nhận việc đã được gửi đến ứng viên.'),
+      },
+    },
+  };
+
+  const recruitmentTaskFormFields = {
+    'screen-cv': [
+      {
+        name: 'screenResult',
+        label: 'Kết quả sàng lọc',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Đạt — Mời phỏng vấn chuyên môn', value: 'PASS' },
+          { label: 'Không đạt — Loại hồ sơ',          value: 'FAIL' },
+          { label: 'Cần xem xét thêm',                 value: 'REVIEW' },
+        ],
+      },
+      { name: 'position', label: 'Vị trí ứng tuyển', type: 'text', required: true },
+      { name: 'screenNotes', label: 'Nhận xét về hồ sơ', type: 'textarea' },
+    ],
+    'tech-interview': [
+      {
+        name: 'techResult',
+        label: 'Kết quả phỏng vấn',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Xuất sắc (≥90đ)', value: 'EXCELLENT' },
+          { label: 'Tốt (70–89đ)',    value: 'GOOD' },
+          { label: 'Đạt (50–69đ)',    value: 'PASS' },
+          { label: 'Không đạt (<50đ)', value: 'FAIL' },
+        ],
+      },
+      { name: 'techScore', label: 'Điểm kỹ thuật (0–100)', type: 'number', min: 0, max: 100 },
+      { name: 'techNotes', label: 'Nhận xét chuyên môn', type: 'textarea', required: true },
+    ],
+    'bod-interview': [
+      {
+        name: 'bodDecision',
+        label: 'Quyết định tuyển dụng',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Tuyển dụng',       value: 'HIRE' },
+          { label: 'Không tuyển dụng', value: 'REJECT' },
+          { label: 'Đưa vào pool dự phòng', value: 'WAITLIST' },
+        ],
+      },
+      { name: 'proposedSalary', label: 'Mức lương đề xuất (VND)', type: 'number' },
+      { name: 'startDate', label: 'Ngày dự kiến bắt đầu', type: 'date' },
+      { name: 'bodNotes', label: 'Ghi chú ban lãnh đạo', type: 'textarea' },
+    ],
+    'send-offer': [
+      {
+        name: 'offerSent',
+        label: 'Đã gửi offer letter',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Đã gửi email', value: 'SENT' },
+          { label: 'Ứng viên xác nhận nhận việc', value: 'ACCEPTED' },
+          { label: 'Ứng viên từ chối offer', value: 'DECLINED' },
+        ],
+      },
+      { name: 'offerNotes', label: 'Ghi chú offer', type: 'textarea' },
+    ],
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 5. ĐÁNH GIÁ HIỆU SUẤT — performance-review
+  // ══════════════════════════════════════════════════════════════════════════════
+  const performanceReviewXml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="performance-review-defs" targetNamespace="http://loop.vn/processes">
+  <process id="performance-review-process" name="Đánh giá Hiệu suất Nhân viên" isExecutable="true">
+    <startEvent id="start" name="Kỳ đánh giá bắt đầu">
+      <outgoing>to-self</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-self" sourceRef="start" targetRef="self-review"/>
+    <userTask id="self-review" name="Nhân viên tự đánh giá">
+      <incoming>to-self</incoming>
+      <outgoing>to-manager</outgoing>
+    </userTask>
+    <sequenceFlow id="to-manager" sourceRef="self-review" targetRef="manager-review"/>
+    <userTask id="manager-review" name="Trưởng phòng đánh giá &amp; phê duyệt">
+      <incoming>to-manager</incoming>
+      <outgoing>to-hr</outgoing>
+    </userTask>
+    <sequenceFlow id="to-hr" sourceRef="manager-review" targetRef="hr-summary"/>
+    <userTask id="hr-summary" name="HR tổng hợp &amp; lưu kết quả">
+      <incoming>to-hr</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="hr-summary" targetRef="end"/>
+    <endEvent id="end" name="Kết thúc chu kỳ đánh giá"><incoming>to-end</incoming></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_perf">
+    <bpmndi:BPMNPlane id="BPMNPlane_perf" bpmnElement="performance-review-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="self-review_di" bpmnElement="self-review"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="manager-review_di" bpmnElement="manager-review"><dc:Bounds x="420" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="hr-summary_di" bpmnElement="hr-summary"><dc:Bounds x="590" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="760" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-self_di" bpmnElement="to-self">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-manager_di" bpmnElement="to-manager">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-hr_di" bpmnElement="to-hr">
+        <di:waypoint x="520" y="200"/><di:waypoint x="590" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="690" y="200"/><di:waypoint x="760" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>`;
+
+  const performanceStepConfig = {
+    'self-review': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Kỳ đánh giá hiệu suất mới đã bắt đầu. Bạn cần hoàn thành bản tự đánh giá.',
+          'Điền đầy đủ các tiêu chí, mô tả thành tích và mục tiêu trong kỳ đánh giá.',
+        ),
+        taskCompleted: notifyRequester('Bạn đã hoàn thành bước tự đánh giá.'),
+      },
+    },
+    'manager-review': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã hoàn thành tự đánh giá và đang chờ bạn nhận xét.',
+          'Xem xét bản tự đánh giá, bổ sung nhận xét và xác nhận kết quả cuối kỳ.',
+        ),
+        taskCompleted: notifyRequester('Trưởng phòng đã hoàn tất đánh giá của bạn.'),
+      },
+    },
+    'hr-summary': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã hoàn tất vòng đánh giá với trưởng phòng.',
+          'Tổng hợp điểm, lưu kết quả vào hồ sơ nhân sự và thông báo cho nhân viên.',
+        ),
+        taskCompleted: notifyRequester('HR đã tổng hợp và lưu kết quả đánh giá của bạn trong kỳ này.'),
+      },
+    },
+  };
+
+  const performanceTaskFormFields = {
+    'self-review': [
+      {
+        name: 'achievements',
+        label: 'Thành tích nổi bật trong kỳ',
+        type: 'textarea',
+        required: true,
+        placeholder: 'Mô tả các kết quả công việc, dự án, đóng góp nổi bật...',
+      },
+      {
+        name: 'challenges',
+        label: 'Khó khăn và bài học kinh nghiệm',
+        type: 'textarea',
+        placeholder: 'Những thách thức gặp phải và cách vượt qua...',
+      },
+      {
+        name: 'nextGoals',
+        label: 'Mục tiêu kỳ tiếp theo',
+        type: 'textarea',
+        required: true,
+        placeholder: 'Liệt kê 3–5 mục tiêu cụ thể cho kỳ đánh giá tới...',
+      },
+      {
+        name: 'selfScore',
+        label: 'Tự chấm điểm (1–10)',
+        type: 'number',
+        min: 1,
+        max: 10,
+        required: true,
+      },
+    ],
+    'manager-review': [
+      {
+        name: 'managerScore',
+        label: 'Điểm đánh giá của trưởng phòng (1–10)',
+        type: 'number',
+        min: 1,
+        max: 10,
+        required: true,
+      },
+      {
+        name: 'performanceLevel',
+        label: 'Xếp loại hiệu suất',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Xuất sắc (S)',    value: 'EXCELLENT' },
+          { label: 'Tốt (A)',         value: 'GOOD' },
+          { label: 'Đạt yêu cầu (B)', value: 'SATISFACTORY' },
+          { label: 'Cần cải thiện (C)', value: 'NEEDS_IMPROVEMENT' },
+          { label: 'Không đạt (D)',   value: 'UNSATISFACTORY' },
+        ],
+      },
+      {
+        name: 'managerComment',
+        label: 'Nhận xét của trưởng phòng',
+        type: 'textarea',
+        required: true,
+        placeholder: 'Đánh giá chi tiết về năng lực, thái độ, kết quả công việc...',
+      },
+      {
+        name: 'developmentPlan',
+        label: 'Kế hoạch phát triển đề xuất',
+        type: 'textarea',
+        placeholder: 'Đào tạo, thăng tiến, luân chuyển vị trí...',
+      },
+    ],
+    'hr-summary': [
+      {
+        name: 'finalScore',
+        label: 'Điểm tổng hợp cuối kỳ',
+        type: 'number',
+        min: 0,
+        max: 10,
+        required: true,
+      },
+      {
+        name: 'salaryReview',
+        label: 'Đề xuất điều chỉnh lương',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Tăng lương theo đề xuất trưởng phòng', value: 'INCREASE' },
+          { label: 'Giữ nguyên',                           value: 'NO_CHANGE' },
+          { label: 'Cần xem xét thêm',                    value: 'REVIEW' },
+        ],
+      },
+      { name: 'hrNotes', label: 'Ghi chú HR và tổng hợp', type: 'textarea' },
+    ],
+  };
+
+  // ─── Upsert tất cả 5 process definitions ─────────────────────────────────────
+
+  const upsertDef = async (def: {
+    key: string;
+    name: string;
+    description: string;
+    bpmnXml: string;
+    stepConfig: object;
+    taskFormFields: object;
+    orgUnitId: string;
+  }) => {
+    const data = {
+      name: def.name,
+      description: def.description,
+      bpmnXml: def.bpmnXml,
+      key: def.key,
+      orgUnitId: def.orgUnitId,
+      version: 1,
+      status: 'ACTIVE' as const,
+      stepConfig: def.stepConfig as any,
+      taskFormFields: def.taskFormFields as any,
+    };
+    await prisma.processDefinition.upsert({
+      where: { key: def.key },
+      update: {
+        name: data.name,
+        description: data.description,
+        bpmnXml: data.bpmnXml,
+        stepConfig: data.stepConfig,
+        taskFormFields: data.taskFormFields,
+      },
+      create: data,
+    });
+    console.log(`  ✓ Process definition [${def.key}] seeded`);
+  };
+
+  await upsertDef({
+    key: 'leave-approval',
+    name: 'Phê duyệt Nghỉ phép',
+    description: 'Quy trình nộp đơn, trưởng phòng xét duyệt và HR cập nhật chấm công',
+    bpmnXml: leaveApprovalXml,
+    stepConfig: leaveStepConfig,
+    taskFormFields: leaveTaskFormFields,
+    orgUnitId,
   });
-  console.log('  ✓ Process definition employee-onboarding seeded');
+
+  await upsertDef({
+    key: 'expense-approval',
+    name: 'Phê duyệt Chi phí',
+    description: 'Quy trình phiếu chi: kế toán kiểm tra chứng từ → trưởng phòng phê duyệt',
+    bpmnXml: expenseApprovalXml,
+    stepConfig: expenseStepConfig,
+    taskFormFields: expenseTaskFormFields,
+    orgUnitId,
+  });
+
+  await upsertDef({
+    key: 'employee-onboarding',
+    name: 'Onboarding Nhân viên Mới',
+    description: 'Quy trình tiếp nhận nhân viên: IT thiết lập → đào tạo hội nhập → HR xác nhận',
+    bpmnXml: onboardingXml,
+    stepConfig: onboardingStepConfig,
+    taskFormFields: onboardingTaskFormFields,
+    orgUnitId,
+  });
+
+  await upsertDef({
+    key: 'recruitment',
+    name: 'Quy trình Tuyển dụng',
+    description: 'Từ tiếp nhận CV → sàng lọc → phỏng vấn chuyên môn → BOD → gửi offer',
+    bpmnXml: recruitmentXml,
+    stepConfig: recruitmentStepConfig,
+    taskFormFields: recruitmentTaskFormFields,
+    orgUnitId,
+  });
+
+  await upsertDef({
+    key: 'performance-review',
+    name: 'Đánh giá Hiệu suất Nhân viên',
+    description: 'Tự đánh giá → trưởng phòng đánh giá → HR tổng hợp kết quả',
+    bpmnXml: performanceReviewXml,
+    stepConfig: performanceStepConfig,
+    taskFormFields: performanceTaskFormFields,
+    orgUnitId,
+  });
 }
 
 async function seedPhase2Demo() {
@@ -986,6 +1647,122 @@ async function seedCrmDemo() {
 
   } catch (err) {
     console.error('  ✗ seedCrmDemo error:', err);
+  }
+}
+
+async function seedClientContractsDemo() {
+  try {
+    const customers = await prisma.customer.findMany({ select: { id: true, code: true } });
+    const custMap: Record<string, string> = Object.fromEntries(customers.map(c => [c.code, c.id]));
+    if (!custMap['VNG'] || !custMap['FPT'] || !custMap['VTEL']) {
+      console.log('  ⚠ Chưa có customers, bỏ qua seed ClientContracts');
+      return;
+    }
+
+    const contracts = [
+      {
+        contractNo: 'CTR-2025-001',
+        title: 'Hợp đồng triển khai Portal nội bộ VNG',
+        customerId: custMap['VNG'],
+        type: 'SERVICE' as const,
+        value: 320_000_000,
+        currency: 'VND',
+        startDate: new Date('2025-03-01'),
+        endDate: new Date('2025-09-30'),
+        signedAt: new Date('2025-02-20'),
+        status: 'COMPLETED' as const,
+        milestones: [
+          { name: 'Kickoff & Analysis', dueDate: new Date('2025-03-31'), amount: 64_000_000,  status: 'PAID' as const, paidAt: new Date('2025-04-05') },
+          { name: 'Design & Prototype', dueDate: new Date('2025-05-31'), amount: 96_000_000,  status: 'PAID' as const, paidAt: new Date('2025-06-02') },
+          { name: 'Development Phase 1', dueDate: new Date('2025-07-31'), amount: 96_000_000, status: 'PAID' as const, paidAt: new Date('2025-08-01') },
+          { name: 'UAT & Go-live',      dueDate: new Date('2025-09-30'), amount: 64_000_000,  status: 'PAID' as const, paidAt: new Date('2025-10-05') },
+        ],
+      },
+      {
+        contractNo: 'CTR-2025-002',
+        title: 'Dịch vụ ERP Phase 1 — FPT Software',
+        customerId: custMap['FPT'],
+        type: 'SERVICE' as const,
+        value: 580_000_000,
+        currency: 'VND',
+        startDate: new Date('2025-06-01'),
+        endDate: new Date('2026-05-31'),
+        signedAt: new Date('2025-05-25'),
+        status: 'ACTIVE' as const,
+        milestones: [
+          { name: 'Tạm ứng ký hợp đồng', dueDate: new Date('2025-06-05'), amount: 116_000_000, status: 'PAID' as const, paidAt: new Date('2025-06-07') },
+          { name: 'Hoàn thành phân tích',  dueDate: new Date('2025-08-31'), amount: 145_000_000, status: 'PAID' as const, paidAt: new Date('2025-09-03') },
+          { name: 'Hoàn thành dev core',   dueDate: new Date('2026-01-31'), amount: 174_000_000, status: 'INVOICED' as const },
+          { name: 'Go-live & bảo hành',    dueDate: new Date('2026-05-31'), amount: 145_000_000, status: 'PENDING' as const },
+        ],
+      },
+      {
+        contractNo: 'CTR-2026-001',
+        title: 'SLA Support — Viettel Data Platform',
+        customerId: custMap['VTEL'],
+        type: 'SLA' as const,
+        value: 240_000_000,
+        currency: 'VND',
+        startDate: new Date('2026-01-01'),
+        endDate: new Date('2026-12-31'),
+        signedAt: new Date('2025-12-20'),
+        status: 'ACTIVE' as const,
+        milestones: [
+          { name: 'Q1/2026', dueDate: new Date('2026-03-31'), amount: 60_000_000, status: 'PAID' as const, paidAt: new Date('2026-04-05') },
+          { name: 'Q2/2026', dueDate: new Date('2026-06-30'), amount: 60_000_000, status: 'INVOICED' as const },
+          { name: 'Q3/2026', dueDate: new Date('2026-09-30'), amount: 60_000_000, status: 'PENDING' as const },
+          { name: 'Q4/2026', dueDate: new Date('2026-12-31'), amount: 60_000_000, status: 'PENDING' as const },
+        ],
+      },
+      {
+        contractNo: 'CTR-2026-002',
+        title: 'Phát triển Mobile App — FPT Mobile Suite',
+        customerId: custMap['FPT'],
+        type: 'PRODUCT' as const,
+        value: 185_000_000,
+        currency: 'VND',
+        startDate: new Date('2026-04-01'),
+        endDate: new Date('2026-10-31'),
+        signedAt: new Date('2026-03-28'),
+        status: 'ACTIVE' as const,
+        milestones: [
+          { name: 'Tạm ứng',           dueDate: new Date('2026-04-05'), amount: 37_000_000,  status: 'PAID' as const, paidAt: new Date('2026-04-06') },
+          { name: 'Hoàn thành thiết kế', dueDate: new Date('2026-06-15'), amount: 55_500_000, status: 'PENDING' as const },
+          { name: 'Beta release',        dueDate: new Date('2026-09-15'), amount: 55_500_000, status: 'PENDING' as const },
+          { name: 'Go-live',             dueDate: new Date('2026-10-31'), amount: 37_000_000,  status: 'PENDING' as const },
+        ],
+      },
+      {
+        contractNo: 'CTR-2026-003',
+        title: 'Tư vấn chuyển đổi số — VNG',
+        customerId: custMap['VNG'],
+        type: 'SUPPORT' as const,
+        value: 90_000_000,
+        currency: 'VND',
+        startDate: new Date('2026-05-01'),
+        endDate: new Date('2026-07-31'),
+        status: 'DRAFT' as const,
+        milestones: [
+          { name: 'Khảo sát & báo cáo hiện trạng', dueDate: new Date('2026-05-31'), amount: 30_000_000, status: 'PENDING' as const },
+          { name: 'Roadmap chuyển đổi số',          dueDate: new Date('2026-06-30'), amount: 35_000_000, status: 'PENDING' as const },
+          { name: 'Bàn giao tài liệu',              dueDate: new Date('2026-07-31'), amount: 25_000_000, status: 'PENDING' as const },
+        ],
+      },
+    ];
+
+    let created = 0;
+    for (const { milestones, ...contractData } of contracts) {
+      const existing = await (prisma as any).clientContract.findFirst({ where: { contractNo: contractData.contractNo } });
+      if (existing) continue;
+      const contract = await (prisma as any).clientContract.create({ data: contractData });
+      for (const m of milestones) {
+        await (prisma as any).contractMilestone.create({ data: { contractId: contract.id, ...m } });
+      }
+      created++;
+    }
+    console.log(`  ✓ ${created} client contracts seeded`);
+  } catch (err) {
+    console.error('  ✗ seedClientContractsDemo error:', err);
   }
 }
 
@@ -2880,6 +3657,102 @@ async function seedHrExtDemo() {
     console.log(`  ✓ ${revCount} performance reviews seeded`);
   } catch (err) {
     console.error('  ✗ seedHrExtDemo error:', err);
+  }
+}
+
+async function seedPayrollComplianceConfig() {
+  try {
+    // 1. InsuranceConfig — tỷ lệ BHXH/BHYT/BHTN 2020 (vẫn áp dụng 2026)
+    await (prisma as any).insuranceConfig.upsert({
+      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2020-01-01') } },
+      update: {},
+      create: {
+        tenantId:           null,
+        effectiveFrom:      new Date('2020-01-01'),
+        bhxhEmployeeRate:   0.08,    // 8%
+        bhytEmployeeRate:   0.015,   // 1.5%
+        bhtnEmployeeRate:   0.01,    // 1%
+        bhxhEmployerRate:   0.17,    // 17%
+        bhytEmployerRate:   0.03,    // 3%
+        bhtnEmployerRate:   0.01,    // 1%
+        tnldRate:           0.005,   // 0.5%
+        bhxhCeilingMultiple: 20,
+        wageBase:           2340000, // Lương cơ sở từ 1/7/2024
+      },
+    });
+    console.log('  ✓ InsuranceConfig seeded (BHXH 8%/17%, BHYT 1.5%/3%, BHTN 1%/1%)');
+
+    // 2. TaxBracket — biểu thuế TNCN lũy tiến 7 bậc (còn hiệu lực đến 31/12/2025)
+    const brackets7 = [
+      { min: 0,          max: 5_000_000,  rate: 0.05 },
+      { min: 5_000_000,  max: 10_000_000, rate: 0.10 },
+      { min: 10_000_000, max: 18_000_000, rate: 0.15 },
+      { min: 18_000_000, max: 32_000_000, rate: 0.20 },
+      { min: 32_000_000, max: 52_000_000, rate: 0.25 },
+      { min: 52_000_000, max: 80_000_000, rate: 0.30 },
+      { min: 80_000_000, max: null,        rate: 0.35 },
+    ];
+    await (prisma as any).taxBracket.upsert({
+      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2013-07-01') } },
+      update: {},
+      create: {
+        tenantId:      null,
+        name:          'Biểu thuế TNCN lũy tiến 7 bậc (TT111/2013)',
+        effectiveFrom: new Date('2013-07-01'),
+        brackets:      brackets7,
+      },
+    });
+
+    // 3. TaxBracket — biểu thuế 5 bậc áp dụng từ 1/1/2026 (theo dự thảo mới)
+    const brackets5 = [
+      { min: 0,          max: 10_000_000, rate: 0.05 },
+      { min: 10_000_000, max: 30_000_000, rate: 0.15 },
+      { min: 30_000_000, max: 60_000_000, rate: 0.25 },
+      { min: 60_000_000, max: 120_000_000,rate: 0.30 },
+      { min: 120_000_000,max: null,        rate: 0.35 },
+    ];
+    await (prisma as any).taxBracket.upsert({
+      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2026-01-01') } },
+      update: {},
+      create: {
+        tenantId:      null,
+        name:          'Biểu thuế TNCN lũy tiến 5 bậc (dự kiến 2026)',
+        effectiveFrom: new Date('2026-01-01'),
+        brackets:      brackets5,
+      },
+    });
+    console.log('  ✓ TaxBracket seeded (7 bậc 2013 + 5 bậc 2026)');
+
+    // 4. TaxDeductionConfig — giảm trừ gia cảnh từ 7/2020
+    await (prisma as any).taxDeductionConfig.upsert({
+      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2020-07-01') } },
+      update: {},
+      create: {
+        tenantId:           null,
+        effectiveFrom:      new Date('2020-07-01'),
+        selfDeduction:      11_000_000, // 11 triệu/tháng bản thân
+        dependentDeduction:  4_400_000, // 4.4 triệu/tháng/người phụ thuộc
+      },
+    });
+    console.log('  ✓ TaxDeductionConfig seeded (bản thân 11tr, phụ thuộc 4.4tr)');
+
+    // 5. WageZoneConfig — lương tối thiểu vùng từ 7/2024
+    await (prisma as any).wageZoneConfig.upsert({
+      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2024-07-01') } },
+      update: {},
+      create: {
+        tenantId:      null,
+        effectiveFrom: new Date('2024-07-01'),
+        zone1:         4_960_000, // Hà Nội, HCM, Bình Dương, Đồng Nai...
+        zone2:         4_410_000, // Các huyện ngoại thành HN/HCM, tỉnh khác
+        zone3:         3_860_000,
+        zone4:         3_450_000,
+      },
+    });
+    console.log('  ✓ WageZoneConfig seeded (vùng 1: 4.96tr, vùng 2: 4.41tr, vùng 3: 3.86tr, vùng 4: 3.45tr)');
+
+  } catch (err) {
+    console.error('  ✗ seedPayrollComplianceConfig error:', err);
   }
 }
 

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  Card, Row, Col, Statistic, Table, Button, DatePicker, Select,
+  Card, Row, Col, Table, Button, DatePicker, Select,
   Typography, Alert, Space, Popconfirm, Tooltip, Badge,
 } from 'antd';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
+import { StatCard } from '../../components/ui/StatCard';
 import { useThemeStore } from '../../store/theme.store';
 
 const TIMESHEET_COL_DEFS = [
@@ -36,6 +37,7 @@ export default function TimesheetPage() {
   const qc = useQueryClient();
   const { mode, preset } = useThemeStore();
   const isDark = mode === 'dark';
+  const linkColor = isDark ? '#93C5FD' : preset.primary;
   const [month, setMonth]             = useState<Dayjs>(dayjs().startOf('month'));
   const [filterStatus, setFilterStatus] = useState<string>('all');
 
@@ -166,47 +168,35 @@ export default function TimesheetPage() {
         <>
           <Row gutter={16} style={{ marginBottom: 20 }}>
             <Col span={5}>
-              <Card size="small">
-                <Statistic
-                  title="Ngày làm việc"
-                  value={Number(record.workingDays)}
-                  suffix={`/ ${Number(record.standardDays)}`}
-                  valueStyle={{ color: preset.primary }}
-                />
-              </Card>
+              <StatCard
+                label="Ngày làm việc"
+                value={`${Number(record.workingDays)} / ${Number(record.standardDays)}`}
+                color="#6366F1"
+                icon={<CalendarOutlined />}
+              />
             </Col>
             <Col span={5}>
-              <Card size="small">
-                <Statistic
-                  title="Làm thêm giờ"
-                  value={Number(record.overtimeHours)}
-                  suffix="h"
-                  valueStyle={{ color: Number(record.overtimeHours) > 0 ? '#F59E0B' : undefined }}
-                />
-              </Card>
+              <StatCard
+                label="Làm thêm giờ"
+                value={`${Number(record.overtimeHours)}h`}
+                color={Number(record.overtimeHours) > 0 ? '#F59E0B' : '#94A3B8'}
+                icon={<ClockCircleOutlined />}
+              />
             </Col>
             <Col span={5}>
-              <Card size="small">
-                <Statistic
-                  title="Ngày nghỉ phép"
-                  value={Number(record.leaveDays)}
-                  suffix="ngày"
-                />
-              </Card>
+              <StatCard
+                label="Ngày nghỉ phép"
+                value={`${Number(record.leaveDays)} ngày`}
+                color="#8B5CF6"
+                icon={<CheckCircleOutlined />}
+              />
             </Col>
             <Col span={5}>
-              <Card size="small">
-                <Statistic
-                  title="Tỷ lệ chuyên cần"
-                  value={record.standardDays > 0
-                    ? Math.round((Number(record.workingDays) / Number(record.standardDays)) * 100)
-                    : 0}
-                  suffix="%"
-                  valueStyle={{
-                    color: (Number(record.workingDays) / Number(record.standardDays)) >= 0.9 ? '#10B981' : '#EF4444',
-                  }}
-                />
-              </Card>
+              <StatCard
+                label="Tỷ lệ chuyên cần"
+                value={`${record.standardDays > 0 ? Math.round((Number(record.workingDays) / Number(record.standardDays)) * 100) : 0}%`}
+                color={(Number(record.workingDays) / Number(record.standardDays)) >= 0.9 ? '#10B981' : '#EF4444'}
+              />
             </Col>
             <Col span={4}>
               <Card size="small" style={{ height: '100%' }}>

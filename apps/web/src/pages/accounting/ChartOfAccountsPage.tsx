@@ -5,7 +5,7 @@ import { BankOutlined } from '@ant-design/icons';
 import { useThemeStore } from '../../store/theme.store';
 import { useGetAccounts, type ChartOfAccount, type AccountType } from '../../api/accounting';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const TYPE_META: Record<AccountType, { label: string; color: string }> = {
   ASSET:     { label: 'Tài sản',     color: 'blue'   },
@@ -28,7 +28,9 @@ export default function ChartOfAccountsPage() {
 
   const bgContainer = isDark ? '#1E293B' : '#ffffff';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
+  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
   const borderColor = isDark ? '#334155' : '#E2E8F0';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const columns: ColumnsType<ChartOfAccount> = [
     {
@@ -36,7 +38,7 @@ export default function ChartOfAccountsPage() {
       dataIndex: 'code',
       width: 120,
       render: (v: string) => (
-        <span style={{ fontFamily: 'monospace', fontWeight: 600, color: preset.primary }}>{v}</span>
+        <span style={{ fontFamily: 'monospace', fontWeight: 600, color: linkColor }}>{v}</span>
       ),
     },
     {

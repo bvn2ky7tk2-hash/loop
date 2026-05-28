@@ -4,6 +4,7 @@ import {
   Row, Col, Statistic, Spin,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   DollarOutlined, WarningOutlined, CheckCircleOutlined, BarChartOutlined,
 } from '@ant-design/icons';
@@ -237,6 +238,7 @@ export default function BudgetPage() {
   const bgContainer   = isDark ? '#1E293B' : '#ffffff';
   const bgCard        = isDark ? '#2D3F56' : '#FAFAFA';
   const borderColor   = isDark ? '#334155' : '#E2E8F0';
+  const linkColor     = isDark ? '#93C5FD' : preset.primary;
 
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | undefined>();
   const [selectedProject, setSelectedProject] = useState<ProjectBudgetRow | null>(null);
@@ -389,37 +391,28 @@ export default function BudgetPage() {
       {/* Summary cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
         <Col xs={24} sm={8}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: '16px 20px' }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 13 }}>Tổng ngân sách</span>}
-              value={totalBudget}
-              formatter={(v) => formatCurrency(Number(v))}
-              valueStyle={{ color: preset.primary, fontSize: 18 }}
-              prefix={<DollarOutlined />}
-            />
-          </div>
+          <StatCard
+            label="Tổng ngân sách"
+            value={formatCurrency(totalBudget)}
+            color="#6366F1"
+            icon={<DollarOutlined />}
+          />
         </Col>
         <Col xs={24} sm={8}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: '16px 20px' }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 13 }}>Đã chi</span>}
-              value={totalSpent}
-              formatter={(v) => formatCurrency(Number(v))}
-              valueStyle={{ color: totalSpent > totalBudget && totalBudget > 0 ? '#FF4D4F' : '#52C41A', fontSize: 18 }}
-              prefix={<CheckCircleOutlined />}
-            />
-          </div>
+          <StatCard
+            label="Đã chi"
+            value={formatCurrency(totalSpent)}
+            color={totalSpent > totalBudget && totalBudget > 0 ? '#FF4D4F' : '#10B981'}
+            icon={<CheckCircleOutlined />}
+          />
         </Col>
         <Col xs={24} sm={8}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: '16px 20px' }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 13 }}>Dự án vượt ngân sách</span>}
-              value={overBudget}
-              suffix="dự án"
-              valueStyle={{ color: overBudget > 0 ? '#FF4D4F' : '#52C41A', fontSize: 18 }}
-              prefix={<WarningOutlined />}
-            />
-          </div>
+          <StatCard
+            label="Dự án vượt ngân sách"
+            value={`${overBudget} dự án`}
+            color={overBudget > 0 ? '#FF4D4F' : '#10B981'}
+            icon={<WarningOutlined />}
+          />
         </Col>
       </Row>
 

@@ -23,6 +23,7 @@ export default function ContactsPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters] = useState<ContactFilterDto>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -69,16 +70,16 @@ export default function ContactsPage() {
       title: 'Tên', dataIndex: 'name',
       render: (name: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{name}</Text>,
     },
-    { title: 'Chức danh', dataIndex: 'title', width: 160, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Chức danh', dataIndex: 'title', width: 160, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Email', dataIndex: 'email', width: 220,
-      render: (v?: string) => v ? <a href={`mailto:${v}`} style={{ color: preset.primary }}>{v}</a> : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <a href={`mailto:${v}`} style={{ color: linkColor }}>{v}</a> : <Text style={{ color: textMuted }}>—</Text>,
     },
-    { title: 'Điện thoại', dataIndex: 'phone', width: 140, render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text> },
+    { title: 'Điện thoại', dataIndex: 'phone', width: 140, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Khách hàng', dataIndex: ['customer', 'name'], width: 200,
       render: (_: unknown, row: Contact) => row.customer
-        ? <Tag color="blue">{row.customer.name}</Tag>
+        ? <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{row.customer.name}</Tag>
         : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
@@ -137,18 +138,6 @@ export default function ContactsPage() {
             total: data?.total ?? 0,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
             showSizeChanger: true,
-          }}
-          components={{
-            header: {
-              cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-                <th {...props} style={{
-                  ...props.style,
-                  background: bgCard,
-                  color: textPrimary,
-                  borderBottom: `1px solid ${borderColor}`,
-                }} />
-              ),
-            },
           }}
         />
       </div>

@@ -32,7 +32,9 @@ export default function PerformancePage() {
   const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
   const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
   const borderColor  = isDark ? '#334155' : '#E2E8F0';
+  const linkColor    = isDark ? '#93C5FD' : preset.primary;
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [periodFilter, setPeriodFilter] = useState<string | undefined>(undefined);
@@ -86,8 +88,8 @@ export default function PerformancePage() {
     {
       title: 'Điểm', dataIndex: 'score', width: 100, align: 'center' as const,
       render: v => v ? (
-        <span style={{ color: preset.primary, fontWeight: 700, fontSize: 16 }}>{Number(v).toFixed(1)}</span>
-      ) : '—',
+        <span style={{ color: linkColor, fontWeight: 700, fontSize: 16 }}>{Number(v).toFixed(1)}</span>
+      ) : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Trạng thái', dataIndex: 'status', width: 120,
@@ -195,8 +197,8 @@ export default function PerformancePage() {
             <Descriptions.Item label="Kỳ đánh giá"><Tag color="blue">{detailReview.period}</Tag></Descriptions.Item>
             <Descriptions.Item label="Điểm">
               {detailReview.score ? (
-                <span style={{ color: preset.primary, fontWeight: 700, fontSize: 18 }}>{Number(detailReview.score).toFixed(1)} / 5</span>
-              ) : '—'}
+                <span style={{ color: linkColor, fontWeight: 700, fontSize: 18 }}>{Number(detailReview.score).toFixed(1)} / 5</span>
+              ) : <Text style={{ color: textMuted }}>—</Text>}
             </Descriptions.Item>
             <Descriptions.Item label="Trạng thái">
               <Tag color={STATUS_META[detailReview.status].color}>{STATUS_META[detailReview.status].label}</Tag>

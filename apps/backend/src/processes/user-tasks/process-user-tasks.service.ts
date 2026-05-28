@@ -172,6 +172,14 @@ export class ProcessUserTasksService {
       },
     });
 
+    // Gửi notification hoàn thành (taskCompleted trigger) trước khi resume engine
+    await this.engineService.sendCompletionNotification(
+      id,
+      task.instanceId,
+      task.activityId,
+      task.name,
+    );
+
     // Tiếp tục engine execution (tokenState được persist bên trong engineService)
     try {
       await this.engineService.completeUserTask(

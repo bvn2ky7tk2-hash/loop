@@ -82,12 +82,19 @@ export function ThemePanel() {
                   justifyContent: 'center',
                   gap: 3,
                   position: 'relative',
+                  boxShadow: p.navTheme === 'light' ? 'inset 0 -1px 0 #E2E8F0' : 'none',
                 }}>
                   {/* Simulate mini menu items */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'flex-start' }}>
-                    <div style={{ width: 22, height: 3, background: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
-                    <div style={{ width: 16, height: 3, background: 'rgba(255,255,255,0.45)', borderRadius: 2 }} />
-                    <div style={{ width: 19, height: 3, background: 'rgba(255,255,255,0.45)', borderRadius: 2 }} />
+                    {p.navTheme === 'light' ? <>
+                      <div style={{ width: 22, height: 3, background: 'rgba(23,43,77,0.65)', borderRadius: 2 }} />
+                      <div style={{ width: 16, height: 3, background: 'rgba(23,43,77,0.35)', borderRadius: 2 }} />
+                      <div style={{ width: 19, height: 3, background: 'rgba(23,43,77,0.35)', borderRadius: 2 }} />
+                    </> : <>
+                      <div style={{ width: 22, height: 3, background: 'rgba(255,255,255,0.7)', borderRadius: 2 }} />
+                      <div style={{ width: 16, height: 3, background: 'rgba(255,255,255,0.45)', borderRadius: 2 }} />
+                      <div style={{ width: 19, height: 3, background: 'rgba(255,255,255,0.45)', borderRadius: 2 }} />
+                    </>}
                   </div>
 
                   {selected && (
@@ -96,12 +103,12 @@ export function ThemePanel() {
                       top: 4, right: 4,
                       width: 14, height: 14,
                       borderRadius: '50%',
-                      background: '#fff',
+                      background: p.navTheme === 'light' ? p.primary : '#fff',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}>
-                      <CheckOutlined style={{ color: p.primary, fontSize: 9, fontWeight: 700 }} />
+                      <CheckOutlined style={{ color: p.navTheme === 'light' ? '#fff' : p.primary, fontSize: 9, fontWeight: 700 }} />
                     </div>
                   )}
                 </div>

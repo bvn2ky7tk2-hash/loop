@@ -99,6 +99,8 @@ model Employee {
   trainingRecords      TrainingRecord[]
   performanceReviews   PerformanceReview[] @relation("ReviewSubject")
   reviewsAsReviewer    PerformanceReview[] @relation("Reviewer")
+  taxProfile           EmployeeTaxProfile?
+  yearlySummaries      EmployeeYearlyTaxSummary[]
 
   @@map("employees")
 }
@@ -253,7 +255,11 @@ model TimesheetRecord {
   workingDays     Decimal         @default(0) @map("working_days") @db.Decimal(5, 2)
   standardDays    Decimal         @default(0) @map("standard_days") @db.Decimal(5, 2)
   overtimeHours   Decimal         @default(0) @map("overtime_hours") @db.Decimal(7, 2)
+  otWeekdayHours  Decimal         @default(0) @map("ot_weekday_hours") @db.Decimal(7, 2)
+  otWeekendHours  Decimal         @default(0) @map("ot_weekend_hours") @db.Decimal(7, 2)
+  otHolidayHours  Decimal         @default(0) @map("ot_holiday_hours") @db.Decimal(7, 2)
   leaveDays       Decimal         @default(0) @map("leave_days") @db.Decimal(5, 2)
+  unpaidLeaveDays Decimal         @default(0) @map("unpaid_leave_days") @db.Decimal(5, 1)
   status          TimesheetStatus @default(DRAFT)
   submittedAt     DateTime?       @map("submitted_at")
   approvedAt      DateTime?       @map("approved_at")
@@ -350,6 +356,7 @@ model ProcessDefinition {
   updatedAt      DateTime          @updatedAt @map("updated_at")
   formFields     Json?             @map("form_fields")
   taskFormFields Json?             @map("task_form_fields")
+  stepConfig     Json?             @map("step_config")
   orgUnit        OrgUnit           @relation(fields: [orgUnitId], references: [id])
   instances      ProcessInstance[]
 
@@ -690,6 +697,7 @@ enum NotificationType {
   ISSUE_CLOSED
   ISSUE_CRITICAL
   ISSUE_OVERDUE
+  PAYSLIP_ISSUED
 }
 
 enum DefinitionStatus {
@@ -918,37 +926,66 @@ enum LeaveStatus {
 // ─── Phase 2: HR — Payroll ────────────────────────────────────────────────────
 
 model PayrollPeriod {
-  id              String        @id @default(uuid())
-  name            String
-  startDate       DateTime      @map("start_date") @db.Date
-  endDate         DateTime      @map("end_date") @db.Date
-  status          PayrollStatus @default(DRAFT)
-  processedById   String?       @map("processed_by_id")
-  processedAt     DateTime?     @map("processed_at")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  records         PayrollRecord[]
-  processedBy     User?         @relation("PayrollProcessor", fields: [processedById], references: [id], onDelete: SetNull)
+  id                    String            @id @default(uuid())
+  name                  String
+  startDate             DateTime          @map("start_date") @db.Date
+  endDate               DateTime          @map("end_date") @db.Date
+  status                PayrollStatus     @default(DRAFT)
+  type                  PayrollPeriodType @default(REGULAR) @map("type")
+  adjustmentForPeriodId String?           @map("adjustment_for_period_id")
+  processedById         String?           @map("processed_by_id")
+  processedAt           DateTime?         @map("processed_at")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+  records               PayrollRecord[]
+  processedBy           User?             @relation("PayrollProcessor", fields: [processedById], references: [id], onDelete: SetNull)
+  adjustmentFor         PayrollPeriod?    @relation("AdjustmentPeriod", fields: [adjustmentForPeriodId], references: [id])
+  adjustments           PayrollPeriod[]   @relation("AdjustmentPeriod")
 
   @@map("payroll_periods")
 }
 
 model PayrollRecord {
-  id            String        @id @default(uuid())
-  periodId      String        @map("period_id")
-  employeeId    String        @map("employee_id")
-  workDays      Decimal       @map("work_days") @db.Decimal(5, 1)
-  leaveDays     Decimal       @default(0) @map("leave_days") @db.Decimal(5, 1)
-  overtimeHours Decimal       @default(0) @map("overtime_hours") @db.Decimal(7, 2)
-  baseSalary    Decimal       @map("base_salary") @db.Decimal(15, 2)
-  deductions    Decimal       @default(0) @db.Decimal(15, 2)
-  bonus         Decimal       @default(0) @db.Decimal(15, 2)
-  netSalary     Decimal       @map("net_salary") @db.Decimal(15, 2)
-  note          String?
-  period        PayrollPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
-  employee      Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  id                  String        @id @default(uuid())
+  periodId            String        @map("period_id")
+  employeeId          String        @map("employee_id")
+  workDays            Decimal       @map("work_days") @db.Decimal(5, 1)
+  leaveDays           Decimal       @default(0) @map("leave_days") @db.Decimal(5, 1)
+  paidLeaveDays       Decimal       @default(0) @map("paid_leave_days") @db.Decimal(5, 1)
+  unpaidLeaveDays     Decimal       @default(0) @map("unpaid_leave_days") @db.Decimal(5, 1)
+  overtimeHours       Decimal       @default(0) @map("overtime_hours") @db.Decimal(7, 2)
+  overtimePayBreakdown Json?        @map("overtime_pay_breakdown")
+  baseSalary          Decimal       @default(0) @map("base_salary") @db.Decimal(15, 2)
+  grossSalary         Decimal       @default(0) @map("gross_salary") @db.Decimal(15, 2)
+  overtimePay         Decimal       @default(0) @map("overtime_pay") @db.Decimal(15, 2)
+  allowances          Decimal       @default(0) @db.Decimal(15, 2)
+  deductions          Decimal       @default(0) @db.Decimal(15, 2)
+  bonus               Decimal       @default(0) @db.Decimal(15, 2)
+  bhxhEmployee        Decimal       @default(0) @map("bhxh_employee") @db.Decimal(15, 2)
+  bhytEmployee        Decimal       @default(0) @map("bhyt_employee") @db.Decimal(15, 2)
+  bhtnEmployee        Decimal       @default(0) @map("bhtn_employee") @db.Decimal(15, 2)
+  bhxhEmployer        Decimal       @default(0) @map("bhxh_employer") @db.Decimal(15, 2)
+  bhytEmployer        Decimal       @default(0) @map("bhyt_employer") @db.Decimal(15, 2)
+  bhtnEmployer        Decimal       @default(0) @map("bhtn_employer") @db.Decimal(15, 2)
+  tnldEmployer        Decimal       @default(0) @map("tnld_employer") @db.Decimal(15, 2)
+  taxableIncome       Decimal       @default(0) @map("taxable_income") @db.Decimal(15, 2)
+  selfDeduction       Decimal       @default(0) @map("self_deduction") @db.Decimal(15, 2)
+  dependentDeduction  Decimal       @default(0) @map("dependent_deduction") @db.Decimal(15, 2)
+  dependentCount      Int           @default(0) @map("dependent_count")
+  pitAmount           Decimal       @default(0) @map("pit_amount") @db.Decimal(15, 2)
+  totalLaborCost      Decimal       @default(0) @map("total_labor_cost") @db.Decimal(15, 2)
+  netSalary           Decimal       @default(0) @map("net_salary") @db.Decimal(15, 2)
+  payslipPath         String?       @map("payslip_path")
+  configSnapshot      Json?         @map("config_snapshot")
+  overrideNote        String?       @map("override_note")
+  note                String?
+  period              PayrollPeriod @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  employee            Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeAllowances  EmployeeAllowance[]
+  employeeBonuses     EmployeeBonus[]
 
   @@unique([periodId, employeeId])
+  @@index([employeeId, periodId])
   @@index([periodId])
   @@map("payroll_records")
 }
@@ -956,6 +993,7 @@ model PayrollRecord {
 enum PayrollStatus {
   DRAFT
   PROCESSING
+  REVIEWED
   APPROVED
   PAID
 
@@ -1025,17 +1063,18 @@ enum ExpenseStatus {
 // ─── Phase 3A: CRM ────────────────────────────────────────────────────────────
 
 model Customer {
-  id        String    @id @default(uuid())
-  code      String    @unique
-  name      String
-  industry  String?
-  website   String?
-  taxCode   String?   @map("tax_code")
-  contacts  Contact[]
-  deals     Deal[]
-  invoices  Invoice[]
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt      @map("updated_at")
+  id              String           @id @default(uuid())
+  code            String           @unique
+  name            String
+  industry        String?
+  website         String?
+  taxCode         String?          @map("tax_code")
+  contacts        Contact[]
+  deals           Deal[]
+  invoices        Invoice[]
+  clientContracts ClientContract[]
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt      @map("updated_at")
 
   @@map("customers")
 }
@@ -1132,6 +1171,75 @@ enum DealStage {
   LOST
 
   @@map("deal_stage")
+}
+
+// ─── Client Contracts ─────────────────────────────────────────────────────────
+
+model ClientContract {
+  id          String               @id @default(uuid())
+  contractNo  String?              @unique @map("contract_no")
+  title       String               @db.VarChar(200)
+  customerId  String               @map("customer_id")
+  dealId      String?              @map("deal_id")
+  type        ClientContractType   @default(SERVICE)
+  value       Decimal?             @db.Decimal(18, 2)
+  currency    String               @default("VND")
+  startDate   DateTime             @map("start_date") @db.Date
+  endDate     DateTime?            @map("end_date") @db.Date
+  signedAt    DateTime?            @map("signed_at") @db.Date
+  status      ClientContractStatus @default(DRAFT)
+  notes       String?              @db.Text
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+  customer    Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  milestones  ContractMilestone[]
+
+  @@index([customerId])
+  @@index([status])
+  @@map("client_contracts")
+}
+
+model ContractMilestone {
+  id         String          @id @default(uuid())
+  contractId String          @map("contract_id")
+  name       String          @db.VarChar(200)
+  dueDate    DateTime        @map("due_date") @db.Date
+  amount     Decimal         @db.Decimal(18, 2)
+  status     MilestoneStatus @default(PENDING)
+  paidAt     DateTime?       @map("paid_at") @db.Date
+  notes      String?
+  createdAt  DateTime        @default(now()) @map("created_at")
+  contract   ClientContract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@index([contractId])
+  @@map("contract_milestones")
+}
+
+enum ClientContractType {
+  SERVICE
+  PRODUCT
+  SUPPORT
+  SLA
+  OTHER
+
+  @@map("client_contract_type")
+}
+
+enum ClientContractStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+
+  @@map("client_contract_status")
+}
+
+enum MilestoneStatus {
+  PENDING
+  INVOICED
+  PAID
+
+  @@map("milestone_status")
 }
 
 // ─── Phase 3A: Invoicing ──────────────────────────────────────────────────────
@@ -1504,4 +1612,209 @@ enum ReviewStatus {
   APPROVED
 
   @@map("review_status")
+}
+
+// ─── Epic 22: Payroll Compliance ──────────────────────────────────────────────
+
+model InsuranceConfig {
+  id                  String   @id @default(uuid())
+  tenantId            String?  @map("tenant_id")
+  effectiveFrom       DateTime @map("effective_from") @db.Date
+  bhxhEmployeeRate    Decimal  @map("bhxh_employee_rate") @db.Decimal(5, 4)
+  bhytEmployeeRate    Decimal  @map("bhyt_employee_rate") @db.Decimal(5, 4)
+  bhtnEmployeeRate    Decimal  @map("bhtn_employee_rate") @db.Decimal(5, 4)
+  bhxhEmployerRate    Decimal  @map("bhxh_employer_rate") @db.Decimal(5, 4)
+  bhytEmployerRate    Decimal  @map("bhyt_employer_rate") @db.Decimal(5, 4)
+  bhtnEmployerRate    Decimal  @map("bhtn_employer_rate") @db.Decimal(5, 4)
+  tnldRate            Decimal  @map("tnld_rate") @db.Decimal(5, 4)
+  bhxhCeilingMultiple Int      @default(20) @map("bhxh_ceiling_multiple")
+  wageBase            Decimal  @map("wage_base") @db.Decimal(12, 2)
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@unique([tenantId, effectiveFrom])
+  @@map("insurance_configs")
+}
+
+model TaxBracket {
+  id            String   @id @default(uuid())
+  tenantId      String?  @map("tenant_id")
+  name          String
+  effectiveFrom DateTime @map("effective_from") @db.Date
+  brackets      Json
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([tenantId, effectiveFrom])
+  @@map("tax_brackets")
+}
+
+model TaxDeductionConfig {
+  id                 String   @id @default(uuid())
+  tenantId           String?  @map("tenant_id")
+  effectiveFrom      DateTime @map("effective_from") @db.Date
+  selfDeduction      Decimal  @map("self_deduction") @db.Decimal(15, 2)
+  dependentDeduction Decimal  @map("dependent_deduction") @db.Decimal(15, 2)
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@unique([tenantId, effectiveFrom])
+  @@map("tax_deduction_configs")
+}
+
+model WageZoneConfig {
+  id            String   @id @default(uuid())
+  tenantId      String?  @map("tenant_id")
+  effectiveFrom DateTime @map("effective_from") @db.Date
+  zone1         Decimal  @db.Decimal(12, 2)
+  zone2         Decimal  @db.Decimal(12, 2)
+  zone3         Decimal  @db.Decimal(12, 2)
+  zone4         Decimal  @db.Decimal(12, 2)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([tenantId, effectiveFrom])
+  @@map("wage_zone_configs")
+}
+
+model EmployeeTaxProfile {
+  employeeId      String          @id @map("employee_id")
+  taxId           String?         @map("tax_id")
+  residencyStatus ResidencyStatus @default(RESIDENT) @map("residency_status")
+  wageZone        Int             @default(1) @map("wage_zone")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  employee        Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  dependents      Dependent[]
+
+  @@map("employee_tax_profiles")
+}
+
+model Dependent {
+  id             String             @id @default(uuid())
+  employeeId     String             @map("employee_id")
+  name           String
+  relationship   String
+  taxId          String?            @map("tax_id")
+  registeredFrom DateTime           @map("registered_from") @db.Date
+  registeredTo   DateTime?          @map("registered_to") @db.Date
+  createdAt      DateTime           @default(now()) @map("created_at")
+  taxProfile     EmployeeTaxProfile @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("dependents")
+}
+
+model AllowanceType {
+  id               String              @id @default(uuid())
+  name             String              @unique
+  defaultAmount    Decimal             @map("default_amount") @db.Decimal(12, 2)
+  isBhxhExempt     Boolean             @default(true) @map("is_bhxh_exempt")
+  isPitExempt      Boolean             @default(false) @map("is_pit_exempt")
+  pitExemptCeiling Decimal?            @map("pit_exempt_ceiling") @db.Decimal(12, 2)
+  isActive         Boolean             @default(true) @map("is_active")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  employeeAllowances EmployeeAllowance[]
+  salaryColumns    SalaryColumn[]
+
+  @@map("allowance_types")
+}
+
+model BonusType {
+  id           String          @id @default(uuid())
+  name         String          @unique
+  isBhxhExempt Boolean         @default(true) @map("is_bhxh_exempt")
+  isActive     Boolean         @default(true) @map("is_active")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  employeeBonuses EmployeeBonus[]
+
+  @@map("bonus_types")
+}
+
+model EmployeeBonus {
+  id              String        @id @default(uuid())
+  payrollRecordId String        @map("payroll_record_id")
+  bonusTypeId     String        @map("bonus_type_id")
+  amount          Decimal       @db.Decimal(15, 2)
+  note            String?
+  payrollRecord   PayrollRecord @relation(fields: [payrollRecordId], references: [id], onDelete: Cascade)
+  bonusType       BonusType     @relation(fields: [bonusTypeId], references: [id])
+
+  @@unique([payrollRecordId, bonusTypeId])
+  @@map("employee_bonuses")
+}
+
+model EmployeeYearlyTaxSummary {
+  id               String   @id @default(uuid())
+  employeeId       String   @map("employee_id")
+  year             Int
+  ytdGross         Decimal  @default(0) @map("ytd_gross") @db.Decimal(15, 2)
+  ytdTaxableIncome Decimal  @default(0) @map("ytd_taxable_income") @db.Decimal(15, 2)
+  ytdPitPaid       Decimal  @default(0) @map("ytd_pit_paid") @db.Decimal(15, 2)
+  ytdBhxhEmployee  Decimal  @default(0) @map("ytd_bhxh_employee") @db.Decimal(15, 2)
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  employee         Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, year])
+  @@index([employeeId, year])
+  @@map("employee_yearly_tax_summaries")
+}
+
+model EmployeeAllowance {
+  id              String        @id @default(uuid())
+  payrollRecordId String        @map("payroll_record_id")
+  allowanceTypeId String        @map("allowance_type_id")
+  amount          Decimal       @db.Decimal(12, 2)
+  overrideNote    String?       @map("override_note")
+  payrollRecord   PayrollRecord @relation(fields: [payrollRecordId], references: [id], onDelete: Cascade)
+  allowanceType   AllowanceType @relation(fields: [allowanceTypeId], references: [id])
+
+  @@unique([payrollRecordId, allowanceTypeId])
+  @@map("employee_allowances")
+}
+
+model SalaryColumn {
+  id               String             @id @default(uuid())
+  tenantId         String?            @map("tenant_id")
+  name             String
+  type             SalaryColumnType
+  source           SalaryColumnSource
+  allowanceTypeId  String?            @map("allowance_type_id")
+  fixedValue       Decimal?           @map("fixed_value") @db.Decimal(15, 2)
+  formula          String?
+  isBhxhExempt     Boolean            @default(false) @map("is_bhxh_exempt")
+  isPitExempt      Boolean            @default(false) @map("is_pit_exempt")
+  pitExemptCeiling Decimal?           @map("pit_exempt_ceiling") @db.Decimal(12, 2)
+  sortOrder        Int                @default(0) @map("sort_order")
+  isActive         Boolean            @default(true) @map("is_active")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  allowanceType    AllowanceType?     @relation(fields: [allowanceTypeId], references: [id])
+
+  @@index([tenantId, isActive])
+  @@map("salary_columns")
+}
+
+enum PayrollPeriodType {
+  REGULAR
+  ADJUSTMENT
+
+  @@map("payroll_period_type")
+}
+
+enum ResidencyStatus {
+  RESIDENT
+  NON_RESIDENT
+
+  @@map("residency_status")
+}
+
+enum SalaryColumnType {
+  EARNING
+  DEDUCTION
+
+  @@map("salary_column_type")
+}
+
+enum SalaryColumnSource {
+  CONTRACT_SALARY
+  ALLOWANCE_TYPE
+  FIXED_VALUE
+  FORMULA
+
+  @@map("salary_column_source")
 }

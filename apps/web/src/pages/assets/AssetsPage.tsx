@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form,
-  Input, InputNumber, DatePicker, Modal, message, Row, Col, Card,
+  Input, InputNumber, DatePicker, Modal, message, Row, Col,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, LaptopOutlined,
   SwapOutlined, RollbackOutlined,
@@ -53,6 +54,7 @@ export default function AssetsPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [filters, setFilters]       = useState<AssetFilterParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer]     = useState(false);
@@ -142,7 +144,7 @@ export default function AssetsPage() {
       title: 'Mã / Tên', key: 'info',
       render: (_: unknown, row: Asset) => (
         <Space direction="vertical" size={0}>
-          <Text code style={{ color: preset.primary, fontSize: 12 }}>{row.code}</Text>
+          <Text code style={{ color: linkColor, fontSize: 12 }}>{row.code}</Text>
           <Text style={{ fontWeight: 500, color: textPrimary }}>{row.name}</Text>
           {(row.brand || row.model) && (
             <Text style={{ fontSize: 12, color: textMuted }}>{[row.brand, row.model].filter(Boolean).join(' · ')}</Text>
@@ -177,7 +179,7 @@ export default function AssetsPage() {
     },
     {
       title: 'Ngày mua', dataIndex: 'purchaseDate', width: 110,
-      render: (v?: string) => v ? dayjs(v).format('DD/MM/YYYY') : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: '', key: 'actions', width: 130, align: 'right',
@@ -200,13 +202,6 @@ export default function AssetsPage() {
     },
   ];
 
-  const summaryCardStyle = (color: string) => ({
-    background: isDark ? '#2D3F56' : '#ffffff',
-    border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`,
-    borderRadius: 10,
-    borderTop: `3px solid ${color}`,
-  });
-
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
@@ -225,16 +220,13 @@ export default function AssetsPage() {
       {/* Summary Cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
         {[
-          { label: 'Tổng tài sản',       value: summary?.total ?? 0,             color: '#B45309' },
-          { label: 'Đang cấp phát',      value: summary?.assigned ?? 0,          color: preset.primary },
-          { label: 'Đang bảo trì',       value: summary?.underMaintenance ?? 0,  color: '#D97706' },
-          { label: 'Tổng nguyên giá',    value: summary ? `${(summary.totalPurchaseValue / 1_000_000).toFixed(0)}M ₫` : '—', color: '#059669' },
+          { label: 'Tổng tài sản',    value: summary?.total ?? 0,            color: '#F97316',    icon: <LaptopOutlined /> },
+          { label: 'Đang cấp phát',   value: summary?.assigned ?? 0,         color: '#6366F1',    icon: <SwapOutlined /> },
+          { label: 'Đang bảo trì',    value: summary?.underMaintenance ?? 0, color: '#F59E0B',    icon: <RollbackOutlined /> },
+          { label: 'Tổng nguyên giá', value: summary ? `${(summary.totalPurchaseValue / 1_000_000).toFixed(0)}M ₫` : '—', color: '#10B981', icon: null },
         ].map(c => (
           <Col key={c.label} xs={12} sm={6}>
-            <Card size="small" style={summaryCardStyle(c.color)} styles={{ body: { padding: '12px 16px' } }}>
-              <Text style={{ fontSize: 12, color: textMuted, display: 'block' }}>{c.label}</Text>
-              <Text style={{ fontSize: 22, fontWeight: 700, color: c.color }}>{c.value}</Text>
-            </Card>
+            <StatCard label={c.label} value={c.value} color={c.color} icon={c.icon} />
           </Col>
         ))}
       </Row>
@@ -255,9 +247,6 @@ export default function AssetsPage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
 

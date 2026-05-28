@@ -39,6 +39,40 @@ export type FormField =
       scoreMax: number;
     };
 
+// ─── Step Config Types ────────────────────────────────────────────────────────
+
+export type AssigneeMode = 'fixed' | 'orgunit' | 'requester_manager' | 'variable';
+export type SystemRole = 'ADMIN' | 'PM' | 'MEMBER' | 'LEADERSHIP';
+
+export interface AssigneeConfig {
+  mode: AssigneeMode;
+  userId?: string;          // mode=fixed
+  orgUnitId?: string;       // mode=orgunit
+  role?: SystemRole;        // mode=orgunit — filter theo system role
+  variablePath?: string;    // mode=variable
+}
+
+export interface NotificationTrigger {
+  enabled: boolean;
+  recipients: string[];     // 'assignee' | 'requester' | 'requester_manager' | 'user:{id}' | '{{variables.X}}'
+  subject: string;
+  bodyTemplate: string;
+}
+
+export interface StepNotificationConfig {
+  taskAssigned?: NotificationTrigger;
+  taskCompleted?: NotificationTrigger;
+}
+
+export interface StepConfigItem {
+  assigneeConfig?: AssigneeConfig;
+  notificationConfig?: StepNotificationConfig;
+}
+
+export type StepConfigMap = Record<string, StepConfigItem>;
+
+// ─── Process Definition ───────────────────────────────────────────────────────
+
 export interface ProcessDefinition {
   id: string;
   name: string;
@@ -47,6 +81,7 @@ export interface ProcessDefinition {
   bpmnXml?: string;
   formFields?: FormField[] | null;
   taskFormFields?: Record<string, FormField[]> | null;
+  stepConfig?: StepConfigMap | null;
   orgUnitId: string;
   status: DefinitionStatus;
   createdAt: string;
@@ -141,6 +176,7 @@ export const processesApi = {
       bpmnXml?: string;
       formFields?: FormField[] | null;
       taskFormFields?: Record<string, FormField[]> | null;
+      stepConfig?: StepConfigMap | null;
     },
   ) =>
     apiClient
@@ -250,6 +286,7 @@ export function useUpdateDefinition() {
         bpmnXml?: string;
         formFields?: FormField[] | null;
         taskFormFields?: Record<string, FormField[]> | null;
+        stepConfig?: StepConfigMap | null;
       };
     }) => processesApi.updateDefinition(id, data),
     onSuccess: () => {

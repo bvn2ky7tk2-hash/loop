@@ -1,51 +1,168 @@
 import { useState } from 'react';
 import {
   Table, Button, Modal, Form, Input, DatePicker, Space, Tag, Typography,
-  App, Popconfirm, Statistic, Row, Col, InputNumber, Divider, Empty,
+  App, Popconfirm, Row, Col, Divider, Empty, Tooltip, Descriptions,
+  InputNumber,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { StatCard } from '../../components/ui/StatCard';
 import type { ColumnsType } from 'antd/es/table';
 import {
-  PlusOutlined, ThunderboltOutlined, CheckOutlined,
-  DollarOutlined, EditOutlined, TeamOutlined, CalendarOutlined,
+  PlusOutlined, ThunderboltOutlined, CheckOutlined, DollarOutlined,
+  EditOutlined, TeamOutlined, CalendarOutlined, EyeOutlined,
+  ReloadOutlined, FileDoneOutlined, SettingOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { payrollApi, type PayrollPeriod, type PayrollRecord } from '../../api/payroll';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { formatCurrency } from '../../utils/format';
 
-const { Text, Title } = Typography;
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+const { Text } = Typography;
 
 const STATUS_LABEL: Record<string, string> = {
   DRAFT:      'Bản nháp',
   PROCESSING: 'Đang xử lý',
+  REVIEWED:   'Chờ duyệt',
   APPROVED:   'Đã duyệt',
   PAID:       'Đã trả lương',
 };
 const STATUS_COLOR: Record<string, string> = {
   DRAFT:      'default',
   PROCESSING: 'orange',
-  APPROVED:   'blue',
+  REVIEWED:   'blue',
+  APPROVED:   'green',
   PAID:       'success',
 };
 
-// ─── EditRecordDrawer ─────────────────────────────────────────────────────────
+// ─── RecordDetailModal ─────────────────────────────────────────────────────────
 
-function EditRecordDrawer({
+function RecordDetailModal({
   record,
   onClose,
-  isDark,
 }: {
   record: PayrollRecord | null;
   onClose: () => void;
-  isDark: boolean;
+}) {
+  const { textPrimary, textMuted, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  if (!record) return null;
+
+  const totalBhxhEmployee = Number(record.bhxhEmployee) + Number(record.bhytEmployee) + Number(record.bhtnEmployee);
+  const totalBhxhEmployer = Number(record.bhxhEmployer) + Number(record.bhytEmployer) + Number(record.bhtnEmployer) + Number(record.tnldEmployer);
+
+  const block = (label: string, value: number, color = textPrimary) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+      <Text style={{ color: textMuted, fontSize: 13 }}>{label}</Text>
+      <Text style={{ color, fontWeight: 600, fontSize: 13 }}>{formatCurrency(value)}</Text>
+    </div>
+  );
+
+  const separator = <div style={{ borderTop: `1px solid ${borderColor}`, margin: '6px 0' }} />;
+
+  return (
+    <CenteredModal
+      open={!!record}
+      onClose={onClose}
+      title={`Chi tiết phiếu lương — ${record.employee?.user?.name ?? '—'}`}
+      width={560}
+    >
+      {/* Thông tin chấm công */}
+      <div style={{ background: bgCard, borderRadius: 8, padding: '12px 16px', border: `1px solid ${borderColor}`, marginBottom: 16 }}>
+        <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 8, fontWeight: 600, letterSpacing: '0.05em' }}>CHẤM CÔNG</Text>
+        <Row gutter={16}>
+          <Col span={8}><div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: textPrimary }}>{record.workDays}</div><div style={{ fontSize: 11, color: textMuted }}>Ngày công</div></div></Col>
+          <Col span={8}><div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: textPrimary }}>{record.paidLeaveDays ?? 0}</div><div style={{ fontSize: 11, color: textMuted }}>Nghỉ phép</div></div></Col>
+          <Col span={8}><div style={{ textAlign: 'center' }}><div style={{ fontSize: 22, fontWeight: 700, color: Number(record.unpaidLeaveDays) > 0 ? '#EF4444' : textPrimary }}>{record.unpaidLeaveDays ?? 0}</div><div style={{ fontSize: 11, color: textMuted }}>Nghỉ ko phép</div></div></Col>
+        </Row>
+        {Number(record.overtimeHours) > 0 && (
+          <div style={{ marginTop: 8, textAlign: 'center', color: '#F59E0B', fontSize: 13 }}>
+            Tăng ca: {record.overtimeHours}h
+          </div>
+        )}
+      </div>
+
+      {/* Thu nhập */}
+      <div style={{ background: bgCard, borderRadius: 8, padding: '12px 16px', border: `1px solid ${borderColor}`, marginBottom: 16 }}>
+        <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 8, fontWeight: 600, letterSpacing: '0.05em' }}>THU NHẬP</Text>
+        {block('Lương theo công', Number(record.baseSalary))}
+        {Number(record.overtimePay) > 0 && block('Lương tăng ca', Number(record.overtimePay))}
+        {Number(record.allowances) > 0 && block('Phụ cấp', Number(record.allowances))}
+        {Number(record.bonus) > 0 && block('Thưởng', Number(record.bonus), '#10B981')}
+        {separator}
+        {block('TỔNG THU NHẬP', Number(record.grossSalary), linkColor)}
+      </div>
+
+      {/* Khấu trừ */}
+      <div style={{ background: bgCard, borderRadius: 8, padding: '12px 16px', border: `1px solid ${borderColor}`, marginBottom: 16 }}>
+        <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 8, fontWeight: 600, letterSpacing: '0.05em' }}>KHẤU TRỪ</Text>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 13 }}>BHXH NLĐ (8%)</Text>
+          <Text style={{ color: '#EF4444', fontSize: 13 }}>{formatCurrency(Number(record.bhxhEmployee))}</Text>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 13 }}>BHYT NLĐ (1.5%)</Text>
+          <Text style={{ color: '#EF4444', fontSize: 13 }}>{formatCurrency(Number(record.bhytEmployee))}</Text>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 13 }}>BHTN NLĐ (1%)</Text>
+          <Text style={{ color: '#EF4444', fontSize: 13 }}>{formatCurrency(Number(record.bhtnEmployee))}</Text>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', paddingLeft: 12 }}>
+          <Text style={{ color: textMuted, fontSize: 12 }}>Tổng BH NLĐ</Text>
+          <Text style={{ color: '#EF4444', fontSize: 12, fontWeight: 600 }}>-{formatCurrency(totalBhxhEmployee)}</Text>
+        </div>
+        {separator}
+        {record.dependentCount > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+            <Text style={{ color: textMuted, fontSize: 13 }}>Giảm trừ gia cảnh ({record.dependentCount} NPT)</Text>
+            <Text style={{ color: textMuted, fontSize: 13 }}>-{formatCurrency(Number(record.selfDeduction) + Number(record.dependentDeduction))}</Text>
+          </div>
+        )}
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 13 }}>Thu nhập chịu thuế</Text>
+          <Text style={{ color: textPrimary, fontSize: 13 }}>{formatCurrency(Number(record.taxableIncome))}</Text>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 13 }}>Thuế TNCN</Text>
+          <Text style={{ color: '#EF4444', fontSize: 13, fontWeight: 600 }}>-{formatCurrency(Number(record.pitAmount))}</Text>
+        </div>
+      </div>
+
+      {/* Kết quả */}
+      <div style={{ background: isDark ? `${linkColor}15` : `${linkColor}08`, borderRadius: 8, padding: '14px 16px', border: `1px solid ${linkColor}40` }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ color: textPrimary, fontSize: 16, fontWeight: 700 }}>THỰC NHẬN</Text>
+          <Text style={{ color: linkColor, fontSize: 22, fontWeight: 800 }}>{formatCurrency(Number(record.netSalary))}</Text>
+        </div>
+        {separator}
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
+          <Text style={{ color: textMuted, fontSize: 12 }}>Chi phí SXKD dự kiến (gồm đóng BH NSDLĐ)</Text>
+          <Text style={{ color: textMuted, fontSize: 12 }}>{formatCurrency(Number(record.totalLaborCost))}</Text>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0', paddingLeft: 12 }}>
+          <Text style={{ color: textMuted, fontSize: 11 }}>BH NSDLĐ (BHXH 17.5% + BHYT 3% + BHTN 1% + TNLĐ 0.5%)</Text>
+          <Text style={{ color: textMuted, fontSize: 11 }}>{formatCurrency(totalBhxhEmployer)}</Text>
+        </div>
+      </div>
+    </CenteredModal>
+  );
+}
+
+// ─── EditRecordModal ───────────────────────────────────────────────────────────
+
+function EditRecordModal({
+  record,
+  onClose,
+}: {
+  record: PayrollRecord | null;
+  onClose: () => void;
 }) {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const [form] = Form.useForm();
+  const { bgCard, borderColor, linkColor, textMuted } = useThemePalette();
 
   const updateMut = useMutation({
     mutationFn: (values: { bonus?: number; deductions?: number; note?: string }) =>
@@ -58,19 +175,14 @@ function EditRecordDrawer({
     onError: (e: Error) => message.error(e.message ?? 'Lỗi cập nhật'),
   });
 
-  const border = isDark ? '#334155' : '#E2E8F0';
-  const cardBg = isDark ? '#1E293B' : '#FAFAFA';
-
   if (!record) return null;
-
-  const name = record.employee?.user?.name ?? '—';
 
   return (
     <CenteredModal
       open={!!record}
       onClose={onClose}
-      title={`Chỉnh sửa lương — ${name}`}
-      width={440}
+      title={`Điều chỉnh — ${record.employee?.user?.name ?? '—'}`}
+      width={420}
       extra={
         <Button type="primary" loading={updateMut.isPending}
           onClick={() => form.validateFields().then(v => updateMut.mutate(v))}>
@@ -78,74 +190,57 @@ function EditRecordDrawer({
         </Button>
       }
     >
-      {/* Thông tin cố định */}
-      <div style={{ padding: '12px 16px', background: cardBg, borderRadius: 8, border: `1px solid ${border}`, marginBottom: 20 }}>
+      <div style={{ padding: '8px 0 12px', background: bgCard, borderRadius: 8, border: `1px solid ${borderColor}`, padding: '12px 16px', marginBottom: 16 }}>
         <Row gutter={16}>
           <Col span={12}>
-            <Statistic title="Ngày công" value={record.workDays} suffix="ngày" valueStyle={{ fontSize: 18 }} />
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 18, fontWeight: 700, color: textMuted }}>{record.workDays}c</div>
+              <div style={{ fontSize: 11, color: textMuted }}>Ngày công</div>
+            </div>
           </Col>
           <Col span={12}>
-            <Statistic title="Nghỉ phép" value={record.leaveDays} suffix="ngày" valueStyle={{ fontSize: 18 }} />
-          </Col>
-        </Row>
-        <Divider style={{ margin: '10px 0' }} />
-        <Row gutter={16}>
-          <Col span={12}>
-            <Statistic title="OT" value={record.overtimeHours} suffix="giờ" valueStyle={{ fontSize: 18 }} />
-          </Col>
-          <Col span={12}>
-            <Statistic title="Lương cơ bản" value={record.baseSalary}
-              formatter={v => formatCurrency(Number(v))} valueStyle={{ fontSize: 16, color: preset.primary }} />
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 18, fontWeight: 700, color: linkColor }}>{formatCurrency(Number(record.grossSalary))}</div>
+              <div style={{ fontSize: 11, color: textMuted }}>Tổng thu nhập</div>
+            </div>
           </Col>
         </Row>
       </div>
-
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{
-          bonus:      record.bonus,
-          deductions: record.deductions,
-          note:       record.note ?? '',
-        }}
-      >
-        <Form.Item name="bonus" label="Thưởng (đ)">
-          <InputNumber
-            style={{ width: '100%' }} min={0} step={100000}
+      <Form form={form} layout="vertical"
+        initialValues={{ bonus: record.bonus, deductions: record.deductions, note: record.note ?? '' }}>
+        <Form.Item name="bonus" label="Thưởng thêm (đ)">
+          <InputNumber style={{ width: '100%' }} min={0} step={500000}
             formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={v => Number(v?.replace(/,/g, '') ?? 0)}
-          />
+            parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
         </Form.Item>
-        <Form.Item name="deductions" label="Khấu trừ (đ)">
-          <InputNumber
-            style={{ width: '100%' }} min={0} step={100000}
+        <Form.Item name="deductions" label="Khấu trừ thêm (đ)">
+          <InputNumber style={{ width: '100%' }} min={0} step={100000}
             formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={v => Number(v?.replace(/,/g, '') ?? 0)}
-          />
+            parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
         </Form.Item>
         <Form.Item name="note" label="Ghi chú">
-          <Input.TextArea rows={2} placeholder="Ghi chú thêm..." />
+          <Input.TextArea rows={2} placeholder="Ghi chú về điều chỉnh..." />
         </Form.Item>
       </Form>
     </CenteredModal>
   );
 }
 
-// ─── PeriodDetailDrawer ────────────────────────────────────────────────────────
+// ─── PeriodDetailModal ─────────────────────────────────────────────────────────
 
-function PeriodDetailDrawer({
+function PeriodDetailModal({
   period,
   onClose,
-  isDark,
 }: {
   period: PayrollPeriod | null;
   onClose: () => void;
-  isDark: boolean;
 }) {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const [editRecord, setEditRecord] = useState<PayrollRecord | null>(null);
+  const [detailRecord, setDetailRecord] = useState<PayrollRecord | null>(null);
   const [page, setPage] = useState(1);
+  const { textPrimary, textMuted, bgCard, borderColor, linkColor, isDark } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-records', period?.id, page],
@@ -163,11 +258,30 @@ function PeriodDetailDrawer({
     onError: (e: Error) => message.error(e.message ?? 'Lỗi tính lương'),
   });
 
+  const reviewMut = useMutation({
+    mutationFn: () => payrollApi.reviewPeriod(period!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['payroll-periods'] });
+      message.success('Đã gửi kỳ lương để kiểm duyệt');
+    },
+    onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
+  });
+
+  const rerunMut = useMutation({
+    mutationFn: () => payrollApi.rerunPeriod(period!.id),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ['payroll-records', period?.id] });
+      qc.invalidateQueries({ queryKey: ['payroll-periods'] });
+      message.success(`Đã tính lại lương cho ${res.generated} nhân viên`);
+    },
+    onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
+  });
+
   const approveMut = useMutation({
     mutationFn: () => payrollApi.approvePeriod(period!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['payroll-periods'] });
-      message.success('Đã phê duyệt kỳ lương');
+      message.success('Đã phê duyệt kỳ lương — YTD đã được cập nhật');
       onClose();
     },
     onError: (e: Error) => message.error(e.message ?? 'Lỗi phê duyệt'),
@@ -183,81 +297,91 @@ function PeriodDetailDrawer({
     onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
   });
 
-  const border = isDark ? '#334155' : '#E2E8F0';
-  const subBg  = isDark ? '#1A2744' : '#F8FAFC';
-
   const records = data?.data ?? [];
+  const totalGross = records.reduce((s, r) => s + Number(r.grossSalary), 0);
   const totalNet = records.reduce((s, r) => s + Number(r.netSalary), 0);
+  const totalPIT = records.reduce((s, r) => s + Number(r.pitAmount), 0);
+  const totalBHXH = records.reduce((s, r) => s + Number(r.bhxhEmployee) + Number(r.bhytEmployee) + Number(r.bhtnEmployee), 0);
 
   const canGenerate = period?.status === 'DRAFT';
-  const canApprove  = period?.status === 'PROCESSING';
+  const canReview   = period?.status === 'PROCESSING';
+  const canRerun    = period?.status === 'REVIEWED';
+  const canApprove  = period?.status === 'REVIEWED';
   const canPay      = period?.status === 'APPROVED';
+  const canEdit     = period?.status !== 'APPROVED' && period?.status !== 'PAID';
 
   const cols: ColumnsType<PayrollRecord> = [
     {
       title: 'Nhân viên',
       render: (_, r) => (
         <div>
-          <div style={{ fontWeight: 600, fontSize: 13 }}>{r.employee?.user?.name ?? '—'}</div>
-          <div style={{ fontSize: 11, color: isDark ? 'rgba(255,255,255,0.4)' : '#94A3B8' }}>{r.employee?.user?.email}</div>
+          <div style={{ fontWeight: 600, fontSize: 13, color: textPrimary }}>{r.employee?.user?.name ?? '—'}</div>
+          <div style={{ fontSize: 11, color: textMuted }}>{r.employee?.user?.email}</div>
         </div>
       ),
     },
     {
-      title: 'Công / Nghỉ / OT',
-      width: 130,
+      title: 'Công / OT',
+      width: 90,
       align: 'center',
       render: (_, r) => (
-        <div style={{ fontSize: 12, lineHeight: 1.8, textAlign: 'center' }}>
-          <div><Tag color="blue" style={{ fontSize: 11 }}>{r.workDays}c</Tag></div>
-          {r.leaveDays > 0 && <div><Tag color="orange" style={{ fontSize: 11 }}>{r.leaveDays}n</Tag></div>}
-          {r.overtimeHours > 0 && <div><Tag color="purple" style={{ fontSize: 11 }}>{r.overtimeHours}h OT</Tag></div>}
+        <div style={{ fontSize: 12, lineHeight: 1.8 }}>
+          <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{r.workDays}c</Tag>
+          {Number(r.overtimeHours) > 0 && <Tag style={isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)' } : {}} color={isDark ? undefined : 'orange'}>{r.overtimeHours}h</Tag>}
         </div>
       ),
     },
     {
-      title: 'Lương cơ bản',
-      dataIndex: 'baseSalary',
-      width: 140,
+      title: 'Tổng TN',
+      dataIndex: 'grossSalary',
+      width: 130,
       align: 'right',
-      render: (v: number) => <Text style={{ fontSize: 13 }}>{formatCurrency(Number(v))}</Text>,
+      render: (v: number) => <Text style={{ color: textPrimary, fontSize: 13 }}>{formatCurrency(Number(v))}</Text>,
     },
     {
-      title: 'Thưởng',
-      dataIndex: 'bonus',
+      title: 'BH NLĐ',
+      width: 110,
+      align: 'right',
+      render: (_, r) => {
+        const total = Number(r.bhxhEmployee) + Number(r.bhytEmployee) + Number(r.bhtnEmployee);
+        return total > 0
+          ? <Text style={{ color: '#EF4444', fontSize: 13 }}>-{formatCurrency(total)}</Text>
+          : <Text style={{ color: textMuted }}>—</Text>;
+      },
+    },
+    {
+      title: 'Thuế TNCN',
+      dataIndex: 'pitAmount',
       width: 110,
       align: 'right',
       render: (v: number) => Number(v) > 0
-        ? <Text style={{ color: '#059669', fontSize: 13 }}>+{formatCurrency(Number(v))}</Text>
-        : <Text type="secondary">—</Text>,
-    },
-    {
-      title: 'Khấu trừ',
-      dataIndex: 'deductions',
-      width: 110,
-      align: 'right',
-      render: (v: number) => Number(v) > 0
-        ? <Text style={{ color: '#DC2626', fontSize: 13 }}>-{formatCurrency(Number(v))}</Text>
-        : <Text type="secondary">—</Text>,
+        ? <Text style={{ color: '#EF4444', fontSize: 13 }}>-{formatCurrency(Number(v))}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Thực nhận',
       dataIndex: 'netSalary',
-      width: 140,
+      width: 130,
       align: 'right',
       render: (v: number) => (
-        <Text strong style={{ color: preset.primary, fontSize: 14 }}>{formatCurrency(Number(v))}</Text>
+        <Text strong style={{ color: linkColor, fontSize: 14 }}>{formatCurrency(Number(v))}</Text>
       ),
     },
     {
       title: '',
-      width: 50,
+      width: 70,
+      align: 'center',
       render: (_, r) => (
-        <Button
-          size="small" icon={<EditOutlined />}
-          disabled={period?.status === 'PAID'}
-          onClick={() => setEditRecord(r)}
-        />
+        <Space size={4}>
+          <Tooltip title="Chi tiết">
+            <Button size="small" icon={<EyeOutlined />} onClick={() => setDetailRecord(r)} />
+          </Tooltip>
+          {canEdit && (
+            <Tooltip title="Điều chỉnh">
+              <Button size="small" icon={<EditOutlined />} onClick={() => setEditRecord(r)} />
+            </Tooltip>
+          )}
+        </Space>
       ),
     },
   ];
@@ -268,18 +392,18 @@ function PeriodDetailDrawer({
         open={!!period}
         onClose={onClose}
         title={
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span>{period?.name}</span>
             {period && <Tag color={STATUS_COLOR[period.status]}>{STATUS_LABEL[period.status]}</Tag>}
           </div>
         }
-        width={900}
+        width={960}
         extra={
           <Space>
             {canGenerate && (
               <Popconfirm
                 title="Tính lương cho toàn bộ nhân viên?"
-                description="Sẽ tính dựa trên bảng chấm công và đơn giá ngày công hiệu lực."
+                description="Sẽ đọc HĐLĐ, chấm công và áp dụng cấu hình BH/thuế hiệu lực."
                 onConfirm={() => generateMut.mutate()}
                 okText="Tính lương" cancelText="Huỷ"
               >
@@ -288,10 +412,34 @@ function PeriodDetailDrawer({
                 </Button>
               </Popconfirm>
             )}
+            {canReview && (
+              <Popconfirm
+                title="Gửi để kiểm duyệt?"
+                description="Trạng thái sẽ chuyển sang REVIEWED để cấp trên phê duyệt."
+                onConfirm={() => reviewMut.mutate()}
+                okText="Gửi duyệt" cancelText="Huỷ"
+              >
+                <Button icon={<FileDoneOutlined />} loading={reviewMut.isPending}>
+                  Gửi duyệt
+                </Button>
+              </Popconfirm>
+            )}
+            {canRerun && (
+              <Popconfirm
+                title="Tính lại kỳ lương?"
+                description="Sẽ tính lại toàn bộ từ đầu với config mới nhất."
+                onConfirm={() => rerunMut.mutate()}
+                okText="Tính lại" cancelText="Huỷ"
+              >
+                <Button icon={<ReloadOutlined />} loading={rerunMut.isPending}>
+                  Tính lại
+                </Button>
+              </Popconfirm>
+            )}
             {canApprove && (
               <Popconfirm
                 title="Phê duyệt kỳ lương?"
-                description="Sau khi duyệt, không thể thay đổi số liệu."
+                description="Sau khi duyệt sẽ cập nhật YTD thuế. Không thể hoàn tác."
                 onConfirm={() => approveMut.mutate()}
                 okText="Phê duyệt" cancelText="Huỷ"
               >
@@ -307,7 +455,7 @@ function PeriodDetailDrawer({
                 okText="Xác nhận" cancelText="Huỷ"
               >
                 <Button type="primary" icon={<DollarOutlined />} loading={markPaidMut.isPending}
-                  style={{ background: '#059669', borderColor: '#059669' }}>
+                  style={{ background: '#10B981', borderColor: '#10B981' }}>
                   Đã trả lương
                 </Button>
               </Popconfirm>
@@ -315,31 +463,43 @@ function PeriodDetailDrawer({
           </Space>
         }
       >
-        {/* Tóm tắt */}
+        {/* Tóm tắt tài chính */}
         {records.length > 0 && (
-          <div style={{
-            padding: '12px 16px', background: subBg, borderRadius: 8,
-            border: `1px solid ${border}`, marginBottom: 16, display: 'flex', gap: 32, flexWrap: 'wrap',
-          }}>
-            <Statistic title="Số nhân viên" value={records.length} prefix={<TeamOutlined />} valueStyle={{ fontSize: 20 }} />
-            <Statistic title="Tổng chi trả" value={totalNet}
-              formatter={v => formatCurrency(Number(v))}
-              valueStyle={{ fontSize: 20, color: preset.primary }}
-            />
-            {period?.processedBy && (
-              <Statistic title="Người duyệt" value={period.processedBy.name} valueStyle={{ fontSize: 16 }} />
-            )}
-          </div>
+          <Row gutter={12} style={{ marginBottom: 16 }}>
+            <Col span={6}>
+              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: textPrimary }}>{records.length}</div>
+                <div style={{ fontSize: 11, color: textMuted }}><TeamOutlined /> Nhân viên</div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: textPrimary }}>{formatCurrency(totalGross)}</div>
+                <div style={{ fontSize: 11, color: textMuted }}>Tổng thu nhập</div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: '#EF4444' }}>-{formatCurrency(totalBHXH + totalPIT)}</div>
+                <div style={{ fontSize: 11, color: textMuted }}>BH + Thuế TNCN</div>
+              </div>
+            </Col>
+            <Col span={6}>
+              <div style={{ background: isDark ? `${linkColor}18` : `${linkColor}0C`, border: `1px solid ${linkColor}30`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: linkColor }}>{formatCurrency(totalNet)}</div>
+                <div style={{ fontSize: 11, color: textMuted }}>Tổng chi trả</div>
+              </div>
+            </Col>
+          </Row>
         )}
 
-        {/* Bảng bản ghi */}
         <Table
           loading={isLoading}
           dataSource={records}
           rowKey="id"
           columns={cols}
           size="small"
-          scroll={{ x: 800 }}
+          scroll={{ x: 780 }}
           pagination={{
             current: page,
             total: data?.total ?? 0,
@@ -347,30 +507,27 @@ function PeriodDetailDrawer({
             onChange: setPage,
             showTotal: t => `${t} nhân viên`,
           }}
-          locale={{ emptyText: <Empty description="Chưa có dữ liệu. Nhấn 'Tính lương' để tạo bản ghi." /> }}
+          locale={{ emptyText: <Empty description="Chưa có dữ liệu. Nhấn 'Tính lương' để bắt đầu." /> }}
         />
       </CenteredModal>
 
-      <EditRecordDrawer
-        record={editRecord}
-        onClose={() => setEditRecord(null)}
-        isDark={isDark}
-      />
+      <RecordDetailModal record={detailRecord} onClose={() => setDetailRecord(null)} />
+      <EditRecordModal record={editRecord} onClose={() => setEditRecord(null)} />
     </>
   );
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Main ──────────────────────────────────────────────────────────────────────
 
 export default function PayrollPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PayrollPeriod | null>(null);
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
+  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-periods', page],
@@ -388,7 +545,11 @@ export default function PayrollPage() {
     onError: (e: Error) => message.error(e.message ?? 'Lỗi tạo kỳ lương'),
   });
 
-  const border = isDark ? '#334155' : '#E2E8F0';
+  const periods = data?.data ?? [];
+  const totalDraft      = periods.filter(p => p.status === 'DRAFT').length;
+  const totalProcessing = periods.filter(p => p.status === 'PROCESSING' || p.status === 'REVIEWED').length;
+  const totalApproved   = periods.filter(p => p.status === 'APPROVED').length;
+  const totalPaid       = periods.filter(p => p.status === 'PAID').length;
 
   const cols: ColumnsType<PayrollPeriod> = [
     {
@@ -396,8 +557,8 @@ export default function PayrollPage() {
       dataIndex: 'name',
       render: (name: string, r) => (
         <div>
-          <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
-          <div style={{ fontSize: 12, color: isDark ? 'rgba(255,255,255,0.4)' : '#64748B' }}>
+          <div style={{ fontWeight: 600, fontSize: 14, color: textPrimary }}>{name}</div>
+          <div style={{ fontSize: 12, color: textMuted }}>
             <CalendarOutlined style={{ marginRight: 4 }} />
             {dayjs(r.startDate).format('DD/MM/YYYY')} – {dayjs(r.endDate).format('DD/MM/YYYY')}
           </div>
@@ -407,121 +568,114 @@ export default function PayrollPage() {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      width: 140,
+      width: 130,
       render: (s: string) => <Tag color={STATUS_COLOR[s]}>{STATUS_LABEL[s]}</Tag>,
     },
     {
       title: 'Nhân viên',
       dataIndex: '_count',
-      width: 100,
+      width: 90,
       align: 'center',
       render: (c: PayrollPeriod['_count']) => (
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontWeight: 700, fontSize: 16 }}>{c?.records ?? 0}</div>
-          <div style={{ fontSize: 11, color: isDark ? 'rgba(255,255,255,0.4)' : '#94A3B8' }}>người</div>
-        </div>
+        <Text style={{ fontWeight: 700, fontSize: 15, color: textPrimary }}>{c?.records ?? 0}</Text>
       ),
     },
     {
       title: 'Người duyệt',
       dataIndex: 'processedBy',
       render: (p: PayrollPeriod['processedBy']) => p
-        ? <Text style={{ fontSize: 13 }}>{p.name}</Text>
-        : <Text type="secondary">—</Text>,
+        ? <Text style={{ fontSize: 13, color: textPrimary }}>{p.name}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Ngày duyệt',
       dataIndex: 'processedAt',
       width: 120,
       render: (d?: string) => d
-        ? dayjs(d).format('DD/MM/YYYY')
-        : <Text type="secondary">—</Text>,
+        ? <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY')}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
-      title: 'Thao tác',
-      width: 110,
+      title: '',
+      width: 100,
       render: (_, r) => (
-        <Button size="small" onClick={() => setSelectedPeriod(r)}>
-          Xem chi tiết
+        <Button size="small" icon={<EyeOutlined />} onClick={() => setSelectedPeriod(r)}>
+          Chi tiết
         </Button>
       ),
     },
   ];
 
   return (
-    <App>
-      <div style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-          <div>
-            <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <DollarOutlined />
-              Payroll
-            </Title>
-            <Text type="secondary" style={{ fontSize: 13 }}>
-              Quản lý kỳ lương, tính lương tự động từ bảng chấm công và phê duyệt chi trả
-            </Text>
-          </div>
-          <Button icon={<PlusOutlined />} type="primary" onClick={() => setCreateOpen(true)}>
-            Tạo kỳ lương
-          </Button>
-        </div>
+    <div style={{ padding: 24 }}>
+      <PageHeader
+        title="Payroll"
+        icon={<DollarOutlined />}
+        iconColor="#0D9488"
+        actions={
+          <Space>
+            <Button icon={<SettingOutlined />} onClick={() => navigate('/payroll/settings')}>
+              Cấu hình
+            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+              Tạo kỳ lương
+            </Button>
+          </Space>
+        }
+      />
 
-        <Divider style={{ margin: '0 0 16px' }} />
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}><StatCard label="Bản nháp" value={totalDraft} color="#94A3B8" icon={<CalendarOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đang xử lý" value={totalProcessing} color="#F59E0B" icon={<ThunderboltOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đã duyệt" value={totalApproved} color="#6366F1" icon={<CheckOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đã trả lương" value={totalPaid} color="#10B981" icon={<DollarOutlined />} /></Col>
+      </Row>
 
-        <Table
-          loading={isLoading}
-          dataSource={data?.data ?? []}
-          rowKey="id"
-          columns={cols}
-          size="small"
-          style={{ border: `1px solid ${border}`, borderRadius: 8 }}
-          pagination={{
-            current: page,
-            total: data?.total ?? 0,
-            pageSize: 20,
-            onChange: setPage,
-            showTotal: t => `${t} kỳ lương`,
-          }}
-          onRow={r => ({ onClick: () => setSelectedPeriod(r), style: { cursor: 'pointer' } })}
-        />
+      <Table
+        loading={isLoading}
+        dataSource={periods}
+        rowKey="id"
+        columns={cols}
+        size="small"
+        style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
+        pagination={{
+          current: page,
+          total: data?.total ?? 0,
+          pageSize: 20,
+          onChange: setPage,
+          showTotal: t => `${t} kỳ lương`,
+        }}
+        onRow={r => ({ onClick: () => setSelectedPeriod(r), style: { cursor: 'pointer' } })}
+      />
 
-        {/* Modal tạo kỳ lương */}
-        <Modal
-          open={createOpen}
-          title="Tạo kỳ lương mới"
-          onCancel={() => { setCreateOpen(false); form.resetFields(); }}
-          onOk={() => form.validateFields().then(values => createMut.mutate({
-            name:      values.name,
-            startDate: values.dateRange[0].format('YYYY-MM-DD'),
-            endDate:   values.dateRange[1].format('YYYY-MM-DD'),
-          }))}
-          confirmLoading={createMut.isPending}
-          okText="Tạo" cancelText="Huỷ"
-        >
-          <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-            <Form.Item name="name" label="Tên kỳ lương"
-              rules={[{ required: true, message: 'Nhập tên kỳ lương' }]}
-              extra="Ví dụ: Lương tháng 5/2026">
-              <Input placeholder="Lương tháng 5/2026" />
-            </Form.Item>
-            <Form.Item name="dateRange" label="Khoảng thời gian"
-              rules={[{ required: true, message: 'Chọn thời gian' }]}>
-              <DatePicker.RangePicker
-                style={{ width: '100%' }}
-                format="DD/MM/YYYY"
-                placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
+      {/* Modal tạo kỳ lương */}
+      <Modal
+        open={createOpen}
+        title="Tạo kỳ lương mới"
+        onCancel={() => { setCreateOpen(false); form.resetFields(); }}
+        onOk={() => form.validateFields().then(values => createMut.mutate({
+          name:      values.name,
+          startDate: values.dateRange[0].format('YYYY-MM-DD'),
+          endDate:   values.dateRange[1].format('YYYY-MM-DD'),
+        }))}
+        confirmLoading={createMut.isPending}
+        okText="Tạo" cancelText="Huỷ"
+      >
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item name="name" label="Tên kỳ lương"
+            rules={[{ required: true, message: 'Nhập tên kỳ lương' }]}
+            extra="Ví dụ: Lương tháng 5/2026">
+            <Input placeholder="Lương tháng 5/2026" />
+          </Form.Item>
+          <Form.Item name="dateRange" label="Khoảng thời gian"
+            rules={[{ required: true, message: 'Chọn thời gian' }]}>
+            <DatePicker.RangePicker style={{ width: '100%' }} format="DD/MM/YYYY"
+              placeholder={['Ngày bắt đầu', 'Ngày kết thúc']} />
+          </Form.Item>
+        </Form>
+      </Modal>
 
-        {/* Drawer chi tiết kỳ lương */}
-        <PeriodDetailDrawer
-          period={selectedPeriod}
-          onClose={() => setSelectedPeriod(null)}
-          isDark={isDark}
-        />
-      </div>
-    </App>
+      <PeriodDetailModal period={selectedPeriod} onClose={() => setSelectedPeriod(null)} />
+    </div>
   );
 }

@@ -56,6 +56,7 @@ function DealCard({
   onDelete: (d: Deal) => void;
 }) {
   const bg = isDark ? '#2D3F56' : '#fff';
+  const linkColor = isDark ? '#93C5FD' : preset.primary;
 
   return (
     <div style={{
@@ -73,7 +74,7 @@ function DealCard({
         <div style={{ fontSize: 12, color: textMuted, marginBottom: 4 }}>{deal.customer.name}</div>
       )}
       {deal.value && (
-        <div style={{ fontSize: 13, color: preset.primary, fontWeight: 500, marginBottom: 6 }}>
+        <div style={{ fontSize: 13, color: linkColor, fontWeight: 500, marginBottom: 6 }}>
           {formatMoney(deal.value)}
         </div>
       )}
@@ -115,6 +116,7 @@ export default function DealsPage() {
   const borderColor = isDark ? '#334155' : '#E2E8F0';
   const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
   const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [viewMode, setViewMode]       = useState<'kanban' | 'list'>('kanban');
   const [filters, setFilters]         = useState<DealFilterDto>({ page: 1, limit: 40 });
@@ -261,7 +263,7 @@ export default function DealsPage() {
   // ─── List view ───────────────────────────────────────────────────────────
 
   const columns: ColumnsType<Deal> = [
-    { title: 'Mã', dataIndex: 'code', width: 110, render: (v: string) => <Text code style={{ color: preset.primary }}>{v}</Text> },
+    { title: 'Mã', dataIndex: 'code', width: 110, render: (v: string) => <Text code style={{ color: linkColor }}>{v}</Text> },
     {
       title: 'Tên deal', dataIndex: 'title',
       render: (t: string, row: Deal) => (
@@ -281,11 +283,11 @@ export default function DealsPage() {
     },
     {
       title: 'Xác suất', dataIndex: 'probability', width: 90, align: 'center',
-      render: (v?: number) => v != null ? <Text style={{ color: textMuted }}>{v}%</Text> : '—',
+      render: (v?: number) => v != null ? <Text style={{ color: textMuted }}>{v}%</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Đóng dự kiến', dataIndex: 'expectedCloseDate', width: 140,
-      render: (v?: string) => v ? dayjs(v).format('DD/MM/YYYY') : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: '', key: 'actions', width: 120, align: 'right',
@@ -373,18 +375,6 @@ export default function DealsPage() {
               total: data?.total ?? 0,
               onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
               showSizeChanger: true,
-            }}
-            components={{
-              header: {
-                cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-                  <th {...props} style={{
-                    ...props.style,
-                    background: bgCard,
-                    color: textPrimary,
-                    borderBottom: `1px solid ${borderColor}`,
-                  }} />
-                ),
-              },
             }}
           />
         </div>

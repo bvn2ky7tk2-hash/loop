@@ -9,18 +9,47 @@ export interface ThemePreset {
   primary: string;
   hover: string;
   active: string;
-  navBg: string;   // nền sidebar + topbar (light mode)
-  navText: string; // màu chữ trên nền navBg
+  navBg: string;        // nền sidebar + topbar (light mode)
+  navText: string;      // màu chữ trên nền navBg
+  navTheme?: 'dark' | 'light'; // light = sidebar trắng, dùng text tối
 }
 
 export const THEME_PRESETS: ThemePreset[] = [
   {
     id: 'loop',
     name: 'Loop',
-    primary: '#5C6BC0',
-    hover:   '#4F46E5',
-    active:  '#3949AB',
-    navBg:   'linear-gradient(135deg, #3949AB 0%, #5C6BC0 55%, #8E44AD 100%)',
+    primary: '#0052CC',
+    hover:   '#2684FF',
+    active:  '#003E99',
+    navBg:   '#0052CC',
+    navText: '#fff',
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    primary: '#0052CC',
+    hover:   '#2684FF',
+    active:  '#003E99',
+    navBg:   '#ffffff',
+    navText: '#172B4D',
+    navTheme: 'light',
+  },
+  {
+    id: 'navy',
+    name: 'Navy',
+    primary: '#2563EB',
+    hover:   '#3B82F6',
+    active:  '#1D4ED8',
+    navBg:   '#1E3A5F',
+    navText: '#fff',
+  },
+  {
+    id: 'slate',
+    name: 'Slate',
+    primary: '#475569',
+    hover:   '#64748B',
+    active:  '#334155',
+    navBg:   '#475569',
     navText: '#fff',
   },
   {

@@ -1,6 +1,6 @@
 import { IsString, IsOptional, MinLength, IsArray, Matches, MaxLength } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { FormFieldDto } from './create-definition.dto';
+import { FormFieldDto, StepConfigItemDto } from './create-definition.dto';
 
 export class UpdateDefinitionDto {
   @ApiPropertyOptional({ description: 'Tên process definition' })
@@ -28,6 +28,10 @@ export class UpdateDefinitionDto {
   @ApiPropertyOptional({ description: 'Per-task form fields schema: { [activityId]: FormFieldDto[] }' })
   @IsOptional()
   taskFormFields?: Record<string, FormFieldDto[]>;
+
+  @ApiPropertyOptional({ description: 'Per-step config (assignee + notification)' })
+  @IsOptional()
+  stepConfig?: Record<string, StepConfigItemDto>;
 
   @ApiPropertyOptional({ description: 'Unique key để reference process (e.g. leave-approval, expense-approval)' })
   @IsOptional()

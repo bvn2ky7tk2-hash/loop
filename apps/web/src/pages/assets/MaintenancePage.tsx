@@ -76,7 +76,7 @@ export default function AssetMaintenancePage() {
     },
     {
       title: 'Ngày thực hiện', dataIndex: 'performedAt', width: 140,
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Chi phí', dataIndex: 'cost', width: 120, align: 'right',
@@ -86,7 +86,7 @@ export default function AssetMaintenancePage() {
     },
     {
       title: 'Người thực hiện', dataIndex: 'performedBy', width: 180,
-      render: (v?: string) => v ?? <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Ghi chú', dataIndex: 'notes', width: 200,
@@ -131,9 +131,6 @@ export default function AssetMaintenancePage() {
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
-          components={{ header: { cell: (props: React.HTMLAttributes<HTMLTableCellElement>) => (
-            <th {...props} style={{ ...props.style, background: bgCard, color: textPrimary, borderBottom: `1px solid ${borderColor}` }} />
-          )}}}
         />
       </div>
 

@@ -1,8 +1,10 @@
-import { Row, Col, Card, Table, Typography } from 'antd';
+import { Row, Col, Card, Table, Typography, Popover, Button } from 'antd';
 import {
   ProjectOutlined, TeamOutlined, CheckSquareOutlined, WarningOutlined,
-  ClockCircleOutlined,
+  ClockCircleOutlined, SettingOutlined,
 } from '@ant-design/icons';
+import { ThemePanel } from '../../components/ui/ThemePanel';
+import { useAuthStore } from '../../store/auth.store';
 import {
   PieChart, Pie, Cell, Tooltip as RTooltip, ResponsiveContainer, Legend,
 } from 'recharts';
@@ -41,6 +43,7 @@ function CardTitle({ icon, label, color }: { icon: React.ReactNode; label: strin
 
 export default function DashboardPage() {
   const { mode, preset } = useThemeStore();
+  const { user } = useAuthStore();
   const isDark = mode === 'dark';
   const primary = preset.primary;
 
@@ -148,33 +151,45 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: '24px 28px' }}>
       {/* ── Page header ── */}
-      <div style={{ marginBottom: 28, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+      <div style={{ marginBottom: 28, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
           <h1 style={{
-            fontSize: 24, fontWeight: 800, margin: 0, letterSpacing: '-0.5px',
+            fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: '-0.3px',
             color: isDark ? '#F1F5F9' : '#0F172A',
           }}>
             Dashboard
           </h1>
-          <p style={{
-            fontSize: 13, margin: '4px 0 0',
-            color: primary, fontWeight: 500,
-          }}>
+          <p style={{ fontSize: 15, fontWeight: 600, margin: '6px 0 2px', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+            Xin chào, {user?.name ?? 'bạn'} 👋
+          </p>
+          <p style={{ fontSize: 13, margin: 0, color: primary, fontWeight: 500 }}>
             {dayjs().format('dddd, DD MMMM YYYY')}
           </p>
         </div>
-        {/* Completion pill */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          background: `${primary}12`,
-          border: `1px solid ${primary}30`,
-          borderRadius: 20, padding: '6px 14px',
-        }}>
-          <span style={{ fontSize: 12, color: primary, fontWeight: 600 }}>
-            Hoàn thành tổng thể
-          </span>
-          <span style={{ fontSize: 16, fontWeight: 800, color: primary }}>{completionPct}%</span>
-        </div>
+
+        {/* Tuỳ chỉnh button */}
+        <Popover
+          content={<ThemePanel />}
+          title={null}
+          trigger="click"
+          placement="bottomRight"
+          arrow={false}
+          overlayInnerStyle={{ padding: '14px 16px', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.14)' }}
+        >
+          <Button
+            icon={<SettingOutlined />}
+            style={{
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 500,
+              color: isDark ? '#94A3B8' : '#64748B',
+              borderColor: isDark ? '#334155' : '#E2E8F0',
+              background: 'transparent',
+            }}
+          >
+            Tuỳ chỉnh
+          </Button>
+        </Popover>
       </div>
 
       {/* ── KPI Cards ── */}
