@@ -16,7 +16,7 @@ import {
 } from '../../api/bugs.api';
 import { BugSeverityBadge } from './BugSeverityBadge';
 import { BugStatusPill } from './BugStatusPill';
-import { BugCommentSection } from './BugCommentSection';
+import { CommentThread } from '../comments/CommentThread';
 import { useAuthStore } from '../../store/auth.store';
 import { projectsApi } from '../../api/projects';
 import { tasksApi } from '../../api/tasks';
@@ -325,7 +325,7 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
           </>
         )}
 
-        <BugCommentSection bugId={bug.id} />
+        <CommentThread entityType="bug" entityId={bug.id} />
       </CenteredModal>
 
       {/* CR Approval Modal */}
