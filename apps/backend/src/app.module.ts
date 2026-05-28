@@ -40,6 +40,11 @@ import { RecruitModule } from './recruit/recruit.module';
 import { AssetsModule } from './assets/assets.module';
 import { AccountingModule } from './accounting/accounting.module';
 import { HrExtModule } from './hr-ext/hr-ext.module';
+import { OkrModule } from './okr/okr.module';
+import { KbModule } from './kb/kb.module';
+import { PortalModule } from './portal/portal.module';
+import { ProcurementModule } from './procurement/procurement.module';
+import { ImportModule } from './import/import.module';
 
 @Module({
   providers: [
@@ -102,6 +107,11 @@ import { HrExtModule } from './hr-ext/hr-ext.module';
     AssetsModule,
     AccountingModule,
     HrExtModule,
+    OkrModule,
+    KbModule,
+    PortalModule,
+    ProcurementModule,
+    ImportModule,
   ],
 })
 export class AppModule {}

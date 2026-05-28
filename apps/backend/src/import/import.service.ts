@@ -1,0 +1,265 @@
+import { Injectable, BadRequestException } from '@nestjs/common';
+import * as ExcelJS from 'exceljs';
+import { PrismaService } from '../prisma/prisma.service';
+import type { ImportTemplate, ImportRow, ImportError, ImportPreviewResult } from './dto/import.dto';
+
+@Injectable()
+export class ImportService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  // ── Parse & validate Excel buffer ──────────────────────────────────────────
+
+  async preview(fileBuffer: Buffer, template: ImportTemplate): Promise<ImportPreviewResult> {
+    const wb = new ExcelJS.Workbook();
+    // ExcelJS.load expects Buffer — cast to avoid Node version Buffer type mismatch
+    await wb.xlsx.load(fileBuffer as never);
+
+    const ws = wb.getWorksheet(1);
+    if (!ws) throw new BadRequestException('File không có worksheet nào');
+
+    const rows = this.extractRows(ws);
+    if (rows.length === 0) {
+      return { template, valid: [], errors: [{ row: 1, message: 'File trống hoặc không có dữ liệu' }] };
+    }
+
+    switch (template) {
+      case 'employees': return { template, ...this.validateEmployees(rows) };
+      case 'assets':    return { template, ...this.validateAssets(rows) };
+      case 'jobs':      return { template, ...this.validateJobs(rows) };
+    }
+  }
+
+  // ── Commit — chỉ import các row hợp lệ ────────────────────────────────────
+
+  async commit(fileBuffer: Buffer, template: ImportTemplate): Promise<{ imported: number; skipped: number }> {
+    const preview = await this.preview(fileBuffer, template);
+
+    if (preview.valid.length === 0) {
+      return { imported: 0, skipped: preview.errors.length };
+    }
+
+    let imported = 0;
+
+    switch (template) {
+      case 'employees': imported = await this.commitEmployees(preview.valid); break;
+      case 'assets':    imported = await this.commitAssets(preview.valid);    break;
+      case 'jobs':      imported = await this.commitJobs(preview.valid);      break;
+    }
+
+    return { imported, skipped: preview.errors.length };
+  }
+
+  // ── Extract rows from worksheet ─────────────────────────────────────────────
+
+  private extractRows(ws: ExcelJS.Worksheet): ImportRow[] {
+    const headerRow = ws.getRow(1);
+    const headers: string[] = [];
+    headerRow.eachCell((cell) => headers.push(String(cell.value ?? '').trim()));
+
+    const rows: ImportRow[] = [];
+    ws.eachRow((row, rowIdx) => {
+      if (rowIdx === 1) return; // skip header
+      const obj: ImportRow = {};
+      let hasValue = false;
+      row.eachCell({ includeEmpty: true }, (cell, colIdx) => {
+        const key = headers[colIdx - 1];
+        if (!key) return;
+        const val = cell.value;
+        if (val !== null && val !== undefined && val !== '') hasValue = true;
+        obj[key] = val as string | number | undefined;
+      });
+      if (hasValue) rows.push(obj);
+    });
+
+    return rows;
+  }
+
+  // ── Validators ──────────────────────────────────────────────────────────────
+
+  private validateEmployees(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum = idx + 2;
+      const name  = this.str(row['Họ tên'] ?? row['fullName'] ?? row['name']);
+      const email = this.str(row['Email'] ?? row['email']);
+
+      if (!name) {
+        errors.push({ row: rowNum, message: 'Thiếu họ tên (cột "Họ tên")' });
+        return;
+      }
+      if (!email) {
+        errors.push({ row: rowNum, message: 'Thiếu email (cột "Email")' });
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.push({ row: rowNum, message: `Email không hợp lệ: ${email}` });
+        return;
+      }
+
+      valid.push({
+        fullName:  name,
+        email,
+        orgUnit:   this.str(row['Phòng ban'] ?? row['orgUnit']),
+        startDate: this.str(row['Ngày vào làm'] ?? row['startDate']),
+      });
+    });
+
+    return { valid, errors };
+  }
+
+  private validateAssets(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum  = idx + 2;
+      const name     = this.str(row['Tên tài sản'] ?? row['name']);
+      const code     = this.str(row['Mã tài sản'] ?? row['code']);
+      const category = this.str(row['Danh mục'] ?? row['category']);
+
+      if (!name)     { errors.push({ row: rowNum, message: 'Thiếu tên tài sản' }); return; }
+      if (!code)     { errors.push({ row: rowNum, message: 'Thiếu mã tài sản' }); return; }
+      if (!category) { errors.push({ row: rowNum, message: 'Thiếu danh mục' }); return; }
+
+      valid.push({
+        name,
+        code,
+        category,
+        serialNumber:  this.str(row['Số serial'] ?? row['serialNumber']),
+        purchaseDate:  this.str(row['Ngày mua'] ?? row['purchaseDate']),
+      });
+    });
+
+    return { valid, errors };
+  }
+
+  private validateJobs(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum   = idx + 2;
+      const title    = this.str(row['Vị trí'] ?? row['title']);
+      const orgUnit  = this.str(row['Phòng ban'] ?? row['orgUnit']);
+      const level    = this.str(row['Cấp độ'] ?? row['level']);
+      const headcount = Number(row['Số lượng'] ?? row['headcount'] ?? 1);
+
+      if (!title)   { errors.push({ row: rowNum, message: 'Thiếu tên vị trí' }); return; }
+      if (!orgUnit) { errors.push({ row: rowNum, message: 'Thiếu phòng ban' }); return; }
+      if (!level)   { errors.push({ row: rowNum, message: 'Thiếu cấp độ' }); return; }
+      if (isNaN(headcount) || headcount < 1) {
+        errors.push({ row: rowNum, message: 'Số lượng phải là số nguyên >= 1' });
+        return;
+      }
+
+      valid.push({ title, orgUnit, level, headcount });
+    });
+
+    return { valid, errors };
+  }
+
+  // ── Commit helpers ──────────────────────────────────────────────────────────
+
+  private async commitEmployees(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    for (const row of rows) {
+      try {
+        // Lookup orgUnit by name
+        let orgUnitId: string | null = null;
+        if (row.orgUnit) {
+          const ou = await this.prisma.orgUnit.findFirst({ where: { name: String(row.orgUnit) } });
+          orgUnitId = ou?.id ?? null;
+        }
+
+        // Kiểm tra email đã tồn tại chưa
+        const existing = await this.prisma.employee.findFirst({
+          where: { email: String(row.email) },
+        });
+        if (existing) continue; // Skip duplicate
+
+        const empData: {
+          fullName: string; email: string; level: 'MID';
+          startDate: Date; code: string; techStack: string[];
+          orgUnitId?: string;
+        } = {
+          fullName:  String(row.fullName),
+          email:     String(row.email),
+          level:     'MID',
+          startDate: row.startDate ? new Date(String(row.startDate)) : new Date(),
+          code:      `IMP-${Date.now()}-${count}`,
+          techStack: [],
+        };
+        if (orgUnitId) empData.orgUnitId = orgUnitId;
+
+        await this.prisma.employee.create({ data: empData as never });
+        count++;
+      } catch {
+        // Skip row on error — không throw để tiếp tục xử lý các row còn lại
+      }
+    }
+    return count;
+  }
+
+  private async commitAssets(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    for (const row of rows) {
+      try {
+        const existing = await this.prisma.asset.findUnique({ where: { code: String(row.code) } });
+        if (existing) continue;
+
+        await this.prisma.asset.create({
+          data: {
+            name:         String(row.name),
+            code:         String(row.code),
+            category:     String(row.category) as never,
+            serialNumber: row.serialNumber ? String(row.serialNumber) : null,
+            purchaseDate: row.purchaseDate ? new Date(String(row.purchaseDate)) : null,
+          },
+        });
+        count++;
+      } catch {
+        // Skip row on error
+      }
+    }
+    return count;
+  }
+
+  private async commitJobs(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    for (const row of rows) {
+      try {
+        let orgUnitId: string | null = null;
+        if (row.orgUnit) {
+          const ou = await this.prisma.orgUnit.findFirst({ where: { name: String(row.orgUnit) } });
+          orgUnitId = ou?.id ?? null;
+        }
+
+        const jobData: {
+          code: string; title: string; level: never; headcount: number; status: never; orgUnitId?: string;
+        } = {
+          code:      `JOB-${Date.now()}-${count}`,
+          title:     String(row.title),
+          level:     String(row.level) as never,
+          headcount: Number(row.headcount),
+          status:    'OPEN' as never,
+        };
+        if (orgUnitId) jobData.orgUnitId = orgUnitId;
+
+        await this.prisma.jobOpening.create({ data: jobData as never });
+        count++;
+      } catch {
+        // Skip row on error
+      }
+    }
+    return count;
+  }
+
+  // ── Utility ─────────────────────────────────────────────────────────────────
+
+  private str(val: unknown): string {
+    if (val === null || val === undefined) return '';
+    return String(val).trim();
+  }
+}

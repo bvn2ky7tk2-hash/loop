@@ -13,7 +13,9 @@ import {
   PlusOutlined, CheckOutlined, EditOutlined, MoreOutlined,
   SearchOutlined, PlusSquareOutlined, MinusSquareOutlined,
   CheckCircleOutlined, RollbackOutlined, EyeOutlined,
+  DownloadOutlined,
 } from '@ant-design/icons';
+import { downloadExport } from '../../utils/exportApi';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { tasksApi, isProgressLocked, type Task } from '../../api/tasks';
 import { projectsApi } from '../../api/projects';
@@ -541,6 +543,13 @@ export default function TasksPage() {
                     <Space size="small">
                       <Button size="small" icon={<PlusSquareOutlined />} onClick={expandAll}>Mở rộng tất cả</Button>
                       <Button size="small" icon={<MinusSquareOutlined />} onClick={collapseAll}>Gom tất cả</Button>
+                      <Button
+                        size="small"
+                        icon={<DownloadOutlined />}
+                        onClick={() => downloadExport('/tasks/export', 'tasks.xlsx').catch(() => message.error('Export thất bại'))}
+                      >
+                        Export
+                      </Button>
                       <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
                         Thêm task
                       </Button>

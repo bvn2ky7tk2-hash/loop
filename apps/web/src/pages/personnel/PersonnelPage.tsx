@@ -5,6 +5,8 @@ import {
   DatePicker, App, Alert, Tooltip, Tabs, Divider,
   Tree, Tag, Popconfirm, Spin, Popover, theme,
 } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import { downloadExport } from '../../utils/exportApi';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import type { TreeDataNode } from 'antd';
 import {
@@ -994,12 +996,20 @@ export default function PersonnelPage() {
               <span style={{ fontSize: 12, color: token.colorTextTertiary }}>{filteredEmployees.length} người</span>
             </div>
           </div>
-          <Button
-            type="primary" icon={<PlusOutlined />}
-            onClick={() => { setCreateError(''); setCreateOpen(true); }}
-          >
-            Thêm nhân sự
-          </Button>
+          <Space>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => downloadExport('/employees/export', 'nhan-vien.xlsx').catch(() => message.error('Export thất bại'))}
+            >
+              Export
+            </Button>
+            <Button
+              type="primary" icon={<PlusOutlined />}
+              onClick={() => { setCreateError(''); setCreateOpen(true); }}
+            >
+              Thêm nhân sự
+            </Button>
+          </Space>
         </div>
 
         {/* Filter bar */}

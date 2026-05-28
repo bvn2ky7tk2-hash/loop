@@ -8,8 +8,9 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, DeleteOutlined, CheckOutlined, CloseOutlined,
-  WalletOutlined, PlusCircleOutlined, BranchesOutlined,
+  WalletOutlined, PlusCircleOutlined, BranchesOutlined, DownloadOutlined,
 } from '@ant-design/icons';
+import { downloadExport } from '../../utils/exportApi';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -479,13 +480,21 @@ export default function ExpensePage() {
           <WalletOutlined style={{ marginRight: 8, color: preset.primary }} />
           Chi phí
         </Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setDrawerOpen(true)}
-        >
-          Tạo yêu cầu
-        </Button>
+        <Space>
+          <Button
+            icon={<DownloadOutlined />}
+            onClick={() => downloadExport('/expenses/export', 'phieu-chi.xlsx').catch(() => message.error('Export thất bại'))}
+          >
+            Export
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setDrawerOpen(true)}
+          >
+            Tạo yêu cầu
+          </Button>
+        </Space>
       </div>
 
       {/* Summary cards */}
