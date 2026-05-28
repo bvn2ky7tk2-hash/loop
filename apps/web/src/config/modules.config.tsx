@@ -90,8 +90,8 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-work-tasks', label: 'Công việc', visible: true,
         items: [
-          { key: '/my-tasks',  label: 'Bảng Kanban',    visible: true },
-          { key: '/tasks',     label: 'Việc của tôi',   visible: true },
+          { key: '/my-tasks',  label: 'Bảng công việc', visible: true },
+          { key: '/tasks',     label: 'Việc dự án',     visible: true },
           { key: '/timeline',  label: 'Lịch trình',     visible: true },
         ],
       },
@@ -117,7 +117,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/timesheet',         label: 'Chấm công của tôi', visible: true },
           { key: '/timesheet/project', label: 'Nhật ký dự án',     visible: true },
-          { key: '/processes/inbox',   label: 'Hộp thư đến',       visible: true },
+          { key: '/processes/inbox',   label: 'Việc quy trình',     visible: true },
         ],
       },
       {
@@ -169,7 +169,7 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-recruit', label: 'Tuyển dụng', visible: true,
         items: [
-          { key: '/recruit/pipeline',   label: 'Pipeline',       visible: true },
+          { key: '/recruit/pipeline',   label: 'Phễu tuyển dụng', visible: true },
           { key: '/recruit/candidates', label: 'Ứng viên',       visible: true },
           { key: '/recruit/interviews', label: 'Lịch phỏng vấn', visible: true },
           { key: '/recruit/jobs',       label: 'Tin tuyển dụng', visible: true },
@@ -232,10 +232,10 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-crm-pipeline', label: 'Pipeline', visible: true,
+        key: 'g-crm-pipeline', label: 'Kênh bán hàng', visible: true,
         items: [
-          { key: '/crm/leads',    label: 'Leads',   visible: true },
-          { key: '/crm/deals',    label: 'Deals',   visible: true },
+          { key: '/crm/leads',    label: 'Khách hàng tiềm năng', visible: true },
+          { key: '/crm/deals',    label: 'Cơ hội bán hàng',      visible: true },
           { key: '/crm/contacts', label: 'Liên hệ', visible: true },
         ],
       },
@@ -312,7 +312,7 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-ops-bpm', label: 'Quy trình BPM', visible: true,
+        key: 'g-ops-bpm', label: 'Quy trình tự động', visible: true,
         items: [
           { key: '/processes',           label: 'Định nghĩa quy trình', visible: true },
           { key: '/processes/instances', label: 'Giám sát quy trình',   visible: true },
@@ -349,16 +349,16 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/import',            label: 'Nhập dữ liệu',      visible: true },
           { key: '/audit-log',         label: 'Nhật ký hệ thống',  visible: true },
           { key: '/automation',        label: 'Tự động hóa',       visible: true },
-          { key: '/scheduled-reports', label: 'Scheduled Reports', visible: true },
-          { key: '/module-config',     label: 'Cấu hình Module',   visible: true },
+          { key: '/scheduled-reports', label: 'Báo cáo định kỳ',   visible: true },
+          { key: '/module-config',     label: 'Cấu hình phân hệ', visible: true },
         ],
       },
       {
         key: 'g-admin-ops', label: 'Vận hành', visible: true,
         items: [
           { key: '/admin/health', label: 'Giám sát hệ thống', visible: true },
-          { key: '/admin/demo',   label: 'Demo Mode',          visible: true },
-          { key: '/onboarding',   label: 'Onboarding Wizard',  visible: true },
+          { key: '/admin/demo',   label: 'Chế độ trình diễn',  visible: true },
+          { key: '/onboarding',   label: 'Hướng dẫn khởi động', visible: true },
         ],
       },
     ],

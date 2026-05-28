@@ -30,8 +30,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/dashboard/admin',   module: 'admin',   label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'admin:settings',  sortOrder: 0 },
 
   // ─── Work — Công việc ──────────────────────────────────────────────────────
-  { route: '/my-tasks',       module: 'work', label: 'Bảng Kanban',           icon: 'AppstoreOutlined',     permCode: 'tasks:read',         sortOrder: 1 },
-  { route: '/tasks',          module: 'work', label: 'Việc của tôi',          icon: 'CheckSquareOutlined',  permCode: 'tasks:read',         sortOrder: 2 },
+  { route: '/my-tasks',       module: 'work', label: 'Bảng công việc',        icon: 'AppstoreOutlined',     permCode: 'tasks:read',         sortOrder: 1 },
+  { route: '/tasks',          module: 'work', label: 'Việc dự án',            icon: 'CheckSquareOutlined',  permCode: 'tasks:read',         sortOrder: 2 },
   { route: '/timeline',       module: 'work', label: 'Lịch trình',            icon: 'ScheduleOutlined',     permCode: 'projects:read',      sortOrder: 3 },
   { route: '/my-bugs',        module: 'work', label: 'Lỗi của tôi',           icon: 'BugOutlined',          permCode: 'bugs:read',          sortOrder: 4 },
   { route: '/bugs',           module: 'work', label: 'Quản lý lỗi',           icon: 'BugFilled',            permCode: 'bugs:read',          sortOrder: 5 },
@@ -40,7 +40,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/knowledge-base', module: 'work', label: 'Cơ sở tri thức',        icon: 'BookOutlined',         permCode: 'projects:read',      sortOrder: 8 },
   { route: '/timesheet',      module: 'work', label: 'Chấm công của tôi',     icon: 'ClockCircleOutlined',  permCode: 'timesheets:read',    sortOrder: 9 },
   { route: '/timesheet/project', module: 'work', label: 'Nhật ký dự án',      icon: 'LineChartOutlined',    permCode: 'timesheets:read',    sortOrder: 10 },
-  { route: '/processes/inbox',   module: 'work', label: 'Hộp thư BPM',        icon: 'InboxOutlined',        permCode: 'bpm:read',           sortOrder: 11 },
+  { route: '/processes/inbox',   module: 'work', label: 'Việc quy trình',      icon: 'InboxOutlined',        permCode: 'bpm:read',           sortOrder: 11 },
   { route: '/feed',              module: 'work', label: 'Bảng tin công ty',    icon: 'MessageOutlined',      permCode: 'dashboard:read',     sortOrder: 12 },
   { route: '/calendar',          module: 'work', label: 'Lịch công ty',        icon: 'CalendarOutlined',     permCode: 'dashboard:read',     sortOrder: 13 },
   { route: '/reports',           module: 'work', label: 'Báo cáo',             icon: 'BarChartOutlined',     permCode: 'reports:read',       sortOrder: 14 },
@@ -62,7 +62,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/performance',      module: 'people', label: 'Đánh giá năng lực',     icon: 'TrophyOutlined',        permCode: 'employees:read',    sortOrder: 7 },
   { route: '/hr/skill-matrix',     module: 'people', label: 'Ma trận kỹ năng',       icon: 'ApartmentOutlined',     permCode: 'skills:read',       sortOrder: 8 },
   { route: '/hr/okr',              module: 'people', label: 'OKR & KPI',              icon: 'AimOutlined',           permCode: 'okr:read',          sortOrder: 9 },
-  { route: '/recruit/pipeline',    module: 'people', label: 'Pipeline tuyển dụng',   icon: 'AppstoreAddOutlined',   permCode: 'recruit:read',      sortOrder: 10 },
+  { route: '/recruit/pipeline',    module: 'people', label: 'Phễu tuyển dụng',       icon: 'AppstoreAddOutlined',   permCode: 'recruit:read',      sortOrder: 10 },
   { route: '/recruit/candidates',  module: 'people', label: 'Ứng viên',               icon: 'UsergroupAddOutlined',  permCode: 'recruit:read',      sortOrder: 11 },
   { route: '/recruit/interviews',  module: 'people', label: 'Lịch phỏng vấn',         icon: 'ScheduleFilled',        permCode: 'recruit:read',      sortOrder: 12 },
   { route: '/recruit/jobs',        module: 'people', label: 'Vị trí tuyển dụng',      icon: 'SolutionOutlined',      permCode: 'recruit:read',      sortOrder: 13 },
@@ -107,10 +107,10 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/audit-log',           module: 'admin', label: 'Nhật ký hệ thống',   icon: 'AuditOutlined',             permCode: 'admin:settings',    sortOrder: 6 },
   { route: '/automation',          module: 'admin', label: 'Tự động hóa',        icon: 'ThunderboltOutlined',       permCode: 'admin:settings',    sortOrder: 7 },
   { route: '/scheduled-reports',   module: 'admin', label: 'Báo cáo định kỳ',    icon: 'MailOutlined',              permCode: 'admin:settings',    sortOrder: 8 },
-  { route: '/module-config',       module: 'admin', label: 'Cấu hình Module',     icon: 'AppstoreOutlined',          permCode: 'admin:settings',    sortOrder: 9 },
+  { route: '/module-config',       module: 'admin', label: 'Cấu hình phân hệ',    icon: 'AppstoreOutlined',          permCode: 'admin:settings',    sortOrder: 9 },
   { route: '/admin/health',        module: 'admin', label: 'Giám sát hệ thống',   icon: 'MonitorOutlined',           permCode: 'admin:settings',    sortOrder: 10 },
-  { route: '/admin/demo',          module: 'admin', label: 'Demo Mode',            icon: 'ExperimentOutlined',        permCode: 'admin:settings',    sortOrder: 11 },
-  { route: '/onboarding',          module: 'admin', label: 'Onboarding Wizard',    icon: 'RocketOutlined',            permCode: 'admin:settings',    sortOrder: 12 },
+  { route: '/admin/demo',          module: 'admin', label: 'Chế độ trình diễn',   icon: 'ExperimentOutlined',        permCode: 'admin:settings',    sortOrder: 11 },
+  { route: '/onboarding',          module: 'admin', label: 'Hướng dẫn khởi động', icon: 'RocketOutlined',            permCode: 'admin:settings',    sortOrder: 12 },
 ];
 
 /**
