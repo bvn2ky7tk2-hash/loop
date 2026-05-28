@@ -49,6 +49,9 @@ model User {
   kbArticles           KbArticle[]       @relation("KbArticleAuthor")
   poRequests           PurchaseOrder[]   @relation("PoRequester")
   poApprovals          PurchaseOrder[]   @relation("PoApprover")
+  comments             Comment[]         @relation("CommentAuthor")
+  feedPosts            FeedPost[]        @relation("FeedPostAuthor")
+  feedReactions        FeedReaction[]    @relation("FeedReactions")
 
   @@map("users")
 }
@@ -2235,6 +2238,65 @@ model PurchaseOrderItem {
   @@map("purchase_order_items")
 }
 
+// ─── v3.0-I: Contextual Comments + Company Feed ──────────────────────────────
+
+enum FeedPostType {
+  ANNOUNCEMENT
+  KUDOS
+  BIRTHDAY
+  DOCUMENT
+
+  @@map("feed_post_type")
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  entityType String   @db.VarChar(50)
+  entityId   String   @db.VarChar(100)
+  authorId   String   @map("author_id")
+  content    String   @db.Text
+  parentId   String?  @map("parent_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  author     User     @relation("CommentAuthor", fields: [authorId], references: [id])
+  parent     Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[] @relation("CommentReplies")
+
+  @@index([entityType, entityId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+model FeedPost {
+  id          String       @id @default(uuid())
+  type        FeedPostType @default(ANNOUNCEMENT)
+  authorId    String       @map("author_id")
+  title       String?      @db.VarChar(300)
+  content     String       @db.Text
+  targetOrgId String?      @map("target_org_id")
+  isPinned    Boolean      @default(false) @map("is_pinned")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  author      User         @relation("FeedPostAuthor", fields: [authorId], references: [id])
+  reactions   FeedReaction[]
+
+  @@index([createdAt])
+  @@map("feed_posts")
+}
+
+model FeedReaction {
+  id        String   @id @default(uuid())
+  postId    String   @map("post_id")
+  userId    String   @map("user_id")
+  emoji     String   @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at")
+  post      FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("FeedReactions", fields: [userId], references: [id])
+
+  @@unique([postId, userId, emoji])
+  @@map("feed_reactions")
+}
+
 // ─── Automation Rules ─────────────────────────────────────────────────────────
 
 model AutomationRule {
@@ -2286,4 +2348,37 @@ model ScheduledReport {
   updatedAt   DateTime        @updatedAt @map("updated_at")
 
   @@map("scheduled_reports")
+}
+
+// ─── Webhook Integration ───────────────────────────────────────────────────────
+
+model WebhookEndpoint {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(200)
+  url         String   @db.VarChar(500)
+  secret      String?  @db.VarChar(200)
+  events      String[]
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  logs        WebhookLog[]
+
+  @@map("webhook_endpoints")
+}
+
+model WebhookLog {
+  id           String          @id @default(uuid())
+  endpointId   String          @map("endpoint_id")
+  event        String          @db.VarChar(100)
+  payload      Json
+  statusCode   Int?            @map("status_code")
+  response     String?         @db.Text
+  success      Boolean         @default(false)
+  attemptCount Int             @default(1) @map("attempt_count")
+  sentAt       DateTime        @default(now()) @map("sent_at")
+  endpoint     WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([endpointId])
+  @@index([event])
+  @@map("webhook_logs")
 }

@@ -37,7 +37,9 @@
     "seed:notifications": "node prisma/seed-notifications.js",
     "seed:audit-logs": "node prisma/seed-audit-logs.js",
     "seed:scheduled-reports": "node prisma/seed-scheduled-reports.js",
-    "seed:automation": "node prisma/seed-automation.js"
+    "seed:automation": "node prisma/seed-automation.js",
+    "seed:webhooks": "node prisma/seed-webhooks.js",
+    "seed:feed": "node prisma/seed-feed.js"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

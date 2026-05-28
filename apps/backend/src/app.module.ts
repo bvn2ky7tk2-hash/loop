@@ -47,6 +47,10 @@ import { ProcurementModule } from './procurement/procurement.module';
 import { ImportModule } from './import/import.module';
 import { AutomationModule } from './automation/automation.module';
 import { ScheduledReportsModule } from './scheduled-reports/scheduled-reports.module';
+import { CommentsModule } from './comments/comments.module';
+import { FeedModule } from './feed/feed.module';
+import { HealthModule } from './admin/health/health.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
   providers: [
@@ -116,6 +120,10 @@ import { ScheduledReportsModule } from './scheduled-reports/scheduled-reports.mo
     ImportModule,
     AutomationModule,
     ScheduledReportsModule,
+    CommentsModule,
+    FeedModule,
+    HealthModule,
+    WebhooksModule,
   ],
 })
 export class AppModule {}

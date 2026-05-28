@@ -474,6 +474,21 @@ export type PurchaseOrder = $Result.DefaultSelection<Prisma.$PurchaseOrderPayloa
  */
 export type PurchaseOrderItem = $Result.DefaultSelection<Prisma.$PurchaseOrderItemPayload>
 /**
+ * Model Comment
+ * 
+ */
+export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
+/**
+ * Model FeedPost
+ * 
+ */
+export type FeedPost = $Result.DefaultSelection<Prisma.$FeedPostPayload>
+/**
+ * Model FeedReaction
+ * 
+ */
+export type FeedReaction = $Result.DefaultSelection<Prisma.$FeedReactionPayload>
+/**
  * Model AutomationRule
  * 
  */
@@ -483,6 +498,16 @@ export type AutomationRule = $Result.DefaultSelection<Prisma.$AutomationRulePayl
  * 
  */
 export type ScheduledReport = $Result.DefaultSelection<Prisma.$ScheduledReportPayload>
+/**
+ * Model WebhookEndpoint
+ * 
+ */
+export type WebhookEndpoint = $Result.DefaultSelection<Prisma.$WebhookEndpointPayload>
+/**
+ * Model WebhookLog
+ * 
+ */
+export type WebhookLog = $Result.DefaultSelection<Prisma.$WebhookLogPayload>
 
 /**
  * Enums
@@ -1082,6 +1107,16 @@ export const PoItemStatus: {
 export type PoItemStatus = (typeof PoItemStatus)[keyof typeof PoItemStatus]
 
 
+export const FeedPostType: {
+  ANNOUNCEMENT: 'ANNOUNCEMENT',
+  KUDOS: 'KUDOS',
+  BIRTHDAY: 'BIRTHDAY',
+  DOCUMENT: 'DOCUMENT'
+};
+
+export type FeedPostType = (typeof FeedPostType)[keyof typeof FeedPostType]
+
+
 export const ReportFrequency: {
   WEEKLY: 'WEEKLY',
   MONTHLY: 'MONTHLY',
@@ -1319,6 +1354,10 @@ export const PoStatus: typeof $Enums.PoStatus
 export type PoItemStatus = $Enums.PoItemStatus
 
 export const PoItemStatus: typeof $Enums.PoItemStatus
+
+export type FeedPostType = $Enums.FeedPostType
+
+export const FeedPostType: typeof $Enums.FeedPostType
 
 export type ReportFrequency = $Enums.ReportFrequency
 
@@ -2370,6 +2409,36 @@ export class PrismaClient<
   get purchaseOrderItem(): Prisma.PurchaseOrderItemDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.comment`: Exposes CRUD operations for the **Comment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Comments
+    * const comments = await prisma.comment.findMany()
+    * ```
+    */
+  get comment(): Prisma.CommentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.feedPost`: Exposes CRUD operations for the **FeedPost** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FeedPosts
+    * const feedPosts = await prisma.feedPost.findMany()
+    * ```
+    */
+  get feedPost(): Prisma.FeedPostDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.feedReaction`: Exposes CRUD operations for the **FeedReaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FeedReactions
+    * const feedReactions = await prisma.feedReaction.findMany()
+    * ```
+    */
+  get feedReaction(): Prisma.FeedReactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.automationRule`: Exposes CRUD operations for the **AutomationRule** model.
     * Example usage:
     * ```ts
@@ -2388,6 +2457,26 @@ export class PrismaClient<
     * ```
     */
   get scheduledReport(): Prisma.ScheduledReportDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.webhookEndpoint`: Exposes CRUD operations for the **WebhookEndpoint** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WebhookEndpoints
+    * const webhookEndpoints = await prisma.webhookEndpoint.findMany()
+    * ```
+    */
+  get webhookEndpoint(): Prisma.WebhookEndpointDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.webhookLog`: Exposes CRUD operations for the **WebhookLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WebhookLogs
+    * const webhookLogs = await prisma.webhookLog.findMany()
+    * ```
+    */
+  get webhookLog(): Prisma.WebhookLogDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -2914,8 +3003,13 @@ export namespace Prisma {
     Vendor: 'Vendor',
     PurchaseOrder: 'PurchaseOrder',
     PurchaseOrderItem: 'PurchaseOrderItem',
+    Comment: 'Comment',
+    FeedPost: 'FeedPost',
+    FeedReaction: 'FeedReaction',
     AutomationRule: 'AutomationRule',
-    ScheduledReport: 'ScheduledReport'
+    ScheduledReport: 'ScheduledReport',
+    WebhookEndpoint: 'WebhookEndpoint',
+    WebhookLog: 'WebhookLog'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -2931,7 +3025,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "automationRule" | "scheduledReport"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "scheduledReport" | "webhookEndpoint" | "webhookLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -9743,6 +9837,228 @@ export namespace Prisma {
           }
         }
       }
+      Comment: {
+        payload: Prisma.$CommentPayload<ExtArgs>
+        fields: Prisma.CommentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          findFirst: {
+            args: Prisma.CommentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          findMany: {
+            args: Prisma.CommentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>[]
+          }
+          create: {
+            args: Prisma.CommentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          createMany: {
+            args: Prisma.CommentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>[]
+          }
+          delete: {
+            args: Prisma.CommentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          update: {
+            args: Prisma.CommentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>[]
+          }
+          upsert: {
+            args: Prisma.CommentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          aggregate: {
+            args: Prisma.CommentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComment>
+          }
+          groupBy: {
+            args: Prisma.CommentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommentCountArgs<ExtArgs>
+            result: $Utils.Optional<CommentCountAggregateOutputType> | number
+          }
+        }
+      }
+      FeedPost: {
+        payload: Prisma.$FeedPostPayload<ExtArgs>
+        fields: Prisma.FeedPostFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FeedPostFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FeedPostFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          findFirst: {
+            args: Prisma.FeedPostFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FeedPostFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          findMany: {
+            args: Prisma.FeedPostFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>[]
+          }
+          create: {
+            args: Prisma.FeedPostCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          createMany: {
+            args: Prisma.FeedPostCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FeedPostCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>[]
+          }
+          delete: {
+            args: Prisma.FeedPostDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          update: {
+            args: Prisma.FeedPostUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          deleteMany: {
+            args: Prisma.FeedPostDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FeedPostUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FeedPostUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>[]
+          }
+          upsert: {
+            args: Prisma.FeedPostUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedPostPayload>
+          }
+          aggregate: {
+            args: Prisma.FeedPostAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFeedPost>
+          }
+          groupBy: {
+            args: Prisma.FeedPostGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FeedPostGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FeedPostCountArgs<ExtArgs>
+            result: $Utils.Optional<FeedPostCountAggregateOutputType> | number
+          }
+        }
+      }
+      FeedReaction: {
+        payload: Prisma.$FeedReactionPayload<ExtArgs>
+        fields: Prisma.FeedReactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FeedReactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FeedReactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          findFirst: {
+            args: Prisma.FeedReactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FeedReactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          findMany: {
+            args: Prisma.FeedReactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>[]
+          }
+          create: {
+            args: Prisma.FeedReactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          createMany: {
+            args: Prisma.FeedReactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FeedReactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>[]
+          }
+          delete: {
+            args: Prisma.FeedReactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          update: {
+            args: Prisma.FeedReactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.FeedReactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FeedReactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.FeedReactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.FeedReactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedReactionPayload>
+          }
+          aggregate: {
+            args: Prisma.FeedReactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFeedReaction>
+          }
+          groupBy: {
+            args: Prisma.FeedReactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FeedReactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FeedReactionCountArgs<ExtArgs>
+            result: $Utils.Optional<FeedReactionCountAggregateOutputType> | number
+          }
+        }
+      }
       AutomationRule: {
         payload: Prisma.$AutomationRulePayload<ExtArgs>
         fields: Prisma.AutomationRuleFieldRefs
@@ -9888,6 +10204,154 @@ export namespace Prisma {
           count: {
             args: Prisma.ScheduledReportCountArgs<ExtArgs>
             result: $Utils.Optional<ScheduledReportCountAggregateOutputType> | number
+          }
+        }
+      }
+      WebhookEndpoint: {
+        payload: Prisma.$WebhookEndpointPayload<ExtArgs>
+        fields: Prisma.WebhookEndpointFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WebhookEndpointFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WebhookEndpointFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          findFirst: {
+            args: Prisma.WebhookEndpointFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WebhookEndpointFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          findMany: {
+            args: Prisma.WebhookEndpointFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>[]
+          }
+          create: {
+            args: Prisma.WebhookEndpointCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          createMany: {
+            args: Prisma.WebhookEndpointCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WebhookEndpointCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>[]
+          }
+          delete: {
+            args: Prisma.WebhookEndpointDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          update: {
+            args: Prisma.WebhookEndpointUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          deleteMany: {
+            args: Prisma.WebhookEndpointDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WebhookEndpointUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WebhookEndpointUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>[]
+          }
+          upsert: {
+            args: Prisma.WebhookEndpointUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookEndpointPayload>
+          }
+          aggregate: {
+            args: Prisma.WebhookEndpointAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWebhookEndpoint>
+          }
+          groupBy: {
+            args: Prisma.WebhookEndpointGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WebhookEndpointGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WebhookEndpointCountArgs<ExtArgs>
+            result: $Utils.Optional<WebhookEndpointCountAggregateOutputType> | number
+          }
+        }
+      }
+      WebhookLog: {
+        payload: Prisma.$WebhookLogPayload<ExtArgs>
+        fields: Prisma.WebhookLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WebhookLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WebhookLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          findFirst: {
+            args: Prisma.WebhookLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WebhookLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          findMany: {
+            args: Prisma.WebhookLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+          }
+          create: {
+            args: Prisma.WebhookLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          createMany: {
+            args: Prisma.WebhookLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WebhookLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+          }
+          delete: {
+            args: Prisma.WebhookLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          update: {
+            args: Prisma.WebhookLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.WebhookLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WebhookLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WebhookLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.WebhookLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WebhookLogPayload>
+          }
+          aggregate: {
+            args: Prisma.WebhookLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWebhookLog>
+          }
+          groupBy: {
+            args: Prisma.WebhookLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WebhookLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WebhookLogCountArgs<ExtArgs>
+            result: $Utils.Optional<WebhookLogCountAggregateOutputType> | number
           }
         }
       }
@@ -10091,8 +10555,13 @@ export namespace Prisma {
     vendor?: VendorOmit
     purchaseOrder?: PurchaseOrderOmit
     purchaseOrderItem?: PurchaseOrderItemOmit
+    comment?: CommentOmit
+    feedPost?: FeedPostOmit
+    feedReaction?: FeedReactionOmit
     automationRule?: AutomationRuleOmit
     scheduledReport?: ScheduledReportOmit
+    webhookEndpoint?: WebhookEndpointOmit
+    webhookLog?: WebhookLogOmit
   }
 
   /* Types for Logging */
@@ -10202,6 +10671,9 @@ export namespace Prisma {
     kbArticles: number
     poRequests: number
     poApprovals: number
+    comments: number
+    feedPosts: number
+    feedReactions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10234,6 +10706,9 @@ export namespace Prisma {
     kbArticles?: boolean | UserCountOutputTypeCountKbArticlesArgs
     poRequests?: boolean | UserCountOutputTypeCountPoRequestsArgs
     poApprovals?: boolean | UserCountOutputTypeCountPoApprovalsArgs
+    comments?: boolean | UserCountOutputTypeCountCommentsArgs
+    feedPosts?: boolean | UserCountOutputTypeCountFeedPostsArgs
+    feedReactions?: boolean | UserCountOutputTypeCountFeedReactionsArgs
   }
 
   // Custom InputTypes
@@ -10448,6 +10923,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPoApprovalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PurchaseOrderWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFeedPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedPostWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFeedReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedReactionWhereInput
   }
 
 
@@ -11938,6 +12434,99 @@ export namespace Prisma {
 
 
   /**
+   * Count Type CommentCountOutputType
+   */
+
+  export type CommentCountOutputType = {
+    replies: number
+  }
+
+  export type CommentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | CommentCountOutputTypeCountRepliesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CommentCountOutputType without action
+   */
+  export type CommentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CommentCountOutputType
+     */
+    select?: CommentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CommentCountOutputType without action
+   */
+  export type CommentCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+  }
+
+
+  /**
+   * Count Type FeedPostCountOutputType
+   */
+
+  export type FeedPostCountOutputType = {
+    reactions: number
+  }
+
+  export type FeedPostCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reactions?: boolean | FeedPostCountOutputTypeCountReactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * FeedPostCountOutputType without action
+   */
+  export type FeedPostCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPostCountOutputType
+     */
+    select?: FeedPostCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * FeedPostCountOutputType without action
+   */
+  export type FeedPostCountOutputTypeCountReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedReactionWhereInput
+  }
+
+
+  /**
+   * Count Type WebhookEndpointCountOutputType
+   */
+
+  export type WebhookEndpointCountOutputType = {
+    logs: number
+  }
+
+  export type WebhookEndpointCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    logs?: boolean | WebhookEndpointCountOutputTypeCountLogsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * WebhookEndpointCountOutputType without action
+   */
+  export type WebhookEndpointCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpointCountOutputType
+     */
+    select?: WebhookEndpointCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * WebhookEndpointCountOutputType without action
+   */
+  export type WebhookEndpointCountOutputTypeCountLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WebhookLogWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -12176,6 +12765,9 @@ export namespace Prisma {
     kbArticles?: boolean | User$kbArticlesArgs<ExtArgs>
     poRequests?: boolean | User$poRequestsArgs<ExtArgs>
     poApprovals?: boolean | User$poApprovalsArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
+    feedPosts?: boolean | User$feedPostsArgs<ExtArgs>
+    feedReactions?: boolean | User$feedReactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -12253,6 +12845,9 @@ export namespace Prisma {
     kbArticles?: boolean | User$kbArticlesArgs<ExtArgs>
     poRequests?: boolean | User$poRequestsArgs<ExtArgs>
     poApprovals?: boolean | User$poApprovalsArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
+    feedPosts?: boolean | User$feedPostsArgs<ExtArgs>
+    feedReactions?: boolean | User$feedReactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -12296,6 +12891,9 @@ export namespace Prisma {
       kbArticles: Prisma.$KbArticlePayload<ExtArgs>[]
       poRequests: Prisma.$PurchaseOrderPayload<ExtArgs>[]
       poApprovals: Prisma.$PurchaseOrderPayload<ExtArgs>[]
+      comments: Prisma.$CommentPayload<ExtArgs>[]
+      feedPosts: Prisma.$FeedPostPayload<ExtArgs>[]
+      feedReactions: Prisma.$FeedReactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -12733,6 +13331,9 @@ export namespace Prisma {
     kbArticles<T extends User$kbArticlesArgs<ExtArgs> = {}>(args?: Subset<T, User$kbArticlesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$KbArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     poRequests<T extends User$poRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$poRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     poApprovals<T extends User$poApprovalsArgs<ExtArgs> = {}>(args?: Subset<T, User$poApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    feedPosts<T extends User$feedPostsArgs<ExtArgs> = {}>(args?: Subset<T, User$feedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    feedReactions<T extends User$feedReactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$feedReactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13904,6 +14505,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PurchaseOrderScalarFieldEnum | PurchaseOrderScalarFieldEnum[]
+  }
+
+  /**
+   * User.comments
+   */
+  export type User$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * User.feedPosts
+   */
+  export type User$feedPostsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    where?: FeedPostWhereInput
+    orderBy?: FeedPostOrderByWithRelationInput | FeedPostOrderByWithRelationInput[]
+    cursor?: FeedPostWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FeedPostScalarFieldEnum | FeedPostScalarFieldEnum[]
+  }
+
+  /**
+   * User.feedReactions
+   */
+  export type User$feedReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    where?: FeedReactionWhereInput
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    cursor?: FeedReactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FeedReactionScalarFieldEnum | FeedReactionScalarFieldEnum[]
   }
 
   /**
@@ -120787,6 +121460,3381 @@ export namespace Prisma {
 
 
   /**
+   * Model Comment
+   */
+
+  export type AggregateComment = {
+    _count: CommentCountAggregateOutputType | null
+    _min: CommentMinAggregateOutputType | null
+    _max: CommentMaxAggregateOutputType | null
+  }
+
+  export type CommentMinAggregateOutputType = {
+    id: string | null
+    entityType: string | null
+    entityId: string | null
+    authorId: string | null
+    content: string | null
+    parentId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommentMaxAggregateOutputType = {
+    id: string | null
+    entityType: string | null
+    entityId: string | null
+    authorId: string | null
+    content: string | null
+    parentId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommentCountAggregateOutputType = {
+    id: number
+    entityType: number
+    entityId: number
+    authorId: number
+    content: number
+    parentId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CommentMinAggregateInputType = {
+    id?: true
+    entityType?: true
+    entityId?: true
+    authorId?: true
+    content?: true
+    parentId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommentMaxAggregateInputType = {
+    id?: true
+    entityType?: true
+    entityId?: true
+    authorId?: true
+    content?: true
+    parentId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommentCountAggregateInputType = {
+    id?: true
+    entityType?: true
+    entityId?: true
+    authorId?: true
+    content?: true
+    parentId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CommentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Comment to aggregate.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Comments
+    **/
+    _count?: true | CommentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommentMaxAggregateInputType
+  }
+
+  export type GetCommentAggregateType<T extends CommentAggregateArgs> = {
+        [P in keyof T & keyof AggregateComment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComment[P]>
+      : GetScalarType<T[P], AggregateComment[P]>
+  }
+
+
+
+
+  export type CommentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithAggregationInput | CommentOrderByWithAggregationInput[]
+    by: CommentScalarFieldEnum[] | CommentScalarFieldEnum
+    having?: CommentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommentCountAggregateInputType | true
+    _min?: CommentMinAggregateInputType
+    _max?: CommentMaxAggregateInputType
+  }
+
+  export type CommentGroupByOutputType = {
+    id: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    parentId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: CommentCountAggregateOutputType | null
+    _min: CommentMinAggregateOutputType | null
+    _max: CommentMaxAggregateOutputType | null
+  }
+
+  type GetCommentGroupByPayload<T extends CommentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommentGroupByOutputType[P]>
+            : GetScalarType<T[P], CommentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    authorId?: boolean
+    content?: boolean
+    parentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+    replies?: boolean | Comment$repliesArgs<ExtArgs>
+    _count?: boolean | CommentCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comment"]>
+
+  export type CommentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    authorId?: boolean
+    content?: boolean
+    parentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["comment"]>
+
+  export type CommentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    authorId?: boolean
+    content?: boolean
+    parentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["comment"]>
+
+  export type CommentSelectScalar = {
+    id?: boolean
+    entityType?: boolean
+    entityId?: boolean
+    authorId?: boolean
+    content?: boolean
+    parentId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "entityType" | "entityId" | "authorId" | "content" | "parentId" | "createdAt" | "updatedAt", ExtArgs["result"]["comment"]>
+  export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+    replies?: boolean | Comment$repliesArgs<ExtArgs>
+    _count?: boolean | CommentCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type CommentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+  }
+  export type CommentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | Comment$parentArgs<ExtArgs>
+  }
+
+  export type $CommentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Comment"
+    objects: {
+      author: Prisma.$UserPayload<ExtArgs>
+      parent: Prisma.$CommentPayload<ExtArgs> | null
+      replies: Prisma.$CommentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      entityType: string
+      entityId: string
+      authorId: string
+      content: string
+      parentId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["comment"]>
+    composites: {}
+  }
+
+  type CommentGetPayload<S extends boolean | null | undefined | CommentDefaultArgs> = $Result.GetResult<Prisma.$CommentPayload, S>
+
+  type CommentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommentCountAggregateInputType | true
+    }
+
+  export interface CommentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Comment'], meta: { name: 'Comment' } }
+    /**
+     * Find zero or one Comment that matches the filter.
+     * @param {CommentFindUniqueArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommentFindUniqueArgs>(args: SelectSubset<T, CommentFindUniqueArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Comment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommentFindUniqueOrThrowArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommentFindUniqueOrThrowArgs>(args: SelectSubset<T, CommentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindFirstArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommentFindFirstArgs>(args?: SelectSubset<T, CommentFindFirstArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindFirstOrThrowArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommentFindFirstOrThrowArgs>(args?: SelectSubset<T, CommentFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Comments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Comments
+     * const comments = await prisma.comment.findMany()
+     * 
+     * // Get first 10 Comments
+     * const comments = await prisma.comment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const commentWithIdOnly = await prisma.comment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommentFindManyArgs>(args?: SelectSubset<T, CommentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Comment.
+     * @param {CommentCreateArgs} args - Arguments to create a Comment.
+     * @example
+     * // Create one Comment
+     * const Comment = await prisma.comment.create({
+     *   data: {
+     *     // ... data to create a Comment
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommentCreateArgs>(args: SelectSubset<T, CommentCreateArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Comments.
+     * @param {CommentCreateManyArgs} args - Arguments to create many Comments.
+     * @example
+     * // Create many Comments
+     * const comment = await prisma.comment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommentCreateManyArgs>(args?: SelectSubset<T, CommentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Comments and returns the data saved in the database.
+     * @param {CommentCreateManyAndReturnArgs} args - Arguments to create many Comments.
+     * @example
+     * // Create many Comments
+     * const comment = await prisma.comment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Comments and only return the `id`
+     * const commentWithIdOnly = await prisma.comment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommentCreateManyAndReturnArgs>(args?: SelectSubset<T, CommentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Comment.
+     * @param {CommentDeleteArgs} args - Arguments to delete one Comment.
+     * @example
+     * // Delete one Comment
+     * const Comment = await prisma.comment.delete({
+     *   where: {
+     *     // ... filter to delete one Comment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommentDeleteArgs>(args: SelectSubset<T, CommentDeleteArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Comment.
+     * @param {CommentUpdateArgs} args - Arguments to update one Comment.
+     * @example
+     * // Update one Comment
+     * const comment = await prisma.comment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommentUpdateArgs>(args: SelectSubset<T, CommentUpdateArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Comments.
+     * @param {CommentDeleteManyArgs} args - Arguments to filter Comments to delete.
+     * @example
+     * // Delete a few Comments
+     * const { count } = await prisma.comment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommentDeleteManyArgs>(args?: SelectSubset<T, CommentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Comments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Comments
+     * const comment = await prisma.comment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommentUpdateManyArgs>(args: SelectSubset<T, CommentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Comments and returns the data updated in the database.
+     * @param {CommentUpdateManyAndReturnArgs} args - Arguments to update many Comments.
+     * @example
+     * // Update many Comments
+     * const comment = await prisma.comment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Comments and only return the `id`
+     * const commentWithIdOnly = await prisma.comment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommentUpdateManyAndReturnArgs>(args: SelectSubset<T, CommentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Comment.
+     * @param {CommentUpsertArgs} args - Arguments to update or create a Comment.
+     * @example
+     * // Update or create a Comment
+     * const comment = await prisma.comment.upsert({
+     *   create: {
+     *     // ... data to create a Comment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Comment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommentUpsertArgs>(args: SelectSubset<T, CommentUpsertArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Comments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentCountArgs} args - Arguments to filter Comments to count.
+     * @example
+     * // Count the number of Comments
+     * const count = await prisma.comment.count({
+     *   where: {
+     *     // ... the filter for the Comments we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommentCountArgs>(
+      args?: Subset<T, CommentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Comment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommentAggregateArgs>(args: Subset<T, CommentAggregateArgs>): Prisma.PrismaPromise<GetCommentAggregateType<T>>
+
+    /**
+     * Group by Comment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommentGroupByArgs['orderBy'] }
+        : { orderBy?: CommentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Comment model
+   */
+  readonly fields: CommentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Comment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends Comment$parentArgs<ExtArgs> = {}>(args?: Subset<T, Comment$parentArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    replies<T extends Comment$repliesArgs<ExtArgs> = {}>(args?: Subset<T, Comment$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Comment model
+   */
+  interface CommentFieldRefs {
+    readonly id: FieldRef<"Comment", 'String'>
+    readonly entityType: FieldRef<"Comment", 'String'>
+    readonly entityId: FieldRef<"Comment", 'String'>
+    readonly authorId: FieldRef<"Comment", 'String'>
+    readonly content: FieldRef<"Comment", 'String'>
+    readonly parentId: FieldRef<"Comment", 'String'>
+    readonly createdAt: FieldRef<"Comment", 'DateTime'>
+    readonly updatedAt: FieldRef<"Comment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Comment findUnique
+   */
+  export type CommentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment findUniqueOrThrow
+   */
+  export type CommentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment findFirst
+   */
+  export type CommentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Comments.
+     */
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment findFirstOrThrow
+   */
+  export type CommentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Comments.
+     */
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment findMany
+   */
+  export type CommentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comments to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Comments.
+     */
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment create
+   */
+  export type CommentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Comment.
+     */
+    data: XOR<CommentCreateInput, CommentUncheckedCreateInput>
+  }
+
+  /**
+   * Comment createMany
+   */
+  export type CommentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Comments.
+     */
+    data: CommentCreateManyInput | CommentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Comment createManyAndReturn
+   */
+  export type CommentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Comments.
+     */
+    data: CommentCreateManyInput | CommentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Comment update
+   */
+  export type CommentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Comment.
+     */
+    data: XOR<CommentUpdateInput, CommentUncheckedUpdateInput>
+    /**
+     * Choose, which Comment to update.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment updateMany
+   */
+  export type CommentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Comments.
+     */
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyInput>
+    /**
+     * Filter which Comments to update
+     */
+    where?: CommentWhereInput
+    /**
+     * Limit how many Comments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Comment updateManyAndReturn
+   */
+  export type CommentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * The data used to update Comments.
+     */
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyInput>
+    /**
+     * Filter which Comments to update
+     */
+    where?: CommentWhereInput
+    /**
+     * Limit how many Comments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Comment upsert
+   */
+  export type CommentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Comment to update in case it exists.
+     */
+    where: CommentWhereUniqueInput
+    /**
+     * In case the Comment found by the `where` argument doesn't exist, create a new Comment with this data.
+     */
+    create: XOR<CommentCreateInput, CommentUncheckedCreateInput>
+    /**
+     * In case the Comment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommentUpdateInput, CommentUncheckedUpdateInput>
+  }
+
+  /**
+   * Comment delete
+   */
+  export type CommentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter which Comment to delete.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment deleteMany
+   */
+  export type CommentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Comments to delete
+     */
+    where?: CommentWhereInput
+    /**
+     * Limit how many Comments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Comment.parent
+   */
+  export type Comment$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+  }
+
+  /**
+   * Comment.replies
+   */
+  export type Comment$repliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment without action
+   */
+  export type CommentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FeedPost
+   */
+
+  export type AggregateFeedPost = {
+    _count: FeedPostCountAggregateOutputType | null
+    _min: FeedPostMinAggregateOutputType | null
+    _max: FeedPostMaxAggregateOutputType | null
+  }
+
+  export type FeedPostMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.FeedPostType | null
+    authorId: string | null
+    title: string | null
+    content: string | null
+    targetOrgId: string | null
+    isPinned: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FeedPostMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.FeedPostType | null
+    authorId: string | null
+    title: string | null
+    content: string | null
+    targetOrgId: string | null
+    isPinned: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FeedPostCountAggregateOutputType = {
+    id: number
+    type: number
+    authorId: number
+    title: number
+    content: number
+    targetOrgId: number
+    isPinned: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FeedPostMinAggregateInputType = {
+    id?: true
+    type?: true
+    authorId?: true
+    title?: true
+    content?: true
+    targetOrgId?: true
+    isPinned?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FeedPostMaxAggregateInputType = {
+    id?: true
+    type?: true
+    authorId?: true
+    title?: true
+    content?: true
+    targetOrgId?: true
+    isPinned?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FeedPostCountAggregateInputType = {
+    id?: true
+    type?: true
+    authorId?: true
+    title?: true
+    content?: true
+    targetOrgId?: true
+    isPinned?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FeedPostAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedPost to aggregate.
+     */
+    where?: FeedPostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedPosts to fetch.
+     */
+    orderBy?: FeedPostOrderByWithRelationInput | FeedPostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FeedPostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedPosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedPosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FeedPosts
+    **/
+    _count?: true | FeedPostCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FeedPostMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FeedPostMaxAggregateInputType
+  }
+
+  export type GetFeedPostAggregateType<T extends FeedPostAggregateArgs> = {
+        [P in keyof T & keyof AggregateFeedPost]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFeedPost[P]>
+      : GetScalarType<T[P], AggregateFeedPost[P]>
+  }
+
+
+
+
+  export type FeedPostGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedPostWhereInput
+    orderBy?: FeedPostOrderByWithAggregationInput | FeedPostOrderByWithAggregationInput[]
+    by: FeedPostScalarFieldEnum[] | FeedPostScalarFieldEnum
+    having?: FeedPostScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FeedPostCountAggregateInputType | true
+    _min?: FeedPostMinAggregateInputType
+    _max?: FeedPostMaxAggregateInputType
+  }
+
+  export type FeedPostGroupByOutputType = {
+    id: string
+    type: $Enums.FeedPostType
+    authorId: string
+    title: string | null
+    content: string
+    targetOrgId: string | null
+    isPinned: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: FeedPostCountAggregateOutputType | null
+    _min: FeedPostMinAggregateOutputType | null
+    _max: FeedPostMaxAggregateOutputType | null
+  }
+
+  type GetFeedPostGroupByPayload<T extends FeedPostGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FeedPostGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FeedPostGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FeedPostGroupByOutputType[P]>
+            : GetScalarType<T[P], FeedPostGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FeedPostSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    authorId?: boolean
+    title?: boolean
+    content?: boolean
+    targetOrgId?: boolean
+    isPinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    reactions?: boolean | FeedPost$reactionsArgs<ExtArgs>
+    _count?: boolean | FeedPostCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedPost"]>
+
+  export type FeedPostSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    authorId?: boolean
+    title?: boolean
+    content?: boolean
+    targetOrgId?: boolean
+    isPinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedPost"]>
+
+  export type FeedPostSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    authorId?: boolean
+    title?: boolean
+    content?: boolean
+    targetOrgId?: boolean
+    isPinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedPost"]>
+
+  export type FeedPostSelectScalar = {
+    id?: boolean
+    type?: boolean
+    authorId?: boolean
+    title?: boolean
+    content?: boolean
+    targetOrgId?: boolean
+    isPinned?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FeedPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "authorId" | "title" | "content" | "targetOrgId" | "isPinned" | "createdAt" | "updatedAt", ExtArgs["result"]["feedPost"]>
+  export type FeedPostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    reactions?: boolean | FeedPost$reactionsArgs<ExtArgs>
+    _count?: boolean | FeedPostCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type FeedPostIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FeedPostIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $FeedPostPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FeedPost"
+    objects: {
+      author: Prisma.$UserPayload<ExtArgs>
+      reactions: Prisma.$FeedReactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.FeedPostType
+      authorId: string
+      title: string | null
+      content: string
+      targetOrgId: string | null
+      isPinned: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["feedPost"]>
+    composites: {}
+  }
+
+  type FeedPostGetPayload<S extends boolean | null | undefined | FeedPostDefaultArgs> = $Result.GetResult<Prisma.$FeedPostPayload, S>
+
+  type FeedPostCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FeedPostFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FeedPostCountAggregateInputType | true
+    }
+
+  export interface FeedPostDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FeedPost'], meta: { name: 'FeedPost' } }
+    /**
+     * Find zero or one FeedPost that matches the filter.
+     * @param {FeedPostFindUniqueArgs} args - Arguments to find a FeedPost
+     * @example
+     * // Get one FeedPost
+     * const feedPost = await prisma.feedPost.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FeedPostFindUniqueArgs>(args: SelectSubset<T, FeedPostFindUniqueArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FeedPost that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FeedPostFindUniqueOrThrowArgs} args - Arguments to find a FeedPost
+     * @example
+     * // Get one FeedPost
+     * const feedPost = await prisma.feedPost.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FeedPostFindUniqueOrThrowArgs>(args: SelectSubset<T, FeedPostFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FeedPost that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostFindFirstArgs} args - Arguments to find a FeedPost
+     * @example
+     * // Get one FeedPost
+     * const feedPost = await prisma.feedPost.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FeedPostFindFirstArgs>(args?: SelectSubset<T, FeedPostFindFirstArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FeedPost that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostFindFirstOrThrowArgs} args - Arguments to find a FeedPost
+     * @example
+     * // Get one FeedPost
+     * const feedPost = await prisma.feedPost.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FeedPostFindFirstOrThrowArgs>(args?: SelectSubset<T, FeedPostFindFirstOrThrowArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FeedPosts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FeedPosts
+     * const feedPosts = await prisma.feedPost.findMany()
+     * 
+     * // Get first 10 FeedPosts
+     * const feedPosts = await prisma.feedPost.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const feedPostWithIdOnly = await prisma.feedPost.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FeedPostFindManyArgs>(args?: SelectSubset<T, FeedPostFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FeedPost.
+     * @param {FeedPostCreateArgs} args - Arguments to create a FeedPost.
+     * @example
+     * // Create one FeedPost
+     * const FeedPost = await prisma.feedPost.create({
+     *   data: {
+     *     // ... data to create a FeedPost
+     *   }
+     * })
+     * 
+     */
+    create<T extends FeedPostCreateArgs>(args: SelectSubset<T, FeedPostCreateArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FeedPosts.
+     * @param {FeedPostCreateManyArgs} args - Arguments to create many FeedPosts.
+     * @example
+     * // Create many FeedPosts
+     * const feedPost = await prisma.feedPost.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FeedPostCreateManyArgs>(args?: SelectSubset<T, FeedPostCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FeedPosts and returns the data saved in the database.
+     * @param {FeedPostCreateManyAndReturnArgs} args - Arguments to create many FeedPosts.
+     * @example
+     * // Create many FeedPosts
+     * const feedPost = await prisma.feedPost.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FeedPosts and only return the `id`
+     * const feedPostWithIdOnly = await prisma.feedPost.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FeedPostCreateManyAndReturnArgs>(args?: SelectSubset<T, FeedPostCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FeedPost.
+     * @param {FeedPostDeleteArgs} args - Arguments to delete one FeedPost.
+     * @example
+     * // Delete one FeedPost
+     * const FeedPost = await prisma.feedPost.delete({
+     *   where: {
+     *     // ... filter to delete one FeedPost
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FeedPostDeleteArgs>(args: SelectSubset<T, FeedPostDeleteArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FeedPost.
+     * @param {FeedPostUpdateArgs} args - Arguments to update one FeedPost.
+     * @example
+     * // Update one FeedPost
+     * const feedPost = await prisma.feedPost.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FeedPostUpdateArgs>(args: SelectSubset<T, FeedPostUpdateArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FeedPosts.
+     * @param {FeedPostDeleteManyArgs} args - Arguments to filter FeedPosts to delete.
+     * @example
+     * // Delete a few FeedPosts
+     * const { count } = await prisma.feedPost.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FeedPostDeleteManyArgs>(args?: SelectSubset<T, FeedPostDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FeedPosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FeedPosts
+     * const feedPost = await prisma.feedPost.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FeedPostUpdateManyArgs>(args: SelectSubset<T, FeedPostUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FeedPosts and returns the data updated in the database.
+     * @param {FeedPostUpdateManyAndReturnArgs} args - Arguments to update many FeedPosts.
+     * @example
+     * // Update many FeedPosts
+     * const feedPost = await prisma.feedPost.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FeedPosts and only return the `id`
+     * const feedPostWithIdOnly = await prisma.feedPost.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FeedPostUpdateManyAndReturnArgs>(args: SelectSubset<T, FeedPostUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FeedPost.
+     * @param {FeedPostUpsertArgs} args - Arguments to update or create a FeedPost.
+     * @example
+     * // Update or create a FeedPost
+     * const feedPost = await prisma.feedPost.upsert({
+     *   create: {
+     *     // ... data to create a FeedPost
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FeedPost we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FeedPostUpsertArgs>(args: SelectSubset<T, FeedPostUpsertArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FeedPosts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostCountArgs} args - Arguments to filter FeedPosts to count.
+     * @example
+     * // Count the number of FeedPosts
+     * const count = await prisma.feedPost.count({
+     *   where: {
+     *     // ... the filter for the FeedPosts we want to count
+     *   }
+     * })
+    **/
+    count<T extends FeedPostCountArgs>(
+      args?: Subset<T, FeedPostCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FeedPostCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FeedPost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FeedPostAggregateArgs>(args: Subset<T, FeedPostAggregateArgs>): Prisma.PrismaPromise<GetFeedPostAggregateType<T>>
+
+    /**
+     * Group by FeedPost.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedPostGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FeedPostGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FeedPostGroupByArgs['orderBy'] }
+        : { orderBy?: FeedPostGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FeedPostGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFeedPostGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FeedPost model
+   */
+  readonly fields: FeedPostFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FeedPost.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FeedPostClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    reactions<T extends FeedPost$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, FeedPost$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FeedPost model
+   */
+  interface FeedPostFieldRefs {
+    readonly id: FieldRef<"FeedPost", 'String'>
+    readonly type: FieldRef<"FeedPost", 'FeedPostType'>
+    readonly authorId: FieldRef<"FeedPost", 'String'>
+    readonly title: FieldRef<"FeedPost", 'String'>
+    readonly content: FieldRef<"FeedPost", 'String'>
+    readonly targetOrgId: FieldRef<"FeedPost", 'String'>
+    readonly isPinned: FieldRef<"FeedPost", 'Boolean'>
+    readonly createdAt: FieldRef<"FeedPost", 'DateTime'>
+    readonly updatedAt: FieldRef<"FeedPost", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FeedPost findUnique
+   */
+  export type FeedPostFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedPost to fetch.
+     */
+    where: FeedPostWhereUniqueInput
+  }
+
+  /**
+   * FeedPost findUniqueOrThrow
+   */
+  export type FeedPostFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedPost to fetch.
+     */
+    where: FeedPostWhereUniqueInput
+  }
+
+  /**
+   * FeedPost findFirst
+   */
+  export type FeedPostFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedPost to fetch.
+     */
+    where?: FeedPostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedPosts to fetch.
+     */
+    orderBy?: FeedPostOrderByWithRelationInput | FeedPostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedPosts.
+     */
+    cursor?: FeedPostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedPosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedPosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedPosts.
+     */
+    distinct?: FeedPostScalarFieldEnum | FeedPostScalarFieldEnum[]
+  }
+
+  /**
+   * FeedPost findFirstOrThrow
+   */
+  export type FeedPostFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedPost to fetch.
+     */
+    where?: FeedPostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedPosts to fetch.
+     */
+    orderBy?: FeedPostOrderByWithRelationInput | FeedPostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedPosts.
+     */
+    cursor?: FeedPostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedPosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedPosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedPosts.
+     */
+    distinct?: FeedPostScalarFieldEnum | FeedPostScalarFieldEnum[]
+  }
+
+  /**
+   * FeedPost findMany
+   */
+  export type FeedPostFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedPosts to fetch.
+     */
+    where?: FeedPostWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedPosts to fetch.
+     */
+    orderBy?: FeedPostOrderByWithRelationInput | FeedPostOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FeedPosts.
+     */
+    cursor?: FeedPostWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedPosts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedPosts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedPosts.
+     */
+    distinct?: FeedPostScalarFieldEnum | FeedPostScalarFieldEnum[]
+  }
+
+  /**
+   * FeedPost create
+   */
+  export type FeedPostCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FeedPost.
+     */
+    data: XOR<FeedPostCreateInput, FeedPostUncheckedCreateInput>
+  }
+
+  /**
+   * FeedPost createMany
+   */
+  export type FeedPostCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FeedPosts.
+     */
+    data: FeedPostCreateManyInput | FeedPostCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FeedPost createManyAndReturn
+   */
+  export type FeedPostCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * The data used to create many FeedPosts.
+     */
+    data: FeedPostCreateManyInput | FeedPostCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FeedPost update
+   */
+  export type FeedPostUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FeedPost.
+     */
+    data: XOR<FeedPostUpdateInput, FeedPostUncheckedUpdateInput>
+    /**
+     * Choose, which FeedPost to update.
+     */
+    where: FeedPostWhereUniqueInput
+  }
+
+  /**
+   * FeedPost updateMany
+   */
+  export type FeedPostUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FeedPosts.
+     */
+    data: XOR<FeedPostUpdateManyMutationInput, FeedPostUncheckedUpdateManyInput>
+    /**
+     * Filter which FeedPosts to update
+     */
+    where?: FeedPostWhereInput
+    /**
+     * Limit how many FeedPosts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FeedPost updateManyAndReturn
+   */
+  export type FeedPostUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * The data used to update FeedPosts.
+     */
+    data: XOR<FeedPostUpdateManyMutationInput, FeedPostUncheckedUpdateManyInput>
+    /**
+     * Filter which FeedPosts to update
+     */
+    where?: FeedPostWhereInput
+    /**
+     * Limit how many FeedPosts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FeedPost upsert
+   */
+  export type FeedPostUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FeedPost to update in case it exists.
+     */
+    where: FeedPostWhereUniqueInput
+    /**
+     * In case the FeedPost found by the `where` argument doesn't exist, create a new FeedPost with this data.
+     */
+    create: XOR<FeedPostCreateInput, FeedPostUncheckedCreateInput>
+    /**
+     * In case the FeedPost was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FeedPostUpdateInput, FeedPostUncheckedUpdateInput>
+  }
+
+  /**
+   * FeedPost delete
+   */
+  export type FeedPostDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+    /**
+     * Filter which FeedPost to delete.
+     */
+    where: FeedPostWhereUniqueInput
+  }
+
+  /**
+   * FeedPost deleteMany
+   */
+  export type FeedPostDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedPosts to delete
+     */
+    where?: FeedPostWhereInput
+    /**
+     * Limit how many FeedPosts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FeedPost.reactions
+   */
+  export type FeedPost$reactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    where?: FeedReactionWhereInput
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    cursor?: FeedReactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FeedReactionScalarFieldEnum | FeedReactionScalarFieldEnum[]
+  }
+
+  /**
+   * FeedPost without action
+   */
+  export type FeedPostDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedPost
+     */
+    select?: FeedPostSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedPost
+     */
+    omit?: FeedPostOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedPostInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FeedReaction
+   */
+
+  export type AggregateFeedReaction = {
+    _count: FeedReactionCountAggregateOutputType | null
+    _min: FeedReactionMinAggregateOutputType | null
+    _max: FeedReactionMaxAggregateOutputType | null
+  }
+
+  export type FeedReactionMinAggregateOutputType = {
+    id: string | null
+    postId: string | null
+    userId: string | null
+    emoji: string | null
+    createdAt: Date | null
+  }
+
+  export type FeedReactionMaxAggregateOutputType = {
+    id: string | null
+    postId: string | null
+    userId: string | null
+    emoji: string | null
+    createdAt: Date | null
+  }
+
+  export type FeedReactionCountAggregateOutputType = {
+    id: number
+    postId: number
+    userId: number
+    emoji: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type FeedReactionMinAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    emoji?: true
+    createdAt?: true
+  }
+
+  export type FeedReactionMaxAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    emoji?: true
+    createdAt?: true
+  }
+
+  export type FeedReactionCountAggregateInputType = {
+    id?: true
+    postId?: true
+    userId?: true
+    emoji?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type FeedReactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedReaction to aggregate.
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedReactions to fetch.
+     */
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FeedReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FeedReactions
+    **/
+    _count?: true | FeedReactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FeedReactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FeedReactionMaxAggregateInputType
+  }
+
+  export type GetFeedReactionAggregateType<T extends FeedReactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateFeedReaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFeedReaction[P]>
+      : GetScalarType<T[P], AggregateFeedReaction[P]>
+  }
+
+
+
+
+  export type FeedReactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedReactionWhereInput
+    orderBy?: FeedReactionOrderByWithAggregationInput | FeedReactionOrderByWithAggregationInput[]
+    by: FeedReactionScalarFieldEnum[] | FeedReactionScalarFieldEnum
+    having?: FeedReactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FeedReactionCountAggregateInputType | true
+    _min?: FeedReactionMinAggregateInputType
+    _max?: FeedReactionMaxAggregateInputType
+  }
+
+  export type FeedReactionGroupByOutputType = {
+    id: string
+    postId: string
+    userId: string
+    emoji: string
+    createdAt: Date
+    _count: FeedReactionCountAggregateOutputType | null
+    _min: FeedReactionMinAggregateOutputType | null
+    _max: FeedReactionMaxAggregateOutputType | null
+  }
+
+  type GetFeedReactionGroupByPayload<T extends FeedReactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FeedReactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FeedReactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FeedReactionGroupByOutputType[P]>
+            : GetScalarType<T[P], FeedReactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FeedReactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    emoji?: boolean
+    createdAt?: boolean
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedReaction"]>
+
+  export type FeedReactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    emoji?: boolean
+    createdAt?: boolean
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedReaction"]>
+
+  export type FeedReactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    emoji?: boolean
+    createdAt?: boolean
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["feedReaction"]>
+
+  export type FeedReactionSelectScalar = {
+    id?: boolean
+    postId?: boolean
+    userId?: boolean
+    emoji?: boolean
+    createdAt?: boolean
+  }
+
+  export type FeedReactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "postId" | "userId" | "emoji" | "createdAt", ExtArgs["result"]["feedReaction"]>
+  export type FeedReactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FeedReactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type FeedReactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    post?: boolean | FeedPostDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $FeedReactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FeedReaction"
+    objects: {
+      post: Prisma.$FeedPostPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      postId: string
+      userId: string
+      emoji: string
+      createdAt: Date
+    }, ExtArgs["result"]["feedReaction"]>
+    composites: {}
+  }
+
+  type FeedReactionGetPayload<S extends boolean | null | undefined | FeedReactionDefaultArgs> = $Result.GetResult<Prisma.$FeedReactionPayload, S>
+
+  type FeedReactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<FeedReactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: FeedReactionCountAggregateInputType | true
+    }
+
+  export interface FeedReactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FeedReaction'], meta: { name: 'FeedReaction' } }
+    /**
+     * Find zero or one FeedReaction that matches the filter.
+     * @param {FeedReactionFindUniqueArgs} args - Arguments to find a FeedReaction
+     * @example
+     * // Get one FeedReaction
+     * const feedReaction = await prisma.feedReaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FeedReactionFindUniqueArgs>(args: SelectSubset<T, FeedReactionFindUniqueArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one FeedReaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {FeedReactionFindUniqueOrThrowArgs} args - Arguments to find a FeedReaction
+     * @example
+     * // Get one FeedReaction
+     * const feedReaction = await prisma.feedReaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FeedReactionFindUniqueOrThrowArgs>(args: SelectSubset<T, FeedReactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FeedReaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionFindFirstArgs} args - Arguments to find a FeedReaction
+     * @example
+     * // Get one FeedReaction
+     * const feedReaction = await prisma.feedReaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FeedReactionFindFirstArgs>(args?: SelectSubset<T, FeedReactionFindFirstArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first FeedReaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionFindFirstOrThrowArgs} args - Arguments to find a FeedReaction
+     * @example
+     * // Get one FeedReaction
+     * const feedReaction = await prisma.feedReaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FeedReactionFindFirstOrThrowArgs>(args?: SelectSubset<T, FeedReactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more FeedReactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FeedReactions
+     * const feedReactions = await prisma.feedReaction.findMany()
+     * 
+     * // Get first 10 FeedReactions
+     * const feedReactions = await prisma.feedReaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const feedReactionWithIdOnly = await prisma.feedReaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FeedReactionFindManyArgs>(args?: SelectSubset<T, FeedReactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a FeedReaction.
+     * @param {FeedReactionCreateArgs} args - Arguments to create a FeedReaction.
+     * @example
+     * // Create one FeedReaction
+     * const FeedReaction = await prisma.feedReaction.create({
+     *   data: {
+     *     // ... data to create a FeedReaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends FeedReactionCreateArgs>(args: SelectSubset<T, FeedReactionCreateArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many FeedReactions.
+     * @param {FeedReactionCreateManyArgs} args - Arguments to create many FeedReactions.
+     * @example
+     * // Create many FeedReactions
+     * const feedReaction = await prisma.feedReaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FeedReactionCreateManyArgs>(args?: SelectSubset<T, FeedReactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FeedReactions and returns the data saved in the database.
+     * @param {FeedReactionCreateManyAndReturnArgs} args - Arguments to create many FeedReactions.
+     * @example
+     * // Create many FeedReactions
+     * const feedReaction = await prisma.feedReaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FeedReactions and only return the `id`
+     * const feedReactionWithIdOnly = await prisma.feedReaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FeedReactionCreateManyAndReturnArgs>(args?: SelectSubset<T, FeedReactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a FeedReaction.
+     * @param {FeedReactionDeleteArgs} args - Arguments to delete one FeedReaction.
+     * @example
+     * // Delete one FeedReaction
+     * const FeedReaction = await prisma.feedReaction.delete({
+     *   where: {
+     *     // ... filter to delete one FeedReaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FeedReactionDeleteArgs>(args: SelectSubset<T, FeedReactionDeleteArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one FeedReaction.
+     * @param {FeedReactionUpdateArgs} args - Arguments to update one FeedReaction.
+     * @example
+     * // Update one FeedReaction
+     * const feedReaction = await prisma.feedReaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FeedReactionUpdateArgs>(args: SelectSubset<T, FeedReactionUpdateArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more FeedReactions.
+     * @param {FeedReactionDeleteManyArgs} args - Arguments to filter FeedReactions to delete.
+     * @example
+     * // Delete a few FeedReactions
+     * const { count } = await prisma.feedReaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FeedReactionDeleteManyArgs>(args?: SelectSubset<T, FeedReactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FeedReactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FeedReactions
+     * const feedReaction = await prisma.feedReaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FeedReactionUpdateManyArgs>(args: SelectSubset<T, FeedReactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FeedReactions and returns the data updated in the database.
+     * @param {FeedReactionUpdateManyAndReturnArgs} args - Arguments to update many FeedReactions.
+     * @example
+     * // Update many FeedReactions
+     * const feedReaction = await prisma.feedReaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more FeedReactions and only return the `id`
+     * const feedReactionWithIdOnly = await prisma.feedReaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends FeedReactionUpdateManyAndReturnArgs>(args: SelectSubset<T, FeedReactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one FeedReaction.
+     * @param {FeedReactionUpsertArgs} args - Arguments to update or create a FeedReaction.
+     * @example
+     * // Update or create a FeedReaction
+     * const feedReaction = await prisma.feedReaction.upsert({
+     *   create: {
+     *     // ... data to create a FeedReaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FeedReaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FeedReactionUpsertArgs>(args: SelectSubset<T, FeedReactionUpsertArgs<ExtArgs>>): Prisma__FeedReactionClient<$Result.GetResult<Prisma.$FeedReactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of FeedReactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionCountArgs} args - Arguments to filter FeedReactions to count.
+     * @example
+     * // Count the number of FeedReactions
+     * const count = await prisma.feedReaction.count({
+     *   where: {
+     *     // ... the filter for the FeedReactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends FeedReactionCountArgs>(
+      args?: Subset<T, FeedReactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FeedReactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FeedReaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FeedReactionAggregateArgs>(args: Subset<T, FeedReactionAggregateArgs>): Prisma.PrismaPromise<GetFeedReactionAggregateType<T>>
+
+    /**
+     * Group by FeedReaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedReactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FeedReactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FeedReactionGroupByArgs['orderBy'] }
+        : { orderBy?: FeedReactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FeedReactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFeedReactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FeedReaction model
+   */
+  readonly fields: FeedReactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FeedReaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FeedReactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    post<T extends FeedPostDefaultArgs<ExtArgs> = {}>(args?: Subset<T, FeedPostDefaultArgs<ExtArgs>>): Prisma__FeedPostClient<$Result.GetResult<Prisma.$FeedPostPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FeedReaction model
+   */
+  interface FeedReactionFieldRefs {
+    readonly id: FieldRef<"FeedReaction", 'String'>
+    readonly postId: FieldRef<"FeedReaction", 'String'>
+    readonly userId: FieldRef<"FeedReaction", 'String'>
+    readonly emoji: FieldRef<"FeedReaction", 'String'>
+    readonly createdAt: FieldRef<"FeedReaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FeedReaction findUnique
+   */
+  export type FeedReactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedReaction to fetch.
+     */
+    where: FeedReactionWhereUniqueInput
+  }
+
+  /**
+   * FeedReaction findUniqueOrThrow
+   */
+  export type FeedReactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedReaction to fetch.
+     */
+    where: FeedReactionWhereUniqueInput
+  }
+
+  /**
+   * FeedReaction findFirst
+   */
+  export type FeedReactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedReaction to fetch.
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedReactions to fetch.
+     */
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedReactions.
+     */
+    cursor?: FeedReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedReactions.
+     */
+    distinct?: FeedReactionScalarFieldEnum | FeedReactionScalarFieldEnum[]
+  }
+
+  /**
+   * FeedReaction findFirstOrThrow
+   */
+  export type FeedReactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedReaction to fetch.
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedReactions to fetch.
+     */
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedReactions.
+     */
+    cursor?: FeedReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedReactions.
+     */
+    distinct?: FeedReactionScalarFieldEnum | FeedReactionScalarFieldEnum[]
+  }
+
+  /**
+   * FeedReaction findMany
+   */
+  export type FeedReactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedReactions to fetch.
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedReactions to fetch.
+     */
+    orderBy?: FeedReactionOrderByWithRelationInput | FeedReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FeedReactions.
+     */
+    cursor?: FeedReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedReactions.
+     */
+    distinct?: FeedReactionScalarFieldEnum | FeedReactionScalarFieldEnum[]
+  }
+
+  /**
+   * FeedReaction create
+   */
+  export type FeedReactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FeedReaction.
+     */
+    data: XOR<FeedReactionCreateInput, FeedReactionUncheckedCreateInput>
+  }
+
+  /**
+   * FeedReaction createMany
+   */
+  export type FeedReactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FeedReactions.
+     */
+    data: FeedReactionCreateManyInput | FeedReactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FeedReaction createManyAndReturn
+   */
+  export type FeedReactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many FeedReactions.
+     */
+    data: FeedReactionCreateManyInput | FeedReactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FeedReaction update
+   */
+  export type FeedReactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FeedReaction.
+     */
+    data: XOR<FeedReactionUpdateInput, FeedReactionUncheckedUpdateInput>
+    /**
+     * Choose, which FeedReaction to update.
+     */
+    where: FeedReactionWhereUniqueInput
+  }
+
+  /**
+   * FeedReaction updateMany
+   */
+  export type FeedReactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FeedReactions.
+     */
+    data: XOR<FeedReactionUpdateManyMutationInput, FeedReactionUncheckedUpdateManyInput>
+    /**
+     * Filter which FeedReactions to update
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * Limit how many FeedReactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * FeedReaction updateManyAndReturn
+   */
+  export type FeedReactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * The data used to update FeedReactions.
+     */
+    data: XOR<FeedReactionUpdateManyMutationInput, FeedReactionUncheckedUpdateManyInput>
+    /**
+     * Filter which FeedReactions to update
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * Limit how many FeedReactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FeedReaction upsert
+   */
+  export type FeedReactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FeedReaction to update in case it exists.
+     */
+    where: FeedReactionWhereUniqueInput
+    /**
+     * In case the FeedReaction found by the `where` argument doesn't exist, create a new FeedReaction with this data.
+     */
+    create: XOR<FeedReactionCreateInput, FeedReactionUncheckedCreateInput>
+    /**
+     * In case the FeedReaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FeedReactionUpdateInput, FeedReactionUncheckedUpdateInput>
+  }
+
+  /**
+   * FeedReaction delete
+   */
+  export type FeedReactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+    /**
+     * Filter which FeedReaction to delete.
+     */
+    where: FeedReactionWhereUniqueInput
+  }
+
+  /**
+   * FeedReaction deleteMany
+   */
+  export type FeedReactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedReactions to delete
+     */
+    where?: FeedReactionWhereInput
+    /**
+     * Limit how many FeedReactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * FeedReaction without action
+   */
+  export type FeedReactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedReaction
+     */
+    select?: FeedReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the FeedReaction
+     */
+    omit?: FeedReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedReactionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model AutomationRule
    */
 
@@ -123045,6 +127093,2265 @@ export namespace Prisma {
 
 
   /**
+   * Model WebhookEndpoint
+   */
+
+  export type AggregateWebhookEndpoint = {
+    _count: WebhookEndpointCountAggregateOutputType | null
+    _min: WebhookEndpointMinAggregateOutputType | null
+    _max: WebhookEndpointMaxAggregateOutputType | null
+  }
+
+  export type WebhookEndpointMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    url: string | null
+    secret: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WebhookEndpointMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    url: string | null
+    secret: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WebhookEndpointCountAggregateOutputType = {
+    id: number
+    name: number
+    url: number
+    secret: number
+    events: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type WebhookEndpointMinAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    secret?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WebhookEndpointMaxAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    secret?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WebhookEndpointCountAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    secret?: true
+    events?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type WebhookEndpointAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WebhookEndpoint to aggregate.
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookEndpoints to fetch.
+     */
+    orderBy?: WebhookEndpointOrderByWithRelationInput | WebhookEndpointOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WebhookEndpointWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookEndpoints from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookEndpoints.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WebhookEndpoints
+    **/
+    _count?: true | WebhookEndpointCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WebhookEndpointMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WebhookEndpointMaxAggregateInputType
+  }
+
+  export type GetWebhookEndpointAggregateType<T extends WebhookEndpointAggregateArgs> = {
+        [P in keyof T & keyof AggregateWebhookEndpoint]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWebhookEndpoint[P]>
+      : GetScalarType<T[P], AggregateWebhookEndpoint[P]>
+  }
+
+
+
+
+  export type WebhookEndpointGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WebhookEndpointWhereInput
+    orderBy?: WebhookEndpointOrderByWithAggregationInput | WebhookEndpointOrderByWithAggregationInput[]
+    by: WebhookEndpointScalarFieldEnum[] | WebhookEndpointScalarFieldEnum
+    having?: WebhookEndpointScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WebhookEndpointCountAggregateInputType | true
+    _min?: WebhookEndpointMinAggregateInputType
+    _max?: WebhookEndpointMaxAggregateInputType
+  }
+
+  export type WebhookEndpointGroupByOutputType = {
+    id: string
+    name: string
+    url: string
+    secret: string | null
+    events: string[]
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: WebhookEndpointCountAggregateOutputType | null
+    _min: WebhookEndpointMinAggregateOutputType | null
+    _max: WebhookEndpointMaxAggregateOutputType | null
+  }
+
+  type GetWebhookEndpointGroupByPayload<T extends WebhookEndpointGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WebhookEndpointGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WebhookEndpointGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WebhookEndpointGroupByOutputType[P]>
+            : GetScalarType<T[P], WebhookEndpointGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WebhookEndpointSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    secret?: boolean
+    events?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    logs?: boolean | WebhookEndpoint$logsArgs<ExtArgs>
+    _count?: boolean | WebhookEndpointCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["webhookEndpoint"]>
+
+  export type WebhookEndpointSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    secret?: boolean
+    events?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["webhookEndpoint"]>
+
+  export type WebhookEndpointSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    secret?: boolean
+    events?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["webhookEndpoint"]>
+
+  export type WebhookEndpointSelectScalar = {
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    secret?: boolean
+    events?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type WebhookEndpointOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "url" | "secret" | "events" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["webhookEndpoint"]>
+  export type WebhookEndpointInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    logs?: boolean | WebhookEndpoint$logsArgs<ExtArgs>
+    _count?: boolean | WebhookEndpointCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type WebhookEndpointIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type WebhookEndpointIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $WebhookEndpointPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WebhookEndpoint"
+    objects: {
+      logs: Prisma.$WebhookLogPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      url: string
+      secret: string | null
+      events: string[]
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["webhookEndpoint"]>
+    composites: {}
+  }
+
+  type WebhookEndpointGetPayload<S extends boolean | null | undefined | WebhookEndpointDefaultArgs> = $Result.GetResult<Prisma.$WebhookEndpointPayload, S>
+
+  type WebhookEndpointCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WebhookEndpointFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WebhookEndpointCountAggregateInputType | true
+    }
+
+  export interface WebhookEndpointDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WebhookEndpoint'], meta: { name: 'WebhookEndpoint' } }
+    /**
+     * Find zero or one WebhookEndpoint that matches the filter.
+     * @param {WebhookEndpointFindUniqueArgs} args - Arguments to find a WebhookEndpoint
+     * @example
+     * // Get one WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WebhookEndpointFindUniqueArgs>(args: SelectSubset<T, WebhookEndpointFindUniqueArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WebhookEndpoint that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WebhookEndpointFindUniqueOrThrowArgs} args - Arguments to find a WebhookEndpoint
+     * @example
+     * // Get one WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WebhookEndpointFindUniqueOrThrowArgs>(args: SelectSubset<T, WebhookEndpointFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WebhookEndpoint that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointFindFirstArgs} args - Arguments to find a WebhookEndpoint
+     * @example
+     * // Get one WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WebhookEndpointFindFirstArgs>(args?: SelectSubset<T, WebhookEndpointFindFirstArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WebhookEndpoint that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointFindFirstOrThrowArgs} args - Arguments to find a WebhookEndpoint
+     * @example
+     * // Get one WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WebhookEndpointFindFirstOrThrowArgs>(args?: SelectSubset<T, WebhookEndpointFindFirstOrThrowArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WebhookEndpoints that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WebhookEndpoints
+     * const webhookEndpoints = await prisma.webhookEndpoint.findMany()
+     * 
+     * // Get first 10 WebhookEndpoints
+     * const webhookEndpoints = await prisma.webhookEndpoint.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const webhookEndpointWithIdOnly = await prisma.webhookEndpoint.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WebhookEndpointFindManyArgs>(args?: SelectSubset<T, WebhookEndpointFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WebhookEndpoint.
+     * @param {WebhookEndpointCreateArgs} args - Arguments to create a WebhookEndpoint.
+     * @example
+     * // Create one WebhookEndpoint
+     * const WebhookEndpoint = await prisma.webhookEndpoint.create({
+     *   data: {
+     *     // ... data to create a WebhookEndpoint
+     *   }
+     * })
+     * 
+     */
+    create<T extends WebhookEndpointCreateArgs>(args: SelectSubset<T, WebhookEndpointCreateArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WebhookEndpoints.
+     * @param {WebhookEndpointCreateManyArgs} args - Arguments to create many WebhookEndpoints.
+     * @example
+     * // Create many WebhookEndpoints
+     * const webhookEndpoint = await prisma.webhookEndpoint.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WebhookEndpointCreateManyArgs>(args?: SelectSubset<T, WebhookEndpointCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WebhookEndpoints and returns the data saved in the database.
+     * @param {WebhookEndpointCreateManyAndReturnArgs} args - Arguments to create many WebhookEndpoints.
+     * @example
+     * // Create many WebhookEndpoints
+     * const webhookEndpoint = await prisma.webhookEndpoint.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WebhookEndpoints and only return the `id`
+     * const webhookEndpointWithIdOnly = await prisma.webhookEndpoint.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WebhookEndpointCreateManyAndReturnArgs>(args?: SelectSubset<T, WebhookEndpointCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WebhookEndpoint.
+     * @param {WebhookEndpointDeleteArgs} args - Arguments to delete one WebhookEndpoint.
+     * @example
+     * // Delete one WebhookEndpoint
+     * const WebhookEndpoint = await prisma.webhookEndpoint.delete({
+     *   where: {
+     *     // ... filter to delete one WebhookEndpoint
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WebhookEndpointDeleteArgs>(args: SelectSubset<T, WebhookEndpointDeleteArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WebhookEndpoint.
+     * @param {WebhookEndpointUpdateArgs} args - Arguments to update one WebhookEndpoint.
+     * @example
+     * // Update one WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WebhookEndpointUpdateArgs>(args: SelectSubset<T, WebhookEndpointUpdateArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WebhookEndpoints.
+     * @param {WebhookEndpointDeleteManyArgs} args - Arguments to filter WebhookEndpoints to delete.
+     * @example
+     * // Delete a few WebhookEndpoints
+     * const { count } = await prisma.webhookEndpoint.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WebhookEndpointDeleteManyArgs>(args?: SelectSubset<T, WebhookEndpointDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WebhookEndpoints.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WebhookEndpoints
+     * const webhookEndpoint = await prisma.webhookEndpoint.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WebhookEndpointUpdateManyArgs>(args: SelectSubset<T, WebhookEndpointUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WebhookEndpoints and returns the data updated in the database.
+     * @param {WebhookEndpointUpdateManyAndReturnArgs} args - Arguments to update many WebhookEndpoints.
+     * @example
+     * // Update many WebhookEndpoints
+     * const webhookEndpoint = await prisma.webhookEndpoint.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WebhookEndpoints and only return the `id`
+     * const webhookEndpointWithIdOnly = await prisma.webhookEndpoint.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WebhookEndpointUpdateManyAndReturnArgs>(args: SelectSubset<T, WebhookEndpointUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WebhookEndpoint.
+     * @param {WebhookEndpointUpsertArgs} args - Arguments to update or create a WebhookEndpoint.
+     * @example
+     * // Update or create a WebhookEndpoint
+     * const webhookEndpoint = await prisma.webhookEndpoint.upsert({
+     *   create: {
+     *     // ... data to create a WebhookEndpoint
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WebhookEndpoint we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WebhookEndpointUpsertArgs>(args: SelectSubset<T, WebhookEndpointUpsertArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WebhookEndpoints.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointCountArgs} args - Arguments to filter WebhookEndpoints to count.
+     * @example
+     * // Count the number of WebhookEndpoints
+     * const count = await prisma.webhookEndpoint.count({
+     *   where: {
+     *     // ... the filter for the WebhookEndpoints we want to count
+     *   }
+     * })
+    **/
+    count<T extends WebhookEndpointCountArgs>(
+      args?: Subset<T, WebhookEndpointCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WebhookEndpointCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WebhookEndpoint.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WebhookEndpointAggregateArgs>(args: Subset<T, WebhookEndpointAggregateArgs>): Prisma.PrismaPromise<GetWebhookEndpointAggregateType<T>>
+
+    /**
+     * Group by WebhookEndpoint.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookEndpointGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WebhookEndpointGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WebhookEndpointGroupByArgs['orderBy'] }
+        : { orderBy?: WebhookEndpointGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WebhookEndpointGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWebhookEndpointGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WebhookEndpoint model
+   */
+  readonly fields: WebhookEndpointFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WebhookEndpoint.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WebhookEndpointClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    logs<T extends WebhookEndpoint$logsArgs<ExtArgs> = {}>(args?: Subset<T, WebhookEndpoint$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WebhookEndpoint model
+   */
+  interface WebhookEndpointFieldRefs {
+    readonly id: FieldRef<"WebhookEndpoint", 'String'>
+    readonly name: FieldRef<"WebhookEndpoint", 'String'>
+    readonly url: FieldRef<"WebhookEndpoint", 'String'>
+    readonly secret: FieldRef<"WebhookEndpoint", 'String'>
+    readonly events: FieldRef<"WebhookEndpoint", 'String[]'>
+    readonly isActive: FieldRef<"WebhookEndpoint", 'Boolean'>
+    readonly createdAt: FieldRef<"WebhookEndpoint", 'DateTime'>
+    readonly updatedAt: FieldRef<"WebhookEndpoint", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WebhookEndpoint findUnique
+   */
+  export type WebhookEndpointFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookEndpoint to fetch.
+     */
+    where: WebhookEndpointWhereUniqueInput
+  }
+
+  /**
+   * WebhookEndpoint findUniqueOrThrow
+   */
+  export type WebhookEndpointFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookEndpoint to fetch.
+     */
+    where: WebhookEndpointWhereUniqueInput
+  }
+
+  /**
+   * WebhookEndpoint findFirst
+   */
+  export type WebhookEndpointFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookEndpoint to fetch.
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookEndpoints to fetch.
+     */
+    orderBy?: WebhookEndpointOrderByWithRelationInput | WebhookEndpointOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WebhookEndpoints.
+     */
+    cursor?: WebhookEndpointWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookEndpoints from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookEndpoints.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookEndpoints.
+     */
+    distinct?: WebhookEndpointScalarFieldEnum | WebhookEndpointScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookEndpoint findFirstOrThrow
+   */
+  export type WebhookEndpointFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookEndpoint to fetch.
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookEndpoints to fetch.
+     */
+    orderBy?: WebhookEndpointOrderByWithRelationInput | WebhookEndpointOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WebhookEndpoints.
+     */
+    cursor?: WebhookEndpointWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookEndpoints from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookEndpoints.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookEndpoints.
+     */
+    distinct?: WebhookEndpointScalarFieldEnum | WebhookEndpointScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookEndpoint findMany
+   */
+  export type WebhookEndpointFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookEndpoints to fetch.
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookEndpoints to fetch.
+     */
+    orderBy?: WebhookEndpointOrderByWithRelationInput | WebhookEndpointOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WebhookEndpoints.
+     */
+    cursor?: WebhookEndpointWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookEndpoints from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookEndpoints.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookEndpoints.
+     */
+    distinct?: WebhookEndpointScalarFieldEnum | WebhookEndpointScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookEndpoint create
+   */
+  export type WebhookEndpointCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WebhookEndpoint.
+     */
+    data: XOR<WebhookEndpointCreateInput, WebhookEndpointUncheckedCreateInput>
+  }
+
+  /**
+   * WebhookEndpoint createMany
+   */
+  export type WebhookEndpointCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WebhookEndpoints.
+     */
+    data: WebhookEndpointCreateManyInput | WebhookEndpointCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WebhookEndpoint createManyAndReturn
+   */
+  export type WebhookEndpointCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * The data used to create many WebhookEndpoints.
+     */
+    data: WebhookEndpointCreateManyInput | WebhookEndpointCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WebhookEndpoint update
+   */
+  export type WebhookEndpointUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WebhookEndpoint.
+     */
+    data: XOR<WebhookEndpointUpdateInput, WebhookEndpointUncheckedUpdateInput>
+    /**
+     * Choose, which WebhookEndpoint to update.
+     */
+    where: WebhookEndpointWhereUniqueInput
+  }
+
+  /**
+   * WebhookEndpoint updateMany
+   */
+  export type WebhookEndpointUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WebhookEndpoints.
+     */
+    data: XOR<WebhookEndpointUpdateManyMutationInput, WebhookEndpointUncheckedUpdateManyInput>
+    /**
+     * Filter which WebhookEndpoints to update
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * Limit how many WebhookEndpoints to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WebhookEndpoint updateManyAndReturn
+   */
+  export type WebhookEndpointUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * The data used to update WebhookEndpoints.
+     */
+    data: XOR<WebhookEndpointUpdateManyMutationInput, WebhookEndpointUncheckedUpdateManyInput>
+    /**
+     * Filter which WebhookEndpoints to update
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * Limit how many WebhookEndpoints to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WebhookEndpoint upsert
+   */
+  export type WebhookEndpointUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WebhookEndpoint to update in case it exists.
+     */
+    where: WebhookEndpointWhereUniqueInput
+    /**
+     * In case the WebhookEndpoint found by the `where` argument doesn't exist, create a new WebhookEndpoint with this data.
+     */
+    create: XOR<WebhookEndpointCreateInput, WebhookEndpointUncheckedCreateInput>
+    /**
+     * In case the WebhookEndpoint was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WebhookEndpointUpdateInput, WebhookEndpointUncheckedUpdateInput>
+  }
+
+  /**
+   * WebhookEndpoint delete
+   */
+  export type WebhookEndpointDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+    /**
+     * Filter which WebhookEndpoint to delete.
+     */
+    where: WebhookEndpointWhereUniqueInput
+  }
+
+  /**
+   * WebhookEndpoint deleteMany
+   */
+  export type WebhookEndpointDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WebhookEndpoints to delete
+     */
+    where?: WebhookEndpointWhereInput
+    /**
+     * Limit how many WebhookEndpoints to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WebhookEndpoint.logs
+   */
+  export type WebhookEndpoint$logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    where?: WebhookLogWhereInput
+    orderBy?: WebhookLogOrderByWithRelationInput | WebhookLogOrderByWithRelationInput[]
+    cursor?: WebhookLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WebhookLogScalarFieldEnum | WebhookLogScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookEndpoint without action
+   */
+  export type WebhookEndpointDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookEndpoint
+     */
+    select?: WebhookEndpointSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookEndpoint
+     */
+    omit?: WebhookEndpointOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookEndpointInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model WebhookLog
+   */
+
+  export type AggregateWebhookLog = {
+    _count: WebhookLogCountAggregateOutputType | null
+    _avg: WebhookLogAvgAggregateOutputType | null
+    _sum: WebhookLogSumAggregateOutputType | null
+    _min: WebhookLogMinAggregateOutputType | null
+    _max: WebhookLogMaxAggregateOutputType | null
+  }
+
+  export type WebhookLogAvgAggregateOutputType = {
+    statusCode: number | null
+    attemptCount: number | null
+  }
+
+  export type WebhookLogSumAggregateOutputType = {
+    statusCode: number | null
+    attemptCount: number | null
+  }
+
+  export type WebhookLogMinAggregateOutputType = {
+    id: string | null
+    endpointId: string | null
+    event: string | null
+    statusCode: number | null
+    response: string | null
+    success: boolean | null
+    attemptCount: number | null
+    sentAt: Date | null
+  }
+
+  export type WebhookLogMaxAggregateOutputType = {
+    id: string | null
+    endpointId: string | null
+    event: string | null
+    statusCode: number | null
+    response: string | null
+    success: boolean | null
+    attemptCount: number | null
+    sentAt: Date | null
+  }
+
+  export type WebhookLogCountAggregateOutputType = {
+    id: number
+    endpointId: number
+    event: number
+    payload: number
+    statusCode: number
+    response: number
+    success: number
+    attemptCount: number
+    sentAt: number
+    _all: number
+  }
+
+
+  export type WebhookLogAvgAggregateInputType = {
+    statusCode?: true
+    attemptCount?: true
+  }
+
+  export type WebhookLogSumAggregateInputType = {
+    statusCode?: true
+    attemptCount?: true
+  }
+
+  export type WebhookLogMinAggregateInputType = {
+    id?: true
+    endpointId?: true
+    event?: true
+    statusCode?: true
+    response?: true
+    success?: true
+    attemptCount?: true
+    sentAt?: true
+  }
+
+  export type WebhookLogMaxAggregateInputType = {
+    id?: true
+    endpointId?: true
+    event?: true
+    statusCode?: true
+    response?: true
+    success?: true
+    attemptCount?: true
+    sentAt?: true
+  }
+
+  export type WebhookLogCountAggregateInputType = {
+    id?: true
+    endpointId?: true
+    event?: true
+    payload?: true
+    statusCode?: true
+    response?: true
+    success?: true
+    attemptCount?: true
+    sentAt?: true
+    _all?: true
+  }
+
+  export type WebhookLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WebhookLog to aggregate.
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookLogs to fetch.
+     */
+    orderBy?: WebhookLogOrderByWithRelationInput | WebhookLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WebhookLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WebhookLogs
+    **/
+    _count?: true | WebhookLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: WebhookLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: WebhookLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WebhookLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WebhookLogMaxAggregateInputType
+  }
+
+  export type GetWebhookLogAggregateType<T extends WebhookLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateWebhookLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWebhookLog[P]>
+      : GetScalarType<T[P], AggregateWebhookLog[P]>
+  }
+
+
+
+
+  export type WebhookLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WebhookLogWhereInput
+    orderBy?: WebhookLogOrderByWithAggregationInput | WebhookLogOrderByWithAggregationInput[]
+    by: WebhookLogScalarFieldEnum[] | WebhookLogScalarFieldEnum
+    having?: WebhookLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WebhookLogCountAggregateInputType | true
+    _avg?: WebhookLogAvgAggregateInputType
+    _sum?: WebhookLogSumAggregateInputType
+    _min?: WebhookLogMinAggregateInputType
+    _max?: WebhookLogMaxAggregateInputType
+  }
+
+  export type WebhookLogGroupByOutputType = {
+    id: string
+    endpointId: string
+    event: string
+    payload: JsonValue
+    statusCode: number | null
+    response: string | null
+    success: boolean
+    attemptCount: number
+    sentAt: Date
+    _count: WebhookLogCountAggregateOutputType | null
+    _avg: WebhookLogAvgAggregateOutputType | null
+    _sum: WebhookLogSumAggregateOutputType | null
+    _min: WebhookLogMinAggregateOutputType | null
+    _max: WebhookLogMaxAggregateOutputType | null
+  }
+
+  type GetWebhookLogGroupByPayload<T extends WebhookLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WebhookLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WebhookLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WebhookLogGroupByOutputType[P]>
+            : GetScalarType<T[P], WebhookLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WebhookLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    endpointId?: boolean
+    event?: boolean
+    payload?: boolean
+    statusCode?: boolean
+    response?: boolean
+    success?: boolean
+    attemptCount?: boolean
+    sentAt?: boolean
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["webhookLog"]>
+
+  export type WebhookLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    endpointId?: boolean
+    event?: boolean
+    payload?: boolean
+    statusCode?: boolean
+    response?: boolean
+    success?: boolean
+    attemptCount?: boolean
+    sentAt?: boolean
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["webhookLog"]>
+
+  export type WebhookLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    endpointId?: boolean
+    event?: boolean
+    payload?: boolean
+    statusCode?: boolean
+    response?: boolean
+    success?: boolean
+    attemptCount?: boolean
+    sentAt?: boolean
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["webhookLog"]>
+
+  export type WebhookLogSelectScalar = {
+    id?: boolean
+    endpointId?: boolean
+    event?: boolean
+    payload?: boolean
+    statusCode?: boolean
+    response?: boolean
+    success?: boolean
+    attemptCount?: boolean
+    sentAt?: boolean
+  }
+
+  export type WebhookLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "endpointId" | "event" | "payload" | "statusCode" | "response" | "success" | "attemptCount" | "sentAt", ExtArgs["result"]["webhookLog"]>
+  export type WebhookLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }
+  export type WebhookLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }
+  export type WebhookLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    endpoint?: boolean | WebhookEndpointDefaultArgs<ExtArgs>
+  }
+
+  export type $WebhookLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WebhookLog"
+    objects: {
+      endpoint: Prisma.$WebhookEndpointPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      endpointId: string
+      event: string
+      payload: Prisma.JsonValue
+      statusCode: number | null
+      response: string | null
+      success: boolean
+      attemptCount: number
+      sentAt: Date
+    }, ExtArgs["result"]["webhookLog"]>
+    composites: {}
+  }
+
+  type WebhookLogGetPayload<S extends boolean | null | undefined | WebhookLogDefaultArgs> = $Result.GetResult<Prisma.$WebhookLogPayload, S>
+
+  type WebhookLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WebhookLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WebhookLogCountAggregateInputType | true
+    }
+
+  export interface WebhookLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WebhookLog'], meta: { name: 'WebhookLog' } }
+    /**
+     * Find zero or one WebhookLog that matches the filter.
+     * @param {WebhookLogFindUniqueArgs} args - Arguments to find a WebhookLog
+     * @example
+     * // Get one WebhookLog
+     * const webhookLog = await prisma.webhookLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WebhookLogFindUniqueArgs>(args: SelectSubset<T, WebhookLogFindUniqueArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WebhookLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WebhookLogFindUniqueOrThrowArgs} args - Arguments to find a WebhookLog
+     * @example
+     * // Get one WebhookLog
+     * const webhookLog = await prisma.webhookLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WebhookLogFindUniqueOrThrowArgs>(args: SelectSubset<T, WebhookLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WebhookLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogFindFirstArgs} args - Arguments to find a WebhookLog
+     * @example
+     * // Get one WebhookLog
+     * const webhookLog = await prisma.webhookLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WebhookLogFindFirstArgs>(args?: SelectSubset<T, WebhookLogFindFirstArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WebhookLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogFindFirstOrThrowArgs} args - Arguments to find a WebhookLog
+     * @example
+     * // Get one WebhookLog
+     * const webhookLog = await prisma.webhookLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WebhookLogFindFirstOrThrowArgs>(args?: SelectSubset<T, WebhookLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WebhookLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WebhookLogs
+     * const webhookLogs = await prisma.webhookLog.findMany()
+     * 
+     * // Get first 10 WebhookLogs
+     * const webhookLogs = await prisma.webhookLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const webhookLogWithIdOnly = await prisma.webhookLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WebhookLogFindManyArgs>(args?: SelectSubset<T, WebhookLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WebhookLog.
+     * @param {WebhookLogCreateArgs} args - Arguments to create a WebhookLog.
+     * @example
+     * // Create one WebhookLog
+     * const WebhookLog = await prisma.webhookLog.create({
+     *   data: {
+     *     // ... data to create a WebhookLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends WebhookLogCreateArgs>(args: SelectSubset<T, WebhookLogCreateArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WebhookLogs.
+     * @param {WebhookLogCreateManyArgs} args - Arguments to create many WebhookLogs.
+     * @example
+     * // Create many WebhookLogs
+     * const webhookLog = await prisma.webhookLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WebhookLogCreateManyArgs>(args?: SelectSubset<T, WebhookLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WebhookLogs and returns the data saved in the database.
+     * @param {WebhookLogCreateManyAndReturnArgs} args - Arguments to create many WebhookLogs.
+     * @example
+     * // Create many WebhookLogs
+     * const webhookLog = await prisma.webhookLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WebhookLogs and only return the `id`
+     * const webhookLogWithIdOnly = await prisma.webhookLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WebhookLogCreateManyAndReturnArgs>(args?: SelectSubset<T, WebhookLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WebhookLog.
+     * @param {WebhookLogDeleteArgs} args - Arguments to delete one WebhookLog.
+     * @example
+     * // Delete one WebhookLog
+     * const WebhookLog = await prisma.webhookLog.delete({
+     *   where: {
+     *     // ... filter to delete one WebhookLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WebhookLogDeleteArgs>(args: SelectSubset<T, WebhookLogDeleteArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WebhookLog.
+     * @param {WebhookLogUpdateArgs} args - Arguments to update one WebhookLog.
+     * @example
+     * // Update one WebhookLog
+     * const webhookLog = await prisma.webhookLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WebhookLogUpdateArgs>(args: SelectSubset<T, WebhookLogUpdateArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WebhookLogs.
+     * @param {WebhookLogDeleteManyArgs} args - Arguments to filter WebhookLogs to delete.
+     * @example
+     * // Delete a few WebhookLogs
+     * const { count } = await prisma.webhookLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WebhookLogDeleteManyArgs>(args?: SelectSubset<T, WebhookLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WebhookLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WebhookLogs
+     * const webhookLog = await prisma.webhookLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WebhookLogUpdateManyArgs>(args: SelectSubset<T, WebhookLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WebhookLogs and returns the data updated in the database.
+     * @param {WebhookLogUpdateManyAndReturnArgs} args - Arguments to update many WebhookLogs.
+     * @example
+     * // Update many WebhookLogs
+     * const webhookLog = await prisma.webhookLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WebhookLogs and only return the `id`
+     * const webhookLogWithIdOnly = await prisma.webhookLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WebhookLogUpdateManyAndReturnArgs>(args: SelectSubset<T, WebhookLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WebhookLog.
+     * @param {WebhookLogUpsertArgs} args - Arguments to update or create a WebhookLog.
+     * @example
+     * // Update or create a WebhookLog
+     * const webhookLog = await prisma.webhookLog.upsert({
+     *   create: {
+     *     // ... data to create a WebhookLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WebhookLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WebhookLogUpsertArgs>(args: SelectSubset<T, WebhookLogUpsertArgs<ExtArgs>>): Prisma__WebhookLogClient<$Result.GetResult<Prisma.$WebhookLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WebhookLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogCountArgs} args - Arguments to filter WebhookLogs to count.
+     * @example
+     * // Count the number of WebhookLogs
+     * const count = await prisma.webhookLog.count({
+     *   where: {
+     *     // ... the filter for the WebhookLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends WebhookLogCountArgs>(
+      args?: Subset<T, WebhookLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WebhookLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WebhookLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WebhookLogAggregateArgs>(args: Subset<T, WebhookLogAggregateArgs>): Prisma.PrismaPromise<GetWebhookLogAggregateType<T>>
+
+    /**
+     * Group by WebhookLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WebhookLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WebhookLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WebhookLogGroupByArgs['orderBy'] }
+        : { orderBy?: WebhookLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WebhookLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWebhookLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WebhookLog model
+   */
+  readonly fields: WebhookLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WebhookLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WebhookLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    endpoint<T extends WebhookEndpointDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WebhookEndpointDefaultArgs<ExtArgs>>): Prisma__WebhookEndpointClient<$Result.GetResult<Prisma.$WebhookEndpointPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WebhookLog model
+   */
+  interface WebhookLogFieldRefs {
+    readonly id: FieldRef<"WebhookLog", 'String'>
+    readonly endpointId: FieldRef<"WebhookLog", 'String'>
+    readonly event: FieldRef<"WebhookLog", 'String'>
+    readonly payload: FieldRef<"WebhookLog", 'Json'>
+    readonly statusCode: FieldRef<"WebhookLog", 'Int'>
+    readonly response: FieldRef<"WebhookLog", 'String'>
+    readonly success: FieldRef<"WebhookLog", 'Boolean'>
+    readonly attemptCount: FieldRef<"WebhookLog", 'Int'>
+    readonly sentAt: FieldRef<"WebhookLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WebhookLog findUnique
+   */
+  export type WebhookLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookLog to fetch.
+     */
+    where: WebhookLogWhereUniqueInput
+  }
+
+  /**
+   * WebhookLog findUniqueOrThrow
+   */
+  export type WebhookLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookLog to fetch.
+     */
+    where: WebhookLogWhereUniqueInput
+  }
+
+  /**
+   * WebhookLog findFirst
+   */
+  export type WebhookLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookLog to fetch.
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookLogs to fetch.
+     */
+    orderBy?: WebhookLogOrderByWithRelationInput | WebhookLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WebhookLogs.
+     */
+    cursor?: WebhookLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookLogs.
+     */
+    distinct?: WebhookLogScalarFieldEnum | WebhookLogScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookLog findFirstOrThrow
+   */
+  export type WebhookLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookLog to fetch.
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookLogs to fetch.
+     */
+    orderBy?: WebhookLogOrderByWithRelationInput | WebhookLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WebhookLogs.
+     */
+    cursor?: WebhookLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookLogs.
+     */
+    distinct?: WebhookLogScalarFieldEnum | WebhookLogScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookLog findMany
+   */
+  export type WebhookLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter, which WebhookLogs to fetch.
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WebhookLogs to fetch.
+     */
+    orderBy?: WebhookLogOrderByWithRelationInput | WebhookLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WebhookLogs.
+     */
+    cursor?: WebhookLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WebhookLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WebhookLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WebhookLogs.
+     */
+    distinct?: WebhookLogScalarFieldEnum | WebhookLogScalarFieldEnum[]
+  }
+
+  /**
+   * WebhookLog create
+   */
+  export type WebhookLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WebhookLog.
+     */
+    data: XOR<WebhookLogCreateInput, WebhookLogUncheckedCreateInput>
+  }
+
+  /**
+   * WebhookLog createMany
+   */
+  export type WebhookLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WebhookLogs.
+     */
+    data: WebhookLogCreateManyInput | WebhookLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WebhookLog createManyAndReturn
+   */
+  export type WebhookLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many WebhookLogs.
+     */
+    data: WebhookLogCreateManyInput | WebhookLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WebhookLog update
+   */
+  export type WebhookLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WebhookLog.
+     */
+    data: XOR<WebhookLogUpdateInput, WebhookLogUncheckedUpdateInput>
+    /**
+     * Choose, which WebhookLog to update.
+     */
+    where: WebhookLogWhereUniqueInput
+  }
+
+  /**
+   * WebhookLog updateMany
+   */
+  export type WebhookLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WebhookLogs.
+     */
+    data: XOR<WebhookLogUpdateManyMutationInput, WebhookLogUncheckedUpdateManyInput>
+    /**
+     * Filter which WebhookLogs to update
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * Limit how many WebhookLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WebhookLog updateManyAndReturn
+   */
+  export type WebhookLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * The data used to update WebhookLogs.
+     */
+    data: XOR<WebhookLogUpdateManyMutationInput, WebhookLogUncheckedUpdateManyInput>
+    /**
+     * Filter which WebhookLogs to update
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * Limit how many WebhookLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WebhookLog upsert
+   */
+  export type WebhookLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WebhookLog to update in case it exists.
+     */
+    where: WebhookLogWhereUniqueInput
+    /**
+     * In case the WebhookLog found by the `where` argument doesn't exist, create a new WebhookLog with this data.
+     */
+    create: XOR<WebhookLogCreateInput, WebhookLogUncheckedCreateInput>
+    /**
+     * In case the WebhookLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WebhookLogUpdateInput, WebhookLogUncheckedUpdateInput>
+  }
+
+  /**
+   * WebhookLog delete
+   */
+  export type WebhookLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+    /**
+     * Filter which WebhookLog to delete.
+     */
+    where: WebhookLogWhereUniqueInput
+  }
+
+  /**
+   * WebhookLog deleteMany
+   */
+  export type WebhookLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WebhookLogs to delete
+     */
+    where?: WebhookLogWhereInput
+    /**
+     * Limit how many WebhookLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WebhookLog without action
+   */
+  export type WebhookLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WebhookLog
+     */
+    select?: WebhookLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WebhookLog
+     */
+    omit?: WebhookLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WebhookLogInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -124488,6 +130795,46 @@ export namespace Prisma {
   export type PurchaseOrderItemScalarFieldEnum = (typeof PurchaseOrderItemScalarFieldEnum)[keyof typeof PurchaseOrderItemScalarFieldEnum]
 
 
+  export const CommentScalarFieldEnum: {
+    id: 'id',
+    entityType: 'entityType',
+    entityId: 'entityId',
+    authorId: 'authorId',
+    content: 'content',
+    parentId: 'parentId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+  export const FeedPostScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    authorId: 'authorId',
+    title: 'title',
+    content: 'content',
+    targetOrgId: 'targetOrgId',
+    isPinned: 'isPinned',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FeedPostScalarFieldEnum = (typeof FeedPostScalarFieldEnum)[keyof typeof FeedPostScalarFieldEnum]
+
+
+  export const FeedReactionScalarFieldEnum: {
+    id: 'id',
+    postId: 'postId',
+    userId: 'userId',
+    emoji: 'emoji',
+    createdAt: 'createdAt'
+  };
+
+  export type FeedReactionScalarFieldEnum = (typeof FeedReactionScalarFieldEnum)[keyof typeof FeedReactionScalarFieldEnum]
+
+
   export const AutomationRuleScalarFieldEnum: {
     id: 'id',
     key: 'key',
@@ -124522,6 +130869,35 @@ export namespace Prisma {
   };
 
   export type ScheduledReportScalarFieldEnum = (typeof ScheduledReportScalarFieldEnum)[keyof typeof ScheduledReportScalarFieldEnum]
+
+
+  export const WebhookEndpointScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    url: 'url',
+    secret: 'secret',
+    events: 'events',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type WebhookEndpointScalarFieldEnum = (typeof WebhookEndpointScalarFieldEnum)[keyof typeof WebhookEndpointScalarFieldEnum]
+
+
+  export const WebhookLogScalarFieldEnum: {
+    id: 'id',
+    endpointId: 'endpointId',
+    event: 'event',
+    payload: 'payload',
+    statusCode: 'statusCode',
+    response: 'response',
+    success: 'success',
+    attemptCount: 'attemptCount',
+    sentAt: 'sentAt'
+  };
+
+  export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -125439,6 +131815,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'FeedPostType'
+   */
+  export type EnumFeedPostTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedPostType'>
+    
+
+
+  /**
+   * Reference to a field of type 'FeedPostType[]'
+   */
+  export type ListEnumFeedPostTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedPostType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ReportFrequency'
    */
   export type EnumReportFrequencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportFrequency'>
@@ -125514,6 +131904,9 @@ export namespace Prisma {
     kbArticles?: KbArticleListRelationFilter
     poRequests?: PurchaseOrderListRelationFilter
     poApprovals?: PurchaseOrderListRelationFilter
+    comments?: CommentListRelationFilter
+    feedPosts?: FeedPostListRelationFilter
+    feedReactions?: FeedReactionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -125558,6 +131951,9 @@ export namespace Prisma {
     kbArticles?: KbArticleOrderByRelationAggregateInput
     poRequests?: PurchaseOrderOrderByRelationAggregateInput
     poApprovals?: PurchaseOrderOrderByRelationAggregateInput
+    comments?: CommentOrderByRelationAggregateInput
+    feedPosts?: FeedPostOrderByRelationAggregateInput
+    feedReactions?: FeedReactionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -125605,6 +132001,9 @@ export namespace Prisma {
     kbArticles?: KbArticleListRelationFilter
     poRequests?: PurchaseOrderListRelationFilter
     poApprovals?: PurchaseOrderListRelationFilter
+    comments?: CommentListRelationFilter
+    feedPosts?: FeedPostListRelationFilter
+    feedReactions?: FeedReactionListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -133163,6 +139562,219 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PurchaseOrderItem"> | Date | string
   }
 
+  export type CommentWhereInput = {
+    AND?: CommentWhereInput | CommentWhereInput[]
+    OR?: CommentWhereInput[]
+    NOT?: CommentWhereInput | CommentWhereInput[]
+    id?: StringFilter<"Comment"> | string
+    entityType?: StringFilter<"Comment"> | string
+    entityId?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    parentId?: StringNullableFilter<"Comment"> | string | null
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parent?: XOR<CommentNullableScalarRelationFilter, CommentWhereInput> | null
+    replies?: CommentListRelationFilter
+  }
+
+  export type CommentOrderByWithRelationInput = {
+    id?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    authorId?: SortOrder
+    content?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    author?: UserOrderByWithRelationInput
+    parent?: CommentOrderByWithRelationInput
+    replies?: CommentOrderByRelationAggregateInput
+  }
+
+  export type CommentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CommentWhereInput | CommentWhereInput[]
+    OR?: CommentWhereInput[]
+    NOT?: CommentWhereInput | CommentWhereInput[]
+    entityType?: StringFilter<"Comment"> | string
+    entityId?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    parentId?: StringNullableFilter<"Comment"> | string | null
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parent?: XOR<CommentNullableScalarRelationFilter, CommentWhereInput> | null
+    replies?: CommentListRelationFilter
+  }, "id">
+
+  export type CommentOrderByWithAggregationInput = {
+    id?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    authorId?: SortOrder
+    content?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CommentCountOrderByAggregateInput
+    _max?: CommentMaxOrderByAggregateInput
+    _min?: CommentMinOrderByAggregateInput
+  }
+
+  export type CommentScalarWhereWithAggregatesInput = {
+    AND?: CommentScalarWhereWithAggregatesInput | CommentScalarWhereWithAggregatesInput[]
+    OR?: CommentScalarWhereWithAggregatesInput[]
+    NOT?: CommentScalarWhereWithAggregatesInput | CommentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Comment"> | string
+    entityType?: StringWithAggregatesFilter<"Comment"> | string
+    entityId?: StringWithAggregatesFilter<"Comment"> | string
+    authorId?: StringWithAggregatesFilter<"Comment"> | string
+    content?: StringWithAggregatesFilter<"Comment"> | string
+    parentId?: StringNullableWithAggregatesFilter<"Comment"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+  }
+
+  export type FeedPostWhereInput = {
+    AND?: FeedPostWhereInput | FeedPostWhereInput[]
+    OR?: FeedPostWhereInput[]
+    NOT?: FeedPostWhereInput | FeedPostWhereInput[]
+    id?: StringFilter<"FeedPost"> | string
+    type?: EnumFeedPostTypeFilter<"FeedPost"> | $Enums.FeedPostType
+    authorId?: StringFilter<"FeedPost"> | string
+    title?: StringNullableFilter<"FeedPost"> | string | null
+    content?: StringFilter<"FeedPost"> | string
+    targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
+    isPinned?: BoolFilter<"FeedPost"> | boolean
+    createdAt?: DateTimeFilter<"FeedPost"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    reactions?: FeedReactionListRelationFilter
+  }
+
+  export type FeedPostOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    authorId?: SortOrder
+    title?: SortOrderInput | SortOrder
+    content?: SortOrder
+    targetOrgId?: SortOrderInput | SortOrder
+    isPinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    author?: UserOrderByWithRelationInput
+    reactions?: FeedReactionOrderByRelationAggregateInput
+  }
+
+  export type FeedPostWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: FeedPostWhereInput | FeedPostWhereInput[]
+    OR?: FeedPostWhereInput[]
+    NOT?: FeedPostWhereInput | FeedPostWhereInput[]
+    type?: EnumFeedPostTypeFilter<"FeedPost"> | $Enums.FeedPostType
+    authorId?: StringFilter<"FeedPost"> | string
+    title?: StringNullableFilter<"FeedPost"> | string | null
+    content?: StringFilter<"FeedPost"> | string
+    targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
+    isPinned?: BoolFilter<"FeedPost"> | boolean
+    createdAt?: DateTimeFilter<"FeedPost"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    reactions?: FeedReactionListRelationFilter
+  }, "id">
+
+  export type FeedPostOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    authorId?: SortOrder
+    title?: SortOrderInput | SortOrder
+    content?: SortOrder
+    targetOrgId?: SortOrderInput | SortOrder
+    isPinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FeedPostCountOrderByAggregateInput
+    _max?: FeedPostMaxOrderByAggregateInput
+    _min?: FeedPostMinOrderByAggregateInput
+  }
+
+  export type FeedPostScalarWhereWithAggregatesInput = {
+    AND?: FeedPostScalarWhereWithAggregatesInput | FeedPostScalarWhereWithAggregatesInput[]
+    OR?: FeedPostScalarWhereWithAggregatesInput[]
+    NOT?: FeedPostScalarWhereWithAggregatesInput | FeedPostScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FeedPost"> | string
+    type?: EnumFeedPostTypeWithAggregatesFilter<"FeedPost"> | $Enums.FeedPostType
+    authorId?: StringWithAggregatesFilter<"FeedPost"> | string
+    title?: StringNullableWithAggregatesFilter<"FeedPost"> | string | null
+    content?: StringWithAggregatesFilter<"FeedPost"> | string
+    targetOrgId?: StringNullableWithAggregatesFilter<"FeedPost"> | string | null
+    isPinned?: BoolWithAggregatesFilter<"FeedPost"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"FeedPost"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FeedPost"> | Date | string
+  }
+
+  export type FeedReactionWhereInput = {
+    AND?: FeedReactionWhereInput | FeedReactionWhereInput[]
+    OR?: FeedReactionWhereInput[]
+    NOT?: FeedReactionWhereInput | FeedReactionWhereInput[]
+    id?: StringFilter<"FeedReaction"> | string
+    postId?: StringFilter<"FeedReaction"> | string
+    userId?: StringFilter<"FeedReaction"> | string
+    emoji?: StringFilter<"FeedReaction"> | string
+    createdAt?: DateTimeFilter<"FeedReaction"> | Date | string
+    post?: XOR<FeedPostScalarRelationFilter, FeedPostWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type FeedReactionOrderByWithRelationInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    emoji?: SortOrder
+    createdAt?: SortOrder
+    post?: FeedPostOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type FeedReactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    postId_userId_emoji?: FeedReactionPostIdUserIdEmojiCompoundUniqueInput
+    AND?: FeedReactionWhereInput | FeedReactionWhereInput[]
+    OR?: FeedReactionWhereInput[]
+    NOT?: FeedReactionWhereInput | FeedReactionWhereInput[]
+    postId?: StringFilter<"FeedReaction"> | string
+    userId?: StringFilter<"FeedReaction"> | string
+    emoji?: StringFilter<"FeedReaction"> | string
+    createdAt?: DateTimeFilter<"FeedReaction"> | Date | string
+    post?: XOR<FeedPostScalarRelationFilter, FeedPostWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "postId_userId_emoji">
+
+  export type FeedReactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    emoji?: SortOrder
+    createdAt?: SortOrder
+    _count?: FeedReactionCountOrderByAggregateInput
+    _max?: FeedReactionMaxOrderByAggregateInput
+    _min?: FeedReactionMinOrderByAggregateInput
+  }
+
+  export type FeedReactionScalarWhereWithAggregatesInput = {
+    AND?: FeedReactionScalarWhereWithAggregatesInput | FeedReactionScalarWhereWithAggregatesInput[]
+    OR?: FeedReactionScalarWhereWithAggregatesInput[]
+    NOT?: FeedReactionScalarWhereWithAggregatesInput | FeedReactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FeedReaction"> | string
+    postId?: StringWithAggregatesFilter<"FeedReaction"> | string
+    userId?: StringWithAggregatesFilter<"FeedReaction"> | string
+    emoji?: StringWithAggregatesFilter<"FeedReaction"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"FeedReaction"> | Date | string
+  }
+
   export type AutomationRuleWhereInput = {
     AND?: AutomationRuleWhereInput | AutomationRuleWhereInput[]
     OR?: AutomationRuleWhereInput[]
@@ -133341,6 +139953,153 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ScheduledReport"> | Date | string
   }
 
+  export type WebhookEndpointWhereInput = {
+    AND?: WebhookEndpointWhereInput | WebhookEndpointWhereInput[]
+    OR?: WebhookEndpointWhereInput[]
+    NOT?: WebhookEndpointWhereInput | WebhookEndpointWhereInput[]
+    id?: StringFilter<"WebhookEndpoint"> | string
+    name?: StringFilter<"WebhookEndpoint"> | string
+    url?: StringFilter<"WebhookEndpoint"> | string
+    secret?: StringNullableFilter<"WebhookEndpoint"> | string | null
+    events?: StringNullableListFilter<"WebhookEndpoint">
+    isActive?: BoolFilter<"WebhookEndpoint"> | boolean
+    createdAt?: DateTimeFilter<"WebhookEndpoint"> | Date | string
+    updatedAt?: DateTimeFilter<"WebhookEndpoint"> | Date | string
+    logs?: WebhookLogListRelationFilter
+  }
+
+  export type WebhookEndpointOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    secret?: SortOrderInput | SortOrder
+    events?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    logs?: WebhookLogOrderByRelationAggregateInput
+  }
+
+  export type WebhookEndpointWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WebhookEndpointWhereInput | WebhookEndpointWhereInput[]
+    OR?: WebhookEndpointWhereInput[]
+    NOT?: WebhookEndpointWhereInput | WebhookEndpointWhereInput[]
+    name?: StringFilter<"WebhookEndpoint"> | string
+    url?: StringFilter<"WebhookEndpoint"> | string
+    secret?: StringNullableFilter<"WebhookEndpoint"> | string | null
+    events?: StringNullableListFilter<"WebhookEndpoint">
+    isActive?: BoolFilter<"WebhookEndpoint"> | boolean
+    createdAt?: DateTimeFilter<"WebhookEndpoint"> | Date | string
+    updatedAt?: DateTimeFilter<"WebhookEndpoint"> | Date | string
+    logs?: WebhookLogListRelationFilter
+  }, "id">
+
+  export type WebhookEndpointOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    secret?: SortOrderInput | SortOrder
+    events?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: WebhookEndpointCountOrderByAggregateInput
+    _max?: WebhookEndpointMaxOrderByAggregateInput
+    _min?: WebhookEndpointMinOrderByAggregateInput
+  }
+
+  export type WebhookEndpointScalarWhereWithAggregatesInput = {
+    AND?: WebhookEndpointScalarWhereWithAggregatesInput | WebhookEndpointScalarWhereWithAggregatesInput[]
+    OR?: WebhookEndpointScalarWhereWithAggregatesInput[]
+    NOT?: WebhookEndpointScalarWhereWithAggregatesInput | WebhookEndpointScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WebhookEndpoint"> | string
+    name?: StringWithAggregatesFilter<"WebhookEndpoint"> | string
+    url?: StringWithAggregatesFilter<"WebhookEndpoint"> | string
+    secret?: StringNullableWithAggregatesFilter<"WebhookEndpoint"> | string | null
+    events?: StringNullableListFilter<"WebhookEndpoint">
+    isActive?: BoolWithAggregatesFilter<"WebhookEndpoint"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"WebhookEndpoint"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WebhookEndpoint"> | Date | string
+  }
+
+  export type WebhookLogWhereInput = {
+    AND?: WebhookLogWhereInput | WebhookLogWhereInput[]
+    OR?: WebhookLogWhereInput[]
+    NOT?: WebhookLogWhereInput | WebhookLogWhereInput[]
+    id?: StringFilter<"WebhookLog"> | string
+    endpointId?: StringFilter<"WebhookLog"> | string
+    event?: StringFilter<"WebhookLog"> | string
+    payload?: JsonFilter<"WebhookLog">
+    statusCode?: IntNullableFilter<"WebhookLog"> | number | null
+    response?: StringNullableFilter<"WebhookLog"> | string | null
+    success?: BoolFilter<"WebhookLog"> | boolean
+    attemptCount?: IntFilter<"WebhookLog"> | number
+    sentAt?: DateTimeFilter<"WebhookLog"> | Date | string
+    endpoint?: XOR<WebhookEndpointScalarRelationFilter, WebhookEndpointWhereInput>
+  }
+
+  export type WebhookLogOrderByWithRelationInput = {
+    id?: SortOrder
+    endpointId?: SortOrder
+    event?: SortOrder
+    payload?: SortOrder
+    statusCode?: SortOrderInput | SortOrder
+    response?: SortOrderInput | SortOrder
+    success?: SortOrder
+    attemptCount?: SortOrder
+    sentAt?: SortOrder
+    endpoint?: WebhookEndpointOrderByWithRelationInput
+  }
+
+  export type WebhookLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: WebhookLogWhereInput | WebhookLogWhereInput[]
+    OR?: WebhookLogWhereInput[]
+    NOT?: WebhookLogWhereInput | WebhookLogWhereInput[]
+    endpointId?: StringFilter<"WebhookLog"> | string
+    event?: StringFilter<"WebhookLog"> | string
+    payload?: JsonFilter<"WebhookLog">
+    statusCode?: IntNullableFilter<"WebhookLog"> | number | null
+    response?: StringNullableFilter<"WebhookLog"> | string | null
+    success?: BoolFilter<"WebhookLog"> | boolean
+    attemptCount?: IntFilter<"WebhookLog"> | number
+    sentAt?: DateTimeFilter<"WebhookLog"> | Date | string
+    endpoint?: XOR<WebhookEndpointScalarRelationFilter, WebhookEndpointWhereInput>
+  }, "id">
+
+  export type WebhookLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    endpointId?: SortOrder
+    event?: SortOrder
+    payload?: SortOrder
+    statusCode?: SortOrderInput | SortOrder
+    response?: SortOrderInput | SortOrder
+    success?: SortOrder
+    attemptCount?: SortOrder
+    sentAt?: SortOrder
+    _count?: WebhookLogCountOrderByAggregateInput
+    _avg?: WebhookLogAvgOrderByAggregateInput
+    _max?: WebhookLogMaxOrderByAggregateInput
+    _min?: WebhookLogMinOrderByAggregateInput
+    _sum?: WebhookLogSumOrderByAggregateInput
+  }
+
+  export type WebhookLogScalarWhereWithAggregatesInput = {
+    AND?: WebhookLogScalarWhereWithAggregatesInput | WebhookLogScalarWhereWithAggregatesInput[]
+    OR?: WebhookLogScalarWhereWithAggregatesInput[]
+    NOT?: WebhookLogScalarWhereWithAggregatesInput | WebhookLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WebhookLog"> | string
+    endpointId?: StringWithAggregatesFilter<"WebhookLog"> | string
+    event?: StringWithAggregatesFilter<"WebhookLog"> | string
+    payload?: JsonWithAggregatesFilter<"WebhookLog">
+    statusCode?: IntNullableWithAggregatesFilter<"WebhookLog"> | number | null
+    response?: StringNullableWithAggregatesFilter<"WebhookLog"> | string | null
+    success?: BoolWithAggregatesFilter<"WebhookLog"> | boolean
+    attemptCount?: IntWithAggregatesFilter<"WebhookLog"> | number
+    sentAt?: DateTimeWithAggregatesFilter<"WebhookLog"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -133382,6 +140141,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -133425,6 +140187,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -133468,6 +140233,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -133511,6 +140279,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -141760,6 +148531,226 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommentCreateInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
+    parent?: CommentCreateNestedOneWithoutRepliesInput
+    replies?: CommentCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentUncheckedCreateInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: CommentUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+    parent?: CommentUpdateOneWithoutRepliesNestedInput
+    replies?: CommentUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: CommentUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentCreateManyInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedPostCreateInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutFeedPostsInput
+    reactions?: FeedReactionCreateNestedManyWithoutPostInput
+  }
+
+  export type FeedPostUncheckedCreateInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    authorId: string
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reactions?: FeedReactionUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type FeedPostUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutFeedPostsNestedInput
+    reactions?: FeedReactionUpdateManyWithoutPostNestedInput
+  }
+
+  export type FeedPostUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    authorId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reactions?: FeedReactionUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type FeedPostCreateManyInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    authorId: string
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedPostUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedPostUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    authorId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionCreateInput = {
+    id?: string
+    emoji: string
+    createdAt?: Date | string
+    post: FeedPostCreateNestedOneWithoutReactionsInput
+    user: UserCreateNestedOneWithoutFeedReactionsInput
+  }
+
+  export type FeedReactionUncheckedCreateInput = {
+    id?: string
+    postId: string
+    userId: string
+    emoji: string
+    createdAt?: Date | string
+  }
+
+  export type FeedReactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: FeedPostUpdateOneRequiredWithoutReactionsNestedInput
+    user?: UserUpdateOneRequiredWithoutFeedReactionsNestedInput
+  }
+
+  export type FeedReactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionCreateManyInput = {
+    id?: string
+    postId: string
+    userId: string
+    emoji: string
+    createdAt?: Date | string
+  }
+
+  export type FeedReactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AutomationRuleCreateInput = {
     id?: string
     key: string
@@ -141970,6 +148961,170 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type WebhookEndpointCreateInput = {
+    id?: string
+    name: string
+    url: string
+    secret?: string | null
+    events?: WebhookEndpointCreateeventsInput | string[]
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    logs?: WebhookLogCreateNestedManyWithoutEndpointInput
+  }
+
+  export type WebhookEndpointUncheckedCreateInput = {
+    id?: string
+    name: string
+    url: string
+    secret?: string | null
+    events?: WebhookEndpointCreateeventsInput | string[]
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    logs?: WebhookLogUncheckedCreateNestedManyWithoutEndpointInput
+  }
+
+  export type WebhookEndpointUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: WebhookLogUpdateManyWithoutEndpointNestedInput
+  }
+
+  export type WebhookEndpointUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: WebhookLogUncheckedUpdateManyWithoutEndpointNestedInput
+  }
+
+  export type WebhookEndpointCreateManyInput = {
+    id?: string
+    name: string
+    url: string
+    secret?: string | null
+    events?: WebhookEndpointCreateeventsInput | string[]
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WebhookEndpointUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookEndpointUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogCreateInput = {
+    id?: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+    endpoint: WebhookEndpointCreateNestedOneWithoutLogsInput
+  }
+
+  export type WebhookLogUncheckedCreateInput = {
+    id?: string
+    endpointId: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+  }
+
+  export type WebhookLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endpoint?: WebhookEndpointUpdateOneRequiredWithoutLogsNestedInput
+  }
+
+  export type WebhookLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    endpointId?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogCreateManyInput = {
+    id?: string
+    endpointId: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+  }
+
+  export type WebhookLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    endpointId?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -142177,6 +149332,24 @@ export namespace Prisma {
     none?: PurchaseOrderWhereInput
   }
 
+  export type CommentListRelationFilter = {
+    every?: CommentWhereInput
+    some?: CommentWhereInput
+    none?: CommentWhereInput
+  }
+
+  export type FeedPostListRelationFilter = {
+    every?: FeedPostWhereInput
+    some?: FeedPostWhereInput
+    none?: FeedPostWhereInput
+  }
+
+  export type FeedReactionListRelationFilter = {
+    every?: FeedReactionWhereInput
+    some?: FeedReactionWhereInput
+    none?: FeedReactionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -142275,6 +149448,18 @@ export namespace Prisma {
   }
 
   export type PurchaseOrderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FeedPostOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type FeedReactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -148414,6 +155599,132 @@ export namespace Prisma {
     _max?: NestedEnumPoItemStatusFilter<$PrismaModel>
   }
 
+  export type CommentNullableScalarRelationFilter = {
+    is?: CommentWhereInput | null
+    isNot?: CommentWhereInput | null
+  }
+
+  export type CommentCountOrderByAggregateInput = {
+    id?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    authorId?: SortOrder
+    content?: SortOrder
+    parentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    authorId?: SortOrder
+    content?: SortOrder
+    parentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommentMinOrderByAggregateInput = {
+    id?: SortOrder
+    entityType?: SortOrder
+    entityId?: SortOrder
+    authorId?: SortOrder
+    content?: SortOrder
+    parentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumFeedPostTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedPostType | EnumFeedPostTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedPostTypeFilter<$PrismaModel> | $Enums.FeedPostType
+  }
+
+  export type FeedPostCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    authorId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    targetOrgId?: SortOrder
+    isPinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FeedPostMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    authorId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    targetOrgId?: SortOrder
+    isPinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FeedPostMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    authorId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    targetOrgId?: SortOrder
+    isPinned?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumFeedPostTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedPostType | EnumFeedPostTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedPostTypeWithAggregatesFilter<$PrismaModel> | $Enums.FeedPostType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeedPostTypeFilter<$PrismaModel>
+    _max?: NestedEnumFeedPostTypeFilter<$PrismaModel>
+  }
+
+  export type FeedPostScalarRelationFilter = {
+    is?: FeedPostWhereInput
+    isNot?: FeedPostWhereInput
+  }
+
+  export type FeedReactionPostIdUserIdEmojiCompoundUniqueInput = {
+    postId: string
+    userId: string
+    emoji: string
+  }
+
+  export type FeedReactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    emoji?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FeedReactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    emoji?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type FeedReactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    postId?: SortOrder
+    userId?: SortOrder
+    emoji?: SortOrder
+    createdAt?: SortOrder
+  }
+
   export type AutomationRuleCountOrderByAggregateInput = {
     id?: SortOrder
     key?: SortOrder
@@ -148556,6 +155867,96 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumReportFormatFilter<$PrismaModel>
     _max?: NestedEnumReportFormatFilter<$PrismaModel>
+  }
+
+  export type WebhookLogListRelationFilter = {
+    every?: WebhookLogWhereInput
+    some?: WebhookLogWhereInput
+    none?: WebhookLogWhereInput
+  }
+
+  export type WebhookLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WebhookEndpointCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    secret?: SortOrder
+    events?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WebhookEndpointMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    secret?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WebhookEndpointMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    secret?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WebhookEndpointScalarRelationFilter = {
+    is?: WebhookEndpointWhereInput
+    isNot?: WebhookEndpointWhereInput
+  }
+
+  export type WebhookLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    endpointId?: SortOrder
+    event?: SortOrder
+    payload?: SortOrder
+    statusCode?: SortOrder
+    response?: SortOrder
+    success?: SortOrder
+    attemptCount?: SortOrder
+    sentAt?: SortOrder
+  }
+
+  export type WebhookLogAvgOrderByAggregateInput = {
+    statusCode?: SortOrder
+    attemptCount?: SortOrder
+  }
+
+  export type WebhookLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    endpointId?: SortOrder
+    event?: SortOrder
+    statusCode?: SortOrder
+    response?: SortOrder
+    success?: SortOrder
+    attemptCount?: SortOrder
+    sentAt?: SortOrder
+  }
+
+  export type WebhookLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    endpointId?: SortOrder
+    event?: SortOrder
+    statusCode?: SortOrder
+    response?: SortOrder
+    success?: SortOrder
+    attemptCount?: SortOrder
+    sentAt?: SortOrder
+  }
+
+  export type WebhookLogSumOrderByAggregateInput = {
+    statusCode?: SortOrder
+    attemptCount?: SortOrder
   }
 
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
@@ -148773,6 +156174,27 @@ export namespace Prisma {
     connect?: PurchaseOrderWhereUniqueInput | PurchaseOrderWhereUniqueInput[]
   }
 
+  export type CommentCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type FeedPostCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput> | FeedPostCreateWithoutAuthorInput[] | FeedPostUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: FeedPostCreateOrConnectWithoutAuthorInput | FeedPostCreateOrConnectWithoutAuthorInput[]
+    createMany?: FeedPostCreateManyAuthorInputEnvelope
+    connect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+  }
+
+  export type FeedReactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput> | FeedReactionCreateWithoutUserInput[] | FeedReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutUserInput | FeedReactionCreateOrConnectWithoutUserInput[]
+    createMany?: FeedReactionCreateManyUserInputEnvelope
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+  }
+
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -148980,6 +156402,27 @@ export namespace Prisma {
     connectOrCreate?: PurchaseOrderCreateOrConnectWithoutApproverInput | PurchaseOrderCreateOrConnectWithoutApproverInput[]
     createMany?: PurchaseOrderCreateManyApproverInputEnvelope
     connect?: PurchaseOrderWhereUniqueInput | PurchaseOrderWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type FeedPostUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput> | FeedPostCreateWithoutAuthorInput[] | FeedPostUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: FeedPostCreateOrConnectWithoutAuthorInput | FeedPostCreateOrConnectWithoutAuthorInput[]
+    createMany?: FeedPostCreateManyAuthorInputEnvelope
+    connect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+  }
+
+  export type FeedReactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput> | FeedReactionCreateWithoutUserInput[] | FeedReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutUserInput | FeedReactionCreateOrConnectWithoutUserInput[]
+    createMany?: FeedReactionCreateManyUserInputEnvelope
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -149428,6 +156871,48 @@ export namespace Prisma {
     deleteMany?: PurchaseOrderScalarWhereInput | PurchaseOrderScalarWhereInput[]
   }
 
+  export type CommentUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type FeedPostUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput> | FeedPostCreateWithoutAuthorInput[] | FeedPostUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: FeedPostCreateOrConnectWithoutAuthorInput | FeedPostCreateOrConnectWithoutAuthorInput[]
+    upsert?: FeedPostUpsertWithWhereUniqueWithoutAuthorInput | FeedPostUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: FeedPostCreateManyAuthorInputEnvelope
+    set?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    disconnect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    delete?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    connect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    update?: FeedPostUpdateWithWhereUniqueWithoutAuthorInput | FeedPostUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: FeedPostUpdateManyWithWhereWithoutAuthorInput | FeedPostUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: FeedPostScalarWhereInput | FeedPostScalarWhereInput[]
+  }
+
+  export type FeedReactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput> | FeedReactionCreateWithoutUserInput[] | FeedReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutUserInput | FeedReactionCreateOrConnectWithoutUserInput[]
+    upsert?: FeedReactionUpsertWithWhereUniqueWithoutUserInput | FeedReactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FeedReactionCreateManyUserInputEnvelope
+    set?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    disconnect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    delete?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    update?: FeedReactionUpdateWithWhereUniqueWithoutUserInput | FeedReactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FeedReactionUpdateManyWithWhereWithoutUserInput | FeedReactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
+  }
+
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -149842,6 +157327,48 @@ export namespace Prisma {
     update?: PurchaseOrderUpdateWithWhereUniqueWithoutApproverInput | PurchaseOrderUpdateWithWhereUniqueWithoutApproverInput[]
     updateMany?: PurchaseOrderUpdateManyWithWhereWithoutApproverInput | PurchaseOrderUpdateManyWithWhereWithoutApproverInput[]
     deleteMany?: PurchaseOrderScalarWhereInput | PurchaseOrderScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type FeedPostUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput> | FeedPostCreateWithoutAuthorInput[] | FeedPostUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: FeedPostCreateOrConnectWithoutAuthorInput | FeedPostCreateOrConnectWithoutAuthorInput[]
+    upsert?: FeedPostUpsertWithWhereUniqueWithoutAuthorInput | FeedPostUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: FeedPostCreateManyAuthorInputEnvelope
+    set?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    disconnect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    delete?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    connect?: FeedPostWhereUniqueInput | FeedPostWhereUniqueInput[]
+    update?: FeedPostUpdateWithWhereUniqueWithoutAuthorInput | FeedPostUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: FeedPostUpdateManyWithWhereWithoutAuthorInput | FeedPostUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: FeedPostScalarWhereInput | FeedPostScalarWhereInput[]
+  }
+
+  export type FeedReactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput> | FeedReactionCreateWithoutUserInput[] | FeedReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutUserInput | FeedReactionCreateOrConnectWithoutUserInput[]
+    upsert?: FeedReactionUpsertWithWhereUniqueWithoutUserInput | FeedReactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: FeedReactionCreateManyUserInputEnvelope
+    set?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    disconnect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    delete?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    update?: FeedReactionUpdateWithWhereUniqueWithoutUserInput | FeedReactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: FeedReactionUpdateManyWithWhereWithoutUserInput | FeedReactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedManyWithoutOrgUnitInput = {
@@ -155249,6 +162776,166 @@ export namespace Prisma {
     update?: XOR<XOR<PurchaseOrderUpdateToOneWithWhereWithoutItemsInput, PurchaseOrderUpdateWithoutItemsInput>, PurchaseOrderUncheckedUpdateWithoutItemsInput>
   }
 
+  export type UserCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CommentCreateNestedOneWithoutRepliesInput = {
+    create?: XOR<CommentCreateWithoutRepliesInput, CommentUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: CommentCreateOrConnectWithoutRepliesInput
+    connect?: CommentWhereUniqueInput
+  }
+
+  export type CommentCreateNestedManyWithoutParentInput = {
+    create?: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput> | CommentCreateWithoutParentInput[] | CommentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutParentInput | CommentCreateOrConnectWithoutParentInput[]
+    createMany?: CommentCreateManyParentInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput> | CommentCreateWithoutParentInput[] | CommentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutParentInput | CommentCreateOrConnectWithoutParentInput[]
+    createMany?: CommentCreateManyParentInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    upsert?: UserUpsertWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type CommentUpdateOneWithoutRepliesNestedInput = {
+    create?: XOR<CommentCreateWithoutRepliesInput, CommentUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: CommentCreateOrConnectWithoutRepliesInput
+    upsert?: CommentUpsertWithoutRepliesInput
+    disconnect?: CommentWhereInput | boolean
+    delete?: CommentWhereInput | boolean
+    connect?: CommentWhereUniqueInput
+    update?: XOR<XOR<CommentUpdateToOneWithWhereWithoutRepliesInput, CommentUpdateWithoutRepliesInput>, CommentUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type CommentUpdateManyWithoutParentNestedInput = {
+    create?: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput> | CommentCreateWithoutParentInput[] | CommentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutParentInput | CommentCreateOrConnectWithoutParentInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutParentInput | CommentUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: CommentCreateManyParentInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutParentInput | CommentUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutParentInput | CommentUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput> | CommentCreateWithoutParentInput[] | CommentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutParentInput | CommentCreateOrConnectWithoutParentInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutParentInput | CommentUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: CommentCreateManyParentInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutParentInput | CommentUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutParentInput | CommentUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutFeedPostsInput = {
+    create?: XOR<UserCreateWithoutFeedPostsInput, UserUncheckedCreateWithoutFeedPostsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedPostsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type FeedReactionCreateNestedManyWithoutPostInput = {
+    create?: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput> | FeedReactionCreateWithoutPostInput[] | FeedReactionUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutPostInput | FeedReactionCreateOrConnectWithoutPostInput[]
+    createMany?: FeedReactionCreateManyPostInputEnvelope
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+  }
+
+  export type FeedReactionUncheckedCreateNestedManyWithoutPostInput = {
+    create?: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput> | FeedReactionCreateWithoutPostInput[] | FeedReactionUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutPostInput | FeedReactionCreateOrConnectWithoutPostInput[]
+    createMany?: FeedReactionCreateManyPostInputEnvelope
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+  }
+
+  export type EnumFeedPostTypeFieldUpdateOperationsInput = {
+    set?: $Enums.FeedPostType
+  }
+
+  export type UserUpdateOneRequiredWithoutFeedPostsNestedInput = {
+    create?: XOR<UserCreateWithoutFeedPostsInput, UserUncheckedCreateWithoutFeedPostsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedPostsInput
+    upsert?: UserUpsertWithoutFeedPostsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFeedPostsInput, UserUpdateWithoutFeedPostsInput>, UserUncheckedUpdateWithoutFeedPostsInput>
+  }
+
+  export type FeedReactionUpdateManyWithoutPostNestedInput = {
+    create?: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput> | FeedReactionCreateWithoutPostInput[] | FeedReactionUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutPostInput | FeedReactionCreateOrConnectWithoutPostInput[]
+    upsert?: FeedReactionUpsertWithWhereUniqueWithoutPostInput | FeedReactionUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: FeedReactionCreateManyPostInputEnvelope
+    set?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    disconnect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    delete?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    update?: FeedReactionUpdateWithWhereUniqueWithoutPostInput | FeedReactionUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: FeedReactionUpdateManyWithWhereWithoutPostInput | FeedReactionUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
+  }
+
+  export type FeedReactionUncheckedUpdateManyWithoutPostNestedInput = {
+    create?: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput> | FeedReactionCreateWithoutPostInput[] | FeedReactionUncheckedCreateWithoutPostInput[]
+    connectOrCreate?: FeedReactionCreateOrConnectWithoutPostInput | FeedReactionCreateOrConnectWithoutPostInput[]
+    upsert?: FeedReactionUpsertWithWhereUniqueWithoutPostInput | FeedReactionUpsertWithWhereUniqueWithoutPostInput[]
+    createMany?: FeedReactionCreateManyPostInputEnvelope
+    set?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    disconnect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    delete?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    connect?: FeedReactionWhereUniqueInput | FeedReactionWhereUniqueInput[]
+    update?: FeedReactionUpdateWithWhereUniqueWithoutPostInput | FeedReactionUpdateWithWhereUniqueWithoutPostInput[]
+    updateMany?: FeedReactionUpdateManyWithWhereWithoutPostInput | FeedReactionUpdateManyWithWhereWithoutPostInput[]
+    deleteMany?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
+  }
+
+  export type FeedPostCreateNestedOneWithoutReactionsInput = {
+    create?: XOR<FeedPostCreateWithoutReactionsInput, FeedPostUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: FeedPostCreateOrConnectWithoutReactionsInput
+    connect?: FeedPostWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutFeedReactionsInput = {
+    create?: XOR<UserCreateWithoutFeedReactionsInput, UserUncheckedCreateWithoutFeedReactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedReactionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type FeedPostUpdateOneRequiredWithoutReactionsNestedInput = {
+    create?: XOR<FeedPostCreateWithoutReactionsInput, FeedPostUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: FeedPostCreateOrConnectWithoutReactionsInput
+    upsert?: FeedPostUpsertWithoutReactionsInput
+    connect?: FeedPostWhereUniqueInput
+    update?: XOR<XOR<FeedPostUpdateToOneWithWhereWithoutReactionsInput, FeedPostUpdateWithoutReactionsInput>, FeedPostUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutFeedReactionsNestedInput = {
+    create?: XOR<UserCreateWithoutFeedReactionsInput, UserUncheckedCreateWithoutFeedReactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedReactionsInput
+    upsert?: UserUpsertWithoutFeedReactionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFeedReactionsInput, UserUpdateWithoutFeedReactionsInput>, UserUncheckedUpdateWithoutFeedReactionsInput>
+  }
+
   export type ScheduledReportCreaterecipientsInput = {
     set: string[]
   }
@@ -155264,6 +162951,71 @@ export namespace Prisma {
 
   export type EnumReportFormatFieldUpdateOperationsInput = {
     set?: $Enums.ReportFormat
+  }
+
+  export type WebhookEndpointCreateeventsInput = {
+    set: string[]
+  }
+
+  export type WebhookLogCreateNestedManyWithoutEndpointInput = {
+    create?: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput> | WebhookLogCreateWithoutEndpointInput[] | WebhookLogUncheckedCreateWithoutEndpointInput[]
+    connectOrCreate?: WebhookLogCreateOrConnectWithoutEndpointInput | WebhookLogCreateOrConnectWithoutEndpointInput[]
+    createMany?: WebhookLogCreateManyEndpointInputEnvelope
+    connect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+  }
+
+  export type WebhookLogUncheckedCreateNestedManyWithoutEndpointInput = {
+    create?: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput> | WebhookLogCreateWithoutEndpointInput[] | WebhookLogUncheckedCreateWithoutEndpointInput[]
+    connectOrCreate?: WebhookLogCreateOrConnectWithoutEndpointInput | WebhookLogCreateOrConnectWithoutEndpointInput[]
+    createMany?: WebhookLogCreateManyEndpointInputEnvelope
+    connect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+  }
+
+  export type WebhookEndpointUpdateeventsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WebhookLogUpdateManyWithoutEndpointNestedInput = {
+    create?: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput> | WebhookLogCreateWithoutEndpointInput[] | WebhookLogUncheckedCreateWithoutEndpointInput[]
+    connectOrCreate?: WebhookLogCreateOrConnectWithoutEndpointInput | WebhookLogCreateOrConnectWithoutEndpointInput[]
+    upsert?: WebhookLogUpsertWithWhereUniqueWithoutEndpointInput | WebhookLogUpsertWithWhereUniqueWithoutEndpointInput[]
+    createMany?: WebhookLogCreateManyEndpointInputEnvelope
+    set?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    disconnect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    delete?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    connect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    update?: WebhookLogUpdateWithWhereUniqueWithoutEndpointInput | WebhookLogUpdateWithWhereUniqueWithoutEndpointInput[]
+    updateMany?: WebhookLogUpdateManyWithWhereWithoutEndpointInput | WebhookLogUpdateManyWithWhereWithoutEndpointInput[]
+    deleteMany?: WebhookLogScalarWhereInput | WebhookLogScalarWhereInput[]
+  }
+
+  export type WebhookLogUncheckedUpdateManyWithoutEndpointNestedInput = {
+    create?: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput> | WebhookLogCreateWithoutEndpointInput[] | WebhookLogUncheckedCreateWithoutEndpointInput[]
+    connectOrCreate?: WebhookLogCreateOrConnectWithoutEndpointInput | WebhookLogCreateOrConnectWithoutEndpointInput[]
+    upsert?: WebhookLogUpsertWithWhereUniqueWithoutEndpointInput | WebhookLogUpsertWithWhereUniqueWithoutEndpointInput[]
+    createMany?: WebhookLogCreateManyEndpointInputEnvelope
+    set?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    disconnect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    delete?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    connect?: WebhookLogWhereUniqueInput | WebhookLogWhereUniqueInput[]
+    update?: WebhookLogUpdateWithWhereUniqueWithoutEndpointInput | WebhookLogUpdateWithWhereUniqueWithoutEndpointInput[]
+    updateMany?: WebhookLogUpdateManyWithWhereWithoutEndpointInput | WebhookLogUpdateManyWithWhereWithoutEndpointInput[]
+    deleteMany?: WebhookLogScalarWhereInput | WebhookLogScalarWhereInput[]
+  }
+
+  export type WebhookEndpointCreateNestedOneWithoutLogsInput = {
+    create?: XOR<WebhookEndpointCreateWithoutLogsInput, WebhookEndpointUncheckedCreateWithoutLogsInput>
+    connectOrCreate?: WebhookEndpointCreateOrConnectWithoutLogsInput
+    connect?: WebhookEndpointWhereUniqueInput
+  }
+
+  export type WebhookEndpointUpdateOneRequiredWithoutLogsNestedInput = {
+    create?: XOR<WebhookEndpointCreateWithoutLogsInput, WebhookEndpointUncheckedCreateWithoutLogsInput>
+    connectOrCreate?: WebhookEndpointCreateOrConnectWithoutLogsInput
+    upsert?: WebhookEndpointUpsertWithoutLogsInput
+    connect?: WebhookEndpointWhereUniqueInput
+    update?: XOR<XOR<WebhookEndpointUpdateToOneWithWhereWithoutLogsInput, WebhookEndpointUpdateWithoutLogsInput>, WebhookEndpointUncheckedUpdateWithoutLogsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -156533,6 +164285,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPoItemStatusFilter<$PrismaModel>
     _max?: NestedEnumPoItemStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumFeedPostTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedPostType | EnumFeedPostTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedPostTypeFilter<$PrismaModel> | $Enums.FeedPostType
+  }
+
+  export type NestedEnumFeedPostTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedPostType | EnumFeedPostTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedPostType[] | ListEnumFeedPostTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedPostTypeWithAggregatesFilter<$PrismaModel> | $Enums.FeedPostType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeedPostTypeFilter<$PrismaModel>
+    _max?: NestedEnumFeedPostTypeFilter<$PrismaModel>
   }
 
   export type NestedEnumReportFrequencyFilter<$PrismaModel = never> = {
@@ -157879,6 +165648,96 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CommentCreateWithoutAuthorInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    parent?: CommentCreateNestedOneWithoutRepliesInput
+    replies?: CommentCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: CommentUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentCreateOrConnectWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentCreateManyAuthorInputEnvelope = {
+    data: CommentCreateManyAuthorInput | CommentCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FeedPostCreateWithoutAuthorInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reactions?: FeedReactionCreateNestedManyWithoutPostInput
+  }
+
+  export type FeedPostUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reactions?: FeedReactionUncheckedCreateNestedManyWithoutPostInput
+  }
+
+  export type FeedPostCreateOrConnectWithoutAuthorInput = {
+    where: FeedPostWhereUniqueInput
+    create: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type FeedPostCreateManyAuthorInputEnvelope = {
+    data: FeedPostCreateManyAuthorInput | FeedPostCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type FeedReactionCreateWithoutUserInput = {
+    id?: string
+    emoji: string
+    createdAt?: Date | string
+    post: FeedPostCreateNestedOneWithoutReactionsInput
+  }
+
+  export type FeedReactionUncheckedCreateWithoutUserInput = {
+    id?: string
+    postId: string
+    emoji: string
+    createdAt?: Date | string
+  }
+
+  export type FeedReactionCreateOrConnectWithoutUserInput = {
+    where: FeedReactionWhereUniqueInput
+    create: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type FeedReactionCreateManyUserInputEnvelope = {
+    data: FeedReactionCreateManyUserInput | FeedReactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BugAttachmentUpsertWithWhereUniqueWithoutUploaderInput = {
     where: BugAttachmentWhereUniqueInput
     update: XOR<BugAttachmentUpdateWithoutUploaderInput, BugAttachmentUncheckedUpdateWithoutUploaderInput>
@@ -158878,6 +166737,94 @@ export namespace Prisma {
     data: XOR<PurchaseOrderUpdateManyMutationInput, PurchaseOrderUncheckedUpdateManyWithoutApproverInput>
   }
 
+  export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutAuthorInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type CommentScalarWhereInput = {
+    AND?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    OR?: CommentScalarWhereInput[]
+    NOT?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    id?: StringFilter<"Comment"> | string
+    entityType?: StringFilter<"Comment"> | string
+    entityId?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    parentId?: StringNullableFilter<"Comment"> | string | null
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+  }
+
+  export type FeedPostUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: FeedPostWhereUniqueInput
+    update: XOR<FeedPostUpdateWithoutAuthorInput, FeedPostUncheckedUpdateWithoutAuthorInput>
+    create: XOR<FeedPostCreateWithoutAuthorInput, FeedPostUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type FeedPostUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: FeedPostWhereUniqueInput
+    data: XOR<FeedPostUpdateWithoutAuthorInput, FeedPostUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type FeedPostUpdateManyWithWhereWithoutAuthorInput = {
+    where: FeedPostScalarWhereInput
+    data: XOR<FeedPostUpdateManyMutationInput, FeedPostUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type FeedPostScalarWhereInput = {
+    AND?: FeedPostScalarWhereInput | FeedPostScalarWhereInput[]
+    OR?: FeedPostScalarWhereInput[]
+    NOT?: FeedPostScalarWhereInput | FeedPostScalarWhereInput[]
+    id?: StringFilter<"FeedPost"> | string
+    type?: EnumFeedPostTypeFilter<"FeedPost"> | $Enums.FeedPostType
+    authorId?: StringFilter<"FeedPost"> | string
+    title?: StringNullableFilter<"FeedPost"> | string | null
+    content?: StringFilter<"FeedPost"> | string
+    targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
+    isPinned?: BoolFilter<"FeedPost"> | boolean
+    createdAt?: DateTimeFilter<"FeedPost"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
+  }
+
+  export type FeedReactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: FeedReactionWhereUniqueInput
+    update: XOR<FeedReactionUpdateWithoutUserInput, FeedReactionUncheckedUpdateWithoutUserInput>
+    create: XOR<FeedReactionCreateWithoutUserInput, FeedReactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type FeedReactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: FeedReactionWhereUniqueInput
+    data: XOR<FeedReactionUpdateWithoutUserInput, FeedReactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type FeedReactionUpdateManyWithWhereWithoutUserInput = {
+    where: FeedReactionScalarWhereInput
+    data: XOR<FeedReactionUpdateManyMutationInput, FeedReactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type FeedReactionScalarWhereInput = {
+    AND?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
+    OR?: FeedReactionScalarWhereInput[]
+    NOT?: FeedReactionScalarWhereInput | FeedReactionScalarWhereInput[]
+    id?: StringFilter<"FeedReaction"> | string
+    postId?: StringFilter<"FeedReaction"> | string
+    userId?: StringFilter<"FeedReaction"> | string
+    emoji?: StringFilter<"FeedReaction"> | string
+    createdAt?: DateTimeFilter<"FeedReaction"> | Date | string
+  }
+
   export type EmployeeCreateWithoutOrgUnitInput = {
     id?: string
     code: string
@@ -159177,6 +167124,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -159219,6 +167169,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOrgUnitInput = {
@@ -159884,6 +167837,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -159926,6 +167882,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -160506,6 +168465,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -160548,6 +168510,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -161456,6 +169421,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -161498,6 +169466,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutLedProjectsInput = {
@@ -161749,6 +169720,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -161791,6 +169765,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutProjectInput = {
@@ -162135,6 +170112,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -162177,6 +170157,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTaskApprovalsInput = {
@@ -162548,6 +170531,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -162590,6 +170576,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type EmployeeUpsertWithoutTasksInput = {
@@ -162940,6 +170929,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -162982,6 +170974,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTimeLogsInput = {
@@ -163097,6 +171092,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -163139,6 +171137,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutWorkStatusesInput = {
@@ -163181,6 +171182,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -163223,6 +171227,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutWorkStatusesInput = {
@@ -163281,6 +171288,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -163323,6 +171333,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutTimeEntriesInput = {
@@ -163365,6 +171378,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -163407,6 +171423,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -163465,6 +171484,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -163507,6 +171529,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -163549,6 +171574,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -163591,6 +171619,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutApprovedTimesheetsInput = {
@@ -163638,6 +171669,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -163680,6 +171714,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTimesheetsInput = {
@@ -163738,6 +171775,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -163780,6 +171820,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutTimesheetsInput = {
@@ -163833,6 +171876,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -163875,6 +171921,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectCreateWithoutAlertConfigsInput = {
@@ -164037,6 +172086,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -164079,6 +172131,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -164137,6 +172192,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -164179,6 +172237,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPushTokensInput = {
@@ -164221,6 +172282,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -164263,6 +172327,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPushTokensInput = {
@@ -164321,6 +172388,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -164363,6 +172433,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TaskCreateWithoutTelegramMessagesInput = {
@@ -164773,6 +172846,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -164815,6 +172891,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStartedProcessesInput = {
@@ -165131,6 +173210,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -165173,6 +173255,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProcessUserTaskUpsertWithWhereUniqueWithoutInstanceInput = {
@@ -165263,6 +173348,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -165305,6 +173393,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProcessTasksInput = {
@@ -165398,6 +173489,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -165440,6 +173534,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutUserTasksInput = {
@@ -165691,6 +173788,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -165733,6 +173833,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAssignedBugsInput = {
@@ -165780,6 +173883,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -165822,6 +173928,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPmApprovedBugsInput = {
@@ -165926,6 +174035,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -165968,6 +174080,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReportedBugsInput = {
@@ -166098,6 +174213,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -166140,6 +174258,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutPmApprovedBugsInput = {
@@ -166193,6 +174314,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -166235,6 +174359,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectUpsertWithoutBugsInput = {
@@ -166351,6 +174478,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -166393,6 +174523,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -166732,6 +174865,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -166774,6 +174910,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBugAttachmentsInput = {
@@ -166899,6 +175038,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -166941,6 +175083,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutBugCommentsInput = {
@@ -166983,6 +175128,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -167025,6 +175173,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBugCommentsInput = {
@@ -167144,6 +175295,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -167186,6 +175340,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BugUpsertWithoutCommentsInput = {
@@ -167764,6 +175921,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -167806,6 +175966,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -167897,6 +176060,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -167939,6 +176105,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ModuleRolePermissionCreateWithoutRoleInput = {
@@ -168194,6 +176363,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -168236,6 +176408,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutModuleRolesInput = {
@@ -168325,6 +176500,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -168367,6 +176545,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -168409,6 +176590,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -168451,6 +176635,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -168509,6 +176696,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -168551,6 +176741,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type GroupPermissionCreateWithoutGroupInput = {
@@ -168765,6 +176958,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -168807,6 +177003,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -168892,6 +177091,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -168934,6 +177136,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserGroupUpsertWithoutMembersInput = {
@@ -169497,6 +177702,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -169539,6 +177747,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutApprovedLeavesInput = {
@@ -169744,6 +177955,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -169786,6 +178000,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutLeaveRequestsInput = {
@@ -170165,6 +178382,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -170207,6 +178427,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProcessedPayrollsInput = {
@@ -170356,6 +178579,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -170398,6 +178624,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PayrollPeriodUpsertWithoutAdjustmentsInput = {
@@ -170902,6 +179131,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -170944,6 +179176,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSubmittedExpensesInput = {
@@ -170991,6 +179226,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -171033,6 +179271,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutApprovedExpensesInput = {
@@ -171215,6 +179456,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -171257,6 +179501,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutApprovedExpensesInput = {
@@ -171310,6 +179557,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -171352,6 +179602,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutExpensesInput = {
@@ -172311,6 +180564,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCrmActivitiesInput = {
@@ -172353,6 +180609,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCrmActivitiesInput = {
@@ -172454,6 +180713,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -172496,6 +180758,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -175667,6 +183932,9 @@ export namespace Prisma {
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOkrObjectivesInput = {
@@ -175709,6 +183977,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOkrObjectivesInput = {
@@ -175799,6 +184070,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -175841,6 +184115,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput = {
@@ -176193,6 +184470,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutKbArticlesInput = {
@@ -176235,6 +184515,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutKbArticlesInput = {
@@ -176326,6 +184609,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutKbArticlesInput = {
@@ -176368,6 +184654,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CustomerCreateWithoutPortalsInput = {
@@ -176732,6 +185021,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPoRequestsInput = {
@@ -176774,6 +185066,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPoRequestsInput = {
@@ -176821,6 +185116,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
     kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPoApprovalsInput = {
@@ -176863,6 +185161,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
     kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
     poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPoApprovalsInput = {
@@ -177006,6 +185307,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoRequestsInput = {
@@ -177048,6 +185352,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutPoApprovalsInput = {
@@ -177101,6 +185408,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoApprovalsInput = {
@@ -177143,6 +185453,9 @@ export namespace Prisma {
     okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type PurchaseOrderItemUpsertWithWhereUniqueWithoutPoInput = {
@@ -177262,6 +185575,929 @@ export namespace Prisma {
     deliveryDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     receivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCommentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type CommentCreateWithoutRepliesInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
+    parent?: CommentCreateNestedOneWithoutRepliesInput
+  }
+
+  export type CommentUncheckedCreateWithoutRepliesInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentCreateOrConnectWithoutRepliesInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutRepliesInput, CommentUncheckedCreateWithoutRepliesInput>
+  }
+
+  export type CommentCreateWithoutParentInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
+    replies?: CommentCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentUncheckedCreateWithoutParentInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: CommentUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type CommentCreateOrConnectWithoutParentInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput>
+  }
+
+  export type CommentCreateManyParentInputEnvelope = {
+    data: CommentCreateManyParentInput | CommentCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutCommentsInput = {
+    update: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type CommentUpsertWithoutRepliesInput = {
+    update: XOR<CommentUpdateWithoutRepliesInput, CommentUncheckedUpdateWithoutRepliesInput>
+    create: XOR<CommentCreateWithoutRepliesInput, CommentUncheckedCreateWithoutRepliesInput>
+    where?: CommentWhereInput
+  }
+
+  export type CommentUpdateToOneWithWhereWithoutRepliesInput = {
+    where?: CommentWhereInput
+    data: XOR<CommentUpdateWithoutRepliesInput, CommentUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type CommentUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+    parent?: CommentUpdateOneWithoutRepliesNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUpsertWithWhereUniqueWithoutParentInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutParentInput, CommentUncheckedUpdateWithoutParentInput>
+    create: XOR<CommentCreateWithoutParentInput, CommentUncheckedCreateWithoutParentInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutParentInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutParentInput, CommentUncheckedUpdateWithoutParentInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutParentInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type UserCreateWithoutFeedPostsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFeedPostsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFeedPostsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFeedPostsInput, UserUncheckedCreateWithoutFeedPostsInput>
+  }
+
+  export type FeedReactionCreateWithoutPostInput = {
+    id?: string
+    emoji: string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutFeedReactionsInput
+  }
+
+  export type FeedReactionUncheckedCreateWithoutPostInput = {
+    id?: string
+    userId: string
+    emoji: string
+    createdAt?: Date | string
+  }
+
+  export type FeedReactionCreateOrConnectWithoutPostInput = {
+    where: FeedReactionWhereUniqueInput
+    create: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput>
+  }
+
+  export type FeedReactionCreateManyPostInputEnvelope = {
+    data: FeedReactionCreateManyPostInput | FeedReactionCreateManyPostInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutFeedPostsInput = {
+    update: XOR<UserUpdateWithoutFeedPostsInput, UserUncheckedUpdateWithoutFeedPostsInput>
+    create: XOR<UserCreateWithoutFeedPostsInput, UserUncheckedCreateWithoutFeedPostsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFeedPostsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFeedPostsInput, UserUncheckedUpdateWithoutFeedPostsInput>
+  }
+
+  export type UserUpdateWithoutFeedPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFeedPostsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type FeedReactionUpsertWithWhereUniqueWithoutPostInput = {
+    where: FeedReactionWhereUniqueInput
+    update: XOR<FeedReactionUpdateWithoutPostInput, FeedReactionUncheckedUpdateWithoutPostInput>
+    create: XOR<FeedReactionCreateWithoutPostInput, FeedReactionUncheckedCreateWithoutPostInput>
+  }
+
+  export type FeedReactionUpdateWithWhereUniqueWithoutPostInput = {
+    where: FeedReactionWhereUniqueInput
+    data: XOR<FeedReactionUpdateWithoutPostInput, FeedReactionUncheckedUpdateWithoutPostInput>
+  }
+
+  export type FeedReactionUpdateManyWithWhereWithoutPostInput = {
+    where: FeedReactionScalarWhereInput
+    data: XOR<FeedReactionUpdateManyMutationInput, FeedReactionUncheckedUpdateManyWithoutPostInput>
+  }
+
+  export type FeedPostCreateWithoutReactionsInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutFeedPostsInput
+  }
+
+  export type FeedPostUncheckedCreateWithoutReactionsInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    authorId: string
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedPostCreateOrConnectWithoutReactionsInput = {
+    where: FeedPostWhereUniqueInput
+    create: XOR<FeedPostCreateWithoutReactionsInput, FeedPostUncheckedCreateWithoutReactionsInput>
+  }
+
+  export type UserCreateWithoutFeedReactionsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutFeedReactionsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutFeedReactionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFeedReactionsInput, UserUncheckedCreateWithoutFeedReactionsInput>
+  }
+
+  export type FeedPostUpsertWithoutReactionsInput = {
+    update: XOR<FeedPostUpdateWithoutReactionsInput, FeedPostUncheckedUpdateWithoutReactionsInput>
+    create: XOR<FeedPostCreateWithoutReactionsInput, FeedPostUncheckedCreateWithoutReactionsInput>
+    where?: FeedPostWhereInput
+  }
+
+  export type FeedPostUpdateToOneWithWhereWithoutReactionsInput = {
+    where?: FeedPostWhereInput
+    data: XOR<FeedPostUpdateWithoutReactionsInput, FeedPostUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type FeedPostUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutFeedPostsNestedInput
+  }
+
+  export type FeedPostUncheckedUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    authorId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutFeedReactionsInput = {
+    update: XOR<UserUpdateWithoutFeedReactionsInput, UserUncheckedUpdateWithoutFeedReactionsInput>
+    create: XOR<UserCreateWithoutFeedReactionsInput, UserUncheckedCreateWithoutFeedReactionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFeedReactionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFeedReactionsInput, UserUncheckedUpdateWithoutFeedReactionsInput>
+  }
+
+  export type UserUpdateWithoutFeedReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFeedReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type WebhookLogCreateWithoutEndpointInput = {
+    id?: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+  }
+
+  export type WebhookLogUncheckedCreateWithoutEndpointInput = {
+    id?: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+  }
+
+  export type WebhookLogCreateOrConnectWithoutEndpointInput = {
+    where: WebhookLogWhereUniqueInput
+    create: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput>
+  }
+
+  export type WebhookLogCreateManyEndpointInputEnvelope = {
+    data: WebhookLogCreateManyEndpointInput | WebhookLogCreateManyEndpointInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WebhookLogUpsertWithWhereUniqueWithoutEndpointInput = {
+    where: WebhookLogWhereUniqueInput
+    update: XOR<WebhookLogUpdateWithoutEndpointInput, WebhookLogUncheckedUpdateWithoutEndpointInput>
+    create: XOR<WebhookLogCreateWithoutEndpointInput, WebhookLogUncheckedCreateWithoutEndpointInput>
+  }
+
+  export type WebhookLogUpdateWithWhereUniqueWithoutEndpointInput = {
+    where: WebhookLogWhereUniqueInput
+    data: XOR<WebhookLogUpdateWithoutEndpointInput, WebhookLogUncheckedUpdateWithoutEndpointInput>
+  }
+
+  export type WebhookLogUpdateManyWithWhereWithoutEndpointInput = {
+    where: WebhookLogScalarWhereInput
+    data: XOR<WebhookLogUpdateManyMutationInput, WebhookLogUncheckedUpdateManyWithoutEndpointInput>
+  }
+
+  export type WebhookLogScalarWhereInput = {
+    AND?: WebhookLogScalarWhereInput | WebhookLogScalarWhereInput[]
+    OR?: WebhookLogScalarWhereInput[]
+    NOT?: WebhookLogScalarWhereInput | WebhookLogScalarWhereInput[]
+    id?: StringFilter<"WebhookLog"> | string
+    endpointId?: StringFilter<"WebhookLog"> | string
+    event?: StringFilter<"WebhookLog"> | string
+    payload?: JsonFilter<"WebhookLog">
+    statusCode?: IntNullableFilter<"WebhookLog"> | number | null
+    response?: StringNullableFilter<"WebhookLog"> | string | null
+    success?: BoolFilter<"WebhookLog"> | boolean
+    attemptCount?: IntFilter<"WebhookLog"> | number
+    sentAt?: DateTimeFilter<"WebhookLog"> | Date | string
+  }
+
+  export type WebhookEndpointCreateWithoutLogsInput = {
+    id?: string
+    name: string
+    url: string
+    secret?: string | null
+    events?: WebhookEndpointCreateeventsInput | string[]
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WebhookEndpointUncheckedCreateWithoutLogsInput = {
+    id?: string
+    name: string
+    url: string
+    secret?: string | null
+    events?: WebhookEndpointCreateeventsInput | string[]
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WebhookEndpointCreateOrConnectWithoutLogsInput = {
+    where: WebhookEndpointWhereUniqueInput
+    create: XOR<WebhookEndpointCreateWithoutLogsInput, WebhookEndpointUncheckedCreateWithoutLogsInput>
+  }
+
+  export type WebhookEndpointUpsertWithoutLogsInput = {
+    update: XOR<WebhookEndpointUpdateWithoutLogsInput, WebhookEndpointUncheckedUpdateWithoutLogsInput>
+    create: XOR<WebhookEndpointCreateWithoutLogsInput, WebhookEndpointUncheckedCreateWithoutLogsInput>
+    where?: WebhookEndpointWhereInput
+  }
+
+  export type WebhookEndpointUpdateToOneWithWhereWithoutLogsInput = {
+    where?: WebhookEndpointWhereInput
+    data: XOR<WebhookEndpointUpdateWithoutLogsInput, WebhookEndpointUncheckedUpdateWithoutLogsInput>
+  }
+
+  export type WebhookEndpointUpdateWithoutLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookEndpointUncheckedUpdateWithoutLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    events?: WebhookEndpointUpdateeventsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -177687,6 +186923,34 @@ export namespace Prisma {
     receivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type CommentCreateManyAuthorInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    content: string
+    parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedPostCreateManyAuthorInput = {
+    id?: string
+    type?: $Enums.FeedPostType
+    title?: string | null
+    content: string
+    targetOrgId?: string | null
+    isPinned?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedReactionCreateManyUserInput = {
+    id?: string
+    postId: string
+    emoji: string
+    createdAt?: Date | string
   }
 
   export type BugAttachmentUpdateWithoutUploaderInput = {
@@ -179024,6 +188288,94 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommentUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    parent?: CommentUpdateOneWithoutRepliesNestedInput
+    replies?: CommentUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: CommentUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedPostUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reactions?: FeedReactionUpdateManyWithoutPostNestedInput
+  }
+
+  export type FeedPostUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reactions?: FeedReactionUncheckedUpdateManyWithoutPostNestedInput
+  }
+
+  export type FeedPostUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumFeedPostTypeFieldUpdateOperationsInput | $Enums.FeedPostType
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    post?: FeedPostUpdateOneRequiredWithoutReactionsNestedInput
+  }
+
+  export type FeedReactionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    postId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateManyOrgUnitInput = {
     id?: string
     code: string
@@ -179406,6 +188758,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -179448,6 +188803,9 @@ export namespace Prisma {
     kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
     poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
     poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -183186,6 +192544,120 @@ export namespace Prisma {
     status?: EnumPoItemStatusFieldUpdateOperationsInput | $Enums.PoItemStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentCreateManyParentInput = {
+    id?: string
+    entityType: string
+    entityId: string
+    authorId: string
+    content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+    replies?: CommentUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: CommentUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type CommentUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    entityType?: StringFieldUpdateOperationsInput | string
+    entityId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionCreateManyPostInput = {
+    id?: string
+    userId: string
+    emoji: string
+    createdAt?: Date | string
+  }
+
+  export type FeedReactionUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutFeedReactionsNestedInput
+  }
+
+  export type FeedReactionUncheckedUpdateWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedReactionUncheckedUpdateManyWithoutPostInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    emoji?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogCreateManyEndpointInput = {
+    id?: string
+    event: string
+    payload: JsonNullValueInput | InputJsonValue
+    statusCode?: number | null
+    response?: string | null
+    success?: boolean
+    attemptCount?: number
+    sentAt?: Date | string
+  }
+
+  export type WebhookLogUpdateWithoutEndpointInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogUncheckedUpdateWithoutEndpointInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WebhookLogUncheckedUpdateManyWithoutEndpointInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    event?: StringFieldUpdateOperationsInput | string
+    payload?: JsonNullValueInput | InputJsonValue
+    statusCode?: NullableIntFieldUpdateOperationsInput | number | null
+    response?: NullableStringFieldUpdateOperationsInput | string | null
+    success?: BoolFieldUpdateOperationsInput | boolean
+    attemptCount?: IntFieldUpdateOperationsInput | number
+    sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

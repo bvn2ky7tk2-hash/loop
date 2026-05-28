@@ -1274,6 +1274,37 @@ exports.Prisma.PurchaseOrderItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  authorId: 'authorId',
+  content: 'content',
+  parentId: 'parentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FeedPostScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  authorId: 'authorId',
+  title: 'title',
+  content: 'content',
+  targetOrgId: 'targetOrgId',
+  isPinned: 'isPinned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FeedReactionScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  emoji: 'emoji',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.AutomationRuleScalarFieldEnum = {
   id: 'id',
   key: 'key',
@@ -1302,6 +1333,29 @@ exports.Prisma.ScheduledReportScalarFieldEnum = {
   sentCount: 'sentCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebhookEndpointScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  url: 'url',
+  secret: 'secret',
+  events: 'events',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WebhookLogScalarFieldEnum = {
+  id: 'id',
+  endpointId: 'endpointId',
+  event: 'event',
+  payload: 'payload',
+  statusCode: 'statusCode',
+  response: 'response',
+  success: 'success',
+  attemptCount: 'attemptCount',
+  sentAt: 'sentAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -1762,6 +1816,13 @@ exports.PoItemStatus = exports.$Enums.PoItemStatus = {
   RETURNED: 'RETURNED'
 };
 
+exports.FeedPostType = exports.$Enums.FeedPostType = {
+  ANNOUNCEMENT: 'ANNOUNCEMENT',
+  KUDOS: 'KUDOS',
+  BIRTHDAY: 'BIRTHDAY',
+  DOCUMENT: 'DOCUMENT'
+};
+
 exports.ReportFrequency = exports.$Enums.ReportFrequency = {
   WEEKLY: 'WEEKLY',
   MONTHLY: 'MONTHLY',
@@ -1866,8 +1927,13 @@ exports.Prisma.ModelName = {
   Vendor: 'Vendor',
   PurchaseOrder: 'PurchaseOrder',
   PurchaseOrderItem: 'PurchaseOrderItem',
+  Comment: 'Comment',
+  FeedPost: 'FeedPost',
+  FeedReaction: 'FeedReaction',
   AutomationRule: 'AutomationRule',
-  ScheduledReport: 'ScheduledReport'
+  ScheduledReport: 'ScheduledReport',
+  WebhookEndpoint: 'WebhookEndpoint',
+  WebhookLog: 'WebhookLog'
 };
 
 /**
