@@ -11,6 +11,7 @@ import { PERMISSIONS } from '../permissions/permissions.constants';
 import type { User } from '../generated/prisma';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { MyTasksQueryDto } from './dto/my-tasks-query.dto';
 import { TaskStatus } from '../generated/prisma';
 
 @ApiTags('tasks')
@@ -57,11 +58,13 @@ export class TasksController {
   @ApiOperation({ summary: 'Task board — cá nhân hoặc team (PM/ADMIN/LEADERSHIP)' })
   getMyTasks(
     @CurrentUser() user: User,
-    @Query('projectId') projectId?: string,
-    @Query('employeeId') employeeId?: string,
-    @Query() { page, limit }: PaginationDto = {} as PaginationDto,
+    @Query() query: MyTasksQueryDto,
   ) {
-    return this.service.getMyTasks(user.id, user.role, projectId, employeeId, page, limit);
+    return this.service.getMyTasks(
+      user.id, user.role, query.projectId, query.employeeId,
+      query.page ? Number(query.page) : undefined,
+      query.limit ? Number(query.limit) : undefined,
+    );
   }
 
   @Get('tasks/:id')

@@ -312,6 +312,9 @@ async function main() {
   console.log('Seeding Recruitment enriched demo data...');
   await seedRecruitEnriched();
 
+  console.log('Seeding Bug & Issue demo data...');
+  await seedBugsDemo();
+
   console.log('Seeding Accounting Chart of Accounts (TT200)...');
   await seedChartOfAccounts();
 
@@ -2603,6 +2606,130 @@ async function seedRecruitEnriched() {
 
   } catch (err) {
     console.error('  ✗ seedRecruitEnriched error:', err);
+  }
+}
+
+async function seedBugsDemo() {
+  try {
+    const uAdmin = await prisma.user.findUnique({ where: { email: 'admin@loop.vn' } });
+    const uPm    = await prisma.user.findUnique({ where: { email: 'pm@loop.vn' } });
+    const uDev1  = await prisma.user.findUnique({ where: { email: 'dev1@loop.vn' } });
+    const uDev2  = await prisma.user.findUnique({ where: { email: 'dev2@loop.vn' } });
+    const uDemo  = await prisma.user.findUnique({ where: { email: 'user.demo@loop.vn' } });
+
+    if (!uAdmin || !uPm) { console.log('  ⚠ Thiếu users để seed bugs'); return; }
+
+    const projFpt  = await prisma.project.findFirst({ where: { code: 'PROJ-FPT-001' } });
+    const projVng  = await prisma.project.findFirst({ where: { code: 'PROJ-VNG-001' } });
+    const projVtel = await prisma.project.findFirst({ where: { code: 'PROJ-VTEL-001' } });
+
+    if (!projFpt || !projVng || !projVtel) { console.log('  ⚠ Thiếu projects để seed bugs'); return; }
+
+    const existing = await prisma.bug.count();
+    if (existing > 0) { console.log(`  ⏭  ${existing} bugs đã tồn tại, bỏ qua seed`); return; }
+
+    const bugDefs = [
+      // FPT ERP bugs
+      {
+        projectId: projFpt.id, reporterId: uPm.id, assigneeId: uDev1?.id,
+        title: '[FPT] API /employees trả sai dữ liệu phân trang',
+        description: 'Endpoint GET /employees?page=2 trả về cùng dữ liệu với page=1. Tái hiện 100% trên môi trường staging.',
+        severity: 'HIGH', status: 'IN_PROGRESS', itemType: 'BUG', isCR: false,
+        affectedModule: 'HR',
+      },
+      {
+        projectId: projFpt.id, reporterId: uPm.id, assigneeId: uDev2?.id,
+        title: '[FPT] Dark mode: header bảng nhân viên bị tối',
+        description: 'Trên theme Dark, header cột bảng Personnel hiển thị màu #0F172A gần như đen — chữ không đọc được.',
+        severity: 'MEDIUM', status: 'OPEN', itemType: 'BUG', isCR: false,
+        affectedModule: 'UI',
+      },
+      {
+        projectId: projFpt.id, reporterId: uAdmin.id, assigneeId: uDev1?.id,
+        title: '[FPT] CR: Thêm export Excel cho bảng chấm công',
+        description: 'Yêu cầu thêm nút Export Excel trên trang Attendance Manager, export 1 tháng data.',
+        severity: 'LOW', status: 'PENDING_REVIEW', itemType: 'ISSUE', isCR: true,
+        requesterName: 'Nguyễn Văn Khách', affectedModule: 'Timesheet',
+      },
+      {
+        projectId: projFpt.id, reporterId: uDev1?.id ?? uPm.id, assigneeId: undefined,
+        title: '[FPT] Login timeout không redirect về /login',
+        description: 'Sau khi JWT hết hạn và refresh thất bại, app không redirect về /login mà bị trắng màn hình.',
+        severity: 'CRITICAL', status: 'OPEN', itemType: 'BUG', isCR: false,
+        affectedModule: 'Auth',
+      },
+      // VNG Portal bugs
+      {
+        projectId: projVng.id, reporterId: uAdmin.id, assigneeId: uDev2?.id,
+        title: '[VNG] Org Chart không load khi có >50 nhân viên',
+        description: 'Trang /org-chart bị treo spinner vô hạn khi tổ chức có nhiều hơn 50 nhân viên. Performance issue.',
+        severity: 'HIGH', status: 'OPEN', itemType: 'BUG', isCR: false,
+        affectedModule: 'HR',
+      },
+      {
+        projectId: projVng.id, reporterId: uAdmin.id, assigneeId: uDev2?.id,
+        title: '[VNG] CR: Thêm tab "Lịch sử" vào chi tiết hợp đồng',
+        description: 'Client yêu cầu xem lịch sử thay đổi (audit log) khi xem chi tiết hợp đồng.',
+        severity: 'MEDIUM', status: 'APPROVED', itemType: 'ISSUE', isCR: true,
+        requesterName: 'Trần Thị Khách VNG', affectedModule: 'Contracts',
+        pmApproverId: uAdmin.id,
+      },
+      {
+        projectId: projVng.id, reporterId: uPm.id, assigneeId: uDev1?.id,
+        title: '[VNG] Budget widget hiển thị NaN khi budgetCost = 0',
+        description: 'Trang /budget hiển thị "NaN%" trong progress bar khi project có budgetCost = 0.',
+        severity: 'MEDIUM', status: 'RESOLVED', itemType: 'BUG', isCR: false,
+        affectedModule: 'Finance',
+      },
+      // Viettel bugs
+      {
+        projectId: projVtel.id, reporterId: uPm.id, assigneeId: uDemo?.id,
+        title: '[VTEL] Kanban card bị mất khi kéo nhanh sang cột khác',
+        description: 'Kéo task nhanh từ TODO sang DONE đôi khi card biến mất khỏi board. Xảy ra ~20% thao tác.',
+        severity: 'HIGH', status: 'OPEN', itemType: 'BUG', isCR: false,
+        affectedModule: 'PM',
+      },
+      {
+        projectId: projVtel.id, reporterId: uAdmin.id, assigneeId: uDev1?.id,
+        title: '[VTEL] Timeline không hiển thị task có startDate = endDate',
+        description: 'Task chỉ có 1 ngày (startDate = dueDate) không hiển thị trên timeline Gantt.',
+        severity: 'LOW', status: 'RESOLVED', itemType: 'BUG', isCR: false,
+        affectedModule: 'Timeline',
+      },
+      {
+        projectId: projVtel.id, reporterId: uPm.id, assigneeId: undefined,
+        title: '[VTEL] CR: Thêm field "Ưu tiên" vào task',
+        description: 'Request bổ sung trường Priority (Low/Medium/High/Critical) vào Task. Cần cả backend lẫn Kanban card UI.',
+        severity: 'MEDIUM', status: 'PENDING_REVIEW', itemType: 'ISSUE', isCR: true,
+        requesterName: 'PM Viettel', affectedModule: 'PM',
+      },
+    ];
+
+    let count = 0;
+    for (const def of bugDefs) {
+      await prisma.bug.create({
+        data: {
+          projectId:      def.projectId,
+          reporterId:     def.reporterId,
+          assigneeId:     def.assigneeId,
+          title:          def.title,
+          description:    def.description,
+          severity:       def.severity as any,
+          status:         def.status as any,
+          itemType:       def.itemType as any,
+          isCR:           def.isCR,
+          requesterName:  (def as any).requesterName,
+          affectedModule: (def as any).affectedModule,
+          pmApproverId:   (def as any).pmApproverId,
+          approvedAt:     (def as any).pmApproverId ? new Date() : undefined,
+          dueDate:        new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        },
+      });
+      count++;
+    }
+    console.log(`  ✓ ${count} bugs & issues seeded`);
+  } catch (err) {
+    console.error('  ✗ seedBugsDemo error:', err);
   }
 }
 

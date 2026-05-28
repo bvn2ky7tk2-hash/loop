@@ -84,9 +84,10 @@ export class BugsController {
   @ApiOperation({ summary: 'Chi tiết bug' })
   findOne(
     @Param('id') id: string,
+    @CurrentUser() user: User,
     @Req() req: { orgUnitIds: string[] | null },
   ) {
-    return this.service.findOne(id, req.orgUnitIds);
+    return this.service.findOne(id, req.orgUnitIds, user.id);
   }
 
   @Put(':id')

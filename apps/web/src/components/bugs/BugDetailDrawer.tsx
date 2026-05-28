@@ -67,7 +67,7 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
   const [approvalNote, setApprovalNote] = useState('');
 
   const { user: currentUser } = useAuthStore();
-  const { data: bug, isLoading } = useGetBug(bugId);
+  const { data: bug, isLoading, isError } = useGetBug(bugId);
   const transitionMut  = useTransitionBug();
   const updateMut      = useUpdateBug();
   const uploadAttach   = useUploadBugAttachment();
@@ -89,8 +89,17 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
   const flatTasks = (arr: typeof tasks): typeof tasks =>
     arr.flatMap((t) => [t, ...flatTasks(t.children ?? [])]);
 
-  if (isLoading || !bug) {
+  if (isLoading) {
     return <CenteredModal open onClose={onClose} width={560} title="Chi tiết" loading />;
+  }
+  if (isError || !bug) {
+    return (
+      <CenteredModal open onClose={onClose} width={480} title="Chi tiết bug">
+        <div style={{ textAlign: 'center', padding: '32px 0', color: '#888' }}>
+          Không thể tải thông tin bug. Bug có thể đã bị xóa hoặc bạn không có quyền xem.
+        </div>
+      </CenteredModal>
+    );
   }
 
   const isAssignee = bug.assigneeId === currentUser?.id;

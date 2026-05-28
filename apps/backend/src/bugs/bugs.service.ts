@@ -196,11 +196,18 @@ export class BugsService {
     });
   }
 
-  async findOne(id: string, orgUnitIds: string[] | null) {
+  async findOne(id: string, orgUnitIds: string[] | null, userId?: string) {
+    const scopeFilter = orgUnitIds !== null
+      ? { project: { orgUnitId: { in: orgUnitIds } } }
+      : {};
+
     const bug = await this.prisma.bug.findFirst({
       where: {
         id,
-        ...(orgUnitIds !== null ? { project: { orgUnitId: { in: orgUnitIds } } } : {}),
+        ...(orgUnitIds !== null && userId
+          // Cho phép assignee/reporter xem bug của mình dù ngoài scope
+          ? { OR: [scopeFilter, { assigneeId: userId }, { reporterId: userId }] }
+          : scopeFilter),
       },
       include: BUG_INCLUDE,
     });

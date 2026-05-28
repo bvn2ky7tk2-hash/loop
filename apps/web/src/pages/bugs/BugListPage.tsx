@@ -54,7 +54,7 @@ export default function BugListPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedBugId, setSelectedBugId] = useState<string | null>(searchParams.get('bugId'));
 
-  const { data, isLoading } = useGetBugs(filters);
+  const { data, isLoading, isError } = useGetBugs(filters);
   const { data: stats }     = useGetBugStats(filters.projectId ? { projectId: filters.projectId } : {});
   const { data: projects = [] } = useQuery({ queryKey: ['projects'], queryFn: projectsApi.list });
   const { data: users = [] }    = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
@@ -238,6 +238,12 @@ export default function BugListPage() {
             }))}
           />
         </Space>
+      )}
+
+      {isError && (
+        <div style={{ textAlign: 'center', padding: '32px 0', color: '#888' }}>
+          Không thể tải danh sách bug. Vui lòng thử lại.
+        </div>
       )}
 
       <Table
