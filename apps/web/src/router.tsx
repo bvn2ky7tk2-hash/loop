@@ -48,6 +48,8 @@ const CrmContactsPage        = lazy(() => import('./pages/crm/ContactsPage'));
 const CrmLeadsPage           = lazy(() => import('./pages/crm/LeadsPage'));
 const CrmDealsPage           = lazy(() => import('./pages/crm/DealsPage'));
 const CrmClientContractsPage = lazy(() => import('./pages/crm/ClientContractsPage'));
+const CrmActivitiesPage      = lazy(() => import('./pages/crm/ActivitiesPage'));
+const SelfServicePage        = lazy(() => import('./pages/self-service/SelfServicePage'));
 const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
 const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
 const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
@@ -123,6 +125,7 @@ export const router = createBrowserRouter([
       { path: 'crm/leads',             element: wrap(CrmLeadsPage) },
       { path: 'crm/deals',             element: wrap(CrmDealsPage) },
       { path: 'crm/client-contracts',  element: wrap(CrmClientContractsPage) },
+      { path: 'crm/activities',        element: wrap(CrmActivitiesPage) },
       { path: 'assets',             element: wrap(AssetsPage) },
       { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
       { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },

@@ -3662,93 +3662,92 @@ async function seedHrExtDemo() {
 
 async function seedPayrollComplianceConfig() {
   try {
-    // 1. InsuranceConfig — tỷ lệ BHXH/BHYT/BHTN 2020 (vẫn áp dụng 2026)
-    await (prisma as any).insuranceConfig.upsert({
-      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2020-01-01') } },
-      update: {},
-      create: {
-        tenantId:           null,
-        effectiveFrom:      new Date('2020-01-01'),
-        bhxhEmployeeRate:   0.08,    // 8%
-        bhytEmployeeRate:   0.015,   // 1.5%
-        bhtnEmployeeRate:   0.01,    // 1%
-        bhxhEmployerRate:   0.17,    // 17%
-        bhytEmployerRate:   0.03,    // 3%
-        bhtnEmployerRate:   0.01,    // 1%
-        tnldRate:           0.005,   // 0.5%
-        bhxhCeilingMultiple: 20,
-        wageBase:           2340000, // Lương cơ sở từ 1/7/2024
-      },
-    });
-    console.log('  ✓ InsuranceConfig seeded (BHXH 8%/17%, BHYT 1.5%/3%, BHTN 1%/1%)');
+    // Helper: createIfNotExists tránh lỗi upsert với tenantId nullable
+    async function createIfAbsent(model: any, where: object, data: object) {
+      const existing = await model.findFirst({ where });
+      if (!existing) await model.create({ data });
+    }
 
-    // 2. TaxBracket — biểu thuế TNCN lũy tiến 7 bậc (còn hiệu lực đến 31/12/2025)
-    const brackets7 = [
-      { min: 0,          max: 5_000_000,  rate: 0.05 },
-      { min: 5_000_000,  max: 10_000_000, rate: 0.10 },
-      { min: 10_000_000, max: 18_000_000, rate: 0.15 },
-      { min: 18_000_000, max: 32_000_000, rate: 0.20 },
-      { min: 32_000_000, max: 52_000_000, rate: 0.25 },
-      { min: 52_000_000, max: 80_000_000, rate: 0.30 },
-      { min: 80_000_000, max: null,        rate: 0.35 },
-    ];
-    await (prisma as any).taxBracket.upsert({
-      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2013-07-01') } },
-      update: {},
-      create: {
+    // 1. InsuranceConfig — tỷ lệ BHXH/BHYT/BHTN từ 2020 (vẫn áp dụng 2026)
+    await createIfAbsent((prisma as any).insuranceConfig,
+      { tenantId: null, effectiveFrom: new Date('2020-01-01') },
+      {
+        tenantId:            null,
+        effectiveFrom:       new Date('2020-01-01'),
+        bhxhEmployeeRate:    0.08,
+        bhytEmployeeRate:    0.015,
+        bhtnEmployeeRate:    0.01,
+        bhxhEmployerRate:    0.17,
+        bhytEmployerRate:    0.03,
+        bhtnEmployerRate:    0.01,
+        tnldRate:            0.005,
+        bhxhCeilingMultiple: 20,
+        wageBase:            2340000,
+      }
+    );
+    console.log('  ✓ InsuranceConfig seeded (BHXH 8%/17%, BHYT 1.5%/3%, BHTN 1%/1%, lương cơ sở 2.34tr)');
+
+    // 2. TaxBracket 7 bậc (hiện hành đến 31/12/2025)
+    await createIfAbsent((prisma as any).taxBracket,
+      { tenantId: null, effectiveFrom: new Date('2013-07-01') },
+      {
         tenantId:      null,
         name:          'Biểu thuế TNCN lũy tiến 7 bậc (TT111/2013)',
         effectiveFrom: new Date('2013-07-01'),
-        brackets:      brackets7,
-      },
-    });
+        brackets: [
+          { min: 0,           max: 5_000_000,   rate: 0.05 },
+          { min: 5_000_000,   max: 10_000_000,  rate: 0.10 },
+          { min: 10_000_000,  max: 18_000_000,  rate: 0.15 },
+          { min: 18_000_000,  max: 32_000_000,  rate: 0.20 },
+          { min: 32_000_000,  max: 52_000_000,  rate: 0.25 },
+          { min: 52_000_000,  max: 80_000_000,  rate: 0.30 },
+          { min: 80_000_000,  max: null,         rate: 0.35 },
+        ],
+      }
+    );
 
-    // 3. TaxBracket — biểu thuế 5 bậc áp dụng từ 1/1/2026 (theo dự thảo mới)
-    const brackets5 = [
-      { min: 0,          max: 10_000_000, rate: 0.05 },
-      { min: 10_000_000, max: 30_000_000, rate: 0.15 },
-      { min: 30_000_000, max: 60_000_000, rate: 0.25 },
-      { min: 60_000_000, max: 120_000_000,rate: 0.30 },
-      { min: 120_000_000,max: null,        rate: 0.35 },
-    ];
-    await (prisma as any).taxBracket.upsert({
-      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2026-01-01') } },
-      update: {},
-      create: {
+    // 3. TaxBracket 5 bậc áp dụng từ 1/1/2026
+    await createIfAbsent((prisma as any).taxBracket,
+      { tenantId: null, effectiveFrom: new Date('2026-01-01') },
+      {
         tenantId:      null,
         name:          'Biểu thuế TNCN lũy tiến 5 bậc (dự kiến 2026)',
         effectiveFrom: new Date('2026-01-01'),
-        brackets:      brackets5,
-      },
-    });
+        brackets: [
+          { min: 0,            max: 10_000_000,  rate: 0.05 },
+          { min: 10_000_000,   max: 30_000_000,  rate: 0.15 },
+          { min: 30_000_000,   max: 60_000_000,  rate: 0.25 },
+          { min: 60_000_000,   max: 120_000_000, rate: 0.30 },
+          { min: 120_000_000,  max: null,         rate: 0.35 },
+        ],
+      }
+    );
     console.log('  ✓ TaxBracket seeded (7 bậc 2013 + 5 bậc 2026)');
 
     // 4. TaxDeductionConfig — giảm trừ gia cảnh từ 7/2020
-    await (prisma as any).taxDeductionConfig.upsert({
-      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2020-07-01') } },
-      update: {},
-      create: {
+    await createIfAbsent((prisma as any).taxDeductionConfig,
+      { tenantId: null, effectiveFrom: new Date('2020-07-01') },
+      {
         tenantId:           null,
         effectiveFrom:      new Date('2020-07-01'),
-        selfDeduction:      11_000_000, // 11 triệu/tháng bản thân
-        dependentDeduction:  4_400_000, // 4.4 triệu/tháng/người phụ thuộc
-      },
-    });
+        selfDeduction:      11_000_000,
+        dependentDeduction:  4_400_000,
+      }
+    );
     console.log('  ✓ TaxDeductionConfig seeded (bản thân 11tr, phụ thuộc 4.4tr)');
 
     // 5. WageZoneConfig — lương tối thiểu vùng từ 7/2024
-    await (prisma as any).wageZoneConfig.upsert({
-      where: { tenantId_effectiveFrom: { tenantId: null, effectiveFrom: new Date('2024-07-01') } },
-      update: {},
-      create: {
+    await createIfAbsent((prisma as any).wageZoneConfig,
+      { tenantId: null, effectiveFrom: new Date('2024-07-01') },
+      {
         tenantId:      null,
         effectiveFrom: new Date('2024-07-01'),
-        zone1:         4_960_000, // Hà Nội, HCM, Bình Dương, Đồng Nai...
-        zone2:         4_410_000, // Các huyện ngoại thành HN/HCM, tỉnh khác
+        zone1:         4_960_000,
+        zone2:         4_410_000,
         zone3:         3_860_000,
         zone4:         3_450_000,
-      },
-    });
+      }
+    );
     console.log('  ✓ WageZoneConfig seeded (vùng 1: 4.96tr, vùng 2: 4.41tr, vùng 3: 3.86tr, vùng 4: 3.45tr)');
 
   } catch (err) {

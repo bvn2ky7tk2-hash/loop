@@ -70,6 +70,15 @@ export class EmployeesService {
     return callerRole === 'ADMIN' ? emp : this.toPublic(emp, callerRole);
   }
 
+  async findMe(userId: string) {
+    const emp = await this.prisma.employee.findFirst({
+      where: { userId },
+      include: { orgUnit: { select: { name: true } }, rates: { orderBy: { effectiveDate: 'desc' }, take: 1 } },
+    });
+    if (!emp) throw new NotFoundException('Chưa có hồ sơ nhân sự cho tài khoản này');
+    return emp;
+  }
+
   async update(id: string, dto: UpdateEmployeeDto) {
     await this.findOrThrow(id);
     return this.prisma.employee.update({

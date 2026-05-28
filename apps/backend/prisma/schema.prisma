@@ -44,6 +44,7 @@ model User {
   orgUnit              OrgUnit?          @relation(fields: [orgUnitId], references: [id])
   workStatuses         WorkStatus[]
   auditLogs            AuditLog[]
+  crmActivities        CrmActivity[]     @relation("CrmActivityCreator")
 
   @@map("users")
 }
@@ -1073,6 +1074,7 @@ model Customer {
   deals           Deal[]
   invoices        Invoice[]
   clientContracts ClientContract[]
+  activities      CrmActivity[]
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt      @map("updated_at")
 
@@ -1171,6 +1173,46 @@ enum DealStage {
   LOST
 
   @@map("deal_stage")
+}
+
+// ─── CRM Activities ──────────────────────────────────────────────────────────
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+
+  @@map("activity_type")
+}
+
+model CrmActivity {
+  id              String       @id @default(uuid())
+  type            ActivityType
+  subject         String       @db.VarChar(200)
+  content         String?      @db.Text
+  customerId      String?      @map("customer_id")
+  customer        Customer?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  dealId          String?      @map("deal_id")
+  contactId       String?      @map("contact_id")
+  leadId          String?      @map("lead_id")
+  scheduledAt     DateTime?    @map("scheduled_at")
+  completedAt     DateTime?    @map("completed_at")
+  duration        Int?
+  outcome         String?      @db.Text
+  nextAction      String?      @map("next_action") @db.VarChar(300)
+  nextActionDueAt DateTime?    @map("next_action_due_at")
+  createdById     String       @map("created_by_id")
+  createdBy       User         @relation("CrmActivityCreator", fields: [createdById], references: [id])
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt      @map("updated_at")
+
+  @@index([customerId])
+  @@index([dealId])
+  @@index([leadId])
+  @@index([contactId])
+  @@index([createdById])
+  @@map("crm_activities")
 }
 
 // ─── Client Contracts ─────────────────────────────────────────────────────────

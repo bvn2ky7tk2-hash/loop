@@ -62,6 +62,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/crm/contacts',         module: 'crm', label: 'Contacts',      icon: 'ContactsOutlined',   permCode: 'crm:read', sortOrder: 2 },
   { route: '/crm/customers',        module: 'crm', label: 'All Customers', icon: 'ShopOutlined',       permCode: 'crm:read', sortOrder: 3 },
   { route: '/crm/client-contracts', module: 'crm', label: 'Hợp đồng KH',  icon: 'AuditOutlined',      permCode: 'crm:read', sortOrder: 4 },
+  { route: '/crm/activities',       module: 'crm', label: 'Activity Log', icon: 'PhoneOutlined',      permCode: 'crm:read', sortOrder: 5 },
 
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',        module: 'admin', label: 'Users',        icon: 'UserOutlined',              permCode: 'admin:users',       sortOrder: 0 },

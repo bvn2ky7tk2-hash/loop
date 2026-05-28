@@ -25,6 +25,12 @@ export class EmployeesController {
     return this.service.create(dto);
   }
 
+  @Get('me')
+  @ApiOperation({ summary: 'Hồ sơ nhân sự của bản thân' })
+  findMe(@CurrentUser() user: User) {
+    return this.service.findMe(user.id);
+  }
+
   @Get()
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
   @ApiOperation({ summary: 'Danh sách nhân sự (org scoped)' })

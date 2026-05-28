@@ -10,6 +10,8 @@ import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { PayrollEngineService } from './payroll-engine.service';
+import { PayslipQueueService } from './payslip-queue.service';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class PayrollService {
@@ -17,6 +19,8 @@ export class PayrollService {
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
     private readonly engine: PayrollEngineService,
+    private readonly payslipQueue: PayslipQueueService,
+    private readonly storage: StorageService,
   ) {}
 
   // ── List kỳ lương ──────────────────────────────────────────────────────────
@@ -56,7 +60,7 @@ export class PayrollService {
     });
   }
 
-  // ── Tính lương cho toàn bộ nhân viên active trong kỳ (delegate engine) ────
+  // ── Tính lương cho toàn bộ nhân viên active trong kỳ ─────────────────────
   async generatePayroll(periodId: string) {
     const { processed } = await this.engine.processPayrollPeriod(periodId);
     return { periodId, generated: processed, status: PayrollStatus.PROCESSING };
@@ -90,7 +94,7 @@ export class PayrollService {
     return paginate(data, total, page, limit);
   }
 
-  // ── Cập nhật bonus / deductions / note của một bản ghi ────────────────────
+  // ── Cập nhật bonus / deductions / note ────────────────────────────────────
   async updateRecord(recordId: string, dto: UpdatePayrollRecordDto) {
     const record = await this.prisma.payrollRecord.findUnique({
       where: { id: recordId },
@@ -99,7 +103,6 @@ export class PayrollService {
 
     const bonus = dto.bonus !== undefined ? dto.bonus : Number(record.bonus);
     const deductions = dto.deductions !== undefined ? dto.deductions : Number(record.deductions);
-    // Tính lại netSalary
     const netSalary = Number(record.baseSalary) - deductions + bonus;
 
     return this.prisma.payrollRecord.update({
@@ -113,7 +116,7 @@ export class PayrollService {
     });
   }
 
-  // ── Chuyển PROCESSING → REVIEWED (gửi để kiểm duyệt) ────────────────────
+  // ── Chuyển PROCESSING → REVIEWED ─────────────────────────────────────────
   async reviewPeriod(periodId: string) {
     const period = await this.prisma.payrollPeriod.findUnique({ where: { id: periodId } });
     if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
@@ -126,7 +129,7 @@ export class PayrollService {
     });
   }
 
-  // ── REVIEWED → DRAFT: chạy lại (re-run) ──────────────────────────────────
+  // ── REVIEWED → DRAFT: chạy lại ───────────────────────────────────────────
   async rerunPeriod(periodId: string) {
     const period = await this.prisma.payrollPeriod.findUnique({ where: { id: periodId } });
     if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
@@ -140,7 +143,7 @@ export class PayrollService {
     return this.generatePayroll(periodId);
   }
 
-  // ── Phê duyệt kỳ lương (REVIEWED → APPROVED) ─────────────────────────────
+  // ── Phê duyệt kỳ lương ───────────────────────────────────────────────────
   async approvePeriod(periodId: string, userId: string) {
     const period = await this.prisma.payrollPeriod.findUnique({
       where: { id: periodId },
@@ -166,7 +169,6 @@ export class PayrollService {
       include: { records: { select: { grossSalary: true } } },
     });
 
-    // Cập nhật YTD sau khi approve
     await this.engine.updateYtdAfterApproval(periodId);
 
     const totalSalary = updated.records.reduce((s, r) => s + Number(r.grossSalary), 0);
@@ -179,7 +181,7 @@ export class PayrollService {
     return updated;
   }
 
-  // ── Đánh dấu đã thanh toán ─────────────────────────────────────────────────
+  // ── Đánh dấu đã thanh toán → enqueue phiếu lương PDF ────────────────────
   async markPaid(periodId: string) {
     const period = await this.prisma.payrollPeriod.findUnique({
       where: { id: periodId },
@@ -190,9 +192,31 @@ export class PayrollService {
       throw new BadRequestException('Chỉ có thể đánh dấu đã trả với kỳ lương đã APPROVED');
     }
 
-    return this.prisma.payrollPeriod.update({
+    const updated = await this.prisma.payrollPeriod.update({
       where: { id: periodId },
       data: { status: PayrollStatus.PAID },
     });
+
+    // Async — không block response; lỗi sẽ được BullMQ retry
+    this.payslipQueue.enqueueAll(periodId).catch(() => {});
+
+    return updated;
+  }
+
+  // ── Lấy presigned URL của phiếu lương PDF ────────────────────────────────
+  // requestUserId kept for API compatibility but ownership check removed (admin access needed)
+  async getPayslipUrl(recordId: string, _requestUserId?: string): Promise<{ url: string | null; pending: boolean }> {
+    const record = await this.prisma.payrollRecord.findUnique({
+      where: { id: recordId },
+      select: { payslipPath: true },
+    });
+    if (!record) throw new NotFoundException(`PayrollRecord ${recordId} không tìm thấy`);
+
+    if (!record.payslipPath) {
+      return { url: null, pending: true };
+    }
+
+    const url = await this.storage.presignedUrl(record.payslipPath, undefined, 3600);
+    return { url, pending: false };
   }
 }

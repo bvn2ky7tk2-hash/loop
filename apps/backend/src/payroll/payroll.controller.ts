@@ -37,7 +37,7 @@ export class PayrollController {
     return this.service.createPeriod(dto);
   }
 
-  // ── Tính lương cho kỳ ──────────────────────────────────────────────────────
+  // ── Tính lương ─────────────────────────────────────────────────────────────
   @Post('periods/:id/generate')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
   @ApiOperation({ summary: 'Tính lương cho toàn bộ nhân viên trong kỳ' })
@@ -71,7 +71,7 @@ export class PayrollController {
     return this.service.reviewPeriod(id);
   }
 
-  // ── Chạy lại kỳ lương (REVIEWED → DRAFT → PROCESSING) ────────────────────
+  // ── Chạy lại kỳ lương ─────────────────────────────────────────────────────
   @Post('periods/:id/rerun')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
   @ApiOperation({ summary: 'Chạy lại tính lương sau khi đã review' })
@@ -90,8 +90,18 @@ export class PayrollController {
   // ── Đánh dấu đã thanh toán ─────────────────────────────────────────────────
   @Post('periods/:id/pay')
   @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Đánh dấu kỳ lương đã thanh toán' })
+  @ApiOperation({ summary: 'Đánh dấu kỳ lương đã thanh toán (trigger phiếu lương async)' })
   markPaid(@Param('id') id: string) {
     return this.service.markPaid(id);
+  }
+
+  // ── Lấy URL phiếu lương PDF ────────────────────────────────────────────────
+  @Get('records/:recordId/payslip')
+  @ApiOperation({ summary: 'Lấy presigned URL phiếu lương PDF (chỉ xem của mình)' })
+  getPayslipUrl(
+    @Param('recordId') recordId: string,
+    @Req() req: { user: { id: string } },
+  ) {
+    return this.service.getPayslipUrl(recordId, req.user.id);
   }
 }

@@ -6,13 +6,38 @@ import { PayrollConfigController } from './payroll-config.controller';
 import { PayrollEmployeeService } from './payroll-employee.service';
 import { PayrollEmployeeController } from './payroll-employee.controller';
 import { PayrollEngineService } from './payroll-engine.service';
+import { PayslipGeneratorService } from './payslip-generator.service';
+import { PayslipQueueService } from './payslip-queue.service';
+import { TaxReportService } from './tax-report.service';
+import { TaxReportController } from './tax-report.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AccountingModule } from '../accounting/accounting.module';
+import { StorageModule } from '../storage/storage.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [PrismaModule, AccountingModule],
-  controllers: [PayrollController, PayrollConfigController, PayrollEmployeeController],
-  providers: [PayrollService, PayrollConfigService, PayrollEmployeeService, PayrollEngineService],
-  exports: [PayrollService, PayrollConfigService, PayrollEmployeeService, PayrollEngineService],
+  imports: [PrismaModule, AccountingModule, StorageModule, NotificationsModule],
+  controllers: [
+    PayrollController,
+    PayrollConfigController,
+    PayrollEmployeeController,
+    TaxReportController,
+  ],
+  providers: [
+    PayrollService,
+    PayrollConfigService,
+    PayrollEmployeeService,
+    PayrollEngineService,
+    PayslipGeneratorService,
+    PayslipQueueService,
+    TaxReportService,
+  ],
+  exports: [
+    PayrollService,
+    PayrollConfigService,
+    PayrollEmployeeService,
+    PayrollEngineService,
+    TaxReportService,
+  ],
 })
 export class PayrollModule {}

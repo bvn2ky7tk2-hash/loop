@@ -11,7 +11,8 @@ import type { ColumnsType } from 'antd/es/table';
 import {
   PlusOutlined, ThunderboltOutlined, CheckOutlined, DollarOutlined,
   EditOutlined, TeamOutlined, CalendarOutlined, EyeOutlined,
-  ReloadOutlined, FileDoneOutlined, SettingOutlined,
+  ReloadOutlined, FileDoneOutlined, SettingOutlined, FilePdfOutlined,
+  FileExcelOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -369,12 +370,19 @@ function PeriodDetailModal({
     },
     {
       title: '',
-      width: 70,
+      width: 100,
       align: 'center',
       render: (_, r) => (
         <Space size={4}>
           <Tooltip title="Chi tiết">
             <Button size="small" icon={<EyeOutlined />} onClick={() => setDetailRecord(r)} />
+          </Tooltip>
+          <Tooltip title="Xem phiếu lương">
+            <Button size="small" icon={<FilePdfOutlined />} onClick={async () => {
+              const res = await payrollApi.getPayslipUrl(r.id);
+              if (res.url) window.open(res.url, '_blank', 'noopener');
+              else message.info('Phiếu lương đang được tạo, vui lòng thử lại sau');
+            }} />
           </Tooltip>
           {canEdit && (
             <Tooltip title="Điều chỉnh">
@@ -527,7 +535,20 @@ export default function PayrollPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<PayrollPeriod | null>(null);
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
+  const [exportingTax, setExportingTax] = useState(false);
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+
+  const handleExportTax = async () => {
+    setExportingTax(true);
+    try {
+      await payrollApi.downloadPitAnnual(new Date().getFullYear());
+      message.success('Đã xuất báo cáo 05-QTT-TNCN');
+    } catch {
+      message.error('Lỗi xuất báo cáo');
+    } finally {
+      setExportingTax(false);
+    }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-periods', page],
@@ -614,6 +635,9 @@ export default function PayrollPage() {
         iconColor="#0D9488"
         actions={
           <Space>
+            <Button icon={<FileExcelOutlined />} loading={exportingTax} onClick={handleExportTax}>
+              Báo cáo thuế {new Date().getFullYear()}
+            </Button>
             <Button icon={<SettingOutlined />} onClick={() => navigate('/payroll/settings')}>
               Cấu hình
             </Button>

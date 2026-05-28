@@ -27,6 +27,7 @@ export interface EmployeeRate {
 }
 
 export const employeesApi = {
+  me: () => apiClient.get<Employee>('/employees/me').then((r) => r.data),
   list: () => apiClient.get<Employee[]>('/employees').then((r) => r.data),
   get: (id: string) => apiClient.get<Employee>(`/employees/${id}`).then((r) => r.data),
   create: (data: Partial<Employee> & { password?: string }) =>

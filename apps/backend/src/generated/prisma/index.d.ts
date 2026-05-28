@@ -259,6 +259,11 @@ export type Lead = $Result.DefaultSelection<Prisma.$LeadPayload>
  */
 export type Deal = $Result.DefaultSelection<Prisma.$DealPayload>
 /**
+ * Model CrmActivity
+ * 
+ */
+export type CrmActivity = $Result.DefaultSelection<Prisma.$CrmActivityPayload>
+/**
  * Model ClientContract
  * 
  */
@@ -689,6 +694,16 @@ export const DealStage: {
 export type DealStage = (typeof DealStage)[keyof typeof DealStage]
 
 
+export const ActivityType: {
+  CALL: 'CALL',
+  EMAIL: 'EMAIL',
+  MEETING: 'MEETING',
+  NOTE: 'NOTE'
+};
+
+export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]
+
+
 export const ClientContractType: {
   SERVICE: 'SERVICE',
   PRODUCT: 'PRODUCT',
@@ -967,6 +982,10 @@ export const LeadStatus: typeof $Enums.LeadStatus
 export type DealStage = $Enums.DealStage
 
 export const DealStage: typeof $Enums.DealStage
+
+export type ActivityType = $Enums.ActivityType
+
+export const ActivityType: typeof $Enums.ActivityType
 
 export type ClientContractType = $Enums.ClientContractType
 
@@ -1650,6 +1669,16 @@ export class PrismaClient<
     * ```
     */
   get deal(): Prisma.DealDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.crmActivity`: Exposes CRUD operations for the **CrmActivity** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CrmActivities
+    * const crmActivities = await prisma.crmActivity.findMany()
+    * ```
+    */
+  get crmActivity(): Prisma.CrmActivityDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.clientContract`: Exposes CRUD operations for the **ClientContract** model.
@@ -2413,6 +2442,7 @@ export namespace Prisma {
     Contact: 'Contact',
     Lead: 'Lead',
     Deal: 'Deal',
+    CrmActivity: 'CrmActivity',
     ClientContract: 'ClientContract',
     ContractMilestone: 'ContractMilestone',
     Invoice: 'Invoice',
@@ -2456,7 +2486,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn"
+      modelProps: "user" | "orgUnit" | "employee" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -6086,6 +6116,80 @@ export namespace Prisma {
           }
         }
       }
+      CrmActivity: {
+        payload: Prisma.$CrmActivityPayload<ExtArgs>
+        fields: Prisma.CrmActivityFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CrmActivityFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CrmActivityFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          findFirst: {
+            args: Prisma.CrmActivityFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CrmActivityFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          findMany: {
+            args: Prisma.CrmActivityFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>[]
+          }
+          create: {
+            args: Prisma.CrmActivityCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          createMany: {
+            args: Prisma.CrmActivityCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CrmActivityCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>[]
+          }
+          delete: {
+            args: Prisma.CrmActivityDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          update: {
+            args: Prisma.CrmActivityUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          deleteMany: {
+            args: Prisma.CrmActivityDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CrmActivityUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CrmActivityUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>[]
+          }
+          upsert: {
+            args: Prisma.CrmActivityUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CrmActivityPayload>
+          }
+          aggregate: {
+            args: Prisma.CrmActivityAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCrmActivity>
+          }
+          groupBy: {
+            args: Prisma.CrmActivityGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CrmActivityGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CrmActivityCountArgs<ExtArgs>
+            result: $Utils.Optional<CrmActivityCountAggregateOutputType> | number
+          }
+        }
+      }
       ClientContract: {
         payload: Prisma.$ClientContractPayload<ExtArgs>
         fields: Prisma.ClientContractFieldRefs
@@ -8315,6 +8419,7 @@ export namespace Prisma {
     contact?: ContactOmit
     lead?: LeadOmit
     deal?: DealOmit
+    crmActivity?: CrmActivityOmit
     clientContract?: ClientContractOmit
     contractMilestone?: ContractMilestoneOmit
     invoice?: InvoiceOmit
@@ -8447,6 +8552,7 @@ export namespace Prisma {
     approvedExpenses: number
     workStatuses: number
     auditLogs: number
+    crmActivities: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8474,6 +8580,7 @@ export namespace Prisma {
     approvedExpenses?: boolean | UserCountOutputTypeCountApprovedExpensesArgs
     workStatuses?: boolean | UserCountOutputTypeCountWorkStatusesArgs
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
+    crmActivities?: boolean | UserCountOutputTypeCountCrmActivitiesArgs
   }
 
   // Custom InputTypes
@@ -8653,6 +8760,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AuditLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCrmActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CrmActivityWhereInput
   }
 
 
@@ -9459,6 +9573,7 @@ export namespace Prisma {
     deals: number
     invoices: number
     clientContracts: number
+    activities: number
   }
 
   export type CustomerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9466,6 +9581,7 @@ export namespace Prisma {
     deals?: boolean | CustomerCountOutputTypeCountDealsArgs
     invoices?: boolean | CustomerCountOutputTypeCountInvoicesArgs
     clientContracts?: boolean | CustomerCountOutputTypeCountClientContractsArgs
+    activities?: boolean | CustomerCountOutputTypeCountActivitiesArgs
   }
 
   // Custom InputTypes
@@ -9505,6 +9621,13 @@ export namespace Prisma {
    */
   export type CustomerCountOutputTypeCountClientContractsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ClientContractWhereInput
+  }
+
+  /**
+   * CustomerCountOutputType without action
+   */
+  export type CustomerCountOutputTypeCountActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CrmActivityWhereInput
   }
 
 
@@ -10132,6 +10255,7 @@ export namespace Prisma {
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
     workStatuses?: boolean | User$workStatusesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
+    crmActivities?: boolean | User$crmActivitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -10204,6 +10328,7 @@ export namespace Prisma {
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
     workStatuses?: boolean | User$workStatusesArgs<ExtArgs>
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
+    crmActivities?: boolean | User$crmActivitiesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10242,6 +10367,7 @@ export namespace Prisma {
       orgUnit: Prisma.$OrgUnitPayload<ExtArgs> | null
       workStatuses: Prisma.$WorkStatusPayload<ExtArgs>[]
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
+      crmActivities: Prisma.$CrmActivityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10674,6 +10800,7 @@ export namespace Prisma {
     orgUnit<T extends User$orgUnitArgs<ExtArgs> = {}>(args?: Subset<T, User$orgUnitArgs<ExtArgs>>): Prisma__OrgUnitClient<$Result.GetResult<Prisma.$OrgUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     workStatuses<T extends User$workStatusesArgs<ExtArgs> = {}>(args?: Subset<T, User$workStatusesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkStatusPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    crmActivities<T extends User$crmActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$crmActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11725,6 +11852,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AuditLogScalarFieldEnum | AuditLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.crmActivities
+   */
+  export type User$crmActivitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    where?: CrmActivityWhereInput
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    cursor?: CrmActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
   }
 
   /**
@@ -63916,6 +64067,7 @@ export namespace Prisma {
     deals?: boolean | Customer$dealsArgs<ExtArgs>
     invoices?: boolean | Customer$invoicesArgs<ExtArgs>
     clientContracts?: boolean | Customer$clientContractsArgs<ExtArgs>
+    activities?: boolean | Customer$activitiesArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["customer"]>
 
@@ -63958,6 +64110,7 @@ export namespace Prisma {
     deals?: boolean | Customer$dealsArgs<ExtArgs>
     invoices?: boolean | Customer$invoicesArgs<ExtArgs>
     clientContracts?: boolean | Customer$clientContractsArgs<ExtArgs>
+    activities?: boolean | Customer$activitiesArgs<ExtArgs>
     _count?: boolean | CustomerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CustomerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -63970,6 +64123,7 @@ export namespace Prisma {
       deals: Prisma.$DealPayload<ExtArgs>[]
       invoices: Prisma.$InvoicePayload<ExtArgs>[]
       clientContracts: Prisma.$ClientContractPayload<ExtArgs>[]
+      activities: Prisma.$CrmActivityPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -64378,6 +64532,7 @@ export namespace Prisma {
     deals<T extends Customer$dealsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$dealsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invoices<T extends Customer$invoicesArgs<ExtArgs> = {}>(args?: Subset<T, Customer$invoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     clientContracts<T extends Customer$clientContractsArgs<ExtArgs> = {}>(args?: Subset<T, Customer$clientContractsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    activities<T extends Customer$activitiesArgs<ExtArgs> = {}>(args?: Subset<T, Customer$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -64901,6 +65056,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ClientContractScalarFieldEnum | ClientContractScalarFieldEnum[]
+  }
+
+  /**
+   * Customer.activities
+   */
+  export type Customer$activitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    where?: CrmActivityWhereInput
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    cursor?: CrmActivityWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
   }
 
   /**
@@ -68547,6 +68726,1286 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: DealInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CrmActivity
+   */
+
+  export type AggregateCrmActivity = {
+    _count: CrmActivityCountAggregateOutputType | null
+    _avg: CrmActivityAvgAggregateOutputType | null
+    _sum: CrmActivitySumAggregateOutputType | null
+    _min: CrmActivityMinAggregateOutputType | null
+    _max: CrmActivityMaxAggregateOutputType | null
+  }
+
+  export type CrmActivityAvgAggregateOutputType = {
+    duration: number | null
+  }
+
+  export type CrmActivitySumAggregateOutputType = {
+    duration: number | null
+  }
+
+  export type CrmActivityMinAggregateOutputType = {
+    id: string | null
+    type: $Enums.ActivityType | null
+    subject: string | null
+    content: string | null
+    customerId: string | null
+    dealId: string | null
+    contactId: string | null
+    leadId: string | null
+    scheduledAt: Date | null
+    completedAt: Date | null
+    duration: number | null
+    outcome: string | null
+    nextAction: string | null
+    nextActionDueAt: Date | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CrmActivityMaxAggregateOutputType = {
+    id: string | null
+    type: $Enums.ActivityType | null
+    subject: string | null
+    content: string | null
+    customerId: string | null
+    dealId: string | null
+    contactId: string | null
+    leadId: string | null
+    scheduledAt: Date | null
+    completedAt: Date | null
+    duration: number | null
+    outcome: string | null
+    nextAction: string | null
+    nextActionDueAt: Date | null
+    createdById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CrmActivityCountAggregateOutputType = {
+    id: number
+    type: number
+    subject: number
+    content: number
+    customerId: number
+    dealId: number
+    contactId: number
+    leadId: number
+    scheduledAt: number
+    completedAt: number
+    duration: number
+    outcome: number
+    nextAction: number
+    nextActionDueAt: number
+    createdById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CrmActivityAvgAggregateInputType = {
+    duration?: true
+  }
+
+  export type CrmActivitySumAggregateInputType = {
+    duration?: true
+  }
+
+  export type CrmActivityMinAggregateInputType = {
+    id?: true
+    type?: true
+    subject?: true
+    content?: true
+    customerId?: true
+    dealId?: true
+    contactId?: true
+    leadId?: true
+    scheduledAt?: true
+    completedAt?: true
+    duration?: true
+    outcome?: true
+    nextAction?: true
+    nextActionDueAt?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CrmActivityMaxAggregateInputType = {
+    id?: true
+    type?: true
+    subject?: true
+    content?: true
+    customerId?: true
+    dealId?: true
+    contactId?: true
+    leadId?: true
+    scheduledAt?: true
+    completedAt?: true
+    duration?: true
+    outcome?: true
+    nextAction?: true
+    nextActionDueAt?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CrmActivityCountAggregateInputType = {
+    id?: true
+    type?: true
+    subject?: true
+    content?: true
+    customerId?: true
+    dealId?: true
+    contactId?: true
+    leadId?: true
+    scheduledAt?: true
+    completedAt?: true
+    duration?: true
+    outcome?: true
+    nextAction?: true
+    nextActionDueAt?: true
+    createdById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CrmActivityAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CrmActivity to aggregate.
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CrmActivities to fetch.
+     */
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CrmActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CrmActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CrmActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CrmActivities
+    **/
+    _count?: true | CrmActivityCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CrmActivityAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CrmActivitySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CrmActivityMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CrmActivityMaxAggregateInputType
+  }
+
+  export type GetCrmActivityAggregateType<T extends CrmActivityAggregateArgs> = {
+        [P in keyof T & keyof AggregateCrmActivity]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCrmActivity[P]>
+      : GetScalarType<T[P], AggregateCrmActivity[P]>
+  }
+
+
+
+
+  export type CrmActivityGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CrmActivityWhereInput
+    orderBy?: CrmActivityOrderByWithAggregationInput | CrmActivityOrderByWithAggregationInput[]
+    by: CrmActivityScalarFieldEnum[] | CrmActivityScalarFieldEnum
+    having?: CrmActivityScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CrmActivityCountAggregateInputType | true
+    _avg?: CrmActivityAvgAggregateInputType
+    _sum?: CrmActivitySumAggregateInputType
+    _min?: CrmActivityMinAggregateInputType
+    _max?: CrmActivityMaxAggregateInputType
+  }
+
+  export type CrmActivityGroupByOutputType = {
+    id: string
+    type: $Enums.ActivityType
+    subject: string
+    content: string | null
+    customerId: string | null
+    dealId: string | null
+    contactId: string | null
+    leadId: string | null
+    scheduledAt: Date | null
+    completedAt: Date | null
+    duration: number | null
+    outcome: string | null
+    nextAction: string | null
+    nextActionDueAt: Date | null
+    createdById: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CrmActivityCountAggregateOutputType | null
+    _avg: CrmActivityAvgAggregateOutputType | null
+    _sum: CrmActivitySumAggregateOutputType | null
+    _min: CrmActivityMinAggregateOutputType | null
+    _max: CrmActivityMaxAggregateOutputType | null
+  }
+
+  type GetCrmActivityGroupByPayload<T extends CrmActivityGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CrmActivityGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CrmActivityGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CrmActivityGroupByOutputType[P]>
+            : GetScalarType<T[P], CrmActivityGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CrmActivitySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    subject?: boolean
+    content?: boolean
+    customerId?: boolean
+    dealId?: boolean
+    contactId?: boolean
+    leadId?: boolean
+    scheduledAt?: boolean
+    completedAt?: boolean
+    duration?: boolean
+    outcome?: boolean
+    nextAction?: boolean
+    nextActionDueAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["crmActivity"]>
+
+  export type CrmActivitySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    subject?: boolean
+    content?: boolean
+    customerId?: boolean
+    dealId?: boolean
+    contactId?: boolean
+    leadId?: boolean
+    scheduledAt?: boolean
+    completedAt?: boolean
+    duration?: boolean
+    outcome?: boolean
+    nextAction?: boolean
+    nextActionDueAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["crmActivity"]>
+
+  export type CrmActivitySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    subject?: boolean
+    content?: boolean
+    customerId?: boolean
+    dealId?: boolean
+    contactId?: boolean
+    leadId?: boolean
+    scheduledAt?: boolean
+    completedAt?: boolean
+    duration?: boolean
+    outcome?: boolean
+    nextAction?: boolean
+    nextActionDueAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["crmActivity"]>
+
+  export type CrmActivitySelectScalar = {
+    id?: boolean
+    type?: boolean
+    subject?: boolean
+    content?: boolean
+    customerId?: boolean
+    dealId?: boolean
+    contactId?: boolean
+    leadId?: boolean
+    scheduledAt?: boolean
+    completedAt?: boolean
+    duration?: boolean
+    outcome?: boolean
+    nextAction?: boolean
+    nextActionDueAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CrmActivityOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "subject" | "content" | "customerId" | "dealId" | "contactId" | "leadId" | "scheduledAt" | "completedAt" | "duration" | "outcome" | "nextAction" | "nextActionDueAt" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["crmActivity"]>
+  export type CrmActivityInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CrmActivityIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type CrmActivityIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    customer?: boolean | CrmActivity$customerArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $CrmActivityPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CrmActivity"
+    objects: {
+      customer: Prisma.$CustomerPayload<ExtArgs> | null
+      createdBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: $Enums.ActivityType
+      subject: string
+      content: string | null
+      customerId: string | null
+      dealId: string | null
+      contactId: string | null
+      leadId: string | null
+      scheduledAt: Date | null
+      completedAt: Date | null
+      duration: number | null
+      outcome: string | null
+      nextAction: string | null
+      nextActionDueAt: Date | null
+      createdById: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["crmActivity"]>
+    composites: {}
+  }
+
+  type CrmActivityGetPayload<S extends boolean | null | undefined | CrmActivityDefaultArgs> = $Result.GetResult<Prisma.$CrmActivityPayload, S>
+
+  type CrmActivityCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CrmActivityFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CrmActivityCountAggregateInputType | true
+    }
+
+  export interface CrmActivityDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CrmActivity'], meta: { name: 'CrmActivity' } }
+    /**
+     * Find zero or one CrmActivity that matches the filter.
+     * @param {CrmActivityFindUniqueArgs} args - Arguments to find a CrmActivity
+     * @example
+     * // Get one CrmActivity
+     * const crmActivity = await prisma.crmActivity.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CrmActivityFindUniqueArgs>(args: SelectSubset<T, CrmActivityFindUniqueArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CrmActivity that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CrmActivityFindUniqueOrThrowArgs} args - Arguments to find a CrmActivity
+     * @example
+     * // Get one CrmActivity
+     * const crmActivity = await prisma.crmActivity.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CrmActivityFindUniqueOrThrowArgs>(args: SelectSubset<T, CrmActivityFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CrmActivity that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityFindFirstArgs} args - Arguments to find a CrmActivity
+     * @example
+     * // Get one CrmActivity
+     * const crmActivity = await prisma.crmActivity.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CrmActivityFindFirstArgs>(args?: SelectSubset<T, CrmActivityFindFirstArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CrmActivity that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityFindFirstOrThrowArgs} args - Arguments to find a CrmActivity
+     * @example
+     * // Get one CrmActivity
+     * const crmActivity = await prisma.crmActivity.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CrmActivityFindFirstOrThrowArgs>(args?: SelectSubset<T, CrmActivityFindFirstOrThrowArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CrmActivities that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CrmActivities
+     * const crmActivities = await prisma.crmActivity.findMany()
+     * 
+     * // Get first 10 CrmActivities
+     * const crmActivities = await prisma.crmActivity.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const crmActivityWithIdOnly = await prisma.crmActivity.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CrmActivityFindManyArgs>(args?: SelectSubset<T, CrmActivityFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CrmActivity.
+     * @param {CrmActivityCreateArgs} args - Arguments to create a CrmActivity.
+     * @example
+     * // Create one CrmActivity
+     * const CrmActivity = await prisma.crmActivity.create({
+     *   data: {
+     *     // ... data to create a CrmActivity
+     *   }
+     * })
+     * 
+     */
+    create<T extends CrmActivityCreateArgs>(args: SelectSubset<T, CrmActivityCreateArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CrmActivities.
+     * @param {CrmActivityCreateManyArgs} args - Arguments to create many CrmActivities.
+     * @example
+     * // Create many CrmActivities
+     * const crmActivity = await prisma.crmActivity.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CrmActivityCreateManyArgs>(args?: SelectSubset<T, CrmActivityCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CrmActivities and returns the data saved in the database.
+     * @param {CrmActivityCreateManyAndReturnArgs} args - Arguments to create many CrmActivities.
+     * @example
+     * // Create many CrmActivities
+     * const crmActivity = await prisma.crmActivity.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CrmActivities and only return the `id`
+     * const crmActivityWithIdOnly = await prisma.crmActivity.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CrmActivityCreateManyAndReturnArgs>(args?: SelectSubset<T, CrmActivityCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CrmActivity.
+     * @param {CrmActivityDeleteArgs} args - Arguments to delete one CrmActivity.
+     * @example
+     * // Delete one CrmActivity
+     * const CrmActivity = await prisma.crmActivity.delete({
+     *   where: {
+     *     // ... filter to delete one CrmActivity
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CrmActivityDeleteArgs>(args: SelectSubset<T, CrmActivityDeleteArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CrmActivity.
+     * @param {CrmActivityUpdateArgs} args - Arguments to update one CrmActivity.
+     * @example
+     * // Update one CrmActivity
+     * const crmActivity = await prisma.crmActivity.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CrmActivityUpdateArgs>(args: SelectSubset<T, CrmActivityUpdateArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CrmActivities.
+     * @param {CrmActivityDeleteManyArgs} args - Arguments to filter CrmActivities to delete.
+     * @example
+     * // Delete a few CrmActivities
+     * const { count } = await prisma.crmActivity.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CrmActivityDeleteManyArgs>(args?: SelectSubset<T, CrmActivityDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CrmActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CrmActivities
+     * const crmActivity = await prisma.crmActivity.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CrmActivityUpdateManyArgs>(args: SelectSubset<T, CrmActivityUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CrmActivities and returns the data updated in the database.
+     * @param {CrmActivityUpdateManyAndReturnArgs} args - Arguments to update many CrmActivities.
+     * @example
+     * // Update many CrmActivities
+     * const crmActivity = await prisma.crmActivity.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CrmActivities and only return the `id`
+     * const crmActivityWithIdOnly = await prisma.crmActivity.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CrmActivityUpdateManyAndReturnArgs>(args: SelectSubset<T, CrmActivityUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CrmActivity.
+     * @param {CrmActivityUpsertArgs} args - Arguments to update or create a CrmActivity.
+     * @example
+     * // Update or create a CrmActivity
+     * const crmActivity = await prisma.crmActivity.upsert({
+     *   create: {
+     *     // ... data to create a CrmActivity
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CrmActivity we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CrmActivityUpsertArgs>(args: SelectSubset<T, CrmActivityUpsertArgs<ExtArgs>>): Prisma__CrmActivityClient<$Result.GetResult<Prisma.$CrmActivityPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CrmActivities.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityCountArgs} args - Arguments to filter CrmActivities to count.
+     * @example
+     * // Count the number of CrmActivities
+     * const count = await prisma.crmActivity.count({
+     *   where: {
+     *     // ... the filter for the CrmActivities we want to count
+     *   }
+     * })
+    **/
+    count<T extends CrmActivityCountArgs>(
+      args?: Subset<T, CrmActivityCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CrmActivityCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CrmActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CrmActivityAggregateArgs>(args: Subset<T, CrmActivityAggregateArgs>): Prisma.PrismaPromise<GetCrmActivityAggregateType<T>>
+
+    /**
+     * Group by CrmActivity.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CrmActivityGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CrmActivityGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CrmActivityGroupByArgs['orderBy'] }
+        : { orderBy?: CrmActivityGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CrmActivityGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCrmActivityGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CrmActivity model
+   */
+  readonly fields: CrmActivityFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CrmActivity.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CrmActivityClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    customer<T extends CrmActivity$customerArgs<ExtArgs> = {}>(args?: Subset<T, CrmActivity$customerArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CrmActivity model
+   */
+  interface CrmActivityFieldRefs {
+    readonly id: FieldRef<"CrmActivity", 'String'>
+    readonly type: FieldRef<"CrmActivity", 'ActivityType'>
+    readonly subject: FieldRef<"CrmActivity", 'String'>
+    readonly content: FieldRef<"CrmActivity", 'String'>
+    readonly customerId: FieldRef<"CrmActivity", 'String'>
+    readonly dealId: FieldRef<"CrmActivity", 'String'>
+    readonly contactId: FieldRef<"CrmActivity", 'String'>
+    readonly leadId: FieldRef<"CrmActivity", 'String'>
+    readonly scheduledAt: FieldRef<"CrmActivity", 'DateTime'>
+    readonly completedAt: FieldRef<"CrmActivity", 'DateTime'>
+    readonly duration: FieldRef<"CrmActivity", 'Int'>
+    readonly outcome: FieldRef<"CrmActivity", 'String'>
+    readonly nextAction: FieldRef<"CrmActivity", 'String'>
+    readonly nextActionDueAt: FieldRef<"CrmActivity", 'DateTime'>
+    readonly createdById: FieldRef<"CrmActivity", 'String'>
+    readonly createdAt: FieldRef<"CrmActivity", 'DateTime'>
+    readonly updatedAt: FieldRef<"CrmActivity", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CrmActivity findUnique
+   */
+  export type CrmActivityFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CrmActivity to fetch.
+     */
+    where: CrmActivityWhereUniqueInput
+  }
+
+  /**
+   * CrmActivity findUniqueOrThrow
+   */
+  export type CrmActivityFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CrmActivity to fetch.
+     */
+    where: CrmActivityWhereUniqueInput
+  }
+
+  /**
+   * CrmActivity findFirst
+   */
+  export type CrmActivityFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CrmActivity to fetch.
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CrmActivities to fetch.
+     */
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CrmActivities.
+     */
+    cursor?: CrmActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CrmActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CrmActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CrmActivities.
+     */
+    distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CrmActivity findFirstOrThrow
+   */
+  export type CrmActivityFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CrmActivity to fetch.
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CrmActivities to fetch.
+     */
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CrmActivities.
+     */
+    cursor?: CrmActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CrmActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CrmActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CrmActivities.
+     */
+    distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CrmActivity findMany
+   */
+  export type CrmActivityFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter, which CrmActivities to fetch.
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CrmActivities to fetch.
+     */
+    orderBy?: CrmActivityOrderByWithRelationInput | CrmActivityOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CrmActivities.
+     */
+    cursor?: CrmActivityWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CrmActivities from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CrmActivities.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CrmActivities.
+     */
+    distinct?: CrmActivityScalarFieldEnum | CrmActivityScalarFieldEnum[]
+  }
+
+  /**
+   * CrmActivity create
+   */
+  export type CrmActivityCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to create a CrmActivity.
+     */
+    data: XOR<CrmActivityCreateInput, CrmActivityUncheckedCreateInput>
+  }
+
+  /**
+   * CrmActivity createMany
+   */
+  export type CrmActivityCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CrmActivities.
+     */
+    data: CrmActivityCreateManyInput | CrmActivityCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CrmActivity createManyAndReturn
+   */
+  export type CrmActivityCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * The data used to create many CrmActivities.
+     */
+    data: CrmActivityCreateManyInput | CrmActivityCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CrmActivity update
+   */
+  export type CrmActivityUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * The data needed to update a CrmActivity.
+     */
+    data: XOR<CrmActivityUpdateInput, CrmActivityUncheckedUpdateInput>
+    /**
+     * Choose, which CrmActivity to update.
+     */
+    where: CrmActivityWhereUniqueInput
+  }
+
+  /**
+   * CrmActivity updateMany
+   */
+  export type CrmActivityUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CrmActivities.
+     */
+    data: XOR<CrmActivityUpdateManyMutationInput, CrmActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which CrmActivities to update
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * Limit how many CrmActivities to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CrmActivity updateManyAndReturn
+   */
+  export type CrmActivityUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * The data used to update CrmActivities.
+     */
+    data: XOR<CrmActivityUpdateManyMutationInput, CrmActivityUncheckedUpdateManyInput>
+    /**
+     * Filter which CrmActivities to update
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * Limit how many CrmActivities to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * CrmActivity upsert
+   */
+  export type CrmActivityUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * The filter to search for the CrmActivity to update in case it exists.
+     */
+    where: CrmActivityWhereUniqueInput
+    /**
+     * In case the CrmActivity found by the `where` argument doesn't exist, create a new CrmActivity with this data.
+     */
+    create: XOR<CrmActivityCreateInput, CrmActivityUncheckedCreateInput>
+    /**
+     * In case the CrmActivity was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CrmActivityUpdateInput, CrmActivityUncheckedUpdateInput>
+  }
+
+  /**
+   * CrmActivity delete
+   */
+  export type CrmActivityDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
+    /**
+     * Filter which CrmActivity to delete.
+     */
+    where: CrmActivityWhereUniqueInput
+  }
+
+  /**
+   * CrmActivity deleteMany
+   */
+  export type CrmActivityDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CrmActivities to delete
+     */
+    where?: CrmActivityWhereInput
+    /**
+     * Limit how many CrmActivities to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CrmActivity.customer
+   */
+  export type CrmActivity$customerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Customer
+     */
+    select?: CustomerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Customer
+     */
+    omit?: CustomerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CustomerInclude<ExtArgs> | null
+    where?: CustomerWhereInput
+  }
+
+  /**
+   * CrmActivity without action
+   */
+  export type CrmActivityDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CrmActivity
+     */
+    select?: CrmActivitySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CrmActivity
+     */
+    omit?: CrmActivityOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CrmActivityInclude<ExtArgs> | null
   }
 
 
@@ -101633,6 +103092,29 @@ export namespace Prisma {
   export type DealScalarFieldEnum = (typeof DealScalarFieldEnum)[keyof typeof DealScalarFieldEnum]
 
 
+  export const CrmActivityScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    subject: 'subject',
+    content: 'content',
+    customerId: 'customerId',
+    dealId: 'dealId',
+    contactId: 'contactId',
+    leadId: 'leadId',
+    scheduledAt: 'scheduledAt',
+    completedAt: 'completedAt',
+    duration: 'duration',
+    outcome: 'outcome',
+    nextAction: 'nextAction',
+    nextActionDueAt: 'nextActionDueAt',
+    createdById: 'createdById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CrmActivityScalarFieldEnum = (typeof CrmActivityScalarFieldEnum)[keyof typeof CrmActivityScalarFieldEnum]
+
+
   export const ClientContractScalarFieldEnum: {
     id: 'id',
     contractNo: 'contractNo',
@@ -102557,6 +104039,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ActivityType'
+   */
+  export type EnumActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityType'>
+    
+
+
+  /**
+   * Reference to a field of type 'ActivityType[]'
+   */
+  export type ListEnumActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActivityType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ClientContractType'
    */
   export type EnumClientContractTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ClientContractType'>
@@ -102851,6 +104347,7 @@ export namespace Prisma {
     orgUnit?: XOR<OrgUnitNullableScalarRelationFilter, OrgUnitWhereInput> | null
     workStatuses?: WorkStatusListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    crmActivities?: CrmActivityListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -102890,6 +104387,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitOrderByWithRelationInput
     workStatuses?: WorkStatusOrderByRelationAggregateInput
     auditLogs?: AuditLogOrderByRelationAggregateInput
+    crmActivities?: CrmActivityOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -102932,6 +104430,7 @@ export namespace Prisma {
     orgUnit?: XOR<OrgUnitNullableScalarRelationFilter, OrgUnitWhereInput> | null
     workStatuses?: WorkStatusListRelationFilter
     auditLogs?: AuditLogListRelationFilter
+    crmActivities?: CrmActivityListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -106599,6 +108098,7 @@ export namespace Prisma {
     deals?: DealListRelationFilter
     invoices?: InvoiceListRelationFilter
     clientContracts?: ClientContractListRelationFilter
+    activities?: CrmActivityListRelationFilter
   }
 
   export type CustomerOrderByWithRelationInput = {
@@ -106614,6 +108114,7 @@ export namespace Prisma {
     deals?: DealOrderByRelationAggregateInput
     invoices?: InvoiceOrderByRelationAggregateInput
     clientContracts?: ClientContractOrderByRelationAggregateInput
+    activities?: CrmActivityOrderByRelationAggregateInput
   }
 
   export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -106632,6 +108133,7 @@ export namespace Prisma {
     deals?: DealListRelationFilter
     invoices?: InvoiceListRelationFilter
     clientContracts?: ClientContractListRelationFilter
+    activities?: CrmActivityListRelationFilter
   }, "id" | "code">
 
   export type CustomerOrderByWithAggregationInput = {
@@ -106947,6 +108449,126 @@ export namespace Prisma {
     processInstanceId?: StringNullableWithAggregatesFilter<"Deal"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Deal"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Deal"> | Date | string
+  }
+
+  export type CrmActivityWhereInput = {
+    AND?: CrmActivityWhereInput | CrmActivityWhereInput[]
+    OR?: CrmActivityWhereInput[]
+    NOT?: CrmActivityWhereInput | CrmActivityWhereInput[]
+    id?: StringFilter<"CrmActivity"> | string
+    type?: EnumActivityTypeFilter<"CrmActivity"> | $Enums.ActivityType
+    subject?: StringFilter<"CrmActivity"> | string
+    content?: StringNullableFilter<"CrmActivity"> | string | null
+    customerId?: StringNullableFilter<"CrmActivity"> | string | null
+    dealId?: StringNullableFilter<"CrmActivity"> | string | null
+    contactId?: StringNullableFilter<"CrmActivity"> | string | null
+    leadId?: StringNullableFilter<"CrmActivity"> | string | null
+    scheduledAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    duration?: IntNullableFilter<"CrmActivity"> | number | null
+    outcome?: StringNullableFilter<"CrmActivity"> | string | null
+    nextAction?: StringNullableFilter<"CrmActivity"> | string | null
+    nextActionDueAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    createdById?: StringFilter<"CrmActivity"> | string
+    createdAt?: DateTimeFilter<"CrmActivity"> | Date | string
+    updatedAt?: DateTimeFilter<"CrmActivity"> | Date | string
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type CrmActivityOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    subject?: SortOrder
+    content?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
+    dealId?: SortOrderInput | SortOrder
+    contactId?: SortOrderInput | SortOrder
+    leadId?: SortOrderInput | SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
+    outcome?: SortOrderInput | SortOrder
+    nextAction?: SortOrderInput | SortOrder
+    nextActionDueAt?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    customer?: CustomerOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+  }
+
+  export type CrmActivityWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CrmActivityWhereInput | CrmActivityWhereInput[]
+    OR?: CrmActivityWhereInput[]
+    NOT?: CrmActivityWhereInput | CrmActivityWhereInput[]
+    type?: EnumActivityTypeFilter<"CrmActivity"> | $Enums.ActivityType
+    subject?: StringFilter<"CrmActivity"> | string
+    content?: StringNullableFilter<"CrmActivity"> | string | null
+    customerId?: StringNullableFilter<"CrmActivity"> | string | null
+    dealId?: StringNullableFilter<"CrmActivity"> | string | null
+    contactId?: StringNullableFilter<"CrmActivity"> | string | null
+    leadId?: StringNullableFilter<"CrmActivity"> | string | null
+    scheduledAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    duration?: IntNullableFilter<"CrmActivity"> | number | null
+    outcome?: StringNullableFilter<"CrmActivity"> | string | null
+    nextAction?: StringNullableFilter<"CrmActivity"> | string | null
+    nextActionDueAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    createdById?: StringFilter<"CrmActivity"> | string
+    createdAt?: DateTimeFilter<"CrmActivity"> | Date | string
+    updatedAt?: DateTimeFilter<"CrmActivity"> | Date | string
+    customer?: XOR<CustomerNullableScalarRelationFilter, CustomerWhereInput> | null
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type CrmActivityOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    subject?: SortOrder
+    content?: SortOrderInput | SortOrder
+    customerId?: SortOrderInput | SortOrder
+    dealId?: SortOrderInput | SortOrder
+    contactId?: SortOrderInput | SortOrder
+    leadId?: SortOrderInput | SortOrder
+    scheduledAt?: SortOrderInput | SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    duration?: SortOrderInput | SortOrder
+    outcome?: SortOrderInput | SortOrder
+    nextAction?: SortOrderInput | SortOrder
+    nextActionDueAt?: SortOrderInput | SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CrmActivityCountOrderByAggregateInput
+    _avg?: CrmActivityAvgOrderByAggregateInput
+    _max?: CrmActivityMaxOrderByAggregateInput
+    _min?: CrmActivityMinOrderByAggregateInput
+    _sum?: CrmActivitySumOrderByAggregateInput
+  }
+
+  export type CrmActivityScalarWhereWithAggregatesInput = {
+    AND?: CrmActivityScalarWhereWithAggregatesInput | CrmActivityScalarWhereWithAggregatesInput[]
+    OR?: CrmActivityScalarWhereWithAggregatesInput[]
+    NOT?: CrmActivityScalarWhereWithAggregatesInput | CrmActivityScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CrmActivity"> | string
+    type?: EnumActivityTypeWithAggregatesFilter<"CrmActivity"> | $Enums.ActivityType
+    subject?: StringWithAggregatesFilter<"CrmActivity"> | string
+    content?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    customerId?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    dealId?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    contactId?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    leadId?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    scheduledAt?: DateTimeNullableWithAggregatesFilter<"CrmActivity"> | Date | string | null
+    completedAt?: DateTimeNullableWithAggregatesFilter<"CrmActivity"> | Date | string | null
+    duration?: IntNullableWithAggregatesFilter<"CrmActivity"> | number | null
+    outcome?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    nextAction?: StringNullableWithAggregatesFilter<"CrmActivity"> | string | null
+    nextActionDueAt?: DateTimeNullableWithAggregatesFilter<"CrmActivity"> | Date | string | null
+    createdById?: StringWithAggregatesFilter<"CrmActivity"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"CrmActivity"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CrmActivity"> | Date | string
   }
 
   export type ClientContractWhereInput = {
@@ -109209,6 +110831,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -109247,6 +110870,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -109285,6 +110909,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -109323,6 +110948,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -113245,6 +114871,7 @@ export namespace Prisma {
     deals?: DealCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateInput = {
@@ -113260,6 +114887,7 @@ export namespace Prisma {
     deals?: DealUncheckedCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractUncheckedCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUpdateInput = {
@@ -113275,6 +114903,7 @@ export namespace Prisma {
     deals?: DealUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateInput = {
@@ -113290,6 +114919,7 @@ export namespace Prisma {
     deals?: DealUncheckedUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUncheckedUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerCreateManyInput = {
@@ -113651,6 +115281,144 @@ export namespace Prisma {
     lostReason?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityCreateInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer?: CustomerCreateNestedOneWithoutActivitiesInput
+    createdBy: UserCreateNestedOneWithoutCrmActivitiesInput
+  }
+
+  export type CrmActivityUncheckedCreateInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    customerId?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CrmActivityUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneWithoutActivitiesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCrmActivitiesNestedInput
+  }
+
+  export type CrmActivityUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityCreateManyInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    customerId?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CrmActivityUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -116281,6 +118049,12 @@ export namespace Prisma {
     none?: AuditLogWhereInput
   }
 
+  export type CrmActivityListRelationFilter = {
+    every?: CrmActivityWhereInput
+    some?: CrmActivityWhereInput
+    none?: CrmActivityWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -116363,6 +118137,10 @@ export namespace Prisma {
   }
 
   export type AuditLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CrmActivityOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -119682,6 +121460,91 @@ export namespace Prisma {
     _max?: NestedEnumDealStageFilter<$PrismaModel>
   }
 
+  export type EnumActivityTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ActivityType | EnumActivityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumActivityTypeFilter<$PrismaModel> | $Enums.ActivityType
+  }
+
+  export type CrmActivityCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    subject?: SortOrder
+    content?: SortOrder
+    customerId?: SortOrder
+    dealId?: SortOrder
+    contactId?: SortOrder
+    leadId?: SortOrder
+    scheduledAt?: SortOrder
+    completedAt?: SortOrder
+    duration?: SortOrder
+    outcome?: SortOrder
+    nextAction?: SortOrder
+    nextActionDueAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CrmActivityAvgOrderByAggregateInput = {
+    duration?: SortOrder
+  }
+
+  export type CrmActivityMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    subject?: SortOrder
+    content?: SortOrder
+    customerId?: SortOrder
+    dealId?: SortOrder
+    contactId?: SortOrder
+    leadId?: SortOrder
+    scheduledAt?: SortOrder
+    completedAt?: SortOrder
+    duration?: SortOrder
+    outcome?: SortOrder
+    nextAction?: SortOrder
+    nextActionDueAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CrmActivityMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    subject?: SortOrder
+    content?: SortOrder
+    customerId?: SortOrder
+    dealId?: SortOrder
+    contactId?: SortOrder
+    leadId?: SortOrder
+    scheduledAt?: SortOrder
+    completedAt?: SortOrder
+    duration?: SortOrder
+    outcome?: SortOrder
+    nextAction?: SortOrder
+    nextActionDueAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CrmActivitySumOrderByAggregateInput = {
+    duration?: SortOrder
+  }
+
+  export type EnumActivityTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ActivityType | EnumActivityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumActivityTypeWithAggregatesFilter<$PrismaModel> | $Enums.ActivityType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumActivityTypeFilter<$PrismaModel>
+    _max?: NestedEnumActivityTypeFilter<$PrismaModel>
+  }
+
   export type EnumClientContractTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ClientContractType | EnumClientContractTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ClientContractType[] | ListEnumClientContractTypeFieldRefInput<$PrismaModel>
@@ -121616,6 +123479,13 @@ export namespace Prisma {
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
   }
 
+  export type CrmActivityCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput> | CrmActivityCreateWithoutCreatedByInput[] | CrmActivityUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCreatedByInput | CrmActivityCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CrmActivityCreateManyCreatedByInputEnvelope
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+  }
+
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -121788,6 +123658,13 @@ export namespace Prisma {
     connectOrCreate?: AuditLogCreateOrConnectWithoutUserInput | AuditLogCreateOrConnectWithoutUserInput[]
     createMany?: AuditLogCreateManyUserInputEnvelope
     connect?: AuditLogWhereUniqueInput | AuditLogWhereUniqueInput[]
+  }
+
+  export type CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput> | CrmActivityCreateWithoutCreatedByInput[] | CrmActivityUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCreatedByInput | CrmActivityCreateOrConnectWithoutCreatedByInput[]
+    createMany?: CrmActivityCreateManyCreatedByInputEnvelope
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -122166,6 +124043,20 @@ export namespace Prisma {
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
   }
 
+  export type CrmActivityUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput> | CrmActivityCreateWithoutCreatedByInput[] | CrmActivityUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCreatedByInput | CrmActivityCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CrmActivityUpsertWithWhereUniqueWithoutCreatedByInput | CrmActivityUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CrmActivityCreateManyCreatedByInputEnvelope
+    set?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    disconnect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    delete?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    update?: CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput | CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CrmActivityUpdateManyWithWhereWithoutCreatedByInput | CrmActivityUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
+  }
+
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -122510,6 +124401,20 @@ export namespace Prisma {
     update?: AuditLogUpdateWithWhereUniqueWithoutUserInput | AuditLogUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AuditLogUpdateManyWithWhereWithoutUserInput | AuditLogUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AuditLogScalarWhereInput | AuditLogScalarWhereInput[]
+  }
+
+  export type CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput> | CrmActivityCreateWithoutCreatedByInput[] | CrmActivityUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCreatedByInput | CrmActivityCreateOrConnectWithoutCreatedByInput[]
+    upsert?: CrmActivityUpsertWithWhereUniqueWithoutCreatedByInput | CrmActivityUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: CrmActivityCreateManyCreatedByInputEnvelope
+    set?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    disconnect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    delete?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    update?: CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput | CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: CrmActivityUpdateManyWithWhereWithoutCreatedByInput | CrmActivityUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedManyWithoutOrgUnitInput = {
@@ -126000,6 +127905,13 @@ export namespace Prisma {
     connect?: ClientContractWhereUniqueInput | ClientContractWhereUniqueInput[]
   }
 
+  export type CrmActivityCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput> | CrmActivityCreateWithoutCustomerInput[] | CrmActivityUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCustomerInput | CrmActivityCreateOrConnectWithoutCustomerInput[]
+    createMany?: CrmActivityCreateManyCustomerInputEnvelope
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+  }
+
   export type ContactUncheckedCreateNestedManyWithoutCustomerInput = {
     create?: XOR<ContactCreateWithoutCustomerInput, ContactUncheckedCreateWithoutCustomerInput> | ContactCreateWithoutCustomerInput[] | ContactUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutCustomerInput | ContactCreateOrConnectWithoutCustomerInput[]
@@ -126026,6 +127938,13 @@ export namespace Prisma {
     connectOrCreate?: ClientContractCreateOrConnectWithoutCustomerInput | ClientContractCreateOrConnectWithoutCustomerInput[]
     createMany?: ClientContractCreateManyCustomerInputEnvelope
     connect?: ClientContractWhereUniqueInput | ClientContractWhereUniqueInput[]
+  }
+
+  export type CrmActivityUncheckedCreateNestedManyWithoutCustomerInput = {
+    create?: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput> | CrmActivityCreateWithoutCustomerInput[] | CrmActivityUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCustomerInput | CrmActivityCreateOrConnectWithoutCustomerInput[]
+    createMany?: CrmActivityCreateManyCustomerInputEnvelope
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
   }
 
   export type ContactUpdateManyWithoutCustomerNestedInput = {
@@ -126084,6 +128003,20 @@ export namespace Prisma {
     deleteMany?: ClientContractScalarWhereInput | ClientContractScalarWhereInput[]
   }
 
+  export type CrmActivityUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput> | CrmActivityCreateWithoutCustomerInput[] | CrmActivityUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCustomerInput | CrmActivityCreateOrConnectWithoutCustomerInput[]
+    upsert?: CrmActivityUpsertWithWhereUniqueWithoutCustomerInput | CrmActivityUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: CrmActivityCreateManyCustomerInputEnvelope
+    set?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    disconnect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    delete?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    update?: CrmActivityUpdateWithWhereUniqueWithoutCustomerInput | CrmActivityUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: CrmActivityUpdateManyWithWhereWithoutCustomerInput | CrmActivityUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
+  }
+
   export type ContactUncheckedUpdateManyWithoutCustomerNestedInput = {
     create?: XOR<ContactCreateWithoutCustomerInput, ContactUncheckedCreateWithoutCustomerInput> | ContactCreateWithoutCustomerInput[] | ContactUncheckedCreateWithoutCustomerInput[]
     connectOrCreate?: ContactCreateOrConnectWithoutCustomerInput | ContactCreateOrConnectWithoutCustomerInput[]
@@ -126138,6 +128071,20 @@ export namespace Prisma {
     update?: ClientContractUpdateWithWhereUniqueWithoutCustomerInput | ClientContractUpdateWithWhereUniqueWithoutCustomerInput[]
     updateMany?: ClientContractUpdateManyWithWhereWithoutCustomerInput | ClientContractUpdateManyWithWhereWithoutCustomerInput[]
     deleteMany?: ClientContractScalarWhereInput | ClientContractScalarWhereInput[]
+  }
+
+  export type CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput = {
+    create?: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput> | CrmActivityCreateWithoutCustomerInput[] | CrmActivityUncheckedCreateWithoutCustomerInput[]
+    connectOrCreate?: CrmActivityCreateOrConnectWithoutCustomerInput | CrmActivityCreateOrConnectWithoutCustomerInput[]
+    upsert?: CrmActivityUpsertWithWhereUniqueWithoutCustomerInput | CrmActivityUpsertWithWhereUniqueWithoutCustomerInput[]
+    createMany?: CrmActivityCreateManyCustomerInputEnvelope
+    set?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    disconnect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    delete?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    connect?: CrmActivityWhereUniqueInput | CrmActivityWhereUniqueInput[]
+    update?: CrmActivityUpdateWithWhereUniqueWithoutCustomerInput | CrmActivityUpdateWithWhereUniqueWithoutCustomerInput[]
+    updateMany?: CrmActivityUpdateManyWithWhereWithoutCustomerInput | CrmActivityUpdateManyWithWhereWithoutCustomerInput[]
+    deleteMany?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
   }
 
   export type CustomerCreateNestedOneWithoutContactsInput = {
@@ -126238,6 +128185,40 @@ export namespace Prisma {
     upsert?: CustomerUpsertWithoutDealsInput
     connect?: CustomerWhereUniqueInput
     update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutDealsInput, CustomerUpdateWithoutDealsInput>, CustomerUncheckedUpdateWithoutDealsInput>
+  }
+
+  export type CustomerCreateNestedOneWithoutActivitiesInput = {
+    create?: XOR<CustomerCreateWithoutActivitiesInput, CustomerUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutActivitiesInput
+    connect?: CustomerWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCrmActivitiesInput = {
+    create?: XOR<UserCreateWithoutCrmActivitiesInput, UserUncheckedCreateWithoutCrmActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCrmActivitiesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumActivityTypeFieldUpdateOperationsInput = {
+    set?: $Enums.ActivityType
+  }
+
+  export type CustomerUpdateOneWithoutActivitiesNestedInput = {
+    create?: XOR<CustomerCreateWithoutActivitiesInput, CustomerUncheckedCreateWithoutActivitiesInput>
+    connectOrCreate?: CustomerCreateOrConnectWithoutActivitiesInput
+    upsert?: CustomerUpsertWithoutActivitiesInput
+    disconnect?: CustomerWhereInput | boolean
+    delete?: CustomerWhereInput | boolean
+    connect?: CustomerWhereUniqueInput
+    update?: XOR<XOR<CustomerUpdateToOneWithWhereWithoutActivitiesInput, CustomerUpdateWithoutActivitiesInput>, CustomerUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCrmActivitiesNestedInput = {
+    create?: XOR<UserCreateWithoutCrmActivitiesInput, UserUncheckedCreateWithoutCrmActivitiesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCrmActivitiesInput
+    upsert?: UserUpsertWithoutCrmActivitiesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCrmActivitiesInput, UserUpdateWithoutCrmActivitiesInput>, UserUncheckedUpdateWithoutCrmActivitiesInput>
   }
 
   export type CustomerCreateNestedOneWithoutClientContractsInput = {
@@ -127952,6 +129933,23 @@ export namespace Prisma {
     _max?: NestedEnumDealStageFilter<$PrismaModel>
   }
 
+  export type NestedEnumActivityTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.ActivityType | EnumActivityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumActivityTypeFilter<$PrismaModel> | $Enums.ActivityType
+  }
+
+  export type NestedEnumActivityTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ActivityType | EnumActivityTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ActivityType[] | ListEnumActivityTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumActivityTypeWithAggregatesFilter<$PrismaModel> | $Enums.ActivityType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumActivityTypeFilter<$PrismaModel>
+    _max?: NestedEnumActivityTypeFilter<$PrismaModel>
+  }
+
   export type NestedEnumClientContractTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.ClientContractType | EnumClientContractTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ClientContractType[] | ListEnumClientContractTypeFieldRefInput<$PrismaModel>
@@ -129342,6 +131340,54 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CrmActivityCreateWithoutCreatedByInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer?: CustomerCreateNestedOneWithoutActivitiesInput
+  }
+
+  export type CrmActivityUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    customerId?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CrmActivityCreateOrConnectWithoutCreatedByInput = {
+    where: CrmActivityWhereUniqueInput
+    create: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CrmActivityCreateManyCreatedByInputEnvelope = {
+    data: CrmActivityCreateManyCreatedByInput | CrmActivityCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BugAttachmentUpsertWithWhereUniqueWithoutUploaderInput = {
     where: BugAttachmentWhereUniqueInput
     update: XOR<BugAttachmentUpdateWithoutUploaderInput, BugAttachmentUncheckedUpdateWithoutUploaderInput>
@@ -130176,6 +132222,45 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"AuditLog"> | Date | string
   }
 
+  export type CrmActivityUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: CrmActivityWhereUniqueInput
+    update: XOR<CrmActivityUpdateWithoutCreatedByInput, CrmActivityUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<CrmActivityCreateWithoutCreatedByInput, CrmActivityUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type CrmActivityUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: CrmActivityWhereUniqueInput
+    data: XOR<CrmActivityUpdateWithoutCreatedByInput, CrmActivityUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type CrmActivityUpdateManyWithWhereWithoutCreatedByInput = {
+    where: CrmActivityScalarWhereInput
+    data: XOR<CrmActivityUpdateManyMutationInput, CrmActivityUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type CrmActivityScalarWhereInput = {
+    AND?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
+    OR?: CrmActivityScalarWhereInput[]
+    NOT?: CrmActivityScalarWhereInput | CrmActivityScalarWhereInput[]
+    id?: StringFilter<"CrmActivity"> | string
+    type?: EnumActivityTypeFilter<"CrmActivity"> | $Enums.ActivityType
+    subject?: StringFilter<"CrmActivity"> | string
+    content?: StringNullableFilter<"CrmActivity"> | string | null
+    customerId?: StringNullableFilter<"CrmActivity"> | string | null
+    dealId?: StringNullableFilter<"CrmActivity"> | string | null
+    contactId?: StringNullableFilter<"CrmActivity"> | string | null
+    leadId?: StringNullableFilter<"CrmActivity"> | string | null
+    scheduledAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    completedAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    duration?: IntNullableFilter<"CrmActivity"> | number | null
+    outcome?: StringNullableFilter<"CrmActivity"> | string | null
+    nextAction?: StringNullableFilter<"CrmActivity"> | string | null
+    nextActionDueAt?: DateTimeNullableFilter<"CrmActivity"> | Date | string | null
+    createdById?: StringFilter<"CrmActivity"> | string
+    createdAt?: DateTimeFilter<"CrmActivity"> | Date | string
+    updatedAt?: DateTimeFilter<"CrmActivity"> | Date | string
+  }
+
   export type EmployeeCreateWithoutOrgUnitInput = {
     id?: string
     code: string
@@ -130468,6 +132553,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -130505,6 +132591,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOrgUnitInput = {
@@ -131165,6 +133252,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -131202,6 +133290,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -131747,6 +133836,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -131784,6 +133874,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -132407,6 +134498,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -132444,6 +134536,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutLedProjectsInput = {
@@ -132690,6 +134783,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -132727,6 +134821,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutProjectInput = {
@@ -133062,6 +135157,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -133099,6 +135195,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskApprovalsInput = {
@@ -133463,6 +135560,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -133500,6 +135598,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type EmployeeUpsertWithoutTasksInput = {
@@ -133843,6 +135942,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -133880,6 +135980,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeLogsInput = {
@@ -133990,6 +136091,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -134027,6 +136129,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutWorkStatusesInput = {
@@ -134064,6 +136167,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -134101,6 +136205,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkStatusesInput = {
@@ -134154,6 +136259,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -134191,6 +136297,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTimeEntriesInput = {
@@ -134228,6 +136335,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -134265,6 +136373,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -134318,6 +136427,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -134355,6 +136465,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -134392,6 +136503,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -134429,6 +136541,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedTimesheetsInput = {
@@ -134471,6 +136584,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -134508,6 +136622,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimesheetsInput = {
@@ -134561,6 +136676,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -134598,6 +136714,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTimesheetsInput = {
@@ -134646,6 +136763,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -134683,6 +136801,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutAlertConfigsInput = {
@@ -134840,6 +136959,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -134877,6 +136997,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -134930,6 +137051,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -134967,6 +137089,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPushTokensInput = {
@@ -135004,6 +137127,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -135041,6 +137165,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPushTokensInput = {
@@ -135094,6 +137219,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -135131,6 +137257,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskCreateWithoutTelegramMessagesInput = {
@@ -135536,6 +137663,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -135573,6 +137701,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutStartedProcessesInput = {
@@ -135884,6 +138013,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -135921,6 +138051,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessUserTaskUpsertWithWhereUniqueWithoutInstanceInput = {
@@ -136006,6 +138137,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -136043,6 +138175,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProcessTasksInput = {
@@ -136131,6 +138264,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -136168,6 +138302,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutUserTasksInput = {
@@ -136414,6 +138549,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -136451,6 +138587,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedBugsInput = {
@@ -136493,6 +138630,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -136530,6 +138668,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPmApprovedBugsInput = {
@@ -136629,6 +138768,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -136666,6 +138806,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReportedBugsInput = {
@@ -136791,6 +138932,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -136828,6 +138970,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutPmApprovedBugsInput = {
@@ -136876,6 +139019,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -136913,6 +139057,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectUpsertWithoutBugsInput = {
@@ -137024,6 +139169,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -137061,6 +139207,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -137395,6 +139542,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -137432,6 +139580,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugAttachmentsInput = {
@@ -137552,6 +139701,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -137589,6 +139739,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutBugCommentsInput = {
@@ -137626,6 +139777,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -137663,6 +139815,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugCommentsInput = {
@@ -137777,6 +139930,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -137814,6 +139968,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BugUpsertWithoutCommentsInput = {
@@ -138387,6 +140542,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -138424,6 +140580,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -138510,6 +140667,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -138547,6 +140705,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ModuleRolePermissionCreateWithoutRoleInput = {
@@ -138797,6 +140956,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -138834,6 +140994,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutModuleRolesInput = {
@@ -138918,6 +141079,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -138955,6 +141117,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -138992,6 +141155,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -139029,6 +141193,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -139082,6 +141247,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -139119,6 +141285,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type GroupPermissionCreateWithoutGroupInput = {
@@ -139328,6 +141495,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -139365,6 +141533,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -139445,6 +141614,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -139482,6 +141652,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserGroupUpsertWithoutMembersInput = {
@@ -140034,6 +142205,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -140071,6 +142243,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedLeavesInput = {
@@ -140269,6 +142442,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -140306,6 +142480,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutLeaveRequestsInput = {
@@ -140676,6 +142851,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -140713,6 +142889,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProcessedPayrollsInput = {
@@ -140857,6 +143034,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -140894,6 +143072,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PayrollPeriodUpsertWithoutAdjustmentsInput = {
@@ -141389,6 +143568,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -141426,6 +143606,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSubmittedExpensesInput = {
@@ -141468,6 +143649,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
     workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -141505,6 +143687,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
     workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedExpensesInput = {
@@ -141682,6 +143865,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -141719,6 +143903,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutApprovedExpensesInput = {
@@ -141767,6 +143952,7 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -141804,6 +143990,7 @@ export namespace Prisma {
     submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutExpensesInput = {
@@ -142113,6 +144300,54 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CrmActivityCreateWithoutCustomerInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCrmActivitiesInput
+  }
+
+  export type CrmActivityUncheckedCreateWithoutCustomerInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CrmActivityCreateOrConnectWithoutCustomerInput = {
+    where: CrmActivityWhereUniqueInput
+    create: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type CrmActivityCreateManyCustomerInputEnvelope = {
+    data: CrmActivityCreateManyCustomerInput | CrmActivityCreateManyCustomerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ContactUpsertWithWhereUniqueWithoutCustomerInput = {
     where: ContactWhereUniqueInput
     update: XOR<ContactUpdateWithoutCustomerInput, ContactUncheckedUpdateWithoutCustomerInput>
@@ -142259,6 +144494,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ClientContract"> | Date | string
   }
 
+  export type CrmActivityUpsertWithWhereUniqueWithoutCustomerInput = {
+    where: CrmActivityWhereUniqueInput
+    update: XOR<CrmActivityUpdateWithoutCustomerInput, CrmActivityUncheckedUpdateWithoutCustomerInput>
+    create: XOR<CrmActivityCreateWithoutCustomerInput, CrmActivityUncheckedCreateWithoutCustomerInput>
+  }
+
+  export type CrmActivityUpdateWithWhereUniqueWithoutCustomerInput = {
+    where: CrmActivityWhereUniqueInput
+    data: XOR<CrmActivityUpdateWithoutCustomerInput, CrmActivityUncheckedUpdateWithoutCustomerInput>
+  }
+
+  export type CrmActivityUpdateManyWithWhereWithoutCustomerInput = {
+    where: CrmActivityScalarWhereInput
+    data: XOR<CrmActivityUpdateManyMutationInput, CrmActivityUncheckedUpdateManyWithoutCustomerInput>
+  }
+
   export type CustomerCreateWithoutContactsInput = {
     id?: string
     code: string
@@ -142271,6 +144522,7 @@ export namespace Prisma {
     deals?: DealCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutContactsInput = {
@@ -142285,6 +144537,7 @@ export namespace Prisma {
     deals?: DealUncheckedCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractUncheckedCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutContactsInput = {
@@ -142355,6 +144608,7 @@ export namespace Prisma {
     deals?: DealUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutContactsInput = {
@@ -142369,6 +144623,7 @@ export namespace Prisma {
     deals?: DealUncheckedUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUncheckedUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type LeadUpsertWithWhereUniqueWithoutContactInput = {
@@ -142478,6 +144733,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutDealsInput = {
@@ -142492,6 +144748,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractUncheckedCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutDealsInput = {
@@ -142522,6 +144779,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutDealsInput = {
@@ -142536,6 +144794,251 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUncheckedUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerCreateWithoutActivitiesInput = {
+    id?: string
+    code: string
+    name: string
+    industry?: string | null
+    website?: string | null
+    taxCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contacts?: ContactCreateNestedManyWithoutCustomerInput
+    deals?: DealCreateNestedManyWithoutCustomerInput
+    invoices?: InvoiceCreateNestedManyWithoutCustomerInput
+    clientContracts?: ClientContractCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerUncheckedCreateWithoutActivitiesInput = {
+    id?: string
+    code: string
+    name: string
+    industry?: string | null
+    website?: string | null
+    taxCode?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    contacts?: ContactUncheckedCreateNestedManyWithoutCustomerInput
+    deals?: DealUncheckedCreateNestedManyWithoutCustomerInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
+    clientContracts?: ClientContractUncheckedCreateNestedManyWithoutCustomerInput
+  }
+
+  export type CustomerCreateOrConnectWithoutActivitiesInput = {
+    where: CustomerWhereUniqueInput
+    create: XOR<CustomerCreateWithoutActivitiesInput, CustomerUncheckedCreateWithoutActivitiesInput>
+  }
+
+  export type UserCreateWithoutCrmActivitiesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCrmActivitiesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCrmActivitiesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCrmActivitiesInput, UserUncheckedCreateWithoutCrmActivitiesInput>
+  }
+
+  export type CustomerUpsertWithoutActivitiesInput = {
+    update: XOR<CustomerUpdateWithoutActivitiesInput, CustomerUncheckedUpdateWithoutActivitiesInput>
+    create: XOR<CustomerCreateWithoutActivitiesInput, CustomerUncheckedCreateWithoutActivitiesInput>
+    where?: CustomerWhereInput
+  }
+
+  export type CustomerUpdateToOneWithWhereWithoutActivitiesInput = {
+    where?: CustomerWhereInput
+    data: XOR<CustomerUpdateWithoutActivitiesInput, CustomerUncheckedUpdateWithoutActivitiesInput>
+  }
+
+  export type CustomerUpdateWithoutActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contacts?: ContactUpdateManyWithoutCustomerNestedInput
+    deals?: DealUpdateManyWithoutCustomerNestedInput
+    invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
+    clientContracts?: ClientContractUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type CustomerUncheckedUpdateWithoutActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxCode?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    contacts?: ContactUncheckedUpdateManyWithoutCustomerNestedInput
+    deals?: DealUncheckedUpdateManyWithoutCustomerNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
+    clientContracts?: ClientContractUncheckedUpdateManyWithoutCustomerNestedInput
+  }
+
+  export type UserUpsertWithoutCrmActivitiesInput = {
+    update: XOR<UserUpdateWithoutCrmActivitiesInput, UserUncheckedUpdateWithoutCrmActivitiesInput>
+    create: XOR<UserCreateWithoutCrmActivitiesInput, UserUncheckedCreateWithoutCrmActivitiesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCrmActivitiesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCrmActivitiesInput, UserUncheckedUpdateWithoutCrmActivitiesInput>
+  }
+
+  export type UserUpdateWithoutCrmActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -142550,6 +145053,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutCustomerInput
     deals?: DealCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutClientContractsInput = {
@@ -142564,6 +145068,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutCustomerInput
     deals?: DealUncheckedCreateNestedManyWithoutCustomerInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutClientContractsInput = {
@@ -142626,6 +145131,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutCustomerNestedInput
     deals?: DealUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutClientContractsInput = {
@@ -142640,6 +145146,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutCustomerNestedInput
     deals?: DealUncheckedUpdateManyWithoutCustomerNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type ContractMilestoneUpsertWithWhereUniqueWithoutContractInput = {
@@ -142773,6 +145280,7 @@ export namespace Prisma {
     contacts?: ContactCreateNestedManyWithoutCustomerInput
     deals?: DealCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerUncheckedCreateWithoutInvoicesInput = {
@@ -142787,6 +145295,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedCreateNestedManyWithoutCustomerInput
     deals?: DealUncheckedCreateNestedManyWithoutCustomerInput
     clientContracts?: ClientContractUncheckedCreateNestedManyWithoutCustomerInput
+    activities?: CrmActivityUncheckedCreateNestedManyWithoutCustomerInput
   }
 
   export type CustomerCreateOrConnectWithoutInvoicesInput = {
@@ -142845,6 +145354,7 @@ export namespace Prisma {
     contacts?: ContactUpdateManyWithoutCustomerNestedInput
     deals?: DealUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUpdateManyWithoutCustomerNestedInput
   }
 
   export type CustomerUncheckedUpdateWithoutInvoicesInput = {
@@ -142859,6 +145369,7 @@ export namespace Prisma {
     contacts?: ContactUncheckedUpdateManyWithoutCustomerNestedInput
     deals?: DealUncheckedUpdateManyWithoutCustomerNestedInput
     clientContracts?: ClientContractUncheckedUpdateManyWithoutCustomerNestedInput
+    activities?: CrmActivityUncheckedUpdateManyWithoutCustomerNestedInput
   }
 
   export type InvoiceItemUpsertWithWhereUniqueWithoutInvoiceInput = {
@@ -145966,6 +148477,25 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type CrmActivityCreateManyCreatedByInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    customerId?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type BugAttachmentUpdateWithoutUploaderInput = {
     id?: StringFieldUpdateOperationsInput | string
     filename?: StringFieldUpdateOperationsInput | string
@@ -147043,6 +149573,63 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CrmActivityUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneWithoutActivitiesNestedInput
+  }
+
+  export type CrmActivityUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateManyOrgUnitInput = {
     id?: string
     code: string
@@ -147418,6 +150005,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -147455,6 +150043,7 @@ export namespace Prisma {
     approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
     workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -149853,6 +152442,25 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type CrmActivityCreateManyCustomerInput = {
+    id?: string
+    type: $Enums.ActivityType
+    subject: string
+    content?: string | null
+    dealId?: string | null
+    contactId?: string | null
+    leadId?: string | null
+    scheduledAt?: Date | string | null
+    completedAt?: Date | string | null
+    duration?: number | null
+    outcome?: string | null
+    nextAction?: string | null
+    nextActionDueAt?: Date | string | null
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ContactUpdateWithoutCustomerInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -150053,6 +152661,63 @@ export namespace Prisma {
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumClientContractStatusFieldUpdateOperationsInput | $Enums.ClientContractStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCrmActivitiesNestedInput
+  }
+
+  export type CrmActivityUncheckedUpdateWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CrmActivityUncheckedUpdateManyWithoutCustomerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumActivityTypeFieldUpdateOperationsInput | $Enums.ActivityType
+    subject?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    dealId?: NullableStringFieldUpdateOperationsInput | string | null
+    contactId?: NullableStringFieldUpdateOperationsInput | string | null
+    leadId?: NullableStringFieldUpdateOperationsInput | string | null
+    scheduledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    duration?: NullableIntFieldUpdateOperationsInput | number | null
+    outcome?: NullableStringFieldUpdateOperationsInput | string | null
+    nextAction?: NullableStringFieldUpdateOperationsInput | string | null
+    nextActionDueAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

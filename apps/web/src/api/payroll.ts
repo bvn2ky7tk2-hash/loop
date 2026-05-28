@@ -244,4 +244,41 @@ export const payrollApi = {
 
   deleteDependent: (employeeId: string, dependentId: string) =>
     apiClient.delete(`${BASE}/employees/${employeeId}/dependents/${dependentId}`).then(r => r.data),
+
+  // ── Lấy presigned URL phiếu lương PDF ────────────────────────────────────
+  getPayslipUrl: (recordId: string) =>
+    apiClient.get<{ url: string | null; pending: boolean }>(`${BASE}/records/${recordId}/payslip`).then(r => r.data),
+
+  // ── Báo cáo thuế TNCN năm (05-QTT-TNCN) ─────────────────────────────────
+  downloadPitAnnual: async (year: number) => {
+    const res = await apiClient.get(`${BASE}/reports/pit-annual`, {
+      params: { year },
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `05-QTT-TNCN-${year}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  // ── Báo cáo chi phí lao động theo kỳ ────────────────────────────────────
+  downloadLaborCost: async (periodId: string, periodName: string) => {
+    const res = await apiClient.get(`${BASE}/reports/labor-cost/${periodId}`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chi-phi-lao-dong-${periodName.replace(/\s+/g, '-')}.xlsx`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
 };

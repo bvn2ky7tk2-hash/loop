@@ -722,6 +722,26 @@ exports.Prisma.DealScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CrmActivityScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  subject: 'subject',
+  content: 'content',
+  customerId: 'customerId',
+  dealId: 'dealId',
+  contactId: 'contactId',
+  leadId: 'leadId',
+  scheduledAt: 'scheduledAt',
+  completedAt: 'completedAt',
+  duration: 'duration',
+  outcome: 'outcome',
+  nextAction: 'nextAction',
+  nextActionDueAt: 'nextActionDueAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ClientContractScalarFieldEnum = {
   id: 'id',
   contractNo: 'contractNo',
@@ -1312,6 +1332,13 @@ exports.DealStage = exports.$Enums.DealStage = {
   LOST: 'LOST'
 };
 
+exports.ActivityType = exports.$Enums.ActivityType = {
+  CALL: 'CALL',
+  EMAIL: 'EMAIL',
+  MEETING: 'MEETING',
+  NOTE: 'NOTE'
+};
+
 exports.ClientContractType = exports.$Enums.ClientContractType = {
   SERVICE: 'SERVICE',
   PRODUCT: 'PRODUCT',
@@ -1481,6 +1508,7 @@ exports.Prisma.ModelName = {
   Contact: 'Contact',
   Lead: 'Lead',
   Deal: 'Deal',
+  CrmActivity: 'CrmActivity',
   ClientContract: 'ClientContract',
   ContractMilestone: 'ContractMilestone',
   Invoice: 'Invoice',

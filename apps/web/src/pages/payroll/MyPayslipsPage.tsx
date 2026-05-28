@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
-  Table, Tag, Typography, Space, Row, Col, Empty, Spin,
+  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message,
 } from 'antd';
-import { FileTextOutlined, CalendarOutlined } from '@ant-design/icons';
+import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { payrollApi, type PayrollRecord } from '../../api/payroll';
@@ -120,6 +120,24 @@ export default function MyPayslipsPage() {
   const user = useAuthStore(s => s.user);
   const [selectedRecord, setSelectedRecord] = useState<PayrollRecord | null>(null);
   const [page, setPage] = useState(1);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+
+  const handleDownloadPdf = async (recordId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDownloadingId(recordId);
+    try {
+      const { url, pending } = await payrollApi.getPayslipUrl(recordId);
+      if (pending || !url) {
+        message.info('Phiếu lương PDF đang được tạo, vui lòng thử lại sau ít phút.');
+        return;
+      }
+      window.open(url, '_blank', 'noopener');
+    } catch {
+      message.error('Không thể tải phiếu lương PDF.');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   // Fetch all periods and then filter records for current user's employee
   // We use the my-tax-profile endpoint to get employeeId, then list records
@@ -207,9 +225,21 @@ export default function MyPayslipsPage() {
     },
     {
       title: '',
-      width: 80,
+      width: 140,
       render: (_: any, r: any) => (
-        <a style={{ color: linkColor, fontSize: 13 }} onClick={() => setSelectedRecord(r)}>Xem</a>
+        <Space size={8}>
+          <a style={{ color: linkColor, fontSize: 13 }} onClick={() => setSelectedRecord(r)}>Chi tiết</a>
+          <Button
+            size="small"
+            type="link"
+            icon={downloadingId === r.id ? <LoadingOutlined /> : <FilePdfOutlined />}
+            style={{ color: '#EF4444', padding: 0, fontSize: 13 }}
+            onClick={(e) => handleDownloadPdf(r.id, e)}
+            disabled={downloadingId === r.id}
+          >
+            PDF
+          </Button>
+        </Space>
       ),
     },
   ];

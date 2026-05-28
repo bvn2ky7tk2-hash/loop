@@ -42,6 +42,7 @@ import {
   SwapOutlined,
   BookOutlined,
   ReadOutlined,
+  PhoneOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -252,6 +253,12 @@ export const MODULES: ModuleDefinition[] = [
         ],
       },
       {
+        key: 'g-crm-activities', label: 'Activities', visible: true,
+        items: [
+          { key: '/crm/activities', label: 'Activity Log', visible: true },
+        ],
+      },
+      {
         key: 'g-crm-customers', label: 'Customers', visible: true,
         items: [
           { key: '/crm/customers', label: 'All Customers', visible: true },
@@ -391,6 +398,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/crm/contacts':          <ContactsOutlined />,
   '/crm/customers':         <ShopOutlined />,
   '/crm/client-contracts':  <AuditOutlined />,
+  '/crm/activities':        <PhoneOutlined />,
   '/recruit/pipeline':      <AppstoreAddOutlined />,
   '/recruit/candidates':    <UsergroupAddOutlined />,
   '/recruit/interviews':    <ScheduleFilled />,
