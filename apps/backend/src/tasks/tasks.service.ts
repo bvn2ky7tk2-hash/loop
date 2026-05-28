@@ -299,6 +299,12 @@ export class TasksService {
 
     const updated = await this.prisma.task.update({ where: { id }, data });
     if (task.parentId) await this.rollUpProgress(task.parentId, task.projectId);
+
+    // Đồng bộ: khi task DONE/CANCELLED → kiểm tra bug linked có thể auto-resolve
+    if (status === 'DONE' || status === 'CANCELLED') {
+      await this.syncLinkedBugs(id);
+    }
+
     return updated;
   }
 
@@ -311,6 +317,43 @@ export class TasksService {
       where: { id },
       data: { actualHours: { increment: hours } },
     });
+  }
+
+  /**
+   * Sau khi task DONE/CANCELLED: nếu tất cả task linked của 1 bug đều
+   * DONE hoặc CANCELLED thì tự chuyển bug → RESOLVED.
+   * Chỉ áp dụng khi bug đang IN_PROGRESS (thường) hoặc APPROVED (CR).
+   */
+  private async syncLinkedBugs(taskId: string): Promise<void> {
+    const links = await this.prisma.bugTask.findMany({
+      where: { taskId },
+      select: { bugId: true },
+    });
+    if (!links.length) return;
+
+    for (const { bugId } of links) {
+      const bug = await this.prisma.bug.findUnique({
+        where: { id: bugId },
+        select: { id: true, status: true },
+      });
+      if (!bug || !['IN_PROGRESS', 'APPROVED'].includes(bug.status)) continue;
+
+      const allLinks = await this.prisma.bugTask.findMany({
+        where: { bugId },
+        include: { task: { select: { status: true } } },
+      });
+      if (!allLinks.length) continue;
+
+      const allSettled = allLinks.every(
+        (l) => l.task && ['DONE', 'CANCELLED'].includes(l.task.status),
+      );
+      if (allSettled) {
+        await this.prisma.bug.update({
+          where: { id: bugId },
+          data: { status: 'RESOLVED', resolvedAt: new Date() },
+        });
+      }
+    }
   }
 
   private async rollUpProgress(taskId: string, projectId: string): Promise<void> {

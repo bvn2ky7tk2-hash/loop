@@ -277,6 +277,11 @@ export class BugsService {
       ).catch(() => {});
     }
 
+    // Đồng bộ: Bug CANCELLED → huỷ task linked còn ở TODO/PENDING_APPROVAL
+    if (dto.toStatus === BugStatus.CANCELLED) {
+      this.cancelLinkedPendingTasks(id).catch(() => {});
+    }
+
     return updated;
   }
 
@@ -390,6 +395,27 @@ export class BugsService {
     }
 
     return where;
+  }
+
+  /**
+   * Đồng bộ: Bug CANCELLED → huỷ các task linked còn ở TODO/PENDING_APPROVAL.
+   * Không động đến IN_PROGRESS/RETURNED vì đang được xử lý tích cực.
+   */
+  private async cancelLinkedPendingTasks(bugId: string): Promise<void> {
+    const links = await this.prisma.bugTask.findMany({
+      where: { bugId },
+      include: { task: { select: { id: true, status: true } } },
+    });
+
+    const cancelable = ['TODO', 'PENDING_APPROVAL'];
+    for (const link of links) {
+      if (link.task && cancelable.includes(link.task.status)) {
+        await this.prisma.task.update({
+          where: { id: link.taskId },
+          data: { status: 'CANCELLED' },
+        });
+      }
+    }
   }
 
   private async assertProjectInScope(projectId: string, orgUnitIds: string[] | null) {
