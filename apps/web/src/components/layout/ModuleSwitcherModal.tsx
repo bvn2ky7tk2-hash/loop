@@ -1,5 +1,6 @@
 import { Modal } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useModuleStore } from '../../store/module.store';
 import { useThemeStore } from '../../store/theme.store';
 import { useAuthStore } from '../../store/auth.store';
@@ -14,6 +15,7 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
   const { activeModuleId, setActiveModule } = useModuleStore();
   const { mode } = useThemeStore();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const isDark = mode === 'dark';
 
   const isAdmin = user?.role === 'ADMIN';
@@ -30,6 +32,10 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
 
   const handleSelect = (id: string) => {
     setActiveModule(id);
+    // Navigate về dashboard của module được chọn
+    const mod = MODULES.find(m => m.id === id);
+    const dashboardRoute = mod?.topItems?.[0]?.key ?? '/';
+    navigate(dashboardRoute);
     onClose();
   };
 

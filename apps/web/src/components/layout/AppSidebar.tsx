@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Tooltip, Badge } from 'antd';
 import { AppstoreOutlined, DownOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { useThemeStore } from '../../store/theme.store';
 import { useMenuStore } from '../../store/menu.store';
 import { useModuleStore } from '../../store/module.store';
 import { MODULE_MAP, ICON_MAP, ROUTE_PERMISSION_MAP } from '../../config/modules.config';
+import { SCREEN_REGISTRY } from '../../config/screens.registry';
 import { tasksApi } from '../../api/tasks';
 import { processesApi } from '../../api/processes.api';
 import { useGetBugStats, useGetMyBugsCount } from '../../api/bugs.api';
@@ -143,9 +144,22 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const { user }  = useAuthStore();
   const { mode, preset } = useThemeStore();
   const { getModuleConfig } = useMenuStore();
-  const { activeModuleId } = useModuleStore();
+  const { activeModuleId, setActiveModule } = useModuleStore();
 
-  const activeModule = MODULE_MAP[activeModuleId];
+  // Auto-sync activeModuleId khi URL thay đổi
+  useEffect(() => {
+    const pathname = location.pathname;
+    const exact = SCREEN_REGISTRY.find(s => s.route === pathname);
+    const derived = exact
+      ?? SCREEN_REGISTRY
+           .filter(s => s.route !== '/' && pathname.startsWith(s.route))
+           .sort((a, b) => b.route.length - a.route.length)[0];
+    if (derived && derived.module !== activeModuleId) {
+      setActiveModule(derived.module);
+    }
+  }, [location.pathname]);
+
+  const activeModule = MODULE_MAP[activeModuleId] ?? MODULE_MAP['work'];
   const config   = useMemo(() => getModuleConfig(activeModuleId), [activeModuleId]);
   const topItems = config.topItems;
   const groups   = config.groups;
