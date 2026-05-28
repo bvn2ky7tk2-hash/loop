@@ -55,6 +55,8 @@ import {
   RocketOutlined,
   CalendarOutlined as RoomCalendarIcon,
   CarOutlined,
+  BuildOutlined,
+  SmileOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -74,12 +76,12 @@ export interface ModuleDefinition {
 }
 
 export const MODULES: ModuleDefinition[] = [
-  // ─── Projects ─────────────────────────────────────────────────────────────
+  // ─── Work ────────────────────────────────────────────────────────────────
   {
-    id: 'pm',
-    label: 'Dự án',
-    description: 'Quản lý dự án, công việc, lỗi & vấn đề',
-    icon: <ProjectOutlined />,
+    id: 'work',
+    label: 'Công việc',
+    description: 'Dự án, công việc, lỗi & vấn đề hàng ngày',
+    icon: <CheckSquareOutlined />,
     color: '#2563EB',
     gatePermission: 'projects:read',
     topItems: [
@@ -87,15 +89,15 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-work', label: 'Công việc', visible: true,
+        key: 'g-work-tasks', label: 'Công việc', visible: true,
         items: [
-          { key: '/my-tasks',  label: 'Bảng Kanban', visible: true },
-          { key: '/tasks',     label: 'Việc của tôi', visible: true },
-          { key: '/timeline',  label: 'Lịch trình',   visible: true },
+          { key: '/my-tasks',  label: 'Bảng Kanban',    visible: true },
+          { key: '/tasks',     label: 'Việc của tôi',   visible: true },
+          { key: '/timeline',  label: 'Lịch trình',     visible: true },
         ],
       },
       {
-        key: 'g-bugs', label: 'Lỗi & Vấn đề', visible: true,
+        key: 'g-work-bugs', label: 'Lỗi & Vấn đề', visible: true,
         items: [
           { key: '/my-bugs',        label: 'Lỗi của tôi',  visible: true },
           { key: '/bugs',           label: 'Quản lý lỗi',  visible: true },
@@ -103,78 +105,24 @@ export const MODULES: ModuleDefinition[] = [
         ],
       },
       {
-        key: 'g-projects', label: 'Dự án', visible: true,
+        key: 'g-work-projects', label: 'Dự án & Cộng tác', visible: true,
         items: [
-          { key: '/projects',       label: 'Tất cả dự án',   visible: true },
-          { key: '/knowledge-base', label: 'Cơ sở tri thức', visible: true },
+          { key: '/projects',       label: 'Tất cả dự án',    visible: true },
+          { key: '/knowledge-base', label: 'Cơ sở tri thức',  visible: true },
           { key: '/feed',           label: 'Bảng tin công ty', visible: true },
-          { key: '/calendar',       label: 'Lịch công ty',      visible: true },
+          { key: '/calendar',       label: 'Lịch công ty',     visible: true },
         ],
       },
-    ],
-  },
-
-  // ─── Workflow (BPM) ────────────────────────────────────────────────────────
-  {
-    id: 'bpm',
-    label: 'Quy trình',
-    description: 'Thiết kế và vận hành quy trình nghiệp vụ',
-    icon: <ApartmentOutlined />,
-    color: '#1D4ED8',
-    gatePermission: 'bpm:read',
-    topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
-    ],
-    groups: [
       {
-        key: 'g-bpm', label: 'Quy trình', visible: true,
+        key: 'g-work-time', label: 'Chấm công', visible: true,
         items: [
-          { key: '/processes/inbox',     label: 'Hộp thư đến',         visible: true },
-          { key: '/processes',           label: 'Định nghĩa quy trình', visible: true },
-          { key: '/processes/instances', label: 'Giám sát quy trình',   visible: true },
+          { key: '/timesheet',         label: 'Chấm công của tôi', visible: true },
+          { key: '/timesheet/project', label: 'Nhật ký dự án',     visible: true },
+          { key: '/processes/inbox',   label: 'Hộp thư đến',       visible: true },
         ],
       },
-    ],
-  },
-
-  // ─── Timesheet ────────────────────────────────────────────────────────────
-  {
-    id: 'timesheet',
-    label: 'Chấm công',
-    description: 'Ghi giờ làm việc, phê duyệt và chấm công',
-    icon: <ClockCircleOutlined />,
-    color: '#D97706',
-    gatePermission: 'timesheets:read',
-    topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
-    ],
-    groups: [
       {
-        key: 'g-timesheet', label: 'Chấm công', visible: true,
-        items: [
-          { key: '/timesheet',           label: 'Chấm công của tôi', visible: true },
-          { key: '/timesheet/approvals', label: 'Duyệt chấm công',   visible: true },
-          { key: '/timesheet/project',   label: 'Nhật ký dự án',     visible: true },
-          { key: '/timesheet/manager',   label: 'Bảng điểm danh',    visible: true },
-        ],
-      },
-    ],
-  },
-
-  // ─── Reports ──────────────────────────────────────────────────────────────
-  {
-    id: 'reports',
-    label: 'Báo cáo',
-    description: 'Phân tích, thống kê và báo cáo dự án',
-    icon: <FundOutlined />,
-    color: '#0891B2',
-    gatePermission: 'reports:read',
-    topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
-    ],
-    groups: [
-      {
-        key: 'g-reports', label: 'Báo cáo', visible: true,
+        key: 'g-work-reports', label: 'Báo cáo', visible: true,
         items: [
           { key: '/reports', label: 'Báo cáo tổng hợp', visible: true },
         ],
@@ -182,11 +130,11 @@ export const MODULES: ModuleDefinition[] = [
     ],
   },
 
-  // ─── HR ───────────────────────────────────────────────────────────────────
+  // ─── People (HR) ──────────────────────────────────────────────────────────
   {
-    id: 'hr',
+    id: 'people',
     label: 'Nhân sự',
-    description: 'Nhân sự, sơ đồ tổ chức và quản lý nghỉ phép',
+    description: 'Nhân viên, đào tạo, tuyển dụng và chấm công',
     icon: <IdcardOutlined />,
     color: '#059669',
     gatePermission: 'employees:read',
@@ -195,7 +143,7 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-hr', label: 'Nhân sự', visible: true,
+        key: 'g-people-hr', label: 'Nhân sự', visible: true,
         items: [
           { key: '/personnel',  label: 'Danh sách nhân viên', visible: true },
           { key: '/org-chart',  label: 'Sơ đồ tổ chức',      visible: true },
@@ -204,19 +152,30 @@ export const MODULES: ModuleDefinition[] = [
         ],
       },
       {
-        key: 'g-hr-dev', label: 'Phát triển nhân lực', visible: true,
+        key: 'g-people-dev', label: 'Phát triển nhân lực', visible: true,
         items: [
-          { key: '/hr/training',      label: 'Đào tạo',           visible: true },
-          { key: '/hr/performance',   label: 'Đánh giá năng lực', visible: true },
-          { key: '/hr/skill-matrix',  label: 'Ma trận kỹ năng',   visible: true },
-          { key: '/hr/okr',           label: 'OKR & KPI',         visible: true },
+          { key: '/hr/training',     label: 'Đào tạo',           visible: true },
+          { key: '/hr/performance',  label: 'Đánh giá năng lực', visible: true },
+          { key: '/hr/skill-matrix', label: 'Ma trận kỹ năng',   visible: true },
+          { key: '/hr/okr',          label: 'OKR & KPI',         visible: true },
         ],
       },
       {
-        key: 'g-hr-self', label: 'Thông tin cá nhân', visible: true,
+        key: 'g-people-recruit', label: 'Tuyển dụng', visible: true,
         items: [
-          { key: '/self-service',        label: 'Thông tin của tôi', visible: true },
-          { key: '/payroll/my-payslips', label: 'Phiếu lương',       visible: true },
+          { key: '/recruit/pipeline',   label: 'Pipeline',       visible: true },
+          { key: '/recruit/candidates', label: 'Ứng viên',       visible: true },
+          { key: '/recruit/interviews', label: 'Lịch phỏng vấn', visible: true },
+          { key: '/recruit/jobs',       label: 'Tin tuyển dụng', visible: true },
+        ],
+      },
+      {
+        key: 'g-people-time', label: 'Chấm công & Lương', visible: true,
+        items: [
+          { key: '/timesheet/approvals', label: 'Duyệt chấm công', visible: true },
+          { key: '/timesheet/manager',   label: 'Bảng điểm danh',  visible: true },
+          { key: '/payroll',             label: 'Bảng lương',      visible: true },
+          { key: '/payroll/settings',    label: 'Cài đặt lương',   visible: true },
         ],
       },
     ],
@@ -226,7 +185,7 @@ export const MODULES: ModuleDefinition[] = [
   {
     id: 'finance',
     label: 'Tài chính',
-    description: 'Lương, chi phí, ngân sách và hóa đơn',
+    description: 'Chi phí, ngân sách, hóa đơn và kế toán',
     icon: <BankOutlined />,
     color: '#0D9488',
     gatePermission: 'finance:read',
@@ -235,17 +194,20 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-finance', label: 'Tài chính', visible: true,
+        key: 'g-finance-ops', label: 'Tài chính vận hành', visible: true,
         items: [
-          { key: '/cost',     label: 'Chi phí dự án',  visible: true },
-          { key: '/budget',   label: 'Ngân sách',      visible: true },
-          { key: '/expenses', label: 'Đề nghị thanh toán', visible: true },
-          { key: '/payroll',          label: 'Bảng lương',        visible: true },
-          { key: '/payroll/settings', label: 'Cài đặt lương',     visible: true },
-          { key: '/invoices',              label: 'Hóa đơn',             visible: true },
-          { key: '/accounting/accounts',          label: 'Hệ thống tài khoản',  visible: true },
-          { key: '/accounting/journal',           label: 'Nhật ký kế toán',     visible: true },
-          { key: '/accounting/financial-reports', label: 'Báo cáo tài chính',   visible: true },
+          { key: '/cost',     label: 'Chi phí dự án',       visible: true },
+          { key: '/budget',   label: 'Ngân sách',           visible: true },
+          { key: '/expenses', label: 'Đề nghị thanh toán',  visible: true },
+          { key: '/invoices', label: 'Hóa đơn',             visible: true },
+        ],
+      },
+      {
+        key: 'g-finance-accounting', label: 'Kế toán', visible: true,
+        items: [
+          { key: '/accounting/accounts',          label: 'Hệ thống tài khoản', visible: true },
+          { key: '/accounting/journal',           label: 'Nhật ký kế toán',    visible: true },
+          { key: '/accounting/financial-reports', label: 'Báo cáo tài chính',  visible: true },
         ],
       },
     ],
@@ -294,64 +256,13 @@ export const MODULES: ModuleDefinition[] = [
     ],
   },
 
-  // ─── Recruitment ──────────────────────────────────────────────────────────
-  {
-    id: 'recruit',
-    label: 'Tuyển dụng',
-    description: 'Vị trí tuyển dụng, ứng viên và phỏng vấn',
-    icon: <SolutionOutlined />,
-    color: '#0EA5E9',
-    gatePermission: 'recruit:read',
-    topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
-    ],
-    groups: [
-      {
-        key: 'g-recruit-pipeline', label: 'Pipeline tuyển dụng', visible: true,
-        items: [
-          { key: '/recruit/pipeline',    label: 'Pipeline',       visible: true },
-          { key: '/recruit/candidates',  label: 'Ứng viên',       visible: true },
-          { key: '/recruit/interviews',  label: 'Lịch phỏng vấn', visible: true },
-        ],
-      },
-      {
-        key: 'g-recruit-jobs', label: 'Vị trí tuyển dụng', visible: true,
-        items: [
-          { key: '/recruit/jobs', label: 'Tin tuyển dụng', visible: true },
-        ],
-      },
-    ],
-  },
-
-  // ─── Procurement ──────────────────────────────────────────────────────────
-  {
-    id: 'procurement',
-    label: 'Mua hàng',
-    description: 'Nhà cung cấp và đơn mua hàng',
-    icon: <ShopOutlined />,
-    color: '#F97316',
-    gatePermission: 'procurement:read',
-    topItems: [
-      { key: '/', label: 'Tổng quan', visible: true },
-    ],
-    groups: [
-      {
-        key: 'g-procurement-main', label: 'Mua hàng', visible: true,
-        items: [
-          { key: '/procurement/vendors', label: 'Nhà cung cấp', visible: true },
-          { key: '/procurement/orders',  label: 'Đơn mua hàng', visible: true },
-        ],
-      },
-    ],
-  },
-
-  // ─── Assets ───────────────────────────────────────────────────────────────
+  // ─── Asset ────────────────────────────────────────────────────────────────
   {
     id: 'asset',
     label: 'Tài sản',
-    description: 'Tài sản công ty, cấp phát và bảo trì',
+    description: 'Tài sản, phòng họp, xe công ty và mua hàng',
     icon: <LaptopOutlined />,
-    color: '#B45309',
+    color: '#D97706',
     gatePermission: 'asset:read',
     topItems: [
       { key: '/', label: 'Tổng quan', visible: true },
@@ -360,11 +271,64 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-asset-main', label: 'Quản lý tài sản', visible: true,
         items: [
-          { key: '/assets',               label: 'Tất cả tài sản',  visible: true },
-          { key: '/assets/assignments',   label: 'Cấp phát tài sản', visible: true },
-          { key: '/assets/maintenance',   label: 'Bảo trì',          visible: true },
-          { key: '/assets/room-booking',  label: 'Đặt phòng họp',    visible: true },
-          { key: '/assets/vehicles',      label: 'Đặt xe công ty',    visible: true },
+          { key: '/assets',             label: 'Tất cả tài sản',   visible: true },
+          { key: '/assets/assignments', label: 'Cấp phát tài sản', visible: true },
+          { key: '/assets/maintenance', label: 'Bảo trì',          visible: true },
+        ],
+      },
+      {
+        key: 'g-asset-booking', label: 'Đặt chỗ', visible: true,
+        items: [
+          { key: '/assets/room-booking', label: 'Đặt phòng họp',  visible: true },
+          { key: '/assets/vehicles',     label: 'Đặt xe công ty', visible: true },
+        ],
+      },
+      {
+        key: 'g-asset-procurement', label: 'Mua hàng', visible: true,
+        items: [
+          { key: '/procurement/vendors', label: 'Nhà cung cấp', visible: true },
+          { key: '/procurement/orders',  label: 'Đơn mua hàng', visible: true },
+        ],
+      },
+    ],
+  },
+
+  // ─── Ops (BPM) ────────────────────────────────────────────────────────────
+  {
+    id: 'ops',
+    label: 'Vận hành',
+    description: 'Thiết kế và giám sát quy trình nghiệp vụ',
+    icon: <BuildOutlined />,
+    color: '#7C3AED',
+    gatePermission: 'bpm:read',
+    topItems: [
+      { key: '/', label: 'Tổng quan', visible: true },
+    ],
+    groups: [
+      {
+        key: 'g-ops-bpm', label: 'Quy trình BPM', visible: true,
+        items: [
+          { key: '/processes',           label: 'Định nghĩa quy trình', visible: true },
+          { key: '/processes/instances', label: 'Giám sát quy trình',   visible: true },
+        ],
+      },
+    ],
+  },
+
+  // ─── Me (Self-service) ────────────────────────────────────────────────────
+  {
+    id: 'me',
+    label: 'Của tôi',
+    description: 'Thông tin cá nhân, phiếu lương và tự phục vụ',
+    icon: <SmileOutlined />,
+    color: '#0EA5E9',
+    topItems: [],
+    groups: [
+      {
+        key: 'g-me-personal', label: 'Thông tin cá nhân', visible: true,
+        items: [
+          { key: '/self-service',        label: 'Thông tin của tôi', visible: true },
+          { key: '/payroll/my-payslips', label: 'Phiếu lương',       visible: true },
         ],
       },
     ],
@@ -381,21 +345,31 @@ export const MODULES: ModuleDefinition[] = [
     topItems: [],
     groups: [
       {
-        key: 'g-system', label: 'Hệ thống', visible: true,
+        key: 'g-admin-system', label: 'Hệ thống', visible: true,
         items: [
-          { key: '/users',        label: 'Người dùng',       visible: true },
-          { key: '/permissions',  label: 'Phân quyền',       visible: true },
-          { key: '/alerts',       label: 'Cảnh báo',         visible: true },
-          { key: '/settings',     label: 'Cấu hình menu',    visible: true },
-          { key: '/integrations', label: 'Tích hợp',         visible: true },
-          { key: '/import',       label: 'Nhập dữ liệu',     visible: true },
-          { key: '/audit-log',    label: 'Nhật ký hệ thống', visible: true },
-          { key: '/automation',         label: 'Tự động hóa',      visible: true },
-          { key: '/scheduled-reports',  label: 'Scheduled Reports', visible: true },
-          { key: '/module-config',      label: 'Cấu hình Module',   visible: true },
-          { key: '/admin/health',       label: 'Giám sát hệ thống', visible: true },
-          { key: '/admin/demo',         label: 'Demo Mode',          visible: true },
-          { key: '/onboarding',         label: 'Onboarding Wizard',  visible: true },
+          { key: '/users',       label: 'Người dùng',       visible: true },
+          { key: '/permissions', label: 'Phân quyền',       visible: true },
+          { key: '/alerts',      label: 'Cảnh báo',         visible: true },
+          { key: '/settings',    label: 'Cấu hình menu',    visible: true },
+          { key: '/integrations', label: 'Tích hợp',        visible: true },
+        ],
+      },
+      {
+        key: 'g-admin-tools', label: 'Công cụ', visible: true,
+        items: [
+          { key: '/import',            label: 'Nhập dữ liệu',      visible: true },
+          { key: '/audit-log',         label: 'Nhật ký hệ thống',  visible: true },
+          { key: '/automation',        label: 'Tự động hóa',       visible: true },
+          { key: '/scheduled-reports', label: 'Scheduled Reports', visible: true },
+          { key: '/module-config',     label: 'Cấu hình Module',   visible: true },
+        ],
+      },
+      {
+        key: 'g-admin-ops', label: 'Vận hành', visible: true,
+        items: [
+          { key: '/admin/health', label: 'Giám sát hệ thống', visible: true },
+          { key: '/admin/demo',   label: 'Demo Mode',          visible: true },
+          { key: '/onboarding',   label: 'Onboarding Wizard',  visible: true },
         ],
       },
     ],
@@ -404,7 +378,7 @@ export const MODULES: ModuleDefinition[] = [
 
 export const MODULE_MAP = Object.fromEntries(MODULES.map(m => [m.id, m]));
 
-export const DEFAULT_MODULE_ID = 'pm';
+export const DEFAULT_MODULE_ID = 'work';
 
 // Route key → permission code (derived from screens.registry)
 export const ROUTE_PERMISSION_MAP: Record<string, string | undefined> = {
@@ -443,9 +417,9 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/org-chart':             <ApartmentOutlined />,
   '/contracts':             <AuditOutlined />,
   '/payroll':               <CreditCardOutlined />,
-  '/payroll/settings':       <SettingOutlined />,
-  '/payroll/my-payslips':    <FileTextOutlined />,
-  '/self-service':           <UserOutlined />,
+  '/payroll/settings':      <SettingOutlined />,
+  '/payroll/my-payslips':   <FileTextOutlined />,
+  '/self-service':          <UserOutlined />,
   '/invoices':              <FileTextOutlined />,
   '/crm/leads':             <FunnelPlotOutlined />,
   '/crm/deals':             <TrophyOutlined />,
