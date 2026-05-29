@@ -3,7 +3,7 @@ import {
   IsNotEmpty, IsDateString, MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ResidencyStatus } from '../../generated/prisma';
+import { ResidencyStatus, AllowanceCalculationMode } from '../../generated/prisma';
 
 export class UpsertEmployeeTaxProfileDto {
   @ApiPropertyOptional({ example: '0123456789', description: 'Mã số thuế cá nhân' })
@@ -50,9 +50,18 @@ export class CreateAllowanceTypeDto {
   @IsString() @IsNotEmpty() @MaxLength(100)
   name: string;
 
-  @ApiProperty({ example: 730000 })
+  @ApiProperty({ example: 730000, description: 'Số tiền mặc định (đ/tháng hoặc đ/ngày công tuỳ calculationMode)' })
   @IsInt() @Min(0)
   defaultAmount: number;
+
+  @ApiPropertyOptional({
+    enum: AllowanceCalculationMode,
+    default: AllowanceCalculationMode.FIXED,
+    description: 'FIXED: cố định hàng tháng; PER_WORK_DAY: tính theo ngày công thực tế',
+  })
+  @IsOptional()
+  @IsEnum(AllowanceCalculationMode)
+  calculationMode?: AllowanceCalculationMode;
 
   @ApiPropertyOptional({ default: true })
   @IsOptional()

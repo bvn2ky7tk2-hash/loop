@@ -20,15 +20,17 @@ export class FeedService {
   constructor(private readonly prisma: PrismaService) {}
 
   /** Danh sách bài đăng — pinned lên đầu, sau đó theo createdAt DESC */
-  async listPosts(page = 1, limit = 20) {
+  async listPosts(page = 1, limit = 20, type?: FeedPostType) {
+    const where = type ? { type } : {};
     const [data, total] = await this.prisma.$transaction([
       this.prisma.feedPost.findMany({
+        where,
         skip:    (page - 1) * limit,
         take:    limit,
         orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
         include: FEED_INCLUDE,
       }),
-      this.prisma.feedPost.count(),
+      this.prisma.feedPost.count({ where }),
     ]);
     return paginate(data, total, page, limit);
   }

@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 export type TaskStatus =
   | 'TODO'
@@ -41,7 +41,7 @@ interface TaskStatusPillProps {
 }
 
 export function TaskStatusPill({ status, size = 'md', style }: TaskStatusPillProps) {
-  const isDark = useThemeStore((s) => s.mode === 'dark');
+  const { isDark } = useThemePalette();
   const fallback = { label: status, bg: '#F1F5F9', color: '#475569', darkBg: '#1E293B', darkColor: '#94A3B8' };
   const cfg = CONFIG[status] ?? fallback;
 

@@ -31,7 +31,7 @@ export const ProjectSelect: React.FC<Props> = ({
   const { data, isLoading } = useQuery({
     queryKey: ['projects-select'],
     queryFn: () =>
-      apiClient.get<ProjectOption[]>('/projects').then((r) => r.data),
+      apiClient.get<{ data: ProjectOption[] }>('/projects').then((r) => r.data.data),
     staleTime: 60_000,
   });
 

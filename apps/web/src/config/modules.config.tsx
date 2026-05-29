@@ -38,6 +38,7 @@ import {
   ScheduleFilled,
   AppstoreAddOutlined,
   LaptopOutlined,
+  HomeOutlined,
   ToolOutlined,
   SwapOutlined,
   BookOutlined,
@@ -98,7 +99,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#2563EB',
     gatePermission: moduleGate('work'),
     topItems: [
-      { key: '/dashboard/work', label: 'Tổng quan', visible: true },
+      { key: '/feed', label: 'Bảng tin', visible: true },
     ],
     groups: [
       {
@@ -124,9 +125,8 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-work-collab', label: 'Cộng tác', visible: true,
         items: [
-          { key: '/knowledge-base', label: 'Cơ sở tri thức',  visible: true },
-          { key: '/feed',           label: 'Bảng tin công ty', visible: true },
-          { key: '/calendar',       label: 'Lịch công ty',     visible: true },
+          { key: '/knowledge-base', label: 'Cơ sở tri thức', visible: true },
+          { key: '/calendar',       label: 'Lịch công ty',    visible: true },
         ],
       },
       {
@@ -164,7 +164,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#059669',
     gatePermission: moduleGate('people'),
     topItems: [
-      { key: '/dashboard/people', label: 'Tổng quan', visible: true },
+      { key: '/feed', label: 'Bảng tin', visible: true },
     ],
     groups: [
       {
@@ -181,11 +181,18 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-attendance', label: 'Chấm công & Đơn từ', visible: true,
         items: [
-          { key: '/hr/attendance',   label: 'Bảng công',              visible: true },
-          { key: '/hr/leaves',       label: 'Quản lý đơn nghỉ phép', visible: true },
-          { key: '/hr/overtime',     label: 'Quản lý OT',             visible: true },
-          { key: '/hr/shifts',       label: 'Ca làm việc',            visible: true },
-          { key: '/hr/holidays',     label: 'Ngày lễ',                visible: true },
+          { key: '/timesheet/approvals', label: 'Duyệt chấm công',       visible: true },
+          { key: '/timesheet/manager',   label: 'Bảng điểm danh',        visible: true },
+          { key: '/leaves',              label: 'Quản lý đơn nghỉ phép', visible: true },
+          { key: '/hr/overtime',         label: 'Quản lý OT',             visible: true },
+        ],
+      },
+      {
+        key: 'g-people-admin', label: 'Lịch & Hành chính', visible: true,
+        items: [
+          { key: '/hr/attendance', label: 'Bảng công',   visible: true },
+          { key: '/hr/holidays',   label: 'Ngày lễ',     visible: true },
+          { key: '/hr/shifts',     label: 'Ca làm việc', visible: true },
         ],
       },
       {
@@ -318,6 +325,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/assets',             label: 'Tất cả tài sản',   visible: true },
           { key: '/assets/assignments', label: 'Cấp phát tài sản', visible: true },
           { key: '/assets/maintenance', label: 'Bảo trì',          visible: true },
+          { key: '/assets/rooms',       label: 'Quản lý phòng họp', visible: true },
         ],
       },
       {
@@ -486,8 +494,10 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/module-config':                 <ModuleConfigIcon />,
   '/onboarding':                    <RocketOutlined />,
   '/assets/room-booking':           <RoomCalendarIcon />,
+  '/assets/rooms':                  <HomeOutlined />,
   '/assets/vehicles':               <CarOutlined />,
   '/calendar':                      <RoomCalendarIcon />,
+
   '/hr/overtime':                   <FieldTimeOutlined />,
   '/my-overtime':                   <FieldTimeOutlined />,
   '/hr/shifts':                     <ClockCircleOutlined />,

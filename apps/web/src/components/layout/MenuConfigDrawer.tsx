@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useMenuStore, DEFAULT_GROUPS, DEFAULT_TOP_ITEMS } from '../../store/menu.store';
 import type { MenuGroupCfg, MenuTopItemCfg } from '../../store/menu.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Text } = Typography;
 
@@ -28,7 +28,7 @@ function cloneGroups(groups: MenuGroupCfg[]): MenuGroupCfg[] {
 
 export function MenuConfigDrawer({ open, onClose }: MenuConfigDrawerProps) {
   const { topItems: stTop, groups: stGroups, setConfig } = useMenuStore();
-  const { mode } = useThemeStore();
+  const { isDark, bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
 
   const [localTop, setLocalTop]       = useState<MenuTopItemCfg[]>([]);
   const [localGroups, setLocalGroups] = useState<MenuGroupCfg[]>([]);
@@ -120,11 +120,6 @@ export function MenuConfigDrawer({ open, onClose }: MenuConfigDrawerProps) {
     });
 
   // ── style tokens ───────────────────────────────────────────────────────────
-  const isDark      = mode === 'dark';
-  const rowBg       = isDark ? '#1E293B' : '#FAFAFA';
-  const groupHdrBg  = isDark ? '#1A2744' : '#EEF2FF';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const mutedText   = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)';
 
   // ── sub-components ─────────────────────────────────────────────────────────
   function LabelCell({ itemKey, label }: { itemKey: string; label: string }) {

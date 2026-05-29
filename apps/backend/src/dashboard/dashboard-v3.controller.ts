@@ -452,4 +452,58 @@ export class DashboardV3Controller {
       .map((o) => ({ dept: o.name, count: o._count.employees }))
       .sort((a, b) => b.count - a.count);
   }
+
+  @Get('today-events')
+  @ApiOperation({ summary: 'Sinh nhật / Thâm niên / Nhân viên mới hôm nay' })
+  async getTodayEvents() {
+    const now = new Date();
+    const todayMonth = now.getMonth() + 1;
+    const todayDay = now.getDate();
+    const todayYear = now.getFullYear();
+
+    // Lấy tất cả nhân viên active kèm user (để lấy tên)
+    const allEmployees = await this.prisma.employee.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        fullName: true,
+        birthdate: true,
+        startDate: true,
+        orgUnit: { select: { name: true } },
+        user: { select: { name: true } },
+      },
+    });
+
+    const birthdays: { id: string; name: string; dept: string }[] = [];
+    const anniversaries: { id: string; name: string; dept: string; years: number }[] = [];
+    const newHires: { id: string; name: string; dept: string }[] = [];
+
+    for (const emp of allEmployees) {
+      const name = emp.user?.name ?? emp.fullName;
+      const dept = emp.orgUnit?.name ?? '';
+
+      // Sinh nhật hôm nay
+      if (emp.birthdate) {
+        const bd = new Date(emp.birthdate);
+        if (bd.getMonth() + 1 === todayMonth && bd.getDate() === todayDay) {
+          birthdays.push({ id: emp.id, name, dept });
+        }
+      }
+
+      // Ngày onboard / thâm niên
+      const sd = new Date(emp.startDate);
+      if (sd.getMonth() + 1 === todayMonth && sd.getDate() === todayDay) {
+        const years = todayYear - sd.getFullYear();
+        if (years === 0) {
+          // Onboard đúng hôm nay
+          newHires.push({ id: emp.id, name, dept });
+        } else if (years > 0) {
+          // Kỷ niệm thâm niên
+          anniversaries.push({ id: emp.id, name, dept, years });
+        }
+      }
+    }
+
+    return { birthdays, anniversaries, newHires };
+  }
 }

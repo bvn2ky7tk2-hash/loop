@@ -213,9 +213,14 @@ export class PayrollEngineService {
         case SalaryColumnSource.ALLOWANCE_TYPE:
           if (col.allowanceTypeId) {
             const override = allowanceOverrideMap.get(col.allowanceTypeId);
-            amount = override !== undefined
+            const baseAmount = override !== undefined
               ? override
               : Number(col.allowanceType?.defaultAmount ?? 0);
+            // PER_WORK_DAY: tính theo ngày công thực tế = amount / standardDays * workDays
+            const calcMode = (col.allowanceType as any)?.calculationMode ?? 'FIXED';
+            amount = calcMode === 'PER_WORK_DAY'
+              ? (baseAmount / standardDays) * workDays
+              : baseAmount;
           }
           allowancesTotal += amount;
           break;

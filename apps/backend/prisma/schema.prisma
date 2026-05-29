@@ -70,7 +70,7 @@ model OrgUnit {
   code               String
   parentId           String?             @map("parent_id")
   level              Int                 @default(0)
-  headJobTitleId     String?             @map("head_job_title_id") @db.Uuid
+  headJobTitleId     String?             @map("head_job_title_id")
   leaderId           String?             @unique @map("leader_id")
   createdAt          DateTime            @default(now()) @map("created_at")
   updatedAt          DateTime            @updatedAt @map("updated_at")
@@ -2000,19 +2000,27 @@ model Dependent {
 }
 
 model AllowanceType {
-  id               String              @id @default(uuid())
-  name             String              @unique
-  defaultAmount    Decimal             @map("default_amount") @db.Decimal(12, 2)
-  isBhxhExempt     Boolean             @default(true) @map("is_bhxh_exempt")
-  isPitExempt      Boolean             @default(false) @map("is_pit_exempt")
-  pitExemptCeiling Decimal?            @map("pit_exempt_ceiling") @db.Decimal(12, 2)
-  isActive         Boolean             @default(true) @map("is_active")
-  createdAt        DateTime            @default(now()) @map("created_at")
+  id               String                   @id @default(uuid())
+  name             String                   @unique
+  defaultAmount    Decimal                  @map("default_amount") @db.Decimal(12, 2)
+  calculationMode  AllowanceCalculationMode @default(FIXED) @map("calculation_mode")
+  isBhxhExempt     Boolean                  @default(true) @map("is_bhxh_exempt")
+  isPitExempt      Boolean                  @default(false) @map("is_pit_exempt")
+  pitExemptCeiling Decimal?                 @map("pit_exempt_ceiling") @db.Decimal(12, 2)
+  isActive         Boolean                  @default(true) @map("is_active")
+  createdAt        DateTime                 @default(now()) @map("created_at")
   employeeAllowances EmployeeAllowance[]
   contractAllowances ContractAllowance[]
   salaryColumns    SalaryColumn[]
 
   @@map("allowance_types")
+}
+
+enum AllowanceCalculationMode {
+  FIXED        // Cố định hàng tháng — không phụ thuộc ngày công
+  PER_WORK_DAY // Tính theo ngày công = amount × workDays / standardDays
+
+  @@map("allowance_calculation_mode")
 }
 
 model BonusType {

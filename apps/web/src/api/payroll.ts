@@ -5,6 +5,7 @@ const BASE = '/api/v1/payroll';
 export type PayrollStatus = 'DRAFT' | 'PROCESSING' | 'REVIEWED' | 'APPROVED' | 'PAID';
 export type SalaryColumnSource = 'CONTRACT_SALARY' | 'ALLOWANCE_TYPE' | 'FIXED_VALUE' | 'FORMULA';
 export type SalaryColumnType = 'EARNING' | 'DEDUCTION';
+export type AllowanceCalculationMode = 'FIXED' | 'PER_WORK_DAY';
 
 export interface PayrollPeriod {
   id: string;
@@ -112,6 +113,7 @@ export interface AllowanceType {
   id: string;
   name: string;
   defaultAmount: number;
+  calculationMode: AllowanceCalculationMode;
   isBhxhExempt: boolean;
   isPitExempt: boolean;
   pitExemptCeiling?: number | null;
@@ -212,8 +214,9 @@ export const payrollApi = {
     apiClient.post<TaxDeductionConfig>(`${BASE}/tax-deductions`, data).then(r => r.data),
 
   // ── Salary Columns ─────────────────────────────────────────────────────────
-  listSalaryColumns: (page = 1, limit = 50) =>
-    apiClient.get<PaginatedResult<SalaryColumn>>(`${BASE}/salary-columns`, { params: { page, limit } }).then(r => r.data),
+  // Backend trả SalaryColumn[] trực tiếp (không phân trang)
+  listSalaryColumns: () =>
+    apiClient.get<SalaryColumn[]>(`${BASE}/salary-columns`).then(r => r.data),
 
   createSalaryColumn: (data: Partial<SalaryColumn>) =>
     apiClient.post<SalaryColumn>(`${BASE}/salary-columns`, data).then(r => r.data),

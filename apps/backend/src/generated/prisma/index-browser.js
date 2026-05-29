@@ -1122,6 +1122,7 @@ exports.Prisma.AllowanceTypeScalarFieldEnum = {
   id: 'id',
   name: 'name',
   defaultAmount: 'defaultAmount',
+  calculationMode: 'calculationMode',
   isBhxhExempt: 'isBhxhExempt',
   isPitExempt: 'isPitExempt',
   pitExemptCeiling: 'pitExemptCeiling',
@@ -2166,6 +2167,11 @@ exports.ReviewStatus = exports.$Enums.ReviewStatus = {
 exports.ResidencyStatus = exports.$Enums.ResidencyStatus = {
   RESIDENT: 'RESIDENT',
   NON_RESIDENT: 'NON_RESIDENT'
+};
+
+exports.AllowanceCalculationMode = exports.$Enums.AllowanceCalculationMode = {
+  FIXED: 'FIXED',
+  PER_WORK_DAY: 'PER_WORK_DAY'
 };
 
 exports.SalaryColumnType = exports.$Enums.SalaryColumnType = {

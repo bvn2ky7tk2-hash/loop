@@ -1,6 +1,15 @@
 import { apiClient } from './client';
 
-export type ContractType = 'FULL_TIME' | 'PART_TIME' | 'PROBATION' | 'FREELANCE';
+// Loại HĐ theo BLLĐ 2019 (Điều 20)
+export type ContractType =
+  | 'PROBATION'   // Thử việc (≤60 ngày phổ thông, ≤180 ngày quản lý)
+  | 'FIXED_12'    // Xác định thời hạn 12 tháng
+  | 'FIXED_24'    // Xác định thời hạn 24 tháng
+  | 'FIXED_36'    // Xác định thời hạn 36 tháng
+  | 'INDEFINITE'  // Không xác định thời hạn (vô thời hạn)
+  | 'PART_TIME'   // Bán thời gian
+  | 'SEASONAL';   // Thời vụ / Công việc cụ thể
+
 export type ContractStatus = 'DRAFT' | 'ACTIVE' | 'EXPIRED' | 'TERMINATED';
 
 export interface ContractAllowanceItem {
@@ -29,6 +38,9 @@ export interface Contract {
   currency: string;
   note?: string | null;
   signedAt?: string | null;
+  renewalCount: number;
+  previousContractId?: string | null;
+  previousContract?: { id: string; type: ContractType; startDate: string; endDate?: string | null } | null;
   createdAt: string;
   updatedAt: string;
   allowances: ContractAllowanceItem[];
@@ -43,6 +55,17 @@ export interface CreateContractDto {
   currency?: string;
   note?: string;
   signedAt?: string;
+  allowances?: ContractAllowanceInputItem[];
+}
+
+export interface RenewContractDto {
+  type: ContractType;
+  startDate: string;
+  endDate?: string;
+  salaryMonthly?: number;
+  note?: string;
+  signedAt?: string;
+  signedById?: string;
   allowances?: ContractAllowanceInputItem[];
 }
 
@@ -66,6 +89,9 @@ export const contractsApi = {
 
   update: (id: string, data: Partial<CreateContractDto> & { status?: ContractStatus }) =>
     apiClient.patch<Contract>(`/contracts/${id}`, data).then((r) => r.data),
+
+  renew: (id: string, data: RenewContractDto) =>
+    apiClient.post<Contract>(`/contracts/${id}/renew`, data).then((r) => r.data),
 
   remove: (id: string) =>
     apiClient.delete(`/contracts/${id}`),

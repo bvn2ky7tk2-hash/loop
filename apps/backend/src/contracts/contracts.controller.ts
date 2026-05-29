@@ -9,7 +9,7 @@ import { PERMISSIONS } from '../permissions/permissions.constants';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ContractsService } from './contracts.service';
-import { CreateContractDto } from './dto/create-contract.dto';
+import { CreateContractDto, RenewContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 
 @ApiTags('contracts')
@@ -44,6 +44,20 @@ export class ContractsController {
   @ApiOperation({ summary: 'Tạo hợp đồng mới' })
   create(@Body() dto: CreateContractDto) {
     return this.service.create(dto);
+  }
+
+  @Post(':id/renew')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_UPDATE)
+  @Audited('RENEW', 'Contract')
+  @ApiOperation({
+    summary: 'Gia hạn hợp đồng — tự động đánh dấu HĐ cũ EXPIRED và tạo HĐ mới',
+    description: `Theo BLLĐ 2019 Điều 20: tối đa 2 lần ký HĐ có thời hạn (FIXED_*).
+    Lần thứ 3 bắt buộc chuyển sang INDEFINITE (không xác định thời hạn).
+    Phụ cấp và lương được kế thừa từ HĐ cũ nếu không truyền vào.`,
+  })
+  renew(@Param('id') id: string, @Body() dto: RenewContractDto) {
+    return this.service.renew(id, dto);
   }
 
   @Patch(':id')

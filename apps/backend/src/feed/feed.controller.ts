@@ -27,7 +27,7 @@ export class FeedController {
   @Get()
   @ApiOperation({ summary: 'Danh sách bài đăng' })
   list(@Query() dto: ListFeedDto) {
-    return this.service.listPosts(dto.page, dto.limit);
+    return this.service.listPosts(dto.page, dto.limit, dto.type);
   }
 
   @Post()

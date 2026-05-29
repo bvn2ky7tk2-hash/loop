@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import type { BugStatus } from '../../api/bugs.api';
 
 interface PillConfig {
@@ -29,7 +29,7 @@ interface BugStatusPillProps {
 }
 
 export function BugStatusPill({ status, size = 'md', style }: BugStatusPillProps) {
-  const isDark = useThemeStore((s) => s.mode === 'dark');
+  const { isDark } = useThemePalette();
   const fallback: PillConfig = { label: status, bg: '#F1F5F9', color: '#475569', darkBg: '#1E293B', darkColor: '#94A3B8' };
   const cfg = CONFIG[status] ?? fallback;
 

@@ -101,6 +101,23 @@ export interface PeopleByDeptItem {
   count: number;
 }
 
+// ─── Today Events ─────────────────────────────────────────────────────────
+export interface TodayEventPerson {
+  id: string;
+  name: string;
+  dept: string;
+}
+
+export interface TodayAnniversaryPerson extends TodayEventPerson {
+  years: number;
+}
+
+export interface TodayEvents {
+  birthdays: TodayEventPerson[];
+  anniversaries: TodayAnniversaryPerson[];
+  newHires: TodayEventPerson[];
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────
 export const dashboardV3Api = {
   getWork: (): Promise<WorkDashboardData> =>
@@ -138,4 +155,7 @@ export const dashboardV3Api = {
 
   getPeopleByDept: (): Promise<PeopleByDeptItem[]> =>
     api.get('/api/v1/dashboard/people-by-dept').then((r) => r.data),
+
+  getTodayEvents: (): Promise<TodayEvents> =>
+    api.get('/api/v1/dashboard/today-events').then((r) => r.data),
 };

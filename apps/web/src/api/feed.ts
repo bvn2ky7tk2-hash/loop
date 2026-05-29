@@ -63,7 +63,7 @@ export interface PaginatedFeedResult {
 
 export const feedKeys = {
   all:   ['feed'] as const,
-  list:  (page: number, limit: number) => ['feed', 'list', page, limit] as const,
+  list:  (page: number, limit: number, type?: FeedPostType) => ['feed', 'list', page, limit, type] as const,
   stats: ['feed', 'stats'] as const,
 };
 
@@ -76,12 +76,12 @@ export function useGetFeedStats() {
   });
 }
 
-export function useGetFeedPosts(page = 1, limit = 20) {
+export function useGetFeedPosts(page = 1, limit = 20, type?: FeedPostType) {
   return useQuery<PaginatedFeedResult>({
-    queryKey: feedKeys.list(page, limit),
+    queryKey: feedKeys.list(page, limit, type),
     queryFn:  () =>
       apiClient
-        .get<PaginatedFeedResult>('/feed', { params: { page, limit } })
+        .get<PaginatedFeedResult>('/feed', { params: { page, limit, ...(type ? { type } : {}) } })
         .then((r) => r.data),
   });
 }

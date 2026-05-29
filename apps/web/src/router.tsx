@@ -72,7 +72,6 @@ const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
 const OvertimePage          = lazy(() => import('./pages/hr/OvertimePage'));
 const MyOvertimePage        = lazy(() => import('./pages/hr/MyOvertimePage'));
 const HrShiftsPage          = lazy(() => import('./pages/hr/HrShiftsPage'));
-const HrLeavesPage          = lazy(() => import('./pages/hr/HrLeavesPage'));
 const KnowledgeBasePage     = lazy(() => import('./pages/knowledge-base/KnowledgeBasePage'));
 const PortalManagePage      = lazy(() => import('./pages/crm/PortalManagePage'));
 const CustomerPortalPage    = lazy(() => import('./pages/portal/CustomerPortalPage'));
@@ -87,8 +86,6 @@ const DemoModePage          = lazy(() => import('./pages/admin/DemoModePage'));
 const ModuleConfigPage      = lazy(() => import('./pages/admin/ModuleConfigPage'));
 const OnboardingWizardPage  = lazy(() => import('./pages/admin/OnboardingWizardPage'));
 const FeedPage              = lazy(() => import('./pages/feed/FeedPage'));
-const WorkDashboard         = lazy(() => import('./pages/dashboard/WorkDashboard'));
-const PeopleDashboard       = lazy(() => import('./pages/dashboard/PeopleDashboard'));
 const FinanceDashboard      = lazy(() => import('./pages/dashboard/FinanceDashboard'));
 const CrmDashboard          = lazy(() => import('./pages/dashboard/CrmDashboard'));
 const AssetDashboard        = lazy(() => import('./pages/dashboard/AssetDashboard'));
@@ -96,6 +93,7 @@ const OpsDashboard          = lazy(() => import('./pages/dashboard/OpsDashboard'
 const MeDashboard           = lazy(() => import('./pages/dashboard/MeDashboard'));
 const AdminDashboard        = lazy(() => import('./pages/dashboard/AdminDashboard'));
 const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'));
+const RoomManagePage        = lazy(() => import('./pages/assets/RoomManagePage'));
 const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPage'));
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
@@ -126,7 +124,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/dashboard/work" replace /> },
+      { index: true, element: <Navigate to="/feed" replace /> },
       { path: 'org', element: <Navigate to="/personnel" replace /> },
       { path: 'personnel', element: wrap(PersonnelPage) },
       { path: 'projects', element: wrap(ProjectsPage) },
@@ -194,7 +192,7 @@ export const router = createBrowserRouter([
       { path: 'hr/leave-policies',   element: wrap(HrLeavePolicyPage) },
       { path: 'hr/attendance',       element: wrap(HrAttendancePage) },
       { path: 'hr/holidays',         element: wrap(HrHolidaysPage) },
-      { path: 'hr/leaves',           element: wrap(HrLeavesPage) },
+
       { path: 'hr/overtime',         element: wrap(OvertimePage) },
       { path: 'hr/shifts',           element: wrap(HrShiftsPage) },
       { path: 'knowledge-base',       element: wrap(KnowledgeBasePage) },
@@ -209,8 +207,8 @@ export const router = createBrowserRouter([
       { path: 'module-config',        element: wrap(ModuleConfigPage) },
       { path: 'onboarding',           element: wrap(OnboardingWizardPage) },
       { path: 'feed',                 element: wrap(FeedPage) },
-      { path: 'dashboard/work',       element: wrap(WorkDashboard) },
-      { path: 'dashboard/people',     element: wrap(PeopleDashboard) },
+      { path: 'dashboard/work',       element: <Navigate to="/feed" replace /> },
+      { path: 'dashboard/people',     element: <Navigate to="/feed" replace /> },
       { path: 'dashboard/finance',    element: wrap(FinanceDashboard) },
       { path: 'dashboard/crm',        element: wrap(CrmDashboard) },
       { path: 'dashboard/asset',      element: wrap(AssetDashboard) },
@@ -218,6 +216,7 @@ export const router = createBrowserRouter([
       { path: 'dashboard/me',         element: wrap(MeDashboard) },
       { path: 'dashboard/admin',      element: wrap(AdminDashboard) },
       { path: 'assets/room-booking',  element: wrap(RoomBookingPage) },
+      { path: 'assets/rooms',         element: wrap(RoomManagePage) },
       { path: 'assets/vehicles',      element: wrap(VehicleBookingPage) },
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },

@@ -1,22 +1,16 @@
-import { CanActivate, ExecutionContext, Injectable, Inject } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { isTenantEnforced, getDefaultTenantId } from '../config/tenant.config';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
-  constructor(@Inject(REQUEST) private readonly request: any) {}
-
-  canActivate(_context: ExecutionContext): boolean {
-    const user = this.request?.user;
-
+  canActivate(context: ExecutionContext): boolean {
     if (!isTenantEnforced()) {
-      // Single-tenant / on-prem: dùng DEFAULT_TENANT_ID, không chặn
       return true;
     }
 
-    const tenantId = user?.tenantId ?? getDefaultTenantId();
-    // Gắn tenantId lên request để các service có thể lấy qua @Inject(REQUEST)
-    this.request.__tenantId = tenantId;
+    const req = context.switchToHttp().getRequest();
+    const tenantId = req?.user?.tenantId ?? getDefaultTenantId();
+    req.__tenantId = tenantId;
     return true;
   }
 }

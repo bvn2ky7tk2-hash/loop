@@ -32,7 +32,7 @@ export interface Allocation {
 }
 
 export const projectsApi = {
-  list: () => apiClient.get<Project[]>('/projects').then((r) => r.data),
+  list: () => apiClient.get<{ data: Project[]; total: number }>('/projects').then((r) => r.data.data),
   get: (id: string) => apiClient.get<Project>(`/projects/${id}`).then((r) => r.data),
   create: (data: Partial<Project>) =>
     apiClient.post<Project>('/projects', data).then((r) => r.data),

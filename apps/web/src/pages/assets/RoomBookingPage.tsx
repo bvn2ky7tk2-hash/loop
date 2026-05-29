@@ -1,18 +1,16 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import {
-  Tabs, Button, Table, Tag, Form, Input, InputNumber, Select,
-  DatePicker, Tooltip, Space, Row, Col, Typography, Spin, message,
+  Tabs, Button, Space, Form, Input, Select,
+  DatePicker, Tooltip, Row, Col, Typography, Spin, message,
 } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import {
-  PlusOutlined, EditOutlined, DeleteOutlined,
-  HomeOutlined, CalendarOutlined, TeamOutlined,
+  PlusOutlined, HomeOutlined, CalendarOutlined, TeamOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { usePermissions } from '../../hooks/usePermissions';
+
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -21,9 +19,8 @@ import { confirmDelete } from '../../components/ui/confirmDelete';
 
 import {
   useRooms, useGanttData, useRoomStats, useAvailableRooms,
-  useCreateRoom, useUpdateRoom, useDeleteRoom,
   useCreateBooking, useCancelBooking,
-  type MeetingRoom, type RoomBooking, type CreateRoomInput, type CreateBookingInput,
+  type MeetingRoom, type RoomBooking, type CreateBookingInput,
 } from '../../api/room-booking';
 import { employeesApi } from '../../api/employees';
 import { apiClient } from '../../api/client';
@@ -66,58 +63,15 @@ function toMinutes(iso: string): number {
   return d.getHours() * 60 + d.getMinutes();
 }
 
-// ─── Nhãn trạng thái phòng ───────────────────────────────────────────────────
-
-function RoomStatusTag({ status, isDark }: { status: MeetingRoom['status']; isDark: boolean }) {
-  if (status === 'ACTIVE') {
-    return (
-      <Tag
-        style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' } : {}}
-        color={isDark ? undefined : 'green'}
-      >
-        Hoạt động
-      </Tag>
-    );
-  }
-  if (status === 'MAINTENANCE') {
-    return (
-      <Tag
-        style={isDark ? { background: 'rgba(251,191,36,0.15)', color: '#FCD34D', borderColor: 'rgba(251,191,36,0.3)' } : {}}
-        color={isDark ? undefined : 'orange'}
-      >
-        Bảo trì
-      </Tag>
-    );
-  }
-  return (
-    <Tag
-      style={isDark ? { background: 'rgba(148,163,184,0.15)', color: '#CBD5E1', borderColor: 'rgba(148,163,184,0.3)' } : {}}
-      color={isDark ? undefined : 'default'}
-    >
-      Không hoạt động
-    </Tag>
-  );
-}
-
 // ─── Component chính ─────────────────────────────────────────────────────────
 
 export default function RoomBookingPage() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark, preset } = useThemePalette();
-  const { hasRole } = usePermissions();
-  const isAdmin = hasRole('ADMIN');
+  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark } = useThemePalette();
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [ganttDate, setGanttDate]           = useState(dayjs().format('YYYY-MM-DD'));
   const [bookingOpen, setBookingOpen]       = useState(false);
-  const [roomModalOpen, setRoomModalOpen]   = useState(false);
-  const [editingRoom, setEditingRoom]       = useState<MeetingRoom | null>(null);
   const [bookingForm] = Form.useForm();
-  const [roomForm]    = Form.useForm();
-
-  // Pre-fill khi click slot Gantt
-  const [prefillRoomId, setPrefillRoomId]   = useState<string | undefined>();
-  const [prefillStart, setPrefillStart]     = useState<dayjs.Dayjs | undefined>();
-  const [prefillEnd, setPrefillEnd]         = useState<dayjs.Dayjs | undefined>();
 
   // Lấy startTime/endTime từ form booking để query phòng trống
   const [bookingStart, setBookingStart]     = useState<string | undefined>();
@@ -126,7 +80,7 @@ export default function RoomBookingPage() {
   // ── Queries ────────────────────────────────────────────────────────────────
   const { data: ganttRaw, isLoading: ganttLoading } = useGanttData(ganttDate);
   const { data: stats }                             = useRoomStats();
-  const { data: roomsRaw, isLoading: roomsLoading } = useRooms({ limit: 100 });
+  const { data: roomsRaw } = useRooms({ limit: 100 });
   const { data: availableRooms = [] }               = useAvailableRooms(bookingStart, bookingEnd);
   const { data: empList = [] }                      = useQuery({
     queryKey: ['employees-list-booking'],
@@ -134,9 +88,6 @@ export default function RoomBookingPage() {
   });
 
   // ── Mutations ──────────────────────────────────────────────────────────────
-  const createRoomMut    = useCreateRoom();
-  const updateRoomMut    = useUpdateRoom();
-  const deleteRoomMut    = useDeleteRoom();
   const createBookingMut = useCreateBooking();
   const cancelBookingMut = useCancelBooking();
 
@@ -144,62 +95,9 @@ export default function RoomBookingPage() {
   const ganttBookings = ganttRaw?.bookings ?? [];
   const roomsList     = (roomsRaw as any)?.data ?? roomsRaw ?? [];
 
-  // ── Handlers — Phòng ───────────────────────────────────────────────────────
-
-  const openCreateRoom = () => {
-    setEditingRoom(null);
-    roomForm.resetFields();
-    setRoomModalOpen(true);
-  };
-
-  const openEditRoom = (room: MeetingRoom) => {
-    setEditingRoom(room);
-    roomForm.setFieldsValue({
-      name:      room.name,
-      floor:     room.floor,
-      capacity:  room.capacity,
-      amenities: room.amenities,
-      status:    room.status,
-    });
-    setRoomModalOpen(true);
-  };
-
-  const handleRoomSubmit = async (values: CreateRoomInput) => {
-    try {
-      if (editingRoom) {
-        await updateRoomMut.mutateAsync({ id: editingRoom.id, data: values });
-        message.success('Cập nhật phòng thành công');
-      } else {
-        await createRoomMut.mutateAsync(values);
-        message.success('Thêm phòng thành công');
-      }
-      setRoomModalOpen(false);
-    } catch (e: any) {
-      message.error(e?.response?.data?.message ?? 'Có lỗi xảy ra');
-    }
-  };
-
-  const handleDeleteRoom = (room: MeetingRoom) => {
-    confirmDelete({
-      itemName: room.name,
-      onConfirm: async () => {
-        try {
-          await deleteRoomMut.mutateAsync(room.id);
-          message.success('Xóa phòng thành công');
-        } catch (e: any) {
-          message.error(e?.response?.data?.message ?? 'Có lỗi xảy ra');
-        }
-      },
-    });
-  };
-
   // ── Handlers — Booking ─────────────────────────────────────────────────────
 
   const openBookingModal = (roomId?: string, start?: dayjs.Dayjs, end?: dayjs.Dayjs) => {
-    setPrefillRoomId(roomId);
-    setPrefillStart(start);
-    setPrefillEnd(end);
-
     bookingForm.resetFields();
     if (roomId) bookingForm.setFieldValue('roomId', roomId);
     if (start)  bookingForm.setFieldValue('startTime', start);
@@ -264,73 +162,6 @@ export default function RoomBookingPage() {
       },
     });
   };
-
-  // ── Columns — Bảng phòng ───────────────────────────────────────────────────
-
-  const roomColumns: ColumnsType<MeetingRoom> = [
-    {
-      title: 'Tên phòng',
-      dataIndex: 'name',
-      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 600 }}>{v}</Text>,
-    },
-    {
-      title: 'Tầng',
-      dataIndex: 'floor',
-      render: (v?: string) => v
-        ? <Text style={{ color: textPrimary }}>{v}</Text>
-        : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Sức chứa',
-      dataIndex: 'capacity',
-      render: (v: number) => <Text style={{ color: textPrimary }}>{v} người</Text>,
-    },
-    {
-      title: 'Tiện nghi',
-      dataIndex: 'amenities',
-      render: (arr: string[], record: MeetingRoom) => (
-        <Space wrap size={4}>
-          {arr.map((a) => (
-            <Tag
-              key={a}
-              style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}
-              color={isDark ? undefined : 'blue'}
-            >
-              {a}
-            </Tag>
-          ))}
-        </Space>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      render: (v: MeetingRoom['status']) => <RoomStatusTag status={v} isDark={isDark} />,
-    },
-    ...(isAdmin ? [{
-      title: 'Thao tác',
-      key: 'actions',
-      width: 100,
-      render: (_: unknown, record: MeetingRoom) => (
-        <Space>
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            size="small"
-            style={{ color: isDark ? '#93C5FD' : preset.primary }}
-            onClick={() => openEditRoom(record)}
-          />
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
-            size="small"
-            danger
-            onClick={() => handleDeleteRoom(record)}
-          />
-        </Space>
-      ),
-    }] : []),
-  ];
 
   // ── Gantt Chart ───────────────────────────────────────────────────────────
 
@@ -596,30 +427,6 @@ export default function RoomBookingPage() {
                 </div>
               ),
             },
-            ...(isAdmin ? [{
-              key:   'rooms',
-              label: 'Quản lý phòng',
-              children: (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={openCreateRoom}
-                    >
-                      Thêm phòng
-                    </Button>
-                  </div>
-                  <Table<MeetingRoom>
-                    rowKey="id"
-                    columns={roomColumns}
-                    dataSource={roomsList}
-                    loading={roomsLoading}
-                    pagination={{ pageSize: 20 }}
-                  />
-                </div>
-              ),
-            }] : []),
           ]}
         />
       </div>
@@ -628,10 +435,15 @@ export default function RoomBookingPage() {
       <CenteredModal
         title="Đặt phòng họp"
         open={bookingOpen}
-        onCancel={() => setBookingOpen(false)}
-        onOk={() => bookingForm.submit()}
-        confirmLoading={createBookingMut.isPending}
-        okText="Đặt phòng"
+        onClose={() => setBookingOpen(false)}
+        footer={
+          <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
+            <Button onClick={() => setBookingOpen(false)}>Huỷ</Button>
+            <Button type="primary" loading={createBookingMut.isPending} onClick={() => bookingForm.submit()}>
+              Đặt phòng
+            </Button>
+          </Space>
+        }
       >
         <Form form={bookingForm} layout="vertical" onFinish={handleBookingSubmit}>
           <Form.Item
@@ -706,41 +518,6 @@ export default function RoomBookingPage() {
         </Form>
       </CenteredModal>
 
-      {/* Modal thêm/sửa phòng (ADMIN only) */}
-      <CenteredModal
-        title={editingRoom ? `Sửa phòng: ${editingRoom.name}` : 'Thêm phòng mới'}
-        open={roomModalOpen}
-        onCancel={() => setRoomModalOpen(false)}
-        onOk={() => roomForm.submit()}
-        confirmLoading={createRoomMut.isPending || updateRoomMut.isPending}
-        okText={editingRoom ? 'Lưu thay đổi' : 'Thêm phòng'}
-      >
-        <Form form={roomForm} layout="vertical" onFinish={handleRoomSubmit}>
-          <Form.Item name="name" label="Tên phòng" rules={[{ required: true }]}>
-            <Input placeholder="VD: Phòng Hoa, A3.01..." maxLength={200} />
-          </Form.Item>
-
-          <Form.Item name="floor" label="Tầng">
-            <Input placeholder="VD: Tầng 2, Tầng 3..." maxLength={100} />
-          </Form.Item>
-
-          <Form.Item name="capacity" label="Sức chứa (người)">
-            <InputNumber min={1} max={500} style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item name="amenities" label="Tiện nghi">
-            <Select mode="tags" placeholder="Nhập tiện nghi (Enter để thêm)" />
-          </Form.Item>
-
-          <Form.Item name="status" label="Trạng thái">
-            <Select>
-              <Select.Option value="ACTIVE">Hoạt động</Select.Option>
-              <Select.Option value="INACTIVE">Không hoạt động</Select.Option>
-              <Select.Option value="MAINTENANCE">Bảo trì</Select.Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </CenteredModal>
     </div>
   );
 }

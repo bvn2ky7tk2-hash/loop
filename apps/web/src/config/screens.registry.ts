@@ -103,8 +103,9 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/assets',                module: 'asset', label: 'Tất cả tài sản',   icon: 'LaptopOutlined',   permCode: 'asset:read',             sortOrder: 1 },
   { route: '/assets/assignments',    module: 'asset', label: 'Cấp phát tài sản', icon: 'SwapOutlined',     permCode: 'asset_assignments:read', sortOrder: 2 },
   { route: '/assets/maintenance',    module: 'asset', label: 'Bảo trì tài sản',  icon: 'ToolOutlined',     permCode: 'asset_maintenance:read', sortOrder: 3 },
-  { route: '/procurement/vendors',   module: 'asset', label: 'Nhà cung cấp',     icon: 'ShopOutlined',     permCode: 'vendors:read',           sortOrder: 4 },
-  { route: '/procurement/orders',    module: 'asset', label: 'Đơn mua hàng',     icon: 'FileTextOutlined', permCode: 'purchase_orders:read',   sortOrder: 5 },
+  { route: '/assets/rooms',          module: 'asset', label: 'Quản lý phòng họp', icon: 'HomeOutlined',     permCode: 'asset:read',             sortOrder: 4 },
+  { route: '/procurement/vendors',   module: 'asset', label: 'Nhà cung cấp',     icon: 'ShopOutlined',     permCode: 'vendors:read',           sortOrder: 5 },
+  { route: '/procurement/orders',    module: 'asset', label: 'Đơn mua hàng',     icon: 'FileTextOutlined', permCode: 'purchase_orders:read',   sortOrder: 6 },
 
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',               module: 'admin', label: 'Người dùng',        icon: 'UserOutlined',              permCode: 'admin:users',            sortOrder: 1 },

@@ -1127,6 +1127,14 @@ export const ReviewStatus: {
 export type ReviewStatus = (typeof ReviewStatus)[keyof typeof ReviewStatus]
 
 
+export const AllowanceCalculationMode: {
+  FIXED: 'FIXED',
+  PER_WORK_DAY: 'PER_WORK_DAY'
+};
+
+export type AllowanceCalculationMode = (typeof AllowanceCalculationMode)[keyof typeof AllowanceCalculationMode]
+
+
 export const PayrollPeriodType: {
   REGULAR: 'REGULAR',
   ADJUSTMENT: 'ADJUSTMENT'
@@ -1632,6 +1640,10 @@ export const TrainingStatus: typeof $Enums.TrainingStatus
 export type ReviewStatus = $Enums.ReviewStatus
 
 export const ReviewStatus: typeof $Enums.ReviewStatus
+
+export type AllowanceCalculationMode = $Enums.AllowanceCalculationMode
+
+export const AllowanceCalculationMode: typeof $Enums.AllowanceCalculationMode
 
 export type PayrollPeriodType = $Enums.PayrollPeriodType
 
@@ -108487,6 +108499,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     defaultAmount: Decimal | null
+    calculationMode: $Enums.AllowanceCalculationMode | null
     isBhxhExempt: boolean | null
     isPitExempt: boolean | null
     pitExemptCeiling: Decimal | null
@@ -108498,6 +108511,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     defaultAmount: Decimal | null
+    calculationMode: $Enums.AllowanceCalculationMode | null
     isBhxhExempt: boolean | null
     isPitExempt: boolean | null
     pitExemptCeiling: Decimal | null
@@ -108509,6 +108523,7 @@ export namespace Prisma {
     id: number
     name: number
     defaultAmount: number
+    calculationMode: number
     isBhxhExempt: number
     isPitExempt: number
     pitExemptCeiling: number
@@ -108532,6 +108547,7 @@ export namespace Prisma {
     id?: true
     name?: true
     defaultAmount?: true
+    calculationMode?: true
     isBhxhExempt?: true
     isPitExempt?: true
     pitExemptCeiling?: true
@@ -108543,6 +108559,7 @@ export namespace Prisma {
     id?: true
     name?: true
     defaultAmount?: true
+    calculationMode?: true
     isBhxhExempt?: true
     isPitExempt?: true
     pitExemptCeiling?: true
@@ -108554,6 +108571,7 @@ export namespace Prisma {
     id?: true
     name?: true
     defaultAmount?: true
+    calculationMode?: true
     isBhxhExempt?: true
     isPitExempt?: true
     pitExemptCeiling?: true
@@ -108652,6 +108670,7 @@ export namespace Prisma {
     id: string
     name: string
     defaultAmount: Decimal
+    calculationMode: $Enums.AllowanceCalculationMode
     isBhxhExempt: boolean
     isPitExempt: boolean
     pitExemptCeiling: Decimal | null
@@ -108682,6 +108701,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     defaultAmount?: boolean
+    calculationMode?: boolean
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: boolean
@@ -108697,6 +108717,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     defaultAmount?: boolean
+    calculationMode?: boolean
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: boolean
@@ -108708,6 +108729,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     defaultAmount?: boolean
+    calculationMode?: boolean
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: boolean
@@ -108719,6 +108741,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     defaultAmount?: boolean
+    calculationMode?: boolean
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: boolean
@@ -108726,7 +108749,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type AllowanceTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "defaultAmount" | "isBhxhExempt" | "isPitExempt" | "pitExemptCeiling" | "isActive" | "createdAt", ExtArgs["result"]["allowanceType"]>
+  export type AllowanceTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "defaultAmount" | "calculationMode" | "isBhxhExempt" | "isPitExempt" | "pitExemptCeiling" | "isActive" | "createdAt", ExtArgs["result"]["allowanceType"]>
   export type AllowanceTypeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employeeAllowances?: boolean | AllowanceType$employeeAllowancesArgs<ExtArgs>
     contractAllowances?: boolean | AllowanceType$contractAllowancesArgs<ExtArgs>
@@ -108747,6 +108770,7 @@ export namespace Prisma {
       id: string
       name: string
       defaultAmount: Prisma.Decimal
+      calculationMode: $Enums.AllowanceCalculationMode
       isBhxhExempt: boolean
       isPitExempt: boolean
       pitExemptCeiling: Prisma.Decimal | null
@@ -109181,6 +109205,7 @@ export namespace Prisma {
     readonly id: FieldRef<"AllowanceType", 'String'>
     readonly name: FieldRef<"AllowanceType", 'String'>
     readonly defaultAmount: FieldRef<"AllowanceType", 'Decimal'>
+    readonly calculationMode: FieldRef<"AllowanceType", 'AllowanceCalculationMode'>
     readonly isBhxhExempt: FieldRef<"AllowanceType", 'Boolean'>
     readonly isPitExempt: FieldRef<"AllowanceType", 'Boolean'>
     readonly pitExemptCeiling: FieldRef<"AllowanceType", 'Decimal'>
@@ -168559,6 +168584,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     defaultAmount: 'defaultAmount',
+    calculationMode: 'calculationMode',
     isBhxhExempt: 'isBhxhExempt',
     isPitExempt: 'isPitExempt',
     pitExemptCeiling: 'pitExemptCeiling',
@@ -170151,6 +170177,20 @@ export namespace Prisma {
    * Reference to a field of type 'ResidencyStatus[]'
    */
   export type ListEnumResidencyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ResidencyStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AllowanceCalculationMode'
+   */
+  export type EnumAllowanceCalculationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowanceCalculationMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'AllowanceCalculationMode[]'
+   */
+  export type ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllowanceCalculationMode[]'>
     
 
 
@@ -177374,6 +177414,7 @@ export namespace Prisma {
     id?: StringFilter<"AllowanceType"> | string
     name?: StringFilter<"AllowanceType"> | string
     defaultAmount?: DecimalFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFilter<"AllowanceType"> | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFilter<"AllowanceType"> | boolean
     isPitExempt?: BoolFilter<"AllowanceType"> | boolean
     pitExemptCeiling?: DecimalNullableFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string | null
@@ -177388,6 +177429,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     defaultAmount?: SortOrder
+    calculationMode?: SortOrder
     isBhxhExempt?: SortOrder
     isPitExempt?: SortOrder
     pitExemptCeiling?: SortOrderInput | SortOrder
@@ -177405,6 +177447,7 @@ export namespace Prisma {
     OR?: AllowanceTypeWhereInput[]
     NOT?: AllowanceTypeWhereInput | AllowanceTypeWhereInput[]
     defaultAmount?: DecimalFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFilter<"AllowanceType"> | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFilter<"AllowanceType"> | boolean
     isPitExempt?: BoolFilter<"AllowanceType"> | boolean
     pitExemptCeiling?: DecimalNullableFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string | null
@@ -177419,6 +177462,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     defaultAmount?: SortOrder
+    calculationMode?: SortOrder
     isBhxhExempt?: SortOrder
     isPitExempt?: SortOrder
     pitExemptCeiling?: SortOrderInput | SortOrder
@@ -177438,6 +177482,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"AllowanceType"> | string
     name?: StringWithAggregatesFilter<"AllowanceType"> | string
     defaultAmount?: DecimalWithAggregatesFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeWithAggregatesFilter<"AllowanceType"> | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolWithAggregatesFilter<"AllowanceType"> | boolean
     isPitExempt?: BoolWithAggregatesFilter<"AllowanceType"> | boolean
     pitExemptCeiling?: DecimalNullableWithAggregatesFilter<"AllowanceType"> | Decimal | DecimalJsLike | number | string | null
@@ -188981,6 +189026,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -188995,6 +189041,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -189009,6 +189056,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -189023,6 +189071,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -189037,6 +189086,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -189048,6 +189098,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -189059,6 +189110,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -199538,6 +199590,13 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumAllowanceCalculationModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowanceCalculationMode | EnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    in?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel> | $Enums.AllowanceCalculationMode
+  }
+
   export type SalaryColumnListRelationFilter = {
     every?: SalaryColumnWhereInput
     some?: SalaryColumnWhereInput
@@ -199552,6 +199611,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     defaultAmount?: SortOrder
+    calculationMode?: SortOrder
     isBhxhExempt?: SortOrder
     isPitExempt?: SortOrder
     pitExemptCeiling?: SortOrder
@@ -199568,6 +199628,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     defaultAmount?: SortOrder
+    calculationMode?: SortOrder
     isBhxhExempt?: SortOrder
     isPitExempt?: SortOrder
     pitExemptCeiling?: SortOrder
@@ -199579,6 +199640,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     defaultAmount?: SortOrder
+    calculationMode?: SortOrder
     isBhxhExempt?: SortOrder
     isPitExempt?: SortOrder
     pitExemptCeiling?: SortOrder
@@ -199589,6 +199651,16 @@ export namespace Prisma {
   export type AllowanceTypeSumOrderByAggregateInput = {
     defaultAmount?: SortOrder
     pitExemptCeiling?: SortOrder
+  }
+
+  export type EnumAllowanceCalculationModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowanceCalculationMode | EnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    in?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAllowanceCalculationModeWithAggregatesFilter<$PrismaModel> | $Enums.AllowanceCalculationMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel>
+    _max?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel>
   }
 
   export type BonusTypeCountOrderByAggregateInput = {
@@ -210288,6 +210360,10 @@ export namespace Prisma {
     connect?: SalaryColumnWhereUniqueInput | SalaryColumnWhereUniqueInput[]
   }
 
+  export type EnumAllowanceCalculationModeFieldUpdateOperationsInput = {
+    set?: $Enums.AllowanceCalculationMode
+  }
+
   export type EmployeeAllowanceUpdateManyWithoutAllowanceTypeNestedInput = {
     create?: XOR<EmployeeAllowanceCreateWithoutAllowanceTypeInput, EmployeeAllowanceUncheckedCreateWithoutAllowanceTypeInput> | EmployeeAllowanceCreateWithoutAllowanceTypeInput[] | EmployeeAllowanceUncheckedCreateWithoutAllowanceTypeInput[]
     connectOrCreate?: EmployeeAllowanceCreateOrConnectWithoutAllowanceTypeInput | EmployeeAllowanceCreateOrConnectWithoutAllowanceTypeInput[]
@@ -214411,6 +214487,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumResidencyStatusFilter<$PrismaModel>
     _max?: NestedEnumResidencyStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAllowanceCalculationModeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowanceCalculationMode | EnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    in?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel> | $Enums.AllowanceCalculationMode
+  }
+
+  export type NestedEnumAllowanceCalculationModeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AllowanceCalculationMode | EnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    in?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AllowanceCalculationMode[] | ListEnumAllowanceCalculationModeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAllowanceCalculationModeWithAggregatesFilter<$PrismaModel> | $Enums.AllowanceCalculationMode
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel>
+    _max?: NestedEnumAllowanceCalculationModeFilter<$PrismaModel>
   }
 
   export type NestedEnumSalaryColumnTypeFilter<$PrismaModel = never> = {
@@ -234468,6 +234561,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -234481,6 +234575,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -234563,6 +234658,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -234576,6 +234672,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -244476,6 +244573,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -244489,6 +244587,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -244603,6 +244702,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -244616,6 +244716,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -244629,6 +244730,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -244642,6 +244744,7 @@ export namespace Prisma {
     id?: string
     name: string
     defaultAmount: Decimal | DecimalJsLike | number | string
+    calculationMode?: $Enums.AllowanceCalculationMode
     isBhxhExempt?: boolean
     isPitExempt?: boolean
     pitExemptCeiling?: Decimal | DecimalJsLike | number | string | null
@@ -244671,6 +244774,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -244684,6 +244788,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     defaultAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    calculationMode?: EnumAllowanceCalculationModeFieldUpdateOperationsInput | $Enums.AllowanceCalculationMode
     isBhxhExempt?: BoolFieldUpdateOperationsInput | boolean
     isPitExempt?: BoolFieldUpdateOperationsInput | boolean
     pitExemptCeiling?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null

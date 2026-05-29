@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { MODULES, ROUTE_PERMISSION_MAP } from '../../config/modules.config';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useModuleStore } from '../../store/module.store';
 import { useAuthStore } from '../../store/auth.store';
 
@@ -34,11 +34,10 @@ const ALL_ITEMS: SearchItem[] = MODULES.flatMap((mod) => [
 );
 
 export function GlobalSearch() {
-  const { mode } = useThemeStore();
+  const { isDark } = useThemePalette();
   const { setActiveModule } = useModuleStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const isDark = mode === 'dark';
 
   const [query, setQuery]         = useState('');
   const [focused, setFocused]     = useState(false);

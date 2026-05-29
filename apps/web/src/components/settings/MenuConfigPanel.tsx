@@ -11,7 +11,7 @@ import {
 import { useMenuStore, getDefaultModuleConfig } from '../../store/menu.store';
 import type { MenuGroupCfg, MenuTopItemCfg } from '../../store/menu.store';
 import { useModuleStore } from '../../store/module.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { MODULES } from '../../config/modules.config';
 
 const { Text } = Typography;
@@ -25,7 +25,7 @@ function cloneGroups(groups: MenuGroupCfg[]): MenuGroupCfg[] {
 export function MenuConfigPanel() {
   const { getModuleConfig, setModuleConfig, resetModuleConfig } = useMenuStore();
   const { activeModuleId } = useModuleStore();
-  const { mode } = useThemeStore();
+  const { isDark, bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
 
   const [selectedModuleId, setSelectedModuleId] = useState(activeModuleId);
   const [localTop,    setLocalTop]    = useState<MenuTopItemCfg[]>([]);
@@ -120,11 +120,6 @@ export function MenuConfigPanel() {
     });
 
   // ── style tokens ─────────────────────────────────────────────────────────────
-  const isDark      = mode === 'dark';
-  const rowBg       = isDark ? '#1E293B' : '#FAFAFA';
-  const groupHdrBg  = isDark ? '#1A2744' : '#EEF2FF';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const mutedText   = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)';
 
   // ── sub-components ───────────────────────────────────────────────────────────
   function LabelCell({ itemKey, label }: { itemKey: string; label: string }) {

@@ -2,7 +2,7 @@ import { Modal } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useModuleStore } from '../../store/module.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useAuthStore } from '../../store/auth.store';
 import { MODULES } from '../../config/modules.config';
 
@@ -13,10 +13,9 @@ interface Props {
 
 export function ModuleSwitcherModal({ open, onClose }: Props) {
   const { activeModuleId, setActiveModule } = useModuleStore();
-  const { mode } = useThemeStore();
+  const { isDark, bgCard, bgContainer, borderColor, textPrimary } = useThemePalette();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const isDark = mode === 'dark';
 
   const isAdmin = user?.role === 'ADMIN';
   const canAccessModule = (mod: typeof MODULES[number]) => {
@@ -28,8 +27,6 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
 
   const accessibleModules = MODULES.filter(canAccessModule);
 
-  const cardBg = isDark ? '#2D3F56' : '#F8FAFC';
-
   const handleSelect = (id: string) => {
     setActiveModule(id);
     // Navigate về dashboard của module được chọn
@@ -39,9 +36,6 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
     onClose();
   };
 
-  const modalBg = isDark ? '#1E293B' : '#ffffff';
-  const titleColor = isDark ? '#F1F5F9' : '#0F172A';
-
   return (
     <Modal
       open={open}
@@ -49,13 +43,13 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
       footer={null}
       width={640}
       title={
-        <span style={{ color: titleColor, fontWeight: 700, fontSize: 16 }}>
+        <span style={{ color: textPrimary, fontWeight: 700, fontSize: 16 }}>
           Chọn module
         </span>
       }
       styles={{
-        content: { background: modalBg, borderRadius: 14, padding: 0 },
-        header:  { background: modalBg, borderBottom: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`, padding: '16px 20px 14px', marginBottom: 0, borderRadius: '14px 14px 0 0' },
+        content: { background: bgContainer, borderRadius: 14, padding: 0 },
+        header:  { background: bgContainer, borderBottom: `1px solid ${borderColor}`, padding: '16px 20px 14px', marginBottom: 0, borderRadius: '14px 14px 0 0' },
         body:    { padding: '12px 16px 16px', maxHeight: 'calc(80vh - 70px)', overflowY: 'auto' },
       }}
     >
@@ -82,7 +76,7 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
                 border: `2px solid ${isActive ? mod.color : (isDark ? '#3D4F65' : '#E2E8F0')}`,
                 background: isActive
                   ? (isDark ? `${mod.color}30` : `${mod.color}0F`)
-                  : cardBg,
+                  : bgCard,
                 transition: 'border-color 0.15s, background 0.15s',
               }}
               onMouseEnter={(e) => {
@@ -94,7 +88,7 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
               onMouseLeave={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.borderColor = isDark ? '#3D4F65' : '#E2E8F0';
-                  e.currentTarget.style.background   = cardBg;
+                  e.currentTarget.style.background   = bgCard;
                 }
               }}
             >

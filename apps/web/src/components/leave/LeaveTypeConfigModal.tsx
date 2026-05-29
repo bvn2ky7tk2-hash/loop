@@ -9,7 +9,7 @@ import {
   type LeaveType,
   type ProcessDefinitionRef,
 } from '../../api/leaves';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Text } = Typography;
 
@@ -20,13 +20,7 @@ interface Props {
 }
 
 export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props) {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const bgContainer   = isDark ? '#1E293B' : '#ffffff';
-  const bgCard        = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor   = isDark ? '#334155' : '#E2E8F0';
+  const { preset, textPrimary, textSecondary, bgContainer, bgCard, borderColor } = useThemePalette();
 
   const qc = useQueryClient();
 

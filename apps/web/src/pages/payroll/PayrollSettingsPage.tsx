@@ -377,7 +377,7 @@ function SalaryColumnsTab() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['salary-columns'],
-    queryFn: () => payrollApi.listSalaryColumns(1, 50),
+    queryFn: payrollApi.listSalaryColumns,
   });
   const { data: allowanceTypes } = useQuery({
     queryKey: ['allowance-types'],
@@ -502,7 +502,7 @@ function SalaryColumnsTab() {
           message="Cột lương xác định cách tính gross salary. Thứ tự ưu tiên: CONTRACT_SALARY → ALLOWANCE_TYPE → FORMULA." />
         <Button type="primary" icon={<PlusOutlined />} onClick={openNew}>Thêm cột</Button>
       </div>
-      <Table loading={isLoading} dataSource={data?.data ?? []} rowKey="id" columns={cols} size="small" pagination={false} />
+      <Table loading={isLoading} dataSource={data ?? []} rowKey="id" columns={cols} size="small" pagination={false} />
 
       <CenteredModal open={open} onClose={() => { setOpen(false); setEditCol(null); form.resetFields(); }}
         title={editCol ? `Sửa: ${editCol.name}` : 'Thêm cột lương'} width={520}
@@ -603,6 +603,7 @@ function AllowanceTab() {
       const payload = {
         name:             values.name,
         defaultAmount:    values.defaultAmount,
+        calculationMode:  values.calculationMode ?? 'FIXED',
         isBhxhExempt:     values.isBhxhExempt ?? true,
         isPitExempt:      values.isPitExempt ?? false,
         pitExemptCeiling: values.isPitExempt ? (values.pitExemptCeiling ?? null) : null,
@@ -631,6 +632,7 @@ function AllowanceTab() {
     form.setFieldsValue({
       name:             at.name,
       defaultAmount:    Number(at.defaultAmount),
+      calculationMode:  at.calculationMode ?? 'FIXED',
       isBhxhExempt:     at.isBhxhExempt,
       isPitExempt:      at.isPitExempt,
       pitExemptCeiling: at.pitExemptCeiling ? Number(at.pitExemptCeiling) : undefined,
@@ -642,7 +644,7 @@ function AllowanceTab() {
   function openNew() {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ isBhxhExempt: true, isPitExempt: false, isActive: true });
+    form.setFieldsValue({ isBhxhExempt: true, isPitExempt: false, isActive: true, calculationMode: 'FIXED' });
     setOpen(true);
   }
 
@@ -653,11 +655,18 @@ function AllowanceTab() {
       render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 600 }}>{v}</Text>,
     },
     {
-      title: 'Mức mặc định (đ/tháng)',
+      title: 'Mức mặc định',
       dataIndex: 'defaultAmount',
-      width: 180,
+      width: 160,
       align: 'right',
-      render: (v: number) => <Text style={{ color: linkColor }}>{formatCurrency(Number(v))}</Text>,
+      render: (v: number, r: AllowanceType) => (
+        <div style={{ textAlign: 'right' }}>
+          <Text style={{ color: linkColor }}>{formatCurrency(Number(v))}</Text>
+          <div style={{ fontSize: 10, color: textMuted }}>
+            {r.calculationMode === 'PER_WORK_DAY' ? '/ ngày công' : '/ tháng cố định'}
+          </div>
+        </div>
+      ),
     },
     {
       title: 'Miễn BHXH',
@@ -724,14 +733,37 @@ function AllowanceTab() {
           <Form.Item name="name" label="Tên loại phụ cấp" rules={[{ required: true, message: 'Nhập tên' }]}>
             <Input placeholder="VD: Phụ cấp đi lại, Phụ cấp ăn ca, Phụ cấp điện thoại..." />
           </Form.Item>
-          <Form.Item name="defaultAmount" label="Mức mặc định (đ/tháng)" rules={[{ required: true }]}>
-            <InputNumber
-              style={{ width: '100%' }} min={0} step={100_000}
-              formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={v => Number(v?.replace(/,/g, '') ?? 0)}
-              placeholder="500,000"
-            />
-          </Form.Item>
+          <Row gutter={12}>
+            <Col span={14}>
+              <Form.Item name="defaultAmount" label="Mức phụ cấp" rules={[{ required: true }]}>
+                <InputNumber
+                  style={{ width: '100%' }} min={0} step={100_000}
+                  formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  parser={v => Number(v?.replace(/,/g, '') ?? 0)}
+                  placeholder="500,000"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={10}>
+              <Form.Item name="calculationMode" label="Cách tính" rules={[{ required: true }]}>
+                <Select
+                  options={[
+                    { value: 'FIXED',        label: 'Cố định / tháng' },
+                    { value: 'PER_WORK_DAY', label: 'Theo ngày công' },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Alert
+            type="info" showIcon style={{ marginBottom: 12, fontSize: 11 }}
+            message={
+              <span>
+                <b>Cố định:</b> Trả đủ bất kể ngày công.{' '}
+                <b>Theo ngày công:</b> = mức × ngày công thực tế ÷ ngày chuẩn tháng.
+              </span>
+            }
+          />
           <Row gutter={12}>
             <Col span={12}>
               <Form.Item name="isBhxhExempt" label="Miễn đóng BHXH" valuePropName="checked">

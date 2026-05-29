@@ -1,7 +1,7 @@
 import { useEffect, useRef, type ReactNode, type CSSProperties } from 'react';
 import { Button, Spin } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 interface SlidePanelProps {
   open: boolean;
@@ -28,14 +28,13 @@ export function SlidePanel({
 }: SlidePanelProps) {
   const panelRef   = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<Element | null>(null);
-  const { mode }   = useThemeStore();
-  const isDark     = mode === 'dark';
+  const { isDark, bgContainer, borderColor, textPrimary, textMuted, bgSubPanel } = useThemePalette();
 
-  const panelBg      = isDark ? '#1E293B' : '#ffffff';
-  const headerBorder = isDark ? '#334155' : '#E2E8F0';
-  const titleColor   = isDark ? '#F1F5F9' : '#0F172A';
-  const subColor     = isDark ? 'rgba(255,255,255,0.45)' : '#6B7280';
-  const footerBg     = isDark ? '#1A2744' : '#F8FAFC';
+  const panelBg      = bgContainer;
+  const headerBorder = borderColor;
+  const titleColor   = textPrimary;
+  const subColor     = textMuted;
+  const footerBg     = bgSubPanel;
 
   useEffect(() => {
     if (!open) return;
