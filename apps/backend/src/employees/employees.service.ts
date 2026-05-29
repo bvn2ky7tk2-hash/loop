@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Prisma } from '../generated/prisma';
 import type { Employee, EmployeeRate, Role } from '../generated/prisma';
@@ -7,16 +8,15 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { CreateRateDto } from './dto/create-rate.dto';
 import * as ExcelJS from 'exceljs';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class EmployeesService {
+@Injectable({ scope: Scope.REQUEST })
+export class EmployeesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
   }
 
   async create(dto: CreateEmployeeDto) {
@@ -46,12 +46,10 @@ export class EmployeesService {
 
   async findAll(orgUnitIds: string[] | null, callerRole: Role, page = 1, limit = 50) {
     const now = new Date();
-    const tenantId = this.getTenantId();
-    const where: Prisma.EmployeeWhereInput = {
+    const where: Prisma.EmployeeWhereInput = this.tenantWhere({
       deletedAt: null,
       ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
-      ...(tenantId ? { tenantId } : {}),
-    };
+    });
 
     const skip = (page - 1) * limit;
     const [employees, total] = await this.prisma.$transaction([
@@ -170,8 +168,8 @@ export class EmployeesService {
 
   async exportExcel(): Promise<Buffer> {
     const employees = await this.prisma.employee.findMany({
-      // Chỉ export nhân sự chưa bị xóa mềm
-      where: { deletedAt: null },
+      // Chỉ export nhân sự chưa bị xóa mềm, lọc theo tenant
+      where: this.tenantWhere({ deletedAt: null }),
       include: { orgUnit: { select: { name: true } } },
       orderBy: { fullName: 'asc' },
       take: 5000,

@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { ProcessInstancesService } from '../processes/instances/process-instances.service';
@@ -8,6 +10,7 @@ import {
   CreateKeyResultDto, UpdateKeyResultDto,
   CreateKpiMetricDto, UpdateKpiMetricDto, CreateKpiRecordDto,
 } from './dto/okr.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 const OBJ_INCLUDE = {
   owner: { select: { id: true, name: true, email: true } },
@@ -16,13 +19,16 @@ const OBJ_INCLUDE = {
 
 const OKR_REVIEW_PROCESS_KEY = 'okr-review';
 
-@Injectable()
-export class OkrService implements OnModuleInit {
+@Injectable({ scope: Scope.REQUEST })
+export class OkrService extends TenantAwareService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly processInstances: ProcessInstancesService,
     private readonly eventBus: ProcessEventBus,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   onModuleInit() {
     this.eventBus.onCompleted(this.handleProcessCompleted.bind(this));
@@ -78,11 +84,12 @@ export class OkrService implements OnModuleInit {
 
   // ── Objectives ─────────────────────────────────────────────────────────────
   async listObjectives(ownerId?: string, cycle?: string, year?: number, status?: string, page = 1, limit = 20) {
-    const where: any = {};
-    if (ownerId) where.ownerId = ownerId;
-    if (cycle)  where.cycle = cycle;
-    if (year)   where.year = year;
-    if (status) where.status = status;
+    const where: any = this.tenantWhere({
+      ...(ownerId ? { ownerId } : {}),
+      ...(cycle   ? { cycle }   : {}),
+      ...(year    ? { year }    : {}),
+      ...(status  ? { status }  : {}),
+    });
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.okrObjective.findMany({
@@ -108,6 +115,7 @@ export class OkrService implements OnModuleInit {
         cycle: dto.cycle as any, year: dto.year,
         ownerId: dto.ownerId, orgUnitId: dto.orgUnitId,
         status: dto.status as any ?? 'DRAFT',
+        tenantId: this.getTenantId(),
       },
       include: OBJ_INCLUDE,
     });
@@ -198,10 +206,12 @@ export class OkrService implements OnModuleInit {
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   async stats() {
+    const objWhere = this.tenantWhere() as any;
+    const activeObjWhere = this.tenantWhere({ status: 'ACTIVE' as const }) as any;
     const [totalObj, totalKr, activeObj, kpiCount] = await this.prisma.$transaction([
-      this.prisma.okrObjective.count(),
+      this.prisma.okrObjective.count({ where: objWhere }),
       this.prisma.okrKeyResult.count(),
-      this.prisma.okrObjective.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.okrObjective.count({ where: activeObjWhere }),
       this.prisma.kpiMetric.count({ where: { isActive: true } }),
     ]);
 

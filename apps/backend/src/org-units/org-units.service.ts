@@ -1,10 +1,12 @@
 import { Injectable, BadRequestException, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import type { OrgUnit } from '../generated/prisma';
 import { CreateOrgUnitDto } from './dto/create-org-unit.dto';
 import { UpdateOrgUnitDto } from './dto/update-org-unit.dto';
 import { OrgScopeService } from '../common/services/org-scope.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 type HeadInfo = { id: string; fullName: string; jobTitleName: string } | null;
 type LeaderInfo = { id: string; fullName: string; code: string } | null;
@@ -24,16 +26,14 @@ export interface OrgUnitTree extends OrgUnit {
   leaderInfo?: LeaderInfo;
 }
 
-@Injectable()
-export class OrgUnitsService {
+@Injectable({ scope: Scope.REQUEST })
+export class OrgUnitsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly orgScope: OrgScopeService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
   }
 
   async create(dto: CreateOrgUnitDto): Promise<OrgUnit> {
@@ -60,9 +60,8 @@ export class OrgUnitsService {
   }
 
   async findAll(): Promise<OrgUnitTree[]> {
-    const tenantId = this.getTenantId();
     const units = await this.prisma.orgUnit.findMany({
-      where: tenantId ? { tenantId } : undefined,
+      where: this.tenantWhere(),
       orderBy: [{ level: 'asc' }, { name: 'asc' }],
       include: {
         _count: { select: { users: true, employees: true } },
