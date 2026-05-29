@@ -8,7 +8,8 @@ export class AlertsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getForProject(projectId: string) {
-    return this.prisma.alertConfig.findMany({ where: { projectId } });
+    // Giới hạn an toàn — số loại cảnh báo trên 1 dự án hữu hạn
+    return this.prisma.alertConfig.findMany({ where: { projectId }, take: 500 });
   }
 
   async upsert(projectId: string, dto: CreateAlertDto) {

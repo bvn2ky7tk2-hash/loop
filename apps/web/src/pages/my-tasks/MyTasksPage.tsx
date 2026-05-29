@@ -79,7 +79,7 @@ function TaskCard({
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { isDark } = useThemePalette();
+  const { isDark, bgContainer, bgPage, borderColor, textPrimary, textMuted } = useThemePalette();
   const progress = Number(task.progress);
   const isOverdue = task.dueDate && task.dueDate < today && task.status !== 'DONE' && task.status !== 'CANCELLED';
 
@@ -88,14 +88,14 @@ function TaskCard({
   const barColor = col?.accent ?? (progress >= 100 ? '#059669' : progress >= 50 ? '#4F46E5' : '#D97706');
 
   const cardStyle: CSSProperties = {
-    background: isDark ? '#1E293B' : '#FFFFFF',
+    background: bgContainer,
     borderRadius: 10,
     padding: '10px 12px',
     marginBottom: 8,
     boxShadow: isDragging
       ? '0 8px 24px rgba(0,0,0,0.18)'
       : isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.07)',
-    border: `1px solid ${isDark ? '#2D3F56' : '#E8EDF3'}`,
+    border: `1px solid ${borderColor}`,
     cursor: isDragging ? 'grabbing' : 'grab',
     opacity: isDragging ? 0.9 : 1,
     userSelect: 'none',
@@ -118,8 +118,8 @@ function TaskCard({
         {task.project && (
           <span style={{
             fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 5,
-            background: isDark ? '#0F172A' : '#F1F5F9',
-            color: isDark ? '#94A3B8' : '#64748B',
+            background: bgPage,
+            color: textMuted,
             letterSpacing: 0.4, flexShrink: 0,
           }}>
             {task.project.code}
@@ -127,7 +127,7 @@ function TaskCard({
         )}
         {showAssignee && assigneeName && (
           <span style={{
-            fontSize: 11, color: isDark ? '#94A3B8' : '#64748B',
+            fontSize: 11, color: textMuted,
             flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
             {assigneeName}
@@ -137,7 +137,7 @@ function TaskCard({
           <Dropdown menu={{ items: moreMenuItems }} trigger={['click']} placement="bottomRight">
             <button style={{
               border: 'none', background: 'transparent', cursor: 'pointer',
-              color: isDark ? '#64748B' : '#94A3B8', fontSize: 16, padding: '0 2px',
+              color: textMuted, fontSize: 16, padding: '0 2px',
               display: 'flex', alignItems: 'center', borderRadius: 4,
             }}>
               <MoreOutlined />
@@ -150,7 +150,7 @@ function TaskCard({
       <Text style={{
         display: 'block', fontSize: 13.5, fontWeight: 600,
         marginBottom: 9, lineHeight: 1.45,
-        color: isDark ? '#E2E8F0' : '#1E293B',
+        color: textPrimary,
       }}>
         {task.title}
       </Text>
@@ -183,7 +183,7 @@ function TaskCard({
             showInfo={false}
             style={{ marginBottom: 3 }}
           />
-          <Text style={{ fontSize: 11, color: isDark ? '#64748B' : '#94A3B8', fontWeight: 500 }}>
+          <Text style={{ fontSize: 11, color: textMuted, fontWeight: 500 }}>
             <span style={{ color: barColor, fontWeight: 700 }}>{progress}%</span>
             {' · '}
             {Number(task.estimateHours)}h ước tính
@@ -197,7 +197,7 @@ function TaskCard({
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <CalendarOutlined style={{
             fontSize: 11,
-            color: isOverdue ? '#DC2626' : isDark ? '#64748B' : '#94A3B8',
+            color: isOverdue ? '#DC2626' : textMuted,
           }} />
           <DatePicker
             size="small"
@@ -208,7 +208,7 @@ function TaskCard({
             onChange={(d) => d && onDueDateChange(task.id, d.format('YYYY-MM-DD'))}
             style={{
               padding: 0, fontSize: 12, width: 100,
-              color: isOverdue ? '#DC2626' : isDark ? '#64748B' : '#64748B',
+              color: isOverdue ? '#DC2626' : textMuted,
             }}
             suffixIcon={null}
           />
@@ -276,12 +276,8 @@ function KanbanColumn({
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { isDark } = useThemePalette();
+  const { bgPage, bgSubPanel, borderColor, textMuted } = useThemePalette();
   const { setNodeRef, isOver } = useDroppable({ id: status });
-
-  const colHeaderBg  = isDark ? '#1A2744' : '#F8FAFC';
-  const colBodyBg    = isDark ? '#141D2E' : '#F1F5F9';
-  const colBorderClr = isDark ? '#253352' : '#E2E8F0';
 
   const columnMenuItems = [
     { key: 'sort-date',  label: 'Sắp xếp theo ngày' },
@@ -296,12 +292,12 @@ function KanbanColumn({
       flexDirection: 'column',
       borderRadius: 12,
       overflow: 'hidden',
-      border: `1px solid ${colBorderClr}`,
+      border: `1px solid ${borderColor}`,
     }}>
       {/* Header */}
       <div style={{
         padding: '10px 12px',
-        background: colHeaderBg,
+        background: bgSubPanel,
         display: 'flex',
         alignItems: 'center',
         gap: 7,
@@ -326,7 +322,7 @@ function KanbanColumn({
         <Dropdown menu={{ items: columnMenuItems }} trigger={['click']} placement="bottomRight">
           <button style={{
             border: 'none', background: 'transparent', cursor: 'pointer',
-            color: isDark ? '#475569' : '#94A3B8', fontSize: 16,
+            color: textMuted, fontSize: 16,
             display: 'flex', alignItems: 'center', padding: '0 2px', borderRadius: 4,
           }}>
             <MoreOutlined />
@@ -340,7 +336,7 @@ function KanbanColumn({
         style={{
           flex: 1, minHeight: 200,
           padding: '8px 8px 4px',
-          background: isOver ? `${accent}0A` : colBodyBg,
+          background: isOver ? `${accent}0A` : bgPage,
           border: isOver ? `2px dashed ${accent}60` : '2px dashed transparent',
           transition: 'all 0.15s',
         }}
@@ -361,13 +357,13 @@ function KanbanColumn({
             paddingTop: 32,
             paddingBottom: 20,
           }}>
-            <div style={{ fontSize: 36, color: isDark ? '#334155' : '#CBD5E1', marginBottom: 8 }}>
+            <div style={{ fontSize: 36, color: textMuted, marginBottom: 8 }}>
               <InboxOutlined />
             </div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? '#475569' : '#94A3B8', marginBottom: 4 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: textMuted, marginBottom: 4 }}>
               Chưa có công việc
             </div>
-            <div style={{ fontSize: 11, color: isDark ? '#334155' : '#CBD5E1', lineHeight: 1.5, padding: '0 8px' }}>
+            <div style={{ fontSize: 11, color: textMuted, lineHeight: 1.5, padding: '0 8px' }}>
               {emptyDesc}
             </div>
           </div>
@@ -381,7 +377,7 @@ function KanbanColumn({
 
 export default function MyTasksPage() {
   const { message } = App.useApp();
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, bgPage, bgContainer, borderColor, textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
   const { user } = useAuthStore();
   const isManager = MANAGER_ROLES.includes(user?.role ?? '');
@@ -510,9 +506,9 @@ export default function MyTasksPage() {
   const pillBase: CSSProperties = {
     padding: '4px 12px', borderRadius: 9999, cursor: 'pointer',
     fontSize: 12, fontWeight: 500,
-    border: `1.5px solid ${isDark ? '#2D3F56' : '#E2E8F0'}`,
-    background: isDark ? '#1E293B' : '#FFFFFF',
-    color: isDark ? '#94A3B8' : '#64748B',
+    border: `1.5px solid ${borderColor}`,
+    background: bgContainer,
+    color: textMuted,
     display: 'flex', alignItems: 'center', gap: 6,
     transition: 'all 0.15s', whiteSpace: 'nowrap',
   };
@@ -523,16 +519,14 @@ export default function MyTasksPage() {
     color: preset.primary,
   };
 
-  const pageBg = isDark ? '#0F172A' : '#F8FAFC';
-
   return (
-    <div style={{ padding: '20px 24px', height: '100%', display: 'flex', flexDirection: 'column', background: pageBg }}>
+    <div style={{ padding: '20px 24px', height: '100%', display: 'flex', flexDirection: 'column', background: bgPage }}>
 
       {/* ── Page header ── */}
       <div style={{ marginBottom: 16 }}>
         <h1 style={{
           fontSize: 22, fontWeight: 800, margin: '0 0 14px',
-          color: isDark ? '#F1F5F9' : '#0F172A', letterSpacing: '-0.3px',
+          color: textPrimary, letterSpacing: '-0.3px',
         }}>
           Kanban Board
         </h1>
@@ -540,8 +534,8 @@ export default function MyTasksPage() {
         {/* Filter bar */}
         <div style={{
           display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center',
-          background: isDark ? '#1E293B' : '#FFFFFF',
-          border: `1px solid ${isDark ? '#2D3F56' : '#E2E8F0'}`,
+          background: bgContainer,
+          border: `1px solid ${borderColor}`,
           borderRadius: 10, padding: '8px 12px',
         }}>
           {/* Project selector */}
@@ -575,7 +569,7 @@ export default function MyTasksPage() {
           )}
 
           {/* Divider */}
-          <div style={{ width: 1, height: 22, background: isDark ? '#2D3F56' : '#E2E8F0', flexShrink: 0 }} />
+          <div style={{ width: 1, height: 22, background: borderColor, flexShrink: 0 }} />
 
           {/* Status quick-filter pills */}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -587,8 +581,8 @@ export default function MyTasksPage() {
               >
                 {f.label}
                 <span style={{
-                  background: filter === f.key ? preset.primary : isDark ? '#2D3F56' : '#F1F5F9',
-                  color: filter === f.key ? '#fff' : isDark ? '#64748B' : '#94A3B8',
+                  background: filter === f.key ? preset.primary : borderColor,
+                  color: filter === f.key ? '#fff' : textMuted,
                   borderRadius: 9999, padding: '0 6px', fontSize: 11, fontWeight: 700,
                 }}>{f.count}</span>
               </button>
@@ -607,7 +601,7 @@ export default function MyTasksPage() {
           <div style={{
             height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexDirection: 'column', gap: 12,
-            color: isDark ? '#475569' : '#94A3B8',
+            color: textMuted,
           }}>
             <InboxOutlined style={{ fontSize: 48 }} />
             <div style={{ fontSize: 15, fontWeight: 600 }}>

@@ -174,10 +174,26 @@ export default function PerformancePage() {
         extra={
           <Space>
             {detailReview?.status === 'DRAFT' && (
-              <Button type="primary" onClick={() => handleSubmit(detailReview.id)}>Nộp đánh giá</Button>
+              // disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy
+              <Button
+                type="primary"
+                loading={updateReview.isPending}
+                disabled={updateReview.isPending}
+                onClick={() => handleSubmit(detailReview.id)}
+              >
+                Nộp đánh giá
+              </Button>
             )}
             {detailReview?.status === 'SUBMITTED' && (
-              <Button type="primary" onClick={() => handleApprove(detailReview.id)}>Phê duyệt</Button>
+              // disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy
+              <Button
+                type="primary"
+                loading={updateReview.isPending}
+                disabled={updateReview.isPending}
+                onClick={() => handleApprove(detailReview.id)}
+              >
+                Phê duyệt
+              </Button>
             )}
           </Space>
         }

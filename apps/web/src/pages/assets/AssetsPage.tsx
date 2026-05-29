@@ -247,8 +247,11 @@ export default function AssetsPage() {
       {/* Create / Edit Drawer */}
       <CenteredModal title={editing ? 'Sửa tài sản' : 'Thêm tài sản'} open={drawerOpen} width={480}
         onClose={() => setDrawer(false)}
-        extra={<Button type="primary" loading={isPending} onClick={handleSave}
-          style={{ background: preset.primary, borderColor: preset.primary }}>{editing ? 'Cập nhật' : 'Lưu'}</Button>}>
+        extra={
+          // disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy
+          <Button type="primary" loading={isPending} disabled={isPending} onClick={handleSave}
+            style={{ background: preset.primary, borderColor: preset.primary }}>{editing ? 'Cập nhật' : 'Lưu'}</Button>
+        }>
         <Form form={form} layout="vertical">
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item name="code" label="Mã tài sản" rules={[{ required: true }]} style={{ flex: 1, marginBottom: 0 }}>
@@ -287,11 +290,11 @@ export default function AssetsPage() {
         </Form>
       </CenteredModal>
 
-      {/* Assign Modal */}
+      {/* Assign Modal — okButtonProps.disabled đồng bộ với loading để ngăn double-submit */}
       <Modal title={`Cấp phát: ${assignTarget?.name ?? ''}`}
         open={assignOpen} onCancel={() => setAssignOpen(false)}
         onOk={handleAssign} okText="Cấp phát"
-        okButtonProps={{ loading: assignMutation.isPending, style: { background: preset.primary, borderColor: preset.primary } }}>
+        okButtonProps={{ loading: assignMutation.isPending, disabled: assignMutation.isPending, style: { background: preset.primary, borderColor: preset.primary } }}>
         <Form form={assignForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="employeeId" label="Nhân viên nhận" rules={[{ required: true }]}>
             <Select showSearch optionFilterProp="label"

@@ -20,6 +20,8 @@ export class CommentsService {
         },
       },
       orderBy: { createdAt: 'asc' },
+      // Giới hạn an toàn — tránh tải quá nhiều comment cho 1 entity
+      take: 200,
     });
     return comments;
   }

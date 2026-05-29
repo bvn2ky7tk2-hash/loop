@@ -63,6 +63,8 @@ export class ReportsService {
     const tasks = await this.prisma.task.findMany({
       where: { projectId },
       select: { estimateHours: true, actualHours: true, status: true, createdAt: true },
+      // Giới hạn an toàn — đủ cho mọi dự án thực tế
+      take: 5000,
     });
 
     const totalEstimate = tasks.reduce((s, t) => s + Number(t.estimateHours), 0);
@@ -113,6 +115,8 @@ export class ReportsService {
       include: {
         _count: { select: { employees: true, projects: true } },
       },
+      // Giới hạn an toàn — tránh dump toàn bộ DB khi số org-unit tăng lớn
+      take: 5000,
     });
 
     return orgUnits.map((o) => ({

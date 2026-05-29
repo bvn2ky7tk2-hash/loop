@@ -644,10 +644,12 @@ export default function HrDecisionsPage() {
 
             <Space wrap>
               {detailRecord.status === 'DRAFT' && (
+                // disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy
                 <Button
                   type="primary"
                   icon={<SendOutlined />}
                   loading={submitMutation.isPending}
+                  disabled={submitMutation.isPending}
                   onClick={() => submitMutation.mutate(detailRecord.id)}
                 >
                   Nộp để duyệt
@@ -655,10 +657,12 @@ export default function HrDecisionsPage() {
               )}
               {detailRecord.status === 'PENDING' && (
                 <>
+                  {/* disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy */}
                   <Button
                     type="primary"
                     icon={<CheckOutlined />}
                     loading={approveMutation.isPending}
+                    disabled={approveMutation.isPending}
                     onClick={() => approveMutation.mutate(detailRecord.id)}
                   >
                     Duyệt

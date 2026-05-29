@@ -67,12 +67,14 @@ export class InterviewsService {
   }
 
   async findByCandidateId(candidateId: string): Promise<Interview[]> {
+    // Giới hạn an toàn — 1 ứng viên không có quá nhiều vòng phỏng vấn
     return this.prisma.interview.findMany({
       where: { candidateId },
       orderBy: { scheduledAt: 'asc' },
       include: {
         candidate: { select: { id: true, name: true, jobOpening: { select: { title: true } } } },
       },
+      take: 200,
     });
   }
 
@@ -104,8 +106,10 @@ export class InterviewsService {
     candidateName: string,
     assigneeId: string | null,
   ): Promise<void> {
+    // Giới hạn an toàn — kiểm tra pass/fail tất cả vòng phỏng vấn
     const allInterviews = await this.prisma.interview.findMany({
       where: { candidateId },
+      take: 200,
     });
 
     const allPassed = allInterviews.every(

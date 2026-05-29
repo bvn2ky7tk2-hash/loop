@@ -143,6 +143,8 @@ export class TasksService {
       include: {
         assignee: { select: { id: true, fullName: true } },
       },
+      // Giới hạn an toàn — tránh dump toàn bộ task khi dự án lớn
+      take: 500,
     });
 
     return this.buildTree(tasks as unknown as Task[]);
@@ -432,7 +434,8 @@ export class TasksService {
   }
 
   private async rollUpProgress(taskId: string, projectId: string): Promise<void> {
-    const children = await this.prisma.task.findMany({ where: { parentId: taskId } });
+    // Giới hạn an toàn — subtask thực tế không bao giờ vượt 200
+    const children = await this.prisma.task.findMany({ where: { parentId: taskId }, take: 200 });
     if (!children.length) return;
 
     const totalEstimate = children.reduce((s, c) => s + Number(c.estimateHours), 0);
@@ -450,8 +453,10 @@ export class TasksService {
   }
 
   private async syncProjectProgress(projectId: string): Promise<void> {
+    // Giới hạn an toàn — root task của 1 dự án không bao giờ vượt 200
     const rootTasks = await this.prisma.task.findMany({
       where: { projectId, parentId: null },
+      take: 200,
     });
     if (!rootTasks.length) return;
 
