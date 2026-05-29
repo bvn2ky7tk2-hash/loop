@@ -4,6 +4,7 @@ import {
   Input, InputNumber, Modal, message, Descriptions, Steps, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { CommentThread } from '../../components/comments/CommentThread';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UsergroupAddOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -261,6 +262,8 @@ export default function CandidatesPage() {
                 <Text style={{ color: textMuted, whiteSpace: 'pre-wrap' }}>{selected.notes}</Text>
               </>
             )}
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="candidate" entityId={selected.id} />
           </>
         )}
       </CenteredModal>

@@ -2,8 +2,10 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Select, Form, Input,
   InputNumber, DatePicker, Tag, Modal, message, Radio, Tooltip, Badge,
+  Drawer, Descriptions, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { CommentThread } from '../../components/comments/CommentThread';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, TrophyOutlined,
   AppstoreOutlined, UnorderedListOutlined, CheckCircleFilled, CloseCircleFilled,
@@ -124,6 +126,7 @@ export default function DealsPage() {
   const [wonModalOpen, setWonModal]   = useState(false);
   const [lostModalOpen, setLostModal] = useState(false);
   const [editing, setEditing]         = useState<Deal | null>(null);
+  const [viewDeal, setViewDeal]       = useState<Deal | null>(null);
   const [actTarget, setActTarget]     = useState<Deal | null>(null);
   const [form] = Form.useForm();
   const [wonForm] = Form.useForm();
@@ -369,6 +372,7 @@ export default function DealsPage() {
             columns={columns}
             dataSource={deals}
             loading={isLoading}
+            onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewDeal(record); }, style: { cursor: 'pointer' } })}
             pagination={{
               current: filters.page,
               pageSize: filters.limit,
@@ -419,6 +423,30 @@ export default function DealsPage() {
           </Form.Item>
         </Form>
       </CenteredModal>
+
+      {/* View-detail Drawer */}
+      <Drawer
+        open={!!viewDeal}
+        onClose={() => setViewDeal(null)}
+        width={520}
+        title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết Deal</span>}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+      >
+        {viewDeal && (
+          <>
+            <Descriptions column={1} bordered size="small" labelStyle={{ color: textMuted }} contentStyle={{ color: textPrimary }}>
+              <Descriptions.Item label="Tên deal">{viewDeal.title}</Descriptions.Item>
+              <Descriptions.Item label="Giai đoạn"><Tag>{viewDeal.stage}</Tag></Descriptions.Item>
+              {viewDeal.value != null && <Descriptions.Item label="Giá trị">{Number(viewDeal.value).toLocaleString('vi-VN')} ₫</Descriptions.Item>}
+              {viewDeal.customer && <Descriptions.Item label="Khách hàng">{viewDeal.customer.name}</Descriptions.Item>}
+              {viewDeal.assignee && <Descriptions.Item label="Phụ trách">{viewDeal.assignee.name}</Descriptions.Item>}
+              {viewDeal.expectedCloseDate && <Descriptions.Item label="Dự kiến đóng">{dayjs(viewDeal.expectedCloseDate).format('DD/MM/YYYY')}</Descriptions.Item>}
+            </Descriptions>
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="deal" entityId={viewDeal.id} />
+          </>
+        )}
+      </Drawer>
 
       {/* Won Modal */}
       <Modal

@@ -2,8 +2,9 @@ import { useState } from 'react';
 import {
   Row, Col, Table, Button, Tag, Typography, Select, Form,
   Input, InputNumber, Drawer, Descriptions, Progress, Space,
-  Tabs, Collapse, Tooltip, Popconfirm,
+  Tabs, Collapse, Tooltip, Popconfirm, Divider,
 } from 'antd';
+import { CommentThread } from '../../components/comments/CommentThread';
 import type { ColumnsType } from 'antd/es/table';
 import {
   TrophyOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
@@ -273,6 +274,8 @@ function OkrTab() {
                   <Button type="primary" size="small" htmlType="submit" loading={addKr.isPending}>Thêm</Button>
                 </Form>
               </div>
+              <Divider style={{ margin: '20px 0 8px' }}>Thảo luận</Divider>
+              <CommentThread entityType="okr" entityId={obj.id} />
             </>
           );
         })()}

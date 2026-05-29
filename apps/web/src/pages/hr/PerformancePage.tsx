@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Modal, Form,
-  Input, InputNumber, Select, Rate, Drawer, Descriptions, message,
+  Input, InputNumber, Select, Rate, Drawer, Descriptions, message, Divider,
 } from 'antd';
+import { CommentThread } from '../../components/comments/CommentThread';
 import { PlusOutlined, TrophyOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
@@ -213,6 +214,12 @@ export default function PerformancePage() {
               <Descriptions.Item label="Mục tiêu"><Text style={{ color: textPrimary }}>{detailReview.goals}</Text></Descriptions.Item>
             )}
           </Descriptions>
+        )}
+        {detailReview && (
+          <>
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="performance-review" entityId={detailReview.id} />
+          </>
         )}
       </Drawer>
     </div>

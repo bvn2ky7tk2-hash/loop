@@ -2,9 +2,10 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
   Input, Modal, Row, Col, Divider, InputNumber, message,
-  Tooltip,
+  Tooltip, Drawer, Descriptions,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { CommentThread } from '../../components/comments/CommentThread';
 import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, DeleteOutlined, CheckOutlined, CloseOutlined,
@@ -276,6 +277,7 @@ export default function ExpensePage() {
   const isPrivileged = canApprove(user?.role);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [viewExpense, setViewExpense] = useState<Expense | null>(null);
   const [statusFilter, setStatusFilter] = useState<ExpenseStatus | undefined>();
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | undefined>();
   const [page, setPage] = useState(1);
@@ -533,6 +535,7 @@ export default function ExpensePage() {
         loading={isLoading}
         rowKey="id"
         columns={columns}
+        onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewExpense(record); }, style: { cursor: 'pointer' } })}
         pagination={{
           total: data?.total,
           pageSize: 20,
@@ -575,6 +578,33 @@ export default function ExpensePage() {
           ),
         }}
       />
+
+      {/* View-detail Drawer */}
+      <Drawer
+        open={!!viewExpense}
+        onClose={() => setViewExpense(null)}
+        width={520}
+        title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết expense</span>}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+      >
+        {viewExpense && (
+          <>
+            <Descriptions column={1} bordered size="small" labelStyle={{ color: textSecondary }} contentStyle={{ color: textPrimary }}>
+              <Descriptions.Item label="Tiêu đề">{viewExpense.title}</Descriptions.Item>
+              <Descriptions.Item label="Danh mục">{viewExpense.category}</Descriptions.Item>
+              <Descriptions.Item label="Tổng tiền">{Number(viewExpense.totalAmount).toLocaleString('vi-VN')} ₫</Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                <Tag color={viewExpense.status === 'APPROVED' ? 'success' : viewExpense.status === 'REJECTED' ? 'error' : viewExpense.status === 'PAID' ? 'blue' : 'warning'}>
+                  {viewExpense.status === 'APPROVED' ? 'Đã duyệt' : viewExpense.status === 'REJECTED' ? 'Từ chối' : viewExpense.status === 'PAID' ? 'Đã thanh toán' : 'Chờ duyệt'}
+                </Tag>
+              </Descriptions.Item>
+              {viewExpense.submittedBy && <Descriptions.Item label="Người nộp">{viewExpense.submittedBy.name}</Descriptions.Item>}
+            </Descriptions>
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="expense" entityId={viewExpense.id} />
+          </>
+        )}
+      </Drawer>
 
       <ExpenseDrawer
         open={drawerOpen}

@@ -2,9 +2,10 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
   DatePicker, InputNumber, Input, Modal, Tabs, Row, Col, Card,
-  Tooltip, message,
+  Tooltip, message, Drawer, Descriptions, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { CommentThread } from '../../components/comments/CommentThread';
 import {
   PlusOutlined, CheckOutlined, CloseOutlined, CalendarOutlined,
   SettingOutlined, BranchesOutlined, DownloadOutlined,
@@ -318,6 +319,7 @@ export default function LeavePage() {
 
   const [activeTab, setActiveTab] = useState<'my' | 'team'>('my');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [viewLeave, setViewLeave] = useState<LeaveRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | undefined>();
   const [page, setPage] = useState(1);
   const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
@@ -540,6 +542,7 @@ export default function LeavePage() {
         loading={isLoading}
         rowKey="id"
         columns={columns}
+        onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewLeave(record); }, style: { cursor: 'pointer' } })}
         pagination={{
           total: data?.total,
           pageSize: 20,
@@ -579,6 +582,35 @@ export default function LeavePage() {
           onChange={(e) => setRejectReason(e.target.value)}
         />
       </Modal>
+
+      {/* View-detail Drawer cho đơn nghỉ phép */}
+      <Drawer
+        open={!!viewLeave}
+        onClose={() => setViewLeave(null)}
+        width={520}
+        title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết đơn nghỉ phép</span>}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+      >
+        {viewLeave && (
+          <>
+            <Descriptions column={1} bordered size="small" labelStyle={{ color: textSecondary }} contentStyle={{ color: textPrimary }}>
+              <Descriptions.Item label="Nhân viên">{viewLeave.employee?.fullName ?? '—'}</Descriptions.Item>
+              <Descriptions.Item label="Loại nghỉ">{viewLeave.leaveType?.name ?? '—'}</Descriptions.Item>
+              <Descriptions.Item label="Từ ngày">{dayjs(viewLeave.startDate).format('DD/MM/YYYY')}</Descriptions.Item>
+              <Descriptions.Item label="Đến ngày">{dayjs(viewLeave.endDate).format('DD/MM/YYYY')}</Descriptions.Item>
+              <Descriptions.Item label="Số ngày">{viewLeave.days}</Descriptions.Item>
+              {viewLeave.reason && <Descriptions.Item label="Lý do">{viewLeave.reason}</Descriptions.Item>}
+              <Descriptions.Item label="Trạng thái">
+                <Tag color={viewLeave.status === 'APPROVED' ? 'success' : viewLeave.status === 'REJECTED' ? 'error' : 'warning'}>
+                  {viewLeave.status === 'APPROVED' ? 'Đã duyệt' : viewLeave.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt'}
+                </Tag>
+              </Descriptions.Item>
+            </Descriptions>
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="leave" entityId={viewLeave.id} />
+          </>
+        )}
+      </Drawer>
 
       {/* Modal cấu hình workflow cho LeaveType */}
       <LeaveTypeConfigModal

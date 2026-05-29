@@ -8,6 +8,7 @@ import {
 import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
 import type { TaskStatus as TaskStatusType } from '../../components/ui/TaskStatusPill';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { CommentThread } from '../../components/comments/CommentThread';
 import type { MenuProps } from 'antd';
 import {
   PlusOutlined, CheckOutlined, EditOutlined, MoreOutlined,
@@ -974,6 +975,8 @@ export default function TasksPage() {
                 </div>
               </>
             )}
+            <Divider style={{ margin: '16px 0 8px' }}>Thảo luận</Divider>
+            <CommentThread entityType="task" entityId={detailTaskId!} />
           </div>
         )}
       </CenteredModal>
