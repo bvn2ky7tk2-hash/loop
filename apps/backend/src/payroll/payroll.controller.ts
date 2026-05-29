@@ -7,7 +7,9 @@ import {
   Body,
   Query,
   Req,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../generated/prisma';
@@ -103,5 +105,20 @@ export class PayrollController {
     @Req() req: { user: { id: string } },
   ) {
     return this.service.getPayslipUrl(recordId, req.user.id);
+  }
+
+  // ── L-10: Xuất phiếu lương Excel ──────────────────────────────────────────
+  @Get('records/:recordId/payslip/excel')
+  @ApiOperation({ summary: 'Xuất phiếu lương dạng Excel (.xlsx)' })
+  async getPayslipExcel(
+    @Param('recordId') recordId: string,
+    @Res() res: Response,
+  ) {
+    const buffer = await this.service.generatePayslipExcel(recordId);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="payslip-${recordId}.xlsx"`,
+    });
+    res.send(buffer);
   }
 }

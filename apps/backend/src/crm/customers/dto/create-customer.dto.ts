@@ -3,6 +3,8 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUrl,
+  Matches,
   MaxLength,
 } from 'class-validator';
 
@@ -25,15 +27,14 @@ export class CreateCustomerDto {
   @MaxLength(100)
   industry?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 'https://example.com' })
   @IsOptional()
-  @IsString()
+  @IsUrl({}, { message: 'website phải là URL hợp lệ' })
   @MaxLength(500)
   website?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: '0123456789', description: '10 hoặc 13 chữ số' })
   @IsOptional()
-  @IsString()
-  @MaxLength(50)
+  @Matches(/^\d{10}(\d{3})?$/, { message: 'taxCode phải là 10 hoặc 13 chữ số' })
   taxCode?: string;
 }

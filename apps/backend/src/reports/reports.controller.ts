@@ -92,4 +92,50 @@ export class ReportsController {
     });
     res.send(buffer);
   }
+
+  // ── L-08: HR Analytics ───────────────────────────────────────────────────
+
+  @Get('hr/turnover')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Tỷ lệ nghỉ việc (turnover rate) theo năm' })
+  @ApiQuery({ name: 'year', required: false })
+  getTurnoverRate(@Query('year') year?: string) {
+    return this.service.getTurnoverRate(year ? Number(year) : new Date().getFullYear());
+  }
+
+  @Get('hr/headcount-trend')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Xu hướng headcount theo tháng' })
+  @ApiQuery({ name: 'months', required: false })
+  getHeadcountTrend(@Query('months') months?: string) {
+    return this.service.getHeadcountTrend(months ? Number(months) : 6);
+  }
+
+  // ── L-05: Utilization Rate ────────────────────────────────────────────────
+
+  @Get('utilization')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Tỷ lệ sử dụng nguồn lực theo tháng' })
+  @ApiQuery({ name: 'period', required: true, description: 'YYYY-MM' })
+  @ApiQuery({ name: 'departmentId', required: false })
+  getUtilization(
+    @Query('period') period: string,
+    @Query('departmentId') departmentId?: string,
+  ) {
+    return this.service.getUtilization(period, departmentId);
+  }
+
+  // ── L-06: Period Comparison Summary ──────────────────────────────────────
+
+  @Get('summary')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Tóm tắt doanh thu/chi phí/dự án theo kỳ (có so sánh kỳ trước)' })
+  @ApiQuery({ name: 'period', required: true, description: 'YYYY-MM' })
+  @ApiQuery({ name: 'comparePeriod', required: false, description: 'YYYY-MM kỳ so sánh' })
+  getSummary(
+    @Query('period') period: string,
+    @Query('comparePeriod') comparePeriod?: string,
+  ) {
+    return this.service.getSummary(period, comparePeriod);
+  }
 }

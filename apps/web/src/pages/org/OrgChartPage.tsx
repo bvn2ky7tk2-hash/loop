@@ -1,17 +1,21 @@
 import { useState, useMemo } from 'react';
 import {
   Button, Form, Input, Select, Modal, App, Spin, Space,
-  Popconfirm, Tooltip, theme, Checkbox, Tag,
+  Popconfirm, Tooltip, theme, Checkbox, Tag, Typography,
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined,
-  PlusCircleOutlined, SettingOutlined,
+  PlusCircleOutlined, SettingOutlined, CrownOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 import { employeesApi, type Employee } from '../../api/employees';
-import { useThemeStore } from '../../store/theme.store';
+import { jobTitlesApi } from '../../api/hr-core';
+import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePermissions } from '../../hooks/usePermissions';
+
+const { Text } = Typography;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -67,23 +71,30 @@ interface OrgNodeProps {
   employees: Employee[];
   levelDirections: Record<number, 'horizontal' | 'vertical'>;
   isDark: boolean;
+  linkColor: string;
+  textMuted: string;
+  canManageOrg: boolean;
   onAddChild: (parentId: string) => void;
   onEdit: (node: OrgUnitTree) => void;
   onDelete: (id: string) => void;
+  onAssignLeader: (node: OrgUnitTree) => void;
 }
 
-function OrgNode({ node, employees, levelDirections, isDark, onAddChild, onEdit, onDelete }: OrgNodeProps) {
+function OrgNode({
+  node, employees, levelDirections, isDark, linkColor, textMuted,
+  canManageOrg, onAddChild, onEdit, onDelete, onAssignLeader,
+}: OrgNodeProps) {
   const hue = getLevelHue(node.level ?? 0);
   const LevelIcon = [BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined][Math.min(node.level ?? 0, 3)];
   const unitEmps = employees.filter((e) => e.orgUnitId === node.id);
   const hasChildren = (node.children ?? []).length > 0;
   const childDirection = levelDirections[(node.level ?? 0) + 1] ?? 'horizontal';
 
-  const nodeBg     = isDark ? `${hue}18` : `${hue}0A`;
-  const borderTop  = hue;
-  const textMain   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSub    = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const connColor  = isDark ? '#334155' : '#CBD5E1';
+  const nodeBg    = isDark ? `${hue}18` : `${hue}0A`;
+  const borderTop = hue;
+  const textMain  = isDark ? '#F1F5F9' : '#0F172A';
+  const textSub   = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const connColor = isDark ? '#334155' : '#CBD5E1';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
@@ -144,6 +155,53 @@ function OrgNode({ node, employees, levelDirections, isDark, onAddChild, onEdit,
           </div>
         )}
 
+        {/* Leader badge */}
+        {node.leaderInfo ? (
+          <div style={{
+            fontSize: 10, marginBottom: 6,
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: isDark ? 'rgba(147,197,253,0.12)' : 'rgba(99,102,241,0.08)',
+            border: `1px solid ${isDark ? 'rgba(147,197,253,0.25)' : 'rgba(99,102,241,0.25)'}`,
+            borderRadius: 5, padding: '3px 6px',
+          }}>
+            <CrownOutlined style={{ color: linkColor, fontSize: 10 }} />
+            <Text style={{ color: linkColor, fontWeight: 600, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {node.leaderInfo.fullName}
+            </Text>
+          </div>
+        ) : (
+          <div style={{ fontSize: 10, color: textMuted, fontStyle: 'italic', marginBottom: 4 }}>
+            Chưa có lãnh đạo
+          </div>
+        )}
+
+        {/* Head row */}
+        {node.head ? (
+          <div style={{
+            fontSize: 10, marginBottom: 6,
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: isDark ? 'rgba(251,191,36,0.12)' : 'rgba(251,191,36,0.15)',
+            border: `1px solid ${isDark ? 'rgba(251,191,36,0.25)' : 'rgba(251,191,36,0.4)'}`,
+            borderRadius: 5, padding: '3px 6px',
+          }}>
+            <span style={{ fontSize: 10 }}>👑</span>
+            <span style={{ color: isDark ? '#FCD34D' : '#92400E', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {node.head.fullName}
+            </span>
+            <span style={{ color: textSub, fontSize: 9, flexShrink: 0 }}>· {node.head.jobTitleName}</span>
+          </div>
+        ) : node.headJobTitle ? (
+          <div style={{
+            fontSize: 10, marginBottom: 6,
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: isDark ? 'rgba(148,163,184,0.1)' : 'rgba(148,163,184,0.12)',
+            borderRadius: 5, padding: '3px 6px',
+          }}>
+            <span style={{ fontSize: 9 }}>👑</span>
+            <span style={{ color: textSub, fontStyle: 'italic' }}>Chưa có {node.headJobTitle.name}</span>
+          </div>
+        ) : null}
+
         {/* Footer */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: textSub, display: 'flex', alignItems: 'center', gap: 3 }}>
@@ -151,6 +209,13 @@ function OrgNode({ node, employees, levelDirections, isDark, onAddChild, onEdit,
             {unitEmps.length} nhân sự
           </span>
           <Space size={2}>
+            {canManageOrg && (
+              <Tooltip title="Gán lãnh đạo">
+                <Button type="text" size="small" icon={<CrownOutlined />}
+                  style={{ color: linkColor, height: 22, width: 22, padding: 0, fontSize: 12 }}
+                  onClick={() => onAssignLeader(node)} />
+              </Tooltip>
+            )}
             <Tooltip title="Thêm đơn vị con">
               <Button type="text" size="small" icon={<PlusCircleOutlined />}
                 style={{ color: hue, height: 22, width: 22, padding: 0, fontSize: 13 }}
@@ -203,8 +268,19 @@ function OrgNode({ node, employees, levelDirections, isDark, onAddChild, onEdit,
                     <div style={{ width: 2, height: 20, background: connColor, marginTop: 0 }} />
                     {/* Padding between siblings */}
                     <div style={{ paddingLeft: 12, paddingRight: 12 }}>
-                      <OrgNode node={child} employees={employees} levelDirections={levelDirections}
-                        isDark={isDark} onAddChild={onAddChild} onEdit={onEdit} onDelete={onDelete} />
+                      <OrgNode
+                        node={child}
+                        employees={employees}
+                        levelDirections={levelDirections}
+                        isDark={isDark}
+                        linkColor={linkColor}
+                        textMuted={textMuted}
+                        canManageOrg={canManageOrg}
+                        onAddChild={onAddChild}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                        onAssignLeader={onAssignLeader}
+                      />
                     </div>
                   </div>
                 ))}
@@ -215,8 +291,19 @@ function OrgNode({ node, employees, levelDirections, isDark, onAddChild, onEdit,
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
               {(node.children ?? []).map((child) => (
                 <div key={child.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <OrgNode node={child} employees={employees} levelDirections={levelDirections}
-                    isDark={isDark} onAddChild={onAddChild} onEdit={onEdit} onDelete={onDelete} />
+                  <OrgNode
+                    node={child}
+                    employees={employees}
+                    levelDirections={levelDirections}
+                    isDark={isDark}
+                    linkColor={linkColor}
+                    textMuted={textMuted}
+                    canManageOrg={canManageOrg}
+                    onAddChild={onAddChild}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onAssignLeader={onAssignLeader}
+                  />
                   {/* connector between vertical siblings handled by child's own top connector */}
                 </div>
               ))}
@@ -234,22 +321,24 @@ export default function OrgChartPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
-  const { mode } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { canAny } = usePermissions();
+
+  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+
+  // Permission guard: admin:org hoặc hr:manager
+  const canManageOrg = canAny('admin:org', 'hr:manager');
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<OrgUnitTree | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaderTarget, setLeaderTarget] = useState<OrgUnitTree | null>(null);
+  const [leaderForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
 
   // level → direction: true = horizontal, false = vertical
   const [horizontalLevels, setHorizontalLevels] = useState<Set<number>>(new Set([1, 2]));
-
-  const bgContainer  = isDark ? '#1E293B' : '#ffffff';
-  const borderColor  = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
 
   const { data: tree = [], isLoading: treeLoading } = useQuery({
     queryKey: ['org-units'],
@@ -260,6 +349,13 @@ export default function OrgChartPage() {
     queryKey: ['employees'],
     queryFn: employeesApi.list,
   });
+
+  const { data: jobTitlesData } = useQuery({
+    queryKey: ['job-titles-active'],
+    queryFn: () => jobTitlesApi.list({ isActive: true, limit: 200 }),
+    staleTime: 5 * 60_000,
+  });
+  const jobTitleOptions = (jobTitlesData?.data ?? []).map((jt) => ({ value: jt.id, label: jt.name }));
 
   const flat = flattenTree(tree);
   const maxLevel = flat.reduce((m, n) => Math.max(m, n.level ?? 0), 0);
@@ -308,9 +404,27 @@ export default function OrgChartPage() {
       message.error(err.response?.data?.message ?? 'Xoá thất bại'),
   });
 
+  const setLeaderMutation = useMutation({
+    mutationFn: ({ orgUnitId, leaderId }: { orgUnitId: string; leaderId: string | null }) =>
+      orgUnitsApi.setLeader(orgUnitId, leaderId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['org-units'] });
+      message.success('Đã cập nhật lãnh đạo đơn vị');
+      setLeaderTarget(null);
+      leaderForm.resetFields();
+    },
+    onError: (err: { response?: { data?: { message?: string } } }) =>
+      message.error(err.response?.data?.message ?? 'Cập nhật lãnh đạo thất bại'),
+  });
+
   function openEdit(node: OrgUnitTree) {
     setEditTarget(node);
-    editForm.setFieldsValue({ name: node.name, code: node.code, parentId: node.parentId ?? null });
+    editForm.setFieldsValue({
+      name: node.name,
+      code: node.code,
+      parentId: node.parentId ?? null,
+      headJobTitleId: node.headJobTitleId ?? null,
+    });
   }
 
   function openCreateWithParent(parentId: string) {
@@ -318,7 +432,27 @@ export default function OrgChartPage() {
     setCreateOpen(true);
   }
 
-  const MAX_CONFIGURABLE = 2; // chỉ cấp 0–2 được tuỳ chỉnh, cấp 3+ luôn dọc
+  function openAssignLeader(node: OrgUnitTree) {
+    setLeaderTarget(node);
+    leaderForm.setFieldsValue({
+      leaderId: node.leaderInfo?.id ?? null,
+    });
+  }
+
+  function handleAssignLeader(values: { leaderId?: string | null }) {
+    if (!leaderTarget) return;
+    setLeaderMutation.mutate({
+      orgUnitId: leaderTarget.id,
+      leaderId: values.leaderId ?? null,
+    });
+  }
+
+  function handleRemoveLeader() {
+    if (!leaderTarget) return;
+    setLeaderMutation.mutate({ orgUnitId: leaderTarget.id, leaderId: null });
+  }
+
+  const MAX_CONFIGURABLE = 2;
 
   const toggleLevel = (level: number) => {
     if (level > MAX_CONFIGURABLE) return;
@@ -329,6 +463,12 @@ export default function OrgChartPage() {
       return next;
     });
   };
+
+  // Employees belonging to the currently selected leaderTarget unit
+  const leaderUnitEmployees = useMemo(() => {
+    if (!leaderTarget) return [];
+    return allEmployees.filter((e) => e.orgUnitId === leaderTarget.id);
+  }, [allEmployees, leaderTarget]);
 
   const isLoading = treeLoading;
 
@@ -413,9 +553,13 @@ export default function OrgChartPage() {
                 employees={allEmployees}
                 levelDirections={levelDirections}
                 isDark={isDark}
+                linkColor={linkColor}
+                textMuted={textMuted}
+                canManageOrg={canManageOrg}
                 onAddChild={openCreateWithParent}
                 onEdit={openEdit}
                 onDelete={(id) => deleteMutation.mutate(id)}
+                onAssignLeader={openAssignLeader}
               />
             ))}
           </div>
@@ -508,6 +652,12 @@ export default function OrgChartPage() {
               options={flat.map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
             />
           </Form.Item>
+          <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
+            <Select allowClear showSearch optionFilterProp="label"
+              placeholder="VD: Trưởng phòng, Giám đốc..."
+              options={jobTitleOptions}
+            />
+          </Form.Item>
         </Form>
       </Modal>
 
@@ -542,6 +692,77 @@ export default function OrgChartPage() {
               options={flat.filter((u) => u.id !== editTarget?.id).map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
             />
           </Form.Item>
+          <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
+            <Select
+              allowClear
+              showSearch
+              optionFilterProp="label"
+              placeholder="VD: Trưởng phòng, Giám đốc..."
+              options={jobTitleOptions}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* ── Modal: Gán lãnh đạo ───────────────────────────────────────────── */}
+      <Modal
+        title={
+          <span>
+            <CrownOutlined style={{ color: linkColor, marginRight: 8 }} />
+            Gán lãnh đạo — {leaderTarget?.name ?? ''}
+          </span>
+        }
+        open={!!leaderTarget}
+        onCancel={() => { setLeaderTarget(null); leaderForm.resetFields(); }}
+        onOk={() => leaderForm.submit()}
+        confirmLoading={setLeaderMutation.isPending}
+        footer={[
+          <Button key="remove" danger
+            disabled={!leaderTarget?.leaderInfo}
+            onClick={handleRemoveLeader}
+            loading={setLeaderMutation.isPending}
+          >
+            Xoá lãnh đạo
+          </Button>,
+          <Button key="cancel" onClick={() => { setLeaderTarget(null); leaderForm.resetFields(); }}>
+            Huỷ
+          </Button>,
+          <Button key="ok" type="primary" onClick={() => leaderForm.submit()} loading={setLeaderMutation.isPending}>
+            Xác nhận
+          </Button>,
+        ]}
+        styles={{
+          body: { background: bgContainer },
+          header: { background: bgContainer, borderBottom: `1px solid ${borderColor}` },
+        }}
+      >
+        <Form form={leaderForm} layout="vertical" onFinish={handleAssignLeader} style={{ marginTop: 12 }}>
+          <Form.Item name="leaderId" label="Chọn lãnh đạo đơn vị">
+            <Select
+              allowClear
+              showSearch
+              optionFilterProp="label"
+              placeholder={
+                leaderUnitEmployees.length === 0
+                  ? 'Đơn vị chưa có nhân sự'
+                  : 'Chọn nhân viên làm lãnh đạo...'
+              }
+              options={leaderUnitEmployees.map((e) => ({
+                value: e.id,
+                label: `${e.fullName} (${e.code})`,
+              }))}
+            />
+          </Form.Item>
+          {leaderUnitEmployees.length === 0 && (
+            <p style={{ margin: 0, fontSize: 12, color: textMuted, fontStyle: 'italic' }}>
+              Chưa có nhân viên trong đơn vị này. Thêm nhân sự trước khi gán lãnh đạo.
+            </p>
+          )}
+          {leaderTarget?.leaderInfo && (
+            <p style={{ margin: '4px 0 0', fontSize: 12, color: textSecondary }}>
+              Lãnh đạo hiện tại: <Text style={{ color: linkColor, fontWeight: 600 }}>{leaderTarget.leaderInfo.fullName}</Text>
+            </p>
+          )}
         </Form>
       </Modal>
     </div>

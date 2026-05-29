@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { TenantConfig } from '../api/tenant';
+import type { TenantConfig } from '../api/tenant';
 
 interface TenantState {
   config: TenantConfig | null;

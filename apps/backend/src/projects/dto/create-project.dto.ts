@@ -1,7 +1,18 @@
 import {
-  IsString, IsEnum, IsOptional, IsDateString, IsNumber, Min, IsUUID, MaxLength,
+  IsString, IsEnum, IsOptional, IsDateString, IsNumber, Min, IsUUID, MaxLength, ValidatorConstraint,
+  ValidatorConstraintInterface, ValidationArguments, Validate,
 } from 'class-validator';
 import { ProjectType, BudgetCurrency } from '../../generated/prisma';
+
+@ValidatorConstraint({ name: 'endDateAfterStart', async: false })
+class EndDateAfterStartConstraint implements ValidatorConstraintInterface {
+  validate(endDate: string, args: ValidationArguments) {
+    const obj = args.object as CreateProjectDto;
+    if (!obj.startDate || !endDate) return true;
+    return new Date(endDate) > new Date(obj.startDate);
+  }
+  defaultMessage() { return 'endDate phải sau startDate'; }
+}
 
 export class CreateProjectDto {
   @IsString()
@@ -16,13 +27,14 @@ export class CreateProjectDto {
   type: ProjectType;
 
   @IsOptional()
-  @IsString()
-  customer?: string;
+  @IsUUID()
+  customerId?: string;
 
   @IsDateString()
   startDate: string;
 
   @IsDateString()
+  @Validate(EndDateAfterStartConstraint)
   endDate: string;
 
   @IsOptional()

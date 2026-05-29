@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  Row, Col, Card, Typography, Tag, Space, Button,
-  Form, Input, Select, Tooltip, App, Popconfirm, Spin, Empty,
+  Row, Col, Card, Typography, Tag, Space, Button, Divider,
+  Form, Input, Select, Tooltip, App, Popconfirm, Spin, Empty, InputNumber,
 } from 'antd';
 import {
-  TeamOutlined, PlusOutlined, PushpinOutlined,
-  LikeOutlined, CheckCircleOutlined, EyeOutlined,
-  DeleteOutlined,
+  TeamOutlined, PushpinOutlined,
+  DeleteOutlined, TrophyOutlined, GiftOutlined, StarOutlined,
+  NotificationOutlined, FileTextOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { useAuthStore } from '../../store/auth.store';
+import { usePermissions } from '../../hooks/usePermissions';
 import {
   useGetFeedStats, useGetFeedPosts, useCreateFeedPost,
   useDeleteFeedPost, useReactFeedPost,
@@ -27,14 +28,22 @@ dayjs.locale('vi');
 
 const { Text, Paragraph } = Typography;
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Config ──────────────────────────────────────────────────────────────────
 
-const POST_TYPE_CONFIG: Record<FeedPostType, { label: string; color: string }> = {
-  ANNOUNCEMENT: { label: 'Thông báo',   color: '#3B82F6' },
-  KUDOS:        { label: 'Kudos',        color: '#10B981' },
-  BIRTHDAY:     { label: 'Sinh nhật',   color: '#F59E0B' },
-  DOCUMENT:     { label: 'Tài liệu',    color: '#8B5CF6' },
+const POST_TYPE_CONFIG: Record<FeedPostType, {
+  label: string;
+  color: string;
+  icon: React.ReactNode;
+  gradient?: string;
+}> = {
+  ANNOUNCEMENT: { label: 'Thông báo',  color: '#3B82F6', icon: <NotificationOutlined /> },
+  KUDOS:        { label: 'Kudos',       color: '#10B981', icon: <StarOutlined /> },
+  BIRTHDAY:     { label: 'Sinh nhật',  color: '#F59E0B', icon: <GiftOutlined />,   gradient: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)' },
+  DOCUMENT:     { label: 'Tài liệu',   color: '#8B5CF6', icon: <FileTextOutlined /> },
+  ANNIVERSARY:  { label: 'Vinh danh',  color: '#EA580C', icon: <TrophyOutlined />, gradient: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)' },
 };
+
+const EMOJIS = ['👍', '❤️', '🎉', '👏'];
 
 function getInitials(name: string) {
   return name.split(' ').slice(-2).map((w) => w[0]).join('').toUpperCase();
@@ -45,14 +54,92 @@ function getAvatarColor(name: string) {
   return colors[name.charCodeAt(0) % colors.length];
 }
 
-const EMOJIS = ['👍', '✅', '👀'];
+// ─── SpecialHeader ────────────────────────────────────────────────────────────
+
+function SpecialHeader({ post }: { post: FeedPost }) {
+  const conf = POST_TYPE_CONFIG[post.type];
+  if (!conf.gradient) return null;
+
+  if (post.type === 'ANNIVERSARY') {
+    return (
+      <div
+        style={{
+          background: conf.gradient,
+          borderRadius: '10px 10px 0 0',
+          padding: '18px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          margin: '-16px -20px 14px',
+        }}
+      >
+        <Space size={12}>
+          <TrophyOutlined style={{ fontSize: 30, color: 'rgba(255,255,255,0.9)' }} />
+          <div>
+            <div style={{
+              fontSize: 10, color: 'rgba(255,255,255,0.75)',
+              letterSpacing: 1.5, textTransform: 'uppercase', fontWeight: 600,
+            }}>
+              Tri ân thâm niên
+            </div>
+            {post.targetName && (
+              <div style={{ fontSize: 17, fontWeight: 700, color: '#FFF', lineHeight: 1.3 }}>
+                {post.targetName}
+              </div>
+            )}
+          </div>
+        </Space>
+        {post.targetYears && (
+          <div style={{
+            background: 'rgba(255,255,255,0.22)',
+            borderRadius: 10,
+            padding: '8px 16px',
+            textAlign: 'center',
+            border: '1px solid rgba(255,255,255,0.3)',
+          }}>
+            <div style={{ fontSize: 30, fontWeight: 900, color: '#FFF', lineHeight: 1 }}>
+              {post.targetYears}
+            </div>
+            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.85)', letterSpacing: 1.5, fontWeight: 600 }}>
+              NĂM
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (post.type === 'BIRTHDAY') {
+    return (
+      <div
+        style={{
+          background: conf.gradient,
+          borderRadius: '10px 10px 0 0',
+          padding: '12px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          margin: '-16px -20px 14px',
+        }}
+      >
+        <span style={{ fontSize: 22 }}>🎂</span>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#FFF' }}>
+          Chúc mừng sinh nhật
+          {post.targetName && <span style={{ fontWeight: 800 }}> {post.targetName}</span>}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
 
 // ─── PostCard ─────────────────────────────────────────────────────────────────
 
 interface PostCardProps {
-  post:      FeedPost;
+  post:       FeedPost;
   currentId?: string;
-  isAdmin:   boolean;
+  isAdmin:    boolean;
 }
 
 function PostCard({ post, currentId, isAdmin }: PostCardProps) {
@@ -61,7 +148,8 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
   const deleteMut = useDeleteFeedPost();
   const reactMut  = useReactFeedPost();
 
-  const typeConf = POST_TYPE_CONFIG[post.type];
+  const typeConf  = POST_TYPE_CONFIG[post.type];
+  const isSpecial = post.type === 'ANNIVERSARY' || post.type === 'BIRTHDAY';
 
   const reactionMap: Record<string, number> = {};
   const myReactions = new Set<string>();
@@ -71,19 +159,13 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
   }
 
   const handleReact = async (emoji: string) => {
-    try {
-      await reactMut.mutateAsync({ id: post.id, emoji });
-    } catch {
-      message.error('Không thể reaction');
-    }
+    try { await reactMut.mutateAsync({ id: post.id, emoji }); }
+    catch { message.error('Không thể reaction'); }
   };
 
   const handleDelete = async () => {
-    try {
-      await deleteMut.mutateAsync(post.id);
-    } catch {
-      message.error('Xóa thất bại');
-    }
+    try { await deleteMut.mutateAsync(post.id); }
+    catch { message.error('Xóa thất bại'); }
   };
 
   const canDelete = isAdmin || post.authorId === currentId;
@@ -92,17 +174,38 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
     <Card
       style={{
         background: bgCard,
-        border: `1px solid ${post.isPinned ? '#6366F1' : borderColor}`,
+        border: `1px solid ${
+          post.isPinned ? '#6366F1'
+          : isSpecial   ? `${typeConf.color}40`
+          : borderColor
+        }`,
         borderRadius: 12,
         marginBottom: 16,
-        boxShadow: post.isPinned ? '0 0 0 2px rgba(99,102,241,0.15)' : undefined,
+        overflow: 'hidden',
+        boxShadow: post.isPinned
+          ? '0 0 0 2px rgba(99,102,241,0.15)'
+          : isSpecial ? `0 4px 20px ${typeConf.color}25` : undefined,
       }}
-      bodyStyle={{ padding: '16px 20px' }}
+      styles={{ body: { padding: '16px 20px' } }}
     >
-      {/* Header */}
+      {/* Gradient header cho Anniversary / Birthday */}
+      <SpecialHeader post={post} />
+
+      {/* Cover image — chỉ hiển thị cho non-special types */}
+      {post.imageUrl && !isSpecial && (
+        <div style={{ margin: '-16px -20px 14px', overflow: 'hidden' }}>
+          <img
+            src={post.imageUrl}
+            alt="cover"
+            style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}
+            onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
+          />
+        </div>
+      )}
+
+      {/* Author row */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
         <Space size={10} align="start">
-          {/* Avatar */}
           <div
             style={{
               width: 38, height: 38, borderRadius: '50%',
@@ -113,7 +216,6 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
           >
             {getInitials(post.author.name)}
           </div>
-
           <div>
             <Space size={6} wrap>
               <Text strong style={{ fontSize: 14, color: textPrimary }}>{post.author.name}</Text>
@@ -127,15 +229,13 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
                 {typeConf.label}
               </Tag>
               {post.isPinned && (
-                <Tooltip title="Ghim">
+                <Tooltip title="Đang ghim">
                   <PushpinOutlined style={{ color: '#6366F1', fontSize: 14 }} />
                 </Tooltip>
               )}
             </Space>
             <div>
-              <Text style={{ fontSize: 11, color: textMuted }}>
-                {dayjs(post.createdAt).fromNow()}
-              </Text>
+              <Text style={{ fontSize: 11, color: textMuted }}>{dayjs(post.createdAt).fromNow()}</Text>
             </div>
           </div>
         </Space>
@@ -148,13 +248,7 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
             cancelText="Huỷ"
             okButtonProps={{ danger: true }}
           >
-            <Button
-              type="text"
-              size="small"
-              icon={<DeleteOutlined />}
-              danger
-              style={{ opacity: 0.6 }}
-            />
+            <Button type="text" size="small" icon={<DeleteOutlined />} danger style={{ opacity: 0.6 }} />
           </Popconfirm>
         )}
       </div>
@@ -187,10 +281,96 @@ function PostCard({ post, currentId, isAdmin }: PostCardProps) {
               loading={reactMut.isPending}
               style={{ borderRadius: 20, fontSize: 13, padding: '0 10px' }}
             >
-              {emoji} {count > 0 && <span style={{ marginLeft: 2 }}>{count}</span>}
+              {emoji}{count > 0 && <span style={{ marginLeft: 4 }}>{count}</span>}
             </Button>
           );
         })}
+      </Space>
+    </Card>
+  );
+}
+
+// ─── ComposerBox ──────────────────────────────────────────────────────────────
+
+interface ComposerBoxProps {
+  userName: string;
+  onOpen: (type?: FeedPostType) => void;
+}
+
+function ComposerBox({ userName, onOpen }: ComposerBoxProps) {
+  const { textMuted, bgCard, borderColor, isDark } = useThemePalette();
+
+  return (
+    <Card
+      style={{ background: bgCard, borderColor, borderRadius: 12, marginBottom: 20 }}
+      styles={{ body: { padding: '12px 16px' } }}
+    >
+      <Space style={{ width: '100%', marginBottom: 10 }} size={10}>
+        <div
+          style={{
+            width: 36, height: 36, borderRadius: '50%',
+            background: getAvatarColor(userName),
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0,
+          }}
+        >
+          {getInitials(userName)}
+        </div>
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => onOpen()}
+          onKeyDown={(e) => e.key === 'Enter' && onOpen()}
+          style={{
+            flex: 1, height: 36, minWidth: 260,
+            background: isDark ? 'rgba(255,255,255,0.06)' : '#F1F5F9',
+            borderRadius: 20, cursor: 'text',
+            display: 'flex', alignItems: 'center',
+            paddingLeft: 16, paddingRight: 16,
+            color: textMuted, fontSize: 14,
+            border: `1px solid ${borderColor}`,
+            userSelect: 'none',
+          }}
+        >
+          Đăng thông báo, vinh danh nhân viên...
+        </div>
+      </Space>
+
+      <Divider style={{ margin: '0 0 8px' }} />
+
+      <Space wrap>
+        <Button
+          type="text" size="small"
+          icon={<NotificationOutlined style={{ color: '#3B82F6' }} />}
+          onClick={() => onOpen('ANNOUNCEMENT')}
+          style={{ color: textMuted }}
+        >
+          Thông báo
+        </Button>
+        <Button
+          type="text" size="small"
+          icon={<StarOutlined style={{ color: '#10B981' }} />}
+          onClick={() => onOpen('KUDOS')}
+          style={{ color: textMuted }}
+        >
+          Kudos
+        </Button>
+        <Button
+          type="text" size="small"
+          icon={<TrophyOutlined style={{ color: '#F59E0B' }} />}
+          onClick={() => onOpen('ANNIVERSARY')}
+          style={{ color: textMuted }}
+        >
+          Vinh danh
+        </Button>
+        <Button
+          type="text" size="small"
+          icon={<FileTextOutlined style={{ color: '#8B5CF6' }} />}
+          onClick={() => onOpen('DOCUMENT')}
+          style={{ color: textMuted }}
+        >
+          Tài liệu
+        </Button>
       </Space>
     </Card>
   );
@@ -202,90 +382,85 @@ export default function FeedPage() {
   const { message } = App.useApp();
   const { user } = useAuthStore();
   const [createOpen, setCreateOpen] = useState(false);
-  const [form]      = Form.useForm();
-  const [page]      = useState(1);
+  const [form]       = Form.useForm();
+  const [page]       = useState(1);
+  const [previewType, setPreviewType] = useState<FeedPostType>('ANNOUNCEMENT');
+  const [imgPreview,  setImgPreview]  = useState('');
 
-  const { data: stats } = useGetFeedStats();
-  const { data: feed, isLoading } = useGetFeedPosts(page, 20);
-  const createMut = useCreateFeedPost();
+  const { data: stats }             = useGetFeedStats();
+  const { data: feed, isLoading }   = useGetFeedPosts(page, 20);
+  const createMut                   = useCreateFeedPost();
 
-  const canPost = ['ADMIN', 'LEADERSHIP'].includes(user?.role ?? '');
+  const { can } = usePermissions();
+  const canPost = can('feed:create');
+
+  const openCreate = useCallback((type: FeedPostType = 'ANNOUNCEMENT') => {
+    form.setFieldValue('type', type);
+    setPreviewType(type);
+    setCreateOpen(true);
+  }, [form]);
+
+  const closeCreate = () => {
+    setCreateOpen(false);
+    form.resetFields();
+    setImgPreview('');
+    setPreviewType('ANNOUNCEMENT');
+  };
 
   const handleCreate = async (values: {
-    type: FeedPostType;
-    title?: string;
-    content: string;
-    isPinned?: boolean;
+    type:        FeedPostType;
+    title?:      string;
+    content:     string;
+    isPinned?:   boolean;
+    imageUrl?:   string;
+    targetName?: string;
+    targetYears?: number;
   }) => {
     try {
       await createMut.mutateAsync({
-        type:     values.type,
-        title:    values.title,
-        content:  values.content,
-        isPinned: values.isPinned ?? false,
+        type:        values.type,
+        title:       values.title,
+        content:     values.content,
+        isPinned:    values.isPinned ?? false,
+        imageUrl:    values.imageUrl || undefined,
+        targetName:  values.targetName || undefined,
+        targetYears: values.targetYears,
       });
       message.success('Đã đăng bài');
-      form.resetFields();
-      setCreateOpen(false);
+      closeCreate();
     } catch {
       message.error('Đăng bài thất bại');
     }
   };
 
+  const needsTargetFields = previewType === 'ANNIVERSARY' || previewType === 'BIRTHDAY';
+
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
-        title="Company Feed"
+        title="Bảng tin công ty"
         icon={<TeamOutlined />}
         iconColor="#6366F1"
-        actions={
-          canPost && (
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setCreateOpen(true)}
-            >
-              Đăng bài
-            </Button>
-          )
-        }
       />
 
-      {/* Stat Cards */}
+      {/* Stat cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Tổng bài đăng"
-            value={stats?.total ?? 0}
-            color="#6366F1"
-            icon={<TeamOutlined />}
-          />
+          <StatCard label="Tổng bài đăng"  value={stats?.total     ?? 0} color="#6366F1" icon={<TeamOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Tháng này"
-            value={stats?.thisMonth ?? 0}
-            color="#3B82F6"
-            icon={<LikeOutlined />}
-          />
+          <StatCard label="Tháng này"       value={stats?.thisMonth ?? 0} color="#3B82F6" icon={<NotificationOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Kudos"
-            value={stats?.kudos ?? 0}
-            color="#10B981"
-            icon={<CheckCircleOutlined />}
-          />
+          <StatCard label="Kudos"           value={stats?.kudos     ?? 0} color="#10B981" icon={<StarOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Đang ghim"
-            value={stats?.pinned ?? 0}
-            color="#F59E0B"
-            icon={<EyeOutlined />}
-          />
+          <StatCard label="Vinh danh"       value={stats?.anniversary ?? 0} color="#F59E0B" icon={<TrophyOutlined />} />
         </Col>
       </Row>
+
+      {/* Composer box — chỉ hiện với admin/leadership */}
+      {canPost && <ComposerBox userName={user?.name ?? ''} onOpen={openCreate} />}
 
       {/* Feed list */}
       {isLoading ? (
@@ -305,26 +480,30 @@ export default function FeedPage() {
         ))
       )}
 
-      {/* Modal tạo bài đăng */}
+      {/* Modal tạo bài */}
       <CenteredModal
         open={createOpen}
         title="Đăng bài mới"
-        width={520}
-        onClose={() => { setCreateOpen(false); form.resetFields(); }}
+        width={560}
+        onClose={closeCreate}
         footer={
           <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
-            <Button onClick={() => { setCreateOpen(false); form.resetFields(); }}>Huỷ</Button>
-            <Button
-              type="primary"
-              loading={createMut.isPending}
-              onClick={() => form.submit()}
-            >
-              Đăng
+            <Button onClick={closeCreate}>Huỷ</Button>
+            <Button type="primary" loading={createMut.isPending} onClick={() => form.submit()}>
+              Đăng bài
             </Button>
           </Space>
         }
       >
-        <Form form={form} layout="vertical" onFinish={handleCreate}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleCreate}
+          onValuesChange={(changed) => {
+            if (changed.type) setPreviewType(changed.type);
+            if ('imageUrl' in changed) setImgPreview(changed.imageUrl ?? '');
+          }}
+        >
           <Form.Item
             name="type"
             label="Loại bài đăng"
@@ -334,10 +513,31 @@ export default function FeedPage() {
             <Select
               options={Object.entries(POST_TYPE_CONFIG).map(([value, conf]) => ({
                 value,
-                label: conf.label,
+                label: (
+                  <Space size={6}>
+                    {conf.icon}
+                    <span>{conf.label}</span>
+                  </Space>
+                ),
               }))}
             />
           </Form.Item>
+
+          {needsTargetFields && (
+            <Form.Item name="targetName" label="Tên nhân viên được vinh danh">
+              <Input placeholder="Nguyễn Văn A" maxLength={200} />
+            </Form.Item>
+          )}
+
+          {previewType === 'ANNIVERSARY' && (
+            <Form.Item name="targetYears" label="Số năm thâm niên">
+              <InputNumber
+                min={1} max={50} placeholder="5"
+                style={{ width: '100%' }}
+                suffix="năm"
+              />
+            </Form.Item>
+          )}
 
           <Form.Item name="title" label="Tiêu đề">
             <Input placeholder="Tiêu đề bài đăng (không bắt buộc)" maxLength={300} />
@@ -348,20 +548,29 @@ export default function FeedPage() {
             label="Nội dung"
             rules={[{ required: true, message: 'Nhập nội dung' }]}
           >
-            <Input.TextArea
-              rows={5}
-              placeholder="Nội dung bài đăng..."
-              showCount
-              maxLength={2000}
-            />
+            <Input.TextArea rows={4} placeholder="Nội dung bài đăng..." showCount maxLength={2000} />
           </Form.Item>
 
-          <Form.Item name="isPinned" label="Ghim bài đăng?" valuePropName="checked">
+          <Form.Item name="imageUrl" label="Ảnh bìa (URL)">
+            <Input placeholder="https://images.unsplash.com/..." maxLength={500} />
+          </Form.Item>
+
+          {imgPreview && (
+            <div style={{ marginBottom: 16, borderRadius: 8, overflow: 'hidden', maxHeight: 160 }}>
+              <img
+                src={imgPreview}
+                alt="preview"
+                style={{ width: '100%', maxHeight: 160, objectFit: 'cover', display: 'block' }}
+                onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
+              />
+            </div>
+          )}
+
+          <Form.Item name="isPinned" label="Ghim bài đăng?" initialValue={false}>
             <Select
-              defaultValue={false}
               options={[
                 { value: false, label: 'Không ghim' },
-                { value: true,  label: 'Ghim lên đầu' },
+                { value: true,  label: '📌 Ghim lên đầu' },
               ]}
             />
           </Form.Item>

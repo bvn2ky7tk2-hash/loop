@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Prisma } from '../generated/prisma';
 import type { Employee, EmployeeRate, Role } from '../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
@@ -9,10 +10,17 @@ import * as ExcelJS from 'exceljs';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) private readonly request: any,
+  ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async create(dto: CreateEmployeeDto) {
-    const existing = await this.prisma.employee.findFirst({ where: { code: dto.code } });
+    const existing = await this.prisma.employee.findFirst({ where: { code: dto.code, deletedAt: null } });
     if (existing) throw new ConflictException('Mã nhân sự đã tồn tại');
 
     return this.prisma.employee.create({
@@ -30,6 +38,7 @@ export class EmployeesService {
         cccdIssuePlace: dto.cccdIssuePlace,
         userId: dto.userId,
         positionId: dto.positionId,
+        tenantId: this.getTenantId(),
       },
       include: { orgUnit: { select: { name: true } } },
     });
@@ -37,9 +46,12 @@ export class EmployeesService {
 
   async findAll(orgUnitIds: string[] | null, callerRole: Role, page = 1, limit = 50) {
     const now = new Date();
-    const where: Prisma.EmployeeWhereInput = orgUnitIds === null
-      ? {}
-      : { orgUnitId: { in: orgUnitIds } };
+    const tenantId = this.getTenantId();
+    const where: Prisma.EmployeeWhereInput = {
+      deletedAt: null,
+      ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
+      ...(tenantId ? { tenantId } : {}),
+    };
 
     const skip = (page - 1) * limit;
     const [employees, total] = await this.prisma.$transaction([
@@ -198,6 +210,23 @@ export class EmployeesService {
     });
   }
 
+  async remove(id: string) {
+    await this.findOrThrow(id);
+    return this.prisma.employee.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  async restore(id: string) {
+    const emp = await this.prisma.employee.findUnique({ where: { id } });
+    if (!emp) throw new NotFoundException('Không tìm thấy nhân sự');
+    return this.prisma.employee.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+  }
+
   private async findOrThrow(id: string): Promise<Employee> {
     const emp = await this.prisma.employee.findUnique({ where: { id } });
     if (!emp) throw new NotFoundException('Không tìm thấy nhân sự');
@@ -209,5 +238,39 @@ export class EmployeesService {
       cccd: unknown; cccdIssueDate: unknown; cccdIssuePlace: unknown; allocations: unknown;
     };
     return rest;
+  }
+
+  // ── L-03: Employee History ─────────────────────────────────────────────────
+
+  async getWorkHistory(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.workHistory.findMany({
+      where: { employeeId },
+      orderBy: { eventDate: 'desc' },
+      take: 50,
+    });
+  }
+
+  async getPositionHistory(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.positionHistory.findMany({
+      where: { employeeId },
+      orderBy: { startDate: 'desc' },
+      take: 50,
+      include: {
+        position: {
+          select: { id: true, code: true, jobTitle: { select: { name: true } } },
+        },
+      },
+    });
+  }
+
+  async getLeaveSummary(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.leaveBalance.findMany({
+      where: { employeeId },
+      include: { leaveType: { select: { id: true, name: true, color: true } } },
+      orderBy: { year: 'desc' },
+    });
   }
 }

@@ -3,8 +3,8 @@ import {
   Body, Param, Query, HttpCode, HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../generated/prisma';
+import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { FeedService } from './feed.service';
 import { CreateFeedPostDto } from './dto/create-feed-post.dto';
 import { ReactFeedPostDto } from './dto/react-feed-post.dto';
@@ -31,8 +31,8 @@ export class FeedController {
   }
 
   @Post()
-  @Roles(Role.ADMIN, Role.LEADERSHIP)
-  @ApiOperation({ summary: 'Tạo bài đăng mới (ADMIN/LEADERSHIP)' })
+  @RequirePermission('feed:create')
+  @ApiOperation({ summary: 'Tạo bài đăng mới' })
   create(
     @Body() dto: CreateFeedPostDto,
     @CurrentUser() user: User,

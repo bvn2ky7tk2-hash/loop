@@ -56,8 +56,16 @@ export class ContractsController {
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission(PERMISSIONS.EMPLOYEES_DELETE)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Xoá hợp đồng' })
+  @ApiOperation({ summary: 'Xoá mềm hợp đồng' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_UPDATE)
+  @ApiOperation({ summary: 'Khôi phục hợp đồng đã xoá mềm' })
+  restore(@Param('id') id: string) {
+    return this.service.restore(id);
   }
 }

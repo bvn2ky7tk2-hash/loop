@@ -3,7 +3,7 @@ import { apiClient } from './client';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export type FeedPostType = 'ANNOUNCEMENT' | 'KUDOS' | 'BIRTHDAY' | 'DOCUMENT';
+export type FeedPostType = 'ANNOUNCEMENT' | 'KUDOS' | 'BIRTHDAY' | 'DOCUMENT' | 'ANNIVERSARY';
 
 export interface FeedAuthor {
   id:   string;
@@ -24,6 +24,9 @@ export interface FeedPost {
   content:     string;
   targetOrgId?: string | null;
   isPinned:    boolean;
+  imageUrl?:   string | null;
+  targetYears?: number | null;
+  targetName?: string | null;
   createdAt:   string;
   updatedAt:   string;
   author:      FeedAuthor;
@@ -31,18 +34,21 @@ export interface FeedPost {
 }
 
 export interface FeedStats {
-  total:     number;
-  thisMonth: number;
-  kudos:     number;
-  pinned:    number;
+  total:       number;
+  thisMonth:   number;
+  kudos:       number;
+  anniversary: number;
 }
 
 export interface CreateFeedPostDto {
-  type:        FeedPostType;
-  title?:      string;
-  content:     string;
+  type:         FeedPostType;
+  title?:       string;
+  content:      string;
   targetOrgId?: string;
-  isPinned?:   boolean;
+  isPinned?:    boolean;
+  imageUrl?:    string;
+  targetYears?: number;
+  targetName?:  string;
 }
 
 export interface PaginatedFeedResult {

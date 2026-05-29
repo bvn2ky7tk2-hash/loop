@@ -75,6 +75,7 @@ export class ReportsService {
       where: { task: { projectId } },
       select: { hours: true, logDate: true },
       orderBy: { logDate: 'asc' },
+      take: 10000,
     });
 
     const dailyHours: Record<string, number> = {};
@@ -130,6 +131,7 @@ export class ReportsService {
     const logs = await this.prisma.timeLog.findMany({
       where: { logDate: { gte: since } },
       select: { hours: true, logDate: true },
+      take: 50000,
     });
 
     const monthlyMap: Record<string, number> = {};
@@ -262,6 +264,163 @@ export class ReportsService {
     };
   }
 
+  // ── L-08: HR Analytics ───────────────────────────────────────────────────
+
+  async getTurnoverRate(year: number) {
+    const startDate = new Date(year, 0, 1);
+    const endDate   = new Date(year, 11, 31, 23, 59, 59);
+    const [leavers, avgHeadcount] = await Promise.all([
+      this.prisma.employee.count({
+        where: { endDate: { gte: startDate, lte: endDate } },
+      }),
+      this.prisma.employee.count({ where: { isActive: true } }),
+    ]);
+    return {
+      year,
+      leavers,
+      avgHeadcount,
+      turnoverRate:
+        avgHeadcount > 0
+          ? Math.round((leavers / avgHeadcount) * 100 * 10) / 10
+          : 0,
+    };
+  }
+
+  async getHeadcountTrend(months = 6) {
+    const results: { month: string; count: number }[] = [];
+    for (let i = months - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const year  = date.getFullYear();
+      const month = date.getMonth(); // 0-indexed
+      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const periodStart = new Date(year, month, 1);
+      const periodEnd   = new Date(year, month + 1, 0, 23, 59, 59);
+
+      const count = await this.prisma.employee.count({
+        where: {
+          startDate: { lte: periodEnd },
+          OR: [
+            { endDate: null },
+            { endDate: { gte: periodStart } },
+          ],
+          isActive: true,
+        },
+      });
+      results.push({ month: monthStr, count });
+    }
+    return results;
+  }
+
+  // ── L-05: Utilization Rate ────────────────────────────────────────────────
+
+  async getUtilization(period: string, departmentId?: string) {
+    const [year, month] = period.split('-').map(Number);
+    const startDate = new Date(year, month - 1, 1);
+    const endDate   = new Date(year, month - 1, 0 + new Date(year, month, 0).getDate());
+
+    // Số ngày làm việc trong tháng (bỏ T7/CN)
+    let workingDays = 0;
+    const d = new Date(startDate);
+    while (d <= endDate) {
+      if (d.getDay() !== 0 && d.getDay() !== 6) workingDays++;
+      d.setDate(d.getDate() + 1);
+    }
+    const availableHours = workingDays * 8;
+
+    const whereEmployee: any = { deletedAt: null, isActive: true };
+    if (departmentId) whereEmployee.orgUnitId = departmentId;
+
+    const employees = await this.prisma.employee.findMany({
+      where: whereEmployee,
+      select: {
+        id: true, fullName: true, code: true, userId: true,
+        orgUnit: { select: { name: true } },
+      },
+      take: 200,
+    });
+
+    const userIds = employees.map((e) => e.userId).filter(Boolean) as string[];
+
+    // Gộp time logs theo userId
+    const timeLogs = await this.prisma.timeLog.findMany({
+      where: {
+        userId: { in: userIds },
+        logDate: { gte: startDate, lte: endDate },
+      },
+      select: { userId: true, hours: true },
+      take: 50000,
+    });
+
+    const hoursMap: Record<string, number> = {};
+    for (const t of timeLogs) {
+      hoursMap[t.userId] = (hoursMap[t.userId] ?? 0) + Number(t.hours);
+    }
+
+    const results = employees.map((emp) => {
+      const actualHours = emp.userId ? (hoursMap[emp.userId] ?? 0) : 0;
+      return {
+        employeeId: emp.id,
+        name: `${emp.code} — ${emp.fullName}`,
+        department: emp.orgUnit?.name ?? '—',
+        actualHours,
+        availableHours,
+        utilizationPct: availableHours > 0
+          ? Math.round((actualHours / availableHours) * 100)
+          : 0,
+      };
+    });
+
+    return results.sort((a, b) => b.utilizationPct - a.utilizationPct);
+  }
+
+  // ── L-06: Period Comparison Summary ──────────────────────────────────────
+
+  async getSummary(period: string, comparePeriod?: string) {
+    const getPeriodData = async (p: string) => {
+      const [yr, mo] = p.split('-').map(Number);
+      const start = new Date(yr, mo - 1, 1);
+      const end   = new Date(yr, mo - 1, new Date(yr, mo, 0).getDate(), 23, 59, 59);
+
+      const [revenue, expenses, newProjects, newEmployees] = await Promise.all([
+        this.prisma.invoice.aggregate({
+          where: { type: 'SALES', status: 'PAID', createdAt: { gte: start, lte: end }, deletedAt: null },
+          _sum: { totalAmount: true },
+        }),
+        this.prisma.expense.aggregate({
+          where: { createdAt: { gte: start, lte: end } },
+          _sum: { totalAmount: true },
+        }),
+        this.prisma.project.count({ where: { createdAt: { gte: start, lte: end }, deletedAt: null } }),
+        this.prisma.employee.count({ where: { startDate: { gte: start, lte: end } } }),
+      ]);
+
+      return {
+        period: p,
+        revenue:      Number(revenue._sum.totalAmount  ?? 0),
+        expenses:     Number(expenses._sum.totalAmount ?? 0),
+        newProjects,
+        newEmployees,
+      };
+    };
+
+    const current = await getPeriodData(period);
+    if (!comparePeriod) return { current };
+
+    const previous = await getPeriodData(comparePeriod);
+    const delta = {
+      revenue:     current.revenue  - previous.revenue,
+      revenuePct:  previous.revenue > 0
+        ? Math.round(((current.revenue - previous.revenue) / previous.revenue) * 100)
+        : 0,
+      expenses:    current.expenses - previous.expenses,
+      newProjects: current.newProjects - previous.newProjects,
+      newEmployees:current.newEmployees - previous.newEmployees,
+    };
+
+    return { current, previous, delta };
+  }
+
   // ── Story 8.3: Parameterised report generation ────────────────────────────
 
   async generateReport(dto: GenerateReportDto): Promise<{ buffer: Buffer; filename: string }> {
@@ -290,6 +449,7 @@ export class ReportsService {
         members: { include: { employee: true } },
         tasks:   { select: { actualHours: true } },
       },
+      take: 500,
     });
 
     const wb = new ExcelJS.Workbook();
@@ -335,6 +495,7 @@ export class ReportsService {
         project:  true,
       },
       orderBy: [{ employee: { fullName: 'asc' } }, { startDate: 'asc' }],
+      take: 5000,
     });
 
     const wb = new ExcelJS.Workbook();
@@ -384,6 +545,7 @@ export class ReportsService {
         assignee: { select: { fullName: true } },
       },
       orderBy: [{ projectId: 'asc' }, { level: 'asc' }, { position: 'asc' }],
+      take: 5000,
     });
 
     const wb = new ExcelJS.Workbook();
@@ -423,6 +585,7 @@ export class ReportsService {
       where: { createdAt: { gte: start, lte: end } },
       include: { user: { select: { name: true } } },
       orderBy: { createdAt: 'desc' },
+      take: 5000,
     });
 
     const wb = new ExcelJS.Workbook();
@@ -466,6 +629,7 @@ export class ReportsService {
         approvedBy: { select: { name: true } },
       },
       orderBy: [{ periodStart: 'asc' }, { user: { name: 'asc' } }],
+      take: 5000,
     });
 
     const wb = new ExcelJS.Workbook();

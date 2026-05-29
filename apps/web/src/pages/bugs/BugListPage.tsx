@@ -251,6 +251,7 @@ export default function BugListPage() {
         loading={isLoading}
         rowKey="id"
         columns={columns}
+        locale={{ emptyText: 'Chưa có bug hoặc issue nào' }}
         rowClassName={(row) => {
           const overdue = row.dueDate && new Date(row.dueDate) < new Date()
             && !OVERDUE_STATUSES.includes(row.status);

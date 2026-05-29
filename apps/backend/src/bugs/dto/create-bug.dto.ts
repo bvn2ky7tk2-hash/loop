@@ -54,6 +54,10 @@ export class CreateBugDto {
   affectedModule?: string;
 
   @IsOptional()
+  @IsUUID()
+  reporterId?: string;
+
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   tags?: string[];

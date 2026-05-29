@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsDateString, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import { IsString, IsEnum, IsDateString, IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ContractType, ContractStatus, BudgetCurrency } from '../../generated/prisma';
 
@@ -39,4 +39,9 @@ export class CreateContractDto {
   @IsOptional()
   @IsDateString()
   signedAt?: string;
+
+  @ApiPropertyOptional({ description: 'UUID nhân viên ký hợp đồng' })
+  @IsOptional()
+  @IsUUID()
+  signedById?: string;
 }

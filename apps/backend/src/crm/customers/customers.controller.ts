@@ -31,7 +31,7 @@ export class CustomersController {
 
   @Get()
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
-  @RequirePermission(PERMISSIONS.CRM_READ)
+  @RequirePermission('crm_customers:read', PERMISSIONS.CRM_READ)
   @ApiOperation({ summary: 'Danh sách khách hàng' })
   findAll(@Query() query: PaginationDto) {
     return this.customersService.findAll(query.page, query.limit);
@@ -39,7 +39,7 @@ export class CustomersController {
 
   @Get(':id')
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
-  @RequirePermission(PERMISSIONS.CRM_READ)
+  @RequirePermission('crm_customers:read', PERMISSIONS.CRM_READ)
   @ApiOperation({ summary: 'Chi tiết khách hàng' })
   findOne(@Param('id') id: string) {
     return this.customersService.findOne(id);
@@ -47,7 +47,7 @@ export class CustomersController {
 
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
   @ApiOperation({ summary: 'Tạo khách hàng' })
   create(@Body() dto: CreateCustomerDto) {
     return this.customersService.create(dto);
@@ -55,7 +55,7 @@ export class CustomersController {
 
   @Patch(':id')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
   @ApiOperation({ summary: 'Cập nhật khách hàng' })
   update(@Param('id') id: string, @Body() dto: UpdateCustomerDto) {
     return this.customersService.update(id, dto);
@@ -63,10 +63,36 @@ export class CustomersController {
 
   @Delete(':id')
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Xoá khách hàng' })
+  @ApiOperation({ summary: 'Xoá mềm khách hàng' })
   remove(@Param('id') id: string) {
     return this.customersService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
+  @ApiOperation({ summary: 'Khôi phục khách hàng đã xoá mềm' })
+  restore(@Param('id') id: string) {
+    return this.customersService.restore(id);
+  }
+
+  // ── L-02: Customer Revenue & Projects ─────────────────────────────────────
+
+  @Get(':id/revenue')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission('crm_customers:read', PERMISSIONS.CRM_READ)
+  @ApiOperation({ summary: 'Doanh thu từ khách hàng (invoices + tổng đã thanh toán)' })
+  getRevenue(@Param('id') id: string) {
+    return this.customersService.getRevenue(id);
+  }
+
+  @Get(':id/projects')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission('crm_customers:read', PERMISSIONS.CRM_READ)
+  @ApiOperation({ summary: 'Danh sách dự án của khách hàng' })
+  getProjects(@Param('id') id: string) {
+    return this.customersService.getProjects(id);
   }
 }

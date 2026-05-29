@@ -14,11 +14,13 @@ export function usePermissions() {
   const moduleRoles = user?.moduleRoles ?? [];
   const role = user?.role ?? '';
 
-  const can = (code: string): boolean => permissions.includes(code);
+  const isAdmin = role === 'ADMIN';
 
-  const canAny = (...codes: string[]): boolean => codes.some((c) => permissions.includes(c));
+  const can = (code: string): boolean => isAdmin || permissions.includes(code);
 
-  const canAll = (...codes: string[]): boolean => codes.every((c) => permissions.includes(c));
+  const canAny = (...codes: string[]): boolean => isAdmin || codes.some((c) => permissions.includes(c));
+
+  const canAll = (...codes: string[]): boolean => isAdmin || codes.every((c) => permissions.includes(c));
 
   const hasRole = (r: string): boolean => role === r;
 

@@ -57,6 +57,17 @@ export interface PaginatedLeaves {
   totalPages: number;
 }
 
+export interface FormField {
+  name: string;
+  label: string;
+  type: 'text' | 'textarea' | 'number' | 'date' | 'time' | 'select';
+  required?: boolean;
+  min?: number;
+  max?: number;
+  placeholder?: string;
+  options?: { label: string; value: string }[];
+}
+
 export interface LeaveFilterParams {
   page?: number;
   pageSize?: number;
@@ -93,6 +104,8 @@ export const leavesApi = {
     apiClient.get<LeaveType[]>('/leaves/types').then((r) => r.data),
   updateType: (id: string, data: { processDefinitionKey?: string | null }): Promise<LeaveType> =>
     apiClient.patch<LeaveType>(`/leaves/types/${id}`, data).then((r) => r.data),
+  getFormSchema: (): Promise<{ fields: FormField[] }> =>
+    apiClient.get<{ fields: FormField[] }>('/leaves/form-schema').then((r) => r.data),
 };
 
 export const processDefsApi = {

@@ -70,8 +70,10 @@ const HrLeavePolicyPage     = lazy(() => import('./pages/hr/LeavePolicyPage'));
 const HrAttendancePage      = lazy(() => import('./pages/hr/AttendancePage'));
 const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
 const OvertimePage          = lazy(() => import('./pages/hr/OvertimePage'));
+const MyOvertimePage        = lazy(() => import('./pages/hr/MyOvertimePage'));
 const HrShiftsPage          = lazy(() => import('./pages/hr/HrShiftsPage'));
 const HrRequestsPage        = lazy(() => import('./pages/hr/HrRequestsPage'));
+const HrLeavesPage          = lazy(() => import('./pages/hr/HrLeavesPage'));
 const KnowledgeBasePage     = lazy(() => import('./pages/knowledge-base/KnowledgeBasePage'));
 const PortalManagePage      = lazy(() => import('./pages/crm/PortalManagePage'));
 const CustomerPortalPage    = lazy(() => import('./pages/portal/CustomerPortalPage'));
@@ -152,6 +154,7 @@ export const router = createBrowserRouter([
       { path: 'org-chart',       element: wrap(OrgChartPage) },
       { path: 'contracts',       element: wrap(ContractsPage) },
       { path: 'leaves',          element: wrap(LeavePage) },
+      { path: 'my-overtime',     element: wrap(MyOvertimePage) },
       { path: 'expenses',        element: wrap(ExpensePage) },
       { path: 'budget',          element: wrap(BudgetPage) },
       { path: 'payroll',          element: wrap(PayrollPage) },
@@ -192,6 +195,7 @@ export const router = createBrowserRouter([
       { path: 'hr/overtime',         element: wrap(OvertimePage) },
       { path: 'hr/shifts',           element: wrap(HrShiftsPage) },
       { path: 'hr/requests',         element: wrap(HrRequestsPage) },
+      { path: 'hr/leaves',           element: wrap(HrLeavesPage) },
       { path: 'knowledge-base',       element: wrap(KnowledgeBasePage) },
       { path: 'procurement/vendors',  element: wrap(VendorsPage) },
       { path: 'procurement/orders',   element: wrap(PurchaseOrdersPage) },

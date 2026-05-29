@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Prisma, ProjectStatus } from '../generated/prisma';
 import type { Project } from '../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
@@ -23,7 +24,12 @@ export class ProjectsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly employeesService: EmployeesService,
+    @Inject(REQUEST) private readonly request: any,
   ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async create(dto: CreateProjectDto): Promise<Project> {
     return this.prisma.project.create({
@@ -31,7 +37,6 @@ export class ProjectsService {
         code: dto.code,
         name: dto.name,
         type: dto.type,
-        customer: dto.customer,
         startDate: new Date(dto.startDate),
         endDate: new Date(dto.endDate),
         budgetCost: dto.budgetCost,
@@ -40,14 +45,19 @@ export class ProjectsService {
         description: dto.description,
         pmId: dto.pmId,
         orgUnitId: dto.orgUnitId,
+        ...(dto.customerId ? { customerId: dto.customerId } : {}),
+        tenantId: this.getTenantId(),
       },
     });
   }
 
   async findAll(orgUnitIds: string[] | null, page = 1, limit = 50) {
-    const where: Prisma.ProjectWhereInput = orgUnitIds === null
-      ? {}
-      : { orgUnitId: { in: orgUnitIds } };
+    const tenantId = this.getTenantId();
+    const where: Prisma.ProjectWhereInput = {
+      deletedAt: null,
+      ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
+      ...(tenantId ? { tenantId } : {}),
+    };
 
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
@@ -55,6 +65,7 @@ export class ProjectsService {
         where,
         include: {
           pm: { select: { id: true, name: true } },
+          customer: { select: { id: true, name: true } },
           _count: { select: { members: true, tasks: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -145,19 +156,28 @@ export class ProjectsService {
   }
 
   async update(id: string, dto: Partial<import('./dto/create-project.dto').CreateProjectDto>) {
-    return this.prisma.project.update({ where: { id }, data: { ...dto } });
+    const { pmId, orgUnitId, customerId, ...rest } = dto as any;
+    return this.prisma.project.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(pmId      ? { pm:       { connect: { id: pmId } } }      : {}),
+        ...(orgUnitId ? { orgUnit:  { connect: { id: orgUnitId } } } : {}),
+        ...(customerId ? { customer: { connect: { id: customerId } } } : {}),
+      },
+    });
   }
 
   async remove(id: string) {
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new NotFoundException('Không tìm thấy dự án');
+    return this.prisma.project.update({ where: { id }, data: { deletedAt: new Date() } });
+  }
 
-    const taskIds = (await this.prisma.task.findMany({ where: { projectId: id }, select: { id: true } })).map((t) => t.id);
-    await this.prisma.timeLog.deleteMany({ where: { taskId: { in: taskIds } } });
-    await this.prisma.task.deleteMany({ where: { projectId: id } });
-    await this.prisma.allocation.deleteMany({ where: { projectId: id } });
-    await this.prisma.alertConfig.deleteMany({ where: { projectId: id } });
-    return this.prisma.project.delete({ where: { id } });
+  async restore(id: string) {
+    const project = await this.prisma.project.findUnique({ where: { id } });
+    if (!project) throw new NotFoundException('Không tìm thấy dự án');
+    return this.prisma.project.update({ where: { id }, data: { deletedAt: null } });
   }
 
   async removeMember(projectId: string, memberId: string) {

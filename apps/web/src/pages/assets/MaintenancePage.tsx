@@ -7,7 +7,7 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PlusOutlined, ToolOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetAllMaintenance, useGetAssets, useAddMaintenance,
   type AssetMaintenance, type MaintenanceFilterParams,
@@ -25,13 +25,7 @@ const TYPE_OPTIONS = [
 ];
 
 export default function AssetMaintenancePage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const { bgContainer, borderColor, textPrimary, textMuted, preset } = useThemePalette();
 
   const [filters, setFilters] = useState<MaintenanceFilterParams & { page: number; limit: number }>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);

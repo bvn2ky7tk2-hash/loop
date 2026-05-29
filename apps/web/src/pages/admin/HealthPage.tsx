@@ -10,7 +10,8 @@ import {
   CloseCircleFilled,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { healthApi, QueueHealth } from '../../api/health';
+import { healthApi } from '../../api/health';
+import type { QueueHealth } from '../../api/health';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';

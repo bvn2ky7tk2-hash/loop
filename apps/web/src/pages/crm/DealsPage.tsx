@@ -13,7 +13,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { usersApi } from '../../api/users';
 import {
   useGetDeals, useCreateDeal, useUpdateDeal, useMarkDealWon, useMarkDealLost, useDeleteDeal,
@@ -108,17 +108,8 @@ function DealCard({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function DealsPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
   const { user } = useAuthStore();
-
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const bgSubPanel  = isDark ? '#1A2744' : '#F8FAFC';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const [viewMode, setViewMode]       = useState<'kanban' | 'list'>('kanban');
   const [filters, setFilters]         = useState<DealFilterDto>({ page: 1, limit: 40 });
@@ -241,7 +232,11 @@ export default function DealsPage() {
               )}
             </div>
             <div style={{ padding: '10px 10px 2px', minHeight: 60 }}>
-              {stageDeals.map(deal => (
+              {stageDeals.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '16px 0', color: textMuted, fontSize: 12 }}>
+                  Chưa có deal
+                </div>
+              ) : stageDeals.map(deal => (
                 <DealCard
                   key={deal.id}
                   deal={deal}
@@ -372,6 +367,7 @@ export default function DealsPage() {
             columns={columns}
             dataSource={deals}
             loading={isLoading}
+            locale={{ emptyText: 'Chưa có deal nào' }}
             onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewDeal(record); }, style: { cursor: 'pointer' } })}
             pagination={{
               current: filters.page,

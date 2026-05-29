@@ -19,11 +19,11 @@ export class PermissionGuard implements CanActivate {
     ]);
     if (isPublic) return true;
 
-    const requiredCode = this.reflector.getAllAndOverride<string | undefined>(PERMISSION_KEY, [
+    const requiredCodes = this.reflector.getAllAndOverride<string[] | undefined>(PERMISSION_KEY, [
       ctx.getHandler(),
       ctx.getClass(),
     ]);
-    if (!requiredCode) return true;
+    if (!requiredCodes || requiredCodes.length === 0) return true;
 
     const user = ctx.switchToHttp().getRequest<{ user?: User }>().user;
     if (!user) return false;
@@ -31,7 +31,11 @@ export class PermissionGuard implements CanActivate {
     // ADMIN bypasses all permission checks
     if (user.role === 'ADMIN') return true;
 
-    const allowed = await this.permissions.userHasPermission(user.id, requiredCode);
+    // OR logic — user needs at least one of the required codes
+    const results = await Promise.all(
+      requiredCodes.map(code => this.permissions.userHasPermission(user.id, code)),
+    );
+    const allowed = results.some(Boolean);
     if (!allowed) throw new ForbiddenException('Bạn không có quyền thực hiện thao tác này');
     return true;
   }

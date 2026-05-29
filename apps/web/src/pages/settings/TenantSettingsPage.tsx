@@ -6,7 +6,8 @@ import {
 import { BuildOutlined, SaveOutlined, EyeOutlined } from '@ant-design/icons';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { tenantApi, TenantConfig } from '../../api/tenant';
+import { tenantApi } from '../../api/tenant';
+import type { TenantConfig } from '../../api/tenant';
 import { useTenantStore } from '../../store/tenant.store';
 
 const { Text } = Typography;

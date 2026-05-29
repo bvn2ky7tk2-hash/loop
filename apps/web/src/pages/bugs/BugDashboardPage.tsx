@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { projectsApi } from '../../api/projects';
 import { useGetBugStats } from '../../api/bugs.api';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 
 const STATUS_COLORS = ['#1677FF', '#FA8C16', '#52C41A', '#8C8C8C', '#D9D9D9'];
@@ -20,8 +20,7 @@ const SEVERITY_COLORS: Record<string, string> = {
 };
 
 export default function BugDashboardPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const primary = preset.primary;
   const chartCardStyle = {
     borderRadius: 12,

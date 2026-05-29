@@ -39,7 +39,7 @@ export class ContactsController {
 
   @Get()
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
-  @RequirePermission(PERMISSIONS.CRM_READ)
+  @RequirePermission('crm_contacts:read', PERMISSIONS.CRM_READ)
   @ApiOperation({ summary: 'Danh sách liên hệ' })
   @ApiQuery({ name: 'customerId', required: false })
   findAll(@Query() query: ContactsQueryDto) {
@@ -52,7 +52,7 @@ export class ContactsController {
 
   @Get(':id')
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
-  @RequirePermission(PERMISSIONS.CRM_READ)
+  @RequirePermission('crm_contacts:read', PERMISSIONS.CRM_READ)
   @ApiOperation({ summary: 'Chi tiết liên hệ' })
   findOne(@Param('id') id: string) {
     return this.contactsService.findOne(id);
@@ -60,7 +60,7 @@ export class ContactsController {
 
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_contacts:create', PERMISSIONS.CRM_MANAGE)
   @ApiOperation({ summary: 'Tạo liên hệ' })
   create(@Body() dto: CreateContactDto) {
     return this.contactsService.create(dto);
@@ -68,7 +68,7 @@ export class ContactsController {
 
   @Patch(':id')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_contacts:create', PERMISSIONS.CRM_MANAGE)
   @ApiOperation({ summary: 'Cập nhật liên hệ' })
   update(@Param('id') id: string, @Body() dto: UpdateContactDto) {
     return this.contactsService.update(id, dto);
@@ -76,7 +76,7 @@ export class ContactsController {
 
   @Delete(':id')
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
-  @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @RequirePermission('crm_contacts:create', PERMISSIONS.CRM_MANAGE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Xoá liên hệ' })
   remove(@Param('id') id: string) {

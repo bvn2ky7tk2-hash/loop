@@ -167,6 +167,7 @@ export class TimesheetService {
     const users = await this.prisma.user.findMany({
       where: { ...orgWhere, isActive: true },
       select: { id: true, name: true },
+      take: 500,
     });
 
     const userIds = users.map((u) => u.id);
@@ -420,6 +421,7 @@ export class TimesheetService {
       },
       include: { user: { select: { id: true, name: true } } },
       orderBy: { submittedAt: 'asc' },
+      take: 500,
     });
 
     return records.map((r) => ({
@@ -448,6 +450,7 @@ export class TimesheetService {
           include: { orgUnit: { include: { parent: true } } },
         },
       },
+      take: 500,
     });
 
     for (const record of overdueRecords) {

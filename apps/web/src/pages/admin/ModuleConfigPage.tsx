@@ -8,7 +8,8 @@ import {
   ToolOutlined, UserOutlined, SettingOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { moduleConfigApi, ModuleConfig } from '../../api/module-config';
+import { moduleConfigApi } from '../../api/module-config';
+import type { ModuleConfig } from '../../api/module-config';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';

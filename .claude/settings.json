@@ -35,7 +35,12 @@
       "Bash(curl -sv -X POST http://localhost:3000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@loop.vn\",\"password\":\"Admin@123\"}')",
       "Bash(curl -s -X POST \"http://localhost:3000/api/v1/auth/login\" -H \"Content-Type: application/json\" -d '{\"email\":\"admin@loop.vn\",\"password\":\"admin\"}')",
       "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, LEFT\\(password_hash, 30\\) as hash_prefix FROM users WHERE email = 'admin@loop.vn';\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, password_hash FROM users WHERE email = 'admin@loop.vn';\" -t)"
+      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, password_hash FROM users WHERE email = 'admin@loop.vn';\" -t)",
+      "Bash(node prisma/seed-skill-matrix.js)",
+      "Bash(PGPASSWORD=loop_password psql -h localhost -U loop -d loop_db -c \"SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename;\")",
+      "Bash(PGPASSWORD=loop_password psql -h localhost -U loop -d loop_db -f prisma/migrations/20290101000000_v4_foundation/migration.sql)",
+      "Bash(sed -n '1367,1380p' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
+      "Bash(sed -n '1310,1370p' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)"
     ]
   }
 }

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { AccountingService } from './accounting.service';
 import { CreateJournalDto } from './dto/create-journal.dto';
 import { FilterJournalDto } from './dto/filter-journal.dto';
@@ -22,13 +23,13 @@ export class AccountingController {
   // ── Chart of Accounts ───────────────────────────────────────────────────────
 
   @Get('accounts')
-  @RequirePermission('finance:read')
+  @RequirePermission('accounts:read', 'finance:read')
   listAccounts(@Query() q: FilterAccountsQuery) {
     return this.svc.listAccounts(q.type);
   }
 
   @Get('accounts/:code')
-  @RequirePermission('finance:read')
+  @RequirePermission('accounts:read', 'finance:read')
   getAccount(@Param('code') code: string) {
     return this.svc.getAccount(code);
   }
@@ -36,13 +37,13 @@ export class AccountingController {
   // ── Journal Entries ─────────────────────────────────────────────────────────
 
   @Get('journal')
-  @RequirePermission('finance:read')
+  @RequirePermission('journal:read', 'finance:read')
   listJournal(@Query() dto: FilterJournalDto) {
     return this.svc.listJournal(dto);
   }
 
   @Post('journal')
-  @RequirePermission('finance:manage')
+  @RequirePermission('journal:manage', 'finance:manage')
   createJournal(@Body() dto: CreateJournalDto, @CurrentUser('sub') userId: string) {
     return this.svc.createJournal(dto, userId);
   }
@@ -50,19 +51,19 @@ export class AccountingController {
   // ── Financial Reports ───────────────────────────────────────────────────────
 
   @Get('reports/profit-loss')
-  @RequirePermission('finance:read')
+  @RequirePermission('financial_reports:read', 'finance:read')
   getProfitLoss(@Query('startDate') startDate: string, @Query('endDate') endDate: string) {
     return this.svc.getProfitLoss(startDate, endDate);
   }
 
   @Get('reports/balance-sheet')
-  @RequirePermission('finance:read')
+  @RequirePermission('financial_reports:read', 'finance:read')
   getBalanceSheet(@Query('asOfDate') asOfDate: string) {
     return this.svc.getBalanceSheet(asOfDate);
   }
 
   @Get('reports/income-statement')
-  @RequirePermission('finance:read')
+  @RequirePermission('financial_reports:read', 'finance:read')
   getIncomeStatement(
     @Query('from') from: string,
     @Query('to') to: string,
@@ -71,11 +72,28 @@ export class AccountingController {
   }
 
   @Get('reports/cash-flow')
-  @RequirePermission('finance:read')
+  @RequirePermission('financial_reports:read', 'finance:read')
   getCashFlowStatement(
     @Query('from') from: string,
     @Query('to') to: string,
   ) {
     return this.svc.getCashFlowStatement(from, to);
+  }
+
+  // ── L-07: Export Excel báo cáo lãi lỗ ────────────────────────────────────
+
+  @Get('reports/profit-loss/export')
+  @RequirePermission('financial_reports:export', 'finance:export')
+  async exportProfitLoss(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Res() res: Response,
+  ) {
+    const buffer = await this.svc.exportProfitLoss(startDate, endDate);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="profit-loss-${startDate}-${endDate}.xlsx"`,
+    });
+    (res as any).send(buffer);
   }
 }

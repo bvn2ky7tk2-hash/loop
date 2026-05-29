@@ -40,7 +40,7 @@ export interface KbStats {
   totalViews:     number;
 }
 
-const BASE = '/api/v1/kb';
+const BASE = '/kb';
 
 export const kbApi = {
   stats: () =>

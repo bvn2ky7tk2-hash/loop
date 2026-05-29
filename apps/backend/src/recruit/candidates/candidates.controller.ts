@@ -29,7 +29,7 @@ import { PERMISSIONS } from '../../permissions/permissions.constants';
 class UpdateStageDto {
   @ApiProperty({ enum: CandidateStage })
   @IsEnum(CandidateStage)
-  stage: CandidateStage;
+  stage!: CandidateStage;
 }
 
 @ApiTags('Recruitment — Candidates')
@@ -39,28 +39,28 @@ export class CandidatesController {
   constructor(private readonly candidatesService: CandidatesService) {}
 
   @Post()
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Tạo ứng viên mới' })
   create(@Body() dto: CreateCandidateDto) {
     return this.candidatesService.create(dto);
   }
 
   @Get()
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_candidates:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Danh sách ứng viên' })
   findAll(@Query() filter: FilterCandidateDto) {
     return this.candidatesService.findAll(filter);
   }
 
   @Get(':id')
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_candidates:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Chi tiết ứng viên' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.candidatesService.findOne(id);
   }
 
   @Put(':id')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Cập nhật ứng viên' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -70,7 +70,7 @@ export class CandidatesController {
   }
 
   @Delete(':id')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Xoá ứng viên (chỉ stage APPLIED)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -78,7 +78,7 @@ export class CandidatesController {
   }
 
   @Patch(':id/stage')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Chuyển stage ứng viên' })
   updateStage(
     @Param('id', ParseUUIDPipe) id: string,
@@ -88,7 +88,7 @@ export class CandidatesController {
   }
 
   @Post(':id/hire')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Onboard ứng viên thành nhân sự' })
   hire(
     @Param('id', ParseUUIDPipe) id: string,
@@ -98,7 +98,7 @@ export class CandidatesController {
   }
 
   @Post(':id/cv')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_candidates:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Upload CV ứng viên (PDF/DOC/DOCX, tối đa 10MB)' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
@@ -110,7 +110,7 @@ export class CandidatesController {
   }
 
   @Get(':id/cv-url')
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_candidates:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Lấy presigned URL để tải CV' })
   getCvUrl(@Param('id', ParseUUIDPipe) id: string) {
     return this.candidatesService.getCvUrl(id);

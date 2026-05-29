@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsUUID,
   MaxLength,
   Max,
   Min,
@@ -26,12 +27,12 @@ export class CreateDealDto {
   title: string;
 
   @ApiProperty()
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   customerId: string;
 
   @ApiProperty()
-  @IsString()
+  @IsUUID()
   @IsNotEmpty()
   assigneeId: string;
 

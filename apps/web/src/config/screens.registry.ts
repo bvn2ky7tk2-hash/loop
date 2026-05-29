@@ -79,6 +79,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/overtime',           module: 'people', label: 'Đăng ký OT',               icon: 'FieldTimeOutlined',     permCode: 'employees:read',              sortOrder: 24 },
   { route: '/hr/shifts',             module: 'people', label: 'Ca làm việc',               icon: 'ClockCircleOutlined',   permCode: 'work_shifts:read',            sortOrder: 25 },
   { route: '/hr/requests',           module: 'people', label: 'Quản lý đơn từ',             icon: 'FileTextOutlined',      permCode: 'timesheets_approve:approve',   sortOrder: 26 },
+  { route: '/hr/leaves',             module: 'people', label: 'Quản lý đơn nghỉ phép',      icon: 'CalendarOutlined',      permCode: 'leaves:approve',               sortOrder: 27 },
 
   // ─── Finance — Tài chính ───────────────────────────────────────────────────
   { route: '/cost',                          module: 'finance', label: 'Chi phí dự án',      icon: 'DollarOutlined',     permCode: 'project_cost:read',       sortOrder: 1 },
@@ -198,6 +199,7 @@ export const PERM_DOMAIN_COLOR: Record<string, string> = {
   org_chart:           '#059669',
   contracts:           '#0D9488',
   leaves:              '#65A30D',
+  leaves_approve:      '#10B981',
   payroll:             '#0D9488',
   payroll_settings:    '#0D9488',
   training:            '#0891B2',
@@ -283,6 +285,7 @@ export const PERM_DOMAIN_LABEL: Record<string, string> = {
   org_chart:           'Sơ đồ tổ chức',
   contracts:           'Hợp đồng lao động',
   leaves:              'Nghỉ phép',
+  leaves_approve:      'Duyệt nghỉ phép',
   payroll:             'Bảng lương',
   payroll_settings:    'Cài đặt lương',
   training:            'Đào tạo',
@@ -368,6 +371,7 @@ export const PERM_DOMAIN_MODULE: Record<string, string> = {
   org_chart:           'people',
   contracts:           'people',
   leaves:              'people',
+  leaves_approve:      'people',
   payroll:             'people',
   payroll_settings:    'people',
   training:            'people',

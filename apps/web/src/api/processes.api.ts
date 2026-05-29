@@ -22,7 +22,7 @@ export type FormField =
   | {
       name: string;
       label: string;
-      type: 'text' | 'number' | 'date' | 'textarea' | 'select';
+      type: 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select';
       required?: boolean;
       placeholder?: string;
       options?: { label: string; value: string }[];

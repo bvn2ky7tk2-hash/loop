@@ -1,16 +1,17 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Button, Tree, Card, Form, Input, Select, Modal,
-  App, Spin, Space, Popconfirm, Tooltip, Row, Col,
+  App, Spin, Space, Popconfirm, Tooltip, Row, Col, Tag,
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined,
-  PlusCircleOutlined, PlusSquareOutlined, MinusSquareOutlined,
+  PlusCircleOutlined, PlusSquareOutlined, MinusSquareOutlined, CrownOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { DataNode } from 'antd/es/tree';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
+import { jobTitlesApi } from '../../api/hr-core';
 
 function flattenTree(nodes: OrgUnitTree[]): OrgUnitTree[] {
   return nodes.flatMap((n) => [n, ...flattenTree(n.children ?? [])]);
@@ -44,6 +45,16 @@ export default function OrgPage() {
     queryKey: ['org-units'],
     queryFn: orgUnitsApi.getTree,
   });
+
+  const { data: jobTitlesData } = useQuery({
+    queryKey: ['job-titles-active'],
+    queryFn: () => jobTitlesApi.list({ isActive: true, limit: 200 }),
+    staleTime: 5 * 60_000,
+  });
+  const jobTitleOptions = (jobTitlesData?.data ?? []).map((jt) => ({
+    value: jt.id,
+    label: jt.name,
+  }));
 
   const flat = flattenTree(tree);
 
@@ -99,7 +110,12 @@ export default function OrgPage() {
 
   function openEdit(node: OrgUnitTree) {
     setEditTarget(node);
-    editForm.setFieldsValue({ name: node.name, code: node.code, parentId: node.parentId ?? null });
+    editForm.setFieldsValue({
+      name: node.name,
+      code: node.code,
+      parentId: node.parentId ?? null,
+      headJobTitleId: node.headJobTitleId ?? null,
+    });
   }
 
   function openCreateWithParent(parentId: string) {
@@ -131,7 +147,7 @@ export default function OrgPage() {
               <div style={{ fontWeight: 600, fontSize: 13, color: '#1e293b', lineHeight: 1.35 }}>
                 {n.name}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3, flexWrap: 'wrap' }}>
                 <span style={{
                   fontSize: 10, fontWeight: 700, borderRadius: 4,
                   padding: '1px 6px', background: config.codeBg, color: config.codeColor,
@@ -147,6 +163,21 @@ export default function OrgPage() {
                 ) : (
                   <span style={{ fontSize: 11, color: '#94a3b8' }}>Chưa có nhân sự</span>
                 )}
+                {n.head ? (
+                  <Tag
+                    icon={<CrownOutlined />}
+                    style={{ fontSize: 11, margin: 0, background: '#FEF9C3', color: '#92400E', borderColor: '#FDE68A' }}
+                  >
+                    {n.head.fullName} · {n.head.jobTitleName}
+                  </Tag>
+                ) : n.headJobTitle ? (
+                  <Tag
+                    icon={<CrownOutlined />}
+                    style={{ fontSize: 11, margin: 0, background: '#F3F4F6', color: '#6B7280', borderColor: '#E5E7EB' }}
+                  >
+                    {n.headJobTitle.name} · Chưa có người
+                  </Tag>
+                ) : null}
               </div>
             </div>
             <Space size={2} onClick={(e) => e.stopPropagation()} style={{ flexShrink: 0 }}>
@@ -178,6 +209,18 @@ export default function OrgPage() {
       };
     });
   }
+
+  const jobTitleSelectField = (
+    <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
+      <Select
+        allowClear
+        showSearch
+        optionFilterProp="label"
+        placeholder="VD: Trưởng phòng, Giám đốc..."
+        options={jobTitleOptions}
+      />
+    </Form.Item>
+  );
 
   return (
     <div className="page-wrapper">
@@ -232,6 +275,7 @@ export default function OrgPage() {
         )}
       </Card>
 
+      {/* Modal Thêm */}
       <Modal
         title="Thêm đơn vị tổ chức"
         open={createOpen}
@@ -262,9 +306,11 @@ export default function OrgPage() {
               options={flat.map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
             />
           </Form.Item>
+          {jobTitleSelectField}
         </Form>
       </Modal>
 
+      {/* Modal Sửa */}
       <Modal
         title={`Sửa: ${editTarget?.name ?? ''}`}
         open={!!editTarget}
@@ -295,6 +341,7 @@ export default function OrgPage() {
               options={flat.filter((u) => u.id !== editTarget?.id).map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
             />
           </Form.Item>
+          {jobTitleSelectField}
         </Form>
       </Modal>
     </div>

@@ -6,7 +6,7 @@ import {
 import { PlusOutlined, BookOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetJournal, useGetAccounts, useCreateJournal,
   type JournalEntry, type JournalFilter,
@@ -20,16 +20,8 @@ function formatMoney(v: string | number) {
 }
 
 export default function JournalPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  const bgContainer  = isDark ? '#1E293B' : '#ffffff';
-  const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
-  const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
+  const { isDark, bgContainer, bgCard, textPrimary, textMuted, borderColor, linkColor, preset } = useThemePalette();
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const borderColor  = isDark ? '#334155' : '#E2E8F0';
-  const linkColor    = isDark ? '#93C5FD' : preset.primary;
 
   const [filter, setFilter] = useState<JournalFilter>({ page: 1, limit: 50 });
   const [modalOpen, setModalOpen] = useState(false);

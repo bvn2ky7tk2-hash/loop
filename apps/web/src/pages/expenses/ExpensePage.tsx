@@ -526,6 +526,7 @@ export default function ExpensePage() {
         loading={isLoading}
         rowKey="id"
         columns={columns}
+        locale={{ emptyText: 'Chưa có yêu cầu chi phí nào' }}
         onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewExpense(record); }, style: { cursor: 'pointer' } })}
         pagination={{
           total: data?.total,

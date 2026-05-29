@@ -34,7 +34,7 @@ export class CreateEmployeeDto {
   techStack?: string[];
 
   @IsOptional()
-  @IsString()
+  @Matches(/^\d{9}(\d{3})?$/, { message: 'CCCD phải là 9 hoặc 12 chữ số' })
   cccd?: string;
 
   @IsOptional()
@@ -52,4 +52,12 @@ export class CreateEmployeeDto {
   @IsOptional()
   @IsUUID()
   userId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  positionId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  leavePolicyId?: string;
 }

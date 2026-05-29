@@ -1,0 +1,28 @@
+# Memory Index
+
+- [Project Loop — Status](project_loop_status.md) — Epics 1-13 complete; Epic 13=Bug & Issue Tracking (MinIO, severity, dashboard)
+- [Epic 13 Bug Tracking](project_bug_epic13.md) — Bug schema, CRUD, MinIO attachments, stats API, web UI (list/my/dashboard), notifications
+- [Epic 12 BPM Module](project_bpm_epic12.md) — BPMN engine bugs/fixes, process definitions, user tasks, form fields, demo seed
+- [BPMN Condition Syntax](feedback_bpmn_conditions.md) — bpmn-elements dùng property path, không phải JS eval; dùng ${environment.variables.X}
+- [Ngôn ngữ giao tiếp](feedback_language.md) — Luôn trả lời hoàn toàn bằng tiếng Việt
+- [Git Push tự động](feedback_git_push.md) — Khi user nói push code, thực hiện luôn (gh CLI đã auth, không hỏi thêm)
+- [Loop v2 — Telegram Integration](project_telegram_v2.md) — v2 tích hợp Telegram bot (push task mới, deadline alert, update status bidirectional via polling)
+- [Build iOS lên iPhone](feedback_ios_build.md) — Chỉ dùng local build (expo run:ios --device), không giải thích Expo Go hay EAS
+- [Dark mode table header](feedback_dark_mode_table_header.md) — Header cột bảng quá tối dark mode; luôn giữ Table token override trong ConfigProvider
+- [Dark Mode Design Rules](feedback_dark_mode_design_rules.md) — Palette chuẩn, layering nền, màu cấm, isDark pattern, StatCard nền đặc màu (#8 mới)
+- [Loop Product Branding](project_loop_product.md) — Tên sản phẩm "Loop 360"; tagline "Nền tảng Quản Trị 360 cho doanh nghiệp"; copyright "Loop 360"
+- [Dashboard colorful card list](project_dashboard_list.md) — Danh sách 6 dashboard/report pages cần SparklineCard filled + chartCardStyle; áp dụng cho trang mới luôn
+- [Lộ trình nâng cấp ERP](project_erp_roadmap.md) — 7 module Phase 1-2 xong; Phase 3 defined: crm/recruit/asset + finance+/hr+ → 10 module tổng; detail tại phase3-planning.md
+- [Bố cục Module Loop](project_module_structure.md) — 8 module: pm/bpm/timesheet/reports/hr/finance/crm/admin; Finance có /cost; Admin có /integrations; label tiếng Anh
+- [Epic 15 Authorization](project_permission_epic15.md) — RBAC + function permissions + org-scope; 3 lớp, 8 stories, ARCH-020–024
+- [Checklist Phân quyền](feedback_permission_checklist.md) — Mọi route/tính năng mới BẮT BUỘC: ROUTE_PERMISSION_MAP + ICON_MAP + router + backend guard; permission codes chuẩn hệ thống
+- [BPM Notification Upgrade](project_bpm_notification_upgrade.md) — Nâng cấp BPM: email/push per-step, template, chọn người nhận — chưa xây, để làm sau
+- [BPM Workflow Integration](project_bpm_workflow_integration.md) — Leave/Expense dùng ProcessEventBus để auto-start/complete BPM process; ProcessDefinition.key, LeaveType.processDefinitionKey
+- [Color System — Loop ERP](project_color_system.md) — Bảng màu ngữ nghĩa SparklineCard + StatCard (nền đặc), StatusPill, Table header tokens, format số vi-VN
+- [Việt hóa — Ngoại lệ & Mapping](feedback_viet_hoa_rules.md) — Status Bug/Task + HR levels giữ tiếng Anh; Severity: Critical→Nghiêm trọng/High→Cao/Medium→Trung bình/Low→Thấp
+- [UI Patterns hệ thống](project_ui_patterns.md) — useThemePalette hook, PageHeader, StatCard, confirmDelete, FilterBar; pattern mẫu CRUD mới; GlobalSearch, ModuleSwitcherModal
+- [Loop v2.0 Roadmap](project_loop_v2_roadmap.md) — 12 mục nâng cấp nghiệp vụ; #1-5 xong; tiếp theo #6 OKR/KPI
+- [Tận dụng BPM cho workflow](feedback_use_bpm_for_workflows.md) — Mọi tính năng có approval/review flow phải dùng BPMN engine, không tự làm state machine
+- [Demo Data sau khi Dev](feedback_demo_data.md) — Sau khi dev xong tính năng mới, seed luôn demo data logic thực tế
+- [Loop v3.0 — Navigation Redesign](project_loop_v3_navigation.md) — Persona-driven; 10→8 module; Reports nhúng vào module; Global Executive Dashboard; chờ v2.x xong
+- [Loop Product Roadmap](project_loop_product_roadmap.md) — Master roadmap v2.x→v3.0→v3.x; v2.x=5 utility releases; v3.0=navigation+8dashboard+Cmd+K+deployment tools; v3.x=mobile/BI/AI

@@ -29,21 +29,21 @@ export class JobsController {
 
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_jobs:manage', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Tạo vị trí tuyển dụng mới' })
   create(@Body() dto: CreateJobDto) {
     return this.jobsService.create(dto);
   }
 
   @Get()
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_jobs:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Danh sách vị trí tuyển dụng' })
   findAll(@Query() filter: FilterJobDto) {
     return this.jobsService.findAll(filter);
   }
 
   @Get(':id')
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_jobs:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Chi tiết vị trí tuyển dụng' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.jobsService.findOne(id);
@@ -51,14 +51,14 @@ export class JobsController {
 
   @Put(':id')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_jobs:manage', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Cập nhật vị trí tuyển dụng' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateJobDto) {
     return this.jobsService.update(id, dto);
   }
 
   @Delete(':id')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_jobs:manage', PERMISSIONS.RECRUIT_MANAGE)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Xoá vị trí tuyển dụng' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -66,7 +66,7 @@ export class JobsController {
   }
 
   @Patch(':id/close')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_jobs:manage', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Đóng vị trí tuyển dụng' })
   close(@Param('id', ParseUUIDPipe) id: string) {
     return this.jobsService.close(id);

@@ -62,4 +62,12 @@ export class InvoicesController {
   remove(@Param('id') id: string) {
     return this.svc.remove(id);
   }
+
+  // ── L-04: Hóa đơn quá hạn ────────────────────────────────────────────────
+
+  @Get('overdue')
+  @RequirePermission(PERMISSIONS.FINANCE_READ)
+  getOverdue() {
+    return this.svc.getOverdue();
+  }
 }

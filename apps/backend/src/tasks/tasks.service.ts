@@ -1,6 +1,7 @@
 import {
-  Injectable, NotFoundException, BadRequestException, ForbiddenException, Optional,
+  Injectable, NotFoundException, BadRequestException, ForbiddenException, Optional, Inject,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Prisma, TaskStatus } from '../generated/prisma';
 import type { Task, User } from '../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
@@ -20,8 +21,13 @@ export class TasksService {
     private readonly prisma: PrismaService,
     private readonly telegramService: TelegramService,
     private readonly telegramCardBuilder: TelegramCardBuilder,
+    @Inject(REQUEST) private readonly request: any,
     @Optional() private readonly notificationsService?: NotificationsService,
   ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async create(projectId: string, dto: CreateTaskDto, caller: User): Promise<Task & { warning?: string }> {
     const isMember = caller.role === 'MEMBER';
@@ -267,7 +273,11 @@ export class TasksService {
   }
 
   async getPendingApprovalTasks(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
-    const where = { status: 'PENDING_APPROVAL' as TaskStatus };
+    const tenantId = this.getTenantId();
+    const where: any = {
+      status: 'PENDING_APPROVAL' as TaskStatus,
+      ...(tenantId ? { project: { tenantId } } : {}),
+    };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.task.findMany({
         where,
@@ -321,9 +331,11 @@ export class TasksService {
       assigneeFilter = { assigneeId: employeeId };
     }
 
+    const tenantId = this.getTenantId();
     const where = {
       ...assigneeFilter,
       ...(projectId ? { projectId } : {}),
+      ...(tenantId ? { project: { tenantId } } : {}),
       status: { not: 'CANCELLED' as TaskStatus },
     };
 

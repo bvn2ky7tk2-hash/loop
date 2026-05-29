@@ -3,7 +3,7 @@ import {
   Select, Table, Card, Row, Col, DatePicker,
 } from 'antd';
 import { DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
@@ -47,8 +47,7 @@ export default function CostPage() {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
 
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const primary = preset.primary;
   const chartCardStyle = {
     borderRadius: 12,

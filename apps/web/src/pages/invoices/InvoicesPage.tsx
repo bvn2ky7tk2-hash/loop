@@ -305,6 +305,7 @@ export default function InvoicesPage() {
           columns={columns}
           dataSource={data?.data ?? []}
           loading={isLoading}
+          locale={{ emptyText: 'Chưa có hóa đơn nào' }}
           pagination={{
             current:     filters.page,
             pageSize:    filters.limit,

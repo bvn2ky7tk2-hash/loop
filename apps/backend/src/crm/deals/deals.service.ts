@@ -4,9 +4,11 @@ import {
   NotFoundException,
   ConflictException,
   UnprocessableEntityException,
+  Inject,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
-import { DealStage, ProjectType, ProjectStatus } from '../../generated/prisma';
+import { Prisma, DealStage, ProjectType, ProjectStatus } from '../../generated/prisma';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
@@ -24,7 +26,14 @@ const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
 
 @Injectable()
 export class DealsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) private readonly request: any,
+  ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async findAll(
     stage?: DealStage,
@@ -33,10 +42,12 @@ export class DealsService {
     page = 1,
     limit = 50,
   ): Promise<PaginatedResult<any>> {
-    const where: any = {};
+    const tenantId = this.getTenantId();
+    const where: any = { deletedAt: null };
     if (stage) where.stage = stage;
     if (customerId) where.customerId = customerId;
     if (assigneeId) where.assigneeId = assigneeId;
+    if (tenantId) where.tenantId = tenantId;
 
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
@@ -170,6 +181,65 @@ export class DealsService {
         'Chỉ có thể xoá deal ở giai đoạn QUALIFICATION hoặc LOST',
       );
     }
-    await this.prisma.deal.delete({ where: { id } });
+    return this.prisma.deal.update({ where: { id }, data: { deletedAt: new Date() } });
+  }
+
+  async restore(id: string) {
+    const deal = await this.prisma.deal.findUnique({ where: { id } });
+    if (!deal) throw new NotFoundException(`Không tìm thấy deal #${id}`);
+    return this.prisma.deal.update({ where: { id }, data: { deletedAt: null } });
+  }
+
+  // ── L-01: CRM Analytics ───────────────────────────────────────────────────
+
+  async getAnalyticsByStage() {
+    const result = await this.prisma.deal.groupBy({
+      by: ['stage'],
+      _count: { id: true },
+      _sum: { value: true },
+      where: { deletedAt: null },
+    });
+    return result.map((r) => ({
+      stage: r.stage,
+      count: r._count.id,
+      totalValue: Number(r._sum.value ?? 0),
+    }));
+  }
+
+  async getWinRate(period?: string) {
+    const where: Prisma.DealWhereInput = { deletedAt: null };
+    if (period) {
+      const [year, month] = period.split('-').map(Number);
+      where.createdAt = {
+        gte: new Date(year, month - 1, 1),
+        lt:  new Date(year, month, 1),
+      };
+    }
+    const [won, lost] = await Promise.all([
+      this.prisma.deal.count({ where: { ...where, stage: DealStage.WON } }),
+      this.prisma.deal.count({ where: { ...where, stage: DealStage.LOST } }),
+    ]);
+    const total = won + lost;
+    return {
+      won,
+      lost,
+      total,
+      winRate: total > 0 ? Math.round((won / total) * 100) : 0,
+    };
+  }
+
+  async getAging() {
+    const deals = await this.prisma.deal.findMany({
+      where: {
+        deletedAt: null,
+        stage: { notIn: [DealStage.WON, DealStage.LOST] },
+      },
+      select: { id: true, title: true, stage: true, createdAt: true },
+      take: 100,
+    });
+    return deals.map((d) => ({
+      ...d,
+      ageDays: Math.floor((Date.now() - d.createdAt.getTime()) / 86400000),
+    }));
   }
 }

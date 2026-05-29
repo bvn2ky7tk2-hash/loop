@@ -22,14 +22,14 @@ export class InterviewsController {
   constructor(private readonly interviewsService: InterviewsService) {}
 
   @Post()
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_interviews:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Tạo lịch phỏng vấn' })
   create(@Body() dto: CreateInterviewDto) {
     return this.interviewsService.create(dto);
   }
 
   @Get()
-  @RequirePermission(PERMISSIONS.RECRUIT_READ)
+  @RequirePermission('recruit_interviews:read', PERMISSIONS.RECRUIT_READ)
   @ApiOperation({ summary: 'Danh sách phỏng vấn (lọc theo candidateId, hoặc trả tất cả)' })
   @ApiQuery({ name: 'candidateId', required: false, type: String })
   @ApiQuery({ name: 'page',  required: false, type: Number })
@@ -44,7 +44,7 @@ export class InterviewsController {
   }
 
   @Patch(':id/result')
-  @RequirePermission(PERMISSIONS.RECRUIT_MANAGE)
+  @RequirePermission('recruit_interviews:create', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Cập nhật kết quả phỏng vấn' })
   updateResult(
     @Param('id', ParseUUIDPipe) id: string,

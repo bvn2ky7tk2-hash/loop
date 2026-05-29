@@ -7,6 +7,10 @@ export interface Employee {
   level: string;
   techStack: string[];
   orgUnitId?: string;
+  orgUnit?: { id: string; name: string };
+  positionId?: string | null;
+  position?: { id: string; code: string; jobTitle?: { name: string } } | null;
+  leavePolicyId?: string | null;
   startDate?: string;
   birthdate?: string;
   email?: string;

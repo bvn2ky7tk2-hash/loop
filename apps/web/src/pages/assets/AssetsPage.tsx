@@ -12,7 +12,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { orgUnitsApi } from '../../api/org-units';
 import { usersApi } from '../../api/users';
 import {
@@ -47,14 +47,7 @@ const CATEGORY_OPTIONS = Object.entries(CATEGORY_META).map(([k, v]) => ({ value:
 const STATUS_OPTIONS   = Object.entries(STATUS_META).map(([k, v]) => ({ value: k as AssetStatus, label: v.label }));
 
 export default function AssetsPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const linkColor   = isDark ? '#93C5FD' : preset.primary;
+  const { bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [filters, setFilters]       = useState<AssetFilterParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer]     = useState(false);
@@ -245,6 +238,7 @@ export default function AssetsPage() {
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Asset>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
+          locale={{ emptyText: 'Chưa có tài sản nào' }}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />

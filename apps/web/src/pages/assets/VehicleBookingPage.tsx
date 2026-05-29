@@ -654,10 +654,15 @@ export default function VehicleBookingPage() {
       <CenteredModal
         title="Đặt xe công vụ"
         open={bookingOpen}
-        onCancel={() => setBookingOpen(false)}
-        onOk={() => bookingForm.submit()}
-        confirmLoading={createRequestMut.isPending}
-        okText="Gửi yêu cầu"
+        onClose={() => setBookingOpen(false)}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => setBookingOpen(false)}>Hủy</Button>
+            <Button type="primary" loading={createRequestMut.isPending} onClick={() => bookingForm.submit()}>
+              Gửi yêu cầu
+            </Button>
+          </div>
+        }
       >
         <Form form={bookingForm} layout="vertical" onFinish={handleBookingSubmit}>
           <Form.Item
@@ -735,10 +740,19 @@ export default function VehicleBookingPage() {
       <CenteredModal
         title={editingVehicle ? `Sửa xe: ${editingVehicle.name}` : 'Thêm xe mới'}
         open={vehicleOpen}
-        onCancel={() => setVehicleOpen(false)}
-        onOk={() => vehicleForm.submit()}
-        confirmLoading={createVehicleMut.isPending || updateVehicleMut.isPending}
-        okText={editingVehicle ? 'Lưu thay đổi' : 'Thêm xe'}
+        onClose={() => setVehicleOpen(false)}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => setVehicleOpen(false)}>Hủy</Button>
+            <Button
+              type="primary"
+              loading={createVehicleMut.isPending || updateVehicleMut.isPending}
+              onClick={() => vehicleForm.submit()}
+            >
+              {editingVehicle ? 'Lưu thay đổi' : 'Thêm xe'}
+            </Button>
+          </div>
+        }
       >
         <Form form={vehicleForm} layout="vertical" onFinish={handleVehicleSubmit}>
           <Form.Item name="name" label="Tên xe" rules={[{ required: true, message: 'Nhập tên xe' }]}>

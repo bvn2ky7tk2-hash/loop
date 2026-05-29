@@ -6,7 +6,7 @@ import {
 import { PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetTrainingPrograms, useGetTrainingRecords, useCreateTrainingProgram,
   useCreateTrainingRecord, useUpdateTrainingRecord,
@@ -26,16 +26,7 @@ const STATUS_META: Record<TrainingStatus, { label: string; color: string }> = {
 };
 
 export default function TrainingPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  const bgContainer  = isDark ? '#1E293B' : '#ffffff';
-  const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
-  const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const borderColor  = isDark ? '#334155' : '#E2E8F0';
-  const linkColor    = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
 
   const [progModalOpen, setProgModalOpen] = useState(false);
   const [recModalOpen, setRecModalOpen] = useState(false);

@@ -3,6 +3,7 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { PayrollStatus } from '../generated/prisma';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
@@ -243,5 +244,81 @@ export class PayrollService {
 
     const url = await this.storage.presignedUrl(record.payslipPath, undefined, 3600);
     return { url, pending: false };
+  }
+
+  // ── L-10: Payslip Excel ───────────────────────────────────────────────────
+
+  async generatePayslipExcel(recordId: string): Promise<Buffer> {
+    const record = await this.prisma.payrollRecord.findUnique({
+      where: { id: recordId },
+      include: {
+        employee: { select: { fullName: true, code: true, email: true } },
+        period:   { select: { name: true, startDate: true, endDate: true } },
+        employeeAllowances: { include: { allowanceType: { select: { name: true } } } },
+        employeeBonuses:    true,
+      },
+    });
+    if (!record) throw new NotFoundException(`PayrollRecord ${recordId} không tìm thấy`);
+
+    const fmt = (n: number | null | undefined) =>
+      (n ?? 0).toLocaleString('vi-VN');
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Phiếu lương');
+    ws.columns = [
+      { key: 'label',  width: 36 },
+      { key: 'value',  width: 24 },
+    ];
+
+    const title = ws.addRow(['PHIẾU LƯƠNG — LOOP 360']);
+    title.font = { bold: true, size: 14 };
+    ws.mergeCells(`A1:B1`);
+
+    ws.addRow([]);
+    ws.addRow(['Nhân viên', `${record.employee.code} — ${record.employee.fullName}`]);
+    ws.addRow(['Email', record.employee.email ?? '—']);
+    ws.addRow(['Kỳ lương', record.period.name]);
+    ws.addRow(['Thời gian', `${new Date(record.period.startDate).toLocaleDateString('vi-VN')} → ${new Date(record.period.endDate).toLocaleDateString('vi-VN')}`]);
+    ws.addRow([]);
+
+    // Thông tin công
+    ws.addRow(['=== CÔNG VÀ GIỜ ===', '']).font = { bold: true };
+    ws.addRow(['Số ngày công', Number(record.workDays)]);
+    ws.addRow(['Ngày nghỉ phép (có lương)', Number(record.paidLeaveDays)]);
+    ws.addRow(['Ngày nghỉ không lương', Number(record.unpaidLeaveDays)]);
+    ws.addRow(['Giờ tăng ca', Number(record.overtimeHours)]);
+    ws.addRow([]);
+
+    // Thu nhập
+    ws.addRow(['=== THU NHẬP ===', '']).font = { bold: true };
+    ws.addRow(['Lương cơ bản', fmt(Number(record.baseSalary))]);
+    ws.addRow(['Lương tăng ca', fmt(Number(record.overtimePay))]);
+
+    for (const allowance of record.employeeAllowances) {
+      ws.addRow([`Phụ cấp: ${allowance.allowanceType.name}`, fmt(Number(allowance.amount))]);
+    }
+    for (const bonus of record.employeeBonuses) {
+      ws.addRow([`Thưởng: ${(bonus as any).note ?? 'Thưởng'}`, fmt(Number((bonus as any).amount ?? 0))]);
+    }
+    ws.addRow(['Tổng thu nhập gộp (Gross)', fmt(Number(record.grossSalary))]).font = { bold: true };
+    ws.addRow([]);
+
+    // Khấu trừ
+    ws.addRow(['=== KHẤU TRỪ ===', '']).font = { bold: true };
+    ws.addRow(['BHXH (NLĐ 8%)', fmt(Number(record.bhxhEmployee))]);
+    ws.addRow(['BHYT (NLĐ 1.5%)', fmt(Number(record.bhytEmployee))]);
+    ws.addRow(['BHTN (NLĐ 1%)', fmt(Number(record.bhtnEmployee))]);
+    ws.addRow(['Thu nhập chịu thuế', fmt(Number(record.taxableIncome))]);
+    ws.addRow(['Giảm trừ bản thân', fmt(Number(record.selfDeduction))]);
+    ws.addRow(['Giảm trừ người phụ thuộc', fmt(Number(record.dependentDeduction))]);
+    ws.addRow(['Thuế TNCN', fmt(Number(record.pitAmount))]);
+    ws.addRow([]);
+
+    // Lương thực nhận
+    const netRow = ws.addRow(['LƯƠNG THỰC NHẬN (NET)', fmt(Number(record.netSalary))]);
+    netRow.font = { bold: true, size: 12 };
+    netRow.getCell(2).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1FAE5' } };
+
+    return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
   }
 }

@@ -1,0 +1,453 @@
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  OnModuleInit,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
+import {
+  HrDecisionType,
+  HrDecisionStatus,
+  WorkHistoryEventType,
+  EmployeeStatus,
+  Role,
+  DefinitionStatus,
+} from '../generated/prisma';
+import {
+  CreateHrDecisionDto,
+  UpdateHrDecisionDto,
+  HrDecisionQueryDto,
+} from './dto/hr-decision.dto';
+import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+
+// Map loại quyết định → ký hiệu viết tắt cho mã quyết định tự động
+const TYPE_ABBR: Record<HrDecisionType, string> = {
+  HIRE: 'TS',
+  PROBATION_END: 'TV',
+  TRANSFER: 'DC',
+  POSITION_CHANGE: 'VT',
+  SALARY_CHANGE: 'CL',
+  COMMENDATION: 'KT',
+  DISCIPLINE: 'KL',
+  TERMINATION: 'CH',
+  PROMOTION: 'TC',
+  SECONDMENT: 'BP',
+};
+
+// Map loại quyết định → loại sự kiện WorkHistory tương ứng
+const TYPE_TO_EVENT: Record<HrDecisionType, WorkHistoryEventType> = {
+  HIRE: WorkHistoryEventType.HR_DECISION,
+  PROBATION_END: WorkHistoryEventType.PROBATION_ENDED,
+  TRANSFER: WorkHistoryEventType.HR_DECISION,
+  POSITION_CHANGE: WorkHistoryEventType.HR_DECISION,
+  SALARY_CHANGE: WorkHistoryEventType.HR_DECISION,
+  COMMENDATION: WorkHistoryEventType.HR_DECISION,
+  DISCIPLINE: WorkHistoryEventType.HR_DECISION,
+  TERMINATION: WorkHistoryEventType.HR_DECISION,
+  PROMOTION: WorkHistoryEventType.HR_DECISION,
+  SECONDMENT: WorkHistoryEventType.HR_DECISION,
+};
+
+@Injectable()
+export class HrDecisionsService implements OnModuleInit {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly eventBus: ProcessEventBus,
+  ) {}
+
+  onModuleInit() {
+    this.eventBus.onCompleted(async (payload) => {
+      await this.handleProcessCompleted(payload);
+    });
+  }
+
+  // Xử lý kết quả process khi hoàn tất — cập nhật trạng thái quyết định nhân sự
+  private async handleProcessCompleted({ instanceId, variables }: ProcessCompletedPayload): Promise<void> {
+    const dec = await this.prisma.hrDecision.findFirst({
+      where: { processInstanceId: instanceId },
+      include: { employee: true },
+    });
+    if (!dec) return;
+
+    const decision = variables['decision'] as string | undefined;
+    if (!decision) return;
+
+    if (decision === 'APPROVED') {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.hrDecision.update({
+          where: { id: dec.id },
+          data: { status: HrDecisionStatus.APPROVED },
+        });
+        await this.applyDecisionEffect(tx, dec);
+      });
+    } else if (decision === 'REJECTED') {
+      await this.prisma.hrDecision.update({
+        where: { id: dec.id },
+        data: {
+          status: HrDecisionStatus.REJECTED,
+          notes: (variables['rejectedReason'] as string) ?? 'Từ chối qua quy trình',
+        },
+      });
+    }
+  }
+
+  async list(query: HrDecisionQueryDto): Promise<PaginatedResult<unknown>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 50;
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+
+    if (query.employeeId) {
+      where['employeeId'] = query.employeeId;
+    }
+    if (query.type) {
+      where['type'] = query.type;
+    }
+    if (query.status) {
+      where['status'] = query.status;
+    }
+    if (query.effectiveDateFrom || query.effectiveDateTo) {
+      where['effectiveDate'] = {
+        ...(query.effectiveDateFrom ? { gte: new Date(query.effectiveDateFrom) } : {}),
+        ...(query.effectiveDateTo ? { lte: new Date(query.effectiveDateTo) } : {}),
+      };
+    }
+    if (query.search) {
+      where['OR'] = [
+        { decisionNumber: { contains: query.search, mode: 'insensitive' } },
+        {
+          employee: {
+            fullName: { contains: query.search, mode: 'insensitive' },
+          },
+        },
+      ];
+    }
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.hrDecision.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { effectiveDate: 'desc' },
+        include: {
+          employee: { select: { id: true, fullName: true, code: true } },
+        },
+      }),
+      this.prisma.hrDecision.count({ where }),
+    ]);
+
+    return paginate(data, total, page, limit);
+  }
+
+  async findOne(id: string) {
+    const decision = await this.prisma.hrDecision.findUnique({
+      where: { id },
+      include: {
+        employee: { select: { id: true, fullName: true, code: true } },
+        workHistories: { orderBy: { eventDate: 'desc' }, take: 10 },
+      },
+    });
+    if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
+    return decision;
+  }
+
+  async create(dto: CreateHrDecisionDto, createdById: string) {
+    // Tự tạo số quyết định nếu không truyền vào
+    let decisionNumber = dto.decisionNumber;
+    if (!decisionNumber) {
+      const year = new Date(dto.effectiveDate).getFullYear();
+      const abbr = TYPE_ABBR[dto.type];
+      const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`);
+      const endOfYear = new Date(`${year + 1}-01-01T00:00:00.000Z`);
+      const count = await this.prisma.hrDecision.count({
+        where: {
+          type: dto.type,
+          createdAt: { gte: startOfYear, lt: endOfYear },
+        },
+      });
+      const seq = String(count + 1).padStart(4, '0');
+      decisionNumber = `QĐ-${abbr}-${year}-${seq}`;
+    }
+
+    return this.prisma.hrDecision.create({
+      data: {
+        decisionNumber,
+        type: dto.type,
+        employeeId: dto.employeeId,
+        effectiveDate: new Date(dto.effectiveDate),
+        signedDate: dto.signedDate ? new Date(dto.signedDate) : null,
+        content: dto.content,
+        signedBy: dto.signedBy,
+        notes: dto.notes,
+        status: HrDecisionStatus.DRAFT,
+        fromOrgUnitId: dto.fromOrgUnitId,
+        toOrgUnitId: dto.toOrgUnitId,
+        fromPositionId: dto.fromPositionId,
+        toPositionId: dto.toPositionId,
+        fromSalary: dto.fromSalary,
+        toSalary: dto.toSalary,
+        createdById,
+      },
+      include: {
+        employee: { select: { id: true, fullName: true, code: true } },
+      },
+    });
+  }
+
+  async update(id: string, dto: UpdateHrDecisionDto) {
+    const decision = await this.prisma.hrDecision.findUnique({ where: { id } });
+    if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
+    if (decision.status !== HrDecisionStatus.DRAFT) {
+      throw new BadRequestException('Chỉ có thể sửa quyết định ở trạng thái DRAFT');
+    }
+
+    return this.prisma.hrDecision.update({
+      where: { id },
+      data: {
+        ...(dto.decisionNumber !== undefined ? { decisionNumber: dto.decisionNumber } : {}),
+        ...(dto.effectiveDate ? { effectiveDate: new Date(dto.effectiveDate) } : {}),
+        ...(dto.signedDate !== undefined
+          ? { signedDate: dto.signedDate ? new Date(dto.signedDate) : null }
+          : {}),
+        ...(dto.content !== undefined ? { content: dto.content } : {}),
+        ...(dto.signedBy !== undefined ? { signedBy: dto.signedBy } : {}),
+        ...(dto.notes !== undefined ? { notes: dto.notes } : {}),
+        ...(dto.fromOrgUnitId !== undefined ? { fromOrgUnitId: dto.fromOrgUnitId } : {}),
+        ...(dto.toOrgUnitId !== undefined ? { toOrgUnitId: dto.toOrgUnitId } : {}),
+        ...(dto.fromPositionId !== undefined ? { fromPositionId: dto.fromPositionId } : {}),
+        ...(dto.toPositionId !== undefined ? { toPositionId: dto.toPositionId } : {}),
+        ...(dto.fromSalary !== undefined ? { fromSalary: dto.fromSalary } : {}),
+        ...(dto.toSalary !== undefined ? { toSalary: dto.toSalary } : {}),
+      },
+      include: {
+        employee: { select: { id: true, fullName: true, code: true } },
+      },
+    });
+  }
+
+  async submit(id: string, userId: string, userRole: Role) {
+    const decision = await this.prisma.hrDecision.findUnique({ where: { id } });
+    if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
+    if (decision.status !== HrDecisionStatus.DRAFT) {
+      throw new BadRequestException('Chỉ có thể nộp quyết định ở trạng thái DRAFT');
+    }
+
+    // Chỉ người tạo hoặc ADMIN mới được nộp
+    if (decision.createdById !== userId && userRole !== Role.ADMIN) {
+      throw new ForbiddenException('Chỉ người tạo hoặc ADMIN mới được nộp quyết định');
+    }
+
+    // Validate effectiveDate >= signedDate
+    if (decision.signedDate && decision.effectiveDate < decision.signedDate) {
+      throw new BadRequestException('Ngày hiệu lực phải >= ngày ký');
+    }
+
+    const updated = await this.prisma.hrDecision.update({
+      where: { id },
+      data: { status: HrDecisionStatus.PENDING },
+    });
+
+    // Tự động start process nếu có definition ACTIVE cho hr-decision-approval
+    const definition = await this.prisma.processDefinition.findUnique({
+      where: { key: 'hr-decision-approval' },
+      select: { id: true, status: true },
+    });
+
+    if (definition?.status === DefinitionStatus.ACTIVE) {
+      const instance = await this.prisma.processInstance.create({
+        data: {
+          definitionId: definition.id,
+          startedBy: userId,
+          status: 'RUNNING' as any,
+          variables: {
+            hrDecisionId: decision.id,
+            type: decision.type,
+            employeeId: decision.employeeId,
+            effectiveDate: (decision.effectiveDate as Date).toISOString(),
+          } as any,
+          tokenState: {} as any,
+        },
+      });
+      await this.prisma.hrDecision.update({
+        where: { id },
+        data: { processInstanceId: instance.id },
+      });
+    }
+
+    return updated;
+  }
+
+  async approve(id: string) {
+    const decision = await this.prisma.hrDecision.findUnique({
+      where: { id },
+      include: { employee: true },
+    });
+    if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
+    if (decision.status !== HrDecisionStatus.PENDING) {
+      throw new BadRequestException('Chỉ có thể duyệt quyết định ở trạng thái PENDING');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // Duyệt quyết định
+      const approved = await tx.hrDecision.update({
+        where: { id },
+        data: { status: HrDecisionStatus.APPROVED },
+      });
+
+      // Áp dụng hiệu lực
+      await this.applyDecisionEffect(tx, decision);
+
+      return approved;
+    });
+  }
+
+  async reject(id: string, reason: string) {
+    const decision = await this.prisma.hrDecision.findUnique({ where: { id } });
+    if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
+    if (decision.status !== HrDecisionStatus.PENDING) {
+      throw new BadRequestException('Chỉ có thể từ chối quyết định ở trạng thái PENDING');
+    }
+
+    return this.prisma.hrDecision.update({
+      where: { id },
+      data: {
+        status: HrDecisionStatus.REJECTED,
+        notes: reason,
+      },
+    });
+  }
+
+  // Áp dụng hiệu lực quyết định — chạy trong transaction
+  private async applyDecisionEffect(
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+    decision: {
+      id: string;
+      type: HrDecisionType;
+      employeeId: string;
+      effectiveDate: Date;
+      toOrgUnitId?: string | null;
+      toPositionId?: string | null;
+      fromPositionId?: string | null;
+      toSalary?: unknown;
+      decisionNumber?: string | null;
+    },
+  ) {
+    const eventType = TYPE_TO_EVENT[decision.type];
+    const titleMap: Record<HrDecisionType, string> = {
+      HIRE: 'Tiếp nhận nhân sự',
+      PROBATION_END: 'Kết thúc thử việc',
+      TRANSFER: 'Điều chuyển',
+      POSITION_CHANGE: 'Thay đổi chức vụ',
+      SALARY_CHANGE: 'Thay đổi lương',
+      COMMENDATION: 'Khen thưởng',
+      DISCIPLINE: 'Kỷ luật',
+      TERMINATION: 'Chấm dứt hợp đồng',
+      PROMOTION: 'Thăng chức',
+      SECONDMENT: 'Biệt phái',
+    };
+
+    // Áp dụng theo từng loại quyết định
+    if (
+      decision.type === HrDecisionType.TRANSFER ||
+      decision.type === HrDecisionType.POSITION_CHANGE
+    ) {
+      const updateData: Record<string, unknown> = {};
+      if (decision.toOrgUnitId) updateData['orgUnitId'] = decision.toOrgUnitId;
+      if (decision.toPositionId) updateData['positionId'] = decision.toPositionId;
+
+      if (Object.keys(updateData).length > 0) {
+        await tx.employee.update({
+          where: { id: decision.employeeId },
+          data: updateData,
+        });
+      }
+
+      // Tạo PositionHistory nếu position thay đổi
+      if (decision.toPositionId && decision.toPositionId !== decision.fromPositionId) {
+        await tx.positionHistory.create({
+          data: {
+            positionId: decision.toPositionId,
+            employeeId: decision.employeeId,
+            startDate: decision.effectiveDate,
+          },
+        });
+      }
+    } else if (
+      decision.type === HrDecisionType.SALARY_CHANGE ||
+      decision.type === HrDecisionType.PROMOTION
+    ) {
+      if (decision.toSalary !== null && decision.toSalary !== undefined) {
+        await tx.salaryRecord.create({
+          data: {
+            employeeId: decision.employeeId,
+            basicSalary: decision.toSalary as number,
+            effectiveDate: decision.effectiveDate,
+            source: 'HR_DECISION',
+            hrDecisionId: decision.id,
+          },
+        });
+      }
+      // Nếu PROMOTION cũng kèm thay đổi position
+      if (decision.type === HrDecisionType.PROMOTION && decision.toPositionId) {
+        await tx.employee.update({
+          where: { id: decision.employeeId },
+          data: {
+            ...(decision.toOrgUnitId ? { orgUnitId: decision.toOrgUnitId } : {}),
+            positionId: decision.toPositionId,
+          },
+        });
+        if (decision.toPositionId !== decision.fromPositionId) {
+          await tx.positionHistory.create({
+            data: {
+              positionId: decision.toPositionId,
+              employeeId: decision.employeeId,
+              startDate: decision.effectiveDate,
+            },
+          });
+        }
+      }
+    } else if (decision.type === HrDecisionType.TERMINATION) {
+      await tx.employee.update({
+        where: { id: decision.employeeId },
+        data: {
+          isActive: false,
+          employeeStatus: EmployeeStatus.TERMINATED,
+          endDate: decision.effectiveDate,
+        },
+      });
+    } else if (decision.type === HrDecisionType.PROBATION_END) {
+      await tx.employee.update({
+        where: { id: decision.employeeId },
+        data: { employeeStatus: EmployeeStatus.ACTIVE },
+      });
+    }
+
+    // Luôn tạo WorkHistory
+    await tx.workHistory.create({
+      data: {
+        employeeId: decision.employeeId,
+        eventType,
+        eventDate: decision.effectiveDate,
+        title: titleMap[decision.type],
+        description: decision.decisionNumber
+          ? `Quyết định số ${decision.decisionNumber}`
+          : undefined,
+        hrDecisionId: decision.id,
+      },
+    });
+  }
+
+  async findByEmployee(employeeId: string) {
+    return this.prisma.hrDecision.findMany({
+      where: { employeeId },
+      orderBy: { effectiveDate: 'desc' },
+      include: {
+        employee: { select: { id: true, fullName: true, code: true } },
+      },
+      take: 200,
+    });
+  }
+}

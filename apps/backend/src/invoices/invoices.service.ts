@@ -1,6 +1,7 @@
 import {
-  Injectable, NotFoundException, UnprocessableEntityException, Logger,
+  Injectable, NotFoundException, UnprocessableEntityException, Logger, Inject,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { paginate } from '../common/dto/pagination.dto';
@@ -49,7 +50,12 @@ export class InvoicesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
+    @Inject(REQUEST) private readonly request: any,
   ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async create(dto: CreateInvoiceDto, userId: string) {
     const code   = await generateCode(this.prisma);
@@ -69,6 +75,7 @@ export class InvoicesService {
         taxAmount:   totals.taxAmount,
         totalAmount: totals.totalAmount,
         createdById: userId,
+        tenantId:    this.getTenantId(),
         items: {
           create: dto.items.map(item => ({
             description: item.description,
@@ -88,7 +95,9 @@ export class InvoicesService {
     const limit = dto.limit ?? 50;
     const skip  = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const tenantId = this.getTenantId();
+    const where: Record<string, unknown> = { deletedAt: null };
+    if (tenantId)       where.tenantId   = tenantId;
     if (dto.type)       where.type       = dto.type;
     if (dto.status)     where.status     = dto.status;
     if (dto.customerId) where.customerId = dto.customerId;
@@ -207,7 +216,13 @@ export class InvoicesService {
     if (!['DRAFT', 'CANCELLED'].includes(inv.status)) {
       throw new UnprocessableEntityException('Chỉ có thể xoá hóa đơn DRAFT hoặc CANCELLED');
     }
-    await this.prisma.invoice.delete({ where: { id } });
+    return this.prisma.invoice.update({ where: { id }, data: { deletedAt: new Date() } });
+  }
+
+  async restore(id: string) {
+    const inv = await this.prisma.invoice.findUnique({ where: { id } });
+    if (!inv) throw new NotFoundException('Không tìm thấy hóa đơn');
+    return this.prisma.invoice.update({ where: { id }, data: { deletedAt: null } });
   }
 
   async getSummary() {
@@ -242,5 +257,20 @@ export class InvoicesService {
     if (result.count > 0) {
       this.logger.log(`Marked ${result.count} invoice(s) as OVERDUE`);
     }
+  }
+
+  // ── L-04: Danh sách hóa đơn quá hạn ─────────────────────────────────────
+
+  async getOverdue() {
+    return this.prisma.invoice.findMany({
+      where: {
+        status: { not: 'PAID' as any },
+        dueDate: { lt: new Date() },
+        deletedAt: null,
+      },
+      include: { customer: { select: { id: true, name: true } } },
+      take: 100,
+      orderBy: { dueDate: 'asc' },
+    });
   }
 }

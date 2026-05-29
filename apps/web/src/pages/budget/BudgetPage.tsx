@@ -12,7 +12,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { projectsApi, type Project } from '../../api/projects';
 import { apiClient } from '../../api/client';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { formatCurrency, formatHours } from '../../utils/format';
 
 const { Text, Title } = Typography;
@@ -231,14 +231,7 @@ function BudgetDetailDrawer({
 // ─── Main BudgetPage ──────────────────────────────────────────────────────────
 
 export default function BudgetPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const bgContainer   = isDark ? '#1E293B' : '#ffffff';
-  const bgCard        = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor   = isDark ? '#334155' : '#E2E8F0';
-  const linkColor     = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, textPrimary, textSecondary, bgContainer, bgCard, borderColor, linkColor, preset } = useThemePalette();
 
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | undefined>();
   const [selectedProject, setSelectedProject] = useState<ProjectBudgetRow | null>(null);
@@ -432,6 +425,7 @@ export default function BudgetPage() {
         loading={projectsLoading}
         rowKey="id"
         columns={columns}
+        locale={{ emptyText: 'Chưa có dự án nào để hiển thị ngân sách' }}
         pagination={{ pageSize: 20, showSizeChanger: false }}
         style={{ background: bgContainer }}
         onRow={(record) => ({

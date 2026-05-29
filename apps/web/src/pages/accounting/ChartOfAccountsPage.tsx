@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Table, Typography, Select, Tag, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { BankOutlined } from '@ant-design/icons';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useGetAccounts, type ChartOfAccount, type AccountType } from '../../api/accounting';
 
 const { Title, Text } = Typography;
@@ -20,17 +20,10 @@ const TYPE_OPTIONS = ([undefined, ...Object.keys(TYPE_META)] as (AccountType | u
 );
 
 export default function ChartOfAccountsPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, bgContainer, textPrimary, borderColor, linkColor, preset } = useThemePalette();
   const [typeFilter, setTypeFilter] = useState<AccountType | undefined>(undefined);
 
   const { data: accounts = [], isLoading } = useGetAccounts(typeFilter);
-
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const linkColor   = isDark ? '#93C5FD' : preset.primary;
 
   const columns: ColumnsType<ChartOfAccount> = [
     {
@@ -59,7 +52,7 @@ export default function ChartOfAccountsPage() {
       dataIndex: 'parentCode',
       width: 100,
       render: (v: string | null) => v ? (
-        <span style={{ fontFamily: 'monospace', color: isDark ? 'rgba(255,255,255,0.5)' : '#475569' }}>{v}</span>
+        <span style={{ fontFamily: 'monospace', color: linkColor }}>{v}</span>
       ) : '—',
     },
     {

@@ -315,7 +315,15 @@
       "Read(//Users/Leopold188/Downloads/Loop/apps/web/src/components/ui/**)",
       "Bash(grep -rn \"isManager\\\\|MANAGER_ROLES\" /Users/Leopold188/Downloads/Loop/apps/web/src 2>/dev/null | head -5 *)",
       "Read(//Users/Leopold188/Downloads/Loop/apps/web/**)",
-      "Bash(node prisma/seed-patch.js)"
+      "Bash(node prisma/seed-patch.js)",
+      "Bash(2>&1)",
+      "Bash(node prisma/seed-skills.js)",
+      "Bash(node prisma/seed-tenant-migrate.js)",
+      "Bash(node -e 'const {PrismaClient} = require\\('\\\\''./src/generated/prisma/index.js'\\\\''\\); const p = new PrismaClient\\({datasources: {db: {url: '\\\\''postgresql://loop:loop_password@localhost:5432/loop_db'\\\\''}}}\\); p.$connect\\(\\).then\\(\\(\\) => { console.log\\('\\\\''OK'\\\\''\\); p.$disconnect\\(\\); }\\).catch\\(e => console.error\\(e.message\\)\\);')",
+      "Bash(grep -E \"^@prisma|^prisma$\")",
+      "Bash(grep \"^pg$\")",
+      "Bash(sed -i '' 's/\\\\.findUnique\\({ where: { code:/.findFirst\\({ where: { code:/g' prisma/seed.ts)",
+      "Bash(sed -i '' 's/\\\\.findUniqueOrThrow\\({ where: { code:/.findFirstOrThrow\\({ where: { code:/g' prisma/seed.ts)"
     ],
     "additionalDirectories": [
       "/Users/leophan188/Downloads/Loop/_bmad-output/planning-artifacts/prds",

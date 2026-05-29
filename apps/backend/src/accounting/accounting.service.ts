@@ -1,4 +1,5 @@
 import { Injectable, Logger, OnModuleInit, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { FinanceEventBus } from './finance-event-bus.service';
 import { paginate } from '../common/dto/pagination.dto';
@@ -449,5 +450,44 @@ export class AccountingService implements OnModuleInit {
       },
       include: { lines: { include: { account: { select: { code: true, name: true } } } } },
     });
+  }
+
+  // ── L-07: Export báo cáo lãi lỗ sang Excel ───────────────────────────────
+
+  async exportProfitLoss(startDate: string, endDate: string): Promise<Buffer> {
+    const data = await this.getProfitLoss(startDate, endDate);
+
+    const wb = new ExcelJS.Workbook();
+    const sheet = wb.addWorksheet('Báo cáo lãi lỗ');
+
+    sheet.columns = [
+      { header: 'Khoản mục',     key: 'name',    width: 40 },
+      { header: 'Mã tài khoản',  key: 'code',    width: 16 },
+      { header: 'Số tiền (VNĐ)', key: 'amount',  width: 22 },
+    ];
+    sheet.getRow(1).font = { bold: true };
+
+    // Phần Doanh thu
+    sheet.addRow({ name: '=== DOANH THU ===', code: '', amount: '' });
+    for (const r of data.revenue) {
+      sheet.addRow({ name: r.name, code: r.code, amount: r.balance });
+    }
+    sheet.addRow({ name: 'Tổng doanh thu', code: '', amount: data.totalRevenue });
+    sheet.addRow({});
+
+    // Phần Chi phí
+    sheet.addRow({ name: '=== CHI PHÍ ===', code: '', amount: '' });
+    for (const r of data.expenses) {
+      sheet.addRow({ name: r.name, code: r.code, amount: r.balance });
+    }
+    sheet.addRow({ name: 'Tổng chi phí', code: '', amount: data.totalExpenses });
+    sheet.addRow({});
+
+    // Lợi nhuận thuần
+    sheet.addRow({ name: 'LỢI NHUẬN THUẦN', code: '', amount: data.netIncome });
+    const lastRow = sheet.lastRow;
+    if (lastRow) lastRow.font = { bold: true };
+
+    return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
   }
 }

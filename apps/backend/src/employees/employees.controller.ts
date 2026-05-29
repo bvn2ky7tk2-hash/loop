@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Body, Param, Req, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -85,5 +85,36 @@ export class EmployeesController {
   @ApiOperation({ summary: 'Lịch sử dự án nhân sự' })
   getProjectHistory(@Param('id') id: string) {
     return this.service.getProjectHistory(id);
+  }
+
+  @Patch(':id/restore')
+  @Roles(Role.ADMIN)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_UPDATE)
+  @ApiOperation({ summary: 'Khôi phục nhân sự đã xoá mềm' })
+  restore(@Param('id') id: string) {
+    return this.service.restore(id);
+  }
+
+  // ── L-03: Employee History ─────────────────────────────────────────────────
+
+  @Get(':id/work-history')
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Lịch sử làm việc (WorkHistory events) của nhân sự' })
+  getWorkHistory(@Param('id') id: string) {
+    return this.service.getWorkHistory(id);
+  }
+
+  @Get(':id/position-history')
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Lịch sử vị trí (PositionHistory) của nhân sự' })
+  getPositionHistory(@Param('id') id: string) {
+    return this.service.getPositionHistory(id);
+  }
+
+  @Get(':id/leave-summary')
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Tóm tắt số ngày phép (LeaveBalance) của nhân sự' })
+  getLeaveSummary(@Param('id') id: string) {
+    return this.service.getLeaveSummary(id);
   }
 }

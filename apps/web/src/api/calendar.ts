@@ -71,19 +71,19 @@ export type CalendarItem = (CalendarEvent | NormalisedBooking) & { _source: 'eve
 // ─── API functions ────────────────────────────────────────────────────────────
 
 const fetchEvents = (from: string, to: string) =>
-  apiClient.get<CalendarEvent[]>(`/api/v1/calendar/events?from=${from}&to=${to}`).then((r) => r.data);
+  apiClient.get<CalendarEvent[]>(`/calendar/events?from=${from}&to=${to}`).then((r) => r.data);
 
 const fetchMonthView = (year: number, month: number) =>
-  apiClient.get<MonthViewResponse>(`/api/v1/calendar/month?year=${year}&month=${month}`).then((r) => r.data);
+  apiClient.get<MonthViewResponse>(`/calendar/month?year=${year}&month=${month}`).then((r) => r.data);
 
 const createEvent = (payload: CreateEventPayload) =>
-  apiClient.post<CalendarEvent>('/api/v1/calendar/events', payload).then((r) => r.data);
+  apiClient.post<CalendarEvent>('/calendar/events', payload).then((r) => r.data);
 
 const updateEvent = (id: string, payload: UpdateEventPayload) =>
-  apiClient.patch<CalendarEvent>(`/api/v1/calendar/events/${id}`, payload).then((r) => r.data);
+  apiClient.patch<CalendarEvent>(`/calendar/events/${id}`, payload).then((r) => r.data);
 
 const deleteEvent = (id: string) =>
-  apiClient.delete(`/api/v1/calendar/events/${id}`).then((r) => r.data);
+  apiClient.delete(`/calendar/events/${id}`).then((r) => r.data);
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 

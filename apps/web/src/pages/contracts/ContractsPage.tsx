@@ -14,7 +14,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { contractsApi, type Contract, type ContractType, type ContractStatus, type CreateContractDto } from '../../api/contracts';
 import { employeesApi } from '../../api/employees';
-import { useThemeStore } from '../../store/theme.store';
+import { positionsApi } from '../../api/hr-core';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { formatNumber } from '../../utils/format';
 
 const { Title } = Typography;
@@ -98,9 +99,8 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
   const qc = useQueryClient();
   const [form] = Form.useForm();
   const [empSearch, setEmpSearch] = useState('');
-
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
+  const [selectedEmpId, setSelectedEmpId] = useState<string | undefined>(undefined);
+  const { bgContainer, textPrimary, textMuted } = useThemePalette();
 
   // Search employees
   const { data: employees = [], isFetching: empLoading } = useQuery({
@@ -112,6 +112,33 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
       : employeesApi.list().then((r) => Array.isArray(r) ? r.slice(0, 50) : []),
     staleTime: 30_000,
   });
+
+  // Load employee detail when selected (to show unit + position info)
+  const { data: selectedEmpDetail } = useQuery({
+    queryKey: ['employee', selectedEmpId],
+    queryFn: () => employeesApi.get(selectedEmpId!),
+    enabled: !!selectedEmpId,
+    staleTime: 60_000,
+  });
+
+  // Load positions for position select — use selectedEmpDetail which is fetched via selectedEmpId
+  const empOrgUnitId = selectedEmpDetail?.orgUnitId;
+  const { data: positionsData } = useQuery({
+    queryKey: ['positions-by-unit', empOrgUnitId],
+    queryFn: () => positionsApi.list({ orgUnitId: empOrgUnitId, isActive: true, limit: 200 }),
+    enabled: !!empOrgUnitId,
+    staleTime: 5 * 60_000,
+  });
+  const positionOptions = (positionsData?.data ?? []).map((p) => ({
+    value: p.id,
+    label: p.jobTitle ? `${p.jobTitle.name} — ${p.code}` : p.code,
+  }));
+
+  function handleEmpChange(empId: string) {
+    setSelectedEmpId(empId);
+    // Clear position when employee changes (org unit may change)
+    form.setFieldValue('positionId', undefined);
+  }
 
   const createMutation = useMutation({
     mutationFn: contractsApi.create,
@@ -142,10 +169,12 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
   useEffect(() => {
     if (!open) return;
     if (editing) {
+      setSelectedEmpId(editing.employeeId);
       form.setFieldsValue({
         employeeId:    editing.employeeId,
         type:          editing.type,
         status:        editing.status,
+        positionId:    (editing as Contract & { positionId?: string }).positionId ?? undefined,
         startDate:     editing.startDate     ? dayjs(editing.startDate)  : null,
         endDate:       editing.endDate       ? dayjs(editing.endDate)    : null,
         salaryMonthly: editing.salaryMonthly,
@@ -154,6 +183,7 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
         signedAt:      editing.signedAt      ? dayjs(editing.signedAt)   : null,
       });
     } else {
+      setSelectedEmpId(undefined);
       form.resetFields();
       form.setFieldValue('currency', 'VND');
       form.setFieldValue('status', 'DRAFT');
@@ -165,6 +195,7 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
       employeeId:    values.employeeId as string,
       type:          values.type as ContractType,
       status:        values.status as ContractStatus,
+      positionId:    (values.positionId as string) ?? undefined,
       startDate:     (values.startDate as dayjs.Dayjs).format('YYYY-MM-DD'),
       endDate:       values.endDate ? (values.endDate as dayjs.Dayjs).format('YYYY-MM-DD') : undefined,
       salaryMonthly: values.salaryMonthly as number,
@@ -212,10 +243,48 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
             loading={empLoading}
             onSearch={setEmpSearch}
             filterOption={false}
+            onChange={handleEmpChange}
             options={employees.map((e) => ({
               value: e.id,
               label: `${e.fullName} — ${e.code}`,
             }))}
+          />
+        </Form.Item>
+
+        {/* Auto-fill: Đơn vị + Vị trí hiện tại */}
+        {selectedEmpDetail && (
+          <div style={{
+            padding: '8px 12px',
+            borderRadius: 8,
+            background: isDark ? 'rgba(16,185,129,0.1)' : 'rgba(16,185,129,0.06)',
+            border: `1px solid ${isDark ? 'rgba(16,185,129,0.3)' : 'rgba(16,185,129,0.2)'}`,
+            marginBottom: 16,
+            display: 'flex', gap: 16, flexWrap: 'wrap',
+          }}>
+            <div>
+              <div style={{ fontSize: 11, color: textMuted }}>Đơn vị hiện tại</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
+                {selectedEmpDetail.orgUnit?.name ?? '—'}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: textMuted }}>Vị trí / Chức danh</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
+                {selectedEmpDetail.position?.jobTitle?.name ?? '—'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Vị trí công việc trong hợp đồng */}
+        <Form.Item name="positionId" label="Vị trí công việc (hợp đồng)">
+          <Select
+            allowClear
+            showSearch
+            placeholder={empOrgUnitId ? 'Chọn vị trí biên chế...' : 'Chọn nhân viên trước'}
+            disabled={!empOrgUnitId}
+            filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+            options={positionOptions}
           />
         </Form.Item>
 
@@ -292,15 +361,7 @@ export default function ContractsPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
-  const { mode } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  // Derived colors
-  const bgContainer   = isDark ? '#1E293B' : '#ffffff';
-  const borderColor   = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const textMuted     = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.35)';
+  const { isDark, bgContainer, borderColor, textPrimary, textMuted, textSecondary } = useThemePalette();
 
   // State
   const [page, setPage]                     = useState(1);

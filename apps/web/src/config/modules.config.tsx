@@ -56,10 +56,11 @@ import {
   CalendarOutlined as RoomCalendarIcon,
   CarOutlined,
   BuildOutlined,
+  FieldTimeOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
-import { ROUTE_PERMISSION_MAP as REGISTRY_MAP } from './screens.registry';
+import { ROUTE_PERMISSION_MAP as REGISTRY_MAP, SCREEN_REGISTRY } from './screens.registry';
 
 export interface ModuleDefinition {
   id: string;
@@ -68,10 +69,23 @@ export interface ModuleDefinition {
   icon: ReactNode;
   color: string;
   /** Permission bắt buộc để truy cập module này. Admin luôn bypass.
-   *  Truyền array để check any-of (user có BẤT KỲ 1 trong các perms là được vào). */
+   *  Truyền array để check any-of (user có BẤT KỲ 1 trong các perms là được vào).
+   *  Được derive tự động từ SCREEN_REGISTRY qua moduleGate(). */
   gatePermission?: string | string[];
   topItems: MenuTopItemCfg[];
   groups: MenuGroupCfg[];
+}
+
+/** Tự động tập hợp tất cả permCode của các màn hình trong module.
+ *  Module hiển thị trong switcher khi user có ÍT NHẤT 1 trong các codes này. */
+function moduleGate(moduleId: string): string[] {
+  return [
+    ...new Set(
+      SCREEN_REGISTRY
+        .filter(s => s.module === moduleId && s.permCode)
+        .map(s => s.permCode!),
+    ),
+  ];
 }
 
 export const MODULES: ModuleDefinition[] = [
@@ -82,7 +96,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Dự án, công việc, lỗi & vấn đề hàng ngày',
     icon: <CheckSquareOutlined />,
     color: '#2563EB',
-    gatePermission: 'projects:read',
+    gatePermission: moduleGate('work'),
     topItems: [
       { key: '/dashboard/work', label: 'Tổng quan', visible: true },
     ],
@@ -129,8 +143,10 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-work-me', label: 'Thông tin cá nhân', visible: true,
         items: [
-          { key: '/self-service',        label: 'Thông tin của tôi', visible: true },
-          { key: '/payroll/my-payslips', label: 'Phiếu lương',       visible: true },
+          { key: '/self-service',        label: 'Thông tin của tôi',    visible: true },
+          { key: '/leaves',              label: 'Đơn nghỉ phép',        visible: true },
+          { key: '/my-overtime',         label: 'Đăng ký làm thêm giờ', visible: true },
+          { key: '/payroll/my-payslips', label: 'Phiếu lương',          visible: true },
         ],
       },
     ],
@@ -143,7 +159,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Nhân viên, đào tạo, tuyển dụng và chấm công',
     icon: <IdcardOutlined />,
     color: '#059669',
-    gatePermission: 'employees:read',
+    gatePermission: moduleGate('people'),
     topItems: [
       { key: '/dashboard/people', label: 'Tổng quan', visible: true },
     ],
@@ -151,10 +167,25 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-hr', label: 'Nhân sự', visible: true,
         items: [
-          { key: '/personnel',  label: 'Danh sách nhân viên', visible: true },
-          { key: '/org-chart',  label: 'Sơ đồ tổ chức',      visible: true },
-          { key: '/contracts',  label: 'Hợp đồng lao động',  visible: true },
-          { key: '/leaves',     label: 'Đơn nghỉ phép',      visible: true },
+          { key: '/personnel',           label: 'Danh sách nhân viên', visible: true },
+          { key: '/org-chart',           label: 'Sơ đồ tổ chức',      visible: true },
+          { key: '/contracts',           label: 'Hợp đồng lao động',  visible: true },
+          { key: '/hr/job-titles',       label: 'Chức danh',          visible: true },
+          { key: '/hr/positions',        label: 'Vị trí biên chế',    visible: true },
+          { key: '/hr/decisions',        label: 'Quyết định nhân sự', visible: true },
+          { key: '/hr/requests',         label: 'Quản lý đơn từ',        visible: true },
+          { key: '/hr/leaves',           label: 'Quản lý đơn nghỉ phép', visible: true },
+          { key: '/hr/overtime',         label: 'Quản lý OT',             visible: true },
+        ],
+      },
+      {
+        key: 'g-people-insurance', label: 'Bảo hiểm & Phép', visible: true,
+        items: [
+          { key: '/hr/insurance',        label: 'Bảo hiểm xã hội',   visible: true },
+          { key: '/hr/leave-policies',   label: 'Chính sách phép',   visible: true },
+          { key: '/hr/attendance',       label: 'Bảng công',          visible: true },
+          { key: '/hr/holidays',         label: 'Ngày lễ',            visible: true },
+          { key: '/hr/shifts',           label: 'Ca làm việc',         visible: true },
         ],
       },
       {
@@ -194,7 +225,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Chi phí, ngân sách, hóa đơn và kế toán',
     icon: <BankOutlined />,
     color: '#0D9488',
-    gatePermission: 'finance:read',
+    gatePermission: moduleGate('finance'),
     topItems: [
       { key: '/dashboard/finance', label: 'Tổng quan', visible: true },
     ],
@@ -226,7 +257,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Khách hàng, leads, deals và pipeline bán hàng',
     icon: <ShopOutlined />,
     color: '#DC2626',
-    gatePermission: 'crm:read',
+    gatePermission: moduleGate('crm'),
     topItems: [
       { key: '/dashboard/crm', label: 'Tổng quan', visible: true },
     ],
@@ -269,7 +300,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Tài sản, phòng họp, xe công ty và mua hàng',
     icon: <LaptopOutlined />,
     color: '#D97706',
-    gatePermission: 'asset:read',
+    gatePermission: moduleGate('asset'),
     topItems: [
       { key: '/dashboard/asset', label: 'Tổng quan', visible: true },
     ],
@@ -306,7 +337,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Thiết kế và giám sát quy trình nghiệp vụ',
     icon: <BuildOutlined />,
     color: '#7C3AED',
-    gatePermission: 'bpm:read',
+    gatePermission: moduleGate('ops'),
     topItems: [
       { key: '/dashboard/ops', label: 'Tổng quan', visible: true },
     ],
@@ -328,7 +359,7 @@ export const MODULES: ModuleDefinition[] = [
     description: 'Cài đặt hệ thống, người dùng và phân quyền',
     icon: <SettingOutlined />,
     color: '#475569',
-    gatePermission: ['admin:users', 'admin:permissions', 'admin:settings'],
+    gatePermission: moduleGate('admin'),
     topItems: [
       { key: '/dashboard/admin', label: 'Tổng quan', visible: true },
     ],
@@ -453,4 +484,9 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/assets/room-booking':           <RoomCalendarIcon />,
   '/assets/vehicles':               <CarOutlined />,
   '/calendar':                      <RoomCalendarIcon />,
+  '/hr/overtime':                   <FieldTimeOutlined />,
+  '/my-overtime':                   <FieldTimeOutlined />,
+  '/hr/shifts':                     <ClockCircleOutlined />,
+  '/hr/requests':                   <FileTextOutlined />,
+  '/hr/leaves':                     <CalendarOutlined />,
 };

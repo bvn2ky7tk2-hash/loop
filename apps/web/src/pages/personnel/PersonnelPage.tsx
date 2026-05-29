@@ -22,6 +22,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { employeesApi, type Employee } from '../../api/employees';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 import { payrollApi, type EmployeeTaxProfile, type Dependent } from '../../api/payroll';
+import { jobTitlesApi, positionsApi } from '../../api/hr-core';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
 import { formatNumber } from '../../utils/format';
@@ -461,6 +462,26 @@ export default function PersonnelPage() {
     enabled: !!detailId,
   });
 
+  // Job titles & positions for edit modal
+  const { data: jobTitlesData } = useQuery({
+    queryKey: ['job-titles-active'],
+    queryFn: () => jobTitlesApi.list({ isActive: true, limit: 200 }),
+    staleTime: 5 * 60_000,
+  });
+  const jobTitleOptions = (jobTitlesData?.data ?? []).map((jt) => ({ value: jt.id, label: jt.name }));
+
+  const editOrgUnitId = editEmployee?.orgUnitId;
+  const { data: positionsData } = useQuery({
+    queryKey: ['positions-by-unit', editOrgUnitId],
+    queryFn: () => positionsApi.list({ orgUnitId: editOrgUnitId, isActive: true, limit: 200 }),
+    enabled: !!editOrgUnitId,
+    staleTime: 5 * 60_000,
+  });
+  const positionOptions = (positionsData?.data ?? []).map((p) => ({
+    value: p.id,
+    label: p.jobTitle ? `${p.jobTitle.name} — ${p.code}` : p.code,
+  }));
+
   // Fetch process definitions to find employee-onboarding
   const { data: onboardingDefinition } = useQuery({
     queryKey: ['process-definitions-onboarding'],
@@ -535,6 +556,7 @@ export default function PersonnelPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['employees'] });
       qc.invalidateQueries({ queryKey: ['employee', editEmployee?.id] });
+      qc.invalidateQueries({ queryKey: ['org-units'] });
       setEditEmployee(null);
       message.success('Đã cập nhật nhân sự');
     },
@@ -825,6 +847,7 @@ export default function PersonnelPage() {
                 editForm.setFieldsValue({
                   fullName: r.fullName, level: r.level, techStack: r.techStack,
                   orgUnitId: r.orgUnitId,
+                  positionId: r.positionId ?? null,
                   startDate: r.startDate ? dayjs(r.startDate) : null,
                   birthdate:  r.birthdate  ? dayjs(r.birthdate)  : null,
                   email: r.email, cccd: r.cccd,
@@ -1219,7 +1242,7 @@ export default function PersonnelPage() {
           <Form.Item name="email" label="Email" rules={[{ type: 'email', message: 'Email không hợp lệ' }]}>
             <Input placeholder="nguyen.van.a@company.vn" />
           </Form.Item>
-          <Divider orientation="left" orientationMargin={0} style={{ fontSize: 13 }}>Căn cước công dân</Divider>
+          <Divider  style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input placeholder="012345678901" /></Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="cccdIssueDate" label="Ngày cấp" style={{ flex: 1 }}><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item>
@@ -1254,9 +1277,20 @@ export default function PersonnelPage() {
               <Select showSearch allowClear placeholder="Chọn phòng ban..."
                 filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
                 options={orgOptions}
+                onChange={() => editForm.setFieldValue('positionId', null)}
               />
             </Form.Item>
           </Space>
+          <Form.Item name="positionId" label="Vị trí biên chế">
+            <Select
+              allowClear
+              showSearch
+              placeholder={editOrgUnitId ? 'Chọn vị trí...' : 'Chọn phòng ban trước'}
+              disabled={!editOrgUnitId}
+              filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+              options={positionOptions}
+            />
+          </Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="startDate" label="Ngày vào làm" style={{ flex: 1 }} rules={[{ required: true, message: 'Chọn ngày' }]}>
               <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
@@ -1271,7 +1305,7 @@ export default function PersonnelPage() {
           <Form.Item name="email" label="Email" rules={[{ type: 'email', message: 'Email không hợp lệ' }]}>
             <Input placeholder="nguyen.van.a@company.vn" />
           </Form.Item>
-          <Divider orientation="left" orientationMargin={0} style={{ fontSize: 13 }}>Căn cước công dân</Divider>
+          <Divider  style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input /></Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="cccdIssueDate" label="Ngày cấp" style={{ flex: 1 }}><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item>

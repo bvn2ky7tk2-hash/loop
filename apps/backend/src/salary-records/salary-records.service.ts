@@ -1,0 +1,69 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateSalaryRecordDto } from './dto/salary-record.dto';
+
+@Injectable()
+export class SalaryRecordsService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findByEmployee(employeeId: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: employeeId },
+      select: { id: true },
+    });
+    if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
+
+    const records = await this.prisma.salaryRecord.findMany({
+      where: { employeeId },
+      orderBy: { effectiveDate: 'desc' },
+      take: 200,
+    });
+
+    // Tính % tăng so với bản ghi trước
+    return records.map((record, index) => {
+      const prev = records[index + 1];
+      const changePercent =
+        prev && Number(prev.basicSalary) > 0
+          ? ((Number(record.basicSalary) - Number(prev.basicSalary)) /
+              Number(prev.basicSalary)) *
+            100
+          : null;
+      return { ...record, changePercent };
+    });
+  }
+
+  async create(dto: CreateSalaryRecordDto, userId: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: dto.employeeId },
+      select: { id: true },
+    });
+    if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
+
+    return this.prisma.salaryRecord.create({
+      data: {
+        employeeId: dto.employeeId,
+        basicSalary: dto.basicSalary,
+        effectiveDate: new Date(dto.effectiveDate),
+        source: dto.source,
+        hrDecisionId: dto.hrDecisionId,
+        note: dto.note,
+        createdBy: userId,
+      },
+    });
+  }
+
+  async getLatest(employeeId: string) {
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: employeeId },
+      select: { id: true },
+    });
+    if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
+
+    const record = await this.prisma.salaryRecord.findFirst({
+      where: { employeeId },
+      orderBy: { effectiveDate: 'desc' },
+    });
+    if (!record) throw new NotFoundException('Chưa có bản ghi lương nào');
+    return record;
+  }
+}

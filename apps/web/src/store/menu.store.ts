@@ -59,8 +59,29 @@ export const useMenuStore = create<MenuConfigState>()(
       moduleConfigs: {},
 
       getModuleConfig: (moduleId) => {
+        const defaults = getDefaultModuleConfig(moduleId);
         const overrides = get().moduleConfigs[moduleId];
-        return overrides ?? getDefaultModuleConfig(moduleId);
+        if (!overrides) return defaults;
+        // Merge: dùng defaults làm gốc, áp visibility từ stored nếu key khớp
+        const topVisibility = new Map(overrides.topItems.map(i => [i.key, i.visible]));
+        const groupVisibility = new Map(overrides.groups.map(g => [g.key, g.visible]));
+        const itemVisibility = new Map(
+          overrides.groups.flatMap(g => g.items.map(i => [`${g.key}:${i.key}`, i.visible]))
+        );
+        return {
+          topItems: defaults.topItems.map(i => ({
+            ...i,
+            visible: topVisibility.has(i.key) ? topVisibility.get(i.key)! : i.visible,
+          })),
+          groups: defaults.groups.map(g => ({
+            ...g,
+            visible: groupVisibility.has(g.key) ? groupVisibility.get(g.key)! : g.visible,
+            items: g.items.map(i => ({
+              ...i,
+              visible: itemVisibility.has(`${g.key}:${i.key}`) ? itemVisibility.get(`${g.key}:${i.key}`)! : i.visible,
+            })),
+          })),
+        };
       },
 
       setModuleConfig: (moduleId, topItems, groups) =>

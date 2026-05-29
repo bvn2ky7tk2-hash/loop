@@ -22,7 +22,21 @@ import { ApproveLeaveDto } from './dto/approve-leave.dto';
 export class LeavesController {
   constructor(private readonly service: LeavesService) {}
 
-  // /balance và /types phải đứng trước /:id để NestJS không parse là UUID
+  // /balance, /types, /form-schema phải đứng trước /:id để NestJS không parse là UUID
+
+  @Get('form-schema')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @ApiOperation({ summary: 'Cấu trúc form tạo đơn nghỉ phép' })
+  getFormSchema() {
+    return {
+      fields: [
+        { name: 'startDate', label: 'Ngày bắt đầu', type: 'date', required: true },
+        { name: 'endDate', label: 'Ngày kết thúc', type: 'date', required: true },
+        { name: 'days', label: 'Số ngày', type: 'number', required: true, min: 0.5, max: 30 },
+        { name: 'reason', label: 'Lý do', type: 'textarea', required: false },
+      ],
+    };
+  }
 
   @Get('types')
   @Throttle({ default: { ttl: 60_000, limit: 100 } })

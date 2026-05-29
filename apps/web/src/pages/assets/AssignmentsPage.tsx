@@ -3,7 +3,7 @@ import { Table, Typography, Select, Tag, Space } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetAllAssignments, useGetAssets,
   type AssetAssignment, type AssignmentFilterParams,
@@ -12,13 +12,7 @@ import {
 const { Title, Text } = Typography;
 
 export default function AssetAssignmentsPage() {
-  const { mode } = useThemeStore();
-  const isDark = mode === 'dark';
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const { bgContainer, borderColor, textPrimary, textMuted } = useThemePalette();
 
   const [filters, setFilters] = useState<AssignmentFilterParams & { page: number; limit: number }>({ page: 1, limit: 20 });
   const { data, isLoading }   = useGetAllAssignments(filters);

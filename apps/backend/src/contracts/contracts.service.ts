@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateContractDto } from './dto/create-contract.dto';
@@ -6,19 +7,29 @@ import { UpdateContractDto } from './dto/update-contract.dto';
 
 const CONTRACT_INCLUDE = {
   employee: { select: { id: true, fullName: true, code: true, level: true } },
+  signedBy: { select: { id: true, fullName: true } },
 } as const;
 
 @Injectable()
 export class ContractsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) private readonly request: any,
+  ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async findAll(
     employeeId?: string,
     page = 1,
     limit = 20,
   ): Promise<PaginatedResult<any>> {
-    const where: any = {};
+    const tenantId = this.getTenantId();
+    const where: any = { deletedAt: null };
     if (employeeId) where.employeeId = employeeId;
+    if (tenantId) where.tenantId = tenantId;
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.contract.findMany({
@@ -54,6 +65,8 @@ export class ContractsService {
         currency:      dto.currency,
         note:          dto.note,
         signedAt:      dto.signedAt ? new Date(dto.signedAt) : undefined,
+        ...(dto.signedById ? { signedById: dto.signedById } : {}),
+        tenantId:      this.getTenantId(),
       },
       include: CONTRACT_INCLUDE,
     });
@@ -79,6 +92,12 @@ export class ContractsService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.contract.delete({ where: { id } });
+    return this.prisma.contract.update({ where: { id }, data: { deletedAt: new Date() } });
+  }
+
+  async restore(id: string) {
+    const contract = await this.prisma.contract.findUnique({ where: { id } });
+    if (!contract) throw new NotFoundException(`Hợp đồng ${id} không tìm thấy`);
+    return this.prisma.contract.update({ where: { id }, data: { deletedAt: null } });
   }
 }

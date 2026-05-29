@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Put, Delete, Body, Param, HttpCode,
+  Controller, Get, Post, Put, Patch, Delete, Body, Param, HttpCode,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -35,6 +35,14 @@ export class OrgUnitsController {
   @RequirePermission(PERMISSIONS.ADMIN_ORG)
   @ApiOperation({ summary: 'Cập nhật đơn vị tổ chức' })
   update(@Param('id') id: string, @Body() dto: UpdateOrgUnitDto) {
+    return this.service.update(id, dto);
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @RequirePermission(PERMISSIONS.ADMIN_ORG)
+  @ApiOperation({ summary: 'Cập nhật một phần đơn vị tổ chức (partial update)' })
+  patch(@Param('id') id: string, @Body() dto: UpdateOrgUnitDto) {
     return this.service.update(id, dto);
   }
 

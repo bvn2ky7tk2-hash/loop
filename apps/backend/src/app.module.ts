@@ -7,6 +7,7 @@ import { OrgScopeInterceptor } from './common/guards/org-scope.interceptor';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { PermissionGuard } from './common/guards/permission.guard';
+import { TenantGuard } from './common/guards/tenant.guard';
 import { LoggerModule } from 'nestjs-pino';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -58,16 +59,16 @@ import { CalendarModule } from './calendar/calendar.module';
 import { TenantModule } from './tenant/tenant.module';
 import { JobTitlesModule } from './job-titles/job-titles.module';
 import { PositionsModule } from './positions/positions.module';
-// import { HrDecisionsModule } from './hr-decisions/hr-decisions.module'; // schema missing WorkHistoryEventType
-// import { SalaryRecordsModule } from './salary-records/salary-records.module'; // schema missing salaryRecord
-// import { WorkHistoryModule } from './work-history/work-history.module'; // schema missing workHistory
-// import { HrInsuranceModule } from './hr-insurance/hr-insurance.module'; // schema missing insuranceEnrollment
-// import { HrProfileModule } from './hr-profile/hr-profile.module'; // schema missing workHistory
+import { HrDecisionsModule } from './hr-decisions/hr-decisions.module';
+import { SalaryRecordsModule } from './salary-records/salary-records.module';
+import { WorkHistoryModule } from './work-history/work-history.module';
+import { HrInsuranceModule } from './hr-insurance/hr-insurance.module';
+import { HrProfileModule } from './hr-profile/hr-profile.module';
 import { LeavePoliciesModule } from './leave-policies/leave-policies.module';
-// import { HrAttendanceModule } from './hr-attendance/hr-attendance.module'; // schema missing AttendanceStatus
+import { HrAttendanceModule } from './hr-attendance/hr-attendance.module';
 import { HrHolidaysModule } from './hr-holidays/hr-holidays.module';
-// import { OvertimeModule } from './overtime/overtime.module'; // schema missing overtimeRequest
-// import { WorkShiftsModule } from './work-shifts/work-shifts.module'; // schema missing workShift
+import { OvertimeModule } from './overtime/overtime.module';
+import { WorkShiftsModule } from './work-shifts/work-shifts.module';
 
 @Module({
   providers: [
@@ -75,6 +76,7 @@ import { HrHolidaysModule } from './hr-holidays/hr-holidays.module';
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: PermissionGuard },
+    { provide: APP_GUARD, useClass: TenantGuard },
     { provide: APP_INTERCEPTOR, useClass: OrgScopeInterceptor },
   ],
   imports: [
@@ -146,19 +148,19 @@ import { HrHolidaysModule } from './hr-holidays/hr-holidays.module';
     VehicleBookingModule,
     CalendarModule,
     TenantModule,
-    // HR v4.0 modules (các module bị tắt tạm vì schema chưa có model tương ứng)
+    // HR v4.0 modules
     JobTitlesModule,
     PositionsModule,
-    // HrDecisionsModule,
-    // SalaryRecordsModule,
-    // WorkHistoryModule,
-    // HrInsuranceModule,
-    // HrProfileModule,
+    HrDecisionsModule,
+    SalaryRecordsModule,
+    WorkHistoryModule,
+    HrInsuranceModule,
+    HrProfileModule,
     LeavePoliciesModule,
-    // HrAttendanceModule,
+    HrAttendanceModule,
     HrHolidaysModule,
-    // OvertimeModule,
-    // WorkShiftsModule,
+    OvertimeModule,
+    WorkShiftsModule,
   ],
 })
 export class AppModule {}

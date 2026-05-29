@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnprocessableEntityException, Logger, Optional } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnprocessableEntityException, Logger, Optional, Inject } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { TelegramService } from '../integrations/telegram/telegram.service';
@@ -61,8 +62,13 @@ export class BugsService {
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly tasksService: TasksService,
+    @Inject(REQUEST) private readonly request: any,
     @Optional() private readonly telegramService: TelegramService,
   ) {}
+
+  private getTenantId(): string | undefined {
+    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+  }
 
   async create(dto: CreateBugDto, reporterId: string, orgUnitIds: string[] | null) {
     await this.assertProjectInScope(dto.projectId, orgUnitIds);
@@ -373,9 +379,11 @@ export class BugsService {
   }
 
   private buildWhere(filters: FilterBugDto, orgUnitIds: string[] | null) {
-    const where: any = orgUnitIds !== null
-      ? { project: { orgUnitId: { in: orgUnitIds } } }
-      : {};
+    const tenantId = this.getTenantId();
+    const where: any = {
+      ...(orgUnitIds !== null ? { project: { orgUnitId: { in: orgUnitIds } } } : {}),
+      ...(tenantId ? { project: { ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}), tenantId } } : {}),
+    };
 
     if (filters.projectId) where.projectId = filters.projectId;
     if (filters.assigneeId) where.assigneeId = filters.assigneeId;

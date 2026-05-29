@@ -6,7 +6,8 @@ import {
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { automationApi, AutomationRule } from '../../api/automation';
+import { automationApi } from '../../api/automation';
+import type { AutomationRule } from '../../api/automation';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';

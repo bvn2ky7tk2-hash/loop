@@ -247,11 +247,8 @@ async function main() {
   const hash     = await bcrypt.hash('admin', 12);
   const demoHash = await bcrypt.hash('Demo@1234', 12);
 
-  const orgUnit = await prisma.orgUnit.upsert({
-    where: { code: 'ROOT' },
-    update: {},
-    create: { name: 'Công ty', code: 'ROOT' },
-  });
+  const orgUnit = await prisma.orgUnit.findFirst({ where: { code: 'ROOT' } })
+    ?? await prisma.orgUnit.create({ data: { name: 'Công ty', code: 'ROOT' } });
 
   await prisma.user.upsert({
     where: { email: 'admin@loop.vn' },
@@ -1826,29 +1823,17 @@ async function seedProcessDefinitions(orgUnitId: string) {
 async function seedPhase2Demo() {
   try {
     // ── 1. OrgUnit hierarchy ────────────────────────────────────────────────
-    const orgRoot = await prisma.orgUnit.upsert({
-      where: { code: 'ROOT' },
-      update: {},
-      create: { name: 'Công ty', code: 'ROOT', level: 0 },
-    });
+    const orgRoot = await prisma.orgUnit.findFirst({ where: { code: 'ROOT' } })
+      ?? await prisma.orgUnit.create({ data: { name: 'Công ty', code: 'ROOT', level: 0 } });
 
-    const orgDev = await prisma.orgUnit.upsert({
-      where: { code: 'DEV' },
-      update: {},
-      create: { name: 'Phòng Kỹ thuật', code: 'DEV', parentId: orgRoot.id, level: 1 },
-    });
+    const orgDev = await prisma.orgUnit.findFirst({ where: { code: 'DEV' } })
+      ?? await prisma.orgUnit.create({ data: { name: 'Phòng Kỹ thuật', code: 'DEV', parentId: orgRoot.id, level: 1 } });
 
-    const orgHrd = await prisma.orgUnit.upsert({
-      where: { code: 'HRD' },
-      update: {},
-      create: { name: 'Phòng Nhân sự', code: 'HRD', parentId: orgRoot.id, level: 1 },
-    });
+    const orgHrd = await prisma.orgUnit.findFirst({ where: { code: 'HRD' } })
+      ?? await prisma.orgUnit.create({ data: { name: 'Phòng Nhân sự', code: 'HRD', parentId: orgRoot.id, level: 1 } });
 
-    const orgFin = await prisma.orgUnit.upsert({
-      where: { code: 'FIN' },
-      update: {},
-      create: { name: 'Phòng Tài chính', code: 'FIN', parentId: orgRoot.id, level: 1 },
-    });
+    const orgFin = await prisma.orgUnit.findFirst({ where: { code: 'FIN' } })
+      ?? await prisma.orgUnit.create({ data: { name: 'Phòng Tài chính', code: 'FIN', parentId: orgRoot.id, level: 1 } });
 
     console.log('  ✓ OrgUnit hierarchy seeded (ROOT, DEV, HRD, FIN)');
 
@@ -1911,18 +1896,17 @@ async function seedPhase2Demo() {
     const employees: Record<string, { id: string; startDate: Date; level: string }> = {};
 
     for (const def of empDefs) {
-      const emp = await prisma.employee.upsert({
-        where: { code: def.code },
-        update: {},
-        create: {
-          code:      def.code,
-          userId:    def.userId,
-          fullName:  def.fullName,
-          level:     def.level,
-          orgUnitId: def.orgUnitId,
-          startDate: def.startDate,
-        },
-      });
+      const emp = await prisma.employee.findFirst({ where: { code: def.code } })
+        ?? await prisma.employee.create({
+          data: {
+            code:      def.code,
+            userId:    def.userId,
+            fullName:  def.fullName,
+            level:     def.level,
+            orgUnitId: def.orgUnitId,
+            startDate: def.startDate,
+          },
+        });
       employees[def.code] = { id: emp.id, startDate: def.startDate, level: def.level };
     }
 
@@ -2263,9 +2247,9 @@ async function seedCrmDemo() {
     ];
     const custMap: Record<string, string> = {};
     for (const c of customers) {
-      const existing = await prisma.customer.findUnique({ where: { code: c.code } });
+      const existing = await prisma.customer.findFirst({ where: { code: c.code } });
       const cust = existing
-        ? await prisma.customer.update({ where: { code: c.code }, data: c })
+        ? await prisma.customer.update({ where: { id: existing.id }, data: c })
         : await prisma.customer.create({ data: c });
       custMap[c.code] = cust.id;
     }
@@ -2312,7 +2296,7 @@ async function seedCrmDemo() {
       { code: 'DEAL-004', title: 'FPT Mobile App Suite',     customerId: custMap['FPT'],  stage: 'WON'           as const, value: 320_000_000, probability: 100, assigneeId: adminUser.id, wonAt: new Date() },
     ];
     for (const d of dealsData) {
-      const exists = await prisma.deal.findUnique({ where: { code: d.code } });
+      const exists = await prisma.deal.findFirst({ where: { code: d.code } });
       if (!exists) await prisma.deal.create({ data: d });
     }
     console.log('  ✓ 4 deals seeded (1 WON)');
@@ -2529,7 +2513,7 @@ async function seedInvoiceDemo() {
     ];
 
     for (const def of invoiceDefs) {
-      const existing = await prisma.invoice.findUnique({ where: { code: def.code } });
+      const existing = await prisma.invoice.findFirst({ where: { code: def.code } });
       if (existing) continue;
 
       const subtotal  = def.items.reduce((s, i) => s + i.quantity * i.unitPrice, 0);
@@ -2588,7 +2572,7 @@ async function seedRecruitDemo() {
 
     const jobs: { id: string; code: string }[] = [];
     for (const def of jobDefs) {
-      const existing = await prisma.jobOpening.findUnique({ where: { code: def.code } });
+      const existing = await prisma.jobOpening.findFirst({ where: { code: def.code } });
       if (existing) { jobs.push({ id: existing.id, code: existing.code }); continue; }
 
       const job = await prisma.jobOpening.create({
@@ -2690,7 +2674,7 @@ async function seedAssetsDemo() {
     }
 
     // Lấy orgUnit ROOT
-    const orgUnit = await prisma.orgUnit.findUnique({ where: { code: 'ROOT' } });
+    const orgUnit = await prisma.orgUnit.findFirst({ where: { code: 'ROOT' } });
 
     // Lấy 3 employees đầu tiên để assign
     const employees = await prisma.employee.findMany({ take: 3, orderBy: { createdAt: 'asc' } });
@@ -2890,7 +2874,7 @@ function calcPayrollCompliance(opts: {
 
 async function seedEnrichedDemo() {
   try {
-    const existing = await prisma.project.findUnique({ where: { code: 'PROJ-FPT-001' } });
+    const existing = await prisma.project.findFirst({ where: { code: 'PROJ-FPT-001' } });
     if (existing) {
       console.log('  ✓ Enriched demo already seeded, skipping');
       return;
@@ -2905,16 +2889,16 @@ async function seedEnrichedDemo() {
     const uHr      = await prisma.user.findUniqueOrThrow({ where: { email: 'hr@loop.vn' } });
     const uFinance = await prisma.user.findUniqueOrThrow({ where: { email: 'finance@loop.vn' } });
 
-    const empAdmin   = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP001' } });
-    const empPm      = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP002' } });
-    const empDemo    = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP003' } });
-    const empHr      = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP004' } });
-    const empFinance = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP005' } });
-    const empDev1    = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP006' } });
-    const empDev2    = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP007' } });
+    const empAdmin   = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP001' } });
+    const empPm      = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP002' } });
+    const empDemo    = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP003' } });
+    const empHr      = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP004' } });
+    const empFinance = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP005' } });
+    const empDev1    = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP006' } });
+    const empDev2    = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP007' } });
 
-    const orgDev = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'DEV' } });
-    const orgHrd = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'HRD' } });
+    const orgDev = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'DEV' } });
+    const orgHrd = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'HRD' } });
 
     // ── 1. Projects ────────────────────────────────────────────────────────────
     // Kết nối với CRM deals: FPT ERP → DEAL-002, Viettel Data → DEAL-003
@@ -2929,7 +2913,6 @@ async function seedEnrichedDemo() {
         orgUnitId:   orgDev.id,
         startDate:   new Date('2026-03-01'),
         endDate:     new Date('2026-11-30'),
-        customer:    'FPT Software',
         budgetCost:  500_000_000,
         budgetHours: 4000,
         currency:    'VND',
@@ -2948,7 +2931,6 @@ async function seedEnrichedDemo() {
         orgUnitId:   orgDev.id,
         startDate:   new Date('2026-06-01'),
         endDate:     new Date('2026-12-31'),
-        customer:    'VNG Corporation',
         budgetCost:  250_000_000,
         budgetHours: 2000,
         currency:    'VND',
@@ -2967,7 +2949,6 @@ async function seedEnrichedDemo() {
         orgUnitId:   orgDev.id,
         startDate:   new Date('2026-04-01'),
         endDate:     new Date('2027-03-31'),
-        customer:    'Viettel Digital',
         budgetCost:  800_000_000,
         budgetHours: 7000,
         currency:    'VND',
@@ -3234,11 +3215,8 @@ async function seedEnrichedDemo() {
         update: {},
         create: { email: 'binh.tran@loop.vn', passwordHash: demoHash, name: 'Trần Thị Bình', role: 'MEMBER', orgUnitId: orgDev.id },
       });
-      const binhEmp = await prisma.employee.upsert({
-        where: { code: 'EMP008' },
-        update: {},
-        create: { code: 'EMP008', userId: binhUser.id, fullName: 'Trần Thị Bình', level: 'SENIOR', orgUnitId: orgDev.id, startDate: new Date('2026-06-01') },
-      });
+      const binhEmp = await prisma.employee.findFirst({ where: { code: 'EMP008' } })
+        ?? await prisma.employee.create({ data: { code: 'EMP008', userId: binhUser.id, fullName: 'Trần Thị Bình', level: 'SENIOR', orgUnitId: orgDev.id, startDate: new Date('2026-06-01') } });
       await prisma.candidate.update({
         where: { id: binhCandidate.id },
         data: { stage: 'HIRED', employeeId: binhEmp.id },
@@ -3372,24 +3350,24 @@ async function seedEnrichedDemo() {
 
 async function seedAssetsEnriched() {
   try {
-    const check = await prisma.asset.findUnique({ where: { code: 'LAPTOP-004' } });
+    const check = await prisma.asset.findFirst({ where: { code: 'LAPTOP-004' } });
     if (check) {
       console.log('  ✓ Assets enriched demo already seeded, skipping');
       return;
     }
 
     // ── Lấy orgUnits & employees ──────────────────────────────────────────────
-    const orgRoot = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'ROOT' } });
-    const orgDev  = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'DEV' } });
-    const orgHrd  = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'HRD' } });
-    const orgFin  = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'FIN' } });
+    const orgRoot = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'ROOT' } });
+    const orgDev  = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'DEV' } });
+    const orgHrd  = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'HRD' } });
+    const orgFin  = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'FIN' } });
 
-    const empHr      = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP004' } });
-    const empFinance = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP005' } });
-    const empDev1    = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP006' } });
-    const empDev2    = await prisma.employee.findUniqueOrThrow({ where: { code: 'EMP007' } });
+    const empHr      = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP004' } });
+    const empFinance = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP005' } });
+    const empDev1    = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP006' } });
+    const empDev2    = await prisma.employee.findFirstOrThrow({ where: { code: 'EMP007' } });
     // EMP008 có thể chưa tồn tại nếu seedEnrichedDemo chưa chạy
-    const empNewHire = await prisma.employee.findUnique({ where: { code: 'EMP008' } });
+    const empNewHire = await prisma.employee.findFirst({ where: { code: 'EMP008' } });
 
     // ── 1. Thêm assets theo từng danh mục ────────────────────────────────────
     const purchaseQ1 = new Date('2025-01-15');
@@ -3649,15 +3627,15 @@ async function seedAssetsEnriched() {
 
 async function seedCrmEnriched() {
   try {
-    const check = await prisma.customer.findUnique({ where: { code: 'MOMO' } });
+    const check = await prisma.customer.findFirst({ where: { code: 'MOMO' } });
     if (check) { console.log('  ✓ CRM enriched demo already seeded, skipping'); return; }
 
     const uAdmin = await prisma.user.findUniqueOrThrow({ where: { email: 'admin@loop.vn' } });
     const uPm    = await prisma.user.findUniqueOrThrow({ where: { email: 'pm@loop.vn' } });
 
     // Lấy project IDs để link deal → project
-    const projFpt  = await prisma.project.findUnique({ where: { code: 'PROJ-FPT-001'  } });
-    const projVtel = await prisma.project.findUnique({ where: { code: 'PROJ-VTEL-001' } });
+    const projFpt  = await prisma.project.findFirst({ where: { code: 'PROJ-FPT-001'  } });
+    const projVtel = await prisma.project.findFirst({ where: { code: 'PROJ-VTEL-001' } });
 
     // ── 1. Customers mới ──────────────────────────────────────────────────────
     const newCustomers = [
@@ -3674,7 +3652,7 @@ async function seedCrmEnriched() {
     }
     // Load existing customers
     for (const code of ['VNG', 'FPT', 'VTEL']) {
-      const row = await prisma.customer.findUnique({ where: { code } });
+      const row = await prisma.customer.findFirst({ where: { code } });
       if (row) custMap[code] = row.id;
     }
     console.log(`  ✓ 5 customers mới (MoMo, Vingroup, Techcombank, Tiki, VNPAY)`);
@@ -3801,7 +3779,7 @@ async function seedCrmEnriched() {
     ];
 
     for (const d of dealDefs) {
-      const exists = await prisma.deal.findUnique({ where: { code: d.code } });
+      const exists = await prisma.deal.findFirst({ where: { code: d.code } });
       if (exists) continue;
       await prisma.deal.create({
         data: {
@@ -3830,7 +3808,7 @@ async function seedCrmEnriched() {
     // ── 6. Invoices liên kết với deal WON DEAL-010 (Vingroup HRM) ────────────
     const adminUser = await prisma.user.findUniqueOrThrow({ where: { email: 'admin@loop.vn' } });
     const vingroupId = custMap['VINGROUP'];
-    const invExists = await prisma.invoice.findUnique({ where: { code: 'INV-VG-001' } });
+    const invExists = await prisma.invoice.findFirst({ where: { code: 'INV-VG-001' } });
     if (!invExists) {
       await prisma.invoice.create({
         data: {
@@ -3850,7 +3828,7 @@ async function seedCrmEnriched() {
     }
 
     const momoId = custMap['MOMO'];
-    const invMomo = await prisma.invoice.findUnique({ where: { code: 'INV-MOMO-001' } });
+    const invMomo = await prisma.invoice.findFirst({ where: { code: 'INV-MOMO-001' } });
     if (!invMomo) {
       await prisma.invoice.create({
         data: {
@@ -3877,16 +3855,16 @@ async function seedCrmEnriched() {
 
 async function seedRecruitEnriched() {
   try {
-    const check = await prisma.jobOpening.findUnique({ where: { code: 'JOB-2026-005' } });
+    const check = await prisma.jobOpening.findFirst({ where: { code: 'JOB-2026-005' } });
     if (check) { console.log('  ✓ Recruit enriched demo already seeded, skipping'); return; }
 
     const uAdmin = await prisma.user.findUniqueOrThrow({ where: { email: 'admin@loop.vn' } });
     const uHr    = await prisma.user.findUniqueOrThrow({ where: { email: 'hr@loop.vn' } });
     const demoHash = await (await import('bcrypt')).hash('Demo@1234', 12);
 
-    const orgDev = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'DEV' } });
-    const orgHrd = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'HRD' } });
-    const orgRoot = await prisma.orgUnit.findUniqueOrThrow({ where: { code: 'ROOT' } });
+    const orgDev = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'DEV' } });
+    const orgHrd = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'HRD' } });
+    const orgRoot = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'ROOT' } });
 
     // ── 1. Đóng JOB-2026-004 (Junior QA đã tuyển đủ) ────────────────────────
     await prisma.jobOpening.updateMany({
@@ -3966,10 +3944,8 @@ async function seedRecruitEnriched() {
       update: {},
       create: { email: 'nam.nh@loop.vn', passwordHash: demoHash, name: 'Nguyễn Hữu Nam', role: 'MEMBER', orgUnitId: orgDev.id },
     });
-    const namEmp = await prisma.employee.upsert({
-      where: { code: 'EMP009' }, update: {},
-      create: { code: 'EMP009', userId: namUser.id, fullName: 'Nguyễn Hữu Nam', level: 'JUNIOR', orgUnitId: orgDev.id, startDate: new Date('2026-05-01') },
-    });
+    const namEmp = await prisma.employee.findFirst({ where: { code: 'EMP009' } })
+      ?? await prisma.employee.create({ data: { code: 'EMP009', userId: namUser.id, fullName: 'Nguyễn Hữu Nam', level: 'JUNIOR', orgUnitId: orgDev.id, startDate: new Date('2026-05-01') } });
     const namCand = await prisma.candidate.findFirst({ where: { email: 'ha.do@gmail.com' } });
     if (namCand && !namCand.employeeId) {
       await prisma.candidate.update({ where: { id: namCand.id }, data: { stage: 'HIRED', employeeId: namEmp.id } });
@@ -3981,10 +3957,8 @@ async function seedRecruitEnriched() {
       update: {},
       create: { email: 'huong.nt@loop.vn', passwordHash: demoHash, name: 'Ngô Thị Hương', role: 'MEMBER', orgUnitId: orgDev.id },
     });
-    const huongEmp = await prisma.employee.upsert({
-      where: { code: 'EMP010' }, update: {},
-      create: { code: 'EMP010', userId: huongUser.id, fullName: 'Ngô Thị Hương', level: 'JUNIOR', orgUnitId: orgDev.id, startDate: new Date('2026-05-15') },
-    });
+    const huongEmp = await prisma.employee.findFirst({ where: { code: 'EMP010' } })
+      ?? await prisma.employee.create({ data: { code: 'EMP010', userId: huongUser.id, fullName: 'Ngô Thị Hương', level: 'JUNIOR', orgUnitId: orgDev.id, startDate: new Date('2026-05-15') } });
     const huongCand = await prisma.candidate.findFirst({ where: { email: 'huong.ngo@gmail.com' } });
     if (huongCand && !huongCand.employeeId) {
       await prisma.candidate.update({ where: { id: huongCand.id }, data: { stage: 'HIRED', employeeId: huongEmp.id } });

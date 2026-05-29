@@ -54,7 +54,7 @@ export interface PaginatedResult<T> {
 export function useGetTrainingPrograms() {
   return useQuery({
     queryKey: ['training', 'programs'],
-    queryFn: () => apiClient.get<TrainingProgram[]>('/api/v1/hr/training/programs').then(r => r.data),
+    queryFn: () => apiClient.get<TrainingProgram[]>('/hr/training/programs').then(r => r.data),
   });
 }
 
@@ -62,7 +62,7 @@ export function useCreateTrainingProgram() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: { title: string; type: string; durationHours: number; description?: string }) =>
-      apiClient.post<TrainingProgram>('/api/v1/hr/training/programs', dto).then(r => r.data),
+      apiClient.post<TrainingProgram>('/hr/training/programs', dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['training'] }),
   });
 }
@@ -70,7 +70,7 @@ export function useCreateTrainingProgram() {
 export function useGetTrainingRecords(params: { page?: number; limit?: number; employeeId?: string; status?: string }) {
   return useQuery({
     queryKey: ['training', 'records', params],
-    queryFn: () => apiClient.get<PaginatedResult<TrainingRecord>>('/api/v1/hr/training/records', { params }).then(r => r.data),
+    queryFn: () => apiClient.get<PaginatedResult<TrainingRecord>>('/hr/training/records', { params }).then(r => r.data),
   });
 }
 
@@ -78,7 +78,7 @@ export function useCreateTrainingRecord() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: { programId: string; employeeId: string; startDate: string; endDate?: string; status?: string; score?: number; notes?: string }) =>
-      apiClient.post<TrainingRecord>('/api/v1/hr/training/records', dto).then(r => r.data),
+      apiClient.post<TrainingRecord>('/hr/training/records', dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['training', 'records'] }),
   });
 }
@@ -87,7 +87,7 @@ export function useUpdateTrainingRecord() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...dto }: { id: string; status?: string; score?: number; endDate?: string; notes?: string }) =>
-      apiClient.patch<TrainingRecord>(`/api/v1/hr/training/records/${id}`, dto).then(r => r.data),
+      apiClient.patch<TrainingRecord>(`/hr/training/records/${id}`, dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['training', 'records'] }),
   });
 }
@@ -95,7 +95,7 @@ export function useUpdateTrainingRecord() {
 export function useGetTrainingStats() {
   return useQuery({
     queryKey: ['training', 'stats'],
-    queryFn: () => apiClient.get('/api/v1/hr/training/stats').then(r => r.data),
+    queryFn: () => apiClient.get('/hr/training/stats').then(r => r.data),
   });
 }
 
@@ -104,7 +104,7 @@ export function useGetTrainingStats() {
 export function useGetPerformanceReviews(params: { page?: number; limit?: number; employeeId?: string; period?: string; status?: string }) {
   return useQuery({
     queryKey: ['performance', params],
-    queryFn: () => apiClient.get<PaginatedResult<PerformanceReview>>('/api/v1/hr/performance', { params }).then(r => r.data),
+    queryFn: () => apiClient.get<PaginatedResult<PerformanceReview>>('/hr/performance', { params }).then(r => r.data),
   });
 }
 
@@ -112,7 +112,7 @@ export function useCreatePerformanceReview() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (dto: { employeeId: string; reviewerId: string; period: string; score?: number; strengths?: string; improvements?: string; goals?: string }) =>
-      apiClient.post<PerformanceReview>('/api/v1/hr/performance', dto).then(r => r.data),
+      apiClient.post<PerformanceReview>('/hr/performance', dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['performance'] }),
   });
 }
@@ -121,7 +121,7 @@ export function useUpdatePerformanceReview() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...dto }: { id: string; score?: number; strengths?: string; improvements?: string; goals?: string; status?: ReviewStatus }) =>
-      apiClient.patch<PerformanceReview>(`/api/v1/hr/performance/${id}`, dto).then(r => r.data),
+      apiClient.patch<PerformanceReview>(`/hr/performance/${id}`, dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['performance'] }),
   });
 }
@@ -129,6 +129,6 @@ export function useUpdatePerformanceReview() {
 export function useGetPerformanceStats(period?: string) {
   return useQuery({
     queryKey: ['performance', 'stats', period],
-    queryFn: () => apiClient.get('/api/v1/hr/performance/stats', { params: period ? { period } : {} }).then(r => r.data),
+    queryFn: () => apiClient.get('/hr/performance/stats', { params: period ? { period } : {} }).then(r => r.data),
   });
 }
