@@ -225,6 +225,12 @@ export const payrollApi = {
   listAllowanceTypes: () =>
     apiClient.get<AllowanceType[]>(`${BASE}/allowance-types`).then(r => r.data),
 
+  createAllowanceType: (data: Omit<AllowanceType, 'id' | 'createdAt'>) =>
+    apiClient.post<AllowanceType>(`${BASE}/allowance-types`, data).then(r => r.data),
+
+  updateAllowanceType: (id: string, data: Partial<Omit<AllowanceType, 'id' | 'createdAt'>>) =>
+    apiClient.patch<AllowanceType>(`${BASE}/allowance-types/${id}`, data).then(r => r.data),
+
   // ── Employee Tax Profile ───────────────────────────────────────────────────
   getEmployeeTaxProfile: (employeeId: string) =>
     apiClient.get<EmployeeTaxProfile>(`${BASE}/employees/${employeeId}/tax-profile`).then(r => r.data),

@@ -20,6 +20,8 @@ export interface OrgUnitTree extends OrgUnit {
 
 export const orgUnitsApi = {
   getTree: () => apiClient.get<OrgUnitTree[]>('/org-units').then((r) => r.data),
+  /** Alias của getTree — trả flat list từ tree API */
+  list: () => apiClient.get<OrgUnitTree[]>('/org-units').then((r) => r.data),
   create: (data: { name: string; code: string; parentId?: string; headJobTitleId?: string }) =>
     apiClient.post<OrgUnitTree>('/org-units', data).then((r) => r.data),
   update: (id: string, data: { name?: string; code?: string; parentId?: string | null; headJobTitleId?: string | null; leaderId?: string | null }) =>

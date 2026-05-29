@@ -8,6 +8,10 @@ import { UpdateContractDto } from './dto/update-contract.dto';
 const CONTRACT_INCLUDE = {
   employee: { select: { id: true, fullName: true, code: true, level: true } },
   signedBy: { select: { id: true, fullName: true } },
+  allowances: {
+    include: { allowanceType: { select: { id: true, name: true } } },
+    orderBy: { amount: 'desc' as const },
+  },
 } as const;
 
 @Injectable()
@@ -55,7 +59,7 @@ export class ContractsService {
   }
 
   async create(dto: CreateContractDto) {
-    return this.prisma.contract.create({
+    const contract = await this.prisma.contract.create({
       data: {
         employeeId:    dto.employeeId,
         type:          dto.type,
@@ -70,15 +74,30 @@ export class ContractsService {
       },
       include: CONTRACT_INCLUDE,
     });
+
+    if (dto.allowances?.length) {
+      await this.prisma.contractAllowance.createMany({
+        data: dto.allowances.map(a => ({
+          contractId:      contract.id,
+          allowanceTypeId: a.allowanceTypeId,
+          amount:          a.amount,
+          note:            a.note,
+        })),
+        skipDuplicates: true,
+      });
+      return this.findOne(contract.id);
+    }
+
+    return contract;
   }
 
   async update(id: string, dto: UpdateContractDto) {
     await this.findOne(id);
 
     const raw = dto as Record<string, any>;
-    const { startDate, endDate, signedAt, employeeId, ...rest } = raw;
+    const { startDate, endDate, signedAt, employeeId, allowances, ...rest } = raw;
 
-    return this.prisma.contract.update({
+    await this.prisma.contract.update({
       where: { id },
       data: {
         ...rest,
@@ -86,8 +105,25 @@ export class ContractsService {
         ...(endDate !== undefined ? { endDate: endDate ? new Date(endDate as string) : null } : {}),
         ...(signedAt !== undefined ? { signedAt: signedAt ? new Date(signedAt as string) : null } : {}),
       },
-      include: CONTRACT_INCLUDE,
     });
+
+    // Nếu allowances được truyền vào → replace toàn bộ
+    if (Array.isArray(allowances)) {
+      await this.prisma.contractAllowance.deleteMany({ where: { contractId: id } });
+      if (allowances.length > 0) {
+        await this.prisma.contractAllowance.createMany({
+          data: allowances.map((a: any) => ({
+            contractId:      id,
+            allowanceTypeId: a.allowanceTypeId,
+            amount:          a.amount,
+            note:            a.note,
+          })),
+          skipDuplicates: true,
+        });
+      }
+    }
+
+    return this.findOne(id);
   }
 
   async remove(id: string) {

@@ -129,21 +129,40 @@ model Employee {
   taxProfile         EmployeeTaxProfile?
   yearlySummaries    EmployeeYearlyTaxSummary[]
 
-  skills            EmployeeSkill[]
-  position          Position?         @relation(fields: [positionId], references: [id])
-  hrDecisions       HrDecision[]
-  workHistories     WorkHistory[]
-  salaryRecords     SalaryRecord[]
-  positionHistories PositionHistory[]
-  directManagerId   String?           @map("direct_manager_id")
-  directManager     Employee?         @relation("DirectReport", fields: [directManagerId], references: [id], onDelete: SetNull)
-  directReports     Employee[]        @relation("DirectReport")
-  leadingOrgUnit    OrgUnit?          @relation("OrgUnitLeader")
-  overtimeRequests  OvertimeRequest[]
-  signedContracts   Contract[]        @relation("ContractSigner")
-  tenantId          String?           @map("tenant_id")
-  tenant            Tenant?           @relation("TenantEmployees", fields: [tenantId], references: [id])
-  deletedAt         DateTime?         @map("deleted_at")
+  skills                  EmployeeSkill[]
+  position                Position?                @relation(fields: [positionId], references: [id])
+  hrDecisions             HrDecision[]
+  workHistories           WorkHistory[]
+  salaryRecords           SalaryRecord[]
+  positionHistories       PositionHistory[]
+  directManagerId         String?                  @map("direct_manager_id")
+  directManager           Employee?                @relation("DirectReport", fields: [directManagerId], references: [id], onDelete: SetNull)
+  directReports           Employee[]               @relation("DirectReport")
+  leadingOrgUnit          OrgUnit?                 @relation("OrgUnitLeader")
+  overtimeRequests        OvertimeRequest[]
+  signedContracts         Contract[]               @relation("ContractSigner")
+  tenantId                String?                  @map("tenant_id")
+  tenant                  Tenant?                  @relation("TenantEmployees", fields: [tenantId], references: [id])
+  deletedAt               DateTime?                @map("deleted_at")
+  leavePolicyId           String?                  @map("leave_policy_id")
+  leavePolicy             LeavePolicy?             @relation(fields: [leavePolicyId], references: [id])
+  idType                  IdType?                  @map("id_type")
+  idNumber                String?                  @map("id_number")
+  idIssueDate             DateTime?                @map("id_issue_date") @db.Date
+  idIssuePlace            String?                  @map("id_issue_place")
+  permanentAddress        String?                  @map("permanent_address")
+  currentAddress          String?                  @map("current_address")
+  ethnicity               String?
+  religion                String?
+  nationality             String?
+  bankAccount             String?                  @map("bank_account")
+  bankName                String?                  @map("bank_name")
+  insuranceEnrollments    InsuranceEnrollment[]
+  socialInsuranceBook     SocialInsuranceBook?
+  attendanceRecords       AttendanceRecord[]
+  monthlyAttendances      MonthlyAttendance[]
+  shiftAssignments        ShiftAssignment[]
+  workScheduleEnrollments WorkScheduleEnrollment[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -951,30 +970,45 @@ model GroupOrgAccess {
 // ─── Phase 2: HR — Contracts ──────────────────────────────────────────────────
 
 model Contract {
-  id            String         @id @default(uuid())
-  employeeId    String         @map("employee_id")
-  type          ContractType   @default(FULL_TIME)
-  status        ContractStatus @default(ACTIVE)
-  startDate     DateTime       @map("start_date") @db.Date
-  endDate       DateTime?      @map("end_date") @db.Date
-  salaryMonthly Decimal        @map("salary_monthly") @db.Decimal(15, 2)
-  currency      BudgetCurrency @default(VND)
+  id            String              @id @default(uuid())
+  employeeId    String              @map("employee_id")
+  type          ContractType        @default(FULL_TIME)
+  status        ContractStatus      @default(ACTIVE)
+  startDate     DateTime            @map("start_date") @db.Date
+  endDate       DateTime?           @map("end_date") @db.Date
+  salaryMonthly Decimal             @map("salary_monthly") @db.Decimal(15, 2)
+  currency      BudgetCurrency      @default(VND)
   note          String?
-  signedAt      DateTime?      @map("signed_at") @db.Date
-  signedById    String?        @map("signed_by_id")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt @map("updated_at")
-  employee      Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  signedBy      Employee?      @relation("ContractSigner", fields: [signedById], references: [id])
-  tenantId      String?        @map("tenant_id")
-  tenant        Tenant?        @relation("TenantContracts", fields: [tenantId], references: [id])
-  deletedAt     DateTime?      @map("deleted_at")
+  signedAt      DateTime?           @map("signed_at") @db.Date
+  signedById    String?             @map("signed_by_id")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+  employee      Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  signedBy      Employee?           @relation("ContractSigner", fields: [signedById], references: [id])
+  tenantId      String?             @map("tenant_id")
+  tenant        Tenant?             @relation("TenantContracts", fields: [tenantId], references: [id])
+  deletedAt     DateTime?           @map("deleted_at")
+  allowances    ContractAllowance[]
 
   @@index([employeeId])
   @@index([status])
   @@index([tenantId])
   @@index([deletedAt])
   @@map("contracts")
+}
+
+model ContractAllowance {
+  id              String        @id @default(uuid())
+  contractId      String        @map("contract_id")
+  allowanceTypeId String        @map("allowance_type_id")
+  amount          Decimal       @db.Decimal(12, 2)
+  note            String?
+  contract        Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  allowanceType   AllowanceType @relation(fields: [allowanceTypeId], references: [id])
+
+  @@unique([contractId, allowanceTypeId])
+  @@index([contractId])
+  @@map("contract_allowances")
 }
 
 enum ContractType {
@@ -1043,14 +1077,15 @@ model LeaveRequest {
 }
 
 model LeaveBalance {
-  id          String    @id @default(uuid())
-  employeeId  String    @map("employee_id")
-  leaveTypeId String    @map("leave_type_id")
-  year        Int
-  totalDays   Decimal   @map("total_days") @db.Decimal(5, 1)
-  usedDays    Decimal   @default(0) @map("used_days") @db.Decimal(5, 1)
-  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
+  id              String    @id @default(uuid())
+  employeeId      String    @map("employee_id")
+  leaveTypeId     String    @map("leave_type_id")
+  year            Int
+  totalDays       Decimal   @map("total_days") @db.Decimal(5, 1)
+  usedDays        Decimal   @default(0) @map("used_days") @db.Decimal(5, 1)
+  entitlementDays Decimal?  @map("entitlement_days") @db.Decimal(5, 1)
+  employee        Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType       LeaveType @relation(fields: [leaveTypeId], references: [id])
 
   tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantLeaveBalances", fields: [tenantId], references: [id])
@@ -1097,6 +1132,7 @@ model OvertimeRequest {
   approvedBy        User?            @relation("OtApprover", fields: [approvedById], references: [id], onDelete: SetNull)
   processInstance   ProcessInstance? @relation(fields: [processInstanceId], references: [id])
 
+  @@unique([employeeId, date])
   @@index([employeeId])
   @@index([status])
   @@map("overtime_requests")
@@ -1960,6 +1996,7 @@ model AllowanceType {
   isActive           Boolean             @default(true) @map("is_active")
   createdAt          DateTime            @default(now()) @map("created_at")
   employeeAllowances EmployeeAllowance[]
+  contractAllowances ContractAllowance[]
   salaryColumns      SalaryColumn[]
 
   @@map("allowance_types")
@@ -2809,7 +2846,7 @@ model HrDecision {
   fromSalary        Decimal?         @map("from_salary") @db.Decimal(18, 2)
   toSalary          Decimal?         @map("to_salary") @db.Decimal(18, 2)
   processInstanceId String?          @map("process_instance_id")
-  createdById       String           @map("created_by_id")
+  createdById       String?          @map("created_by_id")
   createdAt         DateTime         @default(now()) @map("created_at")
   updatedAt         DateTime         @updatedAt @map("updated_at")
   employee          Employee         @relation(fields: [employeeId], references: [id])
@@ -2895,4 +2932,298 @@ enum WorkHistoryEventType {
   PROBATION_ENDED
 
   @@map("work_history_event_type")
+}
+
+// ─── Employee ID Type ─────────────────────────────────────────────────────────
+
+enum IdType {
+  CCCD
+  CMND
+  PASSPORT
+  OTHER
+
+  @@map("id_type")
+}
+
+// ─── Leave Policy ──────────────────────────────────────────────────────────────
+
+enum CarryOverExpiryAction {
+  CLEAR
+  CARRY_OVER
+  PAY_OUT
+
+  @@map("carry_over_expiry_action")
+}
+
+model LeavePolicy {
+  id                    String                @id @default(uuid())
+  name                  String
+  baseAnnualDays        Int                   @map("base_annual_days")
+  seniorityBonus        Json                  @default("[]") @map("seniority_bonus")
+  maxCarryOver          Int                   @default(0) @map("max_carry_over")
+  carryOverExpiry       String?               @map("carry_over_expiry")
+  carryOverExpiryAction CarryOverExpiryAction @default(CLEAR) @map("carry_over_expiry_action")
+  probationPolicy       Json?                 @map("probation_policy")
+  isActive              Boolean               @default(true) @map("is_active")
+  createdAt             DateTime              @default(now()) @map("created_at")
+  updatedAt             DateTime              @updatedAt @map("updated_at")
+  employees             Employee[]
+
+  @@map("leave_policies")
+}
+
+// ─── Holiday Calendar ─────────────────────────────────────────────────────────
+
+enum HolidayType {
+  NATIONAL_HOLIDAY
+  COMPANY_HOLIDAY
+  REGIONAL_HOLIDAY
+  COMPENSATORY_DAY
+
+  @@map("holiday_type")
+}
+
+model HolidayCalendar {
+  id        String      @id @default(uuid())
+  date      DateTime    @unique @db.Date
+  name      String
+  type      HolidayType @default(NATIONAL_HOLIDAY)
+  year      Int
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@index([year])
+  @@map("holiday_calendars")
+}
+
+// ─── Insurance ────────────────────────────────────────────────────────────────
+
+enum InsuranceEnrollmentStatus {
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+
+  @@map("insurance_enrollment_status")
+}
+
+enum InsuranceEventType {
+  ENROLL
+  SALARY_CHANGE
+  SUSPEND
+  RESUME
+  TERMINATE
+
+  @@map("insurance_event_type")
+}
+
+model InsuranceEnrollment {
+  id                  String                    @id @default(uuid())
+  employeeId          String                    @map("employee_id")
+  bhxhBookNumber      String?                   @map("bhxh_book_number")
+  insuranceSalary     Decimal                   @map("insurance_salary") @db.Decimal(15, 2)
+  startDate           DateTime                  @map("start_date") @db.Date
+  endDate             DateTime?                 @map("end_date") @db.Date
+  status              InsuranceEnrollmentStatus @default(ACTIVE)
+  createdAt           DateTime                  @default(now()) @map("created_at")
+  updatedAt           DateTime                  @updatedAt @map("updated_at")
+  employee            Employee                  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  socialInsuranceBook SocialInsuranceBook?
+  events              InsuranceEvent[]
+
+  @@index([employeeId])
+  @@map("insurance_enrollments")
+}
+
+model SocialInsuranceBook {
+  id                 String               @id @default(uuid())
+  employeeId         String               @unique @map("employee_id")
+  enrollmentId       String?              @unique @map("enrollment_id")
+  bookNumber         String               @unique @map("book_number")
+  issueDate          DateTime?            @map("issue_date") @db.Date
+  issueAuthority     String?              @map("issue_authority")
+  receivedByEmployee Boolean              @default(false) @map("received_by_employee")
+  receivedDate       DateTime?            @map("received_date") @db.Date
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  employee           Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  enrollment         InsuranceEnrollment? @relation(fields: [enrollmentId], references: [id])
+
+  @@map("social_insurance_books")
+}
+
+model InsuranceEvent {
+  id              String              @id @default(uuid())
+  enrollmentId    String              @map("enrollment_id")
+  eventType       InsuranceEventType  @map("event_type")
+  insuranceSalary Decimal?            @map("insurance_salary") @db.Decimal(15, 2)
+  effectiveDate   DateTime            @map("effective_date") @db.Date
+  reason          String?
+  hrDecisionId    String?             @map("hr_decision_id")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  enrollment      InsuranceEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@index([enrollmentId])
+  @@map("insurance_events")
+}
+
+// ─── HR Attendance ────────────────────────────────────────────────────────────
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+  ON_LEAVE
+  HOLIDAY
+  LEAVE
+  OT
+
+  @@map("attendance_status")
+}
+
+enum MonthlyAttendanceStatus {
+  OPEN
+  LOCKED
+  APPROVED
+
+  @@map("monthly_attendance_status")
+}
+
+model AttendanceRecord {
+  id                  String             @id @default(uuid())
+  employeeId          String             @map("employee_id")
+  monthlyAttendanceId String?            @map("monthly_attendance_id")
+  shiftId             String?            @map("shift_id")
+  date                DateTime           @db.Date
+  checkIn             DateTime?          @map("check_in")
+  checkOut            DateTime?          @map("check_out")
+  plannedStart        String?            @map("planned_start")
+  plannedEnd          String?            @map("planned_end")
+  totalHours          Decimal?           @map("total_hours") @db.Decimal(5, 2)
+  status              AttendanceStatus   @default(PRESENT)
+  lateMinutes         Int                @default(0) @map("late_minutes")
+  earlyLeaveMinutes   Int                @default(0) @map("early_leave_minutes")
+  overtimeMinutes     Int                @default(0) @map("overtime_minutes")
+  leaveType           String?            @map("leave_type")
+  note                String?
+  isManual            Boolean            @default(false) @map("is_manual")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime           @updatedAt @map("updated_at")
+  employee            Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  monthlyAttendance   MonthlyAttendance? @relation(fields: [monthlyAttendanceId], references: [id])
+
+  @@unique([employeeId, date])
+  @@index([employeeId])
+  @@map("attendance_records")
+}
+
+model MonthlyAttendance {
+  id              String                  @id @default(uuid())
+  employeeId      String                  @map("employee_id")
+  year            Int
+  month           Int
+  workDays        Decimal                 @default(0) @map("work_days") @db.Decimal(5, 1)
+  paidLeaveDays   Decimal                 @default(0) @map("paid_leave_days") @db.Decimal(5, 1)
+  unpaidLeaveDays Decimal                 @default(0) @map("unpaid_leave_days") @db.Decimal(5, 1)
+  otHours         Decimal                 @default(0) @map("ot_hours") @db.Decimal(6, 2)
+  absentDays      Decimal                 @default(0) @map("absent_days") @db.Decimal(5, 1)
+  holidayDays     Decimal                 @default(0) @map("holiday_days") @db.Decimal(5, 1)
+  status          MonthlyAttendanceStatus @default(OPEN)
+  lockedAt        DateTime?               @map("locked_at")
+  lockedById      String?                 @map("locked_by_id")
+  createdAt       DateTime                @default(now()) @map("created_at")
+  updatedAt       DateTime                @updatedAt @map("updated_at")
+  employee        Employee                @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  records         AttendanceRecord[]
+
+  @@unique([employeeId, year, month])
+  @@index([employeeId])
+  @@map("monthly_attendances")
+}
+
+// ─── Work Shifts ──────────────────────────────────────────────────────────────
+
+enum ShiftType {
+  HANH_CHINH
+  CA_SANG
+  CA_CHIEU
+  CA_DEM
+  LINH_HOAT
+
+  @@map("shift_type")
+}
+
+model WorkShift {
+  id             String              @id @default(uuid())
+  name           String
+  code           String              @unique
+  type           ShiftType           @default(HANH_CHINH)
+  startTime      String              @map("start_time")
+  endTime        String              @map("end_time")
+  breakMinutes   Int                 @default(0) @map("break_minutes")
+  isActive       Boolean             @default(true) @map("is_active")
+  description    String?
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  assignments    ShiftAssignment[]
+  schedulePhases WorkSchedulePhase[]
+
+  @@map("work_shifts")
+}
+
+model ShiftAssignment {
+  id            String    @id @default(uuid())
+  employeeId    String    @map("employee_id")
+  shiftId       String    @map("shift_id")
+  effectiveFrom DateTime  @map("effective_from") @db.Date
+  effectiveTo   DateTime? @map("effective_to") @db.Date
+  note          String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  employee      Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  shift         WorkShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("shift_assignments")
+}
+
+model WorkSchedule {
+  id          String                   @id @default(uuid())
+  name        String
+  description String?
+  repeatType  String?                  @map("repeat_type")
+  isActive    Boolean                  @default(true) @map("is_active")
+  createdAt   DateTime                 @default(now()) @map("created_at")
+  updatedAt   DateTime                 @updatedAt @map("updated_at")
+  phases      WorkSchedulePhase[]
+  enrollments WorkScheduleEnrollment[]
+
+  @@map("work_schedules")
+}
+
+model WorkSchedulePhase {
+  id             String       @id @default(uuid())
+  workScheduleId String       @map("work_schedule_id")
+  shiftId        String?      @map("shift_id")
+  phaseOrder     Int          @map("phase_order")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  workSchedule   WorkSchedule @relation(fields: [workScheduleId], references: [id], onDelete: Cascade)
+  shift          WorkShift?   @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+
+  @@index([workScheduleId])
+  @@map("work_schedule_phases")
+}
+
+model WorkScheduleEnrollment {
+  id            String       @id @default(uuid())
+  employeeId    String?      @map("employee_id")
+  orgUnitId     String?      @map("org_unit_id")
+  scheduleId    String       @map("schedule_id")
+  effectiveFrom DateTime     @map("effective_from") @db.Date
+  effectiveTo   DateTime?    @map("effective_to") @db.Date
+  note          String?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  employee      Employee?    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  schedule      WorkSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("work_schedule_enrollments")
 }

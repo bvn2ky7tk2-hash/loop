@@ -9,6 +9,10 @@ import { useQuery } from '@tanstack/react-query';
 import { projectsApi } from '../../api/projects';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid,
+  Tooltip as RTooltip, Legend, ResponsiveContainer,
+} from 'recharts';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { StatCard } from '../../components/ui/StatCard';
@@ -41,6 +45,8 @@ interface MemberCostRow {
 interface CostSummary {
   projectId: string;
   projectName: string;
+  startDate?: string;
+  endDate?: string;
   budgetEffortMm: number | null;
   totalEstimateHours: number;
   totalActualHours: number;
@@ -120,6 +126,49 @@ export default function CostPage() {
   const cpi           = ac > 0 ? ev / ac : 0;
   const spi           = pv > 0 ? ev / pv : 0;
   const hasEvm        = budget > 0 && ac > 0;
+
+  // ── Burndown chart data ──────────────────────────────────────────────────────
+  // remaining hours = total estimate - cumulative done hours per day
+  const burndownData = (() => {
+    if (!cost?.startDate || !cost?.endDate || budget === 0) return [];
+
+    const start = dayjs(cost.startDate);
+    const end   = dayjs(cost.endDate);
+    const today = dayjs();
+    const totalDays = end.diff(start, 'day') + 1;
+    if (totalDays <= 0) return [];
+
+    const dailyIdealBurn = budget / totalDays;
+
+    // Tổng hợp giờ log theo ngày (tất cả time logs của dự án)
+    const hoursPerDay: Record<string, number> = {};
+    for (const log of logs) {
+      const d = dayjs(log.logDate).format('YYYY-MM-DD');
+      hoursPerDay[d] = (hoursPerDay[d] ?? 0) + Number(log.hours);
+    }
+
+    const points: Array<{ date: string; planned: number; actual: number | null }> = [];
+    let cumulativeActual = 0;
+
+    for (let i = 0; i < totalDays; i++) {
+      const day = start.add(i, 'day');
+      const dateKey = day.format('YYYY-MM-DD');
+      const label   = day.format('DD/MM');
+
+      const planned = Math.max(0, Math.round((budget - dailyIdealBurn * i) * 10) / 10);
+
+      // Chỉ tính actual đến ngày hôm nay
+      const isPast = day.isBefore(today, 'day') || day.isSame(today, 'day');
+      if (isPast) {
+        cumulativeActual += hoursPerDay[dateKey] ?? 0;
+        const remaining = Math.max(0, Math.round((budget - cumulativeActual) * 10) / 10);
+        points.push({ date: label, planned, actual: remaining });
+      } else {
+        points.push({ date: label, planned, actual: null });
+      }
+    }
+    return points;
+  })();
 
   const allMemberColumns = [
     { key: 'fullName',       title: 'Nhân sự',      dataIndex: 'fullName',
@@ -296,6 +345,66 @@ export default function CostPage() {
               </Row>
             )}
           </Card>
+
+          {/* ── Burndown Chart ───────────────────────────────────────────── */}
+          {burndownData.length > 0 && (
+            <Card
+              title={
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <FundOutlined style={{ color: '#3B82F6' }} />
+                  Burndown Chart — Giờ còn lại
+                  <Tooltip title="Planned: giờ kế hoạch giảm đều từ tổng về 0. Actual: giờ thực tế còn lại (tổng ước tính − giờ đã log).">
+                    <InfoCircleOutlined style={{ color: textMuted as string, fontSize: 14, cursor: 'help' }} />
+                  </Tooltip>
+                </span>
+              }
+              style={{ marginBottom: 24, ...chartCardStyle }}
+            >
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={burndownData} margin={{ top: 4, right: 16, bottom: 4, left: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fill: textMuted as string, fontSize: 11 }}
+                    interval={Math.max(0, Math.floor(burndownData.length / 8) - 1)}
+                  />
+                  <YAxis
+                    tick={{ fill: textMuted as string, fontSize: 11 }}
+                    unit="h"
+                    width={48}
+                  />
+                  <RTooltip
+                    contentStyle={{
+                      background: isDark ? '#1E293B' : '#fff',
+                      border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`,
+                      borderRadius: 8,
+                      fontSize: 12,
+                    }}
+                    formatter={(v) => [`${v}h`]}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="planned"
+                    name="Kế hoạch"
+                    stroke="#3B82F6"
+                    strokeWidth={2}
+                    dot={false}
+                    strokeDasharray="6 3"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="actual"
+                    name="Thực tế"
+                    stroke="#EF4444"
+                    strokeWidth={2}
+                    dot={false}
+                    connectNulls={false}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
+          )}
 
           {/* ── Chi phí theo nhân sự ─────────────────────────────────────── */}
           <Card

@@ -159,7 +159,7 @@ export default function CrmDashboard() {
                 <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: textMuted as string }} />
                 <RTooltip
                   contentStyle={{
-                    background: isDark ? '#1E293B' : '#fff',
+                    background: bgContainer,
                     border: `1px solid ${borderColor}`,
                     borderRadius: 8,
                     fontSize: 12,

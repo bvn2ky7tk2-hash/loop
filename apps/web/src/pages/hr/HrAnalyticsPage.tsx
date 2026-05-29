@@ -69,8 +69,8 @@ export default function HrAnalyticsPage() {
 
   const chartCardStyle = {
     borderRadius: 12,
-    background: isDark ? '#1E293B' : '#6366F108',
-    border: `1px solid ${isDark ? '#334155' : '#6366F120'}`,
+    background: bgContainer,
+    border: `1px solid ${borderColor}`,
   };
 
   const yearOptions = Array.from({ length: 5 }, (_, i) => ({

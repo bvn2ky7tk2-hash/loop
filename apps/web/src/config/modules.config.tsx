@@ -114,10 +114,11 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-work-team', label: 'Nhóm & Dự án', visible: true,
         items: [
-          { key: '/tasks',              label: 'Việc dự án',    visible: true },
-          { key: '/timeline',           label: 'Lịch trình',    visible: true },
-          { key: '/bugs',               label: 'Quản lý lỗi',  visible: true },
-          { key: '/bugs/dashboard',     label: 'Thống kê lỗi', visible: true },
+          { key: '/tasks',                label: 'Việc dự án',     visible: true },
+          { key: '/timeline',             label: 'Lịch trình',     visible: true },
+          { key: '/timesheet/manager',    label: 'Bảng điểm danh', visible: true },
+          { key: '/bugs',                 label: 'Quản lý lỗi',   visible: true },
+          { key: '/bugs/dashboard',       label: 'Thống kê lỗi',  visible: true },
         ],
       },
       {
@@ -180,17 +181,20 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-attendance', label: 'Chấm công & Đơn từ', visible: true,
         items: [
-          { key: '/hr/attendance',       label: 'Bảng công',              visible: true },
-          { key: '/timesheet/manager',   label: 'Bảng điểm danh',        visible: true },
-          { key: '/hr/leaves',           label: 'Quản lý đơn nghỉ phép', visible: true },
-          { key: '/hr/overtime',         label: 'Quản lý OT',             visible: true },
+          { key: '/hr/attendance',   label: 'Bảng công',              visible: true },
+          { key: '/hr/leaves',       label: 'Quản lý đơn nghỉ phép', visible: true },
+          { key: '/hr/overtime',     label: 'Quản lý OT',             visible: true },
+          { key: '/hr/shifts',       label: 'Ca làm việc',            visible: true },
+          { key: '/hr/holidays',     label: 'Ngày lễ',                visible: true },
         ],
       },
       {
-        key: 'g-people-payroll', label: 'Lương & Bảo hiểm', visible: true,
+        key: 'g-people-payroll', label: 'Lương & Phúc lợi', visible: true,
         items: [
-          { key: '/payroll',      label: 'Bảng lương',      visible: true },
-          { key: '/hr/insurance', label: 'Bảo hiểm xã hội', visible: true },
+          { key: '/payroll',           label: 'Bảng lương',      visible: true },
+          { key: '/payroll/settings',  label: 'Cài đặt lương',   visible: true },
+          { key: '/hr/insurance',      label: 'Bảo hiểm xã hội', visible: true },
+          { key: '/hr/leave-policies', label: 'Chính sách phép', visible: true },
         ],
       },
       {
@@ -379,15 +383,6 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/automation',        label: 'Tự động hóa',       visible: true },
           { key: '/scheduled-reports', label: 'Báo cáo định kỳ',   visible: true },
           { key: '/module-config',     label: 'Cấu hình phân hệ', visible: true },
-        ],
-      },
-      {
-        key: 'g-admin-hr-settings', label: 'Cài đặt nhân sự', visible: true,
-        items: [
-          { key: '/payroll/settings',  label: 'Cài đặt lương',   visible: true },
-          { key: '/hr/leave-policies', label: 'Chính sách phép', visible: true },
-          { key: '/hr/shifts',         label: 'Ca làm việc',     visible: true },
-          { key: '/hr/holidays',       label: 'Ngày lễ',         visible: true },
         ],
       },
       {

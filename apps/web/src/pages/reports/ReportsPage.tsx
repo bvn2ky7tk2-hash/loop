@@ -401,11 +401,11 @@ export default function ReportsPage() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportForm] = Form.useForm<{ reportType: ReportType; dateRange: [import('dayjs').Dayjs, import('dayjs').Dayjs] }>();
-  const { isDark, primary } = useThemePalette();
+  const { isDark, primary, bgContainer, borderColor, textPrimary } = useThemePalette();
   const chartCardStyle = {
     borderRadius: 12,
-    background: isDark ? '#1E293B' : `${primary}09`,
-    border: `1px solid ${isDark ? '#334155' : `${primary}28`}`,
+    background: bgContainer,
+    border: `1px solid ${borderColor}`,
   };
   const axisColor = isDark ? '#888' : '#555';
   const gridColor = isDark ? '#333' : '#f0f0f0';
@@ -472,7 +472,7 @@ export default function ReportsPage() {
     OPEN:        '#EF4444',
     IN_PROGRESS: '#F97316',
     RESOLVED:    '#10B981',
-    CLOSED:      '#6B7280',
+    CLOSED:      '#94A3B8',
   };
 
   const LEAVE_STATUS_COLOR: Record<string, string> = {
@@ -485,7 +485,7 @@ export default function ReportsPage() {
     PENDING:  '#F59E0B',
     APPROVED: '#10B981',
     REJECTED: '#EF4444',
-    PAID:     '#4F46E5',
+    PAID:     '#6366F1',
   };
 
   const topEmployeeColumns = [
@@ -495,7 +495,7 @@ export default function ReportsPage() {
     {
       title: 'Cấp độ', dataIndex: 'level', width: 80,
       render: (v: string) => {
-        const cfg = LEVEL_BADGE[v] ?? { bg: '#F1F5F9', color: '#475569' };
+        const cfg = LEVEL_BADGE[v] ?? { bg: '#F1F5F9', color: '#94A3B8' };
         return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color }}>{v}</span>;
       },
     },
@@ -550,7 +550,7 @@ export default function ReportsPage() {
                           formatter={(v: any) => [`${v}h`, 'Tổng giờ']}
                           contentStyle={{ background: tooltipBg, border: '1px solid #333' }}
                         />
-                        <Bar dataKey="hours" fill="#4F46E5" radius={[0, 4, 4, 0]} />
+                        <Bar dataKey="hours" fill={primary} radius={[0, 4, 4, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </Card>
@@ -632,7 +632,7 @@ export default function ReportsPage() {
                         label="Giờ đã hoàn thành"
                         value={burndown.summary.doneEstimate}
                         unit="h"
-                        color="#4F46E5"
+                        color="#6366F1"
                         icon={<CheckCircleOutlined />}
                         filled
                       />
@@ -723,7 +723,7 @@ export default function ReportsPage() {
                           contentStyle={{ background: tooltipBg, border: '1px solid #333' }}
                         />
                         <Legend formatter={(v) => v === 'employeeCount' ? 'Nhân sự' : 'Dự án'} />
-                        <Bar dataKey="employeeCount" fill="#4F46E5" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="employeeCount" fill={primary} radius={[4, 4, 0, 0]} />
                         <Bar dataKey="projectCount" fill="#722ed1" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -858,7 +858,7 @@ export default function ReportsPage() {
               <Row gutter={[16, 16]}>
                 {/* Leave section */}
                 <Col xs={24}>
-                  <Text strong style={{ fontSize: 15, color: isDark ? '#F1F5F9' : '#0F172A' }}>Leave Requests</Text>
+                  <Text strong style={{ fontSize: 15, color: textPrimary }}>Leave Requests</Text>
                 </Col>
 
                 {/* Leave status cards */}
@@ -908,7 +908,7 @@ export default function ReportsPage() {
                 {/* Expense section divider */}
                 <Col xs={24}>
                   <Divider style={{ borderColor: isDark ? '#334155' : '#E2E8F0', margin: '4px 0 8px' }} />
-                  <Text strong style={{ fontSize: 15, color: isDark ? '#F1F5F9' : '#0F172A' }}>Expense Claims</Text>
+                  <Text strong style={{ fontSize: 15, color: textPrimary }}>Expense Claims</Text>
                 </Col>
 
                 {/* Expense status cards */}

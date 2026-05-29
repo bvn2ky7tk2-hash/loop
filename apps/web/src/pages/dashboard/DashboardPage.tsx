@@ -42,7 +42,7 @@ function CardTitle({ icon, label, color }: { icon: React.ReactNode; label: strin
 }
 
 export default function DashboardPage() {
-  const { isDark, preset, primary } = useThemePalette();
+  const { isDark, preset, primary, textPrimary, textMuted, bgContainer, bgSubPanel, borderColor } = useThemePalette();
   const { user } = useAuthStore();
 
   const { data, isLoading } = useQuery({
@@ -55,14 +55,14 @@ export default function DashboardPage() {
     return (
       <div style={{ padding: '24px 28px' }}>
         <div style={{ marginBottom: 28 }}>
-          <div style={{ height: 28, width: 130, background: isDark ? '#1E293B' : '#F1F5F9', borderRadius: 6, marginBottom: 8 }} />
-          <div style={{ height: 14, width: 200, background: isDark ? '#1E293B' : '#F1F5F9', borderRadius: 4 }} />
+          <div style={{ height: 28, width: 130, background: bgContainer, borderRadius: 6, marginBottom: 8 }} />
+          <div style={{ height: 14, width: 200, background: bgContainer, borderRadius: 4 }} />
         </div>
         <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
           {[1, 2, 3, 4].map((i) => (
             <Col xs={12} xl={6} key={i}>
               <Card style={{ borderRadius: 12, borderTop: `3px solid ${isDark ? '#334155' : '#E2E8F0'}` }}>
-                <div style={{ height: 90, background: isDark ? '#1E293B' : '#F8FAFC', borderRadius: 8 }} />
+                <div style={{ height: 90, background: bgSubPanel, borderRadius: 8 }} />
               </Card>
             </Col>
           ))}
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
   const projectCodeTag = (v: string) => (
     <span style={{
-      fontSize: 11, color: isDark ? '#94A3B8' : '#6B7280',
+      fontSize: 11, color: textMuted,
       background: isDark ? '#334155' : '#F1F5F9',
       borderRadius: 4, padding: '2px 6px',
     }}>
@@ -142,7 +142,7 @@ export default function DashboardPage() {
     },
     {
       title: 'Ngày', dataIndex: 'logDate', width: 85,
-      render: (v: string) => <span style={{ fontSize: 12, color: isDark ? '#94A3B8' : '#6B7280' }}>{dayjs(v).format('DD/MM/YY')}</span>,
+      render: (v: string) => <span style={{ fontSize: 12, color: textMuted as string }}>{dayjs(v).format('DD/MM/YY')}</span>,
     },
   ];
 
@@ -153,11 +153,11 @@ export default function DashboardPage() {
         <div>
           <h1 style={{
             fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: '-0.3px',
-            color: isDark ? '#F1F5F9' : '#0F172A',
+            color: textPrimary,
           }}>
             Dashboard
           </h1>
-          <p style={{ fontSize: 15, fontWeight: 600, margin: '6px 0 2px', color: isDark ? '#F1F5F9' : '#0F172A' }}>
+          <p style={{ fontSize: 15, fontWeight: 600, margin: '6px 0 2px', color: textPrimary }}>
             Xin chào, {user?.name ?? 'bạn'} 👋
           </p>
           <p style={{ fontSize: 13, margin: 0, color: primary, fontWeight: 500 }}>
@@ -180,8 +180,8 @@ export default function DashboardPage() {
               borderRadius: 8,
               fontSize: 13,
               fontWeight: 500,
-              color: isDark ? '#94A3B8' : '#64748B',
-              borderColor: isDark ? '#334155' : '#E2E8F0',
+              color: textMuted,
+              borderColor: borderColor,
               background: 'transparent',
             }}
           >
@@ -244,7 +244,7 @@ export default function DashboardPage() {
         <Col xs={24} lg={10}>
           <Card
             title={<CardTitle icon={<ProjectOutlined />} label="Trạng thái dự án" color={primary} />}
-            style={{ borderRadius: 12, height: '100%', background: isDark ? '#1E293B' : `${primary}09`, border: `1px solid ${isDark ? '#334155' : `${primary}28`}` }}
+            style={{ borderRadius: 12, height: '100%', background: isDark ? bgContainer : `${primary}09`, border: `1px solid ${isDark ? borderColor : `${primary}28`}` }}
           >
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                 <RTooltip
                   formatter={(value: any, name: any) => [value, name]}
                   contentStyle={{
-                    background: isDark ? '#1E293B' : '#0F172A',
+                    background: bgContainer,
                     border: 'none', borderRadius: 8, fontSize: 12, color: '#F1F5F9',
                   }}
                 />
@@ -280,17 +280,17 @@ export default function DashboardPage() {
         <Col xs={24} lg={7}>
           <Card
             title={<CardTitle icon={<CheckSquareOutlined />} label="Tiến độ tổng" color={primary} />}
-            style={{ borderRadius: 12, height: '100%', background: isDark ? '#1E293B' : `${primary}09`, border: `1px solid ${isDark ? '#334155' : `${primary}28`}` }}
+            style={{ borderRadius: 12, height: '100%', background: isDark ? bgContainer : `${primary}09`, border: `1px solid ${isDark ? borderColor : `${primary}28`}` }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 0' }}>
               <ProgressRing percent={completionPct} size="lg" primaryColor={primary} isDark={isDark} />
-              <div style={{ marginTop: 14, fontSize: 13, color: isDark ? '#94A3B8' : '#6B7280', textAlign: 'center' }}>
+              <div style={{ marginTop: 14, fontSize: 13, color: textMuted as string, textAlign: 'center' }}>
                 {doneTasks} / {data.tasks.total} task hoàn thành
               </div>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 12, justifyContent: 'center' }}>
               {taskStatusEntries.map(([status, count]) => (
-                <span key={status} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: isDark ? '#94A3B8' : '#6B7280' }}>
+                <span key={status} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: textMuted as string }}>
                   <TaskStatusPill status={status as TaskStatus} size="sm" />
                   <span style={{ fontWeight: 700 }}>{count}</span>
                 </span>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
         <Col xs={24} lg={7}>
           <Card
             title={<CardTitle icon={<ProjectOutlined />} label="Phân bổ trạng thái" color={primary} />}
-            style={{ borderRadius: 12, height: '100%', background: isDark ? '#1E293B' : `${primary}09`, border: `1px solid ${isDark ? '#334155' : `${primary}28`}` }}
+            style={{ borderRadius: 12, height: '100%', background: isDark ? bgContainer : `${primary}09`, border: `1px solid ${isDark ? borderColor : `${primary}28`}` }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {Object.entries(data.projects.byStatus)
@@ -313,7 +313,7 @@ export default function DashboardPage() {
                     <TaskStatusPill status={status as ProjectStatus} size="sm" />
                     <span style={{
                       fontSize: 15, fontWeight: 800,
-                      color: isDark ? '#F1F5F9' : '#0F172A',
+                      color: textPrimary,
                     }}>{count}</span>
                   </div>
                 ))}

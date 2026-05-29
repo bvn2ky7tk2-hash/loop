@@ -1,6 +1,26 @@
-import { IsString, IsEnum, IsDateString, IsNumber, IsOptional, IsPositive, IsUUID } from 'class-validator';
+import {
+  IsString, IsEnum, IsDateString, IsNumber, IsOptional, IsPositive,
+  IsUUID, IsArray, ValidateNested, IsNotEmpty, Min,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ContractType, ContractStatus, BudgetCurrency } from '../../generated/prisma';
+
+export class ContractAllowanceItemDto {
+  @ApiProperty({ description: 'UUID của AllowanceType' })
+  @IsUUID()
+  allowanceTypeId: string;
+
+  @ApiProperty({ example: 500000 })
+  @IsNumber()
+  @Min(0)
+  amount: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  note?: string;
+}
 
 export class CreateContractDto {
   @ApiProperty()
@@ -44,4 +64,11 @@ export class CreateContractDto {
   @IsOptional()
   @IsUUID()
   signedById?: string;
+
+  @ApiPropertyOptional({ type: [ContractAllowanceItemDto], description: 'Danh sách phụ cấp kèm hợp đồng' })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ContractAllowanceItemDto)
+  allowances?: ContractAllowanceItemDto[];
 }

@@ -196,10 +196,17 @@ export class DashboardV3Controller {
       totalAssets,
       assignedAssets,
       inMaintenance,
+      byCategoryRaw,
     ] = await Promise.all([
       this.prisma.asset.count({ where: { status: { not: 'RETIRED' } } }),
       this.prisma.asset.count({ where: { status: 'ASSIGNED' } }),
       this.prisma.asset.count({ where: { status: 'UNDER_MAINTENANCE' } }),
+      this.prisma.asset.groupBy({
+        by: ['category'],
+        _count: { id: true },
+        where: { status: { not: 'RETIRED' } },
+        orderBy: { _count: { id: 'desc' } },
+      }),
     ]);
 
     // Tài sản được bảo trì trong 30 ngày tới (dự kiến)
@@ -210,11 +217,17 @@ export class DashboardV3Controller {
       },
     });
 
+    const byCategory = byCategoryRaw.map((c) => ({
+      category: c.category,
+      count: c._count.id,
+    }));
+
     return {
       totalAssets,
       assignedAssets,
       inMaintenance,
       dueSoon,
+      byCategory,
     };
   }
 

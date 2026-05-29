@@ -3,6 +3,20 @@ import { apiClient } from './client';
 export type ContractType = 'FULL_TIME' | 'PART_TIME' | 'PROBATION' | 'FREELANCE';
 export type ContractStatus = 'DRAFT' | 'ACTIVE' | 'EXPIRED' | 'TERMINATED';
 
+export interface ContractAllowanceItem {
+  id: string;
+  allowanceTypeId: string;
+  allowanceType: { id: string; name: string };
+  amount: number;
+  note?: string | null;
+}
+
+export interface ContractAllowanceInputItem {
+  allowanceTypeId: string;
+  amount: number;
+  note?: string;
+}
+
 export interface Contract {
   id: string;
   employeeId: string;
@@ -17,6 +31,7 @@ export interface Contract {
   signedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+  allowances: ContractAllowanceItem[];
 }
 
 export interface CreateContractDto {
@@ -28,6 +43,7 @@ export interface CreateContractDto {
   currency?: string;
   note?: string;
   signedAt?: string;
+  allowances?: ContractAllowanceInputItem[];
 }
 
 export interface PaginatedContracts {

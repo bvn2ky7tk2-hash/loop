@@ -8,11 +8,15 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import type { ColumnsType } from 'antd/es/table';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined,
-  FileTextOutlined,
+  FileTextOutlined, GiftOutlined, MinusCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { contractsApi, type Contract, type ContractType, type ContractStatus, type CreateContractDto } from '../../api/contracts';
+import {
+  contractsApi,
+  type Contract, type ContractType, type ContractStatus, type CreateContractDto,
+} from '../../api/contracts';
+import { payrollApi } from '../../api/payroll';
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -100,7 +104,13 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
   const [form] = Form.useForm();
   const [empSearch, setEmpSearch] = useState('');
   const [selectedEmpId, setSelectedEmpId] = useState<string | undefined>(undefined);
-  const { bgContainer, textPrimary, textMuted } = useThemePalette();
+  const { bgContainer, textPrimary, textMuted, borderColor } = useThemePalette();
+
+  const { data: allowanceTypes = [] } = useQuery({
+    queryKey: ['allowance-types'],
+    queryFn: payrollApi.listAllowanceTypes,
+    staleTime: 5 * 60_000,
+  });
 
   // Search employees
   const { data: employees = [], isFetching: empLoading } = useQuery({
@@ -165,7 +175,7 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
       message.error(err.response?.data?.message ?? 'Cập nhật thất bại'),
   });
 
-  // Thay thế afterOpenChange bằng useEffect để sync form khi modal mở
+  // Sync form khi modal mở
   useEffect(() => {
     if (!open) return;
     if (editing) {
@@ -175,37 +185,47 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
         type:          editing.type,
         status:        editing.status,
         positionId:    (editing as Contract & { positionId?: string }).positionId ?? undefined,
-        startDate:     editing.startDate     ? dayjs(editing.startDate)  : null,
-        endDate:       editing.endDate       ? dayjs(editing.endDate)    : null,
+        startDate:     editing.startDate ? dayjs(editing.startDate) : null,
+        endDate:       editing.endDate   ? dayjs(editing.endDate)   : null,
         salaryMonthly: editing.salaryMonthly,
         currency:      editing.currency ?? 'VND',
         note:          editing.note ?? '',
-        signedAt:      editing.signedAt      ? dayjs(editing.signedAt)   : null,
+        signedAt:      editing.signedAt  ? dayjs(editing.signedAt)  : null,
+        allowances:    (editing.allowances ?? []).map(a => ({
+          allowanceTypeId: a.allowanceTypeId,
+          amount:          Number(a.amount),
+          note:            a.note ?? '',
+        })),
       });
     } else {
       setSelectedEmpId(undefined);
       form.resetFields();
-      form.setFieldValue('currency', 'VND');
-      form.setFieldValue('status', 'DRAFT');
+      form.setFieldsValue({ currency: 'VND', status: 'DRAFT', allowances: [] });
     }
   }, [open, editing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleFinish(values: Record<string, unknown>) {
-    const payload = {
+    const rawAllowances = (values.allowances as any[] | undefined) ?? [];
+    const payload: CreateContractDto = {
       employeeId:    values.employeeId as string,
       type:          values.type as ContractType,
-      status:        values.status as ContractStatus,
-      positionId:    (values.positionId as string) ?? undefined,
       startDate:     (values.startDate as dayjs.Dayjs).format('YYYY-MM-DD'),
       endDate:       values.endDate ? (values.endDate as dayjs.Dayjs).format('YYYY-MM-DD') : undefined,
       salaryMonthly: values.salaryMonthly as number,
       currency:      (values.currency as string) ?? 'VND',
-      note:          (values.note as string) ?? undefined,
+      note:          (values.note as string) || undefined,
       signedAt:      values.signedAt ? (values.signedAt as dayjs.Dayjs).format('YYYY-MM-DD') : undefined,
+      allowances:    rawAllowances
+        .filter((a: any) => a?.allowanceTypeId)
+        .map((a: any) => ({
+          allowanceTypeId: a.allowanceTypeId,
+          amount:          Number(a.amount ?? 0),
+          note:            a.note || undefined,
+        })),
     };
 
     if (editing) {
-      updateMutation.mutate({ id: editing.id, data: payload });
+      updateMutation.mutate({ id: editing.id, data: { ...payload, status: values.status as ContractStatus } });
     } else {
       createMutation.mutate(payload);
     }
@@ -341,8 +361,74 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
           />
         </Form.Item>
 
+        {/* Phụ cấp */}
+        <div style={{
+          borderTop: `1px solid ${borderColor}`,
+          paddingTop: 14,
+          marginTop: 4,
+          marginBottom: 4,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+            <GiftOutlined style={{ color: '#10B981' }} />
+            <span style={{ fontWeight: 600, fontSize: 13, color: textPrimary }}>Phụ cấp kèm hợp đồng</span>
+          </div>
+          <Form.List name="allowances">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field) => (
+                  <div key={field.key} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginBottom: 8 }}>
+                    <Form.Item
+                      {...field} name={[field.name, 'allowanceTypeId']}
+                      style={{ flex: 2, marginBottom: 0 }}
+                      rules={[{ required: true, message: 'Chọn loại' }]}
+                    >
+                      <Select
+                        placeholder="Loại phụ cấp"
+                        options={allowanceTypes
+                          .filter(a => a.isActive)
+                          .map(a => ({ value: a.id, label: a.name }))}
+                        showSearch
+                        filterOption={(input, opt) =>
+                          (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())
+                        }
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...field} name={[field.name, 'amount']}
+                      style={{ flex: 1, marginBottom: 0 }}
+                      rules={[{ required: true, message: 'Nhập mức' }]}
+                    >
+                      <InputNumber<number>
+                        style={{ width: '100%' }} min={0} placeholder="Số tiền"
+                        formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={v => Number(v?.replace(/,/g, '') ?? 0)}
+                      />
+                    </Form.Item>
+                    <Button
+                      type="text" danger size="small"
+                      icon={<MinusCircleOutlined />}
+                      onClick={() => remove(field.name)}
+                      style={{ marginBottom: 0 }}
+                    />
+                  </div>
+                ))}
+                <Button
+                  type="dashed" icon={<PlusOutlined />}
+                  onClick={() => {
+                    // Đề xuất mức mặc định từ AllowanceType
+                    add({ allowanceTypeId: undefined, amount: 0 });
+                  }}
+                  size="small" block
+                >
+                  Thêm phụ cấp
+                </Button>
+              </>
+            )}
+          </Form.List>
+        </div>
+
         {/* Ngày ký */}
-        <Form.Item name="signedAt" label="Ngày ký (tuỳ chọn)">
+        <Form.Item name="signedAt" label="Ngày ký (tuỳ chọn)" style={{ marginTop: 14 }}>
           <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" placeholder="Chọn ngày ký" />
         </Form.Item>
 
@@ -474,11 +560,21 @@ export default function ContractsPage() {
       dataIndex: 'salaryMonthly',
       width: 140,
       align: 'right',
-      render: (v: number, r: Contract) => (
-        <span style={{ fontSize: 13, fontWeight: 600, color: textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-          {formatNumber(v)} {r.currency || 'VND'}
-        </span>
-      ),
+      render: (v: number, r: Contract) => {
+        const totalAllowance = (r.allowances ?? []).reduce((s, a) => s + Number(a.amount), 0);
+        return (
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary, fontVariantNumeric: 'tabular-nums' }}>
+              {formatNumber(v)} {r.currency || 'VND'}
+            </div>
+            {totalAllowance > 0 && (
+              <div style={{ fontSize: 11, color: '#10B981', fontVariantNumeric: 'tabular-nums' }}>
+                +{formatNumber(totalAllowance)} phụ cấp
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: '',

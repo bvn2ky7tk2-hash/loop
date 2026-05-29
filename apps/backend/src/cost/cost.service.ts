@@ -13,10 +13,14 @@ export interface MemberCost {
 export interface CostSummary {
   projectId: string;
   projectName: string;
+  startDate: string;
+  endDate: string;
   budgetEffortMm: number | null;
   totalEstimateHours: number;
   totalActualHours: number;
   totalCost: number;
+  completionPct?: number;
+  plannedValue?: number;
   members: MemberCost[];
 }
 
@@ -74,10 +78,16 @@ export class CostService {
     return {
       projectId: project.id,
       projectName: project.name,
+      startDate: project.startDate.toISOString().split('T')[0],
+      endDate: project.endDate.toISOString().split('T')[0],
       budgetEffortMm: project.budgetEffortMm ? Number(project.budgetEffortMm) : null,
       totalEstimateHours,
       totalActualHours,
       totalCost: Math.round(totalCost * 100) / 100,
+      completionPct: totalEstimateHours > 0
+        ? Math.round((totalActualHours / totalEstimateHours) * 100)
+        : 0,
+      plannedValue: totalEstimateHours * 0.8,
       members,
     };
   }

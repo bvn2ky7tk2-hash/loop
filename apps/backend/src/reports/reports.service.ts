@@ -472,7 +472,7 @@ export class ReportsService {
       const budgetMd    = p.budgetEffortMm ? Number(p.budgetEffortMm) : null;
       const effortRatio = budgetMd ? +((actualHours / 8 / budgetMd) * 100).toFixed(1) : null;
       ws.addRow({
-        name: p.name, code: p.code, customer: p.customer ?? '—',
+        name: p.name, code: p.code, customer: p.customerId ?? '—',
         type: p.type, status: p.status,
         budgetCost: p.budgetCost ? Number(p.budgetCost) : null,
         budgetEffortMm: budgetMd, actualHours, effortRatio,

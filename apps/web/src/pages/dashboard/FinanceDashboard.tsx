@@ -6,6 +6,7 @@ import {
   PieChartOutlined,
   RiseOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer,
@@ -161,7 +162,7 @@ export default function FinanceDashboard() {
               <YAxis tick={{ fontSize: 12, fill: textMuted as string }} />
               <RTooltip
                 contentStyle={{
-                  background:   isDark ? '#1E293B' : '#fff',
+                  background:   bgContainer,
                   border:       `1px solid ${borderColor}`,
                   borderRadius: 8,
                   fontSize:     12,

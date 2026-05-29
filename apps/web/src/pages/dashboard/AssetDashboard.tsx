@@ -14,12 +14,10 @@ import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 
-const CATEGORY_MOCK = [
-  { name: 'Laptop', value: 45, color: '#6366F1' },
-  { name: 'Điện thoại', value: 22, color: '#3B82F6' },
-  { name: 'Màn hình', value: 18, color: '#10B981' },
-  { name: 'Thiết bị VP', value: 15, color: '#F59E0B' },
-  { name: 'Máy chủ', value: 8, color: '#F97316' },
+// Bảng màu xoay vòng cho các danh mục tài sản
+const CATEGORY_COLORS = [
+  '#6366F1', '#3B82F6', '#10B981', '#F59E0B', '#F97316',
+  '#8B5CF6', '#EF4444', '#06B6D4', '#84CC16', '#EC4899',
 ];
 
 export default function AssetDashboard() {
@@ -30,6 +28,13 @@ export default function AssetDashboard() {
     queryFn: dashboardV3Api.getAsset,
     refetchInterval: 60_000,
   });
+
+  // Chuyển byCategory từ API sang format chart
+  const categoryChartData = (data?.byCategory ?? []).map((item, i) => ({
+    name: item.category,
+    value: item.count,
+    color: CATEGORY_COLORS[i % CATEGORY_COLORS.length],
+  }));
 
   return (
     <div style={{ padding: 24 }}>
@@ -84,32 +89,38 @@ export default function AssetDashboard() {
           <LaptopOutlined style={{ color: '#F97316' }} />
           Phân bổ tài sản theo danh mục
         </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <PieChart>
-            <Pie
-              data={CATEGORY_MOCK}
-              cx="50%"
-              cy="50%"
-              innerRadius={50}
-              outerRadius={85}
-              dataKey="value"
-              paddingAngle={3}
-            >
-              {CATEGORY_MOCK.map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
-            </Pie>
-            <RTooltip
-              contentStyle={{
-                background: isDark ? '#1E293B' : '#fff',
-                border: `1px solid ${borderColor}`,
-                borderRadius: 8,
-                fontSize: 12,
-              }}
-            />
-            <Legend iconType="circle" iconSize={8} />
-          </PieChart>
-        </ResponsiveContainer>
+        {categoryChartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={220}>
+            <PieChart>
+              <Pie
+                data={categoryChartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={85}
+                dataKey="value"
+                paddingAngle={3}
+              >
+                {categoryChartData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Pie>
+              <RTooltip
+                contentStyle={{
+                  background: bgContainer,
+                  border: `1px solid ${borderColor}`,
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
+              />
+              <Legend iconType="circle" iconSize={8} />
+            </PieChart>
+          </ResponsiveContainer>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0', color: textPrimary, opacity: 0.5 }}>
+            Chưa có dữ liệu tài sản
+          </div>
+        )}
       </div>
     </div>
   );

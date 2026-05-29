@@ -169,7 +169,19 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   email: 'email',
   directManagerId: 'directManagerId',
   tenantId: 'tenantId',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  leavePolicyId: 'leavePolicyId',
+  idType: 'idType',
+  idNumber: 'idNumber',
+  idIssueDate: 'idIssueDate',
+  idIssuePlace: 'idIssuePlace',
+  permanentAddress: 'permanentAddress',
+  currentAddress: 'currentAddress',
+  ethnicity: 'ethnicity',
+  religion: 'religion',
+  nationality: 'nationality',
+  bankAccount: 'bankAccount',
+  bankName: 'bankName'
 };
 
 exports.Prisma.SkillScalarFieldEnum = {
@@ -594,6 +606,14 @@ exports.Prisma.ContractScalarFieldEnum = {
   deletedAt: 'deletedAt'
 };
 
+exports.Prisma.ContractAllowanceScalarFieldEnum = {
+  id: 'id',
+  contractId: 'contractId',
+  allowanceTypeId: 'allowanceTypeId',
+  amount: 'amount',
+  note: 'note'
+};
+
 exports.Prisma.LeaveTypeScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -630,6 +650,7 @@ exports.Prisma.LeaveBalanceScalarFieldEnum = {
   year: 'year',
   totalDays: 'totalDays',
   usedDays: 'usedDays',
+  entitlementDays: 'entitlementDays',
   tenantId: 'tenantId'
 };
 
@@ -1589,6 +1610,158 @@ exports.Prisma.SalaryRecordScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LeavePolicyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  baseAnnualDays: 'baseAnnualDays',
+  seniorityBonus: 'seniorityBonus',
+  maxCarryOver: 'maxCarryOver',
+  carryOverExpiry: 'carryOverExpiry',
+  carryOverExpiryAction: 'carryOverExpiryAction',
+  probationPolicy: 'probationPolicy',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.HolidayCalendarScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  name: 'name',
+  type: 'type',
+  year: 'year',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.InsuranceEnrollmentScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  bhxhBookNumber: 'bhxhBookNumber',
+  insuranceSalary: 'insuranceSalary',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SocialInsuranceBookScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  enrollmentId: 'enrollmentId',
+  bookNumber: 'bookNumber',
+  issueDate: 'issueDate',
+  issueAuthority: 'issueAuthority',
+  receivedByEmployee: 'receivedByEmployee',
+  receivedDate: 'receivedDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InsuranceEventScalarFieldEnum = {
+  id: 'id',
+  enrollmentId: 'enrollmentId',
+  eventType: 'eventType',
+  insuranceSalary: 'insuranceSalary',
+  effectiveDate: 'effectiveDate',
+  reason: 'reason',
+  hrDecisionId: 'hrDecisionId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AttendanceRecordScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  monthlyAttendanceId: 'monthlyAttendanceId',
+  shiftId: 'shiftId',
+  date: 'date',
+  checkIn: 'checkIn',
+  checkOut: 'checkOut',
+  plannedStart: 'plannedStart',
+  plannedEnd: 'plannedEnd',
+  totalHours: 'totalHours',
+  status: 'status',
+  lateMinutes: 'lateMinutes',
+  earlyLeaveMinutes: 'earlyLeaveMinutes',
+  overtimeMinutes: 'overtimeMinutes',
+  leaveType: 'leaveType',
+  note: 'note',
+  isManual: 'isManual',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MonthlyAttendanceScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  year: 'year',
+  month: 'month',
+  workDays: 'workDays',
+  paidLeaveDays: 'paidLeaveDays',
+  unpaidLeaveDays: 'unpaidLeaveDays',
+  otHours: 'otHours',
+  absentDays: 'absentDays',
+  holidayDays: 'holidayDays',
+  status: 'status',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkShiftScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  type: 'type',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  breakMinutes: 'breakMinutes',
+  isActive: 'isActive',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ShiftAssignmentScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  shiftId: 'shiftId',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WorkScheduleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  repeatType: 'repeatType',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkSchedulePhaseScalarFieldEnum = {
+  id: 'id',
+  workScheduleId: 'workScheduleId',
+  shiftId: 'shiftId',
+  phaseOrder: 'phaseOrder',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  orgUnitId: 'orgUnitId',
+  scheduleId: 'scheduleId',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1637,6 +1810,13 @@ exports.EmployeeStatus = exports.$Enums.EmployeeStatus = {
   PROBATION: 'PROBATION',
   ON_LEAVE: 'ON_LEAVE',
   TERMINATED: 'TERMINATED'
+};
+
+exports.IdType = exports.$Enums.IdType = {
+  CCCD: 'CCCD',
+  CMND: 'CMND',
+  PASSPORT: 'PASSPORT',
+  OTHER: 'OTHER'
 };
 
 exports.SkillCategory = exports.$Enums.SkillCategory = {
@@ -2140,6 +2320,58 @@ exports.WorkHistoryEventType = exports.$Enums.WorkHistoryEventType = {
   PROBATION_ENDED: 'PROBATION_ENDED'
 };
 
+exports.CarryOverExpiryAction = exports.$Enums.CarryOverExpiryAction = {
+  CLEAR: 'CLEAR',
+  CARRY_OVER: 'CARRY_OVER',
+  PAY_OUT: 'PAY_OUT'
+};
+
+exports.HolidayType = exports.$Enums.HolidayType = {
+  NATIONAL_HOLIDAY: 'NATIONAL_HOLIDAY',
+  COMPANY_HOLIDAY: 'COMPANY_HOLIDAY',
+  REGIONAL_HOLIDAY: 'REGIONAL_HOLIDAY',
+  COMPENSATORY_DAY: 'COMPENSATORY_DAY'
+};
+
+exports.InsuranceEnrollmentStatus = exports.$Enums.InsuranceEnrollmentStatus = {
+  ACTIVE: 'ACTIVE',
+  SUSPENDED: 'SUSPENDED',
+  TERMINATED: 'TERMINATED'
+};
+
+exports.InsuranceEventType = exports.$Enums.InsuranceEventType = {
+  ENROLL: 'ENROLL',
+  SALARY_CHANGE: 'SALARY_CHANGE',
+  SUSPEND: 'SUSPEND',
+  RESUME: 'RESUME',
+  TERMINATE: 'TERMINATE'
+};
+
+exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
+  PRESENT: 'PRESENT',
+  ABSENT: 'ABSENT',
+  LATE: 'LATE',
+  HALF_DAY: 'HALF_DAY',
+  ON_LEAVE: 'ON_LEAVE',
+  HOLIDAY: 'HOLIDAY',
+  LEAVE: 'LEAVE',
+  OT: 'OT'
+};
+
+exports.MonthlyAttendanceStatus = exports.$Enums.MonthlyAttendanceStatus = {
+  OPEN: 'OPEN',
+  LOCKED: 'LOCKED',
+  APPROVED: 'APPROVED'
+};
+
+exports.ShiftType = exports.$Enums.ShiftType = {
+  HANH_CHINH: 'HANH_CHINH',
+  CA_SANG: 'CA_SANG',
+  CA_CHIEU: 'CA_CHIEU',
+  CA_DEM: 'CA_DEM',
+  LINH_HOAT: 'LINH_HOAT'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -2181,6 +2413,7 @@ exports.Prisma.ModelName = {
   GroupMembership: 'GroupMembership',
   GroupOrgAccess: 'GroupOrgAccess',
   Contract: 'Contract',
+  ContractAllowance: 'ContractAllowance',
   LeaveType: 'LeaveType',
   LeaveRequest: 'LeaveRequest',
   LeaveBalance: 'LeaveBalance',
@@ -2253,7 +2486,19 @@ exports.Prisma.ModelName = {
   PositionHistory: 'PositionHistory',
   HrDecision: 'HrDecision',
   WorkHistory: 'WorkHistory',
-  SalaryRecord: 'SalaryRecord'
+  SalaryRecord: 'SalaryRecord',
+  LeavePolicy: 'LeavePolicy',
+  HolidayCalendar: 'HolidayCalendar',
+  InsuranceEnrollment: 'InsuranceEnrollment',
+  SocialInsuranceBook: 'SocialInsuranceBook',
+  InsuranceEvent: 'InsuranceEvent',
+  AttendanceRecord: 'AttendanceRecord',
+  MonthlyAttendance: 'MonthlyAttendance',
+  WorkShift: 'WorkShift',
+  ShiftAssignment: 'ShiftAssignment',
+  WorkSchedule: 'WorkSchedule',
+  WorkSchedulePhase: 'WorkSchedulePhase',
+  WorkScheduleEnrollment: 'WorkScheduleEnrollment'
 };
 
 /**

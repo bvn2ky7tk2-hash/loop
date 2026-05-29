@@ -36,11 +36,17 @@ export interface CrmDashboardData {
 }
 
 // ─── Asset ────────────────────────────────────────────────────────────────
+export interface AssetCategoryItem {
+  category: string;
+  count: number;
+}
+
 export interface AssetDashboardData {
   totalAssets: number;
   assignedAssets: number;
   inMaintenance: number;
   dueSoon: number;
+  byCategory?: AssetCategoryItem[];
 }
 
 // ─── Ops ──────────────────────────────────────────────────────────────────

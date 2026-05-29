@@ -172,7 +172,7 @@ export default function MeDashboard() {
               </Pie>
               <RTooltip
                 contentStyle={{
-                  background:   isDark ? '#1E293B' : '#fff',
+                  background:   bgContainer,
                   border:       `1px solid ${borderColor}`,
                   borderRadius: 8,
                   fontSize:     12,
