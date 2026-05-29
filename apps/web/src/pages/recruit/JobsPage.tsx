@@ -166,7 +166,7 @@ export default function JobsPage() {
 
       <CenteredModal title={editing ? 'Sửa vị trí' : 'Tạo vị trí tuyển dụng'} open={drawerOpen} width={480}
         onClose={() => setDrawer(false)}
-        extra={<Button type="primary" loading={isPending} onClick={handleSave}
+        extra={<Button type="primary" loading={isPending} disabled={isPending} onClick={handleSave}
           style={{ background: preset.primary, borderColor: preset.primary }}>{editing ? 'Cập nhật' : 'Tạo'}</Button>}>
         <Form form={form} layout="vertical">
           {!editing && (

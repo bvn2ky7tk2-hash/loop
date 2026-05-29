@@ -307,6 +307,21 @@ export class TimesheetService {
     return { record, days };
   }
 
+  // ── Manual Day Entry ───────────────────────────────────────────────────────
+
+  async manualDayEntry(userId: string, date: string, hours: number) {
+    if (hours < 0 || hours > 24) throw new BadRequestException('Số giờ không hợp lệ (0–24)');
+    const day = toDateOnly(date);
+    const checkIn = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 8, 0, 0);
+    const checkOut = new Date(checkIn.getTime() + hours * 3_600_000);
+    await this.prisma.timeEntry.upsert({
+      where: { userId_date: { userId, date: day } },
+      create: { userId, date: day, checkInAt: checkIn, checkOutAt: checkOut, isManualCorrection: true },
+      update: { checkInAt: checkIn, checkOutAt: checkOut, isManualCorrection: true },
+    });
+    return { date, hours };
+  }
+
   // ── Submit ──────────────────────────────────────────────────────────────────
 
   async submit(id: string, userId: string) {

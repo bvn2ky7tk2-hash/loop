@@ -145,19 +145,15 @@ export default function HrLeavesPage() {
   const qc = useQueryClient();
   const canManage = hasRole('ADMIN') || hasRole('HR');
 
-  // Filter state
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterTypeId, setFilterTypeId] = useState<string>('');
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const [page, setPage] = useState(1);
 
-  // Modal: từ chối
   const [rejectOpen, setRejectOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [rejectForm] = Form.useForm();
-
-  // ── Queries ────────────────────────────────────────────────────────────────
 
   const { data: listData, isFetching } = useQuery({
     queryKey: ['hr-leaves-all', page, filterStatus, filterTypeId, dateRange],
@@ -181,20 +177,16 @@ export default function HrLeavesPage() {
   const records = listData?.data ?? [];
   const total = listData?.total ?? 0;
 
-  // Tính stats từ data hiện tại (trang đang hiển thị)
   const pending = records.filter((r) => r.status === 'PENDING').length;
   const approved = records.filter((r) => r.status === 'APPROVED').length;
   const rejected = records.filter((r) => r.status === 'REJECTED').length;
 
-  // ── Lọc theo tên phía client ────────────────────────────────────────────────
   const filtered = search.trim()
     ? records.filter((r) =>
         r.employee?.fullName?.toLowerCase().includes(search.toLowerCase()) ||
         r.employee?.code?.toLowerCase().includes(search.toLowerCase())
       )
     : records;
-
-  // ── Mutations ──────────────────────────────────────────────────────────────
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['hr-leaves-all'] });
 
@@ -236,13 +228,6 @@ export default function HrLeavesPage() {
       onOk: () => approveMut.mutateAsync(record.id),
     });
   };
-
-  const handleReject = (record: LeaveRequest) => {
-    setSelectedId(record.id);
-    setRejectOpen(true);
-  };
-
-  // ── Columns ────────────────────────────────────────────────────────────────
 
   const columns: ColumnsType<LeaveRequest> = [
     {
@@ -357,7 +342,7 @@ export default function HrLeavesPage() {
                 size="small"
                 danger
                 icon={<CloseOutlined />}
-                onClick={() => handleReject(row)}
+                onClick={() => { setSelectedId(row.id); setRejectOpen(true); }}
               >
                 Từ chối
               </Button>
@@ -368,8 +353,6 @@ export default function HrLeavesPage() {
     },
   ];
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
@@ -378,43 +361,21 @@ export default function HrLeavesPage() {
         iconColor="#10B981"
       />
 
-      {/* Stat Cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Tổng đơn"
-            value={total}
-            color="#6366F1"
-            icon={<CalendarOutlined />}
-          />
+          <StatCard label="Tổng đơn"   value={total}    color="#6366F1" icon={<CalendarOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Chờ duyệt"
-            value={pending}
-            color="#F59E0B"
-            icon={<CalendarOutlined />}
-          />
+          <StatCard label="Chờ duyệt"  value={pending}  color="#F59E0B" icon={<CalendarOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Đã duyệt"
-            value={approved}
-            color="#10B981"
-            icon={<CheckOutlined />}
-          />
+          <StatCard label="Đã duyệt"   value={approved} color="#10B981" icon={<CheckOutlined />} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard
-            label="Từ chối"
-            value={rejected}
-            color="#EF4444"
-            icon={<CloseOutlined />}
-          />
+          <StatCard label="Từ chối"    value={rejected} color="#EF4444" icon={<CloseOutlined />} />
         </Col>
       </Row>
 
-      {/* Filter Bar */}
       <FilterBar>
         <Input
           prefix={<SearchOutlined />}
@@ -461,7 +422,6 @@ export default function HrLeavesPage() {
         />
       </FilterBar>
 
-      {/* Table */}
       <div
         style={{
           background: bgContainer,
@@ -489,7 +449,6 @@ export default function HrLeavesPage() {
         />
       </div>
 
-      {/* Modal: Từ chối đơn */}
       <CenteredModal
         title="Từ chối đơn nghỉ phép"
         open={rejectOpen}

@@ -161,14 +161,14 @@ export default function CustomersPage() {
 
       {/* Create CenteredModal */}
       <CenteredModal title="Thêm khách hàng" open={createOpen} onClose={() => setCreateOpen(false)} width={480}
-        extra={<Button type="primary" loading={createMutation.isPending} onClick={handleCreate}
+        extra={<Button type="primary" loading={createMutation.isPending} disabled={createMutation.isPending} onClick={handleCreate}
           style={{ background: preset.primary, borderColor: preset.primary }}>Lưu</Button>}>
         <CustomerForm />
       </CenteredModal>
 
       {/* Edit CenteredModal */}
       <CenteredModal title="Sửa khách hàng" open={editOpen} onClose={() => setEditOpen(false)} width={480}
-        extra={<Button type="primary" loading={updateMutation.isPending} onClick={handleEdit}
+        extra={<Button type="primary" loading={updateMutation.isPending} disabled={updateMutation.isPending} onClick={handleEdit}
           style={{ background: preset.primary, borderColor: preset.primary }}>Cập nhật</Button>}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="Tên khách hàng" rules={[{ required: true }]}><Input /></Form.Item>

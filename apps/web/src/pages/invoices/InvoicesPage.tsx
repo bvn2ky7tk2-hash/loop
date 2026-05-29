@@ -323,7 +323,7 @@ export default function InvoicesPage() {
         onClose={() => setDrawer(false)}
         width={640}
         extra={
-          <Button type="primary" loading={createMutation.isPending} onClick={handleCreate}
+          <Button type="primary" loading={createMutation.isPending} disabled={createMutation.isPending} onClick={handleCreate}
             style={{ background: preset.primary, borderColor: preset.primary }}>
             Tạo hóa đơn
           </Button>

@@ -237,7 +237,7 @@ function LeaveDrawer({
       footer={
         <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
           <Button onClick={onClose}>Huỷ</Button>
-          <Button type="primary" loading={isPending} onClick={() => form.submit()}>
+          <Button type="primary" loading={isPending} disabled={isPending} onClick={() => form.submit()}>
             Gửi yêu cầu
           </Button>
         </Space>

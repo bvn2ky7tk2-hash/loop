@@ -117,4 +117,20 @@ export class CustomersService {
       orderBy: { startDate: 'desc' },
     });
   }
+
+  // ── D6-b: Danh sách hóa đơn + lifetime value của khách hàng ──────────────
+
+  async getCustomerInvoices(id: string) {
+    await this.findOne(id); // 404 nếu không tồn tại
+    const invoices = await this.prisma.invoice.findMany({
+      where: { customerId: id, deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+    const lifetimeValue = invoices.reduce(
+      (sum, inv) => sum + Number(inv.totalAmount ?? 0),
+      0,
+    );
+    return { invoices, lifetimeValue };
+  }
 }

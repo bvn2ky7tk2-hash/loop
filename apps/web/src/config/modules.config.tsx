@@ -102,52 +102,53 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-work-tasks', label: 'Công việc', visible: true,
+        key: 'g-work-me', label: 'Của tôi', visible: true,
         items: [
-          { key: '/my-tasks',  label: 'Bảng công việc', visible: true },
-          { key: '/tasks',     label: 'Việc dự án',     visible: true },
-          { key: '/timeline',  label: 'Lịch trình',     visible: true },
+          { key: '/my-tasks',          label: 'Việc của tôi',         visible: true },
+          { key: '/my-bugs',           label: 'Lỗi của tôi',          visible: true },
+          { key: '/processes/inbox',   label: 'Việc quy trình',        visible: true },
+          { key: '/timesheet',         label: 'Chấm công của tôi',    visible: true },
+          { key: '/timesheet/project', label: 'Nhật ký dự án',        visible: true },
         ],
       },
       {
-        key: 'g-work-bugs', label: 'Lỗi & Vấn đề', visible: true,
+        key: 'g-work-team', label: 'Nhóm & Dự án', visible: true,
         items: [
-          { key: '/my-bugs',        label: 'Lỗi của tôi',  visible: true },
-          { key: '/bugs',           label: 'Quản lý lỗi',  visible: true },
-          { key: '/bugs/dashboard', label: 'Thống kê lỗi', visible: true },
+          { key: '/tasks',              label: 'Việc dự án',    visible: true },
+          { key: '/timeline',           label: 'Lịch trình',    visible: true },
+          { key: '/bugs',               label: 'Quản lý lỗi',  visible: true },
+          { key: '/bugs/dashboard',     label: 'Thống kê lỗi', visible: true },
         ],
       },
       {
-        key: 'g-work-projects', label: 'Dự án & Cộng tác', visible: true,
+        key: 'g-work-collab', label: 'Cộng tác', visible: true,
         items: [
-          { key: '/projects',       label: 'Tất cả dự án',    visible: true },
           { key: '/knowledge-base', label: 'Cơ sở tri thức',  visible: true },
           { key: '/feed',           label: 'Bảng tin công ty', visible: true },
           { key: '/calendar',       label: 'Lịch công ty',     visible: true },
         ],
       },
       {
-        key: 'g-work-time', label: 'Chấm công', visible: true,
+        key: 'g-work-tools', label: 'Tiện ích', visible: true,
         items: [
-          { key: '/timesheet',         label: 'Chấm công của tôi', visible: true },
-          { key: '/timesheet/project', label: 'Nhật ký dự án',     visible: true },
-          { key: '/processes/inbox',   label: 'Việc quy trình',     visible: true },
+          { key: '/assets/room-booking', label: 'Đặt phòng họp',   visible: true },
+          { key: '/assets/vehicles',     label: 'Đặt xe công ty',   visible: true },
         ],
       },
       {
         key: 'g-work-reports', label: 'Báo cáo', visible: true,
         items: [
-          { key: '/reports', label: 'Báo cáo tổng hợp', visible: true },
-          { key: '/reports/utilization', label: 'Utilization Rate', visible: true },
+          { key: '/reports',             label: 'Báo cáo tổng hợp', visible: true },
+          { key: '/reports/utilization', label: 'Utilization Rate',  visible: true },
         ],
       },
       {
-        key: 'g-work-me', label: 'Thông tin cá nhân', visible: true,
+        key: 'g-work-personal', label: 'Cá nhân', visible: true,
         items: [
-          { key: '/self-service',        label: 'Thông tin của tôi',    visible: true },
-          { key: '/leaves',              label: 'Đơn nghỉ phép',        visible: true },
-          { key: '/my-overtime',         label: 'Đăng ký làm thêm giờ', visible: true },
-          { key: '/payroll/my-payslips', label: 'Phiếu lương',          visible: true },
+          { key: '/self-service',        label: 'Thông tin của tôi',     visible: true },
+          { key: '/leaves',              label: 'Đơn nghỉ phép',         visible: true },
+          { key: '/my-overtime',         label: 'Đăng ký làm thêm giờ',  visible: true },
+          { key: '/payroll/my-payslips', label: 'Phiếu lương',           visible: true },
         ],
       },
     ],
@@ -166,27 +167,30 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-people-hr', label: 'Nhân sự', visible: true,
+        key: 'g-people-profile', label: 'Hồ sơ & Tổ chức', visible: true,
         items: [
-          { key: '/personnel',           label: 'Danh sách nhân viên', visible: true },
-          { key: '/org-chart',           label: 'Sơ đồ tổ chức',      visible: true },
-          { key: '/contracts',           label: 'Hợp đồng lao động',  visible: true },
-          { key: '/hr/job-titles',       label: 'Chức danh',          visible: true },
-          { key: '/hr/positions',        label: 'Vị trí biên chế',    visible: true },
-          { key: '/hr/decisions',        label: 'Quyết định nhân sự', visible: true },
-          { key: '/hr/requests',         label: 'Quản lý đơn từ',        visible: true },
+          { key: '/personnel',       label: 'Danh sách nhân viên', visible: true },
+          { key: '/org-chart',       label: 'Sơ đồ tổ chức',      visible: true },
+          { key: '/contracts',       label: 'Hợp đồng lao động',  visible: true },
+          { key: '/hr/job-titles',   label: 'Chức danh',          visible: true },
+          { key: '/hr/positions',    label: 'Vị trí biên chế',    visible: true },
+          { key: '/hr/decisions',    label: 'Quyết định nhân sự', visible: true },
+        ],
+      },
+      {
+        key: 'g-people-attendance', label: 'Chấm công & Đơn từ', visible: true,
+        items: [
+          { key: '/hr/attendance',       label: 'Bảng công',              visible: true },
+          { key: '/timesheet/manager',   label: 'Bảng điểm danh',        visible: true },
           { key: '/hr/leaves',           label: 'Quản lý đơn nghỉ phép', visible: true },
           { key: '/hr/overtime',         label: 'Quản lý OT',             visible: true },
         ],
       },
       {
-        key: 'g-people-insurance', label: 'Bảo hiểm & Phép', visible: true,
+        key: 'g-people-payroll', label: 'Lương & Bảo hiểm', visible: true,
         items: [
-          { key: '/hr/insurance',        label: 'Bảo hiểm xã hội',   visible: true },
-          { key: '/hr/leave-policies',   label: 'Chính sách phép',   visible: true },
-          { key: '/hr/attendance',       label: 'Bảng công',          visible: true },
-          { key: '/hr/holidays',         label: 'Ngày lễ',            visible: true },
-          { key: '/hr/shifts',           label: 'Ca làm việc',         visible: true },
+          { key: '/payroll',      label: 'Bảng lương',      visible: true },
+          { key: '/hr/insurance', label: 'Bảo hiểm xã hội', visible: true },
         ],
       },
       {
@@ -203,18 +207,9 @@ export const MODULES: ModuleDefinition[] = [
         key: 'g-people-recruit', label: 'Tuyển dụng', visible: true,
         items: [
           { key: '/recruit/pipeline',   label: 'Phễu tuyển dụng', visible: true },
-          { key: '/recruit/candidates', label: 'Ứng viên',       visible: true },
-          { key: '/recruit/interviews', label: 'Lịch phỏng vấn', visible: true },
-          { key: '/recruit/jobs',       label: 'Tin tuyển dụng', visible: true },
-        ],
-      },
-      {
-        key: 'g-people-time', label: 'Chấm công & Lương', visible: true,
-        items: [
-          { key: '/timesheet/approvals', label: 'Duyệt chấm công', visible: true },
-          { key: '/timesheet/manager',   label: 'Bảng điểm danh',  visible: true },
-          { key: '/payroll',             label: 'Bảng lương',      visible: true },
-          { key: '/payroll/settings',    label: 'Cài đặt lương',   visible: true },
+          { key: '/recruit/candidates', label: 'Ứng viên',        visible: true },
+          { key: '/recruit/interviews', label: 'Lịch phỏng vấn',  visible: true },
+          { key: '/recruit/jobs',       label: 'Tin tuyển dụng',  visible: true },
         ],
       },
     ],
@@ -233,12 +228,18 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
+        key: 'g-finance-projects', label: 'Dự án', visible: true,
+        items: [
+          { key: '/projects', label: 'Tất cả dự án', visible: true },
+        ],
+      },
+      {
         key: 'g-finance-ops', label: 'Tài chính vận hành', visible: true,
         items: [
-          { key: '/cost',     label: 'Chi phí dự án',       visible: true },
-          { key: '/budget',   label: 'Ngân sách',           visible: true },
-          { key: '/expenses', label: 'Đề nghị thanh toán',  visible: true },
-          { key: '/invoices', label: 'Hóa đơn',             visible: true },
+          { key: '/cost',     label: 'Chi phí dự án',      visible: true },
+          { key: '/budget',   label: 'Ngân sách',          visible: true },
+          { key: '/expenses', label: 'Đề nghị thanh toán', visible: true },
+          { key: '/invoices', label: 'Hóa đơn',            visible: true },
         ],
       },
       {
@@ -299,7 +300,7 @@ export const MODULES: ModuleDefinition[] = [
   {
     id: 'asset',
     label: 'Tài sản',
-    description: 'Tài sản, phòng họp, xe công ty và mua hàng',
+    description: 'Quản lý tài sản, bảo trì và mua hàng',
     icon: <LaptopOutlined />,
     color: '#D97706',
     gatePermission: moduleGate('asset'),
@@ -313,13 +314,6 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/assets',             label: 'Tất cả tài sản',   visible: true },
           { key: '/assets/assignments', label: 'Cấp phát tài sản', visible: true },
           { key: '/assets/maintenance', label: 'Bảo trì',          visible: true },
-        ],
-      },
-      {
-        key: 'g-asset-booking', label: 'Đặt chỗ', visible: true,
-        items: [
-          { key: '/assets/room-booking', label: 'Đặt phòng họp',  visible: true },
-          { key: '/assets/vehicles',     label: 'Đặt xe công ty', visible: true },
         ],
       },
       {
@@ -388,10 +382,19 @@ export const MODULES: ModuleDefinition[] = [
         ],
       },
       {
+        key: 'g-admin-hr-settings', label: 'Cài đặt nhân sự', visible: true,
+        items: [
+          { key: '/payroll/settings',  label: 'Cài đặt lương',   visible: true },
+          { key: '/hr/leave-policies', label: 'Chính sách phép', visible: true },
+          { key: '/hr/shifts',         label: 'Ca làm việc',     visible: true },
+          { key: '/hr/holidays',       label: 'Ngày lễ',         visible: true },
+        ],
+      },
+      {
         key: 'g-admin-ops', label: 'Vận hành', visible: true,
         items: [
-          { key: '/admin/health', label: 'Giám sát hệ thống', visible: true },
-          { key: '/admin/demo',   label: 'Chế độ trình diễn',  visible: true },
+          { key: '/admin/health', label: 'Giám sát hệ thống',   visible: true },
+          { key: '/admin/demo',   label: 'Chế độ trình diễn',   visible: true },
           { key: '/onboarding',   label: 'Hướng dẫn khởi động', visible: true },
         ],
       },
@@ -493,6 +496,8 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/overtime':                   <FieldTimeOutlined />,
   '/my-overtime':                   <FieldTimeOutlined />,
   '/hr/shifts':                     <ClockCircleOutlined />,
-  '/hr/requests':                   <FileTextOutlined />,
-  '/hr/leaves':                     <CalendarOutlined />,
+  '/hr/attendance':                 <AuditOutlined />,
+  '/hr/holidays':                   <CalendarOutlined />,
+  '/hr/leave-policies':             <FileTextOutlined />,
+  '/hr/insurance':                  <SafetyCertificateOutlined />,
 };

@@ -72,7 +72,6 @@ const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
 const OvertimePage          = lazy(() => import('./pages/hr/OvertimePage'));
 const MyOvertimePage        = lazy(() => import('./pages/hr/MyOvertimePage'));
 const HrShiftsPage          = lazy(() => import('./pages/hr/HrShiftsPage'));
-const HrRequestsPage        = lazy(() => import('./pages/hr/HrRequestsPage'));
 const HrLeavesPage          = lazy(() => import('./pages/hr/HrLeavesPage'));
 const KnowledgeBasePage     = lazy(() => import('./pages/knowledge-base/KnowledgeBasePage'));
 const PortalManagePage      = lazy(() => import('./pages/crm/PortalManagePage'));
@@ -195,10 +194,9 @@ export const router = createBrowserRouter([
       { path: 'hr/leave-policies',   element: wrap(HrLeavePolicyPage) },
       { path: 'hr/attendance',       element: wrap(HrAttendancePage) },
       { path: 'hr/holidays',         element: wrap(HrHolidaysPage) },
+      { path: 'hr/leaves',           element: wrap(HrLeavesPage) },
       { path: 'hr/overtime',         element: wrap(OvertimePage) },
       { path: 'hr/shifts',           element: wrap(HrShiftsPage) },
-      { path: 'hr/requests',         element: wrap(HrRequestsPage) },
-      { path: 'hr/leaves',           element: wrap(HrLeavesPage) },
       { path: 'knowledge-base',       element: wrap(KnowledgeBasePage) },
       { path: 'procurement/vendors',  element: wrap(VendorsPage) },
       { path: 'procurement/orders',   element: wrap(PurchaseOrdersPage) },

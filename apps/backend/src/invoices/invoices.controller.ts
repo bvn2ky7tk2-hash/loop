@@ -26,6 +26,13 @@ export class InvoicesController {
     return this.svc.getSummary();
   }
 
+  // ── L-04: Hóa đơn quá hạn — đặt TRƯỚC :id để tránh route conflict ────────
+  @Get('overdue')
+  @RequirePermission(PERMISSIONS.FINANCE_READ)
+  getOverdue() {
+    return this.svc.getOverdue();
+  }
+
   @Get()
   @RequirePermission(PERMISSIONS.FINANCE_READ)
   findAll(@Query() dto: FilterInvoiceDto) {
@@ -66,11 +73,4 @@ export class InvoicesController {
     return this.svc.remove(id);
   }
 
-  // ── L-04: Hóa đơn quá hạn ────────────────────────────────────────────────
-
-  @Get('overdue')
-  @RequirePermission(PERMISSIONS.FINANCE_READ)
-  getOverdue() {
-    return this.svc.getOverdue();
-  }
 }

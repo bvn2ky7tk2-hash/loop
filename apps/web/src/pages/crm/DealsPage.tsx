@@ -389,7 +389,7 @@ export default function DealsPage() {
         onClose={() => setDrawerOpen(false)}
         width={480}
         extra={
-          <Button type="primary" loading={isPending} onClick={handleSave}
+          <Button type="primary" loading={isPending} disabled={isPending} onClick={handleSave}
             style={{ background: preset.primary, borderColor: preset.primary }}>
             {editing ? 'Cập nhật' : 'Lưu'}
           </Button>

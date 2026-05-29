@@ -732,6 +732,7 @@ export default function HrDecisionsPage() {
             <Button
               type="primary"
               loading={createMutation.isPending || updateMutation.isPending}
+              disabled={createMutation.isPending || updateMutation.isPending}
               onClick={handleSaveForm}
             >
               {editRecord ? 'Lưu thay đổi' : 'Tạo quyết định'}

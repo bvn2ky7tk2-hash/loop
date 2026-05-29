@@ -98,4 +98,14 @@ export class CustomersController {
   getProjects(@Param('id') id: string) {
     return this.customersService.getProjects(id);
   }
+
+  // ── D6-b: Hóa đơn + lifetime value ────────────────────────────────────────
+
+  @Get(':id/invoices')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission('crm_customers:read', PERMISSIONS.CRM_READ)
+  @ApiOperation({ summary: 'Danh sách hóa đơn và lifetime value của khách hàng' })
+  getCustomerInvoices(@Param('id') id: string) {
+    return this.customersService.getCustomerInvoices(id);
+  }
 }

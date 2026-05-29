@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Body, Param, Query, Req,
+  Controller, Get, Post, Patch, Body, Param, Query, Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -117,6 +117,16 @@ export class TimesheetController {
   @ApiOperation({ summary: 'Danh sách bảng công chờ duyệt (có cờ quá hạn 48h)' })
   getPendingApproval(@Req() req: { orgUnitIds: string[] | null }) {
     return this.service.getPendingApproval(req.orgUnitIds);
+  }
+
+  @Patch('day')
+  @RequirePermission(PERMISSIONS.TIMELOGS_CREATE)
+  @ApiOperation({ summary: 'Nhập thủ công giờ công cho một ngày' })
+  manualDayEntry(
+    @Body() body: { date: string; hours: number },
+    @CurrentUser() user: User,
+  ) {
+    return this.service.manualDayEntry(user.id, body.date, body.hours);
   }
 
   @Get('project-summary')

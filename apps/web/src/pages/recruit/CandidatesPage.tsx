@@ -200,7 +200,7 @@ export default function CandidatesPage() {
       {/* Create/Edit CenteredModal */}
       <CenteredModal title={editing ? 'Sửa ứng viên' : 'Thêm ứng viên'} open={drawerOpen} width={440}
         onClose={() => setDrawer(false)}
-        extra={<Button type="primary" loading={isPending} onClick={handleSave}
+        extra={<Button type="primary" loading={isPending} disabled={isPending} onClick={handleSave}
           style={{ background: preset.primary, borderColor: preset.primary }}>{editing ? 'Cập nhật' : 'Lưu'}</Button>}>
         <Form form={form} layout="vertical">
           <Form.Item name="name"  label="Họ tên" rules={[{ required: true }]}><Input /></Form.Item>

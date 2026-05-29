@@ -11,6 +11,21 @@ export interface AppNotification {
   payload?: Record<string, unknown>;
   entityType?: string;
   entityId?: string;
+  /** resourceId dùng cho inline approve/reject (EXPENSE_PENDING, LEAVE_PENDING) */
+  resourceId?: string;
+}
+
+/** Types yêu cầu action — được đếm riêng trên badge */
+export const ACTIONABLE_TYPES = new Set([
+  'EXPENSE_PENDING',
+  'LEAVE_PENDING',
+  'TASK_ASSIGNED',
+  'BUG_ASSIGNED',
+]);
+
+/** Đếm số notification actionable (chưa đọc VÀ cần action) */
+export function countActionable(items: AppNotification[]): number {
+  return items.filter((n) => !n.isRead && ACTIONABLE_TYPES.has(n.type)).length;
 }
 
 export interface NotificationFeed {
@@ -47,4 +62,16 @@ export const notificationsApi = {
 
   markAllRead: () =>
     apiClient.post('/notifications/read-all').then((r) => r.data),
+};
+
+/** API inline approve/reject dùng trong NotificationBell */
+export const inlineActionApi = {
+  approveExpense: (id: string) =>
+    apiClient.patch(`/expenses/${id}/approve`, {}).then((r) => r.data),
+  rejectExpense: (id: string) =>
+    apiClient.patch(`/expenses/${id}/reject`, { reason: 'Từ chối' }).then((r) => r.data),
+  approveLeave: (id: string) =>
+    apiClient.patch(`/leaves/${id}`, { status: 'APPROVED' }).then((r) => r.data),
+  rejectLeave: (id: string) =>
+    apiClient.patch(`/leaves/${id}`, { status: 'REJECTED' }).then((r) => r.data),
 };

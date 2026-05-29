@@ -141,7 +141,7 @@ export default function InterviewsPage() {
       {/* Schedule CenteredModal */}
       <CenteredModal title="Lên lịch phỏng vấn" open={scheduleOpen} width={440}
         onClose={() => setScheduleOpen(false)}
-        extra={<Button type="primary" loading={createMutation.isPending} onClick={handleSchedule}
+        extra={<Button type="primary" loading={createMutation.isPending} disabled={createMutation.isPending} onClick={handleSchedule}
           style={{ background: preset.primary, borderColor: preset.primary }}>Lưu</Button>}>
         <Form form={scheduleForm} layout="vertical">
           <Form.Item name="candidateId" label="Ứng viên" rules={[{ required: true }]}>
@@ -162,7 +162,7 @@ export default function InterviewsPage() {
       {/* Result CenteredModal */}
       <CenteredModal title={`Kết quả: ${selected?.candidate?.name ?? ''}`} open={resultOpen} width={400}
         onClose={() => setResultOpen(false)}
-        extra={<Button type="primary" loading={resultMutation.isPending} onClick={handleResult}
+        extra={<Button type="primary" loading={resultMutation.isPending} disabled={resultMutation.isPending} onClick={handleResult}
           style={{ background: preset.primary, borderColor: preset.primary }}>Lưu</Button>}>
         <Form form={resultForm} layout="vertical">
           <Form.Item name="result" label="Kết quả" rules={[{ required: true }]}>
