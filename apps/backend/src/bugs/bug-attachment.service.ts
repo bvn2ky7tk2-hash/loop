@@ -15,7 +15,7 @@ export class BugAttachmentService {
     this.bucket = config.get<string>('MINIO_BUCKET', 'loop-bug-attachments');
   }
 
-  async uploadFile(bugId: string, uploaderId: string, file: Express.Multer.File) {
+  async uploadFile(bugId: string, uploaderId: string, file: Express.Multer.File, tenantId?: string) {
     const { storagePath } = await this.storage.upload({
       bucket:   this.bucket,
       folder:   `bugs/${bugId}`,
@@ -23,6 +23,7 @@ export class BugAttachmentService {
       buffer:   file.buffer,
       size:     file.size,
       mimeType: file.mimetype,
+      tenantId,
     });
 
     try {

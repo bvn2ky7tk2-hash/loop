@@ -1,11 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../common/services/redis.service';
+
+const CACHE_TTL = 300; // 5 phút
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
-  async getSummary() {
+  // ─── Helper cache wrapper ───────────────────────────────────────────────────
+
+  private async cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+    const hit = await this.redis.get(key).catch(() => null);
+    if (hit) return JSON.parse(hit) as T;
+    const data = await fn();
+    await this.redis.setex(key, CACHE_TTL, JSON.stringify(data)).catch(() => {});
+    return data;
+  }
+
+  // ─── getSummary (DashboardController cũ) ───────────────────────────────────
+
+  async getSummary(tenantId?: string) {
+    const key = `dashboard:summary:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcSummary());
+  }
+
+  private async calcSummary() {
     const [
       projectCounts,
       taskCounts,
@@ -68,5 +91,456 @@ export class DashboardService {
       upcomingTasks,
       recentTimeLogs,
     };
+  }
+
+  // ─── Work Dashboard ─────────────────────────────────────────────────────────
+
+  async getWork(userId: string, tenantId?: string) {
+    const key = `dashboard:work:${tenantId ?? 'default'}:${userId}`;
+    return this.cached(key, () => this.calcWork(userId));
+  }
+
+  private async calcWork(userId: string) {
+    const now = new Date();
+
+    const [myOpenTasks, myOverdueTasks, openBugs, pendingBpmTasks] = await Promise.all([
+      this.prisma.task.count({
+        where: { assigneeId: userId, status: { notIn: ['DONE', 'CANCELLED'] } },
+      }),
+      this.prisma.task.count({
+        where: {
+          assigneeId: userId,
+          dueDate: { lt: now },
+          status: { notIn: ['DONE', 'CANCELLED'] },
+        },
+      }),
+      this.prisma.bug.count({
+        where: { status: { notIn: ['CLOSED', 'RESOLVED'] } },
+      }),
+      this.prisma.processUserTask.count({
+        where: { assigneeId: userId, status: { in: ['PENDING', 'IN_PROGRESS'] } },
+      }),
+    ]);
+
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const timesheetThisWeek = await this.prisma.timeLog.aggregate({
+      where: { userId, logDate: { gte: weekStart, lte: now } },
+      _sum: { hours: true },
+    });
+
+    return {
+      myOpenTasks,
+      myOverdueTasks,
+      openBugs,
+      pendingBpmTasks,
+      timesheetHoursThisWeek: Number(timesheetThisWeek._sum.hours ?? 0),
+    };
+  }
+
+  // ─── People Dashboard ────────────────────────────────────────────────────────
+
+  async getPeople(tenantId?: string) {
+    const key = `dashboard:people:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcPeople());
+  }
+
+  private async calcPeople() {
+    const now = new Date();
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    const [
+      headcount,
+      openPositions,
+      pendingLeaves,
+      expiringContracts,
+      pendingTimesheetApprovals,
+    ] = await Promise.all([
+      this.prisma.employee.count({ where: { isActive: true } }),
+      this.prisma.jobOpening.count({ where: { status: 'OPEN' } }),
+      this.prisma.leaveRequest.count({ where: { status: 'PENDING' } }),
+      this.prisma.contract.count({
+        where: { status: 'ACTIVE', endDate: { gte: now, lte: in30Days } },
+      }),
+      this.prisma.timesheetRecord.count({ where: { status: { in: ['SUBMITTED'] } } }),
+    ]);
+
+    return { headcount, openPositions, pendingLeaves, expiringContracts, pendingTimesheetApprovals };
+  }
+
+  // ─── Finance Dashboard ───────────────────────────────────────────────────────
+
+  async getFinance(tenantId?: string) {
+    const key = `dashboard:finance:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcFinance());
+  }
+
+  private async calcFinance() {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const [
+      pendingExpenses,
+      outstandingInvoices,
+      monthlyPayrollAgg,
+      outstandingInvoicesValue,
+    ] = await Promise.all([
+      this.prisma.expense.count({ where: { status: 'PENDING' } }),
+      this.prisma.invoice.count({ where: { status: { in: ['SENT', 'OVERDUE'] } } }),
+      this.prisma.payrollRecord.aggregate({
+        where: {
+          period: { startDate: { gte: monthStart }, endDate: { lte: monthEnd } },
+        },
+        _sum: { netSalary: true },
+      }),
+      this.prisma.invoice.aggregate({
+        where: { status: { in: ['SENT', 'OVERDUE'] } },
+        _sum: { totalAmount: true },
+      }),
+    ]);
+
+    return {
+      pendingExpenses,
+      outstandingInvoices,
+      outstandingInvoicesValue: Number(outstandingInvoicesValue._sum.totalAmount ?? 0),
+      monthlyPayroll: Number(monthlyPayrollAgg._sum.netSalary ?? 0),
+      budgetUtilization: 0,
+    };
+  }
+
+  // ─── CRM Dashboard ───────────────────────────────────────────────────────────
+
+  async getCrm(tenantId?: string) {
+    const key = `dashboard:crm:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcCrm());
+  }
+
+  private async calcCrm() {
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const [openLeads, activeDeals, totalPipelineAgg, activitiesThisWeek] = await Promise.all([
+      this.prisma.lead.count({ where: { status: { notIn: ['CONVERTED', 'LOST'] } } }),
+      this.prisma.deal.count({ where: { stage: { notIn: ['WON', 'LOST'] } } }),
+      this.prisma.deal.aggregate({
+        where: { stage: { notIn: ['WON', 'LOST'] } },
+        _sum: { value: true },
+      }),
+      this.prisma.crmActivity.count({ where: { createdAt: { gte: weekStart } } }),
+    ]);
+
+    return {
+      openLeads,
+      activeDeals,
+      totalPipelineValue: Number(totalPipelineAgg._sum.value ?? 0),
+      activitiesThisWeek,
+    };
+  }
+
+  // ─── Asset Dashboard ─────────────────────────────────────────────────────────
+
+  async getAsset(tenantId?: string) {
+    const key = `dashboard:asset:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcAsset());
+  }
+
+  private async calcAsset() {
+    const now = new Date();
+    const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    const [totalAssets, assignedAssets, inMaintenance, byCategoryRaw] = await Promise.all([
+      this.prisma.asset.count({ where: { status: { not: 'RETIRED' } } }),
+      this.prisma.asset.count({ where: { status: 'ASSIGNED' } }),
+      this.prisma.asset.count({ where: { status: 'UNDER_MAINTENANCE' } }),
+      this.prisma.asset.groupBy({
+        by: ['category'],
+        _count: { id: true },
+        where: { status: { not: 'RETIRED' } },
+        orderBy: { _count: { id: 'desc' } },
+      }),
+    ]);
+
+    const dueSoon = await this.prisma.assetMaintenance.count({
+      where: { performedAt: { gte: now, lte: in30Days } },
+    });
+
+    return {
+      totalAssets,
+      assignedAssets,
+      inMaintenance,
+      dueSoon,
+      byCategory: byCategoryRaw.map((c) => ({ category: c.category, count: c._count.id })),
+    };
+  }
+
+  // ─── Ops Dashboard ───────────────────────────────────────────────────────────
+
+  async getOps(tenantId?: string) {
+    const key = `dashboard:ops:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcOps());
+  }
+
+  private async calcOps() {
+    const [activeProcesses, pendingUserTasks, automationRulesActive, failedJobs] = await Promise.all([
+      this.prisma.processInstance.count({ where: { status: { in: ['RUNNING', 'SUSPENDED'] } } }),
+      this.prisma.processUserTask.count({ where: { status: { in: ['PENDING', 'IN_PROGRESS'] } } }),
+      this.prisma.automationRule.count({ where: { isActive: true } }),
+      this.prisma.processInstance.count({ where: { status: 'ERROR' } }),
+    ]);
+
+    return { activeProcesses, pendingUserTasks, automationRulesActive, failedJobs };
+  }
+
+  // ─── Me Dashboard (user-specific, TTL ngắn hơn) ──────────────────────────────
+
+  async getMe(userId: string, tenantId?: string) {
+    const key = `dashboard:me:${tenantId ?? 'default'}:${userId}`;
+    // TTL 60s cho data cá nhân để cập nhật nhanh hơn
+    const hit = await this.redis.get(key).catch(() => null);
+    if (hit) return JSON.parse(hit);
+    const data = await this.calcMe(userId);
+    await this.redis.setex(key, 60, JSON.stringify(data)).catch(() => {});
+    return data;
+  }
+
+  private async calcMe(userId: string) {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    const [myPendingTasks, myOpenBugs, leaveBalanceAgg] = await Promise.all([
+      this.prisma.task.count({
+        where: { assigneeId: userId, status: { notIn: ['DONE', 'CANCELLED'] } },
+      }),
+      this.prisma.bug.count({
+        where: { reporterId: userId, status: { notIn: ['CLOSED', 'RESOLVED'] } },
+      }),
+      this.prisma.leaveBalance.aggregate({
+        where: { employee: { userId }, year: currentYear },
+        _sum: { totalDays: true, usedDays: true },
+      }),
+    ]);
+
+    const latestPayslip = await this.prisma.payrollRecord.findFirst({
+      where: { employee: { userId } },
+      orderBy: { period: { startDate: 'desc' } },
+      select: { period: { select: { name: true, endDate: true } } },
+    });
+
+    const totalDays = Number(leaveBalanceAgg._sum.totalDays ?? 0);
+    const usedDays = Number(leaveBalanceAgg._sum.usedDays ?? 0);
+
+    return {
+      myPendingTasks,
+      myOpenBugs,
+      leaveBalance: Math.max(0, totalDays - usedDays),
+      nextPayslipDate: latestPayslip?.period?.endDate ?? null,
+    };
+  }
+
+  // ─── Admin Dashboard ─────────────────────────────────────────────────────────
+
+  async getAdmin(tenantId?: string) {
+    const key = `dashboard:admin:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcAdmin());
+  }
+
+  private async calcAdmin() {
+    const now = new Date();
+    const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [totalUsers, activeUsers] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.user.count({ where: { isActive: true } }),
+    ]);
+
+    const recentlyActiveUsers = await this.prisma.auditLog.groupBy({
+      by: ['userId'],
+      where: { createdAt: { gte: last30Days }, userId: { not: null } },
+      _count: { userId: true },
+    });
+
+    return {
+      totalUsers,
+      activeUsers,
+      recentlyActiveUsers: recentlyActiveUsers.length,
+      totalModules: 8,
+      systemStatus: 'OK',
+    };
+  }
+
+  // ─── L-09 Summary APIs ───────────────────────────────────────────────────────
+
+  async getFinanceSummary(tenantId?: string) {
+    const key = `dashboard:finance-summary:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcFinanceSummary());
+  }
+
+  private async calcFinanceSummary() {
+    const results: { month: string; revenue: number; expense: number }[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const date  = new Date();
+      date.setMonth(date.getMonth() - i);
+      const year  = date.getFullYear();
+      const month = date.getMonth();
+      const start = new Date(year, month, 1);
+      const end   = new Date(year, month + 1, 0, 23, 59, 59);
+      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+      const [revenue, expense] = await Promise.all([
+        this.prisma.invoice.aggregate({
+          where: { type: 'SALES', status: 'PAID', createdAt: { gte: start, lte: end }, deletedAt: null },
+          _sum: { totalAmount: true },
+        }),
+        this.prisma.expense.aggregate({
+          where: { createdAt: { gte: start, lte: end } },
+          _sum: { totalAmount: true },
+        }),
+      ]);
+
+      results.push({
+        month: monthStr,
+        revenue: Number(revenue._sum.totalAmount ?? 0),
+        expense: Number(expense._sum.totalAmount ?? 0),
+      });
+    }
+
+    return results;
+  }
+
+  async getMyTasksSummary(userId: string, tenantId?: string) {
+    const key = `dashboard:my-tasks:${tenantId ?? 'default'}:${userId}`;
+    const hit = await this.redis.get(key).catch(() => null);
+    if (hit) return JSON.parse(hit);
+    const data = await this.calcMyTasksSummary(userId);
+    await this.redis.setex(key, 60, JSON.stringify(data)).catch(() => {});
+    return data;
+  }
+
+  private async calcMyTasksSummary(userId: string) {
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!employee) return { todo: 0, inProgress: 0, review: 0, done: 0 };
+
+    const [todo, inProgress, review, done] = await Promise.all([
+      this.prisma.task.count({ where: { assigneeId: employee.id, status: 'TODO' } }),
+      this.prisma.task.count({ where: { assigneeId: employee.id, status: 'IN_PROGRESS' } }),
+      this.prisma.task.count({ where: { assigneeId: employee.id, status: 'PENDING_APPROVAL' } }),
+      this.prisma.task.count({ where: { assigneeId: employee.id, status: 'DONE' } }),
+    ]);
+
+    return { todo, inProgress, review, done };
+  }
+
+  async getWorkTrend(tenantId?: string) {
+    const key = `dashboard:work-trend:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcWorkTrend());
+  }
+
+  private async calcWorkTrend() {
+    const since = new Date();
+    since.setDate(since.getDate() - 6);
+    since.setHours(0, 0, 0, 0);
+
+    const tasks = await this.prisma.task.findMany({
+      where: { status: 'DONE', updatedAt: { gte: since } },
+      select: { updatedAt: true },
+      take: 5000,
+    });
+
+    const dayMap: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      dayMap[d.toISOString().slice(0, 10)] = 0;
+    }
+    for (const t of tasks) {
+      const day = t.updatedAt.toISOString().slice(0, 10);
+      if (day in dayMap) dayMap[day]++;
+    }
+
+    return Object.entries(dayMap).map(([date, completed]) => ({ date, completed }));
+  }
+
+  async getPeopleByDept(tenantId?: string) {
+    const key = `dashboard:people-by-dept:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcPeopleByDept());
+  }
+
+  private async calcPeopleByDept() {
+    const orgUnits = await this.prisma.orgUnit.findMany({
+      include: { _count: { select: { employees: true } } },
+      where: { employees: { some: { isActive: true } } },
+      take: 50,
+    });
+
+    return orgUnits
+      .map((o) => ({ dept: o.name, count: o._count.employees }))
+      .sort((a, b) => b.count - a.count);
+  }
+
+  async getTodayEvents(tenantId?: string) {
+    const key = `dashboard:today-events:${tenantId ?? 'default'}`;
+    // TTL 1 giờ — sự kiện ngày hôm nay không cần refresh thường xuyên
+    const hit = await this.redis.get(key).catch(() => null);
+    if (hit) return JSON.parse(hit);
+    const data = await this.calcTodayEvents();
+    await this.redis.setex(key, 3600, JSON.stringify(data)).catch(() => {});
+    return data;
+  }
+
+  private async calcTodayEvents() {
+    const now = new Date();
+    const todayMonth = now.getMonth() + 1;
+    const todayDay = now.getDate();
+    const todayYear = now.getFullYear();
+
+    const allEmployees = await this.prisma.employee.findMany({
+      where: { isActive: true },
+      take: 500,
+      select: {
+        id: true,
+        fullName: true,
+        birthdate: true,
+        startDate: true,
+        orgUnit: { select: { name: true } },
+        user: { select: { name: true } },
+      },
+    });
+
+    const birthdays: { id: string; name: string; dept: string }[] = [];
+    const anniversaries: { id: string; name: string; dept: string; years: number }[] = [];
+    const newHires: { id: string; name: string; dept: string }[] = [];
+
+    for (const emp of allEmployees) {
+      const name = emp.user?.name ?? emp.fullName;
+      const dept = emp.orgUnit?.name ?? '';
+
+      if (emp.birthdate) {
+        const bd = new Date(emp.birthdate);
+        if (bd.getMonth() + 1 === todayMonth && bd.getDate() === todayDay) {
+          birthdays.push({ id: emp.id, name, dept });
+        }
+      }
+
+      const sd = new Date(emp.startDate);
+      if (sd.getMonth() + 1 === todayMonth && sd.getDate() === todayDay) {
+        const years = todayYear - sd.getFullYear();
+        if (years === 0) {
+          newHires.push({ id: emp.id, name, dept });
+        } else if (years > 0) {
+          anniversaries.push({ id: emp.id, name, dept, years });
+        }
+      }
+    }
+
+    return { birthdays, anniversaries, newHires };
   }
 }

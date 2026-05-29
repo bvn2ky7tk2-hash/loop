@@ -9,6 +9,8 @@ export interface UploadOptions {
   buffer: Buffer;
   size: number;
   mimeType: string;
+  /** Tenant ID để tạo per-tenant path prefix trong MinIO. Nếu không có → dùng 'shared/' */
+  tenantId?: string;
 }
 
 export interface UploadResult {
@@ -50,7 +52,9 @@ export class StorageService implements OnModuleInit {
   async upload(opts: UploadOptions): Promise<UploadResult> {
     const bucket = opts.bucket ?? this.defaultBucket;
     const ext = opts.filename.includes('.') ? '.' + opts.filename.split('.').pop() : '';
-    const storagePath = `${opts.folder}/${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+    // Per-tenant path: <tenantId>/<folder>/... hoặc shared/<folder>/... nếu không có tenantId
+    const tenantPrefix = opts.tenantId ? `${opts.tenantId}/` : 'shared/';
+    const storagePath = `${tenantPrefix}${opts.folder}/${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
 
     await this.client.putObject(bucket, storagePath, opts.buffer, opts.size, {
       'Content-Type': opts.mimeType,

@@ -160,7 +160,7 @@ export class BugsController {
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() user: JwtUser,
   ) {
-    return this.attachmentService.uploadFile(id, user.id, file);
+    return this.attachmentService.uploadFile(id, user.id, file, user.tenantId ?? undefined);
   }
 
   @Get(':id/attachments/:attId/url')
