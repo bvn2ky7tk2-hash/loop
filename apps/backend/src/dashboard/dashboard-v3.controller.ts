@@ -461,9 +461,10 @@ export class DashboardV3Controller {
     const todayDay = now.getDate();
     const todayYear = now.getFullYear();
 
-    // Lấy tất cả nhân viên active kèm user (để lấy tên)
+    // Lấy nhân viên active kèm user (để lấy tên) — giới hạn 500 để tránh full scan
     const allEmployees = await this.prisma.employee.findMany({
       where: { isActive: true },
+      take: 500,
       select: {
         id: true,
         fullName: true,

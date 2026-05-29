@@ -10,7 +10,7 @@ import { CreateFeedPostDto } from './dto/create-feed-post.dto';
 import { ReactFeedPostDto } from './dto/react-feed-post.dto';
 import { ListFeedDto } from './dto/list-feed.dto';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 
 @ApiTags('feed')
 @ApiBearerAuth()
@@ -35,7 +35,7 @@ export class FeedController {
   @ApiOperation({ summary: 'Tạo bài đăng mới' })
   create(
     @Body() dto: CreateFeedPostDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.createPost(dto, user.id);
   }
@@ -45,7 +45,7 @@ export class FeedController {
   @ApiOperation({ summary: 'Xóa bài đăng' })
   remove(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     const isAdmin = user.role === Role.ADMIN || user.role === Role.LEADERSHIP;
     return this.service.deletePost(id, user.id, isAdmin);
@@ -56,7 +56,7 @@ export class FeedController {
   react(
     @Param('id') id: string,
     @Body() dto: ReactFeedPostDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.reactToPost(id, user.id, dto.emoji);
   }

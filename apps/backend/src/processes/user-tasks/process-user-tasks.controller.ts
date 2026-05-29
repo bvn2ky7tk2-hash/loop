@@ -13,7 +13,7 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import type { User } from '../../generated/prisma';
+import type { JwtUser } from '../../common/types/jwt-user.type';
 import { ProcessUserTasksService } from './process-user-tasks.service';
 import { CompleteTaskDto } from './dto/complete-task.dto';
 import { ReturnTaskDto } from './dto/return-task.dto';
@@ -28,7 +28,7 @@ export class ProcessUserTasksController {
   @Get()
   @ApiOperation({ summary: 'Danh sách user tasks (inbox)' })
   findAll(
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(20), ParseIntPipe) pageSize: number,
     @Query('instanceId') instanceId?: string,
@@ -50,7 +50,7 @@ export class ProcessUserTasksController {
 
   @Patch(':id/claim')
   @ApiOperation({ summary: 'Nhận task để xử lý' })
-  claim(@Param('id') id: string, @CurrentUser() user: User) {
+  claim(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.claim(id, user.id);
   }
 
@@ -58,7 +58,7 @@ export class ProcessUserTasksController {
   @ApiOperation({ summary: 'Hoàn thành user task và tiếp tục process' })
   complete(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Body() dto: CompleteTaskDto,
   ) {
     return this.service.complete(id, user.id, dto);
@@ -68,7 +68,7 @@ export class ProcessUserTasksController {
   @ApiOperation({ summary: 'Trả lại task (unassign)' })
   returnTask(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Body() dto: ReturnTaskDto,
   ) {
     return this.service.returnTask(id, user.id, dto);

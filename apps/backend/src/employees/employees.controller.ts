@@ -6,7 +6,7 @@ import { RequirePermission } from '../common/decorators/require-permission.decor
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
 import { PERMISSIONS } from '../permissions/permissions.constants';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
@@ -40,21 +40,21 @@ export class EmployeesController {
 
   @Get('me')
   @ApiOperation({ summary: 'Hồ sơ nhân sự của bản thân' })
-  findMe(@CurrentUser() user: User) {
+  findMe(@CurrentUser() user: JwtUser) {
     return this.service.findMe(user.id);
   }
 
   @Get()
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
   @ApiOperation({ summary: 'Danh sách nhân sự (org scoped)' })
-  findAll(@Req() req: { orgUnitIds: string[] | null }, @CurrentUser() user: User) {
+  findAll(@Req() req: { orgUnitIds: string[] | null }, @CurrentUser() user: JwtUser) {
     return this.service.findAll(req.orgUnitIds, user.role);
   }
 
   @Get(':id')
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
   @ApiOperation({ summary: 'Chi tiết nhân sự' })
-  findOne(@Param('id') id: string, @CurrentUser() user: User) {
+  findOne(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.findOne(id, user.role);
   }
 

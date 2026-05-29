@@ -38,8 +38,10 @@ export class AuthService {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
+      name: user.name,
       role: user.role,
       orgUnitId: user.orgUnitId,
+      tenantId: user.tenantId,
     };
 
     const accessToken = this.jwt.sign(payload, {
@@ -94,8 +96,10 @@ export class AuthService {
     const jwtPayload: JwtPayload = {
       sub: user.id,
       email: user.email,
+      name: user.name,
       role: user.role,
       orgUnitId: user.orgUnitId,
+      tenantId: user.tenantId,
     };
 
     const newAccessToken = this.jwt.sign(jwtPayload, {

@@ -12,7 +12,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 
 @Controller('salary-records')
 export class SalaryRecordsController {
@@ -33,7 +33,7 @@ export class SalaryRecordsController {
 
   @Post()
   @Roles(Role.ADMIN, Role.LEADERSHIP)
-  create(@Body() dto: CreateSalaryRecordDto, @CurrentUser() user: User) {
+  create(@Body() dto: CreateSalaryRecordDto, @CurrentUser() user: JwtUser) {
     return this.service.create(dto, user.id);
   }
 }

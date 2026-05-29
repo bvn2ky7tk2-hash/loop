@@ -12,7 +12,7 @@ import { Throttle } from '@nestjs/throttler';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { OvertimeService } from './overtime.service';
 import {
   CreateOvertimeRequestDto,
@@ -52,7 +52,7 @@ export class OvertimeController {
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @ApiOperation({ summary: 'Tạo đơn tăng ca' })
-  create(@Body() dto: CreateOvertimeRequestDto, @CurrentUser() user: User) {
+  create(@Body() dto: CreateOvertimeRequestDto, @CurrentUser() user: JwtUser) {
     return this.service.create(dto, user.id);
   }
 
@@ -66,7 +66,7 @@ export class OvertimeController {
   @Patch(':id/cancel')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @ApiOperation({ summary: 'Huỷ đơn tăng ca (chỉ PENDING)' })
-  cancel(@Param('id') id: string, @CurrentUser() user: User) {
+  cancel(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.cancel(id, user.id);
   }
 
@@ -74,7 +74,7 @@ export class OvertimeController {
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @Roles(Role.ADMIN, Role.LEADERSHIP, Role.PM)
   @ApiOperation({ summary: 'Duyệt trực tiếp đơn tăng ca (fallback khi không có BPM)' })
-  approveDirectly(@Param('id') id: string, @CurrentUser() user: User) {
+  approveDirectly(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.approveDirectly(id, user.id);
   }
 
@@ -85,7 +85,7 @@ export class OvertimeController {
   reject(
     @Param('id') id: string,
     @Body() dto: RejectOtDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.reject(id, dto, user.id);
   }

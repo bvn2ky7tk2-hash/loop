@@ -6,7 +6,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { Role } from '../generated/prisma';
 
 @ApiTags('comments')
@@ -28,7 +28,7 @@ export class CommentsController {
   @ApiOperation({ summary: 'Tạo comment mới' })
   create(
     @Body() dto: CreateCommentDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.createComment(dto, user.id);
   }
@@ -38,7 +38,7 @@ export class CommentsController {
   @ApiOperation({ summary: 'Xóa comment' })
   remove(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     const isAdmin = user.role === Role.ADMIN || user.role === Role.PM;
     return this.service.deleteComment(id, user.id, isAdmin);

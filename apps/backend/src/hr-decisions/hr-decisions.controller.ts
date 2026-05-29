@@ -19,7 +19,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 
 @Controller('api/v1/hr-decisions')
 export class HrDecisionsController {
@@ -40,7 +40,7 @@ export class HrDecisionsController {
 
   @Post()
   @Roles(Role.ADMIN, Role.LEADERSHIP)
-  create(@Body() dto: CreateHrDecisionDto, @CurrentUser() user: User) {
+  create(@Body() dto: CreateHrDecisionDto, @CurrentUser() user: JwtUser) {
     return this.service.create(dto, user.id);
   }
 
@@ -58,7 +58,7 @@ export class HrDecisionsController {
 
   @Post(':id/submit')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
-  submit(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: User) {
+  submit(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: JwtUser) {
     return this.service.submit(id, user.id, user.role as Role);
   }
 

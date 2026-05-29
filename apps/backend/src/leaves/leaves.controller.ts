@@ -11,7 +11,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { LeaveStatus, Role } from '../generated/prisma';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { LeavesService } from './leaves.service';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
@@ -94,7 +94,7 @@ export class LeavesController {
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
   @ApiOperation({ summary: 'Tạo yêu cầu nghỉ phép' })
-  create(@Body() dto: CreateLeaveRequestDto, @CurrentUser() user: User) {
+  create(@Body() dto: CreateLeaveRequestDto, @CurrentUser() user: JwtUser) {
     return this.service.createRequest(dto, user.id);
   }
 
@@ -106,7 +106,7 @@ export class LeavesController {
   approve(
     @Param('id') id: string,
     @Body() dto: ApproveLeaveDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.approveReject(id, dto, user.id);
   }

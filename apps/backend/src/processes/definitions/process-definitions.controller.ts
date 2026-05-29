@@ -17,7 +17,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Role } from '../../generated/prisma';
-import type { User } from '../../generated/prisma';
+import type { JwtUser } from '../../common/types/jwt-user.type';
 import { ProcessDefinitionsService } from './process-definitions.service';
 import { CreateDefinitionDto } from './dto/create-definition.dto';
 import { UpdateDefinitionDto } from './dto/update-definition.dto';
@@ -49,7 +49,7 @@ export class ProcessDefinitionsController {
   @Post()
   @Roles(Role.ADMIN, Role.PM)
   @ApiOperation({ summary: 'Tạo process definition mới' })
-  create(@Body() dto: CreateDefinitionDto, @CurrentUser() user: User) {
+  create(@Body() dto: CreateDefinitionDto, @CurrentUser() user: JwtUser) {
     const orgUnitId = user.orgUnitId ?? '';
     return this.service.create(dto, orgUnitId);
   }

@@ -3,6 +3,7 @@ import {
   Body, Param, Query,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
 import { PortalService } from './portal.service';
 import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto } from './dto/portal.dto';
@@ -58,6 +59,7 @@ export class PortalPublicController {
 
   @Get(':token')
   @Public()
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
   @ApiOperation({ summary: 'Lấy toàn bộ dữ liệu portal' })
   getData(@Param('token') token: string) {
     return this.svc.getPortalData(token);
@@ -65,6 +67,7 @@ export class PortalPublicController {
 
   @Post(':token/tickets')
   @Public()
+  @Throttle({ auth: { ttl: 60_000, limit: 10 } })
   @ApiOperation({ summary: 'Khách hàng submit ticket' })
   submitTicket(@Param('token') token: string, @Body() dto: SubmitTicketDto) {
     return this.svc.submitTicket(token, dto);

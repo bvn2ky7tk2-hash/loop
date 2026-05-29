@@ -1,11 +1,12 @@
 import {
   Controller, Get, Post, Patch, Body, Param, Query, Req,
 } from '@nestjs/common';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { Role, type User } from '../generated/prisma';
+import { Role } from '../generated/prisma';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import { TimesheetService } from './timesheet.service';
 import { CheckInDto, CheckOutDto } from './dto/checkin.dto';
@@ -23,21 +24,21 @@ export class TimesheetController {
   @Post('checkin')
   @RequirePermission(PERMISSIONS.TIMELOGS_CREATE)
   @ApiOperation({ summary: 'Chấm công vào' })
-  checkIn(@Body() dto: CheckInDto, @CurrentUser() user: User) {
+  checkIn(@Body() dto: CheckInDto, @CurrentUser() user: JwtUser) {
     return this.service.checkIn(user.id, dto);
   }
 
   @Post('checkout')
   @RequirePermission(PERMISSIONS.TIMELOGS_UPDATE)
   @ApiOperation({ summary: 'Chấm công ra' })
-  checkOut(@Body() dto: CheckOutDto, @CurrentUser() user: User) {
+  checkOut(@Body() dto: CheckOutDto, @CurrentUser() user: JwtUser) {
     return this.service.checkOut(user.id, dto);
   }
 
   @Get('me/today')
   @RequirePermission(PERMISSIONS.TIMESHEETS_READ)
   @ApiOperation({ summary: 'Tóm tắt chấm công hôm nay của tôi' })
-  getTodaySummary(@CurrentUser() user: User) {
+  getTodaySummary(@CurrentUser() user: JwtUser) {
     return this.service.getTodaySummary(user.id);
   }
 
@@ -46,7 +47,7 @@ export class TimesheetController {
   @Post('status')
   @RequirePermission(PERMISSIONS.TIMELOGS_CREATE)
   @ApiOperation({ summary: 'Cập nhật trạng thái làm việc (1-tap)' })
-  updateStatus(@Body() dto: UpdateStatusDto, @CurrentUser() user: User) {
+  updateStatus(@Body() dto: UpdateStatusDto, @CurrentUser() user: JwtUser) {
     return this.service.setStatus(user.id, dto);
   }
 
@@ -66,7 +67,7 @@ export class TimesheetController {
   @ApiOperation({ summary: 'Tạo/tính lại bảng công theo kỳ' })
   generatePeriod(
     @Body() dto: GeneratePeriodDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.generatePeriod(user.id, user.role, dto);
   }
@@ -75,7 +76,7 @@ export class TimesheetController {
   @RequirePermission(PERMISSIONS.TIMESHEETS_READ)
   @ApiOperation({ summary: 'Chi tiết bảng công theo kỳ' })
   getPeriodDetail(
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Query('start') start: string,
     @Query('end') end: string,
     @Query('userId') userId?: string,
@@ -87,7 +88,7 @@ export class TimesheetController {
   @Post(':id/submit')
   @RequirePermission(PERMISSIONS.TIMESHEETS_READ)
   @ApiOperation({ summary: 'Nộp bảng công để duyệt' })
-  submit(@Param('id') id: string, @CurrentUser() user: User) {
+  submit(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.submit(id, user.id);
   }
 
@@ -95,7 +96,7 @@ export class TimesheetController {
   @Roles(Role.PM, Role.ADMIN, Role.LEADERSHIP)
   @RequirePermission(PERMISSIONS.TIMESHEETS_APPROVE)
   @ApiOperation({ summary: 'Duyệt bảng công' })
-  approve(@Param('id') id: string, @CurrentUser() user: User) {
+  approve(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.approve(id, user.id);
   }
 
@@ -106,7 +107,7 @@ export class TimesheetController {
   reject(
     @Param('id') id: string,
     @Body() dto: RejectTimesheetDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.reject(id, user.id, dto);
   }
@@ -124,7 +125,7 @@ export class TimesheetController {
   @ApiOperation({ summary: 'Nhập thủ công giờ công cho một ngày' })
   manualDayEntry(
     @Body() body: { date: string; hours: number },
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.manualDayEntry(user.id, body.date, body.hours);
   }
@@ -136,7 +137,7 @@ export class TimesheetController {
     @Query('projectId') projectId: string,
     @Query('year') year: string,
     @Query('month') month: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.getProjectSummary(projectId, parseInt(year), parseInt(month), user);
   }

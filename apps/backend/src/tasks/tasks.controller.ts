@@ -9,7 +9,7 @@ import { RequirePermission } from '../common/decorators/require-permission.decor
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
 import { PERMISSIONS } from '../permissions/permissions.constants';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { MyTasksQueryDto } from './dto/my-tasks-query.dto';
@@ -27,7 +27,7 @@ export class TasksController {
   create(
     @Param('projectId') projectId: string,
     @Body() dto: CreateTaskDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.service.create(projectId, dto, user);
   }
@@ -61,7 +61,7 @@ export class TasksController {
   @Get('tasks/mine/count')
   @RequirePermission(PERMISSIONS.TASKS_READ)
   @ApiOperation({ summary: 'Đếm task chưa hoàn thành của tôi' })
-  getMyTasksCount(@CurrentUser() user: User) {
+  getMyTasksCount(@CurrentUser() user: JwtUser) {
     return this.service.getMyTasksCount(user.id, user.role);
   }
 
@@ -69,7 +69,7 @@ export class TasksController {
   @RequirePermission(PERMISSIONS.TASKS_READ)
   @ApiOperation({ summary: 'Task board — cá nhân hoặc team (PM/ADMIN/LEADERSHIP)' })
   getMyTasks(
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Query() query: MyTasksQueryDto,
   ) {
     return this.service.getMyTasks(
@@ -97,7 +97,7 @@ export class TasksController {
   @Roles(Role.ADMIN, Role.PM)
   @RequirePermission(PERMISSIONS.TASKS_APPROVE)
   @ApiOperation({ summary: 'Duyệt task' })
-  approve(@Param('id') id: string, @CurrentUser() user: User) {
+  approve(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.approve(id, user.id);
   }
 
@@ -150,7 +150,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Ghi nhận giờ thực tế' })
   logEffort(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Body('hours') hours: number,
     @Body('logDate') logDate: string,
     @Body('note') note?: string,

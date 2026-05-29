@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Role } from '../../generated/prisma';
-import type { User } from '../../generated/prisma';
+import type { JwtUser } from '../types/jwt-user.type';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RedisService } from './redis.service';
 
@@ -19,7 +19,7 @@ export class OrgScopeService {
    * []    → user has no orgUnit, sees nothing
    * [...] → union of: group-based org access + role-based fallback
    */
-  async getVisibleOrgUnitIds(user: User): Promise<string[] | null> {
+  async getVisibleOrgUnitIds(user: JwtUser): Promise<string[] | null> {
     if (user.role === Role.ADMIN) return null;
 
     const cacheKey = `orgscope:${user.id}`;

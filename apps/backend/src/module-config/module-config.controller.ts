@@ -1,5 +1,6 @@
 import { Controller, Get, Put, Param, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { Role } from '../generated/prisma';
@@ -31,6 +32,7 @@ export class ModuleConfigController {
 
   @Get(':id/status')
   @Public()
+  @Throttle({ global: { ttl: 60_000, limit: 200 } })
   @ApiOperation({ summary: 'Kiểm tra trạng thái module (public, dùng cho frontend guard)' })
   getModuleStatus(@Param('id') moduleId: string) {
     return this.service.getModuleStatus(moduleId);

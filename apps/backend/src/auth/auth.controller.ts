@@ -7,7 +7,7 @@ import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordSelfDto } from './dto/change-password-self.dto';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { PermissionsService } from '../permissions/permissions.service';
 
 @ApiTags('auth')
@@ -46,7 +46,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout and clear cookies' })
-  logout(@Req() req: Request & { user: User }, @Res({ passthrough: true }) res: Response) {
+  logout(@Req() req: Request & { user: JwtUser }, @Res({ passthrough: true }) res: Response) {
     return this.authService.logout(req.user.id, res);
   }
 
@@ -56,7 +56,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Đổi mật khẩu tài khoản hiện tại' })
   changePassword(
-    @Req() req: Request & { user: User },
+    @Req() req: Request & { user: JwtUser },
     @Body() dto: ChangePasswordSelfDto,
   ) {
     return this.authService.changePasswordSelf(req.user.id, dto);
@@ -67,7 +67,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user profile with permissions' })
-  async me(@Req() req: Request & { user: User }) {
+  async me(@Req() req: Request & { user: JwtUser }) {
     const u = req.user;
     const [permSet, moduleRoles] = await Promise.all([
       this.permissionsService.getEffectivePermissions(u.id),

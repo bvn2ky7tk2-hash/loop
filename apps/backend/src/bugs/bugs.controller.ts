@@ -10,7 +10,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
-import type { User } from '../generated/prisma';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { BugsService } from './bugs.service';
 import { BugAttachmentService } from './bug-attachment.service';
@@ -39,7 +39,7 @@ export class BugsController {
   @ApiOperation({ summary: 'Tạo bug mới' })
   create(
     @Body() dto: CreateBugDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Req() req: { orgUnitIds: string[] | null },
   ) {
     return this.service.create(dto, user.id, req.orgUnitIds);
@@ -59,14 +59,14 @@ export class BugsController {
   @Get('my/count')
   @RequirePermission(PERMISSIONS.BUGS_READ)
   @ApiOperation({ summary: 'Đếm bug chưa xử lý được giao cho tôi' })
-  countMine(@CurrentUser() user: User) {
+  countMine(@CurrentUser() user: JwtUser) {
     return this.service.countMine(user.id);
   }
 
   @Get('my')
   @RequirePermission(PERMISSIONS.BUGS_READ)
   @ApiOperation({ summary: 'Bug được giao cho tôi' })
-  findMine(@CurrentUser() user: User) {
+  findMine(@CurrentUser() user: JwtUser) {
     return this.service.findMine(user.id);
   }
 
@@ -85,7 +85,7 @@ export class BugsController {
   @ApiOperation({ summary: 'Chi tiết bug' })
   findOne(
     @Param('id') id: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Req() req: { orgUnitIds: string[] | null },
   ) {
     return this.service.findOne(id, req.orgUnitIds, user.id);
@@ -132,7 +132,7 @@ export class BugsController {
   approve(
     @Param('id') id: string,
     @Body() dto: ApproveBugDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Req() req: { orgUnitIds: string[] | null },
   ) {
     return this.service.approve(id, dto, req.orgUnitIds, user.role);
@@ -158,7 +158,7 @@ export class BugsController {
   uploadAttachment(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.attachmentService.uploadFile(id, user.id, file);
   }
@@ -193,7 +193,7 @@ export class BugsController {
   addComment(
     @Param('id') id: string,
     @Body('content') content: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.commentService.create(id, user.id, content);
   }
@@ -204,7 +204,7 @@ export class BugsController {
   updateComment(
     @Param('commentId') commentId: string,
     @Body('content') content: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
   ) {
     return this.commentService.update(commentId, user.id, content);
   }
@@ -215,7 +215,7 @@ export class BugsController {
   @ApiOperation({ summary: 'Xoá comment' })
   deleteComment(
     @Param('commentId') commentId: string,
-    @CurrentUser() user: User,
+    @CurrentUser() user: JwtUser,
     @Req() req: any,
   ) {
     const isAdmin = ['ADMIN', 'PM'].includes(user.role);

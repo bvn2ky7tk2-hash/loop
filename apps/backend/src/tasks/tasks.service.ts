@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Prisma, TaskStatus } from '../generated/prisma';
-import type { Task, User } from '../generated/prisma';
+import type { Task, Role } from '../generated/prisma';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { paginate, type PaginatedResult } from '../common/dto/pagination.dto';
@@ -29,7 +29,7 @@ export class TasksService {
     return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
   }
 
-  async create(projectId: string, dto: CreateTaskDto, caller: User): Promise<Task & { warning?: string }> {
+  async create(projectId: string, dto: CreateTaskDto, caller: { role: Role }): Promise<Task & { warning?: string }> {
     const isMember = caller.role === 'MEMBER';
     const status: TaskStatus = isMember ? 'PENDING_APPROVAL' : 'TODO';
 

@@ -14,7 +14,7 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import type { User } from '../../generated/prisma';
+import type { JwtUser } from '../../common/types/jwt-user.type';
 import { ProcessInstancesService } from './process-instances.service';
 import { StartInstanceDto } from './dto/start-instance.dto';
 
@@ -45,13 +45,13 @@ export class ProcessInstancesController {
 
   @Post()
   @ApiOperation({ summary: 'Khởi động process instance mới' })
-  start(@Body() dto: StartInstanceDto, @CurrentUser() user: User) {
+  start(@Body() dto: StartInstanceDto, @CurrentUser() user: JwtUser) {
     return this.service.start(dto, user.id);
   }
 
   @Patch(':id/cancel')
   @ApiOperation({ summary: 'Huỷ process instance' })
-  cancel(@Param('id') id: string, @CurrentUser() user: User) {
+  cancel(@Param('id') id: string, @CurrentUser() user: JwtUser) {
     return this.service.cancel(id, user.id);
   }
 
