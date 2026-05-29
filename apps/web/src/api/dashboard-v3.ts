@@ -68,6 +68,33 @@ export interface AdminDashboardData {
   systemStatus: string;
 }
 
+// ─── Finance Summary (6 tháng) ────────────────────────────────────────────
+export interface FinanceSummaryItem {
+  month: string;      // 'YYYY-MM'
+  revenue: number;
+  expense: number;
+}
+
+// ─── My Tasks Summary ─────────────────────────────────────────────────────
+export interface MyTasksSummary {
+  todo: number;
+  inProgress: number;
+  review: number;
+  done: number;
+}
+
+// ─── Work Trend (7 ngày) ──────────────────────────────────────────────────
+export interface WorkTrendItem {
+  date: string;       // 'YYYY-MM-DD'
+  completed: number;
+}
+
+// ─── People By Dept ───────────────────────────────────────────────────────
+export interface PeopleByDeptItem {
+  dept: string;
+  count: number;
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────
 export const dashboardV3Api = {
   getWork: (): Promise<WorkDashboardData> =>
@@ -93,4 +120,16 @@ export const dashboardV3Api = {
 
   getAdmin: (): Promise<AdminDashboardData> =>
     api.get('/api/v1/dashboard/admin').then((r) => r.data),
+
+  getFinanceSummary: (): Promise<FinanceSummaryItem[]> =>
+    api.get('/api/v1/dashboard/finance-summary').then((r) => r.data),
+
+  getMyTasksSummary: (): Promise<MyTasksSummary> =>
+    api.get('/api/v1/dashboard/my-tasks-summary').then((r) => r.data),
+
+  getWorkTrend: (): Promise<WorkTrendItem[]> =>
+    api.get('/api/v1/dashboard/work-trend').then((r) => r.data),
+
+  getPeopleByDept: (): Promise<PeopleByDeptItem[]> =>
+    api.get('/api/v1/dashboard/people-by-dept').then((r) => r.data),
 };

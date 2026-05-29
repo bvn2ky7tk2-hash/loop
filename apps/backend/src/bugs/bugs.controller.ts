@@ -11,6 +11,7 @@ import { RequirePermission } from '../common/decorators/require-permission.decor
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import type { User } from '../generated/prisma';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { BugsService } from './bugs.service';
 import { BugAttachmentService } from './bug-attachment.service';
 import { BugStatsService } from './bug-stats.service';
@@ -103,6 +104,7 @@ export class BugsController {
 
   @Patch(':id/transition')
   @RequirePermission(PERMISSIONS.BUGS_UPDATE)
+  @Audited('RESOLVE', 'Bug')
   @ApiOperation({ summary: 'Chuyển trạng thái bug' })
   transition(
     @Param('id') id: string,
@@ -114,6 +116,7 @@ export class BugsController {
 
   @Patch(':id/assign')
   @RequirePermission(PERMISSIONS.BUGS_ASSIGN)
+  @Audited('ASSIGN', 'Bug')
   @ApiOperation({ summary: 'Gán assignee cho bug' })
   assign(
     @Param('id') id: string,

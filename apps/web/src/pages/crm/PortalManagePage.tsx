@@ -15,6 +15,7 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { portalAdminApi, type CustomerPortal, type CustomerTicket, type TicketStatus } from '../../api/portal';
+import { CustomerSelect } from '../../components/selects';
 
 const { Text } = Typography;
 
@@ -396,8 +397,8 @@ export default function PortalManagePage() {
             <Input placeholder="VNG Portal, FPT Implementation Portal..." />
           </Form.Item>
           {!editing && (
-            <Form.Item name="customerId" label="Khách hàng" rules={[{ required: true }]}>
-              <Input placeholder="ID khách hàng (từ CRM Customers)" />
+            <Form.Item name="customerId" label="Khách hàng" rules={[{ required: true, message: 'Chọn khách hàng' }]}>
+              <CustomerSelect />
             </Form.Item>
           )}
           <Form.Item name="welcomeMessage" label="Lời chào">

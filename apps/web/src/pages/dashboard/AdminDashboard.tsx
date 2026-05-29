@@ -1,40 +1,108 @@
-import { Row, Col } from 'antd';
+import { Row, Col, Table, Tag } from 'antd';
 import {
   UserOutlined,
   CheckCircleOutlined,
   AppstoreOutlined,
   SafetyOutlined,
+  AuditOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import { Typography, Badge } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { dashboardV3Api } from '../../api/dashboard-v3';
-import { Typography, Badge } from 'antd';
+import { auditLogsApi, type AuditLogRecord } from '../../api/audit-logs';
+import { useAuthStore } from '../../store/auth.store';
 
 const { Text } = Typography;
 
 const MODULE_LIST = [
-  { name: 'Work', color: '#6366F1' },
-  { name: 'People', color: '#8B5CF6' },
+  { name: 'Work',    color: '#6366F1' },
+  { name: 'People',  color: '#8B5CF6' },
   { name: 'Finance', color: '#10B981' },
-  { name: 'CRM', color: '#3B82F6' },
-  { name: 'Asset', color: '#F97316' },
-  { name: 'Ops', color: '#F59E0B' },
-  { name: 'Me', color: '#6366F1' },
-  { name: 'Admin', color: '#EF4444' },
+  { name: 'CRM',     color: '#3B82F6' },
+  { name: 'Asset',   color: '#F97316' },
+  { name: 'Ops',     color: '#F59E0B' },
+  { name: 'Me',      color: '#6366F1' },
+  { name: 'Admin',   color: '#EF4444' },
 ];
 
-export default function AdminDashboard() {
-  const { bgContainer, borderColor, textPrimary, textMuted } = useThemePalette();
+/** Màu badge cho action */
+function actionColor(action: string) {
+  if (/delete|remove/i.test(action)) return 'error';
+  if (/create|add/i.test(action))    return 'success';
+  if (/update|edit|patch/i.test(action)) return 'processing';
+  return 'default';
+}
 
-  const { data } = useQuery({
-    queryKey: ['dashboard-admin'],
-    queryFn: dashboardV3Api.getAdmin,
+export default function AdminDashboard() {
+  const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
+  const { user } = useAuthStore();
+
+  const { data: adminData } = useQuery({
+    queryKey:        ['dashboard-admin'],
+    queryFn:         dashboardV3Api.getAdmin,
     refetchInterval: 60_000,
   });
 
-  const systemOk = data?.systemStatus === 'OK';
+  const { data: auditData } = useQuery({
+    queryKey: ['audit-logs', 'recent'],
+    queryFn:  () => auditLogsApi.list({ page: 1, limit: 10 }),
+    refetchInterval: 60_000,
+  });
+
+  const systemOk    = adminData?.systemStatus === 'OK';
+  const auditLogs: AuditLogRecord[] = auditData?.data ?? [];
+
+  const auditColumns: ColumnsType<AuditLogRecord> = [
+    {
+      title:  'Người dùng',
+      key:    'user',
+      width:  140,
+      render: (_: unknown, r: AuditLogRecord) => (
+        <Text style={{ color: textPrimary }}>{r.user?.name ?? r.userId ?? '—'}</Text>
+      ),
+    },
+    {
+      title:  'Hành động',
+      key:    'action',
+      width:  130,
+      render: (_: unknown, r: AuditLogRecord) => (
+        <Tag color={actionColor(r.action)}>{r.action}</Tag>
+      ),
+    },
+    {
+      title:     'Module',
+      dataIndex: 'module',
+      key:       'module',
+      width:     100,
+      render:    (v?: string) => (
+        <Text style={{ color: textMuted }}>{v ?? '—'}</Text>
+      ),
+    },
+    {
+      title:     'Entity',
+      dataIndex: 'entity',
+      key:       'entity',
+      width:     120,
+      ellipsis:  true,
+      render:    (v?: string) => (
+        <Text style={{ color: textMuted }}>{v ?? '—'}</Text>
+      ),
+    },
+    {
+      title:  'Thời gian',
+      key:    'createdAt',
+      width:  150,
+      render: (_: unknown, r: AuditLogRecord) => (
+        <Text style={{ color: textMuted }}>{dayjs(r.createdAt).format('DD/MM HH:mm:ss')}</Text>
+      ),
+    },
+  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -44,11 +112,12 @@ export default function AdminDashboard() {
         iconColor="#EF4444"
       />
 
+      {/* Hàng 1: StatCards tổng quan */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={12} lg={6}>
           <StatCard
             label="Tổng tài khoản"
-            value={data?.totalUsers ?? 0}
+            value={adminData?.totalUsers ?? 0}
             color="#6366F1"
             icon={<UserOutlined />}
           />
@@ -56,16 +125,16 @@ export default function AdminDashboard() {
         <Col xs={12} sm={12} lg={6}>
           <StatCard
             label="Users đang hoạt động"
-            value={data?.activeUsers ?? 0}
+            value={adminData?.activeUsers ?? 0}
             color="#10B981"
             icon={<CheckCircleOutlined />}
-            subValue={`${data?.recentlyActiveUsers ?? 0} hoạt động 30 ngày qua`}
+            subValue={`${adminData?.recentlyActiveUsers ?? 0} hoạt động 30 ngày qua`}
           />
         </Col>
         <Col xs={12} sm={12} lg={6}>
           <StatCard
             label="Modules bật"
-            value={data?.totalModules ?? 8}
+            value={adminData?.totalModules ?? 8}
             color="#3B82F6"
             icon={<AppstoreOutlined />}
           />
@@ -80,11 +149,55 @@ export default function AdminDashboard() {
         </Col>
       </Row>
 
+      {/* Tenant info */}
       <div style={{
-        background: bgContainer,
-        border: `1px solid ${borderColor}`,
+        background:   bgContainer,
+        border:       `1px solid ${borderColor}`,
         borderRadius: 12,
-        padding: '16px 20px',
+        padding:      '12px 20px',
+        marginBottom: 16,
+        display:      'flex',
+        alignItems:   'center',
+        gap:          16,
+      }}>
+        <GlobalOutlined style={{ color: '#3B82F6', fontSize: 18 }} />
+        <div>
+          <Text style={{ color: textMuted, fontSize: 12 }}>Tenant hiện tại</Text>
+          <div style={{ color: textPrimary, fontWeight: 600, fontSize: 14 }}>
+            {(user as { tenantId?: string })?.tenantId ? `Tenant: ${(user as { tenantId?: string }).tenantId}` : 'Loop 360 — Hệ thống đơn tenant'}
+          </div>
+        </div>
+      </div>
+
+      {/* Audit log gần nhất */}
+      <div style={{
+        background:   bgContainer,
+        border:       `1px solid ${borderColor}`,
+        borderRadius: 12,
+        padding:      '16px 20px',
+        marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: textPrimary, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <AuditOutlined style={{ color: '#F59E0B' }} />
+          Audit log gần nhất
+        </div>
+        <Table<AuditLogRecord>
+          rowKey="id"
+          columns={auditColumns}
+          dataSource={auditLogs}
+          pagination={false}
+          size="small"
+          scroll={{ x: 600 }}
+          locale={{ emptyText: <Text style={{ color: textMuted }}>Chưa có audit log</Text> }}
+        />
+      </div>
+
+      {/* Trạng thái modules */}
+      <div style={{
+        background:   bgContainer,
+        border:       `1px solid ${borderColor}`,
+        borderRadius: 12,
+        padding:      '16px 20px',
       }}>
         <div style={{ fontSize: 14, fontWeight: 600, color: textPrimary, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <AppstoreOutlined style={{ color: '#3B82F6' }} />
@@ -94,13 +207,13 @@ export default function AdminDashboard() {
           {MODULE_LIST.map((mod) => (
             <Col key={mod.name} xs={12} sm={8} md={6}>
               <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '10px 12px',
+                display:     'flex',
+                alignItems:  'center',
+                gap:         8,
+                padding:     '10px 12px',
                 borderRadius: 8,
-                border: `1px solid ${borderColor}`,
-                background: `${mod.color}10`,
+                border:      `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : borderColor}`,
+                background:  `${mod.color}10`,
               }}>
                 <Badge color={mod.color} />
                 <Text style={{ color: textPrimary, fontWeight: 500, fontSize: 13 }}>{mod.name}</Text>

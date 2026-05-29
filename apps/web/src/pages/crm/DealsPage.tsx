@@ -21,6 +21,7 @@ import {
   type Deal, type DealFilterDto, type DealStage,
 } from '../../api/crm';
 import { useAuthStore } from '../../store/auth.store';
+import { ProjectSelect } from '../../components/selects';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -119,6 +120,7 @@ export default function DealsPage() {
   const [editing, setEditing]         = useState<Deal | null>(null);
   const [viewDeal, setViewDeal]       = useState<Deal | null>(null);
   const [actTarget, setActTarget]     = useState<Deal | null>(null);
+  const [wonProjectMode, setWonProjectMode] = useState<'new' | 'existing'>('new');
   const [form] = Form.useForm();
   const [wonForm] = Form.useForm();
   const [lostForm] = Form.useForm();
@@ -448,24 +450,49 @@ export default function DealsPage() {
       <Modal
         title={<Space><TrophyOutlined style={{ color: '#10B981' }} />Deal Won: "{actTarget?.title}"</Space>}
         open={wonModalOpen}
-        onCancel={() => setWonModal(false)}
+        onCancel={() => { setWonModal(false); setWonProjectMode('new'); }}
         onOk={handleWon}
         confirmLoading={wonMutation.isPending}
         okText="Xác nhận Won"
         okButtonProps={{ style: { background: '#10B981', borderColor: '#10B981' } }}
       >
         <Form form={wonForm} layout="vertical">
-          <Form.Item name="projectName" label="Tạo Project mới (tuỳ chọn)">
-            <Input placeholder="Tên project — để trống nếu không tạo" />
+          <Form.Item label="Project liên kết">
+            <Radio.Group
+              value={wonProjectMode}
+              onChange={(e) => {
+                setWonProjectMode(e.target.value);
+                wonForm.setFieldsValue({ projectName: undefined, projectId: undefined });
+              }}
+            >
+              <Radio value="new">Tạo project mới</Radio>
+              <Radio value="existing">Chọn project có sẵn</Radio>
+            </Radio.Group>
           </Form.Item>
-          <Form.Item name="projectType" label="Loại project">
-            <Select allowClear options={[
-              { value: 'WEB', label: 'Web' },
-              { value: 'MOBILE', label: 'Mobile' },
-              { value: 'AI', label: 'AI' },
-              { value: 'OTHER', label: 'Khác' },
-            ]} />
-          </Form.Item>
+
+          {wonProjectMode === 'existing' ? (
+            <Form.Item name="projectId" label="Project có sẵn">
+              <ProjectSelect
+                allowClear
+                filterByCustomerId={actTarget?.customerId}
+                placeholder="Chọn project..."
+              />
+            </Form.Item>
+          ) : (
+            <>
+              <Form.Item name="projectName" label="Tên project mới (tuỳ chọn)">
+                <Input placeholder="Để trống nếu không tạo project" />
+              </Form.Item>
+              <Form.Item name="projectType" label="Loại project">
+                <Select allowClear options={[
+                  { value: 'WEB', label: 'Web' },
+                  { value: 'MOBILE', label: 'Mobile' },
+                  { value: 'AI', label: 'AI' },
+                  { value: 'OTHER', label: 'Khác' },
+                ]} />
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
 

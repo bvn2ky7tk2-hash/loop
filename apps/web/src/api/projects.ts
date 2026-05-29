@@ -9,6 +9,7 @@ export interface Project {
   startDate: string;
   endDate: string;
   customer?: string;
+  customerId?: string;
   budgetEffortMm?: number;
   budgetCost?: number;
   currency?: string;

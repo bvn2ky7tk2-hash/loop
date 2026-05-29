@@ -9,6 +9,7 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { FilterInvoiceDto } from './dto/filter-invoice.dto';
 import { ChangeInvoiceStatusDto } from './dto/change-status.dto';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
@@ -40,6 +41,7 @@ export class InvoicesController {
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission(PERMISSIONS.FINANCE_MANAGE)
+  @Audited('CREATE', 'Invoice')
   create(@Body() dto: CreateInvoiceDto, @CurrentUser('id') userId: string) {
     return this.svc.create(dto, userId);
   }
@@ -52,6 +54,7 @@ export class InvoicesController {
 
   @Patch(':id/status')
   @RequirePermission(PERMISSIONS.FINANCE_MANAGE)
+  @Audited('STATUS_CHANGE', 'Invoice')
   changeStatus(@Param('id') id: string, @Body() dto: ChangeInvoiceStatusDto) {
     return this.svc.changeStatus(id, dto.status);
   }

@@ -22,6 +22,7 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../../permissions/permissions.constants';
+import { Audited } from '../../common/interceptors/audit-log.interceptor';
 
 @ApiTags('CRM — Customers')
 @ApiBearerAuth()
@@ -48,6 +49,7 @@ export class CustomersController {
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
+  @Audited('CREATE', 'Customer')
   @ApiOperation({ summary: 'Tạo khách hàng' })
   create(@Body() dto: CreateCustomerDto) {
     return this.customersService.create(dto);
@@ -64,6 +66,7 @@ export class CustomersController {
   @Delete(':id')
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission('crm_customers:create', PERMISSIONS.CRM_MANAGE)
+  @Audited('DELETE', 'Customer')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Xoá mềm khách hàng' })
   remove(@Param('id') id: string) {

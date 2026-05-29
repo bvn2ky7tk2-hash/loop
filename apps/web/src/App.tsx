@@ -12,6 +12,7 @@ import { createQueryClient, registerLogoutHandler } from '@loop/shared';
 import { useThemeStore } from './store/theme.store';
 import { useAuthStore } from './store/auth.store';
 import { router } from './router';
+import { apiClient } from './api/client';
 
 const queryClient = createQueryClient();
 
@@ -158,6 +159,20 @@ export default function App() {
     root.style.setProperty('--color-primary-20',  `${preset.primary}33`); // ~20%
     root.style.setProperty('--color-primary-40',  `${preset.primary}66`); // ~40%
   }, [preset.primary, preset.hover, preset.active]);
+
+  /* ── Load tenant branding on app init — silent fail nếu chưa đăng nhập ── */
+  useEffect(() => {
+    apiClient.get('/tenants/current').then((r) => {
+      const tenant = r.data;
+      if (tenant?.primaryColor) {
+        document.documentElement.style.setProperty('--color-primary', tenant.primaryColor);
+      }
+      if (tenant?.faviconUrl) {
+        const link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+        if (link) link.href = tenant.faviconUrl;
+      }
+    }).catch(() => { /* silent — không ảnh hưởng app nếu tenant API chưa sẵn sàng */ });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

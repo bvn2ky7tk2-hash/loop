@@ -138,6 +138,7 @@ export const MODULES: ModuleDefinition[] = [
         key: 'g-work-reports', label: 'Báo cáo', visible: true,
         items: [
           { key: '/reports', label: 'Báo cáo tổng hợp', visible: true },
+          { key: '/reports/utilization', label: 'Utilization Rate', visible: true },
         ],
       },
       {
@@ -195,6 +196,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/hr/performance',  label: 'Đánh giá năng lực', visible: true },
           { key: '/hr/skill-matrix', label: 'Ma trận kỹ năng',   visible: true },
           { key: '/hr/okr',          label: 'OKR & KPI',         visible: true },
+          { key: '/hr/analytics',    label: 'HR Analytics',      visible: true },
         ],
       },
       {
@@ -367,11 +369,12 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-admin-system', label: 'Hệ thống', visible: true,
         items: [
-          { key: '/users',       label: 'Người dùng',       visible: true },
-          { key: '/permissions', label: 'Phân quyền',       visible: true },
-          { key: '/alerts',      label: 'Cảnh báo',         visible: true },
-          { key: '/settings',    label: 'Cấu hình menu',    visible: true },
-          { key: '/integrations', label: 'Tích hợp',        visible: true },
+          { key: '/users',          label: 'Người dùng',       visible: true },
+          { key: '/permissions',    label: 'Phân quyền',       visible: true },
+          { key: '/alerts',         label: 'Cảnh báo',         visible: true },
+          { key: '/settings',       label: 'Cấu hình menu',    visible: true },
+          { key: '/integrations',   label: 'Tích hợp',         visible: true },
+          { key: '/admin/tenants',  label: 'Quản lý Tenant',   visible: true },
         ],
       },
       {
@@ -470,6 +473,8 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/performance':        <TrophyOutlined />,
   '/hr/skill-matrix':       <ApartmentOutlined />,
   '/hr/okr':                        <AimOutlined />,
+  '/hr/analytics':                  <BarChartOutlined />,
+  '/reports/utilization':           <TeamOutlined />,
   '/knowledge-base':                <BookOutlined />,
   '/accounting/financial-reports':  <FundOutlined />,
   '/import':                        <UploadOutlined />,
@@ -479,6 +484,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/feed':                          <MessageOutlined />,
   '/admin/health':                  <MonitorOutlined />,
   '/admin/demo':                    <ExperimentOutlined />,
+  '/admin/tenants':                 <GlobalOutlined />,
   '/module-config':                 <ModuleConfigIcon />,
   '/onboarding':                    <RocketOutlined />,
   '/assets/room-booking':           <RoomCalendarIcon />,

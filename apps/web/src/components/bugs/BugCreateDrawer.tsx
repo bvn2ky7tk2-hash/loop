@@ -8,6 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import type { UploadFile } from 'antd';
 import { projectsApi } from '../../api/projects';
+import { UserSelect } from '../selects';
 import { tasksApi } from '../../api/tasks';
 import { useCreateBug, useUploadBugAttachment, type BugSeverity } from '../../api/bugs.api';
 
@@ -167,8 +168,8 @@ export function BugCreateDrawer({ open, onClose }: Props) {
           <Input placeholder="Mô tả ngắn" />
         </Form.Item>
 
-        <Form.Item name="requesterName" label="Người yêu cầu">
-          <Input placeholder="Tên khách hàng / người yêu cầu (nếu có)" />
+        <Form.Item name="reporterId" label="Người báo cáo">
+          <UserSelect allowClear placeholder="Chọn người báo cáo (tùy chọn)" />
         </Form.Item>
 
         <Form.Item name="severity" label="Mức độ" rules={[{ required: true }]}>

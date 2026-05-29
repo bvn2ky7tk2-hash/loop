@@ -3,13 +3,14 @@ import type { ReactNode, CSSProperties } from 'react';
 interface StatCardProps {
   label: string;
   value: string | number;
-  subValue?: string;
+  subValue?: ReactNode;
   color: string;
   icon?: ReactNode;
   style?: CSSProperties;
+  onClick?: () => void;
 }
 
-export function StatCard({ label, value, subValue, color, icon, style }: StatCardProps) {
+export function StatCard({ label, value, subValue, color, icon, style, onClick }: StatCardProps) {
   const cardStyle: CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
@@ -18,6 +19,7 @@ export function StatCard({ label, value, subValue, color, icon, style }: StatCar
     background: `linear-gradient(145deg, rgba(255,255,255,0.22) 0%, rgba(0,0,0,0.12) 100%), ${color}`,
     boxShadow: `0 4px 20px ${color}66, 0 1px 4px rgba(0,0,0,0.2)`,
     border: 'none',
+    cursor: onClick ? 'pointer' : 'default',
     ...style,
   };
 
@@ -60,11 +62,11 @@ export function StatCard({ label, value, subValue, color, icon, style }: StatCar
   };
 
   return (
-    <div style={cardStyle}>
+    <div style={cardStyle} onClick={onClick} role={onClick ? 'button' : undefined} tabIndex={onClick ? 0 : undefined}>
       {icon && <div style={bgIconStyle}>{icon}</div>}
       <span style={labelStyle}>{label}</span>
       <span style={valueStyle}>{value}</span>
-      {subValue && <span style={subValueStyle}>{subValue}</span>}
+      {subValue !== undefined && subValue !== null && subValue !== '' && <span style={subValueStyle}>{subValue}</span>}
     </div>
   );
 }

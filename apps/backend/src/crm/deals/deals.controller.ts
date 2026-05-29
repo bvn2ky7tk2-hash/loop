@@ -27,6 +27,7 @@ import { LostDealDto } from './dto/lost-deal.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../../permissions/permissions.constants';
+import { Audited } from '../../common/interceptors/audit-log.interceptor';
 import { ApiProperty } from '@nestjs/swagger';
 
 class ChangeStageDto {
@@ -112,6 +113,7 @@ export class DealsController {
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission('crm_deals:manage', PERMISSIONS.CRM_MANAGE)
+  @Audited('CREATE', 'Deal')
   @ApiOperation({ summary: 'Tạo deal' })
   create(@Body() dto: CreateDealDto) {
     return this.dealsService.create(dto);
@@ -128,6 +130,7 @@ export class DealsController {
   @Patch(':id/stage')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission('crm_deals:manage', PERMISSIONS.CRM_MANAGE)
+  @Audited('STAGE_CHANGE', 'Deal')
   @ApiOperation({ summary: 'Đổi stage deal' })
   changeStage(@Param('id') id: string, @Body() dto: ChangeStageDto) {
     return this.dealsService.changeStage(id, dto.stage);

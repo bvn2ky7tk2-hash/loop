@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { CustomerSelect } from '../../components/selects';
 
 const PROJECT_COL_DEFS = [
   { key: 'code',        label: 'Mã' },
@@ -450,8 +451,8 @@ export default function ProjectsPage() {
               options={users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` }))}
             />
           </Form.Item>
-          <Form.Item name="customer" label="Khách hàng">
-            <Input />
+          <Form.Item name="customerId" label="Khách hàng">
+            <CustomerSelect allowClear />
           </Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="startDate" label="Bắt đầu" rules={[{ required: true, message: 'Chọn ngày' }]} style={{ flex: 1 }}>
@@ -489,7 +490,7 @@ export default function ProjectsPage() {
                           editForm.setFieldsValue({
                             name: selected.name,
                             type: selected.type,
-                            customer: selected.customer,
+                            customerId: (selected as Project & { customerId?: string }).customerId,
                             pmId: selected.pmId,
                             startDate: selected.startDate ? dayjs(selected.startDate) : null,
                             endDate: selected.endDate ? dayjs(selected.endDate) : null,
@@ -568,8 +569,8 @@ export default function ProjectsPage() {
             <Form.Item name="type" label="Loại dự án" rules={[{ required: true }]} style={{ flex: 1 }}>
               <Select options={[{ value: 'OSDC', label: 'OSDC' }, { value: 'PKG', label: 'PKG' }]} />
             </Form.Item>
-            <Form.Item name="customer" label="Khách hàng" style={{ flex: 1 }}>
-              <Input />
+            <Form.Item name="customerId" label="Khách hàng" style={{ flex: 1 }}>
+              <CustomerSelect allowClear />
             </Form.Item>
           </Space>
           <Form.Item name="name" label="Tên dự án" rules={[{ required: true, message: 'Nhập tên' }]}>

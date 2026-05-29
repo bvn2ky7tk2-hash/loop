@@ -6,6 +6,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role, ProjectStatus } from '../generated/prisma';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import type { User } from '../generated/prisma';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
@@ -19,6 +20,7 @@ export class ProjectsController {
   @Post()
   @Roles(Role.ADMIN, Role.PM)
   @RequirePermission(PERMISSIONS.PROJECTS_CREATE)
+  @Audited('CREATE', 'Project')
   @ApiOperation({ summary: 'Tạo dự án mới' })
   create(@Body() dto: CreateProjectDto) {
     return this.service.create(dto);

@@ -100,6 +100,9 @@ const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'
 const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPage'));
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
+const TenantsPage           = lazy(() => import('./pages/admin/TenantsPage'));
+const HrAnalyticsPage       = lazy(() => import('./pages/hr/HrAnalyticsPage'));
+const UtilizationPage       = lazy(() => import('./pages/reports/UtilizationPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -220,6 +223,9 @@ export const router = createBrowserRouter([
       { path: 'assets/vehicles',      element: wrap(VehicleBookingPage) },
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
+      { path: 'admin/tenants',        element: wrap(TenantsPage) },
+      { path: 'hr/analytics',         element: wrap(HrAnalyticsPage) },
+      { path: 'reports/utilization',  element: wrap(UtilizationPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

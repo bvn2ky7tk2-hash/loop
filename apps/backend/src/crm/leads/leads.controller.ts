@@ -26,6 +26,7 @@ import { ConvertLeadDto } from './dto/convert-lead.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../../permissions/permissions.constants';
+import { Audited } from '../../common/interceptors/audit-log.interceptor';
 
 class LeadsQueryDto extends PaginationDto {
   @IsOptional()
@@ -85,6 +86,7 @@ export class LeadsController {
   @Post(':id/convert')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission(PERMISSIONS.CRM_MANAGE)
+  @Audited('CONVERT', 'Lead')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Chuyển lead thành deal' })
   convertToDeal(@Param('id') id: string, @Body() dto: ConvertLeadDto) {

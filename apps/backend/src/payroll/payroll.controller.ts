@@ -13,6 +13,7 @@ import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../generated/prisma';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { PayrollService } from './payroll.service';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
@@ -84,6 +85,7 @@ export class PayrollController {
   // ── Phê duyệt kỳ lương ─────────────────────────────────────────────────────
   @Post('periods/:id/approve')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @Audited('APPROVE', 'PayrollPeriod')
   @ApiOperation({ summary: 'Phê duyệt kỳ lương (REVIEWED → APPROVED)' })
   approvePeriod(@Param('id') id: string, @Req() req: { user: { id: string } }) {
     return this.service.approvePeriod(id, req.user.id);

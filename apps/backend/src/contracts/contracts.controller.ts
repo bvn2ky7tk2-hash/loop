@@ -7,6 +7,7 @@ import { Throttle } from '@nestjs/throttler';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import { PaginationDto } from '../common/dto/pagination.dto';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
@@ -39,6 +40,7 @@ export class ContractsController {
   @Post()
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission(PERMISSIONS.EMPLOYEES_UPDATE)
+  @Audited('CREATE', 'Contract')
   @ApiOperation({ summary: 'Tạo hợp đồng mới' })
   create(@Body() dto: CreateContractDto) {
     return this.service.create(dto);

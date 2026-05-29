@@ -43,6 +43,7 @@ import { hrDecisionsApi, type HrDecision, type HrDecisionType, type HrDecisionSt
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { orgUnitsApi } from '../../api/org-units';
+import { EmployeeSelect } from '../../components/selects';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -113,6 +114,7 @@ export default function HrDecisionsPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [selectedType, setSelectedType] = useState<HrDecisionType | undefined>(undefined);
   const [selectedEmpId, setSelectedEmpId] = useState<string | undefined>(undefined);
+  const [signedByEmpId, setSignedByEmpId] = useState<string | undefined>(undefined);
 
   const [form] = Form.useForm();
 
@@ -245,6 +247,7 @@ export default function HrDecisionsPage() {
     form.resetFields();
     setSelectedType(undefined);
     setSelectedEmpId(undefined);
+    setSignedByEmpId(undefined);
   }
 
   function openCreate() {
@@ -252,6 +255,7 @@ export default function HrDecisionsPage() {
     form.resetFields();
     setSelectedType(undefined);
     setSelectedEmpId(undefined);
+    setSignedByEmpId(undefined);
     setFormOpen(true);
   }
 
@@ -259,11 +263,12 @@ export default function HrDecisionsPage() {
     setEditRecord(record);
     setSelectedType(record.type);
     setSelectedEmpId(record.employeeId);
+    setSignedByEmpId(undefined);
     form.setFieldsValue({
       type: record.type,
       employeeId: record.employeeId,
       decisionNumber: record.decisionNumber,
-      signedBy: record.signedBy,
+      signedByEmpId: undefined, // signedBy là string name, không reverse-map được sang ID
       signedDate: record.signedDate ? dayjs(record.signedDate) : undefined,
       effectiveDate: record.effectiveDate ? dayjs(record.effectiveDate) : undefined,
       fromSalary: record.fromSalary,
@@ -278,8 +283,14 @@ export default function HrDecisionsPage() {
 
   const handleSaveForm = async () => {
     const values = await form.validateFields();
+    // Map signedByEmpId (UUID) → signedBy (fullName string) cho backend
+    const signedByName = values.signedByEmpId
+      ? (employees.find((e) => e.id === values.signedByEmpId)?.fullName ?? undefined)
+      : undefined;
+    const { signedByEmpId: _dropSignedBy, ...rest } = values;
     const payload: Partial<HrDecision> = {
-      ...values,
+      ...rest,
+      ...(signedByName !== undefined ? { signedBy: signedByName } : {}),
       signedDate: values.signedDate ? values.signedDate.format('YYYY-MM-DD') : undefined,
       effectiveDate: values.effectiveDate.format('YYYY-MM-DD'),
     };
@@ -802,20 +813,13 @@ export default function HrDecisionsPage() {
             {/* Người ký */}
             <Col span={12}>
               <Form.Item
-                name="signedBy"
+                name="signedByEmpId"
                 label={<Text style={{ color: textPrimary }}>Người ký</Text>}
               >
-                <Select
-                  showSearch
+                <EmployeeSelect
                   allowClear
                   placeholder="Chọn người ký..."
-                  filterOption={(input, opt) =>
-                    String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                  }
-                  options={employees.map((e) => ({
-                    value: e.fullName,
-                    label: `${e.code} — ${e.fullName}`,
-                  }))}
+                  onChange={(v) => setSignedByEmpId(v)}
                 />
               </Form.Item>
             </Col>

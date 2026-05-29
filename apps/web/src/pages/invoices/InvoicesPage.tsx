@@ -343,9 +343,23 @@ export default function InvoicesPage() {
             </Col>
           </Row>
 
-          <Form.Item name="customerId" label="Khách hàng">
-            <Select allowClear showSearch optionFilterProp="label" placeholder="Chọn khách hàng"
-              options={customers.map(c => ({ value: c.id, label: c.name }))} />
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, curr) => prev.type !== curr.type}
+          >
+            {({ getFieldValue }) => (
+              <Form.Item
+                name="customerId"
+                label="Khách hàng"
+                rules={[{
+                  required: getFieldValue('type') === 'SALES',
+                  message: 'Vui lòng chọn khách hàng cho hóa đơn bán ra',
+                }]}
+              >
+                <Select allowClear showSearch optionFilterProp="label" placeholder="Chọn khách hàng"
+                  options={customers.map(c => ({ value: c.id, label: c.name }))} />
+              </Form.Item>
+            )}
           </Form.Item>
 
           <Row gutter={12}>

@@ -1,12 +1,24 @@
 import { useState } from 'react';
 import {
-  Select, Table, Card, Row, Col, DatePicker,
+  Select, Table, Card, Row, Col, DatePicker, Typography, Progress, Tooltip,
 } from 'antd';
-import { DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import {
+  DollarOutlined, ClockCircleOutlined, FundOutlined, InfoCircleOutlined,
+} from '@ant-design/icons';
+import { useQuery } from '@tanstack/react-query';
+import { projectsApi } from '../../api/projects';
+import { apiClient } from '../../api/client';
+import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
+import { StatCard } from '../../components/ui/StatCard';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
+import CostBreakdownTooltip from '../../components/CostBreakdownTooltip';
+import { formatNumber, formatCompact } from '../../utils/format';
+
+const { Text } = Typography;
+const { RangePicker } = DatePicker;
 
 const MEMBER_COL_DEFS = [
   { key: 'fullName',       label: 'Nhân sự' },
@@ -15,14 +27,16 @@ const MEMBER_COL_DEFS = [
   { key: 'actualHours',    label: 'Giờ thực tế' },
   { key: 'cost',           label: 'Chi phí' },
 ];
-import { useQuery } from '@tanstack/react-query';
-import { projectsApi } from '../../api/projects';
-import { apiClient } from '../../api/client';
-import dayjs from 'dayjs';
-import CostBreakdownTooltip from '../../components/CostBreakdownTooltip';
-import { formatNumber, formatCompact } from '../../utils/format';
 
-const { RangePicker } = DatePicker;
+interface MemberCostRow {
+  employeeId: string;
+  fullName: string;
+  level: string;
+  allocationRole: string;
+  ratePerDay: number;
+  actualHours: number;
+  cost: number;
+}
 
 interface CostSummary {
   projectId: string;
@@ -31,7 +45,9 @@ interface CostSummary {
   totalEstimateHours: number;
   totalActualHours: number;
   totalCost: number;
-  members: { employeeId: string; fullName: string; allocationRole: string; ratePerDay: number; actualHours: number; cost: number }[];
+  completionPct?: number;
+  plannedValue?: number;
+  members: MemberCostRow[];
 }
 
 interface TimeLog {
@@ -43,11 +59,24 @@ interface TimeLog {
   user: { id: string; name: string };
 }
 
+// ── EVM helpers ──────────────────────────────────────────────────────────────
+function evmColor(index: number): string {
+  if (index >= 1) return '#10B981';
+  if (index >= 0.9) return '#F59E0B';
+  return '#EF4444';
+}
+
+function evmLabel(index: number): string {
+  if (index >= 1) return 'Tốt';
+  if (index >= 0.9) return 'Cần chú ý';
+  return 'Vượt kế hoạch';
+}
+
 export default function CostPage() {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
 
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, textPrimary, textMuted } = useThemePalette();
   const primary = preset.primary;
   const chartCardStyle = {
     borderRadius: 12,
@@ -79,21 +108,37 @@ export default function CostPage() {
     enabled: !!projectId,
   });
 
+  // ── EVM calculations ────────────────────────────────────────────────────────
+  // EV = % complete × Budget (use totalEstimateHours as budget proxy)
+  // AC = totalActualHours (cost driver)
+  // PV = plannedValue from API or estimate
+  const completionPct = (cost?.completionPct ?? 0) / 100;
+  const budget        = cost?.totalEstimateHours ?? 0;
+  const ac            = cost?.totalActualHours ?? 0;
+  const pv            = cost?.plannedValue ?? budget * 0.8; // fallback: 80% budget planned
+  const ev            = completionPct * budget;
+  const cpi           = ac > 0 ? ev / ac : 0;
+  const spi           = pv > 0 ? ev / pv : 0;
+  const hasEvm        = budget > 0 && ac > 0;
+
   const allMemberColumns = [
-    { key: 'fullName',       title: 'Nhân sự',      dataIndex: 'fullName' },
-    { key: 'allocationRole', title: 'Vai trò',       dataIndex: 'allocationRole' },
+    { key: 'fullName',       title: 'Nhân sự',      dataIndex: 'fullName',
+      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text> },
+    { key: 'allocationRole', title: 'Vai trò',       dataIndex: 'allocationRole',
+      render: (v: string) => <Text style={{ color: textMuted }}>{v}</Text> },
     {
       key: 'ratePerDay',
       title: 'Đơn giá/ngày', dataIndex: 'ratePerDay',
-      render: (v: number) => formatNumber(v),
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatNumber(v)}</Text>,
     },
-    { key: 'actualHours', title: 'Giờ thực tế', dataIndex: 'actualHours', render: (v: number) => `${v}h` },
+    { key: 'actualHours', title: 'Giờ thực tế', dataIndex: 'actualHours',
+      render: (v: number) => <Text style={{ color: textPrimary }}>{v}h</Text> },
     {
       key: 'cost',
       title: 'Chi phí', dataIndex: 'cost',
-      render: (v: number, record: CostSummary['members'][number]) => (
+      render: (v: number, record: MemberCostRow) => (
         <CostBreakdownTooltip member={record}>
-          <strong style={{ cursor: 'help' }}>{formatNumber(v)}</strong>
+          <strong style={{ cursor: 'help', color: textPrimary }}>{formatNumber(v)}</strong>
         </CostBreakdownTooltip>
       ),
     },
@@ -104,12 +149,16 @@ export default function CostPage() {
   const logColumns = [
     {
       title: 'Ngày', dataIndex: 'logDate', width: 110,
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
-    { title: 'Người dùng', dataIndex: ['user', 'name'] },
-    { title: 'Task', dataIndex: ['task', 'title'] },
-    { title: 'Giờ', dataIndex: 'hours', width: 80, render: (v: number) => `${Number(v)}h` },
-    { title: 'Ghi chú', dataIndex: 'note' },
+    { title: 'Người dùng', dataIndex: ['user', 'name'],
+      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text> },
+    { title: 'Task', dataIndex: ['task', 'title'],
+      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text> },
+    { title: 'Giờ', dataIndex: 'hours', width: 80,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{Number(v)}h</Text> },
+    { title: 'Ghi chú', dataIndex: 'note',
+      render: (v?: string) => <Text style={{ color: textMuted }}>{v || '—'}</Text> },
   ];
 
   return (
@@ -127,6 +176,7 @@ export default function CostPage() {
 
       {cost && (
         <>
+          {/* ── SparklineCards tổng quan ──────────────────────────────────── */}
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col span={6}>
               <SparklineCard
@@ -169,6 +219,85 @@ export default function CostPage() {
             </Col>
           </Row>
 
+          {/* ── EVM Dashboard ─────────────────────────────────────────────── */}
+          <Card
+            title={
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FundOutlined style={{ color: '#6366F1' }} />
+                Earned Value Management (EVM)
+                <Tooltip title="EVM đo hiệu quả chi phí và tiến độ dự án. CPI > 1 = đang tiết kiệm hơn kế hoạch. SPI > 1 = đang đi trước tiến độ.">
+                  <InfoCircleOutlined style={{ color: textMuted as string, fontSize: 14, cursor: 'help' }} />
+                </Tooltip>
+              </span>
+            }
+            style={{ marginBottom: 24, ...chartCardStyle }}
+          >
+            {!hasEvm ? (
+              <Text style={{ color: textMuted }}>Chưa đủ dữ liệu để tính EVM. Cần có giờ ước tính và giờ thực tế.</Text>
+            ) : (
+              <Row gutter={[16, 16]}>
+                {/* CPI gauge */}
+                <Col xs={24} sm={12} md={6}>
+                  <div style={{ textAlign: 'center' }}>
+                    <Progress
+                      type="circle"
+                      percent={Math.min(Math.round(cpi * 100), 150)}
+                      format={() => <span style={{ color: evmColor(cpi), fontWeight: 700, fontSize: 18 }}>{cpi.toFixed(2)}</span>}
+                      strokeColor={evmColor(cpi)}
+                      size={100}
+                    />
+                    <div style={{ marginTop: 8 }}>
+                      <Text style={{ color: textPrimary, fontWeight: 600, display: 'block' }}>CPI</Text>
+                      <Text style={{ color: evmColor(cpi), fontSize: 12 }}>{evmLabel(cpi)}</Text>
+                      <Text style={{ color: textMuted, fontSize: 11, display: 'block' }}>
+                        {cpi >= 1 ? 'Dưới ngân sách' : 'Vượt ngân sách'}
+                      </Text>
+                    </div>
+                  </div>
+                </Col>
+
+                {/* SPI gauge */}
+                <Col xs={24} sm={12} md={6}>
+                  <div style={{ textAlign: 'center' }}>
+                    <Progress
+                      type="circle"
+                      percent={Math.min(Math.round(spi * 100), 150)}
+                      format={() => <span style={{ color: evmColor(spi), fontWeight: 700, fontSize: 18 }}>{spi.toFixed(2)}</span>}
+                      strokeColor={evmColor(spi)}
+                      size={100}
+                    />
+                    <div style={{ marginTop: 8 }}>
+                      <Text style={{ color: textPrimary, fontWeight: 600, display: 'block' }}>SPI</Text>
+                      <Text style={{ color: evmColor(spi), fontSize: 12 }}>{evmLabel(spi)}</Text>
+                      <Text style={{ color: textMuted, fontSize: 11, display: 'block' }}>
+                        {spi >= 1 ? 'Đúng/trước tiến độ' : 'Chậm tiến độ'}
+                      </Text>
+                    </div>
+                  </div>
+                </Col>
+
+                {/* EVM StatCards */}
+                <Col xs={24} md={12}>
+                  <Row gutter={[8, 8]}>
+                    <Col xs={12}>
+                      <StatCard label="Earned Value (EV)" value={`${ev.toFixed(0)}h`} color="#6366F1" icon={<FundOutlined />} />
+                    </Col>
+                    <Col xs={12}>
+                      <StatCard label="Actual Cost (AC)" value={`${ac}h`} color={ac > budget ? '#EF4444' : '#10B981'} icon={<ClockCircleOutlined />} />
+                    </Col>
+                    <Col xs={12}>
+                      <StatCard label="Planned Value (PV)" value={`${pv.toFixed(0)}h`} color="#3B82F6" icon={<FundOutlined />} />
+                    </Col>
+                    <Col xs={12}>
+                      <StatCard label="% Hoàn thành" value={`${(completionPct * 100).toFixed(0)}%`} color="#F59E0B" icon={<ClockCircleOutlined />} />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+            )}
+          </Card>
+
+          {/* ── Chi phí theo nhân sự ─────────────────────────────────────── */}
           <Card
             title="Chi phí theo nhân sự"
             style={{ marginBottom: 24, ...chartCardStyle }}

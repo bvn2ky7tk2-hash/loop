@@ -7,6 +7,7 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { Role } from '../generated/prisma';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import type { User } from '../generated/prisma';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { EmployeesService } from './employees.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
@@ -60,6 +61,7 @@ export class EmployeesController {
   @Put(':id')
   @Roles(Role.ADMIN)
   @RequirePermission(PERMISSIONS.EMPLOYEES_UPDATE)
+  @Audited('UPDATE', 'Employee')
   @ApiOperation({ summary: 'Cập nhật hồ sơ nhân sự' })
   update(@Param('id') id: string, @Body() dto: UpdateEmployeeDto) {
     return this.service.update(id, dto);

@@ -12,6 +12,7 @@ import { PERMISSIONS } from '../permissions/permissions.constants';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { LeaveStatus, Role } from '../generated/prisma';
 import type { User } from '../generated/prisma';
+import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { LeavesService } from './leaves.service';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { ApproveLeaveDto } from './dto/approve-leave.dto';
@@ -100,6 +101,7 @@ export class LeavesController {
   @Patch(':id/approve')
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission(PERMISSIONS.TIMESHEETS_APPROVE)
+  @Audited('APPROVE', 'LeaveRequest')
   @ApiOperation({ summary: 'Phê duyệt hoặc từ chối yêu cầu nghỉ phép' })
   approve(
     @Param('id') id: string,
