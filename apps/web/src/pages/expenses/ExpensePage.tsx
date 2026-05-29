@@ -21,7 +21,7 @@ import {
 } from '../../api/expenses';
 import { projectsApi } from '../../api/projects';
 import { useAuthStore } from '../../store/auth.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { formatCurrency } from '../../utils/format';
 
 const { Text, Title } = Typography;
@@ -262,16 +262,7 @@ function ExpenseDrawer({
 // ─── Main ExpensePage ─────────────────────────────────────────────────────────
 
 export default function ExpensePage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const textMuted     = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const bgContainer   = isDark ? '#1E293B' : '#ffffff';
-  const bgCard        = isDark ? '#2D3F56' : '#FAFAFA';
-  const bgSubPanel    = isDark ? '#1A2744' : '#F8FAFC';
-  const borderColor   = isDark ? '#334155' : '#E2E8F0';
-  const linkColor     = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, bgSubPanel, borderColor, linkColor, preset } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);

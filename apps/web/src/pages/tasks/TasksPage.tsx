@@ -25,7 +25,7 @@ import dayjs from 'dayjs';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
 import { FilterBar } from '../../components/FilterBar';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 type TaskWithDepth = Task & { _depth: number; children?: TaskWithDepth[] };
 
@@ -75,9 +75,7 @@ const COL_DEFS = [
 export default function TasksPage() {
   const { message, modal } = App.useApp();
   const { token } = theme.useToken();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const linkColor = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, linkColor, preset } = useThemePalette();
   const qc = useQueryClient();
 
   // ── Tab 1: Task list state ────────────────────────────────────────────────

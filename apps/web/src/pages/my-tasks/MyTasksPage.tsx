@@ -28,7 +28,7 @@ import { tasksApi, isProgressLocked, type Task, type TaskStatus } from '../../ap
 import { projectsApi } from '../../api/projects';
 import { employeesApi } from '../../api/employees';
 import { useAuthStore } from '../../store/auth.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Text } = Typography;
 
@@ -79,8 +79,7 @@ function TaskCard({
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { mode } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark } = useThemePalette();
   const progress = Number(task.progress);
   const isOverdue = task.dueDate && task.dueDate < today && task.status !== 'DONE' && task.status !== 'CANCELLED';
 
@@ -277,8 +276,7 @@ function KanbanColumn({
   onProgressChange: (id: string, pct: number) => void;
   onDueDateChange: (id: string, date: string) => void;
 }) {
-  const { mode } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark } = useThemePalette();
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
   const colHeaderBg  = isDark ? '#1A2744' : '#F8FAFC';
@@ -383,8 +381,7 @@ function KanbanColumn({
 
 export default function MyTasksPage() {
   const { message } = App.useApp();
-  const { preset, mode } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const qc = useQueryClient();
   const { user } = useAuthStore();
   const isManager = MANAGER_ROLES.includes(user?.role ?? '');

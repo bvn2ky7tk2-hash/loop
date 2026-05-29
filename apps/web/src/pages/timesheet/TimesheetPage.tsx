@@ -10,7 +10,7 @@ import {
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
 import { StatCard } from '../../components/ui/StatCard';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const TIMESHEET_COL_DEFS = [
   { key: 'date',          label: 'Ngày' },
@@ -35,9 +35,7 @@ const STATUS_TAG: Record<TimesheetRecord['status'], { label: string; bg: string;
 
 export default function TimesheetPage() {
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const linkColor = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, linkColor } = useThemePalette();
   const [month, setMonth]             = useState<Dayjs>(dayjs().startOf('month'));
   const [filterStatus, setFilterStatus] = useState<string>('all');
 

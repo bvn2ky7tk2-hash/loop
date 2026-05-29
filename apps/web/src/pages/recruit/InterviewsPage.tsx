@@ -11,7 +11,7 @@ import {
   useGetAllInterviews, useCreateInterview, useSetInterviewResult, useGetCandidates,
   type Interview, type InterviewType, type InterviewResult,
 } from '../../api/recruit';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -33,14 +33,7 @@ const TYPE_OPTIONS    = Object.entries(TYPE_META).map(([k, v])   => ({ value: k 
 const RESULT_OPTIONS  = Object.entries(RESULT_META).map(([k, v]) => ({ value: k as InterviewResult, label: v.label }));
 
 export default function InterviewsPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const linkColor   = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [page, setPage]                 = useState(1);
   const [limit, setLimit]               = useState(20);

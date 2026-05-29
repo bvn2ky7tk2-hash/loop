@@ -52,6 +52,7 @@ export class AlertsService {
           },
         },
       },
+      take: 500,
     });
 
     for (const task of overdueTasks) {
@@ -63,6 +64,7 @@ export class AlertsService {
   async checkDueSoonTasks(): Promise<void> {
     const alerts = await this.prisma.alertConfig.findMany({
       where: { type: 'TASK_DUE_SOON', isActive: true },
+      take: 500,
     });
 
     for (const alert of alerts) {
@@ -77,6 +79,7 @@ export class AlertsService {
           status: { notIn: ['DONE', 'CANCELLED'] },
           assigneeId: { not: null },
         },
+        take: 200,
       });
 
       for (const task of tasks) {
@@ -88,6 +91,7 @@ export class AlertsService {
   async checkProjectDeadline(): Promise<void> {
     const configs = await this.prisma.alertConfig.findMany({
       where: { type: 'RESOURCE_EXPIRING', isActive: true },
+      take: 500,
     });
 
     for (const config of configs) {
@@ -121,6 +125,7 @@ export class AlertsService {
         isActive: true,
         threshold: { not: null },
       },
+      take: 500,
     });
 
     for (const config of configs) {
@@ -134,6 +139,7 @@ export class AlertsService {
       const tasks = await this.prisma.task.findMany({
         where: { projectId: config.projectId },
         select: { actualHours: true },
+        take: 5000,
       });
       const actualHours = tasks.reduce((s, t) => s + Number(t.actualHours), 0);
       if (budgetHours <= 0) continue;
@@ -168,6 +174,7 @@ export class AlertsService {
         isActive: true,
         threshold: { not: null },
       },
+      take: 500,
     });
 
     for (const config of configs) {
@@ -205,6 +212,7 @@ export class AlertsService {
     const timeLogs = await this.prisma.timeLog.findMany({
       where: { task: { projectId } },
       select: { userId: true, hours: true, logDate: true },
+      take: 10000,
     });
 
     let total = 0;

@@ -48,6 +48,22 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       } else if (prismaErr.code === 'P2025') {
         status = HttpStatus.NOT_FOUND;
         message = 'Không tìm thấy dữ liệu';
+      } else if (prismaErr.code === 'P2003') {
+        // Foreign key constraint failed
+        status = HttpStatus.CONFLICT;
+        message = 'Không thể thực hiện vì dữ liệu liên quan vẫn còn tồn tại';
+      } else if (prismaErr.code === 'P2011') {
+        // Null constraint violation
+        status = HttpStatus.UNPROCESSABLE_ENTITY;
+        message = 'Trường bắt buộc không được để trống';
+      } else if (prismaErr.code === 'P2014') {
+        // Required relation violation
+        status = HttpStatus.CONFLICT;
+        message = 'Vi phạm ràng buộc quan hệ dữ liệu';
+      } else if (prismaErr.code === 'P2015') {
+        // Related record not found
+        status = HttpStatus.NOT_FOUND;
+        message = 'Không tìm thấy dữ liệu liên quan';
       }
     } else {
       this.logger.error('Unhandled exception', exception instanceof Error ? exception.stack : String(exception));

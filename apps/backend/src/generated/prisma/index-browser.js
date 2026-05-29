@@ -140,8 +140,11 @@ exports.Prisma.OrgUnitScalarFieldEnum = {
   code: 'code',
   parentId: 'parentId',
   level: 'level',
+  headJobTitleId: 'headJobTitleId',
+  leaderId: 'leaderId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.EmployeeScalarFieldEnum = {
@@ -159,9 +162,14 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   isActive: 'isActive',
+  employeeStatus: 'employeeStatus',
+  positionId: 'positionId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  email: 'email'
+  email: 'email',
+  directManagerId: 'directManagerId',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.SkillScalarFieldEnum = {
@@ -203,7 +211,7 @@ exports.Prisma.ProjectScalarFieldEnum = {
   orgUnitId: 'orgUnitId',
   startDate: 'startDate',
   endDate: 'endDate',
-  customer: 'customer',
+  customerId: 'customerId',
   budgetHours: 'budgetHours',
   budgetCost: 'budgetCost',
   budgetEffortMm: 'budgetEffortMm',
@@ -211,7 +219,9 @@ exports.Prisma.ProjectScalarFieldEnum = {
   progress: 'progress',
   description: 'description',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.AllocationScalarFieldEnum = {
@@ -225,7 +235,8 @@ exports.Prisma.AllocationScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.TaskScalarFieldEnum = {
@@ -245,7 +256,8 @@ exports.Prisma.TaskScalarFieldEnum = {
   progress: 'progress',
   position: 'position',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.TimeLogScalarFieldEnum = {
@@ -282,7 +294,8 @@ exports.Prisma.TimeEntryScalarFieldEnum = {
   isManualCorrection: 'isManualCorrection',
   correctionReason: 'correctionReason',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.TimesheetRecordScalarFieldEnum = {
@@ -384,7 +397,8 @@ exports.Prisma.ProcessInstanceScalarFieldEnum = {
   variables: 'variables',
   tokenState: 'tokenState',
   startedAt: 'startedAt',
-  completedAt: 'completedAt'
+  completedAt: 'completedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.ProcessUserTaskScalarFieldEnum = {
@@ -433,7 +447,9 @@ exports.Prisma.BugScalarFieldEnum = {
   pmApproverId: 'pmApproverId',
   requesterName: 'requesterName',
   resolutionNote: 'resolutionNote',
-  resolvedAt: 'resolvedAt'
+  resolvedAt: 'resolvedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.BugTaskScalarFieldEnum = {
@@ -571,8 +587,11 @@ exports.Prisma.ContractScalarFieldEnum = {
   currency: 'currency',
   note: 'note',
   signedAt: 'signedAt',
+  signedById: 'signedById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.LeaveTypeScalarFieldEnum = {
@@ -600,7 +619,8 @@ exports.Prisma.LeaveRequestScalarFieldEnum = {
   rejectedReason: 'rejectedReason',
   processInstanceId: 'processInstanceId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.LeaveBalanceScalarFieldEnum = {
@@ -609,7 +629,25 @@ exports.Prisma.LeaveBalanceScalarFieldEnum = {
   leaveTypeId: 'leaveTypeId',
   year: 'year',
   totalDays: 'totalDays',
-  usedDays: 'usedDays'
+  usedDays: 'usedDays',
+  tenantId: 'tenantId'
+};
+
+exports.Prisma.OvertimeRequestScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  date: 'date',
+  fromTime: 'fromTime',
+  toTime: 'toTime',
+  hours: 'hours',
+  reason: 'reason',
+  status: 'status',
+  approvedById: 'approvedById',
+  approvedAt: 'approvedAt',
+  rejectedReason: 'rejectedReason',
+  processInstanceId: 'processInstanceId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PayrollPeriodScalarFieldEnum = {
@@ -695,7 +733,9 @@ exports.Prisma.CustomerScalarFieldEnum = {
   website: 'website',
   taxCode: 'taxCode',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.ContactScalarFieldEnum = {
@@ -706,7 +746,8 @@ exports.Prisma.ContactScalarFieldEnum = {
   title: 'title',
   customerId: 'customerId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.LeadScalarFieldEnum = {
@@ -722,7 +763,8 @@ exports.Prisma.LeadScalarFieldEnum = {
   convertedDealId: 'convertedDealId',
   convertedAt: 'convertedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.DealScalarFieldEnum = {
@@ -742,7 +784,9 @@ exports.Prisma.DealScalarFieldEnum = {
   projectId: 'projectId',
   processInstanceId: 'processInstanceId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.CrmActivityScalarFieldEnum = {
@@ -813,7 +857,9 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   processInstanceId: 'processInstanceId',
   createdById: 'createdById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.InvoiceItemScalarFieldEnum = {
@@ -890,7 +936,8 @@ exports.Prisma.AssetScalarFieldEnum = {
   depreciationYears: 'depreciationYears',
   notes: 'notes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.AssetAssignmentScalarFieldEnum = {
@@ -1121,7 +1168,8 @@ exports.Prisma.OkrObjectiveScalarFieldEnum = {
   status: 'status',
   processInstanceId: 'processInstanceId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.OkrKeyResultScalarFieldEnum = {
@@ -1194,7 +1242,8 @@ exports.Prisma.KbArticleScalarFieldEnum = {
   isPinned: 'isPinned',
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.CustomerPortalScalarFieldEnum = {
@@ -1460,6 +1509,86 @@ exports.Prisma.TenantScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.JobTitleScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  band: 'band',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PositionScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  jobTitleId: 'jobTitleId',
+  orgUnitId: 'orgUnitId',
+  headcount: 'headcount',
+  isHead: 'isHead',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PositionHistoryScalarFieldEnum = {
+  id: 'id',
+  positionId: 'positionId',
+  employeeId: 'employeeId',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.HrDecisionScalarFieldEnum = {
+  id: 'id',
+  decisionNumber: 'decisionNumber',
+  type: 'type',
+  employeeId: 'employeeId',
+  effectiveDate: 'effectiveDate',
+  signedDate: 'signedDate',
+  content: 'content',
+  signedBy: 'signedBy',
+  notes: 'notes',
+  status: 'status',
+  fromOrgUnitId: 'fromOrgUnitId',
+  toOrgUnitId: 'toOrgUnitId',
+  fromPositionId: 'fromPositionId',
+  toPositionId: 'toPositionId',
+  fromSalary: 'fromSalary',
+  toSalary: 'toSalary',
+  processInstanceId: 'processInstanceId',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkHistoryScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  eventType: 'eventType',
+  eventDate: 'eventDate',
+  title: 'title',
+  description: 'description',
+  hrDecisionId: 'hrDecisionId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SalaryRecordScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  basicSalary: 'basicSalary',
+  effectiveDate: 'effectiveDate',
+  source: 'source',
+  note: 'note',
+  createdBy: 'createdBy',
+  hrDecisionId: 'hrDecisionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1501,6 +1630,13 @@ exports.EmployeeLevel = exports.$Enums.EmployeeLevel = {
   MID: 'MID',
   SENIOR: 'SENIOR',
   EXPERT: 'EXPERT'
+};
+
+exports.EmployeeStatus = exports.$Enums.EmployeeStatus = {
+  ACTIVE: 'ACTIVE',
+  PROBATION: 'PROBATION',
+  ON_LEAVE: 'ON_LEAVE',
+  TERMINATED: 'TERMINATED'
 };
 
 exports.SkillCategory = exports.$Enums.SkillCategory = {
@@ -1665,6 +1801,13 @@ exports.ContractStatus = exports.$Enums.ContractStatus = {
 };
 
 exports.LeaveStatus = exports.$Enums.LeaveStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.OtStatus = exports.$Enums.OtStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED',
@@ -1972,6 +2115,31 @@ exports.CalendarEventType = exports.$Enums.CalendarEventType = {
   OTHER: 'OTHER'
 };
 
+exports.HrDecisionType = exports.$Enums.HrDecisionType = {
+  HIRE: 'HIRE',
+  PROBATION_END: 'PROBATION_END',
+  TRANSFER: 'TRANSFER',
+  POSITION_CHANGE: 'POSITION_CHANGE',
+  SALARY_CHANGE: 'SALARY_CHANGE',
+  COMMENDATION: 'COMMENDATION',
+  DISCIPLINE: 'DISCIPLINE',
+  TERMINATION: 'TERMINATION',
+  PROMOTION: 'PROMOTION',
+  SECONDMENT: 'SECONDMENT'
+};
+
+exports.HrDecisionStatus = exports.$Enums.HrDecisionStatus = {
+  DRAFT: 'DRAFT',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
+exports.WorkHistoryEventType = exports.$Enums.WorkHistoryEventType = {
+  HR_DECISION: 'HR_DECISION',
+  PROBATION_ENDED: 'PROBATION_ENDED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -2016,6 +2184,7 @@ exports.Prisma.ModelName = {
   LeaveType: 'LeaveType',
   LeaveRequest: 'LeaveRequest',
   LeaveBalance: 'LeaveBalance',
+  OvertimeRequest: 'OvertimeRequest',
   PayrollPeriod: 'PayrollPeriod',
   PayrollRecord: 'PayrollRecord',
   Expense: 'Expense',
@@ -2078,7 +2247,13 @@ exports.Prisma.ModelName = {
   Vehicle: 'Vehicle',
   VehicleRequest: 'VehicleRequest',
   CalendarEvent: 'CalendarEvent',
-  Tenant: 'Tenant'
+  Tenant: 'Tenant',
+  JobTitle: 'JobTitle',
+  Position: 'Position',
+  PositionHistory: 'PositionHistory',
+  HrDecision: 'HrDecision',
+  WorkHistory: 'WorkHistory',
+  SalaryRecord: 'SalaryRecord'
 };
 
 /**

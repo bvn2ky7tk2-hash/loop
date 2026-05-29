@@ -16,7 +16,7 @@ import { permissionsApi, type PermissionDef } from '../../api/permissions';
 import { userGroupsApi, type UserGroup, type UserGroupDetail } from '../../api/user-groups';
 import { usersApi } from '../../api/users';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   PERM_DOMAIN_COLOR, PERM_DOMAIN_LABEL, PERM_DOMAIN_MODULE,
   MODULE_LABELS, ACTION_LABELS,
@@ -318,8 +318,7 @@ interface GroupDrawerProps {
 function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const [tab, setTab] = useState('perms');
   const [form] = Form.useForm();
   const [selPerms, setSelPerms] = useState<string[]>([]);
@@ -710,8 +709,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
 function UserGroupsTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const [drawerGroupId, setDrawerGroupId] = useState<string | null | undefined>(undefined);
 
   const { data: groups = [], isLoading } = useQuery({
@@ -835,8 +833,7 @@ function UserGroupsTab() {
 function UserOverridesTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [form] = Form.useForm();

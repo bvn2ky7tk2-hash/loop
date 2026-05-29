@@ -14,7 +14,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { reportsApi } from '../../api/reports';
 import { projectsApi } from '../../api/projects';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useGetDeals } from '../../api/crm';
 import { useGetCandidates, useGetJobs } from '../../api/recruit';
 import { useGetAssets } from '../../api/assets';
@@ -104,7 +104,7 @@ function CrmReportTab({ axisColor, gridColor, tooltipBg, primary, chartCardStyle
               <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 12 }} />
               <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={(v: number) => v >= 1e9 ? `${(v/1e9).toFixed(1)}B` : v >= 1e6 ? `${(v/1e6).toFixed(0)}M` : String(v)} />
               <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-              <RTooltip formatter={(v: number) => [new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v), 'Value']} contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
+              <RTooltip formatter={(v) => [new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(v ?? 0)), 'Value']} contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
               <Bar dataKey="value" fill="#10B981" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -210,7 +210,7 @@ function AssetReportTab({ axisColor, gridColor, tooltipBg, primary, chartCardSty
         <Card title="Số lượng theo danh mục" style={chartCardStyle}>
           <ResponsiveContainer width="100%" height={200}>
             <PieChart>
-              <Pie data={byCategory} dataKey="count" nameKey="category" cx="50%" cy="50%" outerRadius={70} label={({ category, count }) => `${category}:${count}`}>
+              <Pie data={byCategory} dataKey="count" nameKey="category" cx="50%" cy="50%" outerRadius={70} label={(props) => `${(props as { category?: string; count?: number }).category ?? ''}:${(props as { category?: string; count?: number }).count ?? ''}`}>
                 {byCategory.map((_, i) => <Cell key={i} fill={[primary, '#6366F1', '#F59E0B', '#10B981', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899', '#0EA5E9'][i % 9]} />)}
               </Pie>
               <RTooltip contentStyle={{ background: tooltipBg, border: '1px solid #333' }} />
@@ -242,9 +242,7 @@ export default function ReportsPage() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportForm] = Form.useForm<{ reportType: ReportType; dateRange: [import('dayjs').Dayjs, import('dayjs').Dayjs] }>();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const primary = preset.primary;
+  const { isDark, primary } = useThemePalette();
   const chartCardStyle = {
     borderRadius: 12,
     background: isDark ? '#1E293B' : `${primary}09`,
@@ -491,24 +489,46 @@ export default function ReportsPage() {
                       </Card>
                     </Col>
                     <Col xs={24}>
-                      <Card title={`Cumulative hours — ${burndown.project.name}`} style={chartCardStyle}>
+                      {/* TODO: kết nối API thật ở Wave 2 để trả remainingHours trực tiếp từ backend */}
+                      <Card title={`Burndown — ${burndown.project.name}`} style={chartCardStyle}>
                         <ResponsiveContainer width="100%" height={320}>
-                          <LineChart data={burndown.burndown} margin={{ top: 8, right: 20, left: -8, bottom: 0 }}>
+                          <LineChart
+                            data={burndown.burndown.map((d, idx, arr) => {
+                              // remainingHours = tổng estimate - tổng giờ thực tế tích lũy đến ngày đó
+                              const cumulativeActual = arr
+                                .slice(0, idx + 1)
+                                .reduce((sum, point) => sum + point.dailyHours, 0);
+                              return {
+                                ...d,
+                                remainingHours: Math.max(
+                                  0,
+                                  burndown.summary.totalEstimate - cumulativeActual,
+                                ),
+                              };
+                            })}
+                            margin={{ top: 8, right: 20, left: -8, bottom: 0 }}
+                          >
                             <XAxis
                               dataKey="date"
                               tick={{ fill: axisColor, fontSize: 11 }}
                               tickFormatter={(v) => dayjs(v).format('DD/MM')}
                             />
-                            <YAxis tick={{ fill: axisColor, fontSize: 12 }} />
+                            <YAxis
+                              tick={{ fill: axisColor, fontSize: 12 }}
+                              label={{ value: 'Giờ còn lại', angle: -90, position: 'insideLeft', fill: axisColor, fontSize: 11, offset: 12 }}
+                            />
                             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                             <RTooltip
                               labelFormatter={(v) => dayjs(v).format('DD/MM/YYYY')}
-                              formatter={(v: any, name: any) => [`${v}h`, name === 'cumulativeHours' ? 'Tích lũy' : 'Trong ngày']}
+                              formatter={(v, name) => [
+                                `${v}h`,
+                                name === 'remainingHours' ? 'Giờ còn lại' : 'Giờ trong ngày',
+                              ]}
                               contentStyle={{ background: tooltipBg, border: '1px solid #333' }}
                             />
-                            <Legend formatter={(v) => v === 'cumulativeHours' ? 'Giờ tích lũy' : 'Giờ trong ngày'} />
-                            <Bar dataKey="dailyHours" fill="#4F46E5" opacity={0.4} />
-                            <Line type="monotone" dataKey="cumulativeHours" stroke="#10B981" strokeWidth={2} dot={false} />
+                            <Legend formatter={(v) => v === 'remainingHours' ? 'Giờ còn lại' : 'Giờ trong ngày'} />
+                            <Bar dataKey="dailyHours" fill="#6366F1" opacity={0.35} />
+                            <Line type="monotone" dataKey="remainingHours" stroke="#10B981" strokeWidth={2} dot={false} />
                           </LineChart>
                         </ResponsiveContainer>
                       </Card>

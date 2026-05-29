@@ -6,7 +6,7 @@ import {
   TeamOutlined, CheckCircleOutlined, HomeOutlined,
   StopOutlined, ClockCircleOutlined, PercentageOutlined,
 } from '@ant-design/icons';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { useQuery } from '@tanstack/react-query';
 import { timesheetApi, type TeamMemberStatus, type WorkStatusType } from '../../api/timesheet';
@@ -41,9 +41,7 @@ const STATUS_BADGE: Record<WorkStatusType, { bg: string; color: string }> = {
 
 export default function TimesheetManagerPage() {
   const { user } = useAuthStore();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const primary = preset.primary;
+  const { isDark, preset, primary } = useThemePalette();
   const chartCardStyle = {
     borderRadius: 12,
     background: isDark ? '#1E293B' : `${primary}09`,

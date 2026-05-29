@@ -157,6 +157,17 @@ export class LeavesService implements OnModuleInit {
       });
 
       if (definition?.status === DefinitionStatus.ACTIVE) {
+        // Tìm manager = directManager hoặc lãnh đạo đơn vị
+        const employeeWithUnit = await this.prisma.employee.findUnique({
+          where: { id: dto.employeeId },
+          include: {
+            orgUnit: { include: { leader: { include: { user: true } } } },
+            directManager: { include: { user: true } },
+          },
+        });
+        const manager = (employeeWithUnit as any)?.directManager || (employeeWithUnit as any)?.orgUnit?.leader;
+        const managerUserId: string | undefined = (manager as any)?.userId ?? undefined;
+
         const instance = await this.prisma.processInstance.create({
           data: {
             definitionId: definition.id,
@@ -170,6 +181,8 @@ export class LeavesService implements OnModuleInit {
               endDate: (leave.endDate as Date).toISOString(),
               days: Number(leave.days),
               reason: leave.reason ?? '',
+              // Truyền userId của manager để BPM có thể assign task
+              managerUserId: managerUserId ?? null,
             } as any,
             tokenState: {} as any,
           },

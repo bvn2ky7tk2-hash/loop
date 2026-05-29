@@ -1,4 +1,4 @@
-import { Form, Input, InputNumber, DatePicker, Select } from 'antd';
+import { Form, Input, InputNumber, DatePicker, Select, TimePicker } from 'antd';
 import type { FormField, CriteriaGridValue } from '../../../api/processes.api';
 import { CriteriaGridField } from './CriteriaGridField';
 
@@ -49,6 +49,9 @@ export function DynamicFormFields({ fields }: Props) {
               placeholder={'placeholder' in field ? field.placeholder : undefined}
               options={'options' in field ? field.options : []}
             />
+          )}
+          {field.type === 'time' && (
+            <TimePicker format="HH:mm" minuteStep={15} style={{ width: '100%' }} />
           )}
           {field.type === 'criteria_grid' && (
             <CriteriaGridFormItem

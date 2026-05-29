@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs, { Dayjs } from 'dayjs';
 import { timesheetApi, type ProjectSummaryMember } from '../../api/timesheet';
 import { projectsApi } from '../../api/projects';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 import { Typography } from 'antd';
 const { Text } = Typography;
@@ -27,8 +27,7 @@ function cellStyle(hours: number, isDark: boolean): CSSProperties {
 }
 
 export default function ProjectTimesheetPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const [projectId, setProjectId] = useState<string | undefined>();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf('month'));
 

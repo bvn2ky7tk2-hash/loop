@@ -44,19 +44,27 @@ export class ProjectsService {
     });
   }
 
-  async findAll(orgUnitIds: string[] | null) {
+  async findAll(orgUnitIds: string[] | null, page = 1, limit = 50) {
     const where: Prisma.ProjectWhereInput = orgUnitIds === null
       ? {}
       : { orgUnitId: { in: orgUnitIds } };
 
-    return this.prisma.project.findMany({
-      where,
-      include: {
-        pm: { select: { id: true, name: true } },
-        _count: { select: { members: true, tasks: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.project.findMany({
+        where,
+        include: {
+          pm: { select: { id: true, name: true } },
+          _count: { select: { members: true, tasks: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.project.count({ where }),
+    ]);
+
+    return { data, total, page, limit };
   }
 
   async findOne(id: string) {

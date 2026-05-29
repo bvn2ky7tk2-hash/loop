@@ -26,7 +26,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { usersApi, type UserRecord } from '../../../api/users';
 import { orgUnitsApi, type OrgUnitTree } from '../../../api/org-units';
-import { useThemeStore } from '../../../store/theme.store';
+import { useThemePalette } from '../../../hooks/useThemePalette';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -119,8 +119,7 @@ interface Props {
 export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, preset } = useThemePalette();
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('__start__');
 

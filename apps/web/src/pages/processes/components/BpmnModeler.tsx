@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import type BpmnModelerClass from 'bpmn-js/lib/Modeler';
 import { theme as antTheme } from 'antd';
-import { useThemeStore } from '../../../store/theme.store';
+import { useThemePalette } from '../../../hooks/useThemePalette';
 import './bpmn-dark.css';
 
 const { useToken } = antTheme;
@@ -34,7 +34,7 @@ export function BpmnModeler({ xml, onChange, onReady }: BpmnModelerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<BpmnModelerClass | null>(null);
   const isInitialized = useRef(false);
-  const isDark = useThemeStore((s) => s.mode === 'dark');
+  const { isDark } = useThemePalette();
   const { token } = useToken();
 
   const handleChange = useCallback(() => {

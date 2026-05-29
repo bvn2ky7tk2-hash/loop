@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 const { Title, Text } = Typography;
 
@@ -234,18 +235,12 @@ function AppMockup() {
 export default function LoginPage() {
   const navigate    = useNavigate();
   const setUser     = useAuthStore((s) => s.setUser);
-  const mode        = useThemeStore((s) => s.mode);
-  const preset      = useThemeStore((s) => s.preset);
   const toggleTheme = useThemeStore((s) => s.toggle);
+  const { isDark, textPrimary, textMuted: textSecondary, borderColor, linkColor, preset } = useThemePalette();
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState('');
-  const isDark = mode === 'dark';
 
-  const bgRight       = isDark ? '#161b22' : '#ffffff';
-  const textPrimary   = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.50)' : '#6B7280';
-  const borderColor   = isDark ? '#334155' : '#E5E7EB';
-  const linkColor     = isDark ? '#93C5FD' : preset.primary;
+  const bgRight = isDark ? '#161b22' : '#ffffff';
 
   const onFinish = async ({ email, password }: { email: string; password: string }) => {
     setError('');

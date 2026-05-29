@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Typography, Select, Tag, Card, Avatar, Spin, Button, Modal, message } from 'antd';
 import { UserOutlined, AppstoreAddOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetJobs, useGetCandidates, useTransitionCandidateStage,
   type Candidate, type CandidateStage,
@@ -35,13 +35,7 @@ const NEXT_STAGE: Partial<Record<CandidateStage, CandidateStage>> = {
 const COLUMNS: CandidateStage[] = ['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'HIRED', 'REJECTED'];
 
 export default function PipelinePage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-  const bgContainer = isDark ? '#1E293B' : '#F1F5F9';
-  const bgCard      = isDark ? '#2D3F56' : '#ffffff';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
 
   const [jobId, setJobId] = useState<string | undefined>();
   const stageMutation = useTransitionCandidateStage();

@@ -12,7 +12,7 @@ export class EmployeesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateEmployeeDto) {
-    const existing = await this.prisma.employee.findUnique({ where: { code: dto.code } });
+    const existing = await this.prisma.employee.findFirst({ where: { code: dto.code } });
     if (existing) throw new ConflictException('Mã nhân sự đã tồn tại');
 
     return this.prisma.employee.create({
@@ -29,41 +29,51 @@ export class EmployeesService {
         cccdIssueDate: dto.cccdIssueDate ? new Date(dto.cccdIssueDate) : null,
         cccdIssuePlace: dto.cccdIssuePlace,
         userId: dto.userId,
+        positionId: dto.positionId,
       },
       include: { orgUnit: { select: { name: true } } },
     });
   }
 
-  async findAll(orgUnitIds: string[] | null, callerRole: Role) {
+  async findAll(orgUnitIds: string[] | null, callerRole: Role, page = 1, limit = 50) {
     const now = new Date();
     const where: Prisma.EmployeeWhereInput = orgUnitIds === null
       ? {}
       : { orgUnitId: { in: orgUnitIds } };
 
-    const employees = await this.prisma.employee.findMany({
-      where,
-      include: {
-        orgUnit: { select: { name: true } },
-        rates: { orderBy: { effectiveDate: 'desc' }, take: 1 },
-        allocations: {
-          where: { startDate: { lte: now }, endDate: { gte: now } },
-          select: { id: true },
+    const skip = (page - 1) * limit;
+    const [employees, total] = await this.prisma.$transaction([
+      this.prisma.employee.findMany({
+        where,
+        include: {
+          orgUnit: { select: { name: true } },
+          rates: { orderBy: { effectiveDate: 'desc' }, take: 1 },
+          allocations: {
+            where: { startDate: { lte: now }, endDate: { gte: now } },
+            select: { id: true },
+          },
         },
-      },
-      orderBy: { fullName: 'asc' },
-    });
+        orderBy: { fullName: 'asc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.employee.count({ where }),
+    ]);
 
-    return employees.map((e) => ({
+    const data = employees.map((e) => ({
       ...this.toPublic(e, callerRole),
       activeProjectCount: e.allocations.length,
     }));
+
+    return { data, total, page, limit };
   }
 
   async findOne(id: string, callerRole: Role) {
     const emp = await this.prisma.employee.findUnique({
       where: { id },
       include: {
-        orgUnit: { select: { name: true } },
+        orgUnit: { select: { id: true, name: true } },
+        position: { include: { jobTitle: { select: { name: true } } } },
         rates: { orderBy: { effectiveDate: 'desc' } },
       },
     });
@@ -113,21 +123,35 @@ export class EmployeesService {
     });
   }
 
-  async getRates(employeeId: string) {
+  async getRates(employeeId: string, page = 1, limit = 50) {
     await this.findOrThrow(employeeId);
-    return this.prisma.employeeRate.findMany({
-      where: { employeeId },
-      orderBy: { effectiveDate: 'desc' },
-    });
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.employeeRate.findMany({
+        where: { employeeId },
+        orderBy: { effectiveDate: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.employeeRate.count({ where: { employeeId } }),
+    ]);
+    return { data, total, page, limit };
   }
 
-  async getProjectHistory(employeeId: string) {
+  async getProjectHistory(employeeId: string, page = 1, limit = 50) {
     await this.findOrThrow(employeeId);
-    return this.prisma.allocation.findMany({
-      where: { employeeId },
-      include: { project: { select: { id: true, name: true, code: true, type: true } } },
-      orderBy: { startDate: 'desc' },
-    });
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.allocation.findMany({
+        where: { employeeId },
+        include: { project: { select: { id: true, name: true, code: true, type: true } } },
+        orderBy: { startDate: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.allocation.count({ where: { employeeId } }),
+    ]);
+    return { data, total, page, limit };
   }
 
   async exportExcel(): Promise<Buffer> {

@@ -190,12 +190,20 @@ export class BugsService {
     return { total };
   }
 
-  async findMine(userId: string) {
-    return this.prisma.bug.findMany({
-      where: { assigneeId: userId },
-      include: BUG_INCLUDE,
-      orderBy: { createdAt: 'desc' },
-    });
+  async findMine(userId: string, page = 1, limit = 50) {
+    const where = { assigneeId: userId };
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.bug.findMany({
+        where,
+        include: BUG_INCLUDE,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.bug.count({ where }),
+    ]);
+    return { data, total, page, limit };
   }
 
   async findOne(id: string, orgUnitIds: string[] | null, userId?: string) {

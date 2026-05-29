@@ -57,6 +57,7 @@ model User {
   vehicleRequests      VehicleRequest[]  @relation("VehicleRequester")
   vehicleApprovals     VehicleRequest[]  @relation("VehicleApprover")
   calendarEvents       CalendarEvent[]   @relation("CalendarEventCreator")
+  approvedOvertimes    OvertimeRequest[] @relation("OtApprover")
   tenantId             String?           @map("tenant_id")
   tenant               Tenant?           @relation(fields: [tenantId], references: [id])
 
@@ -66,26 +67,35 @@ model User {
 model OrgUnit {
   id                 String              @id @default(uuid())
   name               String
-  code               String              @unique
+  code               String
   parentId           String?             @map("parent_id")
   level              Int                 @default(0)
+  headJobTitleId     String?             @map("head_job_title_id") @db.Uuid
+  leaderId           String?             @unique @map("leader_id")
   createdAt          DateTime            @default(now()) @map("created_at")
   updatedAt          DateTime            @updatedAt @map("updated_at")
   employees          Employee[]
+  positions          Position[]
   parent             OrgUnit?            @relation("OrgTree", fields: [parentId], references: [id])
   children           OrgUnit[]           @relation("OrgTree")
+  headJobTitle       JobTitle?           @relation(fields: [headJobTitleId], references: [id], onDelete: SetNull)
+  leader             Employee?           @relation("OrgUnitLeader", fields: [leaderId], references: [id], onDelete: SetNull)
   processDefinitions ProcessDefinition[]
   projects           Project[]
   users              User[]
   groupOrgAccess     GroupOrgAccess[]
   assets             Asset[]
+  tenantId           String?             @map("tenant_id")
+  tenant             Tenant?             @relation("TenantOrgUnits", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, code])
+  @@index([tenantId])
   @@map("org_units")
 }
 
 model Employee {
   id                 String                     @id @default(uuid())
-  code               String                     @unique
+  code               String
   userId             String?                    @unique @map("user_id")
   orgUnitId          String                     @map("org_unit_id")
   fullName           String                     @map("full_name")
@@ -98,6 +108,8 @@ model Employee {
   startDate          DateTime                   @map("start_date") @db.Date
   endDate            DateTime?                  @map("end_date") @db.Date
   isActive           Boolean                    @default(true) @map("is_active")
+  employeeStatus     EmployeeStatus             @default(ACTIVE) @map("employee_status")
+  positionId         String?                    @map("position_id")
   createdAt          DateTime                   @default(now()) @map("created_at")
   updatedAt          DateTime                   @updatedAt @map("updated_at")
   email              String?                    @unique
@@ -117,8 +129,25 @@ model Employee {
   taxProfile         EmployeeTaxProfile?
   yearlySummaries    EmployeeYearlyTaxSummary[]
 
-  skills EmployeeSkill[]
+  skills            EmployeeSkill[]
+  position          Position?         @relation(fields: [positionId], references: [id])
+  hrDecisions       HrDecision[]
+  workHistories     WorkHistory[]
+  salaryRecords     SalaryRecord[]
+  positionHistories PositionHistory[]
+  directManagerId   String?           @map("direct_manager_id")
+  directManager     Employee?         @relation("DirectReport", fields: [directManagerId], references: [id], onDelete: SetNull)
+  directReports     Employee[]        @relation("DirectReport")
+  leadingOrgUnit    OrgUnit?          @relation("OrgUnitLeader")
+  overtimeRequests  OvertimeRequest[]
+  signedContracts   Contract[]        @relation("ContractSigner")
+  tenantId          String?           @map("tenant_id")
+  tenant            Tenant?           @relation("TenantEmployees", fields: [tenantId], references: [id])
+  deletedAt         DateTime?         @map("deleted_at")
 
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("employees")
 }
 
@@ -185,14 +214,14 @@ model EmployeeRate {
 model Project {
   id               String            @id @default(uuid())
   name             String
-  code             String            @unique
+  code             String
   type             ProjectType
   status           ProjectStatus     @default(PLANNING)
   pmId             String            @map("pm_id")
   orgUnitId        String            @map("org_unit_id")
   startDate        DateTime          @map("start_date") @db.Date
   endDate          DateTime          @map("end_date") @db.Date
-  customer         String?
+  customerId       String?           @map("customer_id")
   budgetHours      Decimal?          @map("budget_hours") @db.Decimal(10, 2)
   budgetCost       Decimal?          @map("budget_cost") @db.Decimal(15, 2)
   budgetEffortMm   Decimal?          @map("budget_effort_mm") @db.Decimal(8, 2)
@@ -209,7 +238,15 @@ model Project {
   orgUnit          OrgUnit           @relation(fields: [orgUnitId], references: [id])
   pm               User              @relation("ProjectPM", fields: [pmId], references: [id])
   tasks            Task[]
+  customer         Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  tenantId         String?           @map("tenant_id")
+  tenant           Tenant?           @relation("TenantProjects", fields: [tenantId], references: [id])
+  deletedAt        DateTime?         @map("deleted_at")
 
+  @@unique([tenantId, code])
+  @@index([customerId])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("projects")
 }
 
@@ -228,7 +265,11 @@ model Allocation {
   employee      Employee      @relation(fields: [employeeId], references: [id])
   project       Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantAllocations", fields: [tenantId], references: [id])
+
   @@unique([projectId, employeeId, startDate])
+  @@index([tenantId])
   @@map("allocations")
 }
 
@@ -258,7 +299,10 @@ model Task {
   project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   telegramMessages TelegramMessage[]
   timeLogs         TimeLog[]
+  tenantId         String?           @map("tenant_id")
+  tenant           Tenant?           @relation("TenantTasks", fields: [tenantId], references: [id])
 
+  @@index([tenantId])
   @@map("tasks")
 }
 
@@ -307,7 +351,11 @@ model TimeEntry {
   updatedAt          DateTime      @updatedAt @map("updated_at")
   user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantTimeEntries", fields: [tenantId], references: [id])
+
   @@unique([userId, date])
+  @@index([tenantId])
   @@map("time_entries")
 }
 
@@ -431,26 +479,31 @@ model ProcessDefinition {
 }
 
 model ProcessInstance {
-  id            String               @id @default(uuid())
-  definitionId  String               @map("definition_id")
-  projectId     String?              @map("project_id")
-  startedBy     String               @map("started_by")
-  status        InstanceStatus       @default(RUNNING)
-  variables     Json                 @default("{}")
-  tokenState    Json                 @default("{}") @map("token_state")
-  startedAt     DateTime             @default(now()) @map("started_at")
-  completedAt   DateTime?            @map("completed_at")
-  activityLog   ProcessActivityLog[]
-  definition    ProcessDefinition    @relation(fields: [definitionId], references: [id])
-  project       Project?             @relation(fields: [projectId], references: [id])
-  startedByUser User                 @relation("ProcessInstanceStarter", fields: [startedBy], references: [id])
-  userTasks     ProcessUserTask[]
-  leaveRequests LeaveRequest[]
-  expenses      Expense[]
+  id               String               @id @default(uuid())
+  definitionId     String               @map("definition_id")
+  projectId        String?              @map("project_id")
+  startedBy        String               @map("started_by")
+  status           InstanceStatus       @default(RUNNING)
+  variables        Json                 @default("{}")
+  tokenState       Json                 @default("{}") @map("token_state")
+  startedAt        DateTime             @default(now()) @map("started_at")
+  completedAt      DateTime?            @map("completed_at")
+  activityLog      ProcessActivityLog[]
+  definition       ProcessDefinition    @relation(fields: [definitionId], references: [id])
+  project          Project?             @relation(fields: [projectId], references: [id])
+  startedByUser    User                 @relation("ProcessInstanceStarter", fields: [startedBy], references: [id])
+  userTasks        ProcessUserTask[]
+  leaveRequests    LeaveRequest[]
+  expenses         Expense[]
+  overtimeRequests OvertimeRequest[]
+
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantProcessInstances", fields: [tenantId], references: [id])
 
   @@index([definitionId, status])
   @@index([startedBy])
   @@index([projectId])
+  @@index([tenantId])
   @@map("process_instances")
 }
 
@@ -519,12 +572,17 @@ model Bug {
   pmApprover     User?           @relation("BugPMApprover", fields: [pmApproverId], references: [id])
   project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
   reporter       User            @relation("BugReporter", fields: [reporterId], references: [id])
+  tenantId       String?         @map("tenant_id")
+  tenant         Tenant?         @relation("TenantBugs", fields: [tenantId], references: [id])
+  deletedAt      DateTime?       @map("deleted_at")
 
   @@index([projectId, status])
   @@index([assigneeId, status])
   @@index([reporterId])
   @@index([itemType, status])
   @@index([dueDate])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("bugs")
 }
 
@@ -903,12 +961,19 @@ model Contract {
   currency      BudgetCurrency @default(VND)
   note          String?
   signedAt      DateTime?      @map("signed_at") @db.Date
+  signedById    String?        @map("signed_by_id")
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   employee      Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  signedBy      Employee?      @relation("ContractSigner", fields: [signedById], references: [id])
+  tenantId      String?        @map("tenant_id")
+  tenant        Tenant?        @relation("TenantContracts", fields: [tenantId], references: [id])
+  deletedAt     DateTime?      @map("deleted_at")
 
   @@index([employeeId])
   @@index([status])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("contracts")
 }
 
@@ -967,9 +1032,13 @@ model LeaveRequest {
   approvedBy        User?            @relation("LeaveApprover", fields: [approvedById], references: [id], onDelete: SetNull)
   processInstance   ProcessInstance? @relation(fields: [processInstanceId], references: [id])
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantLeaveRequests", fields: [tenantId], references: [id])
+
   @@index([employeeId])
   @@index([status])
   @@index([processInstanceId])
+  @@index([tenantId])
   @@map("leave_requests")
 }
 
@@ -983,7 +1052,11 @@ model LeaveBalance {
   employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   leaveType   LeaveType @relation(fields: [leaveTypeId], references: [id])
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantLeaveBalances", fields: [tenantId], references: [id])
+
   @@unique([employeeId, leaveTypeId, year])
+  @@index([tenantId])
   @@map("leave_balances")
 }
 
@@ -994,6 +1067,39 @@ enum LeaveStatus {
   CANCELLED
 
   @@map("leave_status")
+}
+
+enum OtStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("ot_status")
+}
+
+model OvertimeRequest {
+  id                String           @id @default(uuid())
+  employeeId        String           @map("employee_id")
+  date              DateTime         @db.Date
+  fromTime          String?          @map("from_time")
+  toTime            String?          @map("to_time")
+  hours             Decimal          @db.Decimal(4, 1)
+  reason            String?
+  status            OtStatus         @default(PENDING)
+  approvedById      String?          @map("approved_by_id")
+  approvedAt        DateTime?        @map("approved_at")
+  rejectedReason    String?          @map("rejected_reason")
+  processInstanceId String?          @map("process_instance_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  employee          Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  approvedBy        User?            @relation("OtApprover", fields: [approvedById], references: [id], onDelete: SetNull)
+  processInstance   ProcessInstance? @relation(fields: [processInstanceId], references: [id])
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("overtime_requests")
 }
 
 // ─── Phase 2: HR — Payroll ────────────────────────────────────────────────────
@@ -1137,7 +1243,7 @@ enum ExpenseStatus {
 
 model Customer {
   id              String           @id @default(uuid())
-  code            String           @unique
+  code            String
   name            String
   industry        String?
   website         String?
@@ -1148,9 +1254,16 @@ model Customer {
   clientContracts ClientContract[]
   activities      CrmActivity[]
   portals         CustomerPortal[]
+  projects        Project[]
   createdAt       DateTime         @default(now()) @map("created_at")
   updatedAt       DateTime         @updatedAt @map("updated_at")
+  tenantId        String?          @map("tenant_id")
+  tenant          Tenant?          @relation("TenantCustomers", fields: [tenantId], references: [id])
+  deletedAt       DateTime?        @map("deleted_at")
 
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("customers")
 }
 
@@ -1165,8 +1278,11 @@ model Contact {
   leads      Lead[]
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
+  tenantId   String?   @map("tenant_id")
+  tenant     Tenant?   @relation("TenantContacts", fields: [tenantId], references: [id])
 
   @@index([customerId])
+  @@index([tenantId])
   @@map("contacts")
 }
 
@@ -1186,14 +1302,18 @@ model Lead {
   createdAt       DateTime   @default(now()) @map("created_at")
   updatedAt       DateTime   @updatedAt @map("updated_at")
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantLeads", fields: [tenantId], references: [id])
+
   @@index([assigneeId])
   @@index([status])
+  @@index([tenantId])
   @@map("leads")
 }
 
 model Deal {
   id                String    @id @default(uuid())
-  code              String    @unique
+  code              String
   title             String    @db.VarChar(200)
   customerId        String    @map("customer_id")
   customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
@@ -1210,10 +1330,16 @@ model Deal {
   processInstanceId String?   @map("process_instance_id")
   createdAt         DateTime  @default(now()) @map("created_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
+  tenantId          String?   @map("tenant_id")
+  tenant            Tenant?   @relation("TenantDeals", fields: [tenantId], references: [id])
+  deletedAt         DateTime? @map("deleted_at")
 
+  @@unique([tenantId, code])
   @@index([customerId])
   @@index([stage])
   @@index([assigneeId])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("deals")
 }
 
@@ -1361,7 +1487,7 @@ enum MilestoneStatus {
 
 model Invoice {
   id                String        @id @default(uuid())
-  code              String        @unique
+  code              String
   type              InvoiceType
   customerId        String?       @map("customer_id")
   customer          Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
@@ -1380,10 +1506,16 @@ model Invoice {
   items             InvoiceItem[]
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
+  tenantId          String?       @map("tenant_id")
+  tenant            Tenant?       @relation("TenantInvoices", fields: [tenantId], references: [id])
+  deletedAt         DateTime?     @map("deleted_at")
 
+  @@unique([tenantId, code])
   @@index([status])
   @@index([customerId])
   @@index([projectId])
+  @@index([tenantId])
+  @@index([deletedAt])
   @@map("invoices")
 }
 
@@ -1540,8 +1672,11 @@ model Asset {
   maintenanceLogs   AssetMaintenance[]
   createdAt         DateTime           @default(now()) @map("created_at")
   updatedAt         DateTime           @updatedAt @map("updated_at")
+  tenantId          String?            @map("tenant_id")
+  tenant            Tenant?            @relation("TenantAssets", fields: [tenantId], references: [id])
 
   @@index([orgUnitId, status], name: "idx_assets_org_status")
+  @@index([tenantId])
   @@map("assets")
 }
 
@@ -1980,8 +2115,12 @@ model OkrObjective {
   createdAt         DateTime       @default(now()) @map("created_at")
   updatedAt         DateTime       @updatedAt @map("updated_at")
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantOkrObjectives", fields: [tenantId], references: [id])
+
   @@index([ownerId])
   @@index([year, cycle])
+  @@index([tenantId])
   @@map("okr_objectives")
 }
 
@@ -2087,9 +2226,13 @@ model KbArticle {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
+  tenantId String? @map("tenant_id")
+  tenant   Tenant? @relation("TenantKbArticles", fields: [tenantId], references: [id])
+
   @@index([categoryId])
   @@index([authorId])
   @@index([status])
+  @@index([tenantId])
   @@map("kb_articles")
 }
 
@@ -2560,20 +2703,196 @@ model CalendarEvent {
 }
 
 model Tenant {
-  id           String   @id @default(uuid())
-  name         String
-  slug         String   @unique
-  logoUrl      String?  @map("logo_url")
-  faviconUrl   String?  @map("favicon_url")
-  primaryColor String?  @map("primary_color")
-  customDomain String?  @map("custom_domain")
-  address      String?
-  timezone     String   @default("Asia/Ho_Chi_Minh")
-  isDefault    Boolean  @default(false) @map("is_default")
-  isActive     Boolean  @default(true) @map("is_active")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  users        User[]
+  id               String            @id @default(uuid())
+  name             String
+  slug             String            @unique
+  logoUrl          String?           @map("logo_url")
+  faviconUrl       String?           @map("favicon_url")
+  primaryColor     String?           @map("primary_color")
+  customDomain     String?           @map("custom_domain")
+  address          String?
+  timezone         String            @default("Asia/Ho_Chi_Minh")
+  isDefault        Boolean           @default(false) @map("is_default")
+  isActive         Boolean           @default(true) @map("is_active")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  users            User[]
+  orgUnits         OrgUnit[]         @relation("TenantOrgUnits")
+  employees        Employee[]        @relation("TenantEmployees")
+  projects         Project[]         @relation("TenantProjects")
+  tasks            Task[]            @relation("TenantTasks")
+  bugs             Bug[]             @relation("TenantBugs")
+  deals            Deal[]            @relation("TenantDeals")
+  customers        Customer[]        @relation("TenantCustomers")
+  contacts         Contact[]         @relation("TenantContacts")
+  leads            Lead[]            @relation("TenantLeads")
+  invoices         Invoice[]         @relation("TenantInvoices")
+  contracts        Contract[]        @relation("TenantContracts")
+  assets           Asset[]           @relation("TenantAssets")
+  kbArticles       KbArticle[]       @relation("TenantKbArticles")
+  okrObjectives    OkrObjective[]    @relation("TenantOkrObjectives")
+  leaveRequests    LeaveRequest[]    @relation("TenantLeaveRequests")
+  leaveBalances    LeaveBalance[]    @relation("TenantLeaveBalances")
+  timeEntries      TimeEntry[]       @relation("TenantTimeEntries")
+  allocations      Allocation[]      @relation("TenantAllocations")
+  processInstances ProcessInstance[] @relation("TenantProcessInstances")
 
   @@map("tenants")
+}
+
+// ─── HR v4 — Danh mục chức danh & vị trí biên chế ───────────────────────────
+
+model JobTitle {
+  id          String     @id @default(uuid())
+  code        String     @unique
+  name        String
+  band        String?
+  description String?
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  positions   Position[]
+  orgUnits    OrgUnit[]
+
+  @@map("job_titles")
+}
+
+model Position {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  jobTitleId  String            @map("job_title_id")
+  orgUnitId   String            @map("org_unit_id")
+  headcount   Int               @default(1)
+  isHead      Boolean           @default(false) @map("is_head")
+  description String?
+  isActive    Boolean           @default(true) @map("is_active")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  jobTitle    JobTitle          @relation(fields: [jobTitleId], references: [id])
+  orgUnit     OrgUnit           @relation(fields: [orgUnitId], references: [id])
+  employees   Employee[]
+  histories   PositionHistory[]
+
+  @@map("positions")
+}
+
+model PositionHistory {
+  id         String    @id @default(uuid())
+  positionId String    @map("position_id")
+  employeeId String    @map("employee_id")
+  startDate  DateTime  @map("start_date") @db.Date
+  endDate    DateTime? @map("end_date") @db.Date
+  createdAt  DateTime  @default(now()) @map("created_at")
+  position   Position  @relation(fields: [positionId], references: [id])
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+
+  @@map("position_histories")
+}
+
+// ─── HR v4 — Quyết định nhân sự ──────────────────────────────────────────────
+
+model HrDecision {
+  id                String           @id @default(uuid())
+  decisionNumber    String?          @unique @map("decision_number") @db.VarChar(100)
+  type              HrDecisionType
+  employeeId        String           @map("employee_id")
+  effectiveDate     DateTime         @map("effective_date") @db.Date
+  signedDate        DateTime?        @map("signed_date") @db.Date
+  content           String?          @db.Text
+  signedBy          String?          @map("signed_by") @db.VarChar(200)
+  notes             String?          @db.Text
+  status            HrDecisionStatus @default(DRAFT)
+  fromOrgUnitId     String?          @map("from_org_unit_id")
+  toOrgUnitId       String?          @map("to_org_unit_id")
+  fromPositionId    String?          @map("from_position_id")
+  toPositionId      String?          @map("to_position_id")
+  fromSalary        Decimal?         @map("from_salary") @db.Decimal(18, 2)
+  toSalary          Decimal?         @map("to_salary") @db.Decimal(18, 2)
+  processInstanceId String?          @map("process_instance_id")
+  createdById       String           @map("created_by_id")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  employee          Employee         @relation(fields: [employeeId], references: [id])
+  workHistories     WorkHistory[]
+  salaryRecords     SalaryRecord[]
+
+  @@index([employeeId])
+  @@index([effectiveDate])
+  @@map("hr_decisions")
+}
+
+model WorkHistory {
+  id           String               @id @default(uuid())
+  employeeId   String               @map("employee_id")
+  eventType    WorkHistoryEventType @map("event_type")
+  eventDate    DateTime             @map("event_date") @db.Date
+  title        String               @db.VarChar(300)
+  description  String?              @db.Text
+  hrDecisionId String?              @map("hr_decision_id")
+  createdAt    DateTime             @default(now()) @map("created_at")
+  employee     Employee             @relation(fields: [employeeId], references: [id])
+  hrDecision   HrDecision?          @relation(fields: [hrDecisionId], references: [id])
+
+  @@index([employeeId])
+  @@map("work_history")
+}
+
+model SalaryRecord {
+  id            String      @id @default(uuid())
+  employeeId    String      @map("employee_id")
+  basicSalary   Decimal     @map("basic_salary") @db.Decimal(18, 2)
+  effectiveDate DateTime    @map("effective_date") @db.Date
+  source        String?     @db.VarChar(100)
+  note          String?     @db.Text
+  createdBy     String?     @map("created_by")
+  hrDecisionId  String?     @map("hr_decision_id")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  employee      Employee    @relation(fields: [employeeId], references: [id])
+  hrDecision    HrDecision? @relation(fields: [hrDecisionId], references: [id])
+
+  @@index([employeeId])
+  @@map("salary_records")
+}
+
+// ─── HR v4 — Enums ────────────────────────────────────────────────────────────
+
+enum EmployeeStatus {
+  ACTIVE
+  PROBATION
+  ON_LEAVE
+  TERMINATED
+
+  @@map("employee_status")
+}
+
+enum HrDecisionType {
+  HIRE
+  PROBATION_END
+  TRANSFER
+  POSITION_CHANGE
+  SALARY_CHANGE
+  COMMENDATION
+  DISCIPLINE
+  TERMINATION
+  PROMOTION
+  SECONDMENT
+
+  @@map("hr_decision_type")
+}
+
+enum HrDecisionStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("hr_decision_status")
+}
+
+enum WorkHistoryEventType {
+  HR_DECISION
+  PROBATION_ENDED
+
+  @@map("work_history_event_type")
 }

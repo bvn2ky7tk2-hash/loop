@@ -104,6 +104,7 @@ export class CostService {
         user: { select: { id: true, name: true } },
       },
       orderBy: { logDate: 'desc' },
+      take: 5000,
     });
   }
 
@@ -126,6 +127,7 @@ export class CostService {
     const logs = await this.prisma.timeLog.findMany({
       where: { userId: employee.userId, taskId: { in: taskIds } },
       select: { hours: true },
+      take: 10000,
     });
 
     return logs.reduce((s, l) => s + Number(l.hours), 0);

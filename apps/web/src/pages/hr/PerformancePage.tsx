@@ -7,7 +7,7 @@ import { CommentThread } from '../../components/comments/CommentThread';
 import { PlusOutlined, TrophyOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetPerformanceReviews, useCreatePerformanceReview, useUpdatePerformanceReview,
   type PerformanceReview, type ReviewStatus,
@@ -26,16 +26,7 @@ const STATUS_META: Record<ReviewStatus, { label: string; color: string }> = {
 };
 
 export default function PerformancePage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  const bgContainer  = isDark ? '#1E293B' : '#ffffff';
-  const bgCard       = isDark ? '#2D3F56' : '#FAFAFA';
-  const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
-  const textMuted    = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const borderColor  = isDark ? '#334155' : '#E2E8F0';
-  const linkColor    = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [periodFilter, setPeriodFilter] = useState<string | undefined>(undefined);

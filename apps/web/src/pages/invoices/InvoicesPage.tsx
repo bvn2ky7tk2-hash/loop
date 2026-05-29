@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useGetCustomers } from '../../api/crm';
 import {
   useGetInvoices, useGetInvoiceSummary, useCreateInvoice, useChangeInvoiceStatus, useDeleteInvoice,
@@ -119,16 +119,7 @@ function LineItemsEditor({ value = [], onChange }: { value?: InvoiceItemInput[];
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InvoicesPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const bgSubPanel  = isDark ? '#1A2744' : '#F0FDF4';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
-  const linkColor   = isDark ? '#93C5FD' : preset.primary;
+  const { isDark, bgContainer, bgCard, bgSubPanel, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [filters, setFilters]   = useState<FilterInvoiceParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);

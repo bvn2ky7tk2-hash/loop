@@ -6,7 +6,7 @@ import {
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FunnelPlotOutlined, SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { usersApi } from '../../api/users';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -40,15 +40,8 @@ const STATUS_OPTIONS = Object.entries(STATUS_META).map(([k, v]) => ({ value: k a
 const SOURCE_OPTIONS = Object.entries(SOURCE_META).map(([k, v]) => ({ value: k as LeadSource, label: v.label }));
 
 export default function LeadsPage() {
-  const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
   const { user }  = useAuthStore();
-
-  const bgContainer = isDark ? '#1E293B' : '#ffffff';
-  const bgCard      = isDark ? '#2D3F56' : '#FAFAFA';
-  const borderColor = isDark ? '#334155' : '#E2E8F0';
-  const textPrimary = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted   = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
 
   const [filters, setFilters] = useState<LeadFilterDto>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawerOpen]     = useState(false);

@@ -4,6 +4,7 @@ import 'dayjs/locale/vi';
 import dayjs from 'dayjs';
 import { RouterProvider } from 'react-router-dom';
 import { useEffect } from 'react';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
 
 dayjs.locale('vi');
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -261,7 +262,9 @@ export default function App() {
         `}</style>
 
         <AntApp>
-          <RouterProvider router={router} />
+          <AppErrorBoundary>
+            <RouterProvider router={router} />
+          </AppErrorBoundary>
         </AntApp>
       </ConfigProvider>
     </QueryClientProvider>

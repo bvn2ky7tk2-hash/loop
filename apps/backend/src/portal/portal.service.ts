@@ -8,15 +8,23 @@ export class PortalService {
 
   // ─── Admin: manage portals ────────────────────────────────────────────────
 
-  listPortals(customerId?: string) {
-    return this.prisma.customerPortal.findMany({
-      where: customerId ? { customerId } : undefined,
-      include: {
-        customer: { select: { id: true, name: true, code: true } },
-        _count: { select: { tickets: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async listPortals(customerId?: string, page = 1, limit = 50) {
+    const where = customerId ? { customerId } : undefined;
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.customerPortal.findMany({
+        where,
+        include: {
+          customer: { select: { id: true, name: true, code: true } },
+          _count: { select: { tickets: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.customerPortal.count({ where }),
+    ]);
+    return { data, total, page, limit };
   }
 
   async getPortal(id: string) {
@@ -60,17 +68,25 @@ export class PortalService {
     return this.prisma.customerPortal.delete({ where: { id } });
   }
 
-  listTickets(portalId?: string, status?: string) {
-    return this.prisma.customerTicket.findMany({
-      where: {
-        ...(portalId ? { portalId } : {}),
-        ...(status ? { status: status as any } : {}),
-      },
-      include: {
-        portal: { select: { id: true, name: true, customer: { select: { name: true } } } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async listTickets(portalId?: string, status?: string, page = 1, limit = 50) {
+    const where = {
+      ...(portalId ? { portalId } : {}),
+      ...(status ? { status: status as any } : {}),
+    };
+    const skip = (page - 1) * limit;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.customerTicket.findMany({
+        where,
+        include: {
+          portal: { select: { id: true, name: true, customer: { select: { name: true } } } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.customerTicket.count({ where }),
+    ]);
+    return { data, total, page, limit };
   }
 
   async respondTicket(id: string, dto: RespondTicketDto) {

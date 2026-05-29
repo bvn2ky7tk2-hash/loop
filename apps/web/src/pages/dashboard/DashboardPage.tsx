@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi } from '../../api/dashboard';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { ProgressRing } from '../../components/ui/ProgressRing';
 import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
@@ -42,10 +42,8 @@ function CardTitle({ icon, label, color }: { icon: React.ReactNode; label: strin
 }
 
 export default function DashboardPage() {
-  const { mode, preset } = useThemeStore();
+  const { isDark, preset, primary } = useThemePalette();
   const { user } = useAuthStore();
-  const isDark = mode === 'dark';
-  const primary = preset.primary;
 
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],

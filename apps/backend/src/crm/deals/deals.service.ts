@@ -118,15 +118,15 @@ export class DealsService {
 
       const project = await tx.project.create({
         data: {
-          code:      deal.code,
-          name:      dto.projectName ?? deal.title,
-          type:      dto.projectType ?? ProjectType.OSDC,
-          customer:  deal.customer.name,
-          status:    ProjectStatus.PLANNING,
-          pmId:      deal.assigneeId,
+          code:       deal.code,
+          name:       dto.projectName ?? deal.title,
+          type:       dto.projectType ?? ProjectType.OSDC,
+          customerId: deal.customerId,
+          status:     ProjectStatus.PLANNING,
+          pmId:       deal.assigneeId,
           orgUnitId,
-          startDate: new Date(),
-          endDate:   new Date(Date.now() + 365 * 24 * 3600 * 1000),
+          startDate:  new Date(),
+          endDate:    new Date(Date.now() + 365 * 24 * 3600 * 1000),
         },
       });
 
