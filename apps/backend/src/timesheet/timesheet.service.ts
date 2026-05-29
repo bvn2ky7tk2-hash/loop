@@ -4,7 +4,10 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CheckInMethod,
@@ -16,6 +19,7 @@ import {
 import { CheckInDto, CheckOutDto } from './dto/checkin.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GeneratePeriodDto, RejectTimesheetDto } from './dto/generate-period.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 // Mon=1 … Fri=5 (ISO weekday)
 const WORK_DAYS = new Set([1, 2, 3, 4, 5]);
@@ -41,9 +45,14 @@ function eachWorkDay(start: Date, end: Date): Date[] {
   return days;
 }
 
-@Injectable()
-export class TimesheetService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class TimesheetService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   // ── Check-in ────────────────────────────────────────────────────────────────
 
@@ -64,6 +73,7 @@ export class TimesheetService {
         checkInLat: dto.lat ?? null,
         checkInLng: dto.lng ?? null,
         checkInMethod: dto.method ?? CheckInMethod.MANUAL,
+        tenantId: this.getTenantId(),
       },
     });
 
@@ -212,10 +222,10 @@ export class TimesheetService {
     const standardDays = workDays.length;
 
     const entries = await this.prisma.timeEntry.findMany({
-      where: {
+      where: this.tenantWhere({
         userId: targetUserId,
         date: { gte: start, lte: end },
-      },
+      }),
     });
 
     const entryByDate = new Map(
@@ -273,7 +283,7 @@ export class TimesheetService {
         where: { userId, periodStart: start },
       }),
       this.prisma.timeEntry.findMany({
-        where: { userId, date: { gte: start, lte: end } },
+        where: this.tenantWhere({ userId, date: { gte: start, lte: end } }),
         orderBy: { date: 'asc' },
       }),
     ]);

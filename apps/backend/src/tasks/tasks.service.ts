@@ -1,6 +1,7 @@
 import {
   Injectable, NotFoundException, BadRequestException, ForbiddenException, Optional, Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Prisma, TaskStatus } from '../generated/prisma';
 import type { Task, Role } from '../generated/prisma';
@@ -10,23 +11,22 @@ import { paginate, type PaginatedResult } from '../common/dto/pagination.dto';
 import { TelegramService } from '../integrations/telegram/telegram.service';
 import { TelegramCardBuilder } from '../integrations/telegram/telegram-card.builder';
 import { NotificationsService } from '../notifications/notifications.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import * as ExcelJS from 'exceljs';
 
 const MAX_TASK_LEVELS = 5;
 const DEFAULT_MAX_ESTIMATE_HOURS = 4;
 
-@Injectable()
-export class TasksService {
+@Injectable({ scope: Scope.REQUEST })
+export class TasksService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly telegramService: TelegramService,
     private readonly telegramCardBuilder: TelegramCardBuilder,
-    @Inject(REQUEST) private readonly request: any,
     @Optional() private readonly notificationsService?: NotificationsService,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
   }
 
   async create(projectId: string, dto: CreateTaskDto, caller: { role: Role }): Promise<Task & { warning?: string }> {
@@ -57,6 +57,7 @@ export class TasksService {
         estimateHours: dto.estimateHours ?? 0,
         position: dto.position ?? 0,
         status,
+        tenantId: this.getTenantId(),
       },
     });
 
@@ -275,11 +276,7 @@ export class TasksService {
   }
 
   async getPendingApprovalTasks(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
-    const tenantId = this.getTenantId();
-    const where: any = {
-      status: 'PENDING_APPROVAL' as TaskStatus,
-      ...(tenantId ? { project: { tenantId } } : {}),
-    };
+    const where: any = this.tenantWhere({ status: 'PENDING_APPROVAL' as TaskStatus });
     const [data, total] = await this.prisma.$transaction([
       this.prisma.task.findMany({
         where,
@@ -333,13 +330,11 @@ export class TasksService {
       assigneeFilter = { assigneeId: employeeId };
     }
 
-    const tenantId = this.getTenantId();
-    const where = {
+    const where = this.tenantWhere({
       ...assigneeFilter,
       ...(projectId ? { projectId } : {}),
-      ...(tenantId ? { project: { tenantId } } : {}),
       status: { not: 'CANCELLED' as TaskStatus },
-    };
+    });
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.task.findMany({
@@ -474,6 +469,7 @@ export class TasksService {
 
   async exportExcel(): Promise<Buffer> {
     const tasks = await this.prisma.task.findMany({
+      where: this.tenantWhere({}),
       include: {
         project:  { select: { name: true } },
         assignee: { select: { fullName: true } },

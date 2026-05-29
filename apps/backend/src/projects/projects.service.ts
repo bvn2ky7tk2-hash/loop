@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException, ForbiddenException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Prisma, ProjectStatus } from '../generated/prisma';
 import type { Project } from '../generated/prisma';
@@ -6,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EmployeesService } from '../employees/employees.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 const WORK_DAYS = new Set([1, 2, 3, 4, 5]); // Mon–Fri
 
@@ -19,16 +21,14 @@ function eachWorkingDay(start: Date, end: Date): Date[] {
   return days;
 }
 
-@Injectable()
-export class ProjectsService {
+@Injectable({ scope: Scope.REQUEST })
+export class ProjectsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly employeesService: EmployeesService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
   }
 
   async create(dto: CreateProjectDto): Promise<Project> {
@@ -52,12 +52,10 @@ export class ProjectsService {
   }
 
   async findAll(orgUnitIds: string[] | null, page = 1, limit = 50) {
-    const tenantId = this.getTenantId();
-    const where: Prisma.ProjectWhereInput = {
+    const where: Prisma.ProjectWhereInput = this.tenantWhere({
       deletedAt: null,
       ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
-      ...(tenantId ? { tenantId } : {}),
-    };
+    });
 
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
