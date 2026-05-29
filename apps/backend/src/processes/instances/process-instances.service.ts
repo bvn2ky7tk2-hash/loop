@@ -1,26 +1,34 @@
 import {
   Injectable,
+  Inject,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BpmnEngineService } from '../engine/bpmn-engine.service';
 import { DefinitionStatus, InstanceStatus } from '../../generated/prisma';
 import { StartInstanceDto } from './dto/start-instance.dto';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
-@Injectable()
-export class ProcessInstancesService {
+@Injectable({ scope: Scope.REQUEST })
+export class ProcessInstancesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly engineService: BpmnEngineService,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async findAll(orgUnitIds: string[] | null, page = 1, pageSize = 20, definitionId?: string, status?: InstanceStatus) {
-    const where = {
+    const extra = {
       ...(orgUnitIds === null ? {} : { definition: { orgUnitId: { in: orgUnitIds } } }),
       ...(definitionId ? { definitionId } : {}),
       ...(status ? { status } : {}),
     };
+    const where = this.tenantWhere(extra);
 
     const [items, total] = await Promise.all([
       this.prisma.processInstance.findMany({
@@ -85,6 +93,7 @@ export class ProcessInstancesService {
         status: InstanceStatus.RUNNING,
         variables: (dto.variables ?? {}) as never,
         tokenState: {} as never,
+        tenantId: this.getTenantId() ?? null,
       },
     });
 

@@ -55,6 +55,26 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
     await this.queue?.close();
   }
 
+  async enqueueOne(recordId: string): Promise<string> {
+    const job = await this.queue.add('payslip', { recordId, periodId: '' }, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 10_000 },
+      removeOnComplete: 50,
+      removeOnFail: 20,
+    });
+    return job.id!;
+  }
+
+  async checkJob(jobId: string): Promise<{ status: string; url?: string }> {
+    const job = await this.queue.getJob(jobId);
+    if (!job) return { status: 'NOT_FOUND' };
+    const state = await job.getState();
+    if (state === 'completed') return { status: 'DONE', url: job.returnvalue?.url };
+    if (state === 'failed') return { status: 'FAILED' };
+    if (state === 'active') return { status: 'PROCESSING' };
+    return { status: 'QUEUED' };
+  }
+
   async enqueueAll(periodId: string): Promise<void> {
     const records = await this.prisma.payrollRecord.findMany({
       where: { periodId },

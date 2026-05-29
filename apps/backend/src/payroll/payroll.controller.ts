@@ -15,6 +15,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../generated/prisma';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { PayrollService } from './payroll.service';
+import { PayslipQueueService } from './payslip-queue.service';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { PaginationDto } from '../common/dto/pagination.dto';
@@ -23,7 +24,10 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 @ApiBearerAuth()
 @Controller('api/v1/payroll')
 export class PayrollController {
-  constructor(private readonly service: PayrollService) {}
+  constructor(
+    private readonly service: PayrollService,
+    private readonly payslipQueue: PayslipQueueService,
+  ) {}
 
   // ── Danh sách kỳ lương ─────────────────────────────────────────────────────
   @Get('periods')
@@ -122,5 +126,22 @@ export class PayrollController {
       'Content-Disposition': `attachment; filename="payslip-${recordId}.xlsx"`,
     });
     res.send(buffer);
+  }
+
+  // ── R-03: Yêu cầu tạo phiếu lương async (enqueue job) ────────────────────
+  @Post('records/:recordId/payslip-request')
+  @ApiOperation({ summary: 'Enqueue job tạo phiếu lương PDF bất đồng bộ, trả về jobId' })
+  async requestPayslip(
+    @Param('recordId') recordId: string,
+  ) {
+    const jobId = await this.payslipQueue.enqueueOne(recordId);
+    return { jobId, status: 'QUEUED' };
+  }
+
+  // ── R-03: Kiểm tra trạng thái job phiếu lương ─────────────────────────────
+  @Get('payslip-jobs/:jobId')
+  @ApiOperation({ summary: 'Kiểm tra trạng thái job PDF: QUEUED | PROCESSING | DONE | FAILED' })
+  async checkPayslipJob(@Param('jobId') jobId: string) {
+    return this.payslipQueue.checkJob(jobId);
   }
 }
