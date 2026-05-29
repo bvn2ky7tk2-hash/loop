@@ -1,4 +1,4 @@
-import { Row, Col, Spin } from 'antd';
+import { Row, Col, Spin, Tag, Avatar, Button } from 'antd';
 import {
   CheckSquareOutlined,
   WarningOutlined,
@@ -6,16 +6,37 @@ import {
   ClockCircleOutlined,
   FireOutlined,
   SyncOutlined,
+  NotificationOutlined,
+  ArrowRightOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/vi';
+import { useNavigate } from 'react-router-dom';
+
+dayjs.extend(relativeTime);
+dayjs.locale('vi');
+import { Typography } from 'antd';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { dashboardV3Api } from '../../api/dashboard-v3';
+import { feedKeys, type FeedPost, type FeedPostType } from '../../api/feed';
+import { apiClient } from '../../api/client';
+
+const { Text } = Typography;
+
+const FEED_TYPE_META: Record<FeedPostType, { label: string; color: string }> = {
+  ANNOUNCEMENT: { label: 'Thông báo', color: 'blue' },
+  KUDOS:        { label: 'Khen ngợi', color: 'gold' },
+  BIRTHDAY:     { label: 'Sinh nhật', color: 'pink' },
+  DOCUMENT:     { label: 'Tài liệu',  color: 'geekblue' },
+  ANNIVERSARY:  { label: 'Kỷ niệm',  color: 'purple' },
+};
 
 /** Đổi 'YYYY-MM-DD' → label ngắn 'T2', 'T3'… */
 function toDayLabel(dateStr: string) {
@@ -24,7 +45,8 @@ function toDayLabel(dateStr: string) {
 }
 
 export default function WorkDashboard() {
-  const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
+  const { bgContainer, borderColor, textPrimary, textMuted, bgCard, isDark } = useThemePalette();
+  const navigate = useNavigate();
 
   const { data: workData } = useQuery({
     queryKey:        ['dashboard-work'],
@@ -37,6 +59,13 @@ export default function WorkDashboard() {
     queryFn:         dashboardV3Api.getWorkTrend,
     refetchInterval: 60_000,
   });
+
+  const { data: feedData } = useQuery({
+    queryKey:        feedKeys.list(1, 5),
+    queryFn:         () => apiClient.get<{ data: FeedPost[] }>('/feed', { params: { page: 1, limit: 5 } }).then((r) => r.data),
+    refetchInterval: 120_000,
+  });
+  const recentPosts: FeedPost[] = feedData?.data ?? [];
 
   const chartData = (trend ?? []).map((item) => ({
     day:       toDayLabel(item.date),
@@ -152,6 +181,83 @@ export default function WorkDashboard() {
               <Bar dataKey="completed" name="Hoàn thành" fill="#10B981" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
+        )}
+      </div>
+
+      {/* ── Bảng tin gần đây ─────────────────────────────────────────────────── */}
+      <div style={{
+        background:   bgContainer,
+        border:       `1px solid ${borderColor}`,
+        borderRadius: 12,
+        padding:      '16px 20px',
+        marginTop:    16,
+      }}>
+        <div style={{
+          display:       'flex',
+          alignItems:    'center',
+          justifyContent: 'space-between',
+          marginBottom:   12,
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 600, color: textPrimary, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <NotificationOutlined style={{ color: '#6366F1' }} />
+            Bảng tin gần đây
+          </div>
+          <Button
+            type="link"
+            size="small"
+            icon={<ArrowRightOutlined />}
+            onClick={() => navigate('/feed')}
+            style={{ padding: 0, fontSize: 12 }}
+          >
+            Xem tất cả
+          </Button>
+        </div>
+
+        {recentPosts.length === 0 ? (
+          <div style={{ padding: '20px 0', textAlign: 'center', color: textMuted, fontSize: 13 }}>
+            Chưa có bài đăng nào
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {recentPosts.map((post) => {
+              const meta = FEED_TYPE_META[post.type] ?? { label: post.type, color: 'default' };
+              return (
+                <div
+                  key={post.id}
+                  style={{
+                    display:      'flex',
+                    gap:          12,
+                    padding:      '10px 14px',
+                    borderRadius: 8,
+                    background:   bgCard,
+                    border:       `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : borderColor}`,
+                    cursor:       'pointer',
+                  }}
+                  onClick={() => navigate('/feed')}
+                >
+                  <Avatar size={36} style={{ background: '#6366F1', flexShrink: 0, fontSize: 14 }}>
+                    {post.author?.name?.[0]?.toUpperCase() ?? '?'}
+                  </Avatar>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <Tag color={meta.color} style={{ margin: 0, fontSize: 11 }}>{meta.label}</Tag>
+                      {post.title && (
+                        <Text strong style={{ color: textPrimary, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {post.title}
+                        </Text>
+                      )}
+                    </div>
+                    <Text style={{ color: textMuted, fontSize: 12, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {post.content}
+                    </Text>
+                    <Text style={{ color: textMuted, fontSize: 11, marginTop: 2, display: 'block' }}>
+                      {post.author?.name} · {dayjs(post.createdAt).fromNow()}
+                    </Text>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
