@@ -57,6 +57,8 @@ model User {
   vehicleRequests      VehicleRequest[]  @relation("VehicleRequester")
   vehicleApprovals     VehicleRequest[]  @relation("VehicleApprover")
   calendarEvents       CalendarEvent[]   @relation("CalendarEventCreator")
+  tenantId             String?           @map("tenant_id")
+  tenant               Tenant?           @relation(fields: [tenantId], references: [id])
 
   @@map("users")
 }
@@ -2253,6 +2255,7 @@ enum FeedPostType {
   KUDOS
   BIRTHDAY
   DOCUMENT
+  ANNIVERSARY
 
   @@map("feed_post_type")
 }
@@ -2283,6 +2286,9 @@ model FeedPost {
   content     String         @db.Text
   targetOrgId String?        @map("target_org_id")
   isPinned    Boolean        @default(false) @map("is_pinned")
+  imageUrl    String?        @map("image_url") @db.VarChar(500)
+  targetYears Int?           @map("target_years")
+  targetName  String?        @map("target_name") @db.VarChar(200)
   createdAt   DateTime       @default(now()) @map("created_at")
   updatedAt   DateTime       @updatedAt @map("updated_at")
   author      User           @relation("FeedPostAuthor", fields: [authorId], references: [id])
@@ -2551,4 +2557,23 @@ model CalendarEvent {
 
   @@index([startTime, endTime])
   @@map("calendar_events")
+}
+
+model Tenant {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique
+  logoUrl      String?  @map("logo_url")
+  faviconUrl   String?  @map("favicon_url")
+  primaryColor String?  @map("primary_color")
+  customDomain String?  @map("custom_domain")
+  address      String?
+  timezone     String   @default("Asia/Ho_Chi_Minh")
+  isDefault    Boolean  @default(false) @map("is_default")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  users        User[]
+
+  @@map("tenants")
 }

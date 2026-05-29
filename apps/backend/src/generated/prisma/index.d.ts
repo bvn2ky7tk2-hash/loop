@@ -538,6 +538,11 @@ export type VehicleRequest = $Result.DefaultSelection<Prisma.$VehicleRequestPayl
  * 
  */
 export type CalendarEvent = $Result.DefaultSelection<Prisma.$CalendarEventPayload>
+/**
+ * Model Tenant
+ * 
+ */
+export type Tenant = $Result.DefaultSelection<Prisma.$TenantPayload>
 
 /**
  * Enums
@@ -1141,7 +1146,8 @@ export const FeedPostType: {
   ANNOUNCEMENT: 'ANNOUNCEMENT',
   KUDOS: 'KUDOS',
   BIRTHDAY: 'BIRTHDAY',
-  DOCUMENT: 'DOCUMENT'
+  DOCUMENT: 'DOCUMENT',
+  ANNIVERSARY: 'ANNIVERSARY'
 };
 
 export type FeedPostType = (typeof FeedPostType)[keyof typeof FeedPostType]
@@ -2637,6 +2643,16 @@ export class PrismaClient<
     * ```
     */
   get calendarEvent(): Prisma.CalendarEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tenant`: Exposes CRUD operations for the **Tenant** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Tenants
+    * const tenants = await prisma.tenant.findMany()
+    * ```
+    */
+  get tenant(): Prisma.TenantDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -3175,7 +3191,8 @@ export namespace Prisma {
     RoomBooking: 'RoomBooking',
     Vehicle: 'Vehicle',
     VehicleRequest: 'VehicleRequest',
-    CalendarEvent: 'CalendarEvent'
+    CalendarEvent: 'CalendarEvent',
+    Tenant: 'Tenant'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -3191,7 +3208,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "calendarEvent"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "leaveType" | "leaveRequest" | "leaveBalance" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "calendarEvent" | "tenant"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -10965,6 +10982,80 @@ export namespace Prisma {
           }
         }
       }
+      Tenant: {
+        payload: Prisma.$TenantPayload<ExtArgs>
+        fields: Prisma.TenantFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TenantFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TenantFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          findFirst: {
+            args: Prisma.TenantFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TenantFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          findMany: {
+            args: Prisma.TenantFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>[]
+          }
+          create: {
+            args: Prisma.TenantCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          createMany: {
+            args: Prisma.TenantCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TenantCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>[]
+          }
+          delete: {
+            args: Prisma.TenantDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          update: {
+            args: Prisma.TenantUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          deleteMany: {
+            args: Prisma.TenantDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TenantUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TenantUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>[]
+          }
+          upsert: {
+            args: Prisma.TenantUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantPayload>
+          }
+          aggregate: {
+            args: Prisma.TenantAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTenant>
+          }
+          groupBy: {
+            args: Prisma.TenantGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TenantGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TenantCountArgs<ExtArgs>
+            result: $Utils.Optional<TenantCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -11178,6 +11269,7 @@ export namespace Prisma {
     vehicle?: VehicleOmit
     vehicleRequest?: VehicleRequestOmit
     calendarEvent?: CalendarEventOmit
+    tenant?: TenantOmit
   }
 
   /* Types for Logging */
@@ -13250,6 +13342,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type TenantCountOutputType
+   */
+
+  export type TenantCountOutputType = {
+    users: number
+  }
+
+  export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | TenantCountOutputTypeCountUsersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantCountOutputType
+     */
+    select?: TenantCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -13274,6 +13397,7 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    tenantId: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -13287,6 +13411,7 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    tenantId: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -13300,6 +13425,7 @@ export namespace Prisma {
     isActive: number
     createdAt: number
     updatedAt: number
+    tenantId: number
     _all: number
   }
 
@@ -13315,6 +13441,7 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    tenantId?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -13328,6 +13455,7 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    tenantId?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -13341,6 +13469,7 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    tenantId?: true
     _all?: true
   }
 
@@ -13427,6 +13556,7 @@ export namespace Prisma {
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    tenantId: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -13457,6 +13587,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    tenantId?: boolean
     bugAttachments?: boolean | User$bugAttachmentsArgs<ExtArgs>
     bugComments?: boolean | User$bugCommentsArgs<ExtArgs>
     assignedBugs?: boolean | User$assignedBugsArgs<ExtArgs>
@@ -13496,6 +13627,7 @@ export namespace Prisma {
     vehicleRequests?: boolean | User$vehicleRequestsArgs<ExtArgs>
     vehicleApprovals?: boolean | User$vehicleApprovalsArgs<ExtArgs>
     calendarEvents?: boolean | User$calendarEventsArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -13510,7 +13642,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    tenantId?: boolean
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13524,7 +13658,9 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    tenantId?: boolean
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -13538,9 +13674,10 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    tenantId?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "orgUnitId" | "refreshToken" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "orgUnitId" | "refreshToken" | "isActive" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bugAttachments?: boolean | User$bugAttachmentsArgs<ExtArgs>
     bugComments?: boolean | User$bugCommentsArgs<ExtArgs>
@@ -13581,13 +13718,16 @@ export namespace Prisma {
     vehicleRequests?: boolean | User$vehicleRequestsArgs<ExtArgs>
     vehicleApprovals?: boolean | User$vehicleApprovalsArgs<ExtArgs>
     calendarEvents?: boolean | User$calendarEventsArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
   }
   export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orgUnit?: boolean | User$orgUnitArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13632,6 +13772,7 @@ export namespace Prisma {
       vehicleRequests: Prisma.$VehicleRequestPayload<ExtArgs>[]
       vehicleApprovals: Prisma.$VehicleRequestPayload<ExtArgs>[]
       calendarEvents: Prisma.$CalendarEventPayload<ExtArgs>[]
+      tenant: Prisma.$TenantPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13644,6 +13785,7 @@ export namespace Prisma {
       isActive: boolean
       createdAt: Date
       updatedAt: Date
+      tenantId: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -14077,6 +14219,7 @@ export namespace Prisma {
     vehicleRequests<T extends User$vehicleRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$vehicleRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     vehicleApprovals<T extends User$vehicleApprovalsArgs<ExtArgs> = {}>(args?: Subset<T, User$vehicleApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VehicleRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     calendarEvents<T extends User$calendarEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$calendarEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tenant<T extends User$tenantArgs<ExtArgs> = {}>(args?: Subset<T, User$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14116,6 +14259,7 @@ export namespace Prisma {
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly tenantId: FieldRef<"User", 'String'>
   }
     
 
@@ -15440,6 +15584,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CalendarEventScalarFieldEnum | CalendarEventScalarFieldEnum[]
+  }
+
+  /**
+   * User.tenant
+   */
+  export type User$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    where?: TenantWhereInput
   }
 
   /**
@@ -123487,8 +123650,18 @@ export namespace Prisma {
 
   export type AggregateFeedPost = {
     _count: FeedPostCountAggregateOutputType | null
+    _avg: FeedPostAvgAggregateOutputType | null
+    _sum: FeedPostSumAggregateOutputType | null
     _min: FeedPostMinAggregateOutputType | null
     _max: FeedPostMaxAggregateOutputType | null
+  }
+
+  export type FeedPostAvgAggregateOutputType = {
+    targetYears: number | null
+  }
+
+  export type FeedPostSumAggregateOutputType = {
+    targetYears: number | null
   }
 
   export type FeedPostMinAggregateOutputType = {
@@ -123499,6 +123672,9 @@ export namespace Prisma {
     content: string | null
     targetOrgId: string | null
     isPinned: boolean | null
+    imageUrl: string | null
+    targetYears: number | null
+    targetName: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -123511,6 +123687,9 @@ export namespace Prisma {
     content: string | null
     targetOrgId: string | null
     isPinned: boolean | null
+    imageUrl: string | null
+    targetYears: number | null
+    targetName: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -123523,11 +123702,22 @@ export namespace Prisma {
     content: number
     targetOrgId: number
     isPinned: number
+    imageUrl: number
+    targetYears: number
+    targetName: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type FeedPostAvgAggregateInputType = {
+    targetYears?: true
+  }
+
+  export type FeedPostSumAggregateInputType = {
+    targetYears?: true
+  }
 
   export type FeedPostMinAggregateInputType = {
     id?: true
@@ -123537,6 +123727,9 @@ export namespace Prisma {
     content?: true
     targetOrgId?: true
     isPinned?: true
+    imageUrl?: true
+    targetYears?: true
+    targetName?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -123549,6 +123742,9 @@ export namespace Prisma {
     content?: true
     targetOrgId?: true
     isPinned?: true
+    imageUrl?: true
+    targetYears?: true
+    targetName?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -123561,6 +123757,9 @@ export namespace Prisma {
     content?: true
     targetOrgId?: true
     isPinned?: true
+    imageUrl?: true
+    targetYears?: true
+    targetName?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -123604,6 +123803,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: FeedPostAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FeedPostSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: FeedPostMinAggregateInputType
@@ -123634,6 +123845,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: FeedPostCountAggregateInputType | true
+    _avg?: FeedPostAvgAggregateInputType
+    _sum?: FeedPostSumAggregateInputType
     _min?: FeedPostMinAggregateInputType
     _max?: FeedPostMaxAggregateInputType
   }
@@ -123646,9 +123859,14 @@ export namespace Prisma {
     content: string
     targetOrgId: string | null
     isPinned: boolean
+    imageUrl: string | null
+    targetYears: number | null
+    targetName: string | null
     createdAt: Date
     updatedAt: Date
     _count: FeedPostCountAggregateOutputType | null
+    _avg: FeedPostAvgAggregateOutputType | null
+    _sum: FeedPostSumAggregateOutputType | null
     _min: FeedPostMinAggregateOutputType | null
     _max: FeedPostMaxAggregateOutputType | null
   }
@@ -123675,6 +123893,9 @@ export namespace Prisma {
     content?: boolean
     targetOrgId?: boolean
     isPinned?: boolean
+    imageUrl?: boolean
+    targetYears?: boolean
+    targetName?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -123690,6 +123911,9 @@ export namespace Prisma {
     content?: boolean
     targetOrgId?: boolean
     isPinned?: boolean
+    imageUrl?: boolean
+    targetYears?: boolean
+    targetName?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -123703,6 +123927,9 @@ export namespace Prisma {
     content?: boolean
     targetOrgId?: boolean
     isPinned?: boolean
+    imageUrl?: boolean
+    targetYears?: boolean
+    targetName?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -123716,11 +123943,14 @@ export namespace Prisma {
     content?: boolean
     targetOrgId?: boolean
     isPinned?: boolean
+    imageUrl?: boolean
+    targetYears?: boolean
+    targetName?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type FeedPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "authorId" | "title" | "content" | "targetOrgId" | "isPinned" | "createdAt" | "updatedAt", ExtArgs["result"]["feedPost"]>
+  export type FeedPostOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "authorId" | "title" | "content" | "targetOrgId" | "isPinned" | "imageUrl" | "targetYears" | "targetName" | "createdAt" | "updatedAt", ExtArgs["result"]["feedPost"]>
   export type FeedPostInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     reactions?: boolean | FeedPost$reactionsArgs<ExtArgs>
@@ -123747,6 +123977,9 @@ export namespace Prisma {
       content: string
       targetOrgId: string | null
       isPinned: boolean
+      imageUrl: string | null
+      targetYears: number | null
+      targetName: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["feedPost"]>
@@ -124181,6 +124414,9 @@ export namespace Prisma {
     readonly content: FieldRef<"FeedPost", 'String'>
     readonly targetOrgId: FieldRef<"FeedPost", 'String'>
     readonly isPinned: FieldRef<"FeedPost", 'Boolean'>
+    readonly imageUrl: FieldRef<"FeedPost", 'String'>
+    readonly targetYears: FieldRef<"FeedPost", 'Int'>
+    readonly targetName: FieldRef<"FeedPost", 'String'>
     readonly createdAt: FieldRef<"FeedPost", 'DateTime'>
     readonly updatedAt: FieldRef<"FeedPost", 'DateTime'>
   }
@@ -137166,6 +137402,1185 @@ export namespace Prisma {
 
 
   /**
+   * Model Tenant
+   */
+
+  export type AggregateTenant = {
+    _count: TenantCountAggregateOutputType | null
+    _min: TenantMinAggregateOutputType | null
+    _max: TenantMaxAggregateOutputType | null
+  }
+
+  export type TenantMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    slug: string | null
+    logoUrl: string | null
+    faviconUrl: string | null
+    primaryColor: string | null
+    customDomain: string | null
+    address: string | null
+    timezone: string | null
+    isDefault: boolean | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TenantMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    slug: string | null
+    logoUrl: string | null
+    faviconUrl: string | null
+    primaryColor: string | null
+    customDomain: string | null
+    address: string | null
+    timezone: string | null
+    isDefault: boolean | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TenantCountAggregateOutputType = {
+    id: number
+    name: number
+    slug: number
+    logoUrl: number
+    faviconUrl: number
+    primaryColor: number
+    customDomain: number
+    address: number
+    timezone: number
+    isDefault: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TenantMinAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    logoUrl?: true
+    faviconUrl?: true
+    primaryColor?: true
+    customDomain?: true
+    address?: true
+    timezone?: true
+    isDefault?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TenantMaxAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    logoUrl?: true
+    faviconUrl?: true
+    primaryColor?: true
+    customDomain?: true
+    address?: true
+    timezone?: true
+    isDefault?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TenantCountAggregateInputType = {
+    id?: true
+    name?: true
+    slug?: true
+    logoUrl?: true
+    faviconUrl?: true
+    primaryColor?: true
+    customDomain?: true
+    address?: true
+    timezone?: true
+    isDefault?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TenantAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tenant to aggregate.
+     */
+    where?: TenantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tenants to fetch.
+     */
+    orderBy?: TenantOrderByWithRelationInput | TenantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TenantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tenants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tenants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Tenants
+    **/
+    _count?: true | TenantCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TenantMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TenantMaxAggregateInputType
+  }
+
+  export type GetTenantAggregateType<T extends TenantAggregateArgs> = {
+        [P in keyof T & keyof AggregateTenant]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTenant[P]>
+      : GetScalarType<T[P], AggregateTenant[P]>
+  }
+
+
+
+
+  export type TenantGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantWhereInput
+    orderBy?: TenantOrderByWithAggregationInput | TenantOrderByWithAggregationInput[]
+    by: TenantScalarFieldEnum[] | TenantScalarFieldEnum
+    having?: TenantScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TenantCountAggregateInputType | true
+    _min?: TenantMinAggregateInputType
+    _max?: TenantMaxAggregateInputType
+  }
+
+  export type TenantGroupByOutputType = {
+    id: string
+    name: string
+    slug: string
+    logoUrl: string | null
+    faviconUrl: string | null
+    primaryColor: string | null
+    customDomain: string | null
+    address: string | null
+    timezone: string
+    isDefault: boolean
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: TenantCountAggregateOutputType | null
+    _min: TenantMinAggregateOutputType | null
+    _max: TenantMaxAggregateOutputType | null
+  }
+
+  type GetTenantGroupByPayload<T extends TenantGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TenantGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TenantGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TenantGroupByOutputType[P]>
+            : GetScalarType<T[P], TenantGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TenantSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    logoUrl?: boolean
+    faviconUrl?: boolean
+    primaryColor?: boolean
+    customDomain?: boolean
+    address?: boolean
+    timezone?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    users?: boolean | Tenant$usersArgs<ExtArgs>
+    _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenant"]>
+
+  export type TenantSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    logoUrl?: boolean
+    faviconUrl?: boolean
+    primaryColor?: boolean
+    customDomain?: boolean
+    address?: boolean
+    timezone?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["tenant"]>
+
+  export type TenantSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    logoUrl?: boolean
+    faviconUrl?: boolean
+    primaryColor?: boolean
+    customDomain?: boolean
+    address?: boolean
+    timezone?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["tenant"]>
+
+  export type TenantSelectScalar = {
+    id?: boolean
+    name?: boolean
+    slug?: boolean
+    logoUrl?: boolean
+    faviconUrl?: boolean
+    primaryColor?: boolean
+    customDomain?: boolean
+    address?: boolean
+    timezone?: boolean
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "logoUrl" | "faviconUrl" | "primaryColor" | "customDomain" | "address" | "timezone" | "isDefault" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+  export type TenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | Tenant$usersArgs<ExtArgs>
+    _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type TenantIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $TenantPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Tenant"
+    objects: {
+      users: Prisma.$UserPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      slug: string
+      logoUrl: string | null
+      faviconUrl: string | null
+      primaryColor: string | null
+      customDomain: string | null
+      address: string | null
+      timezone: string
+      isDefault: boolean
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["tenant"]>
+    composites: {}
+  }
+
+  type TenantGetPayload<S extends boolean | null | undefined | TenantDefaultArgs> = $Result.GetResult<Prisma.$TenantPayload, S>
+
+  type TenantCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TenantFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TenantCountAggregateInputType | true
+    }
+
+  export interface TenantDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Tenant'], meta: { name: 'Tenant' } }
+    /**
+     * Find zero or one Tenant that matches the filter.
+     * @param {TenantFindUniqueArgs} args - Arguments to find a Tenant
+     * @example
+     * // Get one Tenant
+     * const tenant = await prisma.tenant.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TenantFindUniqueArgs>(args: SelectSubset<T, TenantFindUniqueArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Tenant that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TenantFindUniqueOrThrowArgs} args - Arguments to find a Tenant
+     * @example
+     * // Get one Tenant
+     * const tenant = await prisma.tenant.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TenantFindUniqueOrThrowArgs>(args: SelectSubset<T, TenantFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Tenant that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantFindFirstArgs} args - Arguments to find a Tenant
+     * @example
+     * // Get one Tenant
+     * const tenant = await prisma.tenant.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TenantFindFirstArgs>(args?: SelectSubset<T, TenantFindFirstArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Tenant that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantFindFirstOrThrowArgs} args - Arguments to find a Tenant
+     * @example
+     * // Get one Tenant
+     * const tenant = await prisma.tenant.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TenantFindFirstOrThrowArgs>(args?: SelectSubset<T, TenantFindFirstOrThrowArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Tenants that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Tenants
+     * const tenants = await prisma.tenant.findMany()
+     * 
+     * // Get first 10 Tenants
+     * const tenants = await prisma.tenant.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tenantWithIdOnly = await prisma.tenant.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TenantFindManyArgs>(args?: SelectSubset<T, TenantFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Tenant.
+     * @param {TenantCreateArgs} args - Arguments to create a Tenant.
+     * @example
+     * // Create one Tenant
+     * const Tenant = await prisma.tenant.create({
+     *   data: {
+     *     // ... data to create a Tenant
+     *   }
+     * })
+     * 
+     */
+    create<T extends TenantCreateArgs>(args: SelectSubset<T, TenantCreateArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Tenants.
+     * @param {TenantCreateManyArgs} args - Arguments to create many Tenants.
+     * @example
+     * // Create many Tenants
+     * const tenant = await prisma.tenant.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TenantCreateManyArgs>(args?: SelectSubset<T, TenantCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Tenants and returns the data saved in the database.
+     * @param {TenantCreateManyAndReturnArgs} args - Arguments to create many Tenants.
+     * @example
+     * // Create many Tenants
+     * const tenant = await prisma.tenant.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Tenants and only return the `id`
+     * const tenantWithIdOnly = await prisma.tenant.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TenantCreateManyAndReturnArgs>(args?: SelectSubset<T, TenantCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Tenant.
+     * @param {TenantDeleteArgs} args - Arguments to delete one Tenant.
+     * @example
+     * // Delete one Tenant
+     * const Tenant = await prisma.tenant.delete({
+     *   where: {
+     *     // ... filter to delete one Tenant
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TenantDeleteArgs>(args: SelectSubset<T, TenantDeleteArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Tenant.
+     * @param {TenantUpdateArgs} args - Arguments to update one Tenant.
+     * @example
+     * // Update one Tenant
+     * const tenant = await prisma.tenant.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TenantUpdateArgs>(args: SelectSubset<T, TenantUpdateArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Tenants.
+     * @param {TenantDeleteManyArgs} args - Arguments to filter Tenants to delete.
+     * @example
+     * // Delete a few Tenants
+     * const { count } = await prisma.tenant.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TenantDeleteManyArgs>(args?: SelectSubset<T, TenantDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tenants.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Tenants
+     * const tenant = await prisma.tenant.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TenantUpdateManyArgs>(args: SelectSubset<T, TenantUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Tenants and returns the data updated in the database.
+     * @param {TenantUpdateManyAndReturnArgs} args - Arguments to update many Tenants.
+     * @example
+     * // Update many Tenants
+     * const tenant = await prisma.tenant.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Tenants and only return the `id`
+     * const tenantWithIdOnly = await prisma.tenant.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TenantUpdateManyAndReturnArgs>(args: SelectSubset<T, TenantUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Tenant.
+     * @param {TenantUpsertArgs} args - Arguments to update or create a Tenant.
+     * @example
+     * // Update or create a Tenant
+     * const tenant = await prisma.tenant.upsert({
+     *   create: {
+     *     // ... data to create a Tenant
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Tenant we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TenantUpsertArgs>(args: SelectSubset<T, TenantUpsertArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Tenants.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantCountArgs} args - Arguments to filter Tenants to count.
+     * @example
+     * // Count the number of Tenants
+     * const count = await prisma.tenant.count({
+     *   where: {
+     *     // ... the filter for the Tenants we want to count
+     *   }
+     * })
+    **/
+    count<T extends TenantCountArgs>(
+      args?: Subset<T, TenantCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TenantCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Tenant.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TenantAggregateArgs>(args: Subset<T, TenantAggregateArgs>): Prisma.PrismaPromise<GetTenantAggregateType<T>>
+
+    /**
+     * Group by Tenant.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TenantGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TenantGroupByArgs['orderBy'] }
+        : { orderBy?: TenantGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TenantGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTenantGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Tenant model
+   */
+  readonly fields: TenantFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Tenant.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TenantClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    users<T extends Tenant$usersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Tenant model
+   */
+  interface TenantFieldRefs {
+    readonly id: FieldRef<"Tenant", 'String'>
+    readonly name: FieldRef<"Tenant", 'String'>
+    readonly slug: FieldRef<"Tenant", 'String'>
+    readonly logoUrl: FieldRef<"Tenant", 'String'>
+    readonly faviconUrl: FieldRef<"Tenant", 'String'>
+    readonly primaryColor: FieldRef<"Tenant", 'String'>
+    readonly customDomain: FieldRef<"Tenant", 'String'>
+    readonly address: FieldRef<"Tenant", 'String'>
+    readonly timezone: FieldRef<"Tenant", 'String'>
+    readonly isDefault: FieldRef<"Tenant", 'Boolean'>
+    readonly isActive: FieldRef<"Tenant", 'Boolean'>
+    readonly createdAt: FieldRef<"Tenant", 'DateTime'>
+    readonly updatedAt: FieldRef<"Tenant", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Tenant findUnique
+   */
+  export type TenantFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter, which Tenant to fetch.
+     */
+    where: TenantWhereUniqueInput
+  }
+
+  /**
+   * Tenant findUniqueOrThrow
+   */
+  export type TenantFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter, which Tenant to fetch.
+     */
+    where: TenantWhereUniqueInput
+  }
+
+  /**
+   * Tenant findFirst
+   */
+  export type TenantFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter, which Tenant to fetch.
+     */
+    where?: TenantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tenants to fetch.
+     */
+    orderBy?: TenantOrderByWithRelationInput | TenantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tenants.
+     */
+    cursor?: TenantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tenants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tenants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tenants.
+     */
+    distinct?: TenantScalarFieldEnum | TenantScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant findFirstOrThrow
+   */
+  export type TenantFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter, which Tenant to fetch.
+     */
+    where?: TenantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tenants to fetch.
+     */
+    orderBy?: TenantOrderByWithRelationInput | TenantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Tenants.
+     */
+    cursor?: TenantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tenants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tenants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tenants.
+     */
+    distinct?: TenantScalarFieldEnum | TenantScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant findMany
+   */
+  export type TenantFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter, which Tenants to fetch.
+     */
+    where?: TenantWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Tenants to fetch.
+     */
+    orderBy?: TenantOrderByWithRelationInput | TenantOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Tenants.
+     */
+    cursor?: TenantWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Tenants from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Tenants.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Tenants.
+     */
+    distinct?: TenantScalarFieldEnum | TenantScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant create
+   */
+  export type TenantCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Tenant.
+     */
+    data: XOR<TenantCreateInput, TenantUncheckedCreateInput>
+  }
+
+  /**
+   * Tenant createMany
+   */
+  export type TenantCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Tenants.
+     */
+    data: TenantCreateManyInput | TenantCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Tenant createManyAndReturn
+   */
+  export type TenantCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * The data used to create many Tenants.
+     */
+    data: TenantCreateManyInput | TenantCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Tenant update
+   */
+  export type TenantUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Tenant.
+     */
+    data: XOR<TenantUpdateInput, TenantUncheckedUpdateInput>
+    /**
+     * Choose, which Tenant to update.
+     */
+    where: TenantWhereUniqueInput
+  }
+
+  /**
+   * Tenant updateMany
+   */
+  export type TenantUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Tenants.
+     */
+    data: XOR<TenantUpdateManyMutationInput, TenantUncheckedUpdateManyInput>
+    /**
+     * Filter which Tenants to update
+     */
+    where?: TenantWhereInput
+    /**
+     * Limit how many Tenants to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Tenant updateManyAndReturn
+   */
+  export type TenantUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * The data used to update Tenants.
+     */
+    data: XOR<TenantUpdateManyMutationInput, TenantUncheckedUpdateManyInput>
+    /**
+     * Filter which Tenants to update
+     */
+    where?: TenantWhereInput
+    /**
+     * Limit how many Tenants to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Tenant upsert
+   */
+  export type TenantUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Tenant to update in case it exists.
+     */
+    where: TenantWhereUniqueInput
+    /**
+     * In case the Tenant found by the `where` argument doesn't exist, create a new Tenant with this data.
+     */
+    create: XOR<TenantCreateInput, TenantUncheckedCreateInput>
+    /**
+     * In case the Tenant was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TenantUpdateInput, TenantUncheckedUpdateInput>
+  }
+
+  /**
+   * Tenant delete
+   */
+  export type TenantDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    /**
+     * Filter which Tenant to delete.
+     */
+    where: TenantWhereUniqueInput
+  }
+
+  /**
+   * Tenant deleteMany
+   */
+  export type TenantDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Tenants to delete
+     */
+    where?: TenantWhereInput
+    /**
+     * Limit how many Tenants to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Tenant.users
+   */
+  export type Tenant$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant without action
+   */
+  export type TenantDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -137189,7 +138604,8 @@ export namespace Prisma {
     refreshToken: 'refreshToken',
     isActive: 'isActive',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    tenantId: 'tenantId'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -138631,6 +140047,9 @@ export namespace Prisma {
     content: 'content',
     targetOrgId: 'targetOrgId',
     isPinned: 'isPinned',
+    imageUrl: 'imageUrl',
+    targetYears: 'targetYears',
+    targetName: 'targetName',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -138812,6 +140231,25 @@ export namespace Prisma {
   };
 
   export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+  export const TenantScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    slug: 'slug',
+    logoUrl: 'logoUrl',
+    faviconUrl: 'faviconUrl',
+    primaryColor: 'primaryColor',
+    customDomain: 'customDomain',
+    address: 'address',
+    timezone: 'timezone',
+    isDefault: 'isDefault',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -139857,6 +141295,7 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    tenantId?: StringNullableFilter<"User"> | string | null
     bugAttachments?: BugAttachmentListRelationFilter
     bugComments?: BugCommentListRelationFilter
     assignedBugs?: BugListRelationFilter
@@ -139896,6 +141335,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestListRelationFilter
     vehicleApprovals?: VehicleRequestListRelationFilter
     calendarEvents?: CalendarEventListRelationFilter
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -139909,6 +141349,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
     bugAttachments?: BugAttachmentOrderByRelationAggregateInput
     bugComments?: BugCommentOrderByRelationAggregateInput
     assignedBugs?: BugOrderByRelationAggregateInput
@@ -139948,6 +141389,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestOrderByRelationAggregateInput
     vehicleApprovals?: VehicleRequestOrderByRelationAggregateInput
     calendarEvents?: CalendarEventOrderByRelationAggregateInput
+    tenant?: TenantOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -139964,6 +141406,7 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    tenantId?: StringNullableFilter<"User"> | string | null
     bugAttachments?: BugAttachmentListRelationFilter
     bugComments?: BugCommentListRelationFilter
     assignedBugs?: BugListRelationFilter
@@ -140003,6 +141446,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestListRelationFilter
     vehicleApprovals?: VehicleRequestListRelationFilter
     calendarEvents?: CalendarEventListRelationFilter
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -140016,6 +141460,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -140035,6 +141480,7 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    tenantId?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type OrgUnitWhereInput = {
@@ -147648,6 +149094,9 @@ export namespace Prisma {
     content?: StringFilter<"FeedPost"> | string
     targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
     isPinned?: BoolFilter<"FeedPost"> | boolean
+    imageUrl?: StringNullableFilter<"FeedPost"> | string | null
+    targetYears?: IntNullableFilter<"FeedPost"> | number | null
+    targetName?: StringNullableFilter<"FeedPost"> | string | null
     createdAt?: DateTimeFilter<"FeedPost"> | Date | string
     updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -147662,6 +149111,9 @@ export namespace Prisma {
     content?: SortOrder
     targetOrgId?: SortOrderInput | SortOrder
     isPinned?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    targetYears?: SortOrderInput | SortOrder
+    targetName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     author?: UserOrderByWithRelationInput
@@ -147679,6 +149131,9 @@ export namespace Prisma {
     content?: StringFilter<"FeedPost"> | string
     targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
     isPinned?: BoolFilter<"FeedPost"> | boolean
+    imageUrl?: StringNullableFilter<"FeedPost"> | string | null
+    targetYears?: IntNullableFilter<"FeedPost"> | number | null
+    targetName?: StringNullableFilter<"FeedPost"> | string | null
     createdAt?: DateTimeFilter<"FeedPost"> | Date | string
     updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -147693,11 +149148,16 @@ export namespace Prisma {
     content?: SortOrder
     targetOrgId?: SortOrderInput | SortOrder
     isPinned?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    targetYears?: SortOrderInput | SortOrder
+    targetName?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: FeedPostCountOrderByAggregateInput
+    _avg?: FeedPostAvgOrderByAggregateInput
     _max?: FeedPostMaxOrderByAggregateInput
     _min?: FeedPostMinOrderByAggregateInput
+    _sum?: FeedPostSumOrderByAggregateInput
   }
 
   export type FeedPostScalarWhereWithAggregatesInput = {
@@ -147711,6 +149171,9 @@ export namespace Prisma {
     content?: StringWithAggregatesFilter<"FeedPost"> | string
     targetOrgId?: StringNullableWithAggregatesFilter<"FeedPost"> | string | null
     isPinned?: BoolWithAggregatesFilter<"FeedPost"> | boolean
+    imageUrl?: StringNullableWithAggregatesFilter<"FeedPost"> | string | null
+    targetYears?: IntNullableWithAggregatesFilter<"FeedPost"> | number | null
+    targetName?: StringNullableWithAggregatesFilter<"FeedPost"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"FeedPost"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"FeedPost"> | Date | string
   }
@@ -148614,6 +150077,101 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"CalendarEvent"> | Date | string
   }
 
+  export type TenantWhereInput = {
+    AND?: TenantWhereInput | TenantWhereInput[]
+    OR?: TenantWhereInput[]
+    NOT?: TenantWhereInput | TenantWhereInput[]
+    id?: StringFilter<"Tenant"> | string
+    name?: StringFilter<"Tenant"> | string
+    slug?: StringFilter<"Tenant"> | string
+    logoUrl?: StringNullableFilter<"Tenant"> | string | null
+    faviconUrl?: StringNullableFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableFilter<"Tenant"> | string | null
+    customDomain?: StringNullableFilter<"Tenant"> | string | null
+    address?: StringNullableFilter<"Tenant"> | string | null
+    timezone?: StringFilter<"Tenant"> | string
+    isDefault?: BoolFilter<"Tenant"> | boolean
+    isActive?: BoolFilter<"Tenant"> | boolean
+    createdAt?: DateTimeFilter<"Tenant"> | Date | string
+    updatedAt?: DateTimeFilter<"Tenant"> | Date | string
+    users?: UserListRelationFilter
+  }
+
+  export type TenantOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    faviconUrl?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    customDomain?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    timezone?: SortOrder
+    isDefault?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    users?: UserOrderByRelationAggregateInput
+  }
+
+  export type TenantWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    slug?: string
+    AND?: TenantWhereInput | TenantWhereInput[]
+    OR?: TenantWhereInput[]
+    NOT?: TenantWhereInput | TenantWhereInput[]
+    name?: StringFilter<"Tenant"> | string
+    logoUrl?: StringNullableFilter<"Tenant"> | string | null
+    faviconUrl?: StringNullableFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableFilter<"Tenant"> | string | null
+    customDomain?: StringNullableFilter<"Tenant"> | string | null
+    address?: StringNullableFilter<"Tenant"> | string | null
+    timezone?: StringFilter<"Tenant"> | string
+    isDefault?: BoolFilter<"Tenant"> | boolean
+    isActive?: BoolFilter<"Tenant"> | boolean
+    createdAt?: DateTimeFilter<"Tenant"> | Date | string
+    updatedAt?: DateTimeFilter<"Tenant"> | Date | string
+    users?: UserListRelationFilter
+  }, "id" | "slug">
+
+  export type TenantOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    logoUrl?: SortOrderInput | SortOrder
+    faviconUrl?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    customDomain?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    timezone?: SortOrder
+    isDefault?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TenantCountOrderByAggregateInput
+    _max?: TenantMaxOrderByAggregateInput
+    _min?: TenantMinOrderByAggregateInput
+  }
+
+  export type TenantScalarWhereWithAggregatesInput = {
+    AND?: TenantScalarWhereWithAggregatesInput | TenantScalarWhereWithAggregatesInput[]
+    OR?: TenantScalarWhereWithAggregatesInput[]
+    NOT?: TenantScalarWhereWithAggregatesInput | TenantScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Tenant"> | string
+    name?: StringWithAggregatesFilter<"Tenant"> | string
+    slug?: StringWithAggregatesFilter<"Tenant"> | string
+    logoUrl?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    faviconUrl?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    primaryColor?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    customDomain?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    timezone?: StringWithAggregatesFilter<"Tenant"> | string
+    isDefault?: BoolWithAggregatesFilter<"Tenant"> | boolean
+    isActive?: BoolWithAggregatesFilter<"Tenant"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -148663,6 +150221,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -148676,6 +150235,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -148765,6 +150325,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -148778,6 +150339,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -148829,6 +150391,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -148854,6 +150417,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OrgUnitCreateInput = {
@@ -157151,6 +158715,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutFeedPostsInput
@@ -157165,6 +158732,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reactions?: FeedReactionUncheckedCreateNestedManyWithoutPostInput
@@ -157177,6 +158747,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutFeedPostsNestedInput
@@ -157191,6 +158764,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reactions?: FeedReactionUncheckedUpdateManyWithoutPostNestedInput
@@ -157204,6 +158780,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -157215,6 +158794,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -157227,6 +158809,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -158234,6 +159819,122 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TenantCreateInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantCreateManyInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -158483,6 +160184,11 @@ export namespace Prisma {
     none?: CalendarEventWhereInput
   }
 
+  export type TenantNullableScalarRelationFilter = {
+    is?: TenantWhereInput | null
+    isNot?: TenantWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -158623,6 +160329,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    tenantId?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -158636,6 +160343,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    tenantId?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -158649,6 +160357,7 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    tenantId?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -164801,8 +166510,15 @@ export namespace Prisma {
     content?: SortOrder
     targetOrgId?: SortOrder
     isPinned?: SortOrder
+    imageUrl?: SortOrder
+    targetYears?: SortOrder
+    targetName?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type FeedPostAvgOrderByAggregateInput = {
+    targetYears?: SortOrder
   }
 
   export type FeedPostMaxOrderByAggregateInput = {
@@ -164813,6 +166529,9 @@ export namespace Prisma {
     content?: SortOrder
     targetOrgId?: SortOrder
     isPinned?: SortOrder
+    imageUrl?: SortOrder
+    targetYears?: SortOrder
+    targetName?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -164825,8 +166544,15 @@ export namespace Prisma {
     content?: SortOrder
     targetOrgId?: SortOrder
     isPinned?: SortOrder
+    imageUrl?: SortOrder
+    targetYears?: SortOrder
+    targetName?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type FeedPostSumOrderByAggregateInput = {
+    targetYears?: SortOrder
   }
 
   export type EnumFeedPostTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -165467,6 +167193,54 @@ export namespace Prisma {
     _max?: NestedEnumCalendarEventTypeFilter<$PrismaModel>
   }
 
+  export type TenantCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    logoUrl?: SortOrder
+    faviconUrl?: SortOrder
+    primaryColor?: SortOrder
+    customDomain?: SortOrder
+    address?: SortOrder
+    timezone?: SortOrder
+    isDefault?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    logoUrl?: SortOrder
+    faviconUrl?: SortOrder
+    primaryColor?: SortOrder
+    customDomain?: SortOrder
+    address?: SortOrder
+    timezone?: SortOrder
+    isDefault?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    slug?: SortOrder
+    logoUrl?: SortOrder
+    faviconUrl?: SortOrder
+    primaryColor?: SortOrder
+    customDomain?: SortOrder
+    address?: SortOrder
+    timezone?: SortOrder
+    isDefault?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -165736,6 +167510,12 @@ export namespace Prisma {
     connectOrCreate?: CalendarEventCreateOrConnectWithoutCreatedByInput | CalendarEventCreateOrConnectWithoutCreatedByInput[]
     createMany?: CalendarEventCreateManyCreatedByInputEnvelope
     connect?: CalendarEventWhereUniqueInput | CalendarEventWhereUniqueInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutUsersInput = {
+    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
+    connect?: TenantWhereUniqueInput
   }
 
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
@@ -166559,6 +168339,16 @@ export namespace Prisma {
     update?: CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput | CalendarEventUpdateWithWhereUniqueWithoutCreatedByInput[]
     updateMany?: CalendarEventUpdateManyWithWhereWithoutCreatedByInput | CalendarEventUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: CalendarEventScalarWhereInput | CalendarEventScalarWhereInput[]
+  }
+
+  export type TenantUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
+    upsert?: TenantUpsertWithoutUsersInput
+    disconnect?: TenantWhereInput | boolean
+    delete?: TenantWhereInput | boolean
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsersInput, TenantUpdateWithoutUsersInput>, TenantUncheckedUpdateWithoutUsersInput>
   }
 
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
@@ -172969,6 +174759,48 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCalendarEventsInput, UserUpdateWithoutCalendarEventsInput>, UserUncheckedUpdateWithoutCalendarEventsInput>
   }
 
+  export type UserCreateNestedManyWithoutTenantInput = {
+    create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
+    createMany?: UserCreateManyTenantInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
+    createMany?: UserCreateManyTenantInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutTenantInput | UserUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: UserCreateManyTenantInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutTenantInput | UserUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutTenantInput | UserUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutTenantInput | UserUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: UserCreateManyTenantInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutTenantInput | UserUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutTenantInput | UserUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -175723,6 +177555,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reactions?: FeedReactionCreateNestedManyWithoutPostInput
@@ -175735,6 +177570,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     reactions?: FeedReactionUncheckedCreateNestedManyWithoutPostInput
@@ -175968,6 +177806,43 @@ export namespace Prisma {
   export type CalendarEventCreateManyCreatedByInputEnvelope = {
     data: CalendarEventCreateManyCreatedByInput | CalendarEventCreateManyCreatedByInput[]
     skipDuplicates?: boolean
+  }
+
+  export type TenantCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TenantCreateOrConnectWithoutUsersInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
   }
 
   export type BugAttachmentUpsertWithWhereUniqueWithoutUploaderInput = {
@@ -177026,6 +178901,9 @@ export namespace Prisma {
     content?: StringFilter<"FeedPost"> | string
     targetOrgId?: StringNullableFilter<"FeedPost"> | string | null
     isPinned?: BoolFilter<"FeedPost"> | boolean
+    imageUrl?: StringNullableFilter<"FeedPost"> | string | null
+    targetYears?: IntNullableFilter<"FeedPost"> | number | null
+    targetName?: StringNullableFilter<"FeedPost"> | string | null
     createdAt?: DateTimeFilter<"FeedPost"> | Date | string
     updatedAt?: DateTimeFilter<"FeedPost"> | Date | string
   }
@@ -177207,6 +179085,49 @@ export namespace Prisma {
     attendees?: StringNullableListFilter<"CalendarEvent">
     createdAt?: DateTimeFilter<"CalendarEvent"> | Date | string
     updatedAt?: DateTimeFilter<"CalendarEvent"> | Date | string
+  }
+
+  export type TenantUpsertWithoutUsersInput = {
+    update: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+    create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutUsersInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type TenantUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EmployeeCreateWithoutOrgUnitInput = {
@@ -177516,6 +179437,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -177528,6 +179450,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -177838,6 +179761,7 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    tenantId?: StringNullableFilter<"User"> | string | null
   }
 
   export type GroupOrgAccessUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -178239,6 +180163,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -178252,6 +180177,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -178877,6 +180803,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -178890,6 +180817,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -179843,6 +181771,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -179856,6 +181785,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -180152,6 +182082,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -180165,6 +182096,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -180554,6 +182486,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -180567,6 +182500,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -180983,6 +182917,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -180996,6 +182931,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -181391,6 +183327,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -181404,6 +183341,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -181564,6 +183502,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -181577,6 +183516,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -181664,6 +183604,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -181677,6 +183618,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -181780,6 +183722,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -181793,6 +183736,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -181880,6 +183824,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -181893,6 +183838,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -181996,6 +183942,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -182009,6 +183956,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -182096,6 +184044,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -182109,6 +184058,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -182201,6 +184151,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -182214,6 +184165,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -182317,6 +184269,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -182330,6 +184283,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -182428,6 +184382,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -182441,6 +184396,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -182648,6 +184604,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -182661,6 +184618,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -182764,6 +184722,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -182777,6 +184736,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -182864,6 +184824,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -182877,6 +184838,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -182980,6 +184942,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -182993,6 +184956,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -183448,6 +185412,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -183461,6 +185426,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -183822,6 +185788,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -183835,6 +185802,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -183970,6 +185938,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -183983,6 +185952,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -184121,6 +186091,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -184134,6 +186105,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -184430,6 +186402,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -184443,6 +186416,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
@@ -184535,6 +186509,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -184548,6 +186523,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -184697,6 +186673,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -184710,6 +186687,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -184885,6 +186863,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -184898,6 +186877,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
@@ -184996,6 +186976,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -185009,6 +186990,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -185170,6 +187152,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -185183,6 +187166,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -185567,6 +187551,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -185580,6 +187565,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
     pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
@@ -185750,6 +187736,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -185763,6 +187750,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
     pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
@@ -185850,6 +187838,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -185863,6 +187852,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
     pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
@@ -186027,6 +188017,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -186040,6 +188031,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
     pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
@@ -186663,6 +188655,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -186676,6 +188669,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -186812,6 +188806,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -186825,6 +188820,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -187125,6 +189121,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -187138,6 +189135,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -187272,6 +189270,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -187285,6 +189284,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -187372,6 +189372,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -187385,6 +189386,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -187488,6 +189490,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -187501,6 +189504,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -187760,6 +189764,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -187773,6 +189778,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -187903,6 +189909,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -187916,6 +189923,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -188524,6 +190532,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -188537,6 +190546,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -188787,6 +190797,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -188800,6 +190811,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -189224,6 +191236,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -189237,6 +191250,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -189431,6 +191445,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -189444,6 +191459,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -189993,6 +192009,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -190006,6 +192023,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -190098,6 +192116,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -190111,6 +192130,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -190338,6 +192358,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -190351,6 +192372,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -190449,6 +192471,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -190462,6 +192485,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -191466,6 +193490,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutCrmActivitiesInput = {
@@ -191479,6 +193504,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -191625,6 +193651,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -191638,6 +193665,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -194854,6 +196882,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutOkrObjectivesInput = {
@@ -194867,6 +196896,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -195002,6 +197032,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -195015,6 +197046,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -195412,6 +197444,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutKbArticlesInput = {
@@ -195425,6 +197458,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -195561,6 +197595,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutKbArticlesInput = {
@@ -195574,6 +197609,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -195983,6 +198019,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutPoRequestsInput = {
@@ -195996,6 +198033,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -196088,6 +198126,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutPoApprovalsInput = {
@@ -196101,6 +198140,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -196289,6 +198329,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoRequestsInput = {
@@ -196302,6 +198343,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -196400,6 +198442,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoApprovalsInput = {
@@ -196413,6 +198456,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -196621,6 +198665,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -196634,6 +198679,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -196796,6 +198842,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -196809,6 +198856,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -196945,6 +198993,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutFeedPostsInput = {
@@ -196958,6 +199007,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -197085,6 +199135,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedPostsInput = {
@@ -197098,6 +199149,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -197160,6 +199212,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutFeedPostsInput
@@ -197173,6 +199228,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -197230,6 +199288,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutFeedReactionsInput = {
@@ -197243,6 +199302,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -197305,6 +199365,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutFeedPostsNestedInput
@@ -197318,6 +199381,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -197381,6 +199447,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedReactionsInput = {
@@ -197394,6 +199461,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -197685,6 +199753,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutRoomBookingsInput = {
@@ -197698,6 +199767,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -197836,6 +199906,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoomBookingsInput = {
@@ -197849,6 +199920,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -197978,6 +200050,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutVehiclesInput = {
@@ -197991,6 +200064,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -198110,6 +200184,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehiclesInput = {
@@ -198123,6 +200198,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -198241,6 +200317,7 @@ export namespace Prisma {
     vehicles?: VehicleCreateNestedManyWithoutDriverInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutVehicleRequestsInput = {
@@ -198254,6 +200331,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -198346,6 +200424,7 @@ export namespace Prisma {
     vehicles?: VehicleCreateNestedManyWithoutDriverInput
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutVehicleApprovalsInput = {
@@ -198359,6 +200438,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -198499,6 +200579,7 @@ export namespace Prisma {
     vehicles?: VehicleUpdateManyWithoutDriverNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehicleRequestsInput = {
@@ -198512,6 +200593,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -198610,6 +200692,7 @@ export namespace Prisma {
     vehicles?: VehicleUpdateManyWithoutDriverNestedInput
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehicleApprovalsInput = {
@@ -198623,6 +200706,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -198710,6 +200794,7 @@ export namespace Prisma {
     vehicles?: VehicleCreateNestedManyWithoutDriverInput
     vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
     vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutCalendarEventsInput = {
@@ -198723,6 +200808,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
     bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
     bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
     assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
@@ -198826,6 +200912,7 @@ export namespace Prisma {
     vehicles?: VehicleUpdateManyWithoutDriverNestedInput
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCalendarEventsInput = {
@@ -198839,6 +200926,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -198876,6 +200964,134 @@ export namespace Prisma {
     vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
     vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+  }
+
+  export type UserCreateWithoutTenantInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutTenantInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutTenantInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput>
+  }
+
+  export type UserCreateManyTenantInputEnvelope = {
+    data: UserCreateManyTenantInput | UserCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutTenantInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutTenantInput, UserUncheckedUpdateWithoutTenantInput>
+    create: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutTenantInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutTenantInput, UserUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutTenantInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutTenantInput>
   }
 
   export type BugAttachmentCreateManyUploaderInput = {
@@ -199318,6 +201534,9 @@ export namespace Prisma {
     content: string
     targetOrgId?: string | null
     isPinned?: boolean
+    imageUrl?: string | null
+    targetYears?: number | null
+    targetName?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -200775,6 +202994,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reactions?: FeedReactionUpdateManyWithoutPostNestedInput
@@ -200787,6 +203009,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     reactions?: FeedReactionUncheckedUpdateManyWithoutPostNestedInput
@@ -200799,6 +203024,9 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     targetOrgId?: NullableStringFieldUpdateOperationsInput | string | null
     isPinned?: BoolFieldUpdateOperationsInput | boolean
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    targetYears?: NullableIntFieldUpdateOperationsInput | number | null
+    targetName?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -201115,6 +203343,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    tenantId?: string | null
   }
 
   export type GroupOrgAccessCreateManyOrgUnitInput = {
@@ -201432,6 +203661,7 @@ export namespace Prisma {
     vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
     vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
     calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -201444,6 +203674,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
     bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
     assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
@@ -201494,6 +203725,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GroupOrgAccessUpdateWithoutOrgUnitInput = {
@@ -205448,6 +207680,134 @@ export namespace Prisma {
     status?: EnumVehicleRequestStatusFieldUpdateOperationsInput | $Enums.VehicleRequestStatus
     rejectionReason?: NullableStringFieldUpdateOperationsInput | string | null
     note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateManyTenantInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type UserUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

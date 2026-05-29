@@ -227,6 +227,22 @@ export async function seedUserGroupsDemo(orgUnitId: string) {
   }
 }
 
+async function seedTenant() {
+  const count = await prisma.tenant.count();
+  if (count > 0) return;
+  await prisma.tenant.create({
+    data: {
+      name: 'Loop 360 Demo',
+      slug: 'demo',
+      primaryColor: '#6366F1',
+      address: 'Hà Nội, Việt Nam',
+      timezone: 'Asia/Ho_Chi_Minh',
+      isDefault: true,
+    },
+  });
+  console.log('✅ Tenant seeded');
+}
+
 async function main() {
   const hash     = await bcrypt.hash('admin', 12);
   const demoHash = await bcrypt.hash('Demo@1234', 12);
@@ -273,6 +289,8 @@ async function main() {
     },
   });
 
+  console.log('Seeding tenant...');
+  await seedTenant();
   console.log('Seeding permissions...');
   await seedPermissions();
   console.log('Seeding screens registry...');
@@ -338,6 +356,38 @@ async function main() {
 
   console.log('Seeding Accounting journal entries demo...');
   await seedAccountingDemo();
+
+  console.log('Seeding HR v4.0 demo data (JobTitles, Positions, LeavePolicies, Decisions, Insurance, Attendance)...');
+  await seedHrV4Demo();
+
+  console.log('Seeding HR v4.0 missing data (WorkHistory, Insurance, Attendance)...');
+  await seedHrV4Missing();
+
+  console.log('Seeding OT requests demo data...');
+  await seedOvertimeRequestsDemo();
+
+  console.log('Seeding Work Shifts demo data...');
+  await seedWorkShifts();
+
+  console.log('Seeding Work Schedules demo data...');
+  await seedWorkSchedules();
+
+  console.log('Seeding Feed posts...');
+  await seedFeedPosts();
+  console.log('Seeding Meeting rooms & bookings...');
+  await seedMeetingRooms();
+  console.log('Seeding Vehicles & requests...');
+  await seedVehicles();
+  console.log('Seeding Calendar events...');
+  await seedCalendarEvents();
+  console.log('Seeding Knowledge Base...');
+  await seedKnowledgeBase();
+  console.log('Seeding Vendors & Purchase Orders...');
+  await seedVendors();
+  console.log('Seeding Automation Rules...');
+  await seedAutomationRules();
+  console.log('Seeding Scheduled Reports...');
+  await seedScheduledReports();
 
   console.log('✅ Seed xong: admin@loop.vn / admin | pm@loop.vn / admin | user.demo@loop.vn / Demo@1234');
 }
@@ -1609,6 +1659,166 @@ async function seedProcessDefinitions(orgUnitId: string) {
     bpmnXml: performanceReviewXml,
     stepConfig: performanceStepConfig,
     taskFormFields: performanceTaskFormFields,
+    orgUnitId,
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 6. ĐĂNG KÝ OT — overtime-approval
+  // ══════════════════════════════════════════════════════════════════════════════
+  const overtimeApprovalXml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="overtime-approval-defs" targetNamespace="http://loop.vn/processes">
+  <process id="overtime-approval-process" name="Duyệt Đăng ký OT" isExecutable="true">
+    <startEvent id="start" name="Nộp đăng ký OT">
+      <outgoing>to-review</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-review" sourceRef="start" targetRef="review-task"/>
+    <userTask id="review-task" name="Trưởng phòng xét duyệt OT">
+      <incoming>to-review</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="review-task" targetRef="end"/>
+    <endEvent id="end" name="Hoàn tất"><incoming>to-end</incoming></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_overtime">
+    <bpmndi:BPMNPlane id="BPMNPlane_overtime" bpmnElement="overtime-approval-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review-task_di" bpmnElement="review-task"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="420" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-review_di" bpmnElement="to-review">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>`;
+
+  const overtimeStepConfig = {
+    'review-task': {
+      assigneeConfig: { mode: 'requester_manager' },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          '{{requester.name}} đã nộp đăng ký tăng ca và đang chờ bạn xét duyệt.',
+          'Kiểm tra thông tin đăng ký OT và chọn Chấp thuận hoặc Từ chối.',
+        ),
+        taskCompleted: notifyRequester('Đăng ký tăng ca của bạn đã được trưởng phòng xem xét và xử lý.'),
+      },
+    },
+  };
+
+  const overtimeTaskFormFields = {
+    'review-task': [
+      {
+        name: 'decision',
+        label: 'Quyết định',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Chấp thuận', value: 'APPROVED' },
+          { label: 'Từ chối',    value: 'REJECTED' },
+        ],
+      },
+      {
+        name: 'rejectedReason',
+        label: 'Lý do từ chối',
+        type: 'textarea',
+        placeholder: 'Điền lý do nếu từ chối...',
+      },
+    ],
+  };
+
+  await upsertDef({
+    key: 'overtime-approval',
+    name: 'Duyệt Đăng ký OT',
+    description: 'Quy trình duyệt đăng ký tăng ca: trưởng phòng xét duyệt một bước',
+    bpmnXml: overtimeApprovalXml,
+    stepConfig: overtimeStepConfig,
+    taskFormFields: overtimeTaskFormFields,
+    orgUnitId,
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // 7. QUYẾT ĐỊNH NHÂN SỰ — hr-decision-approval
+  // ══════════════════════════════════════════════════════════════════════════════
+  const hrDecisionApprovalXml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  id="hr-decision-approval-defs" targetNamespace="http://loop.vn/processes">
+  <process id="hr-decision-approval-process" name="Duyệt Quyết định Nhân sự" isExecutable="true">
+    <startEvent id="start" name="Nộp quyết định nhân sự">
+      <outgoing>to-review</outgoing>
+    </startEvent>
+    <sequenceFlow id="to-review" sourceRef="start" targetRef="review-task"/>
+    <userTask id="review-task" name="Ban Giám đốc ký duyệt">
+      <incoming>to-review</incoming>
+      <outgoing>to-end</outgoing>
+    </userTask>
+    <sequenceFlow id="to-end" sourceRef="review-task" targetRef="end"/>
+    <endEvent id="end" name="Hoàn tất"><incoming>to-end</incoming></endEvent>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_hrdecision">
+    <bpmndi:BPMNPlane id="BPMNPlane_hrdecision" bpmnElement="hr-decision-approval-process">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start"><dc:Bounds x="150" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="review-task_di" bpmnElement="review-task"><dc:Bounds x="250" y="160" width="100" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end"><dc:Bounds x="420" y="182" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="to-review_di" bpmnElement="to-review">
+        <di:waypoint x="186" y="200"/><di:waypoint x="250" y="200"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="to-end_di" bpmnElement="to-end">
+        <di:waypoint x="350" y="200"/><di:waypoint x="420" y="200"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>`;
+
+  const hrDecisionStepConfig = {
+    'review-task': {
+      assigneeConfig: { mode: 'orgunit', orgUnitId: hrdId },
+      notificationConfig: {
+        taskAssigned: notifyAssignee(
+          'Có quyết định nhân sự mới cần Ban Giám đốc xem xét và ký duyệt.',
+          'Kiểm tra nội dung quyết định và chọn Phê duyệt hoặc Từ chối.',
+        ),
+        taskCompleted: notifyRequester('Quyết định nhân sự đã được Ban Giám đốc xem xét và xử lý.'),
+      },
+    },
+  };
+
+  const hrDecisionTaskFormFields = {
+    'review-task': [
+      {
+        name: 'decision',
+        label: 'Quyết định',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Phê duyệt', value: 'APPROVED' },
+          { label: 'Từ chối',   value: 'REJECTED' },
+        ],
+      },
+      {
+        name: 'rejectedReason',
+        label: 'Lý do từ chối',
+        type: 'textarea',
+        placeholder: 'Điền lý do nếu từ chối...',
+      },
+    ],
+  };
+
+  await upsertDef({
+    key: 'hr-decision-approval',
+    name: 'Duyệt Quyết định Nhân sự',
+    description: 'Quy trình ký duyệt quyết định nhân sự: Ban Giám đốc phê duyệt một bước',
+    bpmnXml: hrDecisionApprovalXml,
+    stepConfig: hrDecisionStepConfig,
+    taskFormFields: hrDecisionTaskFormFields,
     orgUnitId,
   });
 }
@@ -4278,6 +4488,2359 @@ async function seedPayrollComplianceConfig() {
   } catch (err) {
     console.error('  ✗ seedPayrollComplianceConfig error:', err);
   }
+}
+
+// ─── HR v4.0 Demo Data ────────────────────────────────────────────────────────
+
+async function seedHrV4Demo() {
+  try {
+    const existing = await prisma.jobTitle.count();
+    if (existing > 0) {
+      console.log(`  ⏭  ${existing} job titles đã tồn tại, bỏ qua HR v4.0 seed`);
+      return;
+    }
+
+    // ── Org Units (đã tồn tại từ seedPhase2Demo) ──────────────────────────────
+    const orgRoot = await prisma.orgUnit.findFirstOrThrow({ where: { code: 'ROOT' } });
+    const orgDev  = await prisma.orgUnit.findFirst({ where: { code: 'DEV' } });
+    const orgHrd  = await prisma.orgUnit.findFirst({ where: { code: 'HRD' } });
+    const orgFin  = await prisma.orgUnit.findFirst({ where: { code: 'FIN' } });
+
+    // ── 1. JobTitles ─────────────────────────────────────────────────────────
+    const jobTitleDefs = [
+      { code: 'JT-CEO',    name: 'Giám đốc điều hành',        band: 'E',  description: 'Chief Executive Officer' },
+      { code: 'JT-CTO',    name: 'Giám đốc công nghệ',        band: 'E',  description: 'Chief Technology Officer' },
+      { code: 'JT-PM',     name: 'Quản lý dự án',             band: 'M',  description: 'Project Manager / Technical Lead' },
+      { code: 'JT-HRM',    name: 'Trưởng phòng nhân sự',      band: 'M',  description: 'HR Manager' },
+      { code: 'JT-FIM',    name: 'Trưởng phòng tài chính',    band: 'M',  description: 'Finance Manager' },
+      { code: 'JT-SWE',    name: 'Kỹ sư phần mềm',            band: 'IC', description: 'Software Engineer' },
+      { code: 'JT-SRE',    name: 'Kỹ sư cao cấp',             band: 'IC', description: 'Senior Software Engineer' },
+      { code: 'JT-QA',     name: 'Kỹ sư kiểm thử',            band: 'IC', description: 'QA Engineer' },
+      { code: 'JT-DEV',    name: 'Lập trình viên',             band: 'IC', description: 'Developer' },
+      { code: 'JT-HR',     name: 'Chuyên viên nhân sự',        band: 'IC', description: 'HR Specialist' },
+      { code: 'JT-ACC',    name: 'Kế toán viên',               band: 'IC', description: 'Accountant' },
+      { code: 'JT-INTERN', name: 'Thực tập sinh',              band: 'J',  description: 'Intern / Trainee' },
+    ];
+
+    const jobTitles: Record<string, string> = {};
+    for (const jt of jobTitleDefs) {
+      const rec = await prisma.jobTitle.create({ data: jt });
+      jobTitles[jt.code] = rec.id;
+    }
+    console.log(`  ✓ ${jobTitleDefs.length} JobTitles seeded`);
+
+    // ── 2. Positions ──────────────────────────────────────────────────────────
+    const positionDefs = [
+      { code: 'POS-CEO',   jobTitleId: jobTitles['JT-CEO']!,    orgUnitId: orgRoot.id,                headcount: 1, description: 'CEO — Toàn công ty' },
+      { code: 'POS-CTO',   jobTitleId: jobTitles['JT-CTO']!,    orgUnitId: orgRoot.id,                headcount: 1, description: 'CTO — Toàn công ty' },
+      { code: 'POS-PM1',   jobTitleId: jobTitles['JT-PM']!,     orgUnitId: orgDev?.id ?? orgRoot.id,  headcount: 2, description: 'PM phụ trách dev team' },
+      { code: 'POS-HRM1',  jobTitleId: jobTitles['JT-HRM']!,    orgUnitId: orgHrd?.id ?? orgRoot.id,  headcount: 1, description: 'Trưởng phòng HR' },
+      { code: 'POS-FIM1',  jobTitleId: jobTitles['JT-FIM']!,    orgUnitId: orgFin?.id ?? orgRoot.id,  headcount: 1, description: 'Trưởng phòng tài chính' },
+      { code: 'POS-SRE1',  jobTitleId: jobTitles['JT-SRE']!,    orgUnitId: orgDev?.id ?? orgRoot.id,  headcount: 3, description: 'Senior Engineer — Backend' },
+      { code: 'POS-DEV1',  jobTitleId: jobTitles['JT-DEV']!,    orgUnitId: orgDev?.id ?? orgRoot.id,  headcount: 5, description: 'Developer — Frontend/Fullstack' },
+      { code: 'POS-HR1',   jobTitleId: jobTitles['JT-HR']!,     orgUnitId: orgHrd?.id ?? orgRoot.id,  headcount: 2, description: 'Chuyên viên nhân sự' },
+      { code: 'POS-ACC1',  jobTitleId: jobTitles['JT-ACC']!,    orgUnitId: orgFin?.id ?? orgRoot.id,  headcount: 2, description: 'Kế toán' },
+    ];
+
+    const positions: Record<string, string> = {};
+    for (const pos of positionDefs) {
+      const rec = await prisma.position.create({ data: pos });
+      positions[pos.code] = rec.id;
+    }
+    console.log(`  ✓ ${positionDefs.length} Positions seeded`);
+
+    // ── 3. LeavePolicies ─────────────────────────────────────────────────────
+    const lpVanPhong = await prisma.leavePolicy.create({
+      data: {
+        name: 'Chính sách phép văn phòng (tiêu chuẩn)',
+        baseAnnualDays: 12,
+        seniorityBonus: [
+          { yearsFrom: 5,  bonusDays: 1 },
+          { yearsFrom: 10, bonusDays: 2 },
+        ],
+        maxCarryOver: 5,
+        carryOverExpiry: '03-31',
+        carryOverExpiryAction: 'CLEAR',
+        probationPolicy: { probationDays: 60, prorateLeave: true },
+        isActive: true,
+      },
+    });
+
+    await prisma.leavePolicy.create({
+      data: {
+        name: 'Chính sách phép lao động nặng nhọc',
+        baseAnnualDays: 14,
+        seniorityBonus: [
+          { yearsFrom: 5,  bonusDays: 1 },
+          { yearsFrom: 10, bonusDays: 2 },
+        ],
+        maxCarryOver: 3,
+        carryOverExpiry: '03-31',
+        carryOverExpiryAction: 'CLEAR',
+        probationPolicy: { probationDays: 60, prorateLeave: true },
+        isActive: true,
+      },
+    });
+
+    await prisma.leavePolicy.create({
+      data: {
+        name: 'Chính sách phép quản lý cấp cao',
+        baseAnnualDays: 15,
+        seniorityBonus: [
+          { yearsFrom: 3,  bonusDays: 1 },
+          { yearsFrom: 7,  bonusDays: 2 },
+          { yearsFrom: 12, bonusDays: 3 },
+        ],
+        maxCarryOver: 10,
+        carryOverExpiry: '06-30',
+        carryOverExpiryAction: 'PAY_OUT',
+        probationPolicy: { probationDays: 60, prorateLeave: false },
+        isActive: true,
+      },
+    });
+    console.log('  ✓ 3 LeavePolicies seeded (văn phòng / nặng nhọc / quản lý)');
+
+    // ── 4. HolidayCalendar 2026 (Việt Nam) ───────────────────────────────────
+    const vn2026: Array<{ date: string; name: string; type: string }> = [
+      { date: '2026-01-01', name: 'Tết Dương lịch',                    type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-01-27', name: 'Tết Nguyên đán (26 tháng Chạp)',   type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-01-28', name: 'Tết Nguyên đán (27 tháng Chạp)',   type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-01-29', name: 'Tết Nguyên đán (28 tháng Chạp)',   type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-01-30', name: 'Tết Nguyên đán (Mồng 1 Tết)',      type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-01-31', name: 'Tết Nguyên đán (Mồng 2 Tết)',      type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-02-01', name: 'Tết Nguyên đán (Mồng 3 Tết)',      type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-04-30', name: 'Ngày Giải phóng miền Nam',         type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-05-01', name: 'Ngày Quốc tế Lao động',            type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-09-02', name: 'Ngày Quốc khánh',                  type: 'NATIONAL_HOLIDAY' },
+      { date: '2026-09-03', name: 'Ngày Quốc khánh (bù)',             type: 'COMPENSATORY_DAY' },
+      // Giỗ Tổ Hùng Vương (10/3 Âm lịch ≈ 28/4/2026)
+      { date: '2026-04-28', name: 'Giỗ Tổ Hùng Vương',               type: 'NATIONAL_HOLIDAY' },
+    ];
+
+    let holidayCount = 0;
+    for (const h of vn2026) {
+      await prisma.holidayCalendar.upsert({
+        where: { date: new Date(h.date) },
+        update: {},
+        create: { year: 2026, date: new Date(h.date), name: h.name, type: h.type as any },
+      });
+      holidayCount++;
+    }
+    console.log(`  ✓ ${holidayCount} ngày lễ 2026 seeded`);
+
+    // ── 5. Lấy danh sách employees ────────────────────────────────────────────
+    const empList = await prisma.employee.findMany({
+      where: { code: { in: ['EMP001','EMP002','EMP003','EMP004','EMP005','EMP006','EMP007'] } },
+      select: { id: true, code: true, startDate: true },
+    });
+    const empMap: Record<string, { id: string; startDate: Date }> = {};
+    for (const e of empList) empMap[e.code] = { id: e.id, startDate: e.startDate };
+
+    // ── 6. Assign LeavePolicies & Positions to employees ─────────────────────
+    const empPolicyMap: Record<string, string> = {
+      EMP001: lpVanPhong.id, EMP002: lpVanPhong.id, EMP003: lpVanPhong.id,
+      EMP004: lpVanPhong.id, EMP005: lpVanPhong.id, EMP006: lpVanPhong.id,
+      EMP007: lpVanPhong.id,
+    };
+    const empPositionMap: Record<string, string> = {
+      EMP001: positions['POS-CTO']!,   EMP002: positions['POS-PM1']!,
+      EMP003: positions['POS-DEV1']!,  EMP004: positions['POS-HRM1']!,
+      EMP005: positions['POS-ACC1']!,  EMP006: positions['POS-SRE1']!,
+      EMP007: positions['POS-DEV1']!,
+    };
+
+    for (const [code, empData] of Object.entries(empMap)) {
+      await prisma.employee.update({
+        where: { id: empData.id },
+        data: {
+          leavePolicyId: empPolicyMap[code],
+          positionId:    empPositionMap[code],
+        },
+      });
+    }
+    console.log('  ✓ LeavePolicy + Position gán cho 7 employees');
+
+    // ── 7. SalaryRecords (lịch sử lương) ─────────────────────────────────────
+    const salaryHistory: Array<{ code: string; salary: number; date: string; note: string }> = [
+      // EMP001 — CTO, join 2023
+      { code: 'EMP001', salary: 45_000_000, date: '2023-01-01', note: 'Mức lương khởi đầu khi gia nhập' },
+      { code: 'EMP001', salary: 50_000_000, date: '2024-01-01', note: 'Tăng lương năm 2024' },
+      { code: 'EMP001', salary: 55_000_000, date: '2025-07-01', note: 'Tăng lương giữa năm 2025' },
+      // EMP002 — PM, join 2023
+      { code: 'EMP002', salary: 35_000_000, date: '2023-01-01', note: 'Mức lương khởi đầu khi gia nhập' },
+      { code: 'EMP002', salary: 38_000_000, date: '2024-01-01', note: 'Tăng lương năm 2024' },
+      { code: 'EMP002', salary: 42_000_000, date: '2025-01-01', note: 'Tăng lương năm 2025' },
+      // EMP003 — Dev, join 2024-06
+      { code: 'EMP003', salary: 20_000_000, date: '2024-06-01', note: 'Mức lương khởi đầu' },
+      { code: 'EMP003', salary: 23_000_000, date: '2025-06-01', note: 'Review 1 năm' },
+      // EMP004 — HR Manager, join 2023
+      { code: 'EMP004', salary: 28_000_000, date: '2023-01-01', note: 'Mức lương khởi đầu' },
+      { code: 'EMP004', salary: 32_000_000, date: '2024-07-01', note: 'Thăng chức Trưởng phòng HR' },
+      // EMP005 — Accountant, join 2024-06
+      { code: 'EMP005', salary: 18_000_000, date: '2024-06-01', note: 'Mức lương khởi đầu' },
+      { code: 'EMP005', salary: 20_000_000, date: '2025-06-01', note: 'Review 1 năm' },
+      // EMP006 — Senior Dev, join 2023
+      { code: 'EMP006', salary: 32_000_000, date: '2023-01-01', note: 'Mức lương khởi đầu' },
+      { code: 'EMP006', salary: 36_000_000, date: '2024-04-01', note: 'Tăng lương theo thị trường' },
+      { code: 'EMP006', salary: 40_000_000, date: '2025-04-01', note: 'Senior promotion' },
+      // EMP007 — Dev, join 2024-06
+      { code: 'EMP007', salary: 16_000_000, date: '2024-06-01', note: 'Mức lương khởi đầu' },
+      { code: 'EMP007', salary: 18_500_000, date: '2025-06-01', note: 'Review 1 năm' },
+    ];
+
+    for (const s of salaryHistory) {
+      const emp = empMap[s.code];
+      if (!emp) continue;
+      await prisma.salaryRecord.create({
+        data: {
+          employeeId:   emp.id,
+          basicSalary:  s.salary,
+          effectiveDate: new Date(s.date),
+          source:       'MANUAL',
+          note:         s.note,
+        },
+      });
+    }
+    console.log(`  ✓ ${salaryHistory.length} SalaryRecords seeded`);
+
+    // ── 8. HrDecisions ───────────────────────────────────────────────────────
+    const adminUser = await prisma.user.findUnique({ where: { email: 'admin@loop.vn' }, select: { id: true } });
+
+    const decisionDefs = [
+      // HIRE decisions (2023)
+      { empCode: 'EMP001', type: 'HIRE',          num: 'QD-2023-001', signed: '2022-12-28', effective: '2023-01-01',
+        content: 'Quyết định tuyển dụng và bổ nhiệm vào vị trí Giám đốc Công nghệ (CTO)',
+        toSalary: 45_000_000, status: 'APPROVED' },
+      { empCode: 'EMP002', type: 'HIRE',          num: 'QD-2023-002', signed: '2022-12-28', effective: '2023-01-01',
+        content: 'Quyết định tuyển dụng vào vị trí Quản lý Dự án',
+        toSalary: 35_000_000, status: 'APPROVED' },
+      { empCode: 'EMP004', type: 'HIRE',          num: 'QD-2023-003', signed: '2022-12-28', effective: '2023-01-01',
+        content: 'Quyết định tuyển dụng vào vị trí Chuyên viên Nhân sự',
+        toSalary: 28_000_000, status: 'APPROVED' },
+      { empCode: 'EMP006', type: 'HIRE',          num: 'QD-2023-004', signed: '2022-12-28', effective: '2023-01-01',
+        content: 'Quyết định tuyển dụng vào vị trí Kỹ sư phần mềm Senior',
+        toSalary: 32_000_000, status: 'APPROVED' },
+      // HIRE decisions (2024 mid-year batch)
+      { empCode: 'EMP003', type: 'HIRE',          num: 'QD-2024-010', signed: '2024-05-28', effective: '2024-06-01',
+        content: 'Quyết định tuyển dụng vào vị trí Lập trình viên',
+        toSalary: 20_000_000, status: 'APPROVED' },
+      { empCode: 'EMP005', type: 'HIRE',          num: 'QD-2024-011', signed: '2024-05-28', effective: '2024-06-01',
+        content: 'Quyết định tuyển dụng vào vị trí Kế toán viên',
+        toSalary: 18_000_000, status: 'APPROVED' },
+      { empCode: 'EMP007', type: 'HIRE',          num: 'QD-2024-012', signed: '2024-05-28', effective: '2024-06-01',
+        content: 'Quyết định tuyển dụng vào vị trí Lập trình viên',
+        toSalary: 16_000_000, status: 'APPROVED' },
+      // PROMOTION
+      { empCode: 'EMP004', type: 'PROMOTION',     num: 'QD-2024-025', signed: '2024-06-28', effective: '2024-07-01',
+        content: 'Quyết định bổ nhiệm Trưởng phòng Nhân sự kiêm phụ trách công tác tuyển dụng và đào tạo',
+        fromSalary: 28_000_000, toSalary: 32_000_000, status: 'APPROVED' },
+      { empCode: 'EMP006', type: 'PROMOTION',     num: 'QD-2025-008', signed: '2025-03-28', effective: '2025-04-01',
+        content: 'Quyết định nâng bậc từ Kỹ sư phần mềm lên Senior Engineer, phụ trách kỹ thuật nhóm Backend',
+        fromSalary: 36_000_000, toSalary: 40_000_000, status: 'APPROVED' },
+      // SALARY_CHANGE
+      { empCode: 'EMP001', type: 'SALARY_CHANGE', num: 'QD-2024-001', signed: '2023-12-28', effective: '2024-01-01',
+        content: 'Điều chỉnh lương năm 2024 theo kết quả đánh giá hiệu suất cuối năm (đạt KPI 95%)',
+        fromSalary: 45_000_000, toSalary: 50_000_000, status: 'APPROVED' },
+      { empCode: 'EMP002', type: 'SALARY_CHANGE', num: 'QD-2025-001', signed: '2024-12-28', effective: '2025-01-01',
+        content: 'Điều chỉnh lương năm 2025',
+        fromSalary: 38_000_000, toSalary: 42_000_000, status: 'APPROVED' },
+      // DRAFT decision (chưa duyệt)
+      { empCode: 'EMP003', type: 'SALARY_CHANGE', num: 'QD-2026-003', signed: null, effective: '2026-06-01',
+        content: 'Đề xuất tăng lương sau 2 năm gắn bó, đạt hiệu suất tốt trong Q1/2026',
+        fromSalary: 23_000_000, toSalary: 26_000_000, status: 'DRAFT' },
+      // REWARD
+      { empCode: 'EMP002', type: 'COMMENDATION',   num: 'QD-2026-001', signed: '2026-01-05', effective: '2026-01-05',
+        content: 'Khen thưởng hoàn thành xuất sắc dự án FPT ERP Q4/2025 — thưởng 2 tháng lương',
+        status: 'APPROVED' },
+    ];
+
+    let decisionCount = 0;
+    const decisionIdMap: Record<string, string> = {};
+    for (const d of decisionDefs) {
+      const emp = empMap[d.empCode];
+      if (!emp) continue;
+      const dec = await prisma.hrDecision.create({
+        data: {
+          decisionNumber: d.num,
+          type:           d.type as any,
+          employeeId:     emp.id,
+          signedDate:     d.signed ? new Date(d.signed) : null,
+          effectiveDate:  new Date(d.effective),
+          content:        d.content,
+          signedBy:       'Ban Giám đốc Loop.vn',
+          status:         d.status as any,
+          fromSalary:     (d as any).fromSalary ?? null,
+          toSalary:       (d as any).toSalary ?? null,
+          createdById:    adminUser?.id ?? null,
+        },
+      });
+      decisionIdMap[d.num] = dec.id;
+      decisionCount++;
+    }
+    console.log(`  ✓ ${decisionCount} HrDecisions seeded`);
+
+    // ── 9. WorkHistory (từ decisions) ─────────────────────────────────────────
+    const workHistoryDefs = [
+      { code: 'EMP001', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — CTO',            decNum: 'QD-2023-001' },
+      { code: 'EMP002', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — PM',             decNum: 'QD-2023-002' },
+      { code: 'EMP004', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — HR Specialist',  decNum: 'QD-2023-003' },
+      { code: 'EMP006', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — Senior Dev',     decNum: 'QD-2023-004' },
+      { code: 'EMP003', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Developer',      decNum: 'QD-2024-010' },
+      { code: 'EMP005', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Accountant',     decNum: 'QD-2024-011' },
+      { code: 'EMP007', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Developer',      decNum: 'QD-2024-012' },
+      { code: 'EMP004', event: 'HR_DECISION', date: '2024-07-01', title: 'Bổ nhiệm Trưởng phòng Nhân sự',    decNum: 'QD-2024-025' },
+      { code: 'EMP006', event: 'HR_DECISION', date: '2025-04-01', title: 'Thăng cấp Senior Engineer',         decNum: 'QD-2025-008' },
+      { code: 'EMP001', event: 'HR_DECISION', date: '2024-01-01', title: 'Điều chỉnh lương 2024',             decNum: 'QD-2024-001' },
+      { code: 'EMP002', event: 'HR_DECISION', date: '2025-01-01', title: 'Điều chỉnh lương 2025',             decNum: 'QD-2025-001' },
+    ];
+
+    for (const wh of workHistoryDefs) {
+      const emp = empMap[wh.code];
+      if (!emp) continue;
+      await prisma.workHistory.create({
+        data: {
+          employeeId:  emp.id,
+          eventType:   wh.event as any,
+          eventDate:   new Date(wh.date),
+          title:       wh.title,
+          hrDecisionId: decisionIdMap[wh.decNum] ?? null,
+        },
+      });
+    }
+    console.log(`  ✓ ${workHistoryDefs.length} WorkHistory events seeded`);
+
+    // ── 10. InsuranceEnrollments + SocialInsuranceBooks ───────────────────────
+    const insuranceDefs = [
+      { code: 'EMP001', bhxhBook: 'VN-2301-0001', salary: 46_800_000, start: '2023-01-01' },
+      { code: 'EMP002', bhxhBook: 'VN-2301-0002', salary: 36_400_000, start: '2023-01-01' },
+      { code: 'EMP004', bhxhBook: 'VN-2301-0004', salary: 29_120_000, start: '2023-01-01' },
+      { code: 'EMP006', bhxhBook: 'VN-2301-0006', salary: 33_280_000, start: '2023-01-01' },
+      { code: 'EMP003', bhxhBook: 'VN-2406-0003', salary: 20_800_000, start: '2024-06-01' },
+      { code: 'EMP005', bhxhBook: 'VN-2406-0005', salary: 18_720_000, start: '2024-06-01' },
+      { code: 'EMP007', bhxhBook: 'VN-2406-0007', salary: 16_640_000, start: '2024-06-01' },
+    ];
+
+    for (const ins of insuranceDefs) {
+      const emp = empMap[ins.code];
+      if (!emp) continue;
+
+      const enrollment = await prisma.insuranceEnrollment.create({
+        data: {
+          employeeId:     emp.id,
+          bhxhBookNumber: ins.bhxhBook,
+          insuranceSalary: ins.salary,
+          startDate:      new Date(ins.start),
+          status:         'ACTIVE',
+        },
+      });
+
+      // SocialInsuranceBook
+      await prisma.socialInsuranceBook.create({
+        data: {
+          employeeId:         emp.id,
+          enrollmentId:       enrollment.id,
+          bookNumber:         ins.bhxhBook,
+          issueDate:          new Date(ins.start),
+          issueAuthority:     'Bảo hiểm xã hội TP. Hà Nội',
+          receivedByEmployee: true,
+          receivedDate:       new Date(ins.start),
+        },
+      });
+
+      // Sự kiện ENROLL ban đầu
+      await prisma.insuranceEvent.create({
+        data: {
+          enrollmentId:   enrollment.id,
+          eventType:      'ENROLL',
+          insuranceSalary: ins.salary,
+          effectiveDate:  new Date(ins.start),
+          reason:         'Tham gia BHXH khi ký HĐLĐ',
+        },
+      });
+    }
+
+    // Salary change events for EMP004 (promoted → insurance salary updated)
+    const enr004 = await prisma.insuranceEnrollment.findFirst({
+      where: { employee: { code: 'EMP004' } },
+    });
+    if (enr004) {
+      await prisma.insuranceEvent.create({
+        data: {
+          enrollmentId:   enr004.id,
+          eventType:      'SALARY_CHANGE',
+          insuranceSalary: 33_280_000,
+          effectiveDate:  new Date('2024-07-01'),
+          reason:         'Điều chỉnh mức đóng BHXH sau khi thăng chức Trưởng phòng',
+          hrDecisionId:   decisionIdMap['QD-2024-025'] ?? null,
+        },
+      });
+    }
+    console.log('  ✓ 7 InsuranceEnrollments + SocialInsuranceBooks + events seeded');
+
+    // ── 11. MonthlyAttendance (Mar–May 2026) ──────────────────────────────────
+    const monthlyAttDefs = [
+      // March 2026 (22 working days)
+      { code: 'EMP001', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 8,  absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP002', year: 2026, month: 3, workDays: 21.5, paidLeave: 0.5, unpaidLeave: 0, otHours: 4,  absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP003', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP004', year: 2026, month: 3, workDays: 21,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP005', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP006', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 16, absent: 0, holiday: 0, status: 'LOCKED' },
+      { code: 'EMP007', year: 2026, month: 3, workDays: 21,   paidLeave: 0,   unpaidLeave: 1, otHours: 0,  absent: 0, holiday: 0, status: 'LOCKED' },
+      // April 2026 (21 working days — 30/4 nghỉ lễ)
+      { code: 'EMP001', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 4,  absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP002', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP003', year: 2026, month: 4, workDays: 20,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP004', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP005', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP006', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 12, absent: 0, holiday: 1, status: 'LOCKED' },
+      { code: 'EMP007', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 1, status: 'LOCKED' },
+      // May 2026 (19 working days đã qua — chưa lock)
+      { code: 'EMP001', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 4,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP002', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP003', year: 2026, month: 5, workDays: 18,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP004', year: 2026, month: 5, workDays: 18.5, paidLeave: 0.5, unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP005', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP006', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 8,  absent: 0, holiday: 2, status: 'OPEN' },
+      { code: 'EMP007', year: 2026, month: 5, workDays: 17,   paidLeave: 0,   unpaidLeave: 2, otHours: 0,  absent: 0, holiday: 2, status: 'OPEN' },
+    ];
+
+    for (const ma of monthlyAttDefs) {
+      const emp = empMap[ma.code];
+      if (!emp) continue;
+      await prisma.monthlyAttendance.upsert({
+        where: { employeeId_year_month: { employeeId: emp.id, year: ma.year, month: ma.month } },
+        update: {},
+        create: {
+          employeeId:     emp.id,
+          year:           ma.year,
+          month:          ma.month,
+          workDays:       ma.workDays,
+          paidLeaveDays:  ma.paidLeave,
+          unpaidLeaveDays: ma.unpaidLeave,
+          otHours:        ma.otHours,
+          absentDays:     ma.absent,
+          holidayDays:    ma.holiday,
+          status:         ma.status as any,
+          lockedAt:       ma.status === 'LOCKED' ? new Date(`2026-0${ma.month + 1}-05`) : null,
+        },
+      });
+    }
+    console.log(`  ✓ ${monthlyAttDefs.length} MonthlyAttendance records seeded (Mar–May 2026)`);
+
+    // ── 12. Một số AttendanceRecord ngày trong tháng 5/2026 ───────────────────
+    const today = new Date('2026-05-29');
+    const checkDates = ['2026-05-26', '2026-05-27', '2026-05-28', '2026-05-29'];
+    let attCount = 0;
+    for (const dateStr of checkDates) {
+      const d = new Date(dateStr);
+      if (d > today) continue;
+      for (const [code, empData] of Object.entries(empMap)) {
+        // EMP007 nghỉ phép không lương 27, 28
+        if (code === 'EMP007' && (dateStr === '2026-05-27' || dateStr === '2026-05-28')) {
+          await prisma.attendanceRecord.upsert({
+            where: { employeeId_date: { employeeId: empData.id, date: d } },
+            update: {},
+            create: {
+              employeeId: empData.id,
+              date:       d,
+              status:     'LEAVE',
+              leaveType:  'Nghỉ không lương',
+              isManual:   true,
+              note:       'Nghỉ phép không lương',
+            },
+          });
+        } else {
+          const checkIn  = new Date(`${dateStr}T08:${15 + attCount % 10}:00.000Z`);
+          const checkOut = new Date(`${dateStr}T17:${30 + attCount % 20}:00.000Z`);
+          const totalHours = 8.5 + (code === 'EMP006' && dateStr === '2026-05-29' ? 2 : 0);
+          await prisma.attendanceRecord.upsert({
+            where: { employeeId_date: { employeeId: empData.id, date: d } },
+            update: {},
+            create: {
+              employeeId: empData.id,
+              date:       d,
+              checkIn,
+              checkOut,
+              totalHours,
+              status:     'PRESENT',
+              isManual:   false,
+            },
+          });
+        }
+        attCount++;
+      }
+    }
+    console.log(`  ✓ ${attCount} AttendanceRecord ngày cuối tháng 5/2026 seeded`);
+
+    console.log('✅ HR v4.0 demo data hoàn tất!');
+  } catch (err) {
+    console.error('  ✗ seedHrV4Demo error:', err);
+    throw err;
+  }
+}
+
+async function seedHrV4Missing() {
+  try {
+    // Kiểm tra từng phần còn thiếu
+    const whCount  = await prisma.workHistory.count();
+    const insCount = await prisma.insuranceEnrollment.count();
+    const maCount  = await prisma.monthlyAttendance.count();
+
+    if (whCount > 0 && insCount > 0 && maCount > 0) {
+      console.log(`  ⏭  WorkHistory/Insurance/Attendance đã đủ, bỏ qua`);
+      return;
+    }
+
+    const empList = await prisma.employee.findMany({
+      where: { code: { in: ['EMP001','EMP002','EMP003','EMP004','EMP005','EMP006','EMP007'] } },
+      select: { id: true, code: true },
+    });
+    const empMap: Record<string, string> = {};
+    for (const e of empList) empMap[e.code] = e.id;
+
+    // Lấy decision IDs từ DB
+    const decisions = await prisma.hrDecision.findMany({
+      where: { decisionNumber: { not: null } },
+      select: { id: true, decisionNumber: true },
+    });
+    const decMap: Record<string, string> = {};
+    for (const d of decisions) {
+      if (d.decisionNumber) decMap[d.decisionNumber] = d.id;
+    }
+
+    // ── WorkHistory ───────────────────────────────────────────────────────────
+    if (whCount === 0) {
+      const workHistoryDefs = [
+        { code: 'EMP001', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — CTO',           decNum: 'QD-2023-001' },
+        { code: 'EMP002', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — PM',            decNum: 'QD-2023-002' },
+        { code: 'EMP004', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — HR Specialist', decNum: 'QD-2023-003' },
+        { code: 'EMP006', event: 'HR_DECISION', date: '2023-01-01', title: 'Gia nhập công ty — Senior Dev',    decNum: 'QD-2023-004' },
+        { code: 'EMP003', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Developer',     decNum: 'QD-2024-010' },
+        { code: 'EMP005', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Accountant',    decNum: 'QD-2024-011' },
+        { code: 'EMP007', event: 'HR_DECISION', date: '2024-06-01', title: 'Gia nhập công ty — Developer',     decNum: 'QD-2024-012' },
+        { code: 'EMP004', event: 'HR_DECISION', date: '2024-07-01', title: 'Bổ nhiệm Trưởng phòng Nhân sự',   decNum: 'QD-2024-025' },
+        { code: 'EMP006', event: 'HR_DECISION', date: '2025-04-01', title: 'Thăng cấp Senior Engineer',        decNum: 'QD-2025-008' },
+        { code: 'EMP001', event: 'HR_DECISION', date: '2024-01-01', title: 'Điều chỉnh lương 2024',           decNum: 'QD-2024-001' },
+        { code: 'EMP002', event: 'HR_DECISION', date: '2025-01-01', title: 'Điều chỉnh lương 2025',           decNum: 'QD-2025-001' },
+      ];
+      for (const wh of workHistoryDefs) {
+        const empId = empMap[wh.code];
+        if (!empId) continue;
+        await prisma.workHistory.create({
+          data: {
+            employeeId:   empId,
+            eventType:    wh.event as any,
+            eventDate:    new Date(wh.date),
+            title:        wh.title,
+            hrDecisionId: decMap[wh.decNum] ?? null,
+          },
+        });
+      }
+      console.log(`  ✓ ${workHistoryDefs.length} WorkHistory events seeded`);
+    }
+
+    // ── InsuranceEnrollments + SocialInsuranceBooks + InsuranceEvents ─────────
+    if (insCount === 0) {
+      const insuranceDefs = [
+        { code: 'EMP001', bhxhBook: 'VN-2301-0001', salary: 46_800_000, start: '2023-01-01' },
+        { code: 'EMP002', bhxhBook: 'VN-2301-0002', salary: 36_400_000, start: '2023-01-01' },
+        { code: 'EMP004', bhxhBook: 'VN-2301-0004', salary: 29_120_000, start: '2023-01-01' },
+        { code: 'EMP006', bhxhBook: 'VN-2301-0006', salary: 33_280_000, start: '2023-01-01' },
+        { code: 'EMP003', bhxhBook: 'VN-2406-0003', salary: 20_800_000, start: '2024-06-01' },
+        { code: 'EMP005', bhxhBook: 'VN-2406-0005', salary: 18_720_000, start: '2024-06-01' },
+        { code: 'EMP007', bhxhBook: 'VN-2406-0007', salary: 16_640_000, start: '2024-06-01' },
+      ];
+
+      for (const ins of insuranceDefs) {
+        const empId = empMap[ins.code];
+        if (!empId) continue;
+        const enrollment = await prisma.insuranceEnrollment.create({
+          data: {
+            employeeId:      empId,
+            bhxhBookNumber:  ins.bhxhBook,
+            insuranceSalary: ins.salary,
+            startDate:       new Date(ins.start),
+            status:          'ACTIVE',
+          },
+        });
+        await prisma.socialInsuranceBook.create({
+          data: {
+            employeeId:         empId,
+            enrollmentId:       enrollment.id,
+            bookNumber:         ins.bhxhBook,
+            issueDate:          new Date(ins.start),
+            issueAuthority:     'Bảo hiểm xã hội TP. Hà Nội',
+            receivedByEmployee: true,
+            receivedDate:       new Date(ins.start),
+          },
+        });
+        await prisma.insuranceEvent.create({
+          data: {
+            enrollmentId:    enrollment.id,
+            eventType:       'ENROLL',
+            insuranceSalary: ins.salary,
+            effectiveDate:   new Date(ins.start),
+            reason:          'Tham gia BHXH khi ký HĐLĐ',
+          },
+        });
+      }
+
+      // Salary change event cho EMP004 sau thăng chức
+      const enr004 = await prisma.insuranceEnrollment.findFirst({
+        where: { employee: { code: 'EMP004' } },
+      });
+      if (enr004) {
+        await prisma.insuranceEvent.create({
+          data: {
+            enrollmentId:    enr004.id,
+            eventType:       'SALARY_CHANGE',
+            insuranceSalary: 33_280_000,
+            effectiveDate:   new Date('2024-07-01'),
+            reason:          'Điều chỉnh mức đóng BHXH sau khi thăng chức Trưởng phòng',
+            hrDecisionId:    decMap['QD-2024-025'] ?? null,
+          },
+        });
+      }
+      console.log('  ✓ 7 InsuranceEnrollments + SocialInsuranceBooks + events seeded');
+    }
+
+    // ── MonthlyAttendance (Mar–May 2026) ──────────────────────────────────────
+    if (maCount === 0) {
+      const monthlyAttDefs = [
+        { code: 'EMP001', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 8,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP002', year: 2026, month: 3, workDays: 21.5, paidLeave: 0.5, unpaidLeave: 0, otHours: 4,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP003', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP004', year: 2026, month: 3, workDays: 21,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP005', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP006', year: 2026, month: 3, workDays: 22,   paidLeave: 0,   unpaidLeave: 0, otHours: 16, holiday: 0, status: 'LOCKED' },
+        { code: 'EMP007', year: 2026, month: 3, workDays: 21,   paidLeave: 0,   unpaidLeave: 1, otHours: 0,  holiday: 0, status: 'LOCKED' },
+        { code: 'EMP001', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 4,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP002', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP003', year: 2026, month: 4, workDays: 20,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP004', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP005', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP006', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 12, holiday: 1, status: 'LOCKED' },
+        { code: 'EMP007', year: 2026, month: 4, workDays: 21,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 1, status: 'LOCKED' },
+        { code: 'EMP001', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 4,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP002', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP003', year: 2026, month: 5, workDays: 18,   paidLeave: 1,   unpaidLeave: 0, otHours: 0,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP004', year: 2026, month: 5, workDays: 18.5, paidLeave: 0.5, unpaidLeave: 0, otHours: 0,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP005', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 0,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP006', year: 2026, month: 5, workDays: 19,   paidLeave: 0,   unpaidLeave: 0, otHours: 8,  holiday: 2, status: 'OPEN' },
+        { code: 'EMP007', year: 2026, month: 5, workDays: 17,   paidLeave: 0,   unpaidLeave: 2, otHours: 0,  holiday: 2, status: 'OPEN' },
+      ];
+
+      for (const ma of monthlyAttDefs) {
+        const empId = empMap[ma.code];
+        if (!empId) continue;
+        await prisma.monthlyAttendance.upsert({
+          where: { employeeId_year_month: { employeeId: empId, year: ma.year, month: ma.month } },
+          update: {},
+          create: {
+            employeeId:      empId,
+            year:            ma.year,
+            month:           ma.month,
+            workDays:        ma.workDays,
+            paidLeaveDays:   ma.paidLeave,
+            unpaidLeaveDays: ma.unpaidLeave,
+            otHours:         ma.otHours,
+            absentDays:      0,
+            holidayDays:     ma.holiday,
+            status:          ma.status as any,
+            lockedAt:        ma.status === 'LOCKED' ? new Date(`2026-0${ma.month + 1}-05`) : null,
+          },
+        });
+      }
+      console.log(`  ✓ ${monthlyAttDefs.length} MonthlyAttendance records seeded (Mar–May 2026)`);
+
+      // Một số AttendanceRecord ngày cuối tháng 5/2026
+      const checkDates = ['2026-05-26', '2026-05-27', '2026-05-28', '2026-05-29'];
+      let attCount = 0;
+      for (const dateStr of checkDates) {
+        const d = new Date(dateStr);
+        for (const [code, empId] of Object.entries(empMap)) {
+          if (code === 'EMP007' && (dateStr === '2026-05-27' || dateStr === '2026-05-28')) {
+            await prisma.attendanceRecord.upsert({
+              where: { employeeId_date: { employeeId: empId, date: d } },
+              update: {},
+              create: {
+                employeeId: empId,
+                date:       d,
+                status:     'LEAVE',
+                leaveType:  'Nghỉ không lương',
+                isManual:   true,
+                note:       'Nghỉ phép không lương',
+              },
+            });
+          } else {
+            const checkIn  = new Date(`${dateStr}T01:15:00.000Z`);
+            const checkOut = new Date(`${dateStr}T10:30:00.000Z`);
+            const totalHours = code === 'EMP006' && dateStr === '2026-05-29' ? 10.5 : 8.25;
+            await prisma.attendanceRecord.upsert({
+              where: { employeeId_date: { employeeId: empId, date: d } },
+              update: {},
+              create: {
+                employeeId: empId,
+                date:       d,
+                checkIn,
+                checkOut,
+                totalHours,
+                status:     'PRESENT',
+                isManual:   false,
+              },
+            });
+          }
+          attCount++;
+        }
+      }
+      console.log(`  ✓ ${attCount} AttendanceRecords seeded (26–29 May 2026)`);
+    }
+
+  } catch (err) {
+    console.error('  ✗ seedHrV4Missing error:', err);
+  }
+}
+
+async function seedOvertimeRequestsDemo() {
+  const existing = await prisma.overtimeRequest.count();
+  if (existing >= 5) {
+    console.log(`  ⏭  ${existing} OT requests đã tồn tại, bỏ qua`);
+    return;
+  }
+
+  const employees = await prisma.employee.findMany({ take: 8, orderBy: { createdAt: 'asc' } });
+  if (employees.length === 0) {
+    console.log('  ⏭  Không có nhân viên, bỏ qua OT seed');
+    return;
+  }
+
+  const otData = [
+    { idx: 0, date: new Date('2026-05-05'), fromTime: '18:00', toTime: '21:00', hours: 3, reason: 'Hoàn thiện báo cáo quý 1', status: 'APPROVED' as const },
+    { idx: 1, date: new Date('2026-05-08'), fromTime: '18:00', toTime: '20:00', hours: 2, reason: 'Triển khai tính năng mới theo yêu cầu khách hàng', status: 'APPROVED' as const },
+    { idx: 2, date: new Date('2026-05-12'), fromTime: '18:30', toTime: '21:30', hours: 3, reason: 'Sửa lỗi khẩn cấp production', status: 'APPROVED' as const },
+    { idx: 0, date: new Date('2026-05-15'), fromTime: '18:00', toTime: '22:00', hours: 4, reason: 'Chuẩn bị demo sản phẩm cho đối tác', status: 'PENDING' as const },
+    { idx: 3, date: new Date('2026-05-16'), fromTime: '18:00', toTime: '20:00', hours: 2, reason: 'Họp online với đối tác nước ngoài (múi giờ lệch)', status: 'PENDING' as const },
+    { idx: 1, date: new Date('2026-05-19'), fromTime: '18:00', toTime: '21:00', hours: 3, reason: 'Hoàn tất tài liệu kỹ thuật cho sprint', status: 'REJECTED' as const },
+    { idx: 2, date: new Date('2026-05-22'), fromTime: '18:00', toTime: '20:00', hours: 2, reason: 'Kiểm thử hệ thống trước khi go-live', status: 'PENDING' as const },
+    { idx: 4, date: new Date('2026-05-23'), fromTime: '18:00', toTime: '21:00', hours: 3, reason: 'Backup và migration dữ liệu khách hàng', status: 'APPROVED' as const },
+    { idx: 3, date: new Date('2026-05-26'), fromTime: '18:00', toTime: '22:00', hours: 4, reason: 'Sprint review & retrospective + planning tháng 6', status: 'PENDING' as const },
+    { idx: 5, date: new Date('2026-05-27'), fromTime: '18:00', toTime: '20:00', hours: 2, reason: 'Cập nhật dashboard analytics theo yêu cầu BGĐ', status: 'PENDING' as const },
+  ];
+
+  let count = 0;
+  for (const ot of otData) {
+    const emp = employees[ot.idx % employees.length];
+    try {
+      await prisma.overtimeRequest.upsert({
+        where: { employeeId_date: { employeeId: emp.id, date: ot.date } },
+        update: {},
+        create: {
+          employeeId: emp.id,
+          date: ot.date,
+          fromTime: ot.fromTime,
+          toTime: ot.toTime,
+          hours: ot.hours,
+          reason: ot.reason,
+          status: ot.status,
+          ...(ot.status === 'REJECTED' ? { rejectedReason: 'Không đủ cơ sở phê duyệt, vui lòng liên hệ quản lý trực tiếp' } : {}),
+        },
+      });
+      count++;
+    } catch { /* skip conflict */ }
+  }
+  console.log(`  ✓ ${count} OT requests seeded`);
+}
+
+async function seedWorkShifts() {
+  const count = await prisma.workShift.count();
+  if (count >= 3) { console.log('  ⏭  WorkShifts đã tồn tại'); return; }
+
+  const shifts = [
+    { name: 'Ca hành chính', code: 'HC', type: 'HANH_CHINH' as const, startTime: '08:00', endTime: '17:00', breakMinutes: 60, description: 'Ca làm việc hành chính tiêu chuẩn' },
+    { name: 'Ca sáng', code: 'CS', type: 'CA_SANG' as const, startTime: '06:00', endTime: '14:00', breakMinutes: 30, description: 'Ca sáng sản xuất' },
+    { name: 'Ca chiều', code: 'CC', type: 'CA_CHIEU' as const, startTime: '14:00', endTime: '22:00', breakMinutes: 30, description: 'Ca chiều sản xuất' },
+    { name: 'Ca đêm', code: 'CD', type: 'CA_DEM' as const, startTime: '22:00', endTime: '06:00', breakMinutes: 30, description: 'Ca đêm sản xuất' },
+    { name: 'Linh hoạt', code: 'LH', type: 'LINH_HOAT' as const, startTime: '09:00', endTime: '18:00', breakMinutes: 60, description: 'Linh hoạt thời gian (core hours 10h-16h)' },
+  ];
+
+  for (const s of shifts) {
+    await prisma.workShift.upsert({
+      where: { code: s.code },
+      update: {},
+      create: s,
+    });
+  }
+
+  // Gán ca HC mặc định cho 5 nhân viên đầu tiên
+  const hcShift = await prisma.workShift.findFirst({ where: { code: 'HC' } });
+  const employees = await prisma.employee.findMany({ take: 5, orderBy: { createdAt: 'asc' } });
+  if (hcShift) {
+    for (const emp of employees) {
+      const existing = await prisma.shiftAssignment.findFirst({
+        where: { employeeId: emp.id, effectiveTo: null },
+      });
+      if (!existing) {
+        await prisma.shiftAssignment.create({
+          data: {
+            employeeId: emp.id,
+            shiftId: hcShift.id,
+            effectiveFrom: new Date('2026-01-01'),
+            note: 'Ca mặc định',
+          },
+        });
+      }
+    }
+  }
+  console.log(`  ✓ ${shifts.length} WorkShifts seeded`);
+}
+
+async function seedWorkSchedules() {
+  const count = await prisma.workSchedule.count();
+  if (count >= 3) { console.log('  ⏭  WorkSchedules đã tồn tại'); return; }
+
+  const employees = await prisma.employee.findMany({ take: 6, orderBy: { createdAt: 'asc' } });
+  if (employees.length < 3) { console.log('  ⚠  Không đủ nhân viên để seed WorkSchedules'); return; }
+
+  const shiftHC = await prisma.workShift.findFirst({ where: { code: 'HC' } });
+  const shiftCS = await prisma.workShift.findFirst({ where: { code: 'CS' } });
+  const shiftCC = await prisma.workShift.findFirst({ where: { code: 'CC' } });
+  const shiftCD = await prisma.workShift.findFirst({ where: { code: 'CD' } });
+
+  if (!shiftHC || !shiftCS || !shiftCC || !shiftCD) {
+    console.log('  ⚠  Chưa có WorkShifts — chạy seedWorkShifts trước'); return;
+  }
+
+  // Template 1: Hành chính (dành cho văn phòng)
+  const tpl1 = await prisma.workSchedule.create({
+    data: {
+      name: 'Lịch hành chính chuẩn',
+      description: 'Ca hành chính 8h-17h, áp dụng cho nhân viên văn phòng',
+      repeatType: 'MONTHLY',
+      isActive: true,
+      phases: { create: [{ shiftId: shiftHC.id, phaseOrder: 0 }] },
+    },
+  });
+
+  // Template 2: Xoay ca sáng-chiều theo tuần (nhà máy)
+  const tpl2 = await prisma.workSchedule.create({
+    data: {
+      name: 'Xoay ca sáng-chiều theo tuần',
+      description: 'Tuần 1 ca sáng, tuần 2 ca chiều, lặp lại',
+      repeatType: 'WEEKLY',
+      isActive: true,
+      phases: {
+        create: [
+          { shiftId: shiftCS.id, phaseOrder: 0 },
+          { shiftId: shiftCC.id, phaseOrder: 1 },
+        ],
+      },
+    },
+  });
+
+  // Template 3: Xoay 3 ca theo ngày (sản xuất liên tục)
+  const tpl3 = await prisma.workSchedule.create({
+    data: {
+      name: 'Xoay 3 ca liên tục (ngày)',
+      description: 'Ca sáng → Ca chiều → Ca đêm, xoay mỗi ngày',
+      repeatType: 'DAILY',
+      isActive: true,
+      phases: {
+        create: [
+          { shiftId: shiftCS.id, phaseOrder: 0 },
+          { shiftId: shiftCC.id, phaseOrder: 1 },
+          { shiftId: shiftCD.id, phaseOrder: 2 },
+        ],
+      },
+    },
+  });
+
+  // Gán nhân viên vào các lịch
+  const effectiveFrom = new Date('2026-01-01');
+
+  // Template 1 (hành chính): nhân viên 1-2
+  await prisma.workScheduleEnrollment.createMany({
+    data: [
+      { scheduleId: tpl1.id, employeeId: employees[0].id, effectiveFrom },
+      { scheduleId: tpl1.id, employeeId: employees[1].id, effectiveFrom },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Template 2 (xoay tuần): nhân viên 3-4
+  await prisma.workScheduleEnrollment.createMany({
+    data: [
+      { scheduleId: tpl2.id, employeeId: employees[2].id, effectiveFrom },
+      { scheduleId: tpl2.id, employeeId: employees[3].id, effectiveFrom },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Template 3 (xoay ngày): nhân viên 5-6
+  await prisma.workScheduleEnrollment.createMany({
+    data: [
+      { scheduleId: tpl3.id, employeeId: employees[4].id, effectiveFrom },
+      ...(employees[5] ? [{ scheduleId: tpl3.id, employeeId: employees[5].id, effectiveFrom }] : []),
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 3 WorkSchedule templates + enrollments seeded');
+}
+
+// ─── FEED POSTS ────────────────────────────────────────────────────────────────
+async function seedFeedPosts() {
+  const count = await prisma.feedPost.count();
+  if (count > 0) {
+    console.log('  ✓ FeedPost đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 5 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedFeedPosts');
+    return;
+  }
+
+  const u = (i: number) => users[i % users.length].id;
+
+  const posts = await prisma.$transaction([
+    // ANNOUNCEMENT 1 — pinned
+    prisma.feedPost.create({
+      data: {
+        type: 'ANNOUNCEMENT',
+        authorId: u(0),
+        title: 'Cập nhật chính sách làm việc từ xa Q3/2026',
+        content:
+          'Kể từ ngày 01/07/2026, công ty áp dụng chính sách Hybrid Work: tối đa 2 ngày/tuần làm việc tại nhà. Nhân viên cần đăng ký lịch remote trước 17:00 thứ Sáu hàng tuần qua hệ thống Loop. Vui lòng đọc kỹ tài liệu đính kèm và liên hệ HR nếu có thắc mắc.',
+        isPinned: true,
+      },
+    }),
+    // ANNOUNCEMENT 2
+    prisma.feedPost.create({
+      data: {
+        type: 'ANNOUNCEMENT',
+        authorId: u(0),
+        title: 'Lịch nghỉ lễ Quốc khánh 2/9/2026',
+        content:
+          'Thông báo lịch nghỉ lễ Quốc khánh 2/9: Công ty nghỉ từ thứ Tư 02/09 đến hết thứ Sáu 04/09/2026 (3 ngày). Nhân viên có lịch làm bù vui lòng đăng ký với quản lý trực tiếp trước ngày 28/08. Chúc toàn thể CBNV kỳ nghỉ vui vẻ!',
+        isPinned: false,
+      },
+    }),
+    // KUDOS 1
+    prisma.feedPost.create({
+      data: {
+        type: 'KUDOS',
+        authorId: u(1),
+        title: 'Kudos cho team Backend! 🎉',
+        content:
+          'Xin chúc mừng và cảm ơn toàn bộ team Backend đã hoàn thành migration hệ thống lên PostgreSQL 16 trước deadline 3 ngày! Đặc biệt cảm ơn anh Minh và chị Lan đã làm thêm cuối tuần để đảm bảo hệ thống ổn định. Các bạn thật tuyệt vời! 💪',
+        isPinned: false,
+      },
+    }),
+    // KUDOS 2
+    prisma.feedPost.create({
+      data: {
+        type: 'KUDOS',
+        authorId: u(2),
+        title: 'Cảm ơn team Kinh doanh tháng 5!',
+        content:
+          'Team Kinh doanh đã vượt chỉ tiêu doanh thu tháng 5 lên đến 127%! Đặc biệt chào mừng deal mới với đối tác FPT và Viettel. Sự nỗ lực của các bạn là nguồn cảm hứng cho toàn công ty. Xứng đáng được nghỉ một ngày bù! 🏆',
+        isPinned: false,
+      },
+    }),
+    // BIRTHDAY 1
+    prisma.feedPost.create({
+      data: {
+        type: 'BIRTHDAY',
+        authorId: u(0),
+        title: 'Chúc mừng sinh nhật Nguyễn Thị Hương! 🎂',
+        content:
+          'Hôm nay là sinh nhật của chị Nguyễn Thị Hương — Trưởng phòng Nhân sự. Chúc chị một ngày thật vui, tràn đầy niềm vui và sức khỏe dồi dào! Cả công ty gửi lời chúc mừng tốt đẹp nhất đến chị! 🥳🎉',
+        isPinned: false,
+      },
+    }),
+    // BIRTHDAY 2
+    prisma.feedPost.create({
+      data: {
+        type: 'BIRTHDAY',
+        authorId: u(0),
+        title: 'Happy Birthday Trần Văn Đức! 🎂',
+        content:
+          'Chúc mừng sinh nhật anh Trần Văn Đức — Senior Developer của team Backend! Cảm ơn anh đã đóng góp rất nhiều cho hệ thống trong suốt thời gian qua. Chúc anh sinh nhật vui vẻ, luôn mạnh khỏe và tiếp tục phát huy! 🚀',
+        isPinned: false,
+      },
+    }),
+    // DOCUMENT 1
+    prisma.feedPost.create({
+      data: {
+        type: 'DOCUMENT',
+        authorId: u(3),
+        title: 'Tài liệu: Quy trình onboarding nhân viên mới 2026',
+        content:
+          'Phòng HR vừa cập nhật tài liệu hướng dẫn onboarding nhân viên mới cho năm 2026. Tài liệu bao gồm: checklist ngày đầu tiên, danh sách tài khoản cần tạo, quy trình bàn giao thiết bị, và lịch đào tạo hội nhập 2 tuần đầu. Mọi quản lý vui lòng đọc và áp dụng cho nhân viên mới.',
+        isPinned: false,
+      },
+    }),
+    // DOCUMENT 2
+    prisma.feedPost.create({
+      data: {
+        type: 'DOCUMENT',
+        authorId: u(4),
+        title: 'Hướng dẫn sử dụng hệ thống Loop ERP v3.0',
+        content:
+          'Loop ERP v3.0 đã được ra mắt với nhiều tính năng mới: quản lý xe cộ, đặt phòng họp, lịch sự kiện công ty và bảng tin nội bộ. Tài liệu hướng dẫn sử dụng đã được đăng tải trên cổng thông tin nội bộ. Mọi thắc mắc vui lòng liên hệ team IT qua email it-support@loop.vn.',
+        isPinned: false,
+      },
+    }),
+  ]);
+
+  // Thêm reactions cho một số post
+  await prisma.feedReaction.createMany({
+    data: [
+      { postId: posts[0].id, userId: u(1), emoji: '👍' },
+      { postId: posts[0].id, userId: u(2), emoji: '✅' },
+      { postId: posts[0].id, userId: u(3), emoji: '👍' },
+      { postId: posts[2].id, userId: u(0), emoji: '👍' },
+      { postId: posts[2].id, userId: u(3), emoji: '👍' },
+      { postId: posts[3].id, userId: u(1), emoji: '✅' },
+      { postId: posts[3].id, userId: u(4), emoji: '👀' },
+      { postId: posts[6].id, userId: u(2), emoji: '👀' },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 8 FeedPost + reactions seeded');
+}
+
+// ─── MEETING ROOMS & BOOKINGS ───────────────────────────────────────────────
+async function seedMeetingRooms() {
+  const count = await prisma.meetingRoom.count();
+  if (count > 0) {
+    console.log('  ✓ MeetingRoom đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 5 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedMeetingRooms');
+    return;
+  }
+
+  const u = (i: number) => users[i % users.length].id;
+
+  const rooms = await prisma.$transaction([
+    prisma.meetingRoom.create({
+      data: {
+        name: 'Phòng họp A101',
+        floor: '1',
+        capacity: 8,
+        amenities: ['Máy chiếu', 'Bảng trắng', 'Điều hòa'],
+        status: 'ACTIVE',
+      },
+    }),
+    prisma.meetingRoom.create({
+      data: {
+        name: 'Phòng họp B201',
+        floor: '2',
+        capacity: 12,
+        amenities: ['Màn hình lớn', 'Video call', 'Điều hòa'],
+        status: 'ACTIVE',
+      },
+    }),
+    prisma.meetingRoom.create({
+      data: {
+        name: 'Phòng hội thảo C301',
+        floor: '3',
+        capacity: 30,
+        amenities: ['Sân khấu', 'Hệ thống âm thanh', 'Điều hòa'],
+        status: 'ACTIVE',
+      },
+    }),
+    prisma.meetingRoom.create({
+      data: {
+        name: 'Phòng họp nhỏ D102',
+        floor: '1',
+        capacity: 4,
+        amenities: ['TV', 'Bảng trắng'],
+        status: 'ACTIVE',
+      },
+    }),
+    prisma.meetingRoom.create({
+      data: {
+        name: 'Phòng đào tạo E401',
+        floor: '4',
+        capacity: 20,
+        amenities: ['Máy chiếu', 'Laptop', 'Wifi riêng'],
+        status: 'MAINTENANCE',
+      },
+    }),
+  ]);
+
+  // Bookings: 3 hôm nay (2026-05-29), 3 ngày mai + tuần này
+  const today = new Date('2026-05-29');
+  const tomorrow = new Date('2026-05-30');
+  const day3 = new Date('2026-05-31');
+
+  const mkTime = (base: Date, h: number, m = 0) => {
+    const d = new Date(base);
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  await prisma.roomBooking.createMany({
+    data: [
+      // Hôm nay
+      {
+        roomId: rooms[0].id,
+        bookedById: u(0),
+        title: 'Họp weekly team Product',
+        startTime: mkTime(today, 9, 0),
+        endTime: mkTime(today, 10, 0),
+        attendees: ['pm@loop.vn', 'dev@loop.vn'],
+        status: 'CONFIRMED',
+        note: 'Review sprint backlog tuần này',
+      },
+      {
+        roomId: rooms[1].id,
+        bookedById: u(1),
+        title: 'Demo sản phẩm cho khách hàng FPT',
+        startTime: mkTime(today, 14, 0),
+        endTime: mkTime(today, 15, 30),
+        attendees: ['sales@loop.vn', 'cto@loop.vn'],
+        status: 'CONFIRMED',
+        note: 'Chuẩn bị slide và demo môi trường staging',
+      },
+      {
+        roomId: rooms[3].id,
+        bookedById: u(2),
+        title: 'Phỏng vấn ứng viên Senior Dev',
+        startTime: mkTime(today, 16, 0),
+        endTime: mkTime(today, 17, 0),
+        attendees: ['hr@loop.vn', 'tech-lead@loop.vn'],
+        status: 'CONFIRMED',
+      },
+      // Ngày mai
+      {
+        roomId: rooms[0].id,
+        bookedById: u(3),
+        title: 'Họp review OKR tháng 6',
+        startTime: mkTime(tomorrow, 9, 30),
+        endTime: mkTime(tomorrow, 11, 0),
+        attendees: ['ceo@loop.vn', 'coo@loop.vn'],
+        status: 'CONFIRMED',
+        note: 'Chuẩn bị báo cáo kết quả tháng 5',
+      },
+      {
+        roomId: rooms[2].id,
+        bookedById: u(4),
+        title: 'All-hands meeting tháng 5/2026',
+        startTime: mkTime(tomorrow, 14, 0),
+        endTime: mkTime(tomorrow, 16, 0),
+        attendees: ['all-staff@loop.vn'],
+        status: 'CONFIRMED',
+        note: 'Toàn thể nhân viên tham dự',
+      },
+      {
+        roomId: rooms[1].id,
+        bookedById: u(0),
+        title: 'Đào tạo kỹ năng thuyết trình',
+        startTime: mkTime(day3, 9, 0),
+        endTime: mkTime(day3, 12, 0),
+        attendees: ['hr@loop.vn'],
+        status: 'CONFIRMED',
+        note: 'Trainer: Nguyễn Thanh Hùng từ VTC Academy',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 5 MeetingRoom + 6 RoomBooking seeded');
+}
+
+// ─── VEHICLES & REQUESTS ────────────────────────────────────────────────────
+async function seedVehicles() {
+  const count = await prisma.vehicle.count();
+  if (count > 0) {
+    console.log('  ✓ Vehicle đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 5 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedVehicles');
+    return;
+  }
+
+  const u = (i: number) => users[i % users.length].id;
+
+  const vehicles = await prisma.$transaction([
+    prisma.vehicle.create({
+      data: {
+        name: 'Toyota Innova',
+        plateNumber: '51A-12345',
+        type: 'MPV',
+        seats: 7,
+        status: 'AVAILABLE',
+      },
+    }),
+    prisma.vehicle.create({
+      data: {
+        name: 'Ford Transit',
+        plateNumber: '51B-67890',
+        type: 'Van',
+        seats: 16,
+        status: 'AVAILABLE',
+      },
+    }),
+    prisma.vehicle.create({
+      data: {
+        name: 'Toyota Camry',
+        plateNumber: '51C-11111',
+        type: 'Sedan',
+        seats: 4,
+        status: 'IN_USE',
+        driverId: u(0),
+      },
+    }),
+    prisma.vehicle.create({
+      data: {
+        name: 'Honda City',
+        plateNumber: '51D-22222',
+        type: 'Sedan',
+        seats: 4,
+        status: 'AVAILABLE',
+      },
+    }),
+    prisma.vehicle.create({
+      data: {
+        name: 'Hyundai County',
+        plateNumber: '51E-33333',
+        type: 'Bus',
+        seats: 29,
+        status: 'MAINTENANCE',
+      },
+    }),
+  ]);
+
+  const today = new Date('2026-05-29');
+  const yesterday = new Date('2026-05-28');
+  const tomorrow = new Date('2026-05-30');
+  const nextWeek1 = new Date('2026-06-02');
+  const nextWeek2 = new Date('2026-06-03');
+
+  const mkTime = (base: Date, h: number, m = 0) => {
+    const d = new Date(base);
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  await prisma.vehicleRequest.createMany({
+    data: [
+      // PENDING — ngày mai
+      {
+        vehicleId: vehicles[0].id,
+        requestedById: u(1),
+        purpose: 'Đưa đón khách hàng FPT từ sân bay Tân Sơn Nhất về văn phòng',
+        destination: 'Sân bay Tân Sơn Nhất → 285 Cách Mạng Tháng 8, Q.10, TP.HCM',
+        startTime: mkTime(tomorrow, 8, 0),
+        endTime: mkTime(tomorrow, 12, 0),
+        passengerCount: 4,
+        status: 'PENDING',
+        note: 'Khách hàng VIP, cần xe sạch và tài xế lịch sự',
+      },
+      {
+        vehicleId: vehicles[1].id,
+        requestedById: u(2),
+        purpose: 'Vận chuyển thiết bị đến chi nhánh Hà Nội',
+        destination: 'Kho Q.Bình Chánh → 12 Láng Hạ, Ba Đình, Hà Nội',
+        startTime: mkTime(tomorrow, 6, 0),
+        endTime: mkTime(tomorrow, 20, 0),
+        passengerCount: 3,
+        status: 'PENDING',
+      },
+      // APPROVED — tuần sau
+      {
+        vehicleId: vehicles[3].id,
+        requestedById: u(3),
+        approvedById: u(0),
+        purpose: 'Họp đối tác Viettel tại Hà Nội',
+        destination: '1 Giang Văn Minh, Ba Đình, Hà Nội (Tập đoàn Viettel)',
+        startTime: mkTime(nextWeek1, 7, 0),
+        endTime: mkTime(nextWeek1, 18, 0),
+        passengerCount: 2,
+        status: 'APPROVED',
+        note: 'Mang theo hợp đồng ký kết',
+      },
+      {
+        vehicleId: vehicles[0].id,
+        requestedById: u(4),
+        approvedById: u(0),
+        purpose: 'Đưa ban lãnh đạo đi tham quan nhà máy đối tác',
+        destination: 'KCN Biên Hòa 2, Đồng Nai',
+        startTime: mkTime(nextWeek2, 8, 0),
+        endTime: mkTime(nextWeek2, 17, 0),
+        passengerCount: 6,
+        status: 'APPROVED',
+      },
+      // IN_PROGRESS — hôm nay
+      {
+        vehicleId: vehicles[2].id,
+        requestedById: u(1),
+        approvedById: u(0),
+        purpose: 'Đưa đón Ban Giám đốc họp với nhà đầu tư',
+        destination: 'Sofitel Saigon Plaza, 17 Lê Duẩn, Q.1, TP.HCM',
+        startTime: mkTime(today, 9, 0),
+        endTime: mkTime(today, 17, 0),
+        passengerCount: 2,
+        status: 'IN_PROGRESS',
+        note: 'Tài xế chờ tại bãi đậu xe khách sạn',
+      },
+      {
+        vehicleId: vehicles[1].id,
+        requestedById: u(2),
+        approvedById: u(0),
+        purpose: 'Đưa đón nhân viên đi team building',
+        destination: 'Khu du lịch Suối Tiên, Q.9, TP.HCM',
+        startTime: mkTime(today, 7, 30),
+        endTime: mkTime(today, 18, 0),
+        passengerCount: 15,
+        status: 'IN_PROGRESS',
+      },
+      // COMPLETED — hôm qua
+      {
+        vehicleId: vehicles[3].id,
+        requestedById: u(3),
+        approvedById: u(0),
+        purpose: 'Giao tài liệu và hợp đồng cho đối tác',
+        destination: 'Tòa nhà Bitexco, 2 Hải Triều, Q.1, TP.HCM',
+        startTime: mkTime(yesterday, 10, 0),
+        endTime: mkTime(yesterday, 12, 0),
+        passengerCount: 1,
+        status: 'COMPLETED',
+      },
+      // REJECTED
+      {
+        vehicleId: vehicles[4].id,
+        requestedById: u(4),
+        approvedById: u(0),
+        purpose: 'Thuê xe đi du lịch cá nhân cuối tuần',
+        destination: 'Vũng Tàu, Bà Rịa - Vũng Tàu',
+        startTime: mkTime(tomorrow, 6, 0),
+        endTime: mkTime(tomorrow, 22, 0),
+        passengerCount: 10,
+        status: 'REJECTED',
+        rejectionReason: 'Xe không được sử dụng cho mục đích cá nhân. Chỉ phục vụ công việc của công ty.',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 5 Vehicle + 8 VehicleRequest seeded');
+}
+
+// ─── CALENDAR EVENTS ────────────────────────────────────────────────────────
+async function seedCalendarEvents() {
+  const count = await prisma.calendarEvent.count();
+  if (count > 0) {
+    console.log('  ✓ CalendarEvent đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 5 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedCalendarEvents');
+    return;
+  }
+
+  const u = (i: number) => users[i % users.length].id;
+
+  const mkDt = (dateStr: string, h: number, m = 0) => {
+    const d = new Date(dateStr);
+    d.setHours(h, m, 0, 0);
+    return d;
+  };
+
+  await prisma.calendarEvent.createMany({
+    data: [
+      // MEETING — 3 cuộc họp
+      {
+        title: 'Họp weekly team — tuần 22/2026',
+        eventType: 'MEETING',
+        startTime: mkDt('2026-05-29', 9, 0),
+        endTime: mkDt('2026-05-29', 10, 0),
+        isAllDay: false,
+        location: 'Phòng họp A101',
+        color: '#3B82F6',
+        createdById: u(0),
+        attendees: ['pm@loop.vn', 'dev@loop.vn', 'design@loop.vn'],
+        description: 'Review sprint, cập nhật tiến độ và phân công công việc tuần tới',
+      },
+      {
+        title: 'Daily standup — Backend team',
+        eventType: 'MEETING',
+        startTime: mkDt('2026-05-30', 9, 0),
+        endTime: mkDt('2026-05-30', 9, 15),
+        isAllDay: false,
+        location: 'Phòng họp nhỏ D102 / Google Meet',
+        color: '#3B82F6',
+        createdById: u(1),
+        attendees: ['backend@loop.vn'],
+        description: 'Standup 15 phút: done/doing/blocker',
+      },
+      {
+        title: 'Sprint Review & Retrospective — Sprint 14',
+        eventType: 'MEETING',
+        startTime: mkDt('2026-06-05', 14, 0),
+        endTime: mkDt('2026-06-05', 16, 30),
+        isAllDay: false,
+        location: 'Phòng hội thảo C301',
+        color: '#3B82F6',
+        createdById: u(0),
+        attendees: ['all-dev@loop.vn', 'pm@loop.vn'],
+        description: 'Demo tính năng hoàn thành sprint 14, retrospective và planning sprint 15',
+      },
+      // HOLIDAY — 2 ngày nghỉ lễ
+      {
+        title: 'Nghỉ lễ Quốc khánh 2/9/2026',
+        eventType: 'HOLIDAY',
+        startTime: new Date('2026-09-02T00:00:00.000Z'),
+        endTime: new Date('2026-09-04T23:59:59.000Z'),
+        isAllDay: true,
+        color: '#EF4444',
+        createdById: u(0),
+        attendees: [],
+        description: 'Nghỉ lễ Quốc khánh 2/9 — nghỉ 3 ngày từ 02/09 đến 04/09/2026',
+      },
+      {
+        title: 'Nghỉ Giỗ Tổ Hùng Vương (10/3 âm lịch)',
+        eventType: 'HOLIDAY',
+        startTime: new Date('2026-04-27T00:00:00.000Z'),
+        endTime: new Date('2026-04-27T23:59:59.000Z'),
+        isAllDay: true,
+        color: '#EF4444',
+        createdById: u(0),
+        attendees: [],
+        description: 'Ngày Giỗ Tổ Hùng Vương — nghỉ 1 ngày theo quy định nhà nước',
+      },
+      // TRAINING — 2 buổi đào tạo
+      {
+        title: 'Đào tạo kỹ năng thuyết trình & trình bày',
+        eventType: 'TRAINING',
+        startTime: mkDt('2026-05-31', 9, 0),
+        endTime: mkDt('2026-05-31', 12, 0),
+        isAllDay: false,
+        location: 'Phòng họp B201',
+        color: '#8B5CF6',
+        createdById: u(3),
+        attendees: ['all-staff@loop.vn'],
+        description: 'Trainer: Nguyễn Thanh Hùng — VTC Academy. Đối tượng: nhân viên dưới 2 năm kinh nghiệm',
+      },
+      {
+        title: 'Workshop: Clean Code & Code Review Best Practices',
+        eventType: 'TRAINING',
+        startTime: mkDt('2026-06-10', 14, 0),
+        endTime: mkDt('2026-06-10', 17, 0),
+        isAllDay: false,
+        location: 'Phòng đào tạo E401',
+        color: '#8B5CF6',
+        createdById: u(1),
+        attendees: ['backend@loop.vn', 'frontend@loop.vn'],
+        description: 'Workshop nội bộ do team Senior Dev tổ chức. Nội dung: SOLID principles, PR review checklist',
+      },
+      // DEADLINE — 2 deadline dự án
+      {
+        title: 'Deadline: Bàn giao Module Quản lý Xe — v1.0',
+        eventType: 'DEADLINE',
+        startTime: mkDt('2026-06-15', 17, 0),
+        endTime: mkDt('2026-06-15', 18, 0),
+        isAllDay: false,
+        color: '#F59E0B',
+        createdById: u(0),
+        attendees: ['backend@loop.vn', 'frontend@loop.vn', 'pm@loop.vn'],
+        description: 'Deadline bàn giao toàn bộ module Vehicle Management v1.0 cho khách hàng',
+      },
+      {
+        title: 'Deadline: Báo cáo tài chính Q2/2026',
+        eventType: 'DEADLINE',
+        startTime: mkDt('2026-06-30', 17, 0),
+        endTime: mkDt('2026-06-30', 18, 0),
+        isAllDay: false,
+        color: '#F59E0B',
+        createdById: u(4),
+        attendees: ['finance@loop.vn', 'cfo@loop.vn'],
+        description: 'Hạn nộp báo cáo tài chính quý 2 lên Ban Giám đốc và Hội đồng Quản trị',
+      },
+      // OTHER — 3 sự kiện khác
+      {
+        title: 'Kỷ niệm 5 năm thành lập Loop.vn',
+        eventType: 'OTHER',
+        startTime: new Date('2026-06-20T00:00:00.000Z'),
+        endTime: new Date('2026-06-20T23:59:59.000Z'),
+        isAllDay: true,
+        location: 'Nhà hàng Bến Thuyền, Q.1, TP.HCM',
+        color: '#10B981',
+        createdById: u(0),
+        attendees: ['all-staff@loop.vn'],
+        description: 'Tiệc kỷ niệm 5 năm thành lập công ty. Tất cả nhân viên tham dự. Dress code: Smart Casual',
+      },
+      {
+        title: 'Team Building Q2 — Suối Tiên',
+        eventType: 'OTHER',
+        startTime: new Date('2026-06-27T00:00:00.000Z'),
+        endTime: new Date('2026-06-28T23:59:59.000Z'),
+        isAllDay: true,
+        location: 'Khu du lịch Suối Tiên, Q.9, TP.HCM',
+        color: '#10B981',
+        createdById: u(2),
+        attendees: ['all-staff@loop.vn'],
+        description: 'Team building 2 ngày 1 đêm. Bao gồm: các hoạt động nhóm, gala dinner, và tổng kết H1/2026',
+      },
+      {
+        title: 'Hội thảo chuyển đổi số doanh nghiệp 2026',
+        eventType: 'OTHER',
+        startTime: mkDt('2026-07-05', 8, 0),
+        endTime: mkDt('2026-07-05', 17, 0),
+        isAllDay: false,
+        location: 'GEM Center, 8 Nguyễn Bỉnh Khiêm, Q.1, TP.HCM',
+        color: '#6366F1',
+        createdById: u(3),
+        attendees: ['ceo@loop.vn', 'cto@loop.vn', 'pm@loop.vn'],
+        description: 'Hội thảo quốc gia về chuyển đổi số. Loop.vn tham dự với tư cách exhibitor và speaker',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 12 CalendarEvent seeded');
+}
+
+// ─────────────────────────────────────────────────────────────
+// KNOWLEDGE BASE
+// ─────────────────────────────────────────────────────────────
+async function seedKnowledgeBase() {
+  const catCount = await prisma.kbCategory.count();
+  if (catCount > 0) {
+    console.log('  ⚠ KbCategory đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 3 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedKnowledgeBase');
+    return;
+  }
+
+  const author = users[0];
+
+  const catQT = await prisma.kbCategory.create({
+    data: { name: 'Quy trình nội bộ', icon: '📋', color: '#6366F1', sortOrder: 0 },
+  });
+  const catIT = await prisma.kbCategory.create({
+    data: { name: 'Kỹ thuật & IT', icon: '💻', color: '#3B82F6', sortOrder: 1 },
+  });
+  const catHR = await prisma.kbCategory.create({
+    data: { name: 'HR & Nhân sự', icon: '👥', color: '#8B5CF6', sortOrder: 2 },
+  });
+
+  const now = new Date();
+
+  await prisma.kbArticle.createMany({
+    data: [
+      {
+        title: 'Quy trình xin nghỉ phép',
+        slug: 'quy-trinh-xin-nghi-phep',
+        content: `## Quy trình xin nghỉ phép
+
+Để đảm bảo hoạt động của công ty không bị gián đoạn, nhân viên cần tuân thủ quy trình xin nghỉ phép như sau:
+
+### 1. Đăng ký trước thời gian
+- Nghỉ từ 1–2 ngày: đăng ký trước tối thiểu **3 ngày làm việc**
+- Nghỉ từ 3–5 ngày: đăng ký trước tối thiểu **1 tuần**
+- Nghỉ trên 5 ngày: đăng ký trước tối thiểu **2 tuần**
+
+### 2. Cách đăng ký
+1. Đăng nhập vào hệ thống Loop ERP → module **HR → Nghỉ phép**
+2. Nhấn **Tạo đơn nghỉ**, điền thông tin ngày bắt đầu, ngày kết thúc, lý do
+3. Chọn loại nghỉ: Phép năm / Nghỉ ốm / Nghỉ cá nhân / Nghỉ không lương
+4. Nhấn **Gửi duyệt** — hệ thống tự động thông báo cho Quản lý trực tiếp
+
+### 3. Phê duyệt
+- Quản lý trực tiếp duyệt trong vòng **1 ngày làm việc**
+- Kết quả (Duyệt / Từ chối) được thông báo qua email và hệ thống
+
+### 4. Trường hợp khẩn cấp
+Liên hệ trực tiếp Quản lý qua điện thoại, sau đó hoàn thiện đơn trên hệ thống trong ngày làm việc tiếp theo.
+
+### 5. Số ngày phép
+Nhân viên xem số ngày phép còn lại tại **HR → Bảng lương → Ngày phép**. Phép năm được cộng dồn mỗi tháng theo hợp đồng lao động.`,
+        summary: 'Hướng dẫn chi tiết quy trình xin nghỉ phép, thời gian đăng ký và cách phê duyệt trên hệ thống Loop ERP.',
+        categoryId: catQT.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['HR', 'nghỉ phép'],
+        viewCount: 142,
+        isPinned: false,
+        publishedAt: now,
+      },
+      {
+        title: 'Quy trình thanh toán chi phí công tác',
+        slug: 'quy-trinh-thanh-toan-chi-phi-cong-tac',
+        content: `## Quy trình thanh toán chi phí công tác
+
+### 1. Trước khi đi công tác
+- Lập **Đề nghị tạm ứng** trên hệ thống Finance → Thanh toán
+- Đính kèm lịch trình, mục đích công tác
+- Tạm ứng được duyệt trong vòng **1 ngày làm việc**
+
+### 2. Trong quá trình công tác
+Giữ lại toàn bộ hóa đơn, biên lai gốc cho:
+- Vé máy bay / tàu xe
+- Phòng khách sạn
+- Ăn uống (theo mức quy định)
+- Chi phí di chuyển nội địa
+
+### 3. Sau khi công tác
+Trong vòng **5 ngày làm việc** sau khi trở về:
+1. Vào Finance → Thanh toán → Tạo quyết toán công tác
+2. Điền đầy đủ danh mục chi phí thực tế
+3. Scan/chụp và đính kèm toàn bộ hóa đơn gốc
+4. Gửi hóa đơn gốc về phòng Kế toán
+
+### 4. Mức thanh toán
+| Loại chi phí | Mức tối đa/ngày |
+|---|---|
+| Ăn uống (trong nước) | 200.000 đ |
+| Khách sạn (tỉnh thành) | 800.000 đ |
+| Khách sạn (Hà Nội/TP.HCM) | 1.200.000 đ |
+
+Chi phí vượt mức phải được Giám đốc phê duyệt trước.`,
+        summary: 'Quy trình tạm ứng, quyết toán và mức chi phí công tác theo chính sách công ty.',
+        categoryId: catQT.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['tài chính', 'công tác', 'thanh toán'],
+        viewCount: 98,
+        isPinned: true,
+        publishedAt: now,
+      },
+      {
+        title: 'Hướng dẫn sử dụng hệ thống chấm công',
+        slug: 'huong-dan-su-dung-he-thong-cham-cong',
+        content: `## Hướng dẫn sử dụng hệ thống chấm công Loop ERP
+
+### 1. Check-in / Check-out
+- **Check-in**: Thực hiện trước hoặc ngay khi bắt đầu giờ làm (8:00 SA)
+- **Check-out**: Thực hiện ngay sau khi kết thúc giờ làm (17:30 CH)
+- Truy cập: **Timesheet → Check-in/out** hoặc dùng app mobile Loop
+
+### 2. Sửa giờ công
+Nếu quên check-in hoặc check-out:
+1. Vào **Timesheet → Lịch sử chấm công**
+2. Nhấn **Yêu cầu điều chỉnh** bên cạnh ngày cần sửa
+3. Điền lý do và giờ thực tế
+4. Quản lý duyệt trong vòng 1 ngày
+
+### 3. Xem báo cáo cá nhân
+- **Timesheet → Tổng hợp tháng**: xem tổng giờ làm, giờ OT, ngày vắng
+- Dữ liệu cập nhật real-time sau mỗi lần check-in/out
+
+### 4. Lưu ý quan trọng
+- Không được nhờ người khác check-in thay
+- Check-in muộn/sớm quá 15 phút bị ghi nhận là đi muộn/về sớm
+- 3 lần đi muộn trong tháng = 1 ngày phép bị trừ`,
+        summary: 'Hướng dẫn check-in, check-out, điều chỉnh giờ công và xem báo cáo chấm công trên hệ thống.',
+        categoryId: catQT.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['chấm công', 'timesheet', 'HR'],
+        viewCount: 203,
+        isPinned: false,
+        publishedAt: now,
+      },
+      {
+        title: 'Cài đặt môi trường dev Loop ERP',
+        slug: 'cai-dat-moi-truong-dev-loop-erp',
+        content: `## Cài đặt môi trường phát triển Loop ERP
+
+### Yêu cầu hệ thống
+- Node.js >= 20.x
+- pnpm >= 9.x
+- Docker Desktop
+- PostgreSQL 16 (qua Docker)
+
+### 1. Clone repo
+\`\`\`bash
+git clone https://github.com/loop-vn/loop-erp.git
+cd loop-erp
+pnpm install
+\`\`\`
+
+### 2. Khởi động services
+\`\`\`bash
+docker-compose up -d   # PostgreSQL + Redis + MinIO
+\`\`\`
+
+### 3. Cấu hình env
+\`\`\`bash
+cp apps/backend/.env.example apps/backend/.env
+# Điền DATABASE_URL, JWT_SECRET, MINIO_* vào .env
+\`\`\`
+
+### 4. Migrate & Seed
+\`\`\`bash
+cd apps/backend
+npx prisma migrate dev
+npx tsx prisma/seed.ts
+\`\`\`
+
+### 5. Chạy dev server
+\`\`\`bash
+# Terminal 1 — Backend
+pnpm --filter backend dev
+
+# Terminal 2 — Frontend
+pnpm --filter web dev
+\`\`\`
+
+Backend: http://localhost:3000
+Frontend: http://localhost:5173
+MinIO Console: http://localhost:9001`,
+        summary: 'Hướng dẫn cài đặt môi trường phát triển Loop ERP từ đầu: Node, Docker, Prisma migrate, seed.',
+        categoryId: catIT.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['dev', 'setup', 'NestJS', 'React'],
+        viewCount: 87,
+        isPinned: false,
+        publishedAt: now,
+      },
+      {
+        title: 'Hướng dẫn debug backend NestJS',
+        slug: 'huong-dan-debug-backend-nestjs',
+        content: `## Debug Backend NestJS trong Loop ERP
+
+### 1. Debug với VS Code
+Thêm vào \`.vscode/launch.json\`:
+\`\`\`json
+{
+  "type": "node",
+  "request": "attach",
+  "name": "Attach NestJS",
+  "port": 9229,
+  "restart": true,
+  "sourceMaps": true
+}
+\`\`\`
+Khởi động backend với: \`pnpm dev:debug\`
+
+### 2. Xem logs Prisma
+\`\`\`ts
+// prisma.service.ts — bật query log khi cần
+this.prisma.$on('query', (e) => console.log(e.query, e.params));
+\`\`\`
+
+### 3. Test API với HTTPie
+\`\`\`bash
+http POST :3000/auth/login email=admin@loop.vn password=admin
+http GET :3000/bugs Authorization:"Bearer <token>"
+\`\`\`
+
+### 4. Lỗi thường gặp
+| Lỗi | Nguyên nhân | Cách sửa |
+|---|---|---|
+| P2002 | Unique constraint | Kiểm tra dữ liệu trùng |
+| P2025 | Record not found | Kiểm tra ID tồn tại |
+| 401 Unauthorized | Token hết hạn | Re-login lấy token mới |
+| 403 Forbidden | Sai role | Kiểm tra @Roles decorator |`,
+        summary: 'Hướng dẫn debug backend NestJS: VS Code debugger, Prisma query log, test API và xử lý lỗi phổ biến.',
+        categoryId: catIT.id,
+        authorId: author.id,
+        status: 'DRAFT',
+        tags: ['debug', 'NestJS', 'backend'],
+        viewCount: 34,
+        isPinned: false,
+        publishedAt: null,
+      },
+      {
+        title: 'Quy chuẩn code frontend React',
+        slug: 'quy-chuan-code-frontend-react',
+        content: `## Quy chuẩn code Frontend React — Loop ERP
+
+### 1. Cấu trúc file
+\`\`\`
+components/
+  ui/           # Shared UI components (PageHeader, StatCard...)
+  [module]/     # Components theo module
+hooks/          # Custom hooks
+pages/          # Page components (route-level)
+store/          # Zustand stores
+utils/          # Helper functions
+\`\`\`
+
+### 2. Bắt buộc dùng hook/component chung
+- **Màu sắc**: \`useThemePalette()\` — KHÔNG tự khai báo màu
+- **Header trang**: \`<PageHeader>\` — KHÔNG tự làm div
+- **Stat card**: \`<StatCard>\` — KHÔNG tự làm Statistic
+- **Xóa item**: \`confirmDelete()\` — KHÔNG dùng Modal.confirm inline
+
+### 3. Column Table
+\`\`\`tsx
+// ✅ Đúng — wrap trong Text với color tường minh
+render: (v) => <Text style={{ color: textPrimary }}>{v}</Text>
+
+// ❌ Sai — plain string
+render: (v) => v ?? '—'
+\`\`\`
+
+### 4. Naming convention
+- Component: PascalCase (\`BugDetailDrawer\`)
+- Hook: camelCase bắt đầu bằng \`use\` (\`useThemePalette\`)
+- Constant: UPPER_SNAKE_CASE
+- File: kebab-case hoặc PascalCase theo loại
+
+### 5. API calls
+Mọi request qua \`apiClient\` (axios instance) — không gọi \`fetch\` trực tiếp.`,
+        summary: 'Chuẩn code frontend React: cấu trúc thư mục, component chung bắt buộc, naming convention và API pattern.',
+        categoryId: catIT.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['React', 'frontend', 'coding standards'],
+        viewCount: 156,
+        isPinned: false,
+        publishedAt: now,
+      },
+      {
+        title: 'Chính sách lương thưởng 2026',
+        slug: 'chinh-sach-luong-thuong-2026',
+        content: `## Chính sách lương thưởng năm 2026
+
+### 1. Cơ cấu lương
+- **Lương cơ bản**: theo hợp đồng lao động, trả ngày 10 hàng tháng
+- **Phụ cấp**: ăn trưa (30.000đ/ngày), xăng xe (500.000đ/tháng), điện thoại (theo chức danh)
+- **Lương OT**: x1.5 ngày thường, x2.0 cuối tuần, x3.0 lễ tết
+
+### 2. Thưởng hiệu suất (KPI)
+Đánh giá hàng quý dựa trên điểm KPI cá nhân:
+| Điểm KPI | Thưởng |
+|---|---|
+| ≥ 95 | 1.5 tháng lương |
+| 80–94 | 1.0 tháng lương |
+| 65–79 | 0.5 tháng lương |
+| < 65 | Không thưởng |
+
+### 3. Thưởng Tết
+- Nhân viên đủ 12 tháng: tối thiểu 1 tháng lương
+- 6–12 tháng: tính theo tỷ lệ tháng công tác
+- < 6 tháng: thưởng theo quy định Giám đốc
+
+### 4. Chính sách nâng lương
+- Review lương hàng năm vào tháng 4
+- Mức tăng trung bình: 8–12% theo hiệu suất và thị trường
+- Thăng chức đi kèm điều chỉnh lương ngay lập tức
+
+### 5. Phúc lợi bổ sung
+- Bảo hiểm sức khỏe PVI cho nhân viên và 1 thành viên gia đình
+- Khám sức khỏe định kỳ hàng năm
+- Du lịch công ty 1 lần/năm`,
+        summary: 'Chính sách lương cơ bản, phụ cấp, thưởng KPI hàng quý, thưởng Tết và phúc lợi năm 2026.',
+        categoryId: catHR.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['lương', 'thưởng', 'phúc lợi', 'HR'],
+        viewCount: 312,
+        isPinned: true,
+        publishedAt: now,
+      },
+      {
+        title: 'Quy định làm việc từ xa (Remote Work)',
+        slug: 'quy-dinh-lam-viec-tu-xa-remote-work',
+        content: `## Quy định làm việc từ xa (Remote Work)
+
+### 1. Đối tượng áp dụng
+Nhân viên có xếp loại hiệu suất từ "Đạt" trở lên, đã qua thử việc, được Quản lý phê duyệt.
+
+### 2. Số ngày remote tối đa
+| Cấp độ | Ngày remote/tuần |
+|---|---|
+| Staff | 2 ngày |
+| Senior / Specialist | 3 ngày |
+| Manager trở lên | Linh hoạt theo thỏa thuận |
+
+### 3. Yêu cầu khi làm remote
+- **Giờ làm việc**: đảm bảo online 8:00–17:30, phản hồi tin nhắn trong 15 phút
+- **Check-in**: bắt buộc check-in hệ thống Loop ERP trước 8:15
+- **Daily standup**: tham gia đầy đủ cuộc họp sáng (nếu có)
+- **Kết nối**: mạng internet tốc độ ≥ 50 Mbps, tai nghe có micro
+
+### 4. Đăng ký remote
+1. Vào **HR → Nghỉ phép → Đăng ký Remote**
+2. Chọn ngày, lý do
+3. Quản lý duyệt trong vòng 1 ngày làm việc
+
+### 5. Vi phạm
+- Check-in muộn khi remote: ghi nhận đi muộn
+- Không phản hồi trong giờ làm: cảnh báo lần 1, thu hồi quyền remote lần 2`,
+        summary: 'Chính sách làm việc từ xa: đối tượng áp dụng, số ngày tối đa, yêu cầu khi remote và cách đăng ký.',
+        categoryId: catHR.id,
+        authorId: author.id,
+        status: 'PUBLISHED',
+        tags: ['remote work', 'HR', 'chính sách'],
+        viewCount: 178,
+        isPinned: false,
+        publishedAt: now,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 3 KbCategory + 8 KbArticle seeded');
+}
+
+// ─────────────────────────────────────────────────────────────
+// VENDORS & PURCHASE ORDERS
+// ─────────────────────────────────────────────────────────────
+async function seedVendors() {
+  const vendorCount = await prisma.vendor.count();
+  if (vendorCount > 0) {
+    console.log('  ⚠ Vendor đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  const users = await prisma.user.findMany({ take: 3 });
+  if (users.length === 0) {
+    console.log('  ⚠ Không tìm thấy user, bỏ qua seedVendors');
+    return;
+  }
+
+  const requester = users[0];
+  const approver = users[1] ?? users[0];
+
+  // ── Vendors ──────────────────────────────────────────────
+  const v1 = await prisma.vendor.create({
+    data: {
+      code: 'V001',
+      name: 'Công ty TNHH Thiết bị văn phòng Minh Phát',
+      category: 'Thiết bị văn phòng',
+      contactName: 'Nguyễn Văn Minh',
+      phone: '0901234567',
+      email: 'minhphat@gmail.com',
+      taxCode: '0101234567',
+      bankName: 'Vietcombank',
+      bankAccount: '1234567890',
+      rating: 4,
+      status: 'ACTIVE',
+      notes: 'Nhà cung cấp thiết bị văn phòng uy tín, giao hàng đúng hẹn.',
+    },
+  });
+
+  const v2 = await prisma.vendor.create({
+    data: {
+      code: 'V002',
+      name: 'CTCP Dịch vụ vệ sinh Green Clean',
+      category: 'Dịch vụ',
+      contactName: 'Trần Thị Hoa',
+      phone: '0912345678',
+      email: 'greenclean@gmail.com',
+      rating: 5,
+      status: 'ACTIVE',
+      notes: 'Dịch vụ vệ sinh chuyên nghiệp, đã hợp tác 3 năm.',
+    },
+  });
+
+  const v3 = await prisma.vendor.create({
+    data: {
+      code: 'V003',
+      name: 'Công ty TNHH In ấn Đại Phát',
+      category: 'In ấn quảng cáo',
+      contactName: 'Lê Văn Đại',
+      phone: '0923456789',
+      email: 'daiphat.print@gmail.com',
+      rating: 3,
+      status: 'ACTIVE',
+      notes: 'In ấn tài liệu marketing, banner, brochure.',
+    },
+  });
+
+  const v4 = await prisma.vendor.create({
+    data: {
+      code: 'V004',
+      name: 'CTCP Phần mềm FPT',
+      category: 'Phần mềm',
+      contactName: 'Phạm Văn Hùng',
+      phone: '0934567890',
+      email: 'fpt.software@fpt.com',
+      taxCode: '0100686209',
+      bankName: 'Techcombank',
+      bankAccount: '9876543210',
+      rating: 5,
+      status: 'ACTIVE',
+      notes: 'Cung cấp license phần mềm và giải pháp CNTT doanh nghiệp.',
+    },
+  });
+
+  await prisma.vendor.create({
+    data: {
+      code: 'V005',
+      name: 'Công ty Bảo vệ Việt Hưng',
+      category: 'Dịch vụ bảo vệ',
+      contactName: 'Hoàng Văn Bảo',
+      phone: '0945678901',
+      rating: 2,
+      status: 'INACTIVE',
+      notes: 'Tạm ngừng hợp tác do chất lượng dịch vụ không đảm bảo.',
+    },
+  });
+
+  // ── Purchase Orders ───────────────────────────────────────
+  const nextWeek = new Date();
+  nextWeek.setDate(nextWeek.getDate() + 7);
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-001',
+      vendorId: v1.id,
+      requesterId: requester.id,
+      approverId: approver.id,
+      status: 'APPROVED',
+      currency: 'VND',
+      totalAmount: 25000000,
+      taxAmount: 2272727,
+      notes: 'Mua 8 bộ máy tính xách tay phục vụ nhân viên mới Q2/2026.',
+      deliveryDate: nextWeek,
+      approvedAt: new Date('2026-05-20T10:00:00Z'),
+      items: {
+        create: [
+          {
+            description: 'Máy tính xách tay Dell Latitude 5540',
+            unit: 'Bộ',
+            quantity: 8,
+            unitPrice: 2840000,
+            totalPrice: 22720000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+          {
+            description: 'Chuột không dây Logitech MX Anywhere 3',
+            unit: 'Cái',
+            quantity: 8,
+            unitPrice: 285000,
+            totalPrice: 2280000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-002',
+      vendorId: v2.id,
+      requesterId: requester.id,
+      approverId: approver.id,
+      status: 'RECEIVED',
+      currency: 'VND',
+      totalAmount: 5000000,
+      taxAmount: 454545,
+      notes: 'Dịch vụ vệ sinh văn phòng tháng 5/2026.',
+      deliveryDate: new Date('2026-05-31'),
+      approvedAt: new Date('2026-05-01T09:00:00Z'),
+      receivedAt: new Date('2026-05-15T17:00:00Z'),
+      items: {
+        create: [
+          {
+            description: 'Dịch vụ vệ sinh văn phòng tháng 5 (4 lầu)',
+            unit: 'Tháng',
+            quantity: 1,
+            unitPrice: 5000000,
+            totalPrice: 5000000,
+            receivedQty: 1,
+            status: 'RECEIVED',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-003',
+      vendorId: v4.id,
+      requesterId: requester.id,
+      status: 'SUBMITTED',
+      currency: 'VND',
+      totalAmount: 120000000,
+      taxAmount: 12000000,
+      notes: 'Mua license phần mềm ERP và dịch vụ triển khai 12 tháng.',
+      deliveryDate: new Date('2026-06-30'),
+      items: {
+        create: [
+          {
+            description: 'License phần mềm ERP Cloud — gói 50 users/năm',
+            unit: 'License',
+            quantity: 1,
+            unitPrice: 96000000,
+            totalPrice: 96000000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+          {
+            description: 'Dịch vụ tư vấn triển khai và đào tạo',
+            unit: 'Gói',
+            quantity: 1,
+            unitPrice: 12000000,
+            totalPrice: 12000000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-004',
+      vendorId: v1.id,
+      requesterId: requester.id,
+      status: 'DRAFT',
+      currency: 'VND',
+      totalAmount: 8000000,
+      taxAmount: 727272,
+      notes: 'Mua văn phòng phẩm định kỳ tháng 6.',
+      items: {
+        create: [
+          {
+            description: 'Mực in HP LaserJet 85A (hộp 12 cái)',
+            unit: 'Hộp',
+            quantity: 12,
+            unitPrice: 320000,
+            totalPrice: 3840000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+          {
+            description: 'Giấy A4 IK Color 80gsm (thùng 5 ram)',
+            unit: 'Thùng',
+            quantity: 20,
+            unitPrice: 208000,
+            totalPrice: 4160000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-005',
+      vendorId: v3.id,
+      requesterId: requester.id,
+      approverId: approver.id,
+      status: 'ORDERED',
+      currency: 'VND',
+      totalAmount: 15000000,
+      taxAmount: 1363636,
+      notes: 'In tài liệu marketing Q3/2026: brochure, banner, standee.',
+      deliveryDate: new Date('2026-06-15'),
+      approvedAt: new Date('2026-05-22T14:00:00Z'),
+      items: {
+        create: [
+          {
+            description: 'Brochure A4 in 4 màu, 500 tờ',
+            unit: 'Bộ',
+            quantity: 500,
+            unitPrice: 8000,
+            totalPrice: 4000000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+          {
+            description: 'Banner hiflex 80x180cm, in UV',
+            unit: 'Cái',
+            quantity: 20,
+            unitPrice: 250000,
+            totalPrice: 5000000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+          {
+            description: 'Standee khung nhôm 60x160cm + in decal',
+            unit: 'Cái',
+            quantity: 10,
+            unitPrice: 600000,
+            totalPrice: 6000000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  await prisma.purchaseOrder.create({
+    data: {
+      poNumber: 'PO-2026-006',
+      vendorId: v2.id,
+      requesterId: requester.id,
+      approverId: approver.id,
+      status: 'APPROVED',
+      currency: 'VND',
+      totalAmount: 5500000,
+      taxAmount: 500000,
+      notes: 'Dịch vụ vệ sinh văn phòng tháng 6/2026.',
+      deliveryDate: new Date('2026-06-30'),
+      approvedAt: new Date('2026-05-28T10:00:00Z'),
+      items: {
+        create: [
+          {
+            description: 'Dịch vụ vệ sinh văn phòng tháng 6 (4 lầu + tổng vệ sinh)',
+            unit: 'Tháng',
+            quantity: 1,
+            unitPrice: 5500000,
+            totalPrice: 5500000,
+            receivedQty: 0,
+            status: 'PENDING',
+          },
+        ],
+      },
+    },
+  });
+
+  console.log('  ✓ 5 Vendor + 6 PurchaseOrder seeded');
+}
+
+// ─────────────────────────────────────────────────────────────
+// AUTOMATION RULES
+// ─────────────────────────────────────────────────────────────
+async function seedAutomationRules() {
+  const count = await prisma.automationRule.count();
+  if (count > 0) {
+    console.log('  ⚠ AutomationRule đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  await prisma.automationRule.createMany({
+    data: [
+      {
+        key: 'birthday_kudos',
+        name: 'Tự động chúc sinh nhật nhân viên',
+        description: 'Gửi tin nhắn chúc mừng sinh nhật qua Telegram và email cho nhân viên có sinh nhật hôm nay lúc 8:00 sáng.',
+        cronExpr: '0 8 * * *',
+        isActive: true,
+        lastRunAt: new Date('2026-05-29T08:00:00Z'),
+        runCount: 28,
+      },
+      {
+        key: 'weekly_timesheet_reminder',
+        name: 'Nhắc nộp timesheet cuối tuần',
+        description: 'Nhắc nhở nhân viên chưa hoàn thành timesheet tuần gửi vào 17:00 thứ Sáu hàng tuần.',
+        cronExpr: '0 17 * * 5',
+        isActive: true,
+        lastRunAt: new Date('2026-05-23T17:00:00Z'),
+        runCount: 12,
+      },
+      {
+        key: 'leave_balance_sync',
+        name: 'Đồng bộ số ngày phép tháng mới',
+        description: 'Cộng dồn số ngày phép năm theo hợp đồng vào đầu mỗi tháng (ngày 1 lúc 00:00).',
+        cronExpr: '0 0 1 * *',
+        isActive: true,
+        lastRunAt: new Date('2026-05-01T00:00:00Z'),
+        runCount: 5,
+      },
+      {
+        key: 'overdue_invoice_alert',
+        name: 'Cảnh báo hóa đơn quá hạn',
+        description: 'Quét hóa đơn quá hạn thanh toán, gửi cảnh báo cho kế toán và quản lý mỗi thứ Hai lúc 9:00.',
+        cronExpr: '0 9 * * 1',
+        isActive: true,
+        lastRunAt: new Date('2026-05-26T09:00:00Z'),
+        runCount: 20,
+      },
+      {
+        key: 'daily_attendance_report',
+        name: 'Báo cáo chấm công hằng ngày',
+        description: 'Tổng hợp danh sách đi muộn, vắng mặt không phép trong ngày, gửi HR lúc 7:00 các ngày làm việc.',
+        cronExpr: '0 7 * * 1-5',
+        isActive: false,
+        runCount: 0,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 5 AutomationRule seeded');
+}
+
+// ─────────────────────────────────────────────────────────────
+// SCHEDULED REPORTS
+// ─────────────────────────────────────────────────────────────
+async function seedScheduledReports() {
+  const count = await prisma.scheduledReport.count();
+  if (count > 0) {
+    console.log('  ⚠ ScheduledReport đã có dữ liệu, bỏ qua');
+    return;
+  }
+
+  await prisma.scheduledReport.createMany({
+    data: [
+      {
+        name: 'Báo cáo nhân sự hàng tuần',
+        template: 'hr_weekly',
+        recipients: ['admin@loop.vn'],
+        frequency: 'WEEKLY',
+        dayOfWeek: 1,
+        hour: 8,
+        format: 'EXCEL',
+        isActive: true,
+        lastSentAt: new Date('2026-05-26T08:00:00Z'),
+        sentCount: 8,
+      },
+      {
+        name: 'Báo cáo tài chính tháng',
+        template: 'finance_monthly',
+        recipients: ['admin@loop.vn', 'hr@loop.vn'],
+        frequency: 'MONTHLY',
+        dayOfMonth: 1,
+        hour: 9,
+        format: 'PDF',
+        isActive: true,
+        lastSentAt: new Date('2026-05-01T09:00:00Z'),
+        sentCount: 5,
+      },
+      {
+        name: 'Tổng kết kế hoạch quý',
+        template: 'okr_quarterly',
+        recipients: ['admin@loop.vn'],
+        frequency: 'QUARTERLY',
+        dayOfMonth: 1,
+        hour: 8,
+        format: 'EXCEL',
+        isActive: true,
+        lastSentAt: new Date('2026-04-01T08:00:00Z'),
+        sentCount: 1,
+      },
+      {
+        name: 'Báo cáo chấm công hàng tuần',
+        template: 'attendance_weekly',
+        recipients: ['admin@loop.vn'],
+        frequency: 'WEEKLY',
+        dayOfWeek: 2,
+        hour: 8,
+        format: 'EXCEL',
+        isActive: false,
+        sentCount: 0,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('  ✓ 4 ScheduledReport seeded');
 }
 
 main().finally(() => prisma.$disconnect());

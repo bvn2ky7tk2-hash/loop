@@ -7,6 +7,8 @@ import { useAuthStore } from '../../store/auth.store';
 import { authApi } from '../../api/auth';
 import { CommandPalette } from '../ui/CommandPalette';
 import { useCommandPaletteStore } from '../../store/commandPalette.store';
+import { tenantApi } from '../../api/tenant';
+import { useTenantStore } from '../../store/tenant.store';
 
 const { Content } = Layout;
 
@@ -18,11 +20,19 @@ export function AppLayout() {
   const [isMobile,  setIsMobile]  = useState(window.innerWidth < BREAKPOINT_MOBILE);
   const { user, isLoading, setUser, setLoading } = useAuthStore();
   const openPalette = useCommandPaletteStore((s) => s.open);
+  const setTenantConfig = useTenantStore(s => s.setConfig);
 
   useEffect(() => {
     authApi.me()
       .then((profile) => setUser(profile))
       .catch(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    tenantApi.getConfig().then(cfg => {
+      setTenantConfig(cfg);
+      if (cfg.name) document.title = cfg.name;
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {

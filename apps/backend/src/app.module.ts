@@ -55,6 +55,19 @@ import { ModuleConfigModule } from './module-config/module-config.module';
 import { RoomBookingModule } from './room-booking/room-booking.module';
 import { VehicleBookingModule } from './vehicle-booking/vehicle-booking.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { TenantModule } from './tenant/tenant.module';
+import { JobTitlesModule } from './job-titles/job-titles.module';
+import { PositionsModule } from './positions/positions.module';
+// import { HrDecisionsModule } from './hr-decisions/hr-decisions.module'; // schema missing WorkHistoryEventType
+// import { SalaryRecordsModule } from './salary-records/salary-records.module'; // schema missing salaryRecord
+// import { WorkHistoryModule } from './work-history/work-history.module'; // schema missing workHistory
+// import { HrInsuranceModule } from './hr-insurance/hr-insurance.module'; // schema missing insuranceEnrollment
+// import { HrProfileModule } from './hr-profile/hr-profile.module'; // schema missing workHistory
+import { LeavePoliciesModule } from './leave-policies/leave-policies.module';
+// import { HrAttendanceModule } from './hr-attendance/hr-attendance.module'; // schema missing AttendanceStatus
+import { HrHolidaysModule } from './hr-holidays/hr-holidays.module';
+// import { OvertimeModule } from './overtime/overtime.module'; // schema missing overtimeRequest
+// import { WorkShiftsModule } from './work-shifts/work-shifts.module'; // schema missing workShift
 
 @Module({
   providers: [
@@ -132,6 +145,20 @@ import { CalendarModule } from './calendar/calendar.module';
     RoomBookingModule,
     VehicleBookingModule,
     CalendarModule,
+    TenantModule,
+    // HR v4.0 modules (các module bị tắt tạm vì schema chưa có model tương ứng)
+    JobTitlesModule,
+    PositionsModule,
+    // HrDecisionsModule,
+    // SalaryRecordsModule,
+    // WorkHistoryModule,
+    // HrInsuranceModule,
+    // HrProfileModule,
+    LeavePoliciesModule,
+    // HrAttendanceModule,
+    HrHolidaysModule,
+    // OvertimeModule,
+    // WorkShiftsModule,
   ],
 })
 export class AppModule {}

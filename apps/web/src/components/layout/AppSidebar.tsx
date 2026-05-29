@@ -13,6 +13,7 @@ import { tasksApi } from '../../api/tasks';
 import { processesApi } from '../../api/processes.api';
 import { useGetBugStats, useGetMyBugsCount } from '../../api/bugs.api';
 import { ModuleSwitcherModal } from './ModuleSwitcherModal';
+import { useTenantStore } from '../../store/tenant.store';
 
 interface AppSidebarProps {
   collapsed: boolean;
@@ -143,6 +144,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const location  = useLocation();
   const { user }  = useAuthStore();
   const { mode, preset } = useThemeStore();
+  const tenantConfig = useTenantStore(s => s.config);
   const { getModuleConfig } = useMenuStore();
   const { activeModuleId, setActiveModule } = useModuleStore();
 
@@ -244,7 +246,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
       }}
     >
       {/* ── Logo ── */}
-      <Tooltip title={collapsed ? 'Loop 360' : ''} placement="right">
+      <Tooltip title={collapsed ? (tenantConfig?.name ?? 'Loop 360') : ''} placement="right">
         <div
           onClick={() => navigate('/')}
           style={{
@@ -261,8 +263,14 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
           }}
         >
           {collapsed
-            ? <img src="/logo-icon.svg"  alt="Loop 360" style={{ width: 34, height: 34, flexShrink: 0, filter: isNavLight ? 'none' : 'brightness(0) invert(1)' }} />
-            : <img src="/logo-full.svg"  alt="Loop 360" style={{ height: 40, maxWidth: 190, flexShrink: 0, filter: isNavLight ? 'none' : 'brightness(0) invert(1)' }} />
+            ? (tenantConfig?.logoUrl
+                ? <img src={tenantConfig.logoUrl} alt={tenantConfig.name} style={{ width: 34, height: 34, flexShrink: 0, objectFit: 'contain' }} />
+                : <img src="/logo-icon.svg" alt="Loop 360" style={{ width: 34, height: 34, flexShrink: 0, filter: isNavLight ? 'none' : 'brightness(0) invert(1)' }} />
+              )
+            : (tenantConfig?.logoUrl
+                ? <img src={tenantConfig.logoUrl} alt={tenantConfig.name} style={{ height: 28, maxWidth: 190, flexShrink: 0, objectFit: 'contain' }} />
+                : <img src="/logo-full.svg" alt="Loop 360" style={{ height: 40, maxWidth: 190, flexShrink: 0, filter: isNavLight ? 'none' : 'brightness(0) invert(1)' }} />
+              )
           }
         </div>
       </Tooltip>

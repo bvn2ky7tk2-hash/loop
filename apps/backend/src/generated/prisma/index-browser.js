@@ -130,7 +130,8 @@ exports.Prisma.UserScalarFieldEnum = {
   refreshToken: 'refreshToken',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.OrgUnitScalarFieldEnum = {
@@ -1293,6 +1294,9 @@ exports.Prisma.FeedPostScalarFieldEnum = {
   content: 'content',
   targetOrgId: 'targetOrgId',
   isPinned: 'isPinned',
+  imageUrl: 'imageUrl',
+  targetYears: 'targetYears',
+  targetName: 'targetName',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -1436,6 +1440,22 @@ exports.Prisma.CalendarEventScalarFieldEnum = {
   color: 'color',
   createdById: 'createdById',
   attendees: 'attendees',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TenantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
+  primaryColor: 'primaryColor',
+  customDomain: 'customDomain',
+  address: 'address',
+  timezone: 'timezone',
+  isDefault: 'isDefault',
+  isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -1902,7 +1922,8 @@ exports.FeedPostType = exports.$Enums.FeedPostType = {
   ANNOUNCEMENT: 'ANNOUNCEMENT',
   KUDOS: 'KUDOS',
   BIRTHDAY: 'BIRTHDAY',
-  DOCUMENT: 'DOCUMENT'
+  DOCUMENT: 'DOCUMENT',
+  ANNIVERSARY: 'ANNIVERSARY'
 };
 
 exports.ReportFrequency = exports.$Enums.ReportFrequency = {
@@ -2056,7 +2077,8 @@ exports.Prisma.ModelName = {
   RoomBooking: 'RoomBooking',
   Vehicle: 'Vehicle',
   VehicleRequest: 'VehicleRequest',
-  CalendarEvent: 'CalendarEvent'
+  CalendarEvent: 'CalendarEvent',
+  Tenant: 'Tenant'
 };
 
 /**

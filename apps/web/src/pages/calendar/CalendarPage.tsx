@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Button,
   Modal,
@@ -47,6 +48,8 @@ import {
   type CalendarEventType,
   type CreateEventPayload,
 } from '../../api/calendar';
+import { useAvailableRooms, roomBookingApi } from '../../api/room-booking';
+import { employeesApi } from '../../api/employees';
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -158,6 +161,8 @@ export default function CalendarPage() {
   const [prefilledDate, setPrefilledDate] = useState<Dayjs | null>(null);
   const [filterType, setFilterType] = useState<string>('');
 
+  const [pickedRange, setPickedRange] = useState<[string, string] | null>(null);
+
   const [form] = Form.useForm();
 
   const year  = currentDate.year();
@@ -167,6 +172,16 @@ export default function CalendarPage() {
   const createMutation = useCreateEvent();
   const updateMutation = useUpdateEvent();
   const deleteMutation = useDeleteEvent();
+
+  const { data: availableRooms = [] } = useAvailableRooms(
+    pickedRange?.[0],
+    pickedRange?.[1],
+  );
+
+  const { data: employeesList = [] } = useQuery({
+    queryKey: ['employees-list'],
+    queryFn:  () => employeesApi.list().then((r) => r),
+  });
 
   // Combine events + bookings
   const allItems = useMemo(() => {
@@ -239,6 +254,7 @@ export default function CalendarPage() {
   async function handleSubmit() {
     const values = await form.validateFields();
     const [startTime, endTime] = values.range as [Dayjs, Dayjs];
+    const roomId = values.roomId as string | undefined;
     const payload: CreateEventPayload = {
       title:       values.title,
       description: values.description,
@@ -254,9 +270,24 @@ export default function CalendarPage() {
       await updateMutation.mutateAsync({ id: editingEvent.id, payload });
     } else {
       await createMutation.mutateAsync(payload);
+      // Nếu chọn phòng → tạo booking tương ứng
+      if (roomId) {
+        try {
+          await roomBookingApi.createBooking({
+            roomId,
+            title:     payload.title,
+            startTime: payload.startTime,
+            endTime:   payload.endTime,
+          });
+        } catch (e) {
+          // booking thất bại không chặn event creation
+          console.warn('Could not create room booking:', e);
+        }
+      }
     }
     setFormVisible(false);
     form.resetFields();
+    setPickedRange(null);
   }
 
   // ─── Delete event ──────────────────────────────────────────────────────────
@@ -856,7 +887,7 @@ export default function CalendarPage() {
       {/* ─── Create / Edit Event Modal ──────────────────────────────────── */}
       <Modal
         open={formVisible}
-        onCancel={() => { setFormVisible(false); form.resetFields(); }}
+        onCancel={() => { setFormVisible(false); form.resetFields(); setPickedRange(null); }}
         onOk={handleSubmit}
         confirmLoading={createMutation.isPending || updateMutation.isPending}
         title={
@@ -916,6 +947,34 @@ export default function CalendarPage() {
               showTime={{ format: 'HH:mm' }}
               format="DD/MM/YYYY HH:mm"
               style={{ width: '100%' }}
+              onChange={(dates) => {
+                if (dates?.[0] && dates?.[1]) {
+                  setPickedRange([dates[0].toISOString(), dates[1].toISOString()]);
+                } else {
+                  setPickedRange(null);
+                }
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="roomId"
+            label={<Text style={{ color: textPrimary }}>Phòng họp</Text>}
+          >
+            <Select
+              allowClear
+              placeholder={pickedRange ? 'Chọn phòng trống...' : 'Chọn thời gian trước để lọc phòng trống'}
+              disabled={!pickedRange}
+              onChange={(roomId) => {
+                if (roomId) {
+                  const room = (availableRooms as any[]).find((r) => r.id === roomId);
+                  if (room) form.setFieldValue('location', room.name);
+                }
+              }}
+              options={(availableRooms as any[]).map((r) => ({
+                value: r.id,
+                label: `${r.name}${r.floor ? ` — ${r.floor}` : ''} (${r.capacity ?? '?'} người)`,
+              }))}
             />
           </Form.Item>
 
@@ -938,10 +997,15 @@ export default function CalendarPage() {
             label={<Text style={{ color: textPrimary }}>Người tham dự</Text>}
           >
             <Select
-              mode="tags"
-              placeholder="Nhập email hoặc tên..."
-              tokenSeparators={[',']}
-              open={false}
+              mode="multiple"
+              allowClear
+              showSearch
+              placeholder="Chọn nhân viên tham dự..."
+              optionFilterProp="label"
+              options={(employeesList as any[]).map((e) => ({
+                value: e.fullName,
+                label: `${e.code ? e.code + ' — ' : ''}${e.fullName}`,
+              }))}
             />
           </Form.Item>
         </Form>

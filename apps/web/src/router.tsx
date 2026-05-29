@@ -60,6 +60,18 @@ const HrTrainingPage        = lazy(() => import('./pages/hr/TrainingPage'));
 const HrPerformancePage     = lazy(() => import('./pages/hr/PerformancePage'));
 const SkillMatrixPage       = lazy(() => import('./pages/hr/SkillMatrixPage'));
 const OkrPage               = lazy(() => import('./pages/hr/OkrPage'));
+// HR v4.0
+const HrJobTitlesPage       = lazy(() => import('./pages/hr/JobTitlesPage'));
+const HrPositionsPage       = lazy(() => import('./pages/hr/PositionsPage'));
+const HrDecisionsPage       = lazy(() => import('./pages/hr/HrDecisionsPage'));
+const HrInsurancePage       = lazy(() => import('./pages/hr/InsurancePage'));
+const HrProfile360Page      = lazy(() => import('./pages/hr/EmployeeProfile360Page'));
+const HrLeavePolicyPage     = lazy(() => import('./pages/hr/LeavePolicyPage'));
+const HrAttendancePage      = lazy(() => import('./pages/hr/AttendancePage'));
+const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
+const OvertimePage          = lazy(() => import('./pages/hr/OvertimePage'));
+const HrShiftsPage          = lazy(() => import('./pages/hr/HrShiftsPage'));
+const HrRequestsPage        = lazy(() => import('./pages/hr/HrRequestsPage'));
 const KnowledgeBasePage     = lazy(() => import('./pages/knowledge-base/KnowledgeBasePage'));
 const PortalManagePage      = lazy(() => import('./pages/crm/PortalManagePage'));
 const CustomerPortalPage    = lazy(() => import('./pages/portal/CustomerPortalPage'));
@@ -85,6 +97,7 @@ const AdminDashboard        = lazy(() => import('./pages/dashboard/AdminDashboar
 const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'));
 const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPage'));
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
+const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -167,6 +180,18 @@ export const router = createBrowserRouter([
       { path: 'hr/performance',      element: wrap(HrPerformancePage) },
       { path: 'hr/skill-matrix',     element: wrap(SkillMatrixPage) },
       { path: 'hr/okr',             element: wrap(OkrPage) },
+      // HR v4.0
+      { path: 'hr/job-titles',       element: wrap(HrJobTitlesPage) },
+      { path: 'hr/positions',        element: wrap(HrPositionsPage) },
+      { path: 'hr/decisions',        element: wrap(HrDecisionsPage) },
+      { path: 'hr/insurance',        element: wrap(HrInsurancePage) },
+      { path: 'hr/employees/:employeeId', element: wrap(HrProfile360Page) },
+      { path: 'hr/leave-policies',   element: wrap(HrLeavePolicyPage) },
+      { path: 'hr/attendance',       element: wrap(HrAttendancePage) },
+      { path: 'hr/holidays',         element: wrap(HrHolidaysPage) },
+      { path: 'hr/overtime',         element: wrap(OvertimePage) },
+      { path: 'hr/shifts',           element: wrap(HrShiftsPage) },
+      { path: 'hr/requests',         element: wrap(HrRequestsPage) },
       { path: 'knowledge-base',       element: wrap(KnowledgeBasePage) },
       { path: 'procurement/vendors',  element: wrap(VendorsPage) },
       { path: 'procurement/orders',   element: wrap(PurchaseOrdersPage) },
@@ -190,6 +215,7 @@ export const router = createBrowserRouter([
       { path: 'assets/room-booking',  element: wrap(RoomBookingPage) },
       { path: 'assets/vehicles',      element: wrap(VehicleBookingPage) },
       { path: 'calendar',             element: wrap(CalendarPage) },
+      { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

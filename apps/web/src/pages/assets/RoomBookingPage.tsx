@@ -3,6 +3,7 @@ import {
   Tabs, Button, Table, Tag, Form, Input, InputNumber, Select,
   DatePicker, Tooltip, Space, Row, Col, Typography, Spin, message,
 } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   HomeOutlined, CalendarOutlined, TeamOutlined,
@@ -24,6 +25,8 @@ import {
   useCreateBooking, useCancelBooking,
   type MeetingRoom, type RoomBooking, type CreateRoomInput, type CreateBookingInput,
 } from '../../api/room-booking';
+import { employeesApi } from '../../api/employees';
+import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -125,6 +128,10 @@ export default function RoomBookingPage() {
   const { data: stats }                             = useRoomStats();
   const { data: roomsRaw, isLoading: roomsLoading } = useRooms({ limit: 100 });
   const { data: availableRooms = [] }               = useAvailableRooms(bookingStart, bookingEnd);
+  const { data: empList = [] }                      = useQuery({
+    queryKey: ['employees-list-booking'],
+    queryFn:  () => employeesApi.list(),
+  });
 
   // ── Mutations ──────────────────────────────────────────────────────────────
   const createRoomMut    = useCreateRoom();
@@ -214,8 +221,28 @@ export default function RoomBookingPage() {
         startTime: values.startTime.toISOString(),
         endTime:   values.endTime.toISOString(),
         note:      values.note,
+        attendees: values.attendees ?? [],
       };
       await createBookingMut.mutateAsync(payload);
+
+      // Tạo calendar event để booking xuất hiện trên lịch cá nhân của attendees
+      const attendeeList: string[] = values.attendees ?? [];
+      if (attendeeList.length > 0 && values.title) {
+        try {
+          await apiClient.post('/calendar/events', {
+            title:     `Phòng họp: ${values.title}`,
+            eventType: 'MEETING',
+            startTime: payload.startTime,
+            endTime:   payload.endTime,
+            isAllDay:  false,
+            attendees: attendeeList,
+          });
+        } catch (e) {
+          // Không chặn nếu calendar sync thất bại
+          console.warn('Calendar sync failed:', e);
+        }
+      }
+
       message.success('Đặt phòng thành công');
       setBookingOpen(false);
     } catch (e: any) {
@@ -661,6 +688,20 @@ export default function RoomBookingPage() {
 
           <Form.Item name="note" label="Ghi chú">
             <TextArea rows={3} placeholder="Thông tin thêm (không bắt buộc)" maxLength={500} />
+          </Form.Item>
+
+          <Form.Item name="attendees" label="Người tham dự">
+            <Select
+              mode="multiple"
+              allowClear
+              showSearch
+              placeholder="Chọn nhân viên tham dự..."
+              optionFilterProp="label"
+              options={(empList as any[]).map((e) => ({
+                value: e.fullName,
+                label: `${e.code ? e.code + ' — ' : ''}${e.fullName}`,
+              }))}
+            />
           </Form.Item>
         </Form>
       </CenteredModal>
