@@ -612,7 +612,7 @@ export class BpmnEngineService {
         where: { id: instanceId },
         data: { status: InstanceStatus.COMPLETED, completedAt: new Date() },
       });
-      this.eventBus.emitCompleted({
+      await this.eventBus.emitCompleted({
         instanceId,
         variables: (instance?.variables ?? {}) as Record<string, unknown>,
       });

@@ -1,24 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { EventEmitter } from 'node:events';
+import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import { Queue, Worker } from 'bullmq';
 
 export interface ProcessCompletedPayload {
   instanceId: string;
   variables: Record<string, unknown>;
 }
 
+const QUEUE_NAME = 'process.completed';
+
 @Injectable()
-export class ProcessEventBus {
-  private readonly emitter = new EventEmitter();
+export class ProcessEventBus implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(ProcessEventBus.name);
+  private queue!: Queue<ProcessCompletedPayload>;
+  private workers: Worker<ProcessCompletedPayload>[] = [];
 
-  emitCompleted(payload: ProcessCompletedPayload): void {
-    this.emitter.emit('process.completed', payload);
+  private get connection() {
+    return {
+      host: process.env['REDIS_HOST'] ?? 'localhost',
+      port: Number(process.env['REDIS_PORT'] ?? 6379),
+    };
   }
 
-  onCompleted(handler: (payload: ProcessCompletedPayload) => void): void {
-    this.emitter.on('process.completed', handler);
+  onModuleInit() {
+    this.queue = new Queue<ProcessCompletedPayload>(QUEUE_NAME, {
+      connection: this.connection,
+    });
+    this.logger.log(`ProcessEventBus queue "${QUEUE_NAME}" initialized`);
   }
 
-  offCompleted(handler: (payload: ProcessCompletedPayload) => void): void {
-    this.emitter.off('process.completed', handler);
+  async onModuleDestroy() {
+    await Promise.all(this.workers.map((w) => w.close()));
+    await this.queue?.close();
+  }
+
+  async emitCompleted(payload: ProcessCompletedPayload): Promise<void> {
+    await this.queue.add('completed', payload, {
+      removeOnComplete: 100,
+      removeOnFail: 50,
+    });
+  }
+
+  onCompleted(handler: (payload: ProcessCompletedPayload) => Promise<void>): void {
+    const worker = new Worker<ProcessCompletedPayload>(
+      QUEUE_NAME,
+      async (job) => handler(job.data),
+      { connection: this.connection },
+    );
+    worker.on('failed', (job, err) => {
+      this.logger.error(`ProcessEventBus job ${job?.id} failed`, err);
+    });
+    this.workers.push(worker);
   }
 }

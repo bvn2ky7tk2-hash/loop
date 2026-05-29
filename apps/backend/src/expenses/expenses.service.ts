@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  OnModuleInit,
   Optional,
   Inject,
   Scope,
@@ -15,7 +14,6 @@ import { ExpenseStatus, DefinitionStatus } from '../generated/prisma';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ApproveExpenseDto } from './dto/approve-expense.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
-import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
@@ -27,52 +25,15 @@ const EXPENSE_INCLUDE = {
 } as const;
 
 @Injectable({ scope: Scope.REQUEST })
-export class ExpensesService extends TenantAwareService implements OnModuleInit {
+export class ExpensesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eventBus: ProcessEventBus,
     private readonly financeEventBus: FinanceEventBus,
     private readonly auditLog: AuditLogService,
     @Inject(REQUEST) req: any,
     @Optional() private readonly notificationsService?: NotificationsService,
   ) {
     super(req);
-  }
-
-  onModuleInit() {
-    this.eventBus.onCompleted(async (payload) => {
-      await this.handleProcessCompleted(payload);
-    });
-  }
-
-  // Xử lý kết quả process khi hoàn tất — cập nhật trạng thái phiếu chi
-  private async handleProcessCompleted({ instanceId, variables }: ProcessCompletedPayload): Promise<void> {
-    const expense = await this.prisma.expense.findFirst({
-      where: { processInstanceId: instanceId },
-    });
-    if (!expense) return;
-
-    const decision = variables['decision'] as string | undefined;
-    if (!decision) return;
-
-    if (decision === 'APPROVED') {
-      await this.prisma.expense.update({
-        where: { id: expense.id },
-        data: {
-          status: 'APPROVED' as any,
-          approvedAt: new Date(),
-          approvedById: (variables['approvedById'] as string) ?? null,
-        },
-      });
-    } else if (decision === 'REJECTED') {
-      await this.prisma.expense.update({
-        where: { id: expense.id },
-        data: {
-          status: 'REJECTED' as any,
-          rejectedReason: (variables['rejectedReason'] as string) ?? 'Từ chối qua quy trình',
-        },
-      });
-    }
   }
 
   // ── Danh sách phiếu chi ────────────────────────────────────────────────────
@@ -206,7 +167,7 @@ export class ExpensesService extends TenantAwareService implements OnModuleInit 
     });
 
     if (dto.status === ExpenseStatus.APPROVED) {
-      this.financeEventBus.emit({
+      await this.financeEventBus.emit({
         type: 'expense.approved',
         refId: id,
         amount: Number(updated.totalAmount),

@@ -1,5 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import ExcelJS from 'exceljs';
 
 export type ReportType =
@@ -17,9 +20,14 @@ export interface GenerateReportDto {
   employeeIds?: string[];
 }
 
-@Injectable()
-export class ReportsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class ReportsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async getTopEmployeesByHours(limit = 10) {
     const logs = await this.prisma.timeLog.groupBy({
@@ -55,13 +63,13 @@ export class ReportsService {
 
   async getProjectBurndown(projectId: string) {
     const project = await this.prisma.project.findUnique({
-      where: { id: projectId },
+      where: this.tenantWhere({ id: projectId }),
       select: { id: true, name: true, startDate: true, endDate: true, budgetEffortMm: true },
     });
     if (!project) return null;
 
     const tasks = await this.prisma.task.findMany({
-      where: { projectId },
+      where: this.tenantWhere({ projectId }),
       select: { estimateHours: true, actualHours: true, status: true, createdAt: true },
       // Giới hạn an toàn — đủ cho mọi dự án thực tế
       take: 5000,
@@ -112,6 +120,7 @@ export class ReportsService {
 
   async getOrgUnitSummary() {
     const orgUnits = await this.prisma.orgUnit.findMany({
+      where: this.tenantWhere(),
       include: {
         _count: { select: { employees: true, projects: true } },
       },
@@ -179,17 +188,22 @@ export class ReportsService {
   }
 
   async getBugStats() {
+    const tid = this.getTenantId();
+    const bugWhere = tid ? { tenantId: tid } : undefined;
     const [byStatus, bySeverity, byProject, monthlyTrend] = await Promise.all([
       this.prisma.bug.groupBy({
         by: ['status'],
+        where: bugWhere,
         _count: { id: true },
       }),
       this.prisma.bug.groupBy({
         by: ['severity'],
+        where: bugWhere,
         _count: { id: true },
       }),
       this.prisma.bug.groupBy({
         by: ['projectId'],
+        where: bugWhere,
         _count: { id: true },
         orderBy: { _count: { id: 'desc' } },
         take: 8,
@@ -205,7 +219,7 @@ export class ReportsService {
 
     const projectIds = byProject.map((b) => b.projectId);
     const projects = await this.prisma.project.findMany({
-      where: { id: { in: projectIds } },
+      where: this.tenantWhere({ id: { in: projectIds } }),
       select: { id: true, name: true, code: true },
     });
     const projectMap = Object.fromEntries(projects.map((p) => [p.id, p]));
@@ -224,14 +238,18 @@ export class ReportsService {
   }
 
   async getHrStats() {
+    const tid = this.getTenantId();
+    const leaveWhere = tid ? { tenantId: tid } : undefined;
     const [leaveByStatus, leaveByType, expenseByStatus, expenseByCategory] = await Promise.all([
-      this.prisma.leaveRequest.groupBy({ by: ['status'], _count: { id: true } }),
+      this.prisma.leaveRequest.groupBy({ by: ['status'], where: leaveWhere, _count: { id: true } }),
       this.prisma.leaveRequest.groupBy({
         by: ['leaveTypeId'],
+        where: leaveWhere,
         _count: { id: true },
         orderBy: { _count: { id: 'desc' } },
         take: 8,
       }),
+      // Expense không có tenantId — query toàn bộ
       this.prisma.expense.groupBy({ by: ['status'], _count: { id: true } }),
       this.prisma.expense.groupBy({
         by: ['category'],
@@ -275,9 +293,9 @@ export class ReportsService {
     const endDate   = new Date(year, 11, 31, 23, 59, 59);
     const [leavers, avgHeadcount] = await Promise.all([
       this.prisma.employee.count({
-        where: { endDate: { gte: startDate, lte: endDate } },
+        where: this.tenantWhere({ endDate: { gte: startDate, lte: endDate } }),
       }),
-      this.prisma.employee.count({ where: { isActive: true } }),
+      this.prisma.employee.count({ where: this.tenantWhere({ isActive: true }) }),
     ]);
     return {
       year,
@@ -302,14 +320,14 @@ export class ReportsService {
       const periodEnd   = new Date(year, month + 1, 0, 23, 59, 59);
 
       const count = await this.prisma.employee.count({
-        where: {
+        where: this.tenantWhere({
           startDate: { lte: periodEnd },
           OR: [
             { endDate: null },
             { endDate: { gte: periodStart } },
           ],
           isActive: true,
-        },
+        }),
       });
       results.push({ month: monthStr, count });
     }
@@ -332,7 +350,7 @@ export class ReportsService {
     }
     const availableHours = workingDays * 8;
 
-    const whereEmployee: any = { deletedAt: null, isActive: true };
+    const whereEmployee: any = this.tenantWhere({ deletedAt: null, isActive: true });
     if (departmentId) whereEmployee.orgUnitId = departmentId;
 
     const employees = await this.prisma.employee.findMany({
@@ -388,15 +406,16 @@ export class ReportsService {
 
       const [revenue, expenses, newProjects, newEmployees] = await Promise.all([
         this.prisma.invoice.aggregate({
-          where: { type: 'SALES', status: 'PAID', createdAt: { gte: start, lte: end }, deletedAt: null },
+          where: this.tenantWhere({ type: 'SALES' as any, status: 'PAID' as any, createdAt: { gte: start, lte: end }, deletedAt: null }),
           _sum: { totalAmount: true },
         }),
+        // Expense không có tenantId
         this.prisma.expense.aggregate({
           where: { createdAt: { gte: start, lte: end } },
           _sum: { totalAmount: true },
         }),
-        this.prisma.project.count({ where: { createdAt: { gte: start, lte: end }, deletedAt: null } }),
-        this.prisma.employee.count({ where: { startDate: { gte: start, lte: end } } }),
+        this.prisma.project.count({ where: this.tenantWhere({ createdAt: { gte: start, lte: end }, deletedAt: null }) }),
+        this.prisma.employee.count({ where: this.tenantWhere({ startDate: { gte: start, lte: end } }) }),
       ]);
 
       return {
@@ -444,11 +463,11 @@ export class ReportsService {
 
   private async reportProjectCost(start: Date, end: Date, projectIds?: string[], tag = '') {
     const projects = await this.prisma.project.findMany({
-      where: {
+      where: this.tenantWhere({
         ...(projectIds?.length ? { id: { in: projectIds } } : {}),
         startDate: { lte: end },
         endDate:   { gte: start },
-      },
+      }),
       include: {
         members: { include: { employee: true } },
         tasks:   { select: { actualHours: true } },
@@ -489,11 +508,11 @@ export class ReportsService {
 
   private async reportPersonnelAllocation(start: Date, end: Date, employeeIds?: string[], tag = '') {
     const allocs = await this.prisma.allocation.findMany({
-      where: {
+      where: this.tenantWhere({
         ...(employeeIds?.length ? { employeeId: { in: employeeIds } } : {}),
         startDate: { lte: end },
         endDate:   { gte: start },
-      },
+      }),
       include: {
         employee: { include: { orgUnit: true } },
         project:  true,
@@ -536,14 +555,14 @@ export class ReportsService {
 
   private async reportTaskProgress(start: Date, end: Date, projectIds?: string[], tag = '') {
     const tasks = await this.prisma.task.findMany({
-      where: {
+      where: this.tenantWhere({
         ...(projectIds?.length ? { projectId: { in: projectIds } } : {}),
         OR: [
           { dueDate: { gte: start, lte: end } },
           { startDate: { gte: start, lte: end } },
           { dueDate: null },
         ],
-      },
+      }),
       include: {
         project:  { select: { name: true, code: true } },
         assignee: { select: { fullName: true } },

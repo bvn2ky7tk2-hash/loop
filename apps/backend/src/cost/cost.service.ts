@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 export interface MemberCost {
   employeeId: string;
@@ -24,13 +27,18 @@ export interface CostSummary {
   members: MemberCost[];
 }
 
-@Injectable()
-export class CostService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class CostService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async getProjectCost(projectId: string): Promise<CostSummary> {
     const project = await this.prisma.project.findUnique({
-      where: { id: projectId },
+      where: this.tenantWhere({ id: projectId }),
       include: {
         members: {
           include: {
@@ -98,7 +106,7 @@ export class CostService {
     to?: string,
   ) {
     const tasks = await this.prisma.task.findMany({
-      where: { projectId },
+      where: this.tenantWhere({ projectId }),
       select: { id: true },
     });
     const taskIds = tasks.map((t) => t.id);
@@ -129,7 +137,7 @@ export class CostService {
     if (!employee?.userId) return 0;
 
     const tasks = await this.prisma.task.findMany({
-      where: { projectId },
+      where: this.tenantWhere({ projectId }),
       select: { id: true },
     });
     const taskIds = tasks.map((t) => t.id);

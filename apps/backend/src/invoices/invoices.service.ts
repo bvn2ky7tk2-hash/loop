@@ -200,7 +200,7 @@ export class InvoicesService extends TenantAwareService {
     });
 
     if (toStatus === 'PAID') {
-      this.financeEventBus.emit({
+      await this.financeEventBus.emit({
         type: 'invoice.paid',
         refId: id,
         amount: Number(updated.totalAmount),

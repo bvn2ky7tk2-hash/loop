@@ -194,7 +194,7 @@ export class PayrollService extends TenantAwareService {
     await this.engine.updateYtdAfterApproval(periodId);
 
     const totalSalary = updated.records.reduce((s, r) => s + Number(r.grossSalary), 0);
-    this.financeEventBus.emit({
+    await this.financeEventBus.emit({
       type: 'payroll.approved',
       refId: periodId,
       amount: totalSalary,

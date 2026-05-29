@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Optional, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, Optional, Inject } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import * as ExcelJS from 'exceljs';
@@ -7,7 +7,6 @@ import { LeaveStatus, DefinitionStatus } from '../generated/prisma';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { ApproveLeaveDto } from './dto/approve-leave.dto';
-import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
@@ -19,60 +18,14 @@ const LEAVE_REQUEST_INCLUDE = {
 } as const;
 
 @Injectable({ scope: Scope.REQUEST })
-export class LeavesService extends TenantAwareService implements OnModuleInit {
+export class LeavesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eventBus: ProcessEventBus,
     private readonly auditLog: AuditLogService,
     @Optional() private readonly notificationsService?: NotificationsService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
-  }
-
-  onModuleInit() {
-    this.eventBus.onCompleted(async (payload) => {
-      await this.handleProcessCompleted(payload);
-    });
-  }
-
-  // Xử lý kết quả process khi hoàn tất — cập nhật trạng thái đơn nghỉ phép
-  private async handleProcessCompleted({ instanceId, variables }: ProcessCompletedPayload): Promise<void> {
-    const leave = await this.prisma.leaveRequest.findFirst({
-      where: { processInstanceId: instanceId },
-      include: { leaveType: { select: { id: true } } },
-    });
-    if (!leave) return;
-
-    const decision = variables['decision'] as string | undefined;
-    if (!decision) return;
-
-    if (decision === 'APPROVED') {
-      await this.prisma.$transaction(async (tx) => {
-        await tx.leaveRequest.update({
-          where: { id: leave.id },
-          data: {
-            status: LeaveStatus.APPROVED,
-            approvedAt: new Date(),
-            approvedById: (variables['approvedById'] as string) ?? null,
-          },
-        });
-        // Cập nhật số ngày đã dùng trong năm
-        const year = new Date(leave.startDate).getFullYear();
-        await tx.leaveBalance.updateMany({
-          where: { employeeId: leave.employeeId, leaveTypeId: leave.leaveTypeId, year },
-          data: { usedDays: { increment: Number(leave.days) } },
-        });
-      });
-    } else if (decision === 'REJECTED') {
-      await this.prisma.leaveRequest.update({
-        where: { id: leave.id },
-        data: {
-          status: LeaveStatus.REJECTED,
-          rejectedReason: (variables['rejectedReason'] as string) ?? 'Từ chối qua quy trình',
-        },
-      });
-    }
   }
 
   async listRequests(
