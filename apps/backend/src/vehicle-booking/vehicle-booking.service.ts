@@ -3,15 +3,29 @@ import {
   NotFoundException,
   ConflictException,
   ForbiddenException,
+  Inject,
+  Scope,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { CreateVehicleDto, UpdateVehicleDto } from './dto/create-vehicle.dto';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { VehicleRequestStatus, VehicleStatus, Role } from '../generated/prisma';
 
-@Injectable()
-export class VehicleBookingService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class VehicleBookingService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
+
+  private tenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { requestedBy: { tenantId: tid } } : {};
+  }
 
   // ─── Vehicles ────────────────────────────────────────────────────────────────
 
@@ -67,7 +81,10 @@ export class VehicleBookingService {
   // ─── Requests ────────────────────────────────────────────────────────────────
 
   async listRequests(userId: string, isAdmin: boolean) {
-    const where = isAdmin ? {} : { requestedById: userId };
+    const tf = this.tenantFilter();
+    const where = isAdmin
+      ? { ...tf }
+      : { ...tf, requestedById: userId };
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.vehicleRequest.findMany({

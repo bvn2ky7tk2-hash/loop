@@ -3,16 +3,30 @@ import {
   NotFoundException,
   ConflictException,
   ForbiddenException,
+  Inject,
+  Scope,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { CreateRoomDto, UpdateRoomDto } from './dto/create-room.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { paginate, PaginationDto } from '../common/dto/pagination.dto';
 import { BookingStatus, Role } from '../generated/prisma';
 
-@Injectable()
-export class RoomBookingService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class RoomBookingService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
+
+  private tenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { bookedBy: { tenantId: tid } } : {};
+  }
 
   // ─── Rooms ───────────────────────────────────────────────────────────────────
 
@@ -97,7 +111,7 @@ export class RoomBookingService {
 
   async listBookings(pagination: PaginationDto & { date?: string }) {
     const { page = 1, limit = 50, date } = pagination;
-    const where: any = {};
+    const where: any = { ...this.tenantFilter() };
 
     if (date) {
       const day   = new Date(date);
@@ -192,6 +206,7 @@ export class RoomBookingService {
       }),
       this.prisma.roomBooking.findMany({
         where: {
+          ...this.tenantFilter(),
           status:    BookingStatus.CONFIRMED,
           startTime: { gte: start },
           endTime:   { lte: end },
@@ -211,6 +226,7 @@ export class RoomBookingService {
     const today = new Date();
     const dayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0);
     const dayEnd   = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    const tf = this.tenantFilter();
 
     const [totalRooms, activeRooms, maintenanceRooms, todayBookings] = await this.prisma.$transaction([
       this.prisma.meetingRoom.count(),
@@ -218,6 +234,7 @@ export class RoomBookingService {
       this.prisma.meetingRoom.count({ where: { status: 'MAINTENANCE' } }),
       this.prisma.roomBooking.count({
         where: {
+          ...tf,
           status:    BookingStatus.CONFIRMED,
           startTime: { gte: dayStart, lte: dayEnd },
         },

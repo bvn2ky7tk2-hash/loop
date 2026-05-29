@@ -1,12 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, Optional } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { WorkHistoryEventType } from '../generated/prisma';
 import { CreateWorkHistoryDto } from './dto/work-history.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class WorkHistoryService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class WorkHistoryService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
+
+  private getTenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { employee: { tenantId: tid } } : {};
+  }
 
   async findByEmployee(
     employeeId: string,
@@ -15,7 +28,8 @@ export class WorkHistoryService {
     eventType?: WorkHistoryEventType,
   ): Promise<PaginatedResult<unknown>> {
     const skip = (page - 1) * limit;
-    const where: Record<string, unknown> = { employeeId };
+    const tenantFilter = this.getTenantFilter();
+    const where: Record<string, unknown> = { employeeId, ...tenantFilter };
     if (eventType) where['eventType'] = eventType;
 
     const [data, total] = await this.prisma.$transaction([

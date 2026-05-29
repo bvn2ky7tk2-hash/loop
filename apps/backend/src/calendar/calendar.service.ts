@@ -2,15 +2,34 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  Inject,
+  Scope,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Role } from '../generated/prisma';
 
-@Injectable()
-export class CalendarService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class CalendarService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
+
+  private tenantEventFilter() {
+    const tid = this.getTenantId();
+    return tid ? { createdBy: { tenantId: tid } } : {};
+  }
+
+  private tenantBookingFilter() {
+    const tid = this.getTenantId();
+    return tid ? { bookedBy: { tenantId: tid } } : {};
+  }
 
   async listEvents(from: string, to: string) {
     const fromDate = new Date(from);
@@ -18,6 +37,7 @@ export class CalendarService {
 
     return this.prisma.calendarEvent.findMany({
       where: {
+        ...this.tenantEventFilter(),
         startTime: { lte: toDate },
         endTime: { gte: fromDate },
       },
@@ -35,6 +55,7 @@ export class CalendarService {
 
     return this.prisma.roomBooking.findMany({
       where: {
+        ...this.tenantBookingFilter(),
         startTime: { lte: toDate },
         endTime: { gte: fromDate },
         status: 'CONFIRMED',

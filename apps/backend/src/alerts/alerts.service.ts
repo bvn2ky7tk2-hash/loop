@@ -1,15 +1,30 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, Optional } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAlertDto } from './dto/create-alert.dto';
 import type { NotificationType } from '../generated/prisma';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class AlertsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class AlertsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
+
+  private getTenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { project: { tenantId: tid } } : {};
+  }
 
   async getForProject(projectId: string) {
+    const tid = this.getTenantId();
+    const tenantFilter = tid ? { project: { tenantId: tid } } : {};
     // Giới hạn an toàn — số loại cảnh báo trên 1 dự án hữu hạn
-    return this.prisma.alertConfig.findMany({ where: { projectId }, take: 500 });
+    return this.prisma.alertConfig.findMany({ where: { projectId, ...tenantFilter }, take: 500 });
   }
 
   async upsert(projectId: string, dto: CreateAlertDto) {
@@ -64,7 +79,7 @@ export class AlertsService {
 
   async checkDueSoonTasks(): Promise<void> {
     const alerts = await this.prisma.alertConfig.findMany({
-      where: { type: 'TASK_DUE_SOON', isActive: true },
+      where: { type: 'TASK_DUE_SOON', isActive: true, ...this.getTenantFilter() },
       take: 500,
     });
 
@@ -91,7 +106,7 @@ export class AlertsService {
 
   async checkProjectDeadline(): Promise<void> {
     const configs = await this.prisma.alertConfig.findMany({
-      where: { type: 'RESOURCE_EXPIRING', isActive: true },
+      where: { type: 'RESOURCE_EXPIRING', isActive: true, ...this.getTenantFilter() },
       take: 500,
     });
 
@@ -125,6 +140,7 @@ export class AlertsService {
         type: { in: ['EFFORT_NEAR_BUDGET', 'EFFORT_OVER_BUDGET'] },
         isActive: true,
         threshold: { not: null },
+        ...this.getTenantFilter(),
       },
       take: 500,
     });
@@ -174,6 +190,7 @@ export class AlertsService {
         type: { in: ['BUDGET_NEAR_LIMIT', 'BUDGET_EXCEEDED'] },
         isActive: true,
         threshold: { not: null },
+        ...this.getTenantFilter(),
       },
       take: 500,
     });

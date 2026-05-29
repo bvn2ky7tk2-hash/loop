@@ -1,18 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, Optional } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class BugAttachmentService {
+@Injectable({ scope: Scope.REQUEST })
+export class BugAttachmentService extends TenantAwareService {
   private readonly bucket: string;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly storage: StorageService,
     config: ConfigService,
+    @Optional() @Inject(REQUEST) req?: any,
   ) {
+    super(req);
     this.bucket = config.get<string>('MINIO_BUCKET', 'loop-bug-attachments');
+  }
+
+  private getTenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { bug: { tenantId: tid } } : {};
   }
 
   async uploadFile(bugId: string, uploaderId: string, file: Express.Multer.File, tenantId?: string) {
@@ -37,13 +47,19 @@ export class BugAttachmentService {
   }
 
   async getPresignedUrl(attachmentId: string): Promise<string> {
-    const attachment = await this.prisma.bugAttachment.findUnique({ where: { id: attachmentId } });
+    const tenantFilter = this.getTenantFilter();
+    const attachment = await this.prisma.bugAttachment.findFirst({
+      where: { id: attachmentId, ...tenantFilter },
+    });
     if (!attachment) throw new NotFoundException(`Attachment ${attachmentId} không tìm thấy`);
     return this.storage.presignedUrl(attachment.storagePath, this.bucket);
   }
 
   async deleteFile(attachmentId: string) {
-    const attachment = await this.prisma.bugAttachment.findUnique({ where: { id: attachmentId } });
+    const tenantFilter = this.getTenantFilter();
+    const attachment = await this.prisma.bugAttachment.findFirst({
+      where: { id: attachmentId, ...tenantFilter },
+    });
     if (!attachment) throw new NotFoundException(`Attachment ${attachmentId} không tìm thấy`);
     await this.prisma.bugAttachment.delete({ where: { id: attachmentId } });
     await this.storage.delete(attachment.storagePath, this.bucket);

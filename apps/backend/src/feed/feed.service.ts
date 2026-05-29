@@ -1,6 +1,8 @@
-import { Injectable, ForbiddenException, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, Logger, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { CreateFeedPostDto } from './dto/create-feed-post.dto';
 import { paginate } from '../common/dto/pagination.dto';
 import { FeedPostType } from '../generated/prisma';
@@ -13,15 +15,25 @@ const FEED_INCLUDE = {
   },
 } as const;
 
-@Injectable()
-export class FeedService {
+@Injectable({ scope: Scope.REQUEST })
+export class FeedService extends TenantAwareService {
   private readonly logger = new Logger(FeedService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
+
+  private tenantFilter() {
+    const tid = this.getTenantId();
+    return tid ? { author: { tenantId: tid } } : {};
+  }
 
   /** Danh sách bài đăng — pinned lên đầu, sau đó theo createdAt DESC */
   async listPosts(page = 1, limit = 20, type?: FeedPostType) {
-    const where = type ? { type } : {};
+    const where = { ...this.tenantFilter(), ...(type ? { type } : {}) };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.feedPost.findMany({
         where,
@@ -171,12 +183,13 @@ export class FeedService {
   async getStats() {
     const now   = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const tf    = this.tenantFilter();
 
     const [total, thisMonth, kudos, anniversary] = await Promise.all([
-      this.prisma.feedPost.count(),
-      this.prisma.feedPost.count({ where: { createdAt: { gte: start } } }),
-      this.prisma.feedPost.count({ where: { type: FeedPostType.KUDOS } }),
-      this.prisma.feedPost.count({ where: { type: FeedPostType.ANNIVERSARY } }),
+      this.prisma.feedPost.count({ where: { ...tf } }),
+      this.prisma.feedPost.count({ where: { ...tf, createdAt: { gte: start } } }),
+      this.prisma.feedPost.count({ where: { ...tf, type: FeedPostType.KUDOS } }),
+      this.prisma.feedPost.count({ where: { ...tf, type: FeedPostType.ANNIVERSARY } }),
     ]);
 
     return { total, thisMonth, kudos, anniversary };

@@ -478,7 +478,7 @@ model TelegramMessage {
 
 model ProcessDefinition {
   id             String            @id @default(uuid())
-  key            String?           @unique
+  key            String?
   name           String
   description    String?
   version        Int               @default(1)
@@ -492,9 +492,13 @@ model ProcessDefinition {
   stepConfig     Json?             @map("step_config")
   orgUnit        OrgUnit           @relation(fields: [orgUnitId], references: [id])
   instances      ProcessInstance[]
+  tenantId       String?           @map("tenant_id")
+  tenant         Tenant?           @relation("TenantProcessDefinitions", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, key])
   @@index([orgUnitId])
   @@index([status])
+  @@index([tenantId])
   @@map("process_definitions")
 }
 
@@ -540,9 +544,11 @@ model ProcessUserTask {
   completedAt    DateTime?       @map("completed_at")
   assignee       User?           @relation("ProcessTaskAssignee", fields: [assigneeId], references: [id])
   instance       ProcessInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  tenantId       String?         @map("tenant_id")
 
   @@index([instanceId])
   @@index([assigneeId, status])
+  @@index([tenantId])
   @@map("process_user_tasks")
 }
 
@@ -1167,7 +1173,10 @@ model PayrollPeriod {
   processedBy           User?             @relation("PayrollProcessor", fields: [processedById], references: [id], onDelete: SetNull)
   adjustmentFor         PayrollPeriod?    @relation("AdjustmentPeriod", fields: [adjustmentForPeriodId], references: [id])
   adjustments           PayrollPeriod[]   @relation("AdjustmentPeriod")
+  tenantId              String?           @map("tenant_id")
+  tenant                Tenant?           @relation("TenantPayrollPeriods", fields: [tenantId], references: [id])
 
+  @@index([tenantId])
   @@map("payroll_periods")
 }
 
@@ -1209,10 +1218,13 @@ model PayrollRecord {
   employee            Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeAllowances  EmployeeAllowance[]
   employeeBonuses     EmployeeBonus[]
+  tenantId            String?       @map("tenant_id")
+  tenant              Tenant?       @relation("TenantPayrollRecords", fields: [tenantId], references: [id])
 
   @@unique([periodId, employeeId])
   @@index([employeeId, periodId])
   @@index([periodId])
+  @@index([tenantId])
   @@map("payroll_records")
 }
 
@@ -1454,12 +1466,15 @@ model CrmActivity {
   createdBy       User         @relation("CrmActivityCreator", fields: [createdById], references: [id])
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @updatedAt      @map("updated_at")
+  tenantId        String?      @map("tenant_id")
+  tenant          Tenant?      @relation("TenantCrmActivities", fields: [tenantId], references: [id])
 
   @@index([customerId])
   @@index([dealId])
   @@index([leadId])
   @@index([contactId])
   @@index([createdById])
+  @@index([tenantId])
   @@map("crm_activities")
 }
 
@@ -1467,7 +1482,7 @@ model CrmActivity {
 
 model ClientContract {
   id          String               @id @default(uuid())
-  contractNo  String?              @unique @map("contract_no")
+  contractNo  String?              @map("contract_no")
   title       String               @db.VarChar(200)
   customerId  String               @map("customer_id")
   dealId      String?              @map("deal_id")
@@ -1483,9 +1498,13 @@ model ClientContract {
   updatedAt   DateTime             @updatedAt @map("updated_at")
   customer    Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
   milestones  ContractMilestone[]
+  tenantId    String?              @map("tenant_id")
+  tenant      Tenant?              @relation("TenantClientContracts", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, contractNo])
   @@index([customerId])
   @@index([status])
+  @@index([tenantId])
   @@map("client_contracts")
 }
 
@@ -1603,7 +1622,7 @@ enum InvoiceStatus {
 
 model JobOpening {
   id           String        @id @default(uuid())
-  code         String        @unique
+  code         String
   title        String        @db.VarChar(200)
   orgUnitId    String        @map("org_unit_id")
   level        EmployeeLevel @default(JUNIOR)
@@ -1616,8 +1635,12 @@ model JobOpening {
   candidates   Candidate[]
   createdAt    DateTime      @default(now()) @map("created_at")
   updatedAt    DateTime      @updatedAt      @map("updated_at")
+  tenantId     String?       @map("tenant_id")
+  tenant       Tenant?       @relation("TenantJobOpenings", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, code])
   @@index([orgUnitId, status])
+  @@index([tenantId])
   @@map("job_openings")
 }
 
@@ -1639,9 +1662,12 @@ model Candidate {
   notes             String?        @db.Text
   createdAt         DateTime       @default(now()) @map("created_at")
   updatedAt         DateTime       @updatedAt      @map("updated_at")
+  tenantId          String?        @map("tenant_id")
+  tenant            Tenant?        @relation("TenantCandidates", fields: [tenantId], references: [id])
 
   @@index([jobOpeningId, stage])
   @@index([assigneeId])
+  @@index([tenantId])
   @@map("candidates")
 }
 
@@ -1659,8 +1685,11 @@ model Interview {
   notes        String?         @db.Text
   createdAt    DateTime        @default(now()) @map("created_at")
   updatedAt    DateTime        @updatedAt      @map("updated_at")
+  tenantId     String?         @map("tenant_id")
+  tenant       Tenant?         @relation("TenantInterviews", fields: [tenantId], references: [id])
 
   @@index([candidateId])
+  @@index([tenantId])
   @@map("interviews")
 }
 
@@ -2327,8 +2356,11 @@ model CustomerPortal {
   createdAt          DateTime         @default(now()) @map("created_at")
   updatedAt          DateTime         @updatedAt @map("updated_at")
   tickets            CustomerTicket[]
+  tenantId           String?          @map("tenant_id")
+  tenant             Tenant?          @relation("TenantCustomerPortals", fields: [tenantId], references: [id])
 
   @@index([customerId])
+  @@index([tenantId])
   @@map("customer_portals")
 }
 
@@ -2381,7 +2413,7 @@ enum PoItemStatus {
 
 model Vendor {
   id           String       @id @default(uuid())
-  code         String       @unique @db.VarChar(50)
+  code         String       @db.VarChar(50)
   name         String       @db.VarChar(200)
   category     String?      @db.VarChar(100)
   contactName  String?      @db.VarChar(100) @map("contact_name")
@@ -2397,13 +2429,17 @@ model Vendor {
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
   purchaseOrders PurchaseOrder[]
+  tenantId     String?      @map("tenant_id")
+  tenant       Tenant?      @relation("TenantVendors", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, code])
+  @@index([tenantId])
   @@map("vendors")
 }
 
 model PurchaseOrder {
   id           String    @id @default(uuid())
-  poNumber     String    @unique @db.VarChar(50) @map("po_number")
+  poNumber     String    @db.VarChar(50) @map("po_number")
   vendorId     String    @map("vendor_id")
   vendor       Vendor    @relation(fields: [vendorId], references: [id])
   requesterId  String    @map("requester_id")
@@ -2421,10 +2457,14 @@ model PurchaseOrder {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   items        PurchaseOrderItem[]
+  tenantId     String?   @map("tenant_id")
+  tenant       Tenant?   @relation("TenantPurchaseOrders", fields: [tenantId], references: [id])
 
+  @@unique([tenantId, poNumber])
   @@index([vendorId])
   @@index([requesterId])
   @@index([status])
+  @@index([tenantId])
   @@map("purchase_orders")
 }
 
@@ -2470,9 +2510,12 @@ model Comment {
   author     User     @relation("CommentAuthor", fields: [authorId], references: [id])
   parent     Comment? @relation("CommentReplies", fields: [parentId], references: [id])
   replies    Comment[] @relation("CommentReplies")
+  tenantId   String?  @map("tenant_id")
+  tenant     Tenant?  @relation("TenantComments", fields: [tenantId], references: [id])
 
   @@index([entityType, entityId])
   @@index([authorId])
+  @@index([tenantId])
   @@map("comments")
 }
 
@@ -2790,7 +2833,12 @@ model Tenant {
   leaveBalances LeaveBalance[]    @relation("TenantLeaveBalances")
   timeEntries   TimeEntry[]       @relation("TenantTimeEntries")
   allocations   Allocation[]      @relation("TenantAllocations")
-  processInstances ProcessInstance[] @relation("TenantProcessInstances")
+  processInstances    ProcessInstance[]   @relation("TenantProcessInstances")
+  processDefinitions  ProcessDefinition[] @relation("TenantProcessDefinitions")
+  processUserTasks    ProcessUserTask[]   @relation("TenantProcessUserTasks")
+  payrollPeriods      PayrollPeriod[]     @relation("TenantPayrollPeriods")
+  payrollRecords      PayrollRecord[]     @relation("TenantPayrollRecords")
+  crmActivities       CrmActivity[]       @relation("TenantCrmActivities")
 
   @@map("tenants")
 }

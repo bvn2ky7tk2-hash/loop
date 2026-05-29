@@ -13,3 +13,4 @@ import { TelegramModule } from '../integrations/telegram/telegram.module';
   exports: [AlertsService],
 })
 export class AlertsModule {}
+
