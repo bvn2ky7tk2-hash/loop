@@ -140,7 +140,7 @@ export default function ContactsPage() {
         onClose={() => setDrawerOpen(false)}
         width={440}
         extra={
-          <Button type="primary" loading={isPending} onClick={handleSave}
+          <Button type="primary" loading={isPending} disabled={isPending} onClick={handleSave}
             style={{ background: preset.primary, borderColor: preset.primary }}>
             {editing ? 'Cập nhật' : 'Lưu'}
           </Button>

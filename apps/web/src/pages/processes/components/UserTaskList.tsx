@@ -139,6 +139,7 @@ export function UserTaskList({
                 icon={<UserOutlined />}
                 onClick={() => handleClaim(record.id)}
                 loading={claimMutation.isPending}
+                disabled={claimMutation.isPending}
               >
                 Nhận
               </Button>

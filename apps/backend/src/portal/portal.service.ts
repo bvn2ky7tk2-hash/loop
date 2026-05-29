@@ -123,11 +123,15 @@ export class PortalService {
             where: { id: { in: portal.allowedContractIds } },
             include: { milestones: { orderBy: { dueDate: 'asc' } } },
             orderBy: { startDate: 'desc' },
+            // Giới hạn an toàn — portal khách hàng hiển thị tối đa 200 hợp đồng
+            take: 200,
           })
         : this.prisma.clientContract.findMany({
             where: { customerId: portal.customerId },
             include: { milestones: { orderBy: { dueDate: 'asc' } } },
             orderBy: { startDate: 'desc' },
+            // Giới hạn an toàn — portal khách hàng hiển thị tối đa 200 hợp đồng
+            take: 200,
           }),
       this.prisma.deal.findMany({
         where: { customerId: portal.customerId },

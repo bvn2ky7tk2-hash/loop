@@ -130,7 +130,7 @@ function InsuranceTab() {
 
       <CenteredModal open={open} onClose={() => { setOpen(false); form.resetFields(); }}
         title="Thêm cấu hình bảo hiểm" width={560}
-        extra={<Button type="primary" loading={createMut.isPending} onClick={() => form.validateFields().then(v => createMut.mutate(v))}>Lưu</Button>}>
+        extra={<Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={() => form.validateFields().then(v => createMut.mutate(v))}>Lưu</Button>}>
         <Form form={form} layout="vertical"
           initialValues={{ bhxhEmployeeRate: 8, bhytEmployeeRate: 1.5, bhtnEmployeeRate: 1, bhxhEmployerRate: 17.5, bhytEmployerRate: 3, bhtnEmployerRate: 1, tnldRate: 0.5, bhxhCeilingMultiple: 20, wageBase: 2340000 }}>
           <Form.Item name="effectiveFrom" label="Hiệu lực từ ngày" rules={[{ required: true }]}>
@@ -289,7 +289,7 @@ function TaxBracketTab() {
       {/* Modal thêm biểu thuế */}
       <CenteredModal open={open} onClose={() => { setOpen(false); form.resetFields(); }}
         title="Thêm biểu thuế TNCN" width={580}
-        extra={<Button type="primary" loading={createBracketMut.isPending} onClick={() => form.validateFields().then(v => createBracketMut.mutate(v))}>Lưu</Button>}>
+        extra={<Button type="primary" loading={createBracketMut.isPending} disabled={createBracketMut.isPending} onClick={() => form.validateFields().then(v => createBracketMut.mutate(v))}>Lưu</Button>}>
         <Form form={form} layout="vertical"
           initialValues={{
             name: 'Luật 109/2025/QH15 (5 bậc)',
@@ -337,7 +337,7 @@ function TaxBracketTab() {
       {/* Modal cập nhật giảm trừ */}
       <CenteredModal open={deductOpen} onClose={() => { setDeductOpen(false); deductForm.resetFields(); }}
         title="Cập nhật mức giảm trừ gia cảnh" width={420}
-        extra={<Button type="primary" loading={createDeductMut.isPending} onClick={() => deductForm.validateFields().then(v => createDeductMut.mutate(v))}>Lưu</Button>}>
+        extra={<Button type="primary" loading={createDeductMut.isPending} disabled={createDeductMut.isPending} onClick={() => deductForm.validateFields().then(v => createDeductMut.mutate(v))}>Lưu</Button>}>
         <Form form={deductForm} layout="vertical" initialValues={{ selfDeduction: 11_000_000, dependentDeduction: 4_400_000 }}>
           <Form.Item name="effectiveFrom" label="Hiệu lực từ ngày" rules={[{ required: true }]}>
             <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
@@ -506,7 +506,7 @@ function SalaryColumnsTab() {
 
       <CenteredModal open={open} onClose={() => { setOpen(false); setEditCol(null); form.resetFields(); }}
         title={editCol ? `Sửa: ${editCol.name}` : 'Thêm cột lương'} width={520}
-        extra={<Button type="primary" loading={createMut.isPending} onClick={() => form.validateFields().then(v => createMut.mutate(v))}>Lưu</Button>}>
+        extra={<Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={() => form.validateFields().then(v => createMut.mutate(v))}>Lưu</Button>}>
         <Form form={form} layout="vertical" initialValues={{ type: 'EARNING', source: 'CONTRACT_SALARY', sortOrder: 0, isActive: true, isBhxhExempt: false, isPitExempt: false }}>
           <Row gutter={12}>
             <Col span={16}>
@@ -722,7 +722,7 @@ function AllowanceTab() {
         title={editing ? `Sửa: ${editing.name}` : 'Thêm loại phụ cấp'}
         width={480}
         extra={
-          <Button type="primary" loading={saveMut.isPending}
+          <Button type="primary" loading={saveMut.isPending} disabled={saveMut.isPending}
             onClick={() => form.validateFields().then(v => saveMut.mutate(v))}>
             Lưu
           </Button>

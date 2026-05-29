@@ -4,7 +4,7 @@ import { AppstoreOutlined, DownOutlined } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/auth.store';
-import { useThemeStore } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { useMenuStore } from '../../store/menu.store';
 import { useModuleStore } from '../../store/module.store';
 import { MODULE_MAP, ICON_MAP, ROUTE_PERMISSION_MAP } from '../../config/modules.config';
@@ -143,7 +143,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { user }  = useAuthStore();
-  const { mode, preset } = useThemeStore();
+  const { isDark, preset } = useThemePalette();
   const tenantConfig = useTenantStore(s => s.config);
   const { getModuleConfig } = useMenuStore();
   const { activeModuleId, setActiveModule } = useModuleStore();
@@ -168,7 +168,6 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
 
-  const isDark      = mode === 'dark';
   const isNavLight  = !isDark && preset.navTheme === 'light';
   const sidebarBg   = isDark ? '#0F172A' : preset.navBg;
   const dividerColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : 'rgba(255,255,255,0.12)';

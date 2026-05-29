@@ -247,7 +247,7 @@ export default function CustomerPortalPage() {
               </Form.Item>
               <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                 <Button onClick={() => setSubmitOpen(false)}>Hủy</Button>
-                <Button type="primary" htmlType="submit" loading={mutateTicket.isPending} icon={<SendOutlined />} style={{ background: '#6366F1', borderColor: '#6366F1' }}>
+                <Button type="primary" htmlType="submit" loading={mutateTicket.isPending} disabled={mutateTicket.isPending} icon={<SendOutlined />} style={{ background: '#6366F1', borderColor: '#6366F1' }}>
                   Gửi yêu cầu
                 </Button>
               </div>

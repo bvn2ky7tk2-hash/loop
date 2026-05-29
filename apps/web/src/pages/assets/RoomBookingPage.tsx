@@ -439,7 +439,7 @@ export default function RoomBookingPage() {
         footer={
           <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
             <Button onClick={() => setBookingOpen(false)}>Huỷ</Button>
-            <Button type="primary" loading={createBookingMut.isPending} onClick={() => bookingForm.submit()}>
+            <Button type="primary" loading={createBookingMut.isPending} disabled={createBookingMut.isPending} onClick={() => bookingForm.submit()}>
               Đặt phòng
             </Button>
           </Space>

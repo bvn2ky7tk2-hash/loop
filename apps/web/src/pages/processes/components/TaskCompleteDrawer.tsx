@@ -126,7 +126,7 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
   const footerButtons = (
     <Space style={{ justifyContent: 'space-between', width: '100%', display: 'flex' }}>
       <Popconfirm title="Trả lại task này?" onConfirm={handleReturn}>
-        <Button icon={<RollbackOutlined />} loading={returnMutation.isPending}>
+        <Button icon={<RollbackOutlined />} loading={returnMutation.isPending} disabled={returnMutation.isPending}>
           Trả lại
         </Button>
       </Popconfirm>
@@ -135,12 +135,12 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
         {isApproval ? (
           <>
             <Popconfirm title="Từ chối yêu cầu?" onConfirm={() => handleComplete({ approved: false })}>
-              <Button danger icon={<DislikeOutlined />} loading={completeMutation.isPending}>
+              <Button danger icon={<DislikeOutlined />} loading={completeMutation.isPending} disabled={completeMutation.isPending}>
                 Từ chối
               </Button>
             </Popconfirm>
             <Popconfirm title="Đồng ý duyệt yêu cầu?" onConfirm={() => handleComplete({ approved: true })}>
-              <Button type="primary" icon={<LikeOutlined />} loading={completeMutation.isPending}>
+              <Button type="primary" icon={<LikeOutlined />} loading={completeMutation.isPending} disabled={completeMutation.isPending}>
                 Đồng ý
               </Button>
             </Popconfirm>
@@ -150,6 +150,7 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
             type="primary"
             icon={<CheckOutlined />}
             loading={completeMutation.isPending}
+            disabled={completeMutation.isPending}
             onClick={() => handleComplete()}
           >
             Hoàn thành

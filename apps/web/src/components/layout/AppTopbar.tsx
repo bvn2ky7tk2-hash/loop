@@ -5,7 +5,6 @@ import {
   BgColorsOutlined, PlusOutlined, CheckSquareOutlined, BugOutlined,
   KeyOutlined, PartitionOutlined,
 } from '@ant-design/icons';
-import { useThemeStore } from '../../store/theme.store';
 import { useAuthStore } from '../../store/auth.store';
 import { authApi } from '../../api/auth';
 import { notificationsApi } from '../../api/notifications';
@@ -169,11 +168,10 @@ function QuickProcessModal({ open, onClose }: { open: boolean; onClose: () => vo
 }
 
 export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
-  const { mode, preset } = useThemeStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const openPalette = useCommandPaletteStore((s) => s.open);
-  const { textMuted, borderColor: paletteBorderColor } = useThemePalette();
+  const { isDark, textMuted, borderColor: paletteBorderColor, preset } = useThemePalette();
   const [quickTaskOpen,      setQuickTaskOpen]      = useState(false);
   const [quickBugOpen,       setQuickBugOpen]       = useState(false);
   const [quickProcessOpen,   setQuickProcessOpen]   = useState(false);
@@ -191,7 +189,6 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
     navigate('/login', { replace: true });
   };
 
-  const isDark      = mode === 'dark';
   const isNavLight  = !isDark && preset.navTheme === 'light';
   const topbarBg    = isDark ? '#0F172A' : preset.navBg;
   const iconColor   = isNavLight ? preset.navText : '#fff';

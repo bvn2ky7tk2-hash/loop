@@ -65,7 +65,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/decisions',          module: 'people', label: 'Quyết định nhân sự',       icon: 'FileProtectOutlined',  permCode: 'hr_decisions:read',          sortOrder: 6 },
   { route: '/hr/attendance',         module: 'people', label: 'Bảng công',                icon: 'ScheduleOutlined',     permCode: 'attendance:read',            sortOrder: 7 },
   { route: '/timesheet/approvals',   module: 'people', label: 'Duyệt chấm công',          icon: 'AuditOutlined',        permCode: 'timesheet_approvals:approve',sortOrder: 8 },
-  { route: '/hr/leaves',             module: 'people', label: 'Quản lý đơn nghỉ phép',    icon: 'CalendarOutlined',     permCode: 'leaves:approve',             sortOrder: 9 },
+  { route: '/leaves',                 module: 'people', label: 'Quản lý đơn nghỉ phép',    icon: 'CalendarOutlined',     permCode: 'leaves:approve',             sortOrder: 9 },
   { route: '/hr/overtime',           module: 'people', label: 'Quản lý OT',               icon: 'FieldTimeOutlined',    permCode: 'employees:read',             sortOrder: 10 },
   { route: '/payroll',               module: 'people', label: 'Bảng lương',               icon: 'CreditCardOutlined',   permCode: 'payroll:read',               sortOrder: 11 },
   { route: '/hr/insurance',          module: 'people', label: 'Bảo hiểm xã hội',          icon: 'SafetyOutlined',       permCode: 'insurance:read',             sortOrder: 12 },

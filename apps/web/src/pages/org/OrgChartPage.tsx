@@ -718,7 +718,7 @@ export default function OrgChartPage() {
         confirmLoading={setLeaderMutation.isPending}
         footer={[
           <Button key="remove" danger
-            disabled={!leaderTarget?.leaderInfo}
+            disabled={!leaderTarget?.leaderInfo || setLeaderMutation.isPending}
             onClick={handleRemoveLeader}
             loading={setLeaderMutation.isPending}
           >
@@ -727,7 +727,7 @@ export default function OrgChartPage() {
           <Button key="cancel" onClick={() => { setLeaderTarget(null); leaderForm.resetFields(); }}>
             Huỷ
           </Button>,
-          <Button key="ok" type="primary" onClick={() => leaderForm.submit()} loading={setLeaderMutation.isPending}>
+          <Button key="ok" type="primary" onClick={() => leaderForm.submit()} loading={setLeaderMutation.isPending} disabled={setLeaderMutation.isPending}>
             Xác nhận
           </Button>,
         ]}

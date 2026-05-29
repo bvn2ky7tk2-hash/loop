@@ -360,6 +360,7 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
             <Button
               type="primary"
               loading={updateMut.isPending || uploadAttach.isPending}
+              disabled={updateMut.isPending || uploadAttach.isPending}
               onClick={() => form.submit()}
             >
               Lưu thay đổi
