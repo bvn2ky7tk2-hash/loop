@@ -3,7 +3,10 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   ConflictException,
+  Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
@@ -11,10 +14,16 @@ import { FilterAssetDto } from './dto/filter-asset.dto';
 import { AssignAssetDto, ReturnAssetDto } from './dto/assign-asset.dto';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
 import { paginate } from '../common/dto/pagination.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class AssetsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class AssetsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async create(dto: CreateAssetDto) {
     const existing = await this.prisma.asset.findUnique({ where: { code: dto.code } });
@@ -33,6 +42,7 @@ export class AssetsService {
         purchasePrice:     dto.purchasePrice,
         depreciationYears: dto.depreciationYears,
         notes:             dto.notes,
+        ...( this.getTenantId() ? { tenantId: this.getTenantId() } : {} ),
       },
       include: {
         orgUnit: true,
@@ -46,7 +56,7 @@ export class AssetsService {
 
   async findAll(filter: FilterAssetDto) {
     const { category, status, orgUnitId, page = 1, limit = 20 } = filter;
-    const where: any = {};
+    const where: any = this.tenantWhere();
     if (category)  where.category  = category;
     if (status)    where.status    = status;
     if (orgUnitId) where.orgUnitId = orgUnitId;
@@ -225,11 +235,12 @@ export class AssetsService {
   // ─── Summary (for summary cards) ─────────────────────────────────────────────
 
   async getSummary() {
+    const baseWhere = this.tenantWhere();
     const [total, assigned, underMaintenance, totalPriceResult] = await this.prisma.$transaction([
-      this.prisma.asset.count(),
-      this.prisma.asset.count({ where: { status: 'ASSIGNED' } }),
-      this.prisma.asset.count({ where: { status: 'UNDER_MAINTENANCE' } }),
-      this.prisma.asset.aggregate({ _sum: { purchasePrice: true } }),
+      this.prisma.asset.count({ where: baseWhere }),
+      this.prisma.asset.count({ where: { ...baseWhere, status: 'ASSIGNED' } }),
+      this.prisma.asset.count({ where: { ...baseWhere, status: 'UNDER_MAINTENANCE' } }),
+      this.prisma.asset.aggregate({ where: baseWhere, _sum: { purchasePrice: true } }),
     ]);
 
     return {

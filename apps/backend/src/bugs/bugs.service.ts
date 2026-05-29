@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, UnprocessableEntityException, Logger, Optional, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -11,6 +12,7 @@ import { TransitionBugDto } from './dto/transition-bug.dto';
 import { AssignBugDto } from './dto/assign-bug.dto';
 import { FilterBugDto } from './dto/filter-bug.dto';
 import { ApproveBugDto } from './dto/approve-bug.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 const BUG_TRANSITIONS: Record<BugStatus, BugStatus[]> = {
   [BugStatus.OPEN]:           [BugStatus.PENDING, BugStatus.IN_PROGRESS, BugStatus.CANCELLED],
@@ -54,20 +56,18 @@ const BUG_INCLUDE = {
   tags:       true,
 } as const;
 
-@Injectable()
-export class BugsService {
+@Injectable({ scope: Scope.REQUEST })
+export class BugsService extends TenantAwareService {
   private readonly logger = new Logger(BugsService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly tasksService: TasksService,
-    @Inject(REQUEST) private readonly request: any,
     @Optional() private readonly telegramService: TelegramService,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
   }
 
   async create(dto: CreateBugDto, reporterId: string, orgUnitIds: string[] | null) {
@@ -187,17 +187,23 @@ export class BugsService {
   }
 
   async countMine(userId: string) {
+    const tenantId = this.getTenantId();
     const total = await this.prisma.bug.count({
       where: {
         assigneeId: userId,
         status: { notIn: ['CLOSED', 'CANCELLED', 'REJECTED'] },
+        ...(tenantId ? { tenantId } : {}),
       },
     });
     return { total };
   }
 
   async findMine(userId: string, page = 1, limit = 50) {
-    const where = { assigneeId: userId };
+    const tenantId = this.getTenantId();
+    const where = {
+      assigneeId: userId,
+      ...(tenantId ? { tenantId } : {}),
+    };
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
       this.prisma.bug.findMany({
@@ -380,9 +386,12 @@ export class BugsService {
 
   private buildWhere(filters: FilterBugDto, orgUnitIds: string[] | null) {
     const tenantId = this.getTenantId();
+    const projectFilter = {
+      ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
+      ...(tenantId ? { tenantId } : {}),
+    };
     const where: any = {
-      ...(orgUnitIds !== null ? { project: { orgUnitId: { in: orgUnitIds } } } : {}),
-      ...(tenantId ? { project: { ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}), tenantId } } : {}),
+      ...( Object.keys(projectFilter).length ? { project: projectFilter } : {} ),
     };
 
     if (filters.projectId) where.projectId = filters.projectId;

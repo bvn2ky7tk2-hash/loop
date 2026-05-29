@@ -1,19 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { Prisma } from '../generated/prisma';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 export interface BugStatsFilter {
   projectId?: string;
   orgUnitIds: string[] | null;
 }
 
-@Injectable()
-export class BugStatsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class BugStatsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async getStats(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
+    const projectFilter = {
+      ...(filter.orgUnitIds !== null ? { orgUnitId: { in: filter.orgUnitIds } } : {}),
+      ...(tenantId ? { tenantId } : {}),
+    };
     const baseWhere: Prisma.BugWhereInput = {
-      ...(filter.orgUnitIds !== null ? { project: { orgUnitId: { in: filter.orgUnitIds } } } : {}),
+      ...(Object.keys(projectFilter).length ? { project: projectFilter } : {}),
       ...(filter.projectId ? { projectId: filter.projectId } : {}),
     };
 
@@ -66,6 +79,7 @@ export class BugStatsService {
   }
 
   private async getOpenByProject(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<
       { projectId: string; projectName: string; open: bigint; critical: bigint; total: bigint }[]
     >(Prisma.sql`
@@ -80,6 +94,7 @@ export class BugStatsService {
       WHERE 1=1
         ${filter.orgUnitIds !== null ? Prisma.sql`AND p.org_unit_id = ANY(${filter.orgUnitIds})` : Prisma.sql``}
         ${filter.projectId ? Prisma.sql`AND b.project_id = ${filter.projectId}` : Prisma.sql``}
+        ${tenantId ? Prisma.sql`AND p.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY b.project_id, p.name
       ORDER BY total DESC
       LIMIT 10
@@ -95,6 +110,7 @@ export class BugStatsService {
   }
 
   private async getOpenByTask(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<
       { taskId: string; taskTitle: string; projectName: string; openCount: bigint }[]
     >(Prisma.sql`
@@ -112,6 +128,7 @@ export class BugStatsService {
       WHERE 1=1
         ${filter.orgUnitIds !== null ? Prisma.sql`AND p.org_unit_id = ANY(${filter.orgUnitIds})` : Prisma.sql``}
         ${filter.projectId ? Prisma.sql`AND p.id = ${filter.projectId}` : Prisma.sql``}
+        ${tenantId ? Prisma.sql`AND p.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY t.id, t.title, p.name
       ORDER BY "openCount" DESC
       LIMIT 10
@@ -126,6 +143,7 @@ export class BugStatsService {
   }
 
   private async getOpenByAssignee(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<
       { assigneeId: string; assigneeName: string; open: bigint; critical: bigint; total: bigint }[]
     >(Prisma.sql`
@@ -141,6 +159,7 @@ export class BugStatsService {
       WHERE b.assignee_id IS NOT NULL
         ${filter.orgUnitIds !== null ? Prisma.sql`AND p.org_unit_id = ANY(${filter.orgUnitIds})` : Prisma.sql``}
         ${filter.projectId ? Prisma.sql`AND b.project_id = ${filter.projectId}` : Prisma.sql``}
+        ${tenantId ? Prisma.sql`AND p.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY u.id, u.name
       ORDER BY "open" DESC
       LIMIT 15
@@ -156,6 +175,7 @@ export class BugStatsService {
   }
 
   private async getOpenByReporter(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<
       { reporterId: string; reporterName: string; open: bigint; critical: bigint; total: bigint }[]
     >(Prisma.sql`
@@ -171,6 +191,7 @@ export class BugStatsService {
       WHERE 1=1
         ${filter.orgUnitIds !== null ? Prisma.sql`AND p.org_unit_id = ANY(${filter.orgUnitIds})` : Prisma.sql``}
         ${filter.projectId ? Prisma.sql`AND b.project_id = ${filter.projectId}` : Prisma.sql``}
+        ${tenantId ? Prisma.sql`AND p.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY u.id, u.name
       ORDER BY "total" DESC
       LIMIT 15
@@ -186,6 +207,7 @@ export class BugStatsService {
   }
 
   private async getTrend30Days(filter: BugStatsFilter) {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<
       { date: Date; created: bigint; resolved: bigint }[]
     >(Prisma.sql`
@@ -208,6 +230,7 @@ export class BugStatsService {
           WHERE p.id = b.project_id
             ${filter.orgUnitIds !== null ? Prisma.sql`AND p.org_unit_id = ANY(${filter.orgUnitIds})` : Prisma.sql``}
             ${filter.projectId ? Prisma.sql`AND p.id = ${filter.projectId}` : Prisma.sql``}
+            ${tenantId ? Prisma.sql`AND p.tenant_id = ${tenantId}` : Prisma.sql``}
         )
       GROUP BY d.date
       ORDER BY d.date

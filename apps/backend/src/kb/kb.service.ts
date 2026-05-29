@@ -1,6 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto, UpdateCategoryDto, CreateArticleDto, UpdateArticleDto } from './dto/kb.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 function slugify(text: string): string {
   return text
@@ -24,16 +27,22 @@ async function uniqueSlug(prisma: PrismaService, base: string, excludeId?: strin
   }
 }
 
-@Injectable()
-export class KbService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class KbService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async stats() {
+    const baseWhere = this.tenantWhere();
     const [total, published, categories, totalViews] = await Promise.all([
-      this.prisma.kbArticle.count(),
-      this.prisma.kbArticle.count({ where: { status: 'PUBLISHED' } }),
+      this.prisma.kbArticle.count({ where: baseWhere }),
+      this.prisma.kbArticle.count({ where: { ...baseWhere, status: 'PUBLISHED' } }),
       this.prisma.kbCategory.count(),
-      this.prisma.kbArticle.aggregate({ _sum: { viewCount: true } }),
+      this.prisma.kbArticle.aggregate({ where: baseWhere, _sum: { viewCount: true } }),
     ]);
     return {
       totalArticles: total,
@@ -74,7 +83,7 @@ export class KbService {
     limit?: number;
   }) {
     const { categoryId, status, search, pinned, page = 1, limit = 20 } = params;
-    const where: any = {};
+    const where: any = this.tenantWhere();
     if (categoryId) where.categoryId = categoryId;
     if (status) where.status = status;
     if (pinned !== undefined) where.isPinned = pinned;
@@ -132,6 +141,7 @@ export class KbService {
         authorId,
         tags: dto.tags ?? [],
         publishedAt,
+        ...( this.getTenantId() ? { tenantId: this.getTenantId() } : {} ),
       },
       include: {
         category: { select: { id: true, name: true, color: true } },
