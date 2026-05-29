@@ -46,8 +46,9 @@ export class CustomersService {
   }
 
   async findOne(id: string) {
-    const customer = await this.prisma.customer.findUnique({
-      where: { id },
+    // Dùng findFirst để lọc được deletedAt — findUnique không hỗ trợ thêm điều kiện
+    const customer = await this.prisma.customer.findFirst({
+      where: { id, deletedAt: null },
       include: {
         contacts: true,
         deals: {
@@ -87,6 +88,7 @@ export class CustomersService {
   }
 
   async restore(id: string) {
+    // restore cần tìm cả record đã bị xóa mềm nên không lọc deletedAt
     const customer = await this.prisma.customer.findUnique({ where: { id } });
     if (!customer) throw new NotFoundException(`Không tìm thấy khách hàng #${id}`);
     return this.prisma.customer.update({ where: { id }, data: { deletedAt: null } });

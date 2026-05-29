@@ -306,7 +306,7 @@ function LeaveDrawer({
 // ─── Main LeavePage ───────────────────────────────────────────────────────────
 
 export default function LeavePage() {
-  const { isDark, textPrimary, textSecondary, bgContainer, bgCard, borderColor, preset } = useThemePalette();
+  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, borderColor, preset } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -537,6 +537,16 @@ export default function LeavePage() {
         rowKey="id"
         columns={columns}
         onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewLeave(record); }, style: { cursor: 'pointer' } })}
+        locale={{
+          emptyText: (
+            <div style={{ padding: '40px 0', textAlign: 'center' }}>
+              {/* Icon và text hiển thị khi chưa có đơn xin nghỉ nào */}
+              <CalendarOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+              <div style={{ color: textMuted, fontSize: 14 }}>Chưa có đơn xin nghỉ nào</div>
+              <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Tạo yêu cầu để gửi đơn nghỉ phép</div>
+            </div>
+          ),
+        }}
         pagination={{
           total: data?.total,
           pageSize: 20,

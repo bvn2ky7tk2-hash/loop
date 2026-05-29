@@ -66,8 +66,9 @@ export class DealsService {
   }
 
   async findOne(id: string) {
-    const deal = await this.prisma.deal.findUnique({
-      where: { id },
+    // Dùng findFirst để lọc cả deletedAt — không trả về deal đã xóa mềm
+    const deal = await this.prisma.deal.findFirst({
+      where: { id, deletedAt: null },
       include: {
         customer: true,
       },
@@ -185,6 +186,7 @@ export class DealsService {
   }
 
   async restore(id: string) {
+    // restore cần tìm cả record đã bị xóa mềm nên không lọc deletedAt
     const deal = await this.prisma.deal.findUnique({ where: { id } });
     if (!deal) throw new NotFoundException(`Không tìm thấy deal #${id}`);
     return this.prisma.deal.update({ where: { id }, data: { deletedAt: null } });

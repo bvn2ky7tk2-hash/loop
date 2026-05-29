@@ -122,7 +122,20 @@ export default function AssetMaintenancePage() {
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<AssetMaintenance>
-          rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
+          rowKey="id"
+          columns={columns}
+          dataSource={data?.data ?? []}
+          loading={isLoading}
+          locale={{
+            emptyText: (
+              <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                {/* Icon và text hiển thị khi chưa có dữ liệu bảo trì */}
+                <ToolOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                <div style={{ color: textMuted, fontSize: 14 }}>Chưa có lịch bảo trì nào</div>
+                <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Log bảo trì để ghi nhận</div>
+              </div>
+            ),
+          }}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />

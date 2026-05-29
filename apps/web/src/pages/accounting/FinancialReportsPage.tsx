@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Row, Col, Typography, DatePicker, Table, Spin, Divider, Tabs, Button, message,
 } from 'antd';
+import { downloadExport } from '../../utils/exportApi';
 import type { ColumnsType } from 'antd/es/table';
 import {
   BarChartOutlined, FundOutlined, BankOutlined, FileExcelOutlined,
@@ -52,6 +53,7 @@ function renderAmount(
 function BalanceSheetTab() {
   const { textPrimary, textMuted, linkColor, bgContainer, borderColor } = useThemePalette();
   const [asOfDate, setAsOfDate] = useState('2026-05-31');
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data, isFetching } = useGetBalanceSheet(asOfDate);
 
@@ -147,7 +149,20 @@ function BalanceSheetTab() {
         />
         <Button
           icon={<FileExcelOutlined />}
-          onClick={() => message.info('Tính năng xuất Excel đang phát triển')}
+          loading={isExporting}
+          onClick={async () => {
+            setIsExporting(true);
+            try {
+              await downloadExport(
+                `/api/v1/accounting/reports/balance-sheet/export?asOfDate=${asOfDate}`,
+                `balance-sheet-${asOfDate}.xlsx`,
+              );
+            } catch {
+              message.error('Xuất Excel thất bại');
+            } finally {
+              setIsExporting(false);
+            }
+          }}
         >
           Xuất Excel
         </Button>
@@ -240,6 +255,7 @@ function BalanceSheetTab() {
 function IncomeStatementTab() {
   const { textPrimary, textMuted, linkColor, bgContainer, borderColor } = useThemePalette();
   const [range, setRange] = useState<[string, string]>(['2026-01-01', '2026-05-31']);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data, isFetching } = useGetIncomeStatement(range[0], range[1]);
 
@@ -301,7 +317,20 @@ function IncomeStatementTab() {
         />
         <Button
           icon={<FileExcelOutlined />}
-          onClick={() => message.info('Tính năng xuất Excel đang phát triển')}
+          loading={isExporting}
+          onClick={async () => {
+            setIsExporting(true);
+            try {
+              await downloadExport(
+                `/api/v1/accounting/reports/income-statement/export?from=${range[0]}&to=${range[1]}`,
+                `income-statement-${range[0]}-${range[1]}.xlsx`,
+              );
+            } catch {
+              message.error('Xuất Excel thất bại');
+            } finally {
+              setIsExporting(false);
+            }
+          }}
         >
           Xuất Excel
         </Button>
@@ -373,6 +402,7 @@ function IncomeStatementTab() {
 function CashFlowTab() {
   const { textPrimary, textMuted, linkColor, bgContainer, borderColor } = useThemePalette();
   const [range, setRange] = useState<[string, string]>(['2026-01-01', '2026-05-31']);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data, isFetching } = useGetCashFlow(range[0], range[1]);
 
@@ -420,7 +450,20 @@ function CashFlowTab() {
         />
         <Button
           icon={<FileExcelOutlined />}
-          onClick={() => message.info('Tính năng xuất Excel đang phát triển')}
+          loading={isExporting}
+          onClick={async () => {
+            setIsExporting(true);
+            try {
+              await downloadExport(
+                `/api/v1/accounting/reports/cash-flow/export?from=${range[0]}&to=${range[1]}`,
+                `cash-flow-${range[0]}-${range[1]}.xlsx`,
+              );
+            } catch {
+              message.error('Xuất Excel thất bại');
+            } finally {
+              setIsExporting(false);
+            }
+          }}
         >
           Xuất Excel
         </Button>

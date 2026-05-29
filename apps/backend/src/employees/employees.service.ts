@@ -81,8 +81,9 @@ export class EmployeesService {
   }
 
   async findOne(id: string, callerRole: Role) {
-    const emp = await this.prisma.employee.findUnique({
-      where: { id },
+    const emp = await this.prisma.employee.findFirst({
+      // Dùng findFirst thay findUnique để có thể lọc deletedAt
+      where: { id, deletedAt: null },
       include: {
         orgUnit: { select: { id: true, name: true } },
         position: { include: { jobTitle: { select: { name: true } } } },
@@ -95,7 +96,8 @@ export class EmployeesService {
 
   async findMe(userId: string) {
     const emp = await this.prisma.employee.findFirst({
-      where: { userId },
+      // Chỉ trả về nhân sự chưa bị xóa mềm
+      where: { userId, deletedAt: null },
       include: { orgUnit: { select: { name: true } }, rates: { orderBy: { effectiveDate: 'desc' }, take: 1 } },
     });
     if (!emp) throw new NotFoundException('Chưa có hồ sơ nhân sự cho tài khoản này');
@@ -168,6 +170,8 @@ export class EmployeesService {
 
   async exportExcel(): Promise<Buffer> {
     const employees = await this.prisma.employee.findMany({
+      // Chỉ export nhân sự chưa bị xóa mềm
+      where: { deletedAt: null },
       include: { orgUnit: { select: { name: true } } },
       orderBy: { fullName: 'asc' },
       take: 5000,
@@ -228,7 +232,8 @@ export class EmployeesService {
   }
 
   private async findOrThrow(id: string): Promise<Employee> {
-    const emp = await this.prisma.employee.findUnique({ where: { id } });
+    // Kiểm tra cả deletedAt để không thao tác trên record đã xóa mềm
+    const emp = await this.prisma.employee.findFirst({ where: { id, deletedAt: null } });
     if (!emp) throw new NotFoundException('Không tìm thấy nhân sự');
     return emp;
   }

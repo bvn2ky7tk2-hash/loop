@@ -26,7 +26,7 @@ const STATUS_META: Record<TrainingStatus, { label: string; color: string }> = {
 };
 
 export default function TrainingPage() {
-  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
+  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
 
   const [progModalOpen, setProgModalOpen] = useState(false);
   const [recModalOpen, setRecModalOpen] = useState(false);
@@ -133,8 +133,22 @@ export default function TrainingPage() {
                 </div>
                 <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, overflow: 'hidden' }}>
                   <Table<TrainingRecord>
-                    rowKey="id" dataSource={records} columns={recordColumns}
-                    loading={recLoading} pagination={{ pageSize: 20 }} size="middle"
+                    rowKey="id"
+                    dataSource={records}
+                    columns={recordColumns}
+                    loading={recLoading}
+                    pagination={{ pageSize: 20 }}
+                    size="middle"
+                    locale={{
+                      emptyText: (
+                        <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                          {/* Icon và text khi chưa có bản ghi đào tạo nào */}
+                          <ReadOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                          <div style={{ color: textMuted, fontSize: 14 }}>Chưa có bản ghi đào tạo nào</div>
+                          <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Thêm bản ghi để tạo mới</div>
+                        </div>
+                      ),
+                    }}
                   />
                 </div>
               </>
@@ -150,8 +164,22 @@ export default function TrainingPage() {
                 </div>
                 <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, overflow: 'hidden' }}>
                   <Table<TrainingProgram>
-                    rowKey="id" dataSource={programs} columns={programColumns}
-                    loading={progLoading} pagination={{ pageSize: 20 }} size="middle"
+                    rowKey="id"
+                    dataSource={programs}
+                    columns={programColumns}
+                    loading={progLoading}
+                    pagination={{ pageSize: 20 }}
+                    size="middle"
+                    locale={{
+                      emptyText: (
+                        <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                          {/* Icon và text khi chưa có khóa đào tạo nào */}
+                          <ReadOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                          <div style={{ color: textMuted, fontSize: 14 }}>Chưa có khóa đào tạo nào</div>
+                          <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Tạo chương trình để thêm mới</div>
+                        </div>
+                      ),
+                    }}
                   />
                 </div>
               </>

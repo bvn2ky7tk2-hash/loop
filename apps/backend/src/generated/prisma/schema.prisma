@@ -163,6 +163,7 @@ model Employee {
   monthlyAttendances      MonthlyAttendance[]
   shiftAssignments        ShiftAssignment[]
   workScheduleEnrollments WorkScheduleEnrollment[]
+  submittedExpenses       Expense[]                @relation("ExpenseEmployee")
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -970,30 +971,36 @@ model GroupOrgAccess {
 // ─── Phase 2: HR — Contracts ──────────────────────────────────────────────────
 
 model Contract {
-  id            String              @id @default(uuid())
-  employeeId    String              @map("employee_id")
-  type          ContractType        @default(FULL_TIME)
-  status        ContractStatus      @default(ACTIVE)
-  startDate     DateTime            @map("start_date") @db.Date
-  endDate       DateTime?           @map("end_date") @db.Date
-  salaryMonthly Decimal             @map("salary_monthly") @db.Decimal(15, 2)
-  currency      BudgetCurrency      @default(VND)
-  note          String?
-  signedAt      DateTime?           @map("signed_at") @db.Date
-  signedById    String?             @map("signed_by_id")
-  createdAt     DateTime            @default(now()) @map("created_at")
-  updatedAt     DateTime            @updatedAt @map("updated_at")
-  employee      Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  signedBy      Employee?           @relation("ContractSigner", fields: [signedById], references: [id])
-  tenantId      String?             @map("tenant_id")
-  tenant        Tenant?             @relation("TenantContracts", fields: [tenantId], references: [id])
-  deletedAt     DateTime?           @map("deleted_at")
-  allowances    ContractAllowance[]
+  id                 String              @id @default(uuid())
+  employeeId         String              @map("employee_id")
+  type               ContractType        @default(INDEFINITE)
+  status             ContractStatus      @default(ACTIVE)
+  startDate          DateTime            @map("start_date") @db.Date
+  endDate            DateTime?           @map("end_date") @db.Date
+  salaryMonthly      Decimal             @map("salary_monthly") @db.Decimal(15, 2)
+  currency           BudgetCurrency      @default(VND)
+  note               String?
+  signedAt           DateTime?           @map("signed_at") @db.Date
+  signedById         String?             @map("signed_by_id")
+  // Gia hạn HĐ
+  renewalCount       Int                 @default(0) @map("renewal_count")
+  previousContractId String?             @map("previous_contract_id")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  employee           Employee            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  signedBy           Employee?           @relation("ContractSigner", fields: [signedById], references: [id])
+  previousContract   Contract?           @relation("ContractRenewal", fields: [previousContractId], references: [id])
+  renewals           Contract[]          @relation("ContractRenewal")
+  tenantId           String?             @map("tenant_id")
+  tenant             Tenant?             @relation("TenantContracts", fields: [tenantId], references: [id])
+  deletedAt          DateTime?           @map("deleted_at")
+  allowances         ContractAllowance[]
 
   @@index([employeeId])
   @@index([status])
   @@index([tenantId])
   @@index([deletedAt])
+  @@index([previousContractId])
   @@map("contracts")
 }
 
@@ -1012,10 +1019,14 @@ model ContractAllowance {
 }
 
 enum ContractType {
-  FULL_TIME
-  PART_TIME
-  PROBATION
-  FREELANCE
+  // Loại HĐ theo Bộ luật Lao động 2019 (Điều 20)
+  PROBATION // Thử việc (≤60 ngày phổ thông, ≤180 ngày quản lý/chuyên gia)
+  FIXED_12 // Xác định thời hạn 12 tháng
+  FIXED_24 // Xác định thời hạn 24 tháng
+  FIXED_36 // Xác định thời hạn 36 tháng
+  INDEFINITE // Không xác định thời hạn (vô thời hạn)
+  PART_TIME // Bán thời gian
+  SEASONAL // Thời vụ / Công việc cụ thể (dưới 12 tháng)
 
   @@map("contract_type")
 }
@@ -1221,6 +1232,7 @@ model Expense {
   id                String           @id @default(uuid())
   projectId         String?          @map("project_id")
   submittedById     String           @map("submitted_by_id")
+  employeeId        String?          @map("employee_id")
   title             String
   category          ExpenseCategory  @default(OTHER)
   totalAmount       Decimal          @map("total_amount") @db.Decimal(15, 2)
@@ -1238,6 +1250,7 @@ model Expense {
   submittedBy       User             @relation("ExpenseSubmitter", fields: [submittedById], references: [id])
   approvedBy        User?            @relation("ExpenseApprover", fields: [approvedById], references: [id], onDelete: SetNull)
   processInstance   ProcessInstance? @relation(fields: [processInstanceId], references: [id])
+  employee          Employee?        @relation("ExpenseEmployee", fields: [employeeId], references: [id], onDelete: SetNull)
 
   @@index([submittedById])
   @@index([status])

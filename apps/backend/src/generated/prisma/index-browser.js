@@ -600,6 +600,8 @@ exports.Prisma.ContractScalarFieldEnum = {
   note: 'note',
   signedAt: 'signedAt',
   signedById: 'signedById',
+  renewalCount: 'renewalCount',
+  previousContractId: 'previousContractId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId',
@@ -725,6 +727,7 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
   submittedById: 'submittedById',
+  employeeId: 'employeeId',
   title: 'title',
   category: 'category',
   totalAmount: 'totalAmount',
@@ -1967,10 +1970,13 @@ exports.BugItemType = exports.$Enums.BugItemType = {
 };
 
 exports.ContractType = exports.$Enums.ContractType = {
-  FULL_TIME: 'FULL_TIME',
-  PART_TIME: 'PART_TIME',
   PROBATION: 'PROBATION',
-  FREELANCE: 'FREELANCE'
+  FIXED_12: 'FIXED_12',
+  FIXED_24: 'FIXED_24',
+  FIXED_36: 'FIXED_36',
+  INDEFINITE: 'INDEFINITE',
+  PART_TIME: 'PART_TIME',
+  SEASONAL: 'SEASONAL'
 };
 
 exports.ContractStatus = exports.$Enums.ContractStatus = {

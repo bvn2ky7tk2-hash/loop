@@ -96,4 +96,55 @@ export class AccountingController {
     });
     (res as any).send(buffer);
   }
+
+  // ── Export Excel bảng cân đối kế toán ────────────────────────────────────
+
+  @Get('reports/balance-sheet/export')
+  @RequirePermission('financial_reports:export', 'finance:export')
+  async exportBalanceSheet(
+    @Query('asOfDate') asOfDate: string,
+    @Res() res: Response,
+  ) {
+    const date = asOfDate ?? new Date().toISOString().slice(0, 10);
+    const buffer = await this.svc.exportBalanceSheet(date);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="balance-sheet-${date}.xlsx"`,
+    });
+    (res as any).send(buffer);
+  }
+
+  // ── Export Excel báo cáo KQKD ─────────────────────────────────────────────
+
+  @Get('reports/income-statement/export')
+  @RequirePermission('financial_reports:export', 'finance:export')
+  async exportIncomeStatement(
+    @Query('from') from: string,
+    @Query('to') to: string,
+    @Res() res: Response,
+  ) {
+    const buffer = await this.svc.exportIncomeStatement(from, to);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="income-statement-${from}-${to}.xlsx"`,
+    });
+    (res as any).send(buffer);
+  }
+
+  // ── Export Excel lưu chuyển tiền tệ ──────────────────────────────────────
+
+  @Get('reports/cash-flow/export')
+  @RequirePermission('financial_reports:export', 'finance:export')
+  async exportCashFlow(
+    @Query('from') from: string,
+    @Query('to') to: string,
+    @Res() res: Response,
+  ) {
+    const buffer = await this.svc.exportCashFlowStatement(from, to);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="cash-flow-${from}-${to}.xlsx"`,
+    });
+    (res as any).send(buffer);
+  }
 }

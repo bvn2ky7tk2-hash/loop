@@ -40,6 +40,11 @@ export class CreateExpenseDto {
   @IsString()
   projectId?: string;
 
+  @ApiPropertyOptional({ description: 'ID nhân viên (khi admin nhập thay)' })
+  @IsOptional()
+  @IsString()
+  employeeId?: string;
+
   @ApiPropertyOptional({ description: 'Ghi chú', maxLength: 500 })
   @IsOptional()
   @IsString()

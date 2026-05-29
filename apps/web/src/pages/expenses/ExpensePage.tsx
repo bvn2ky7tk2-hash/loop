@@ -6,6 +6,7 @@ import {
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
+import { EmployeeSelect } from '../../components/selects';
 import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, DeleteOutlined, CheckOutlined, CloseOutlined,
@@ -78,6 +79,7 @@ function ExpenseDrawer({
   isDark,
   bgContainer,
   bgCard,
+  isPrivileged,
   borderColor,
   textPrimary,
   textSecondary,
@@ -91,6 +93,7 @@ function ExpenseDrawer({
   borderColor: string;
   textPrimary: string;
   textSecondary: string;
+  isPrivileged?: boolean;
 }) {
   const [form] = Form.useForm();
   const [items, setItems] = useState<ItemRow[]>([{ key: 0, description: '', amount: 0 }]);
@@ -138,6 +141,7 @@ function ExpenseDrawer({
       title: values.title as string,
       category: values.category as ExpenseCategory,
       projectId: values.projectId as string | undefined,
+      employeeId: values.employeeId as string | undefined,
       note: values.note as string | undefined,
       items: validItems,
     });
@@ -192,6 +196,12 @@ function ExpenseDrawer({
             </Form.Item>
           </Col>
         </Row>
+
+        {isPrivileged && (
+          <Form.Item name="employeeId" label="Nhân viên (nhập thay)">
+            <EmployeeSelect allowClear placeholder="Mặc định: chính bạn" />
+          </Form.Item>
+        )}
 
         <Form.Item name="note" label="Ghi chú">
           <TextArea rows={2} placeholder="Mô tả thêm (không bắt buộc)" />
@@ -608,6 +618,7 @@ export default function ExpensePage() {
         borderColor={borderColor}
         textPrimary={textPrimary}
         textSecondary={textSecondary}
+        isPrivileged={isPrivileged}
       />
 
       <Modal

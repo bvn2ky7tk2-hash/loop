@@ -147,6 +147,16 @@ export default function JournalPage() {
           dataSource={data?.data ?? []}
           columns={columns}
           loading={isLoading}
+          locale={{
+            emptyText: (
+              <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                {/* Icon và text hiển thị khi chưa có bút toán nào */}
+                <BookOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                <div style={{ color: textMuted, fontSize: 14 }}>Chưa có bút toán nào</div>
+                <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Tạo bút toán để thêm mới</div>
+              </div>
+            ),
+          }}
           pagination={{
             current: filter.page,
             pageSize: filter.limit,

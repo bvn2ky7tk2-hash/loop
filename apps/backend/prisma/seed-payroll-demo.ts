@@ -139,7 +139,7 @@ async function main() {
 
     const contractSalary = Number(contract.salaryMonthly);
     const isProbation = contract.type === 'PROBATION';
-    const isFreelance = contract.type === 'FREELANCE';
+    const isFreelance = contract.type === 'PART_TIME';
     const baseSalary = isProbation ? contractSalary * 0.85 : contractSalary;
 
     const workDays = i === 0 ? 18 : 22; // NV đầu nghỉ 4 ngày

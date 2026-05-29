@@ -122,6 +122,7 @@ export class ExpensesService implements OnModuleInit {
           totalAmount:  dto.totalAmount,
           currency:     dto.currency,
           projectId:    dto.projectId ?? null,
+          employeeId:   dto.employeeId ?? null,
           note:         dto.note ?? null,
           submittedById,
           status:       ExpenseStatus.PENDING,

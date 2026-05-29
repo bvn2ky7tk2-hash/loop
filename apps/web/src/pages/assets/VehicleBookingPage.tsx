@@ -604,6 +604,16 @@ export default function VehicleBookingPage() {
                   loading={requestsLoading}
                   pagination={{ pageSize: 20 }}
                   scroll={{ x: 800 }}
+                  locale={{
+                    emptyText: (
+                      <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                        {/* Icon và text hiển thị khi chưa có yêu cầu xe nào */}
+                        <CarOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                        <div style={{ color: textMuted, fontSize: 14 }}>Chưa có yêu cầu xe nào</div>
+                        <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Đặt xe để tạo yêu cầu mới</div>
+                      </div>
+                    ),
+                  }}
                 />
               ),
             },
@@ -618,6 +628,15 @@ export default function VehicleBookingPage() {
                   loading={requestsLoading}
                   pagination={{ pageSize: 20 }}
                   scroll={{ x: 900 }}
+                  locale={{
+                    emptyText: (
+                      <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                        {/* Icon và text khi không có yêu cầu nào chờ duyệt */}
+                        <CarOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                        <div style={{ color: textMuted, fontSize: 14 }}>Không có yêu cầu nào chờ duyệt</div>
+                      </div>
+                    ),
+                  }}
                 />
               ),
             }] : []),
@@ -642,6 +661,16 @@ export default function VehicleBookingPage() {
                     loading={vehiclesLoading}
                     pagination={{ pageSize: 20 }}
                     scroll={{ x: 800 }}
+                    locale={{
+                      emptyText: (
+                        <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                          {/* Icon và text khi chưa có xe nào trong hệ thống */}
+                          <CarOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                          <div style={{ color: textMuted, fontSize: 14 }}>Chưa có xe nào trong hệ thống</div>
+                          <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Thêm xe để đăng ký xe mới</div>
+                        </div>
+                      ),
+                    }}
                   />
                 </div>
               ),

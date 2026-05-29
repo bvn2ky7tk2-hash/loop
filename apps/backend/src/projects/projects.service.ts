@@ -79,8 +79,9 @@ export class ProjectsService {
   }
 
   async findOne(id: string) {
-    const project = await this.prisma.project.findUnique({
-      where: { id },
+    // Dùng findFirst để lọc cả deletedAt — không trả về dự án đã xóa mềm
+    const project = await this.prisma.project.findFirst({
+      where: { id, deletedAt: null },
       include: {
         pm: { select: { id: true, name: true } },
         orgUnit: { select: { id: true, name: true } },
@@ -94,7 +95,8 @@ export class ProjectsService {
   }
 
   async updateStatus(id: string, status: ProjectStatus, callerId: string) {
-    const project = await this.prisma.project.findUnique({ where: { id } });
+    // Kiểm tra deletedAt để tránh cập nhật trạng thái dự án đã xóa mềm
+    const project = await this.prisma.project.findFirst({ where: { id, deletedAt: null } });
     if (!project) throw new NotFoundException('Không tìm thấy dự án');
     if (project.pmId !== callerId) throw new ForbiddenException('Chỉ PM của dự án mới được cập nhật trạng thái');
 
@@ -102,7 +104,8 @@ export class ProjectsService {
   }
 
   async addMember(projectId: string, dto: AddMemberDto) {
-    const project = await this.prisma.project.findUnique({ where: { id: projectId } });
+    // Không cho thêm thành viên vào dự án đã xóa mềm
+    const project = await this.prisma.project.findFirst({ where: { id: projectId, deletedAt: null } });
     if (!project) throw new NotFoundException('Không tìm thấy dự án');
 
     const startDate = new Date(dto.startDate);
@@ -169,12 +172,14 @@ export class ProjectsService {
   }
 
   async remove(id: string) {
-    const project = await this.prisma.project.findUnique({ where: { id } });
+    // Kiểm tra dự án tồn tại và chưa bị xóa trước khi soft delete
+    const project = await this.prisma.project.findFirst({ where: { id, deletedAt: null } });
     if (!project) throw new NotFoundException('Không tìm thấy dự án');
     return this.prisma.project.update({ where: { id }, data: { deletedAt: new Date() } });
   }
 
   async restore(id: string) {
+    // restore cần tìm cả record đã bị xóa mềm nên không lọc deletedAt
     const project = await this.prisma.project.findUnique({ where: { id } });
     if (!project) throw new NotFoundException('Không tìm thấy dự án');
     return this.prisma.project.update({ where: { id }, data: { deletedAt: null } });

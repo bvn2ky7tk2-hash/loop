@@ -125,8 +125,9 @@ export class InvoicesService {
   }
 
   async findOne(id: string) {
-    const inv = await this.prisma.invoice.findUnique({
-      where: { id },
+    // Dùng findFirst để lọc cả deletedAt — không trả về hóa đơn đã xóa mềm
+    const inv = await this.prisma.invoice.findFirst({
+      where: { id, deletedAt: null },
       include: {
         items:    true,
         customer: { select: { id: true, name: true } },
@@ -220,6 +221,7 @@ export class InvoicesService {
   }
 
   async restore(id: string) {
+    // restore cần tìm cả record đã bị xóa mềm nên không lọc deletedAt
     const inv = await this.prisma.invoice.findUnique({ where: { id } });
     if (!inv) throw new NotFoundException('Không tìm thấy hóa đơn');
     return this.prisma.invoice.update({ where: { id }, data: { deletedAt: null } });
@@ -229,12 +231,13 @@ export class InvoicesService {
     const now   = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
 
+    // Thêm deletedAt: null để loại hóa đơn đã xóa mềm khỏi thống kê
     const [draft, sent, overdue, paidThisMonth] = await Promise.all([
-      this.prisma.invoice.aggregate({ where: { status: 'DRAFT'   }, _count: true, _sum: { totalAmount: true } }),
-      this.prisma.invoice.aggregate({ where: { status: 'SENT'    }, _count: true, _sum: { totalAmount: true } }),
-      this.prisma.invoice.aggregate({ where: { status: 'OVERDUE' }, _count: true, _sum: { totalAmount: true } }),
+      this.prisma.invoice.aggregate({ where: { status: 'DRAFT',   deletedAt: null }, _count: true, _sum: { totalAmount: true } }),
+      this.prisma.invoice.aggregate({ where: { status: 'SENT',    deletedAt: null }, _count: true, _sum: { totalAmount: true } }),
+      this.prisma.invoice.aggregate({ where: { status: 'OVERDUE', deletedAt: null }, _count: true, _sum: { totalAmount: true } }),
       this.prisma.invoice.aggregate({
-        where: { status: 'PAID', paidAt: { gte: start } },
+        where: { status: 'PAID', paidAt: { gte: start }, deletedAt: null },
         _count: true, _sum: { totalAmount: true },
       }),
     ]);
@@ -247,11 +250,11 @@ export class InvoicesService {
     };
   }
 
-  // Cron hàng ngày 8:00 — đánh dấu quá hạn
+  // Cron hàng ngày 8:00 — đánh dấu quá hạn (bỏ qua hóa đơn đã xóa mềm)
   @Cron('0 8 * * *')
   async markOverdueInvoices() {
     const result = await this.prisma.invoice.updateMany({
-      where: { status: 'SENT', dueDate: { lt: new Date() } },
+      where: { status: 'SENT', dueDate: { lt: new Date() }, deletedAt: null },
       data:  { status: 'OVERDUE' },
     });
     if (result.count > 0) {

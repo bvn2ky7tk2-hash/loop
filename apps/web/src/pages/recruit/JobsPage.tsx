@@ -4,7 +4,7 @@ import {
   Input, InputNumber, Modal, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutlined, TeamOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -158,7 +158,20 @@ export default function JobsPage() {
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<JobOpening>
-          rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
+          rowKey="id"
+          columns={columns}
+          dataSource={data?.data ?? []}
+          loading={isLoading}
+          locale={{
+            emptyText: (
+              <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                {/* Icon và text khi chưa có vị trí tuyển dụng nào */}
+                <TeamOutlined style={{ fontSize: 48, color: '#94A3B8', marginBottom: 12, display: 'block' }} />
+                <div style={{ color: textMuted, fontSize: 14 }}>Chưa có vị trí tuyển dụng nào</div>
+                <div style={{ color: textMuted, fontSize: 12, marginTop: 4 }}>Nhấn nút Tạo vị trí để đăng tuyển mới</div>
+              </div>
+            ),
+          }}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />

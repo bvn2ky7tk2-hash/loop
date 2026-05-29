@@ -57,6 +57,7 @@ export const expensesApi = {
     title: string;
     category: ExpenseCategory;
     projectId?: string;
+    employeeId?: string;
     note?: string;
     items: ExpenseItem[];
   }) => apiClient.post<Expense>('/expenses', data).then((r) => r.data),

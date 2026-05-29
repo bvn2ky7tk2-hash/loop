@@ -250,7 +250,7 @@ export class PayrollEngineService {
     let bhxhEmployer = 0, bhytEmployer = 0, bhtnEmployer = 0, tnldEmployer = 0;
 
     // FREELANCE không đóng BHXH; unpaidLeaveDays >= 14 được miễn BHXH tháng đó
-    if (contractType !== ContractType.FREELANCE && insuranceConfig && unpaidLeaveDays < 14) {
+    if (contractType !== ContractType.PART_TIME && insuranceConfig && unpaidLeaveDays < 14) {
       const ceiling = Number(insuranceConfig.wageBase) * insuranceConfig.bhxhCeilingMultiple;
       // BHXH base = contractSalary (không phải grossSalary), giới hạn ceiling
       const bhxhBase = Math.min(contractSalary, ceiling);
@@ -281,7 +281,7 @@ export class PayrollEngineService {
     let selfDeductionAmt = 0;
     let dependentDeductionAmt = 0;
 
-    if (contractType === ContractType.FREELANCE) {
+    if (contractType === ContractType.PART_TIME) {
       // Nhà thầu cá nhân: thuế khoán 10% nếu thanh toán >= 2,000,000đ (TT 111/2013)
       if (grossSalary >= 2_000_000) {
         taxableIncome = grossSalary;

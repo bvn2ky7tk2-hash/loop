@@ -864,10 +864,13 @@ export type BugItemType = (typeof BugItemType)[keyof typeof BugItemType]
 
 
 export const ContractType: {
-  FULL_TIME: 'FULL_TIME',
-  PART_TIME: 'PART_TIME',
   PROBATION: 'PROBATION',
-  FREELANCE: 'FREELANCE'
+  FIXED_12: 'FIXED_12',
+  FIXED_24: 'FIXED_24',
+  FIXED_36: 'FIXED_36',
+  INDEFINITE: 'INDEFINITE',
+  PART_TIME: 'PART_TIME',
+  SEASONAL: 'SEASONAL'
 };
 
 export type ContractType = (typeof ContractType)[keyof typeof ContractType]
@@ -13842,6 +13845,7 @@ export namespace Prisma {
     monthlyAttendances: number
     shiftAssignments: number
     workScheduleEnrollments: number
+    submittedExpenses: number
   }
 
   export type EmployeeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13870,6 +13874,7 @@ export namespace Prisma {
     monthlyAttendances?: boolean | EmployeeCountOutputTypeCountMonthlyAttendancesArgs
     shiftAssignments?: boolean | EmployeeCountOutputTypeCountShiftAssignmentsArgs
     workScheduleEnrollments?: boolean | EmployeeCountOutputTypeCountWorkScheduleEnrollmentsArgs
+    submittedExpenses?: boolean | EmployeeCountOutputTypeCountSubmittedExpensesArgs
   }
 
   // Custom InputTypes
@@ -14056,6 +14061,13 @@ export namespace Prisma {
    */
   export type EmployeeCountOutputTypeCountWorkScheduleEnrollmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: WorkScheduleEnrollmentWhereInput
+  }
+
+  /**
+   * EmployeeCountOutputType without action
+   */
+  export type EmployeeCountOutputTypeCountSubmittedExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExpenseWhereInput
   }
 
 
@@ -14532,10 +14544,12 @@ export namespace Prisma {
    */
 
   export type ContractCountOutputType = {
+    renewals: number
     allowances: number
   }
 
   export type ContractCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    renewals?: boolean | ContractCountOutputTypeCountRenewalsArgs
     allowances?: boolean | ContractCountOutputTypeCountAllowancesArgs
   }
 
@@ -14548,6 +14562,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the ContractCountOutputType
      */
     select?: ContractCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ContractCountOutputType without action
+   */
+  export type ContractCountOutputTypeCountRenewalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContractWhereInput
   }
 
   /**
@@ -20223,6 +20244,7 @@ export namespace Prisma {
     monthlyAttendances?: boolean | Employee$monthlyAttendancesArgs<ExtArgs>
     shiftAssignments?: boolean | Employee$shiftAssignmentsArgs<ExtArgs>
     workScheduleEnrollments?: boolean | Employee$workScheduleEnrollmentsArgs<ExtArgs>
+    submittedExpenses?: boolean | Employee$submittedExpensesArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["employee"]>
 
@@ -20385,6 +20407,7 @@ export namespace Prisma {
     monthlyAttendances?: boolean | Employee$monthlyAttendancesArgs<ExtArgs>
     shiftAssignments?: boolean | Employee$shiftAssignmentsArgs<ExtArgs>
     workScheduleEnrollments?: boolean | Employee$workScheduleEnrollmentsArgs<ExtArgs>
+    submittedExpenses?: boolean | Employee$submittedExpensesArgs<ExtArgs>
     _count?: boolean | EmployeeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EmployeeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20441,6 +20464,7 @@ export namespace Prisma {
       monthlyAttendances: Prisma.$MonthlyAttendancePayload<ExtArgs>[]
       shiftAssignments: Prisma.$ShiftAssignmentPayload<ExtArgs>[]
       workScheduleEnrollments: Prisma.$WorkScheduleEnrollmentPayload<ExtArgs>[]
+      submittedExpenses: Prisma.$ExpensePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -20905,6 +20929,7 @@ export namespace Prisma {
     monthlyAttendances<T extends Employee$monthlyAttendancesArgs<ExtArgs> = {}>(args?: Subset<T, Employee$monthlyAttendancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonthlyAttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shiftAssignments<T extends Employee$shiftAssignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$shiftAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     workScheduleEnrollments<T extends Employee$workScheduleEnrollmentsArgs<ExtArgs> = {}>(args?: Subset<T, Employee$workScheduleEnrollmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkScheduleEnrollmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    submittedExpenses<T extends Employee$submittedExpensesArgs<ExtArgs> = {}>(args?: Subset<T, Employee$submittedExpensesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -22118,6 +22143,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: WorkScheduleEnrollmentScalarFieldEnum | WorkScheduleEnrollmentScalarFieldEnum[]
+  }
+
+  /**
+   * Employee.submittedExpenses
+   */
+  export type Employee$submittedExpensesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Expense
+     */
+    select?: ExpenseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Expense
+     */
+    omit?: ExpenseOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExpenseInclude<ExtArgs> | null
+    where?: ExpenseWhereInput
+    orderBy?: ExpenseOrderByWithRelationInput | ExpenseOrderByWithRelationInput[]
+    cursor?: ExpenseWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
   }
 
   /**
@@ -63719,10 +63768,12 @@ export namespace Prisma {
 
   export type ContractAvgAggregateOutputType = {
     salaryMonthly: Decimal | null
+    renewalCount: number | null
   }
 
   export type ContractSumAggregateOutputType = {
     salaryMonthly: Decimal | null
+    renewalCount: number | null
   }
 
   export type ContractMinAggregateOutputType = {
@@ -63737,6 +63788,8 @@ export namespace Prisma {
     note: string | null
     signedAt: Date | null
     signedById: string | null
+    renewalCount: number | null
+    previousContractId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     tenantId: string | null
@@ -63755,6 +63808,8 @@ export namespace Prisma {
     note: string | null
     signedAt: Date | null
     signedById: string | null
+    renewalCount: number | null
+    previousContractId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     tenantId: string | null
@@ -63773,6 +63828,8 @@ export namespace Prisma {
     note: number
     signedAt: number
     signedById: number
+    renewalCount: number
+    previousContractId: number
     createdAt: number
     updatedAt: number
     tenantId: number
@@ -63783,10 +63840,12 @@ export namespace Prisma {
 
   export type ContractAvgAggregateInputType = {
     salaryMonthly?: true
+    renewalCount?: true
   }
 
   export type ContractSumAggregateInputType = {
     salaryMonthly?: true
+    renewalCount?: true
   }
 
   export type ContractMinAggregateInputType = {
@@ -63801,6 +63860,8 @@ export namespace Prisma {
     note?: true
     signedAt?: true
     signedById?: true
+    renewalCount?: true
+    previousContractId?: true
     createdAt?: true
     updatedAt?: true
     tenantId?: true
@@ -63819,6 +63880,8 @@ export namespace Prisma {
     note?: true
     signedAt?: true
     signedById?: true
+    renewalCount?: true
+    previousContractId?: true
     createdAt?: true
     updatedAt?: true
     tenantId?: true
@@ -63837,6 +63900,8 @@ export namespace Prisma {
     note?: true
     signedAt?: true
     signedById?: true
+    renewalCount?: true
+    previousContractId?: true
     createdAt?: true
     updatedAt?: true
     tenantId?: true
@@ -63942,6 +64007,8 @@ export namespace Prisma {
     note: string | null
     signedAt: Date | null
     signedById: string | null
+    renewalCount: number
+    previousContractId: string | null
     createdAt: Date
     updatedAt: Date
     tenantId: string | null
@@ -63979,12 +64046,16 @@ export namespace Prisma {
     note?: boolean
     signedAt?: boolean
     signedById?: boolean
+    renewalCount?: boolean
+    previousContractId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenantId?: boolean
     deletedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
+    renewals?: boolean | Contract$renewalsArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
     allowances?: boolean | Contract$allowancesArgs<ExtArgs>
     _count?: boolean | ContractCountOutputTypeDefaultArgs<ExtArgs>
@@ -64002,12 +64073,15 @@ export namespace Prisma {
     note?: boolean
     signedAt?: boolean
     signedById?: boolean
+    renewalCount?: boolean
+    previousContractId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenantId?: boolean
     deletedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
   }, ExtArgs["result"]["contract"]>
 
@@ -64023,12 +64097,15 @@ export namespace Prisma {
     note?: boolean
     signedAt?: boolean
     signedById?: boolean
+    renewalCount?: boolean
+    previousContractId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenantId?: boolean
     deletedAt?: boolean
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
   }, ExtArgs["result"]["contract"]>
 
@@ -64044,16 +64121,20 @@ export namespace Prisma {
     note?: boolean
     signedAt?: boolean
     signedById?: boolean
+    renewalCount?: boolean
+    previousContractId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenantId?: boolean
     deletedAt?: boolean
   }
 
-  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "type" | "status" | "startDate" | "endDate" | "salaryMonthly" | "currency" | "note" | "signedAt" | "signedById" | "createdAt" | "updatedAt" | "tenantId" | "deletedAt", ExtArgs["result"]["contract"]>
+  export type ContractOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "type" | "status" | "startDate" | "endDate" | "salaryMonthly" | "currency" | "note" | "signedAt" | "signedById" | "renewalCount" | "previousContractId" | "createdAt" | "updatedAt" | "tenantId" | "deletedAt", ExtArgs["result"]["contract"]>
   export type ContractInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
+    renewals?: boolean | Contract$renewalsArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
     allowances?: boolean | Contract$allowancesArgs<ExtArgs>
     _count?: boolean | ContractCountOutputTypeDefaultArgs<ExtArgs>
@@ -64061,11 +64142,13 @@ export namespace Prisma {
   export type ContractIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
   }
   export type ContractIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     signedBy?: boolean | Contract$signedByArgs<ExtArgs>
+    previousContract?: boolean | Contract$previousContractArgs<ExtArgs>
     tenant?: boolean | Contract$tenantArgs<ExtArgs>
   }
 
@@ -64074,6 +64157,8 @@ export namespace Prisma {
     objects: {
       employee: Prisma.$EmployeePayload<ExtArgs>
       signedBy: Prisma.$EmployeePayload<ExtArgs> | null
+      previousContract: Prisma.$ContractPayload<ExtArgs> | null
+      renewals: Prisma.$ContractPayload<ExtArgs>[]
       tenant: Prisma.$TenantPayload<ExtArgs> | null
       allowances: Prisma.$ContractAllowancePayload<ExtArgs>[]
     }
@@ -64089,6 +64174,8 @@ export namespace Prisma {
       note: string | null
       signedAt: Date | null
       signedById: string | null
+      renewalCount: number
+      previousContractId: string | null
       createdAt: Date
       updatedAt: Date
       tenantId: string | null
@@ -64489,6 +64576,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     employee<T extends EmployeeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EmployeeDefaultArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     signedBy<T extends Contract$signedByArgs<ExtArgs> = {}>(args?: Subset<T, Contract$signedByArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    previousContract<T extends Contract$previousContractArgs<ExtArgs> = {}>(args?: Subset<T, Contract$previousContractArgs<ExtArgs>>): Prisma__ContractClient<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    renewals<T extends Contract$renewalsArgs<ExtArgs> = {}>(args?: Subset<T, Contract$renewalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tenant<T extends Contract$tenantArgs<ExtArgs> = {}>(args?: Subset<T, Contract$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     allowances<T extends Contract$allowancesArgs<ExtArgs> = {}>(args?: Subset<T, Contract$allowancesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContractAllowancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -64531,6 +64620,8 @@ export namespace Prisma {
     readonly note: FieldRef<"Contract", 'String'>
     readonly signedAt: FieldRef<"Contract", 'DateTime'>
     readonly signedById: FieldRef<"Contract", 'String'>
+    readonly renewalCount: FieldRef<"Contract", 'Int'>
+    readonly previousContractId: FieldRef<"Contract", 'String'>
     readonly createdAt: FieldRef<"Contract", 'DateTime'>
     readonly updatedAt: FieldRef<"Contract", 'DateTime'>
     readonly tenantId: FieldRef<"Contract", 'String'>
@@ -64952,6 +65043,49 @@ export namespace Prisma {
      */
     include?: EmployeeInclude<ExtArgs> | null
     where?: EmployeeWhereInput
+  }
+
+  /**
+   * Contract.previousContract
+   */
+  export type Contract$previousContractArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Contract
+     */
+    select?: ContractSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Contract
+     */
+    omit?: ContractOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContractInclude<ExtArgs> | null
+    where?: ContractWhereInput
+  }
+
+  /**
+   * Contract.renewals
+   */
+  export type Contract$renewalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Contract
+     */
+    select?: ContractSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Contract
+     */
+    omit?: ContractOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContractInclude<ExtArgs> | null
+    where?: ContractWhereInput
+    orderBy?: ContractOrderByWithRelationInput | ContractOrderByWithRelationInput[]
+    cursor?: ContractWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ContractScalarFieldEnum | ContractScalarFieldEnum[]
   }
 
   /**
@@ -73948,6 +74082,7 @@ export namespace Prisma {
     id: string | null
     projectId: string | null
     submittedById: string | null
+    employeeId: string | null
     title: string | null
     category: $Enums.ExpenseCategory | null
     totalAmount: Decimal | null
@@ -73966,6 +74101,7 @@ export namespace Prisma {
     id: string | null
     projectId: string | null
     submittedById: string | null
+    employeeId: string | null
     title: string | null
     category: $Enums.ExpenseCategory | null
     totalAmount: Decimal | null
@@ -73984,6 +74120,7 @@ export namespace Prisma {
     id: number
     projectId: number
     submittedById: number
+    employeeId: number
     title: number
     category: number
     totalAmount: number
@@ -74012,6 +74149,7 @@ export namespace Prisma {
     id?: true
     projectId?: true
     submittedById?: true
+    employeeId?: true
     title?: true
     category?: true
     totalAmount?: true
@@ -74030,6 +74168,7 @@ export namespace Prisma {
     id?: true
     projectId?: true
     submittedById?: true
+    employeeId?: true
     title?: true
     category?: true
     totalAmount?: true
@@ -74048,6 +74187,7 @@ export namespace Prisma {
     id?: true
     projectId?: true
     submittedById?: true
+    employeeId?: true
     title?: true
     category?: true
     totalAmount?: true
@@ -74153,6 +74293,7 @@ export namespace Prisma {
     id: string
     projectId: string | null
     submittedById: string
+    employeeId: string | null
     title: string
     category: $Enums.ExpenseCategory
     totalAmount: Decimal
@@ -74190,6 +74331,7 @@ export namespace Prisma {
     id?: boolean
     projectId?: boolean
     submittedById?: boolean
+    employeeId?: boolean
     title?: boolean
     category?: boolean
     totalAmount?: boolean
@@ -74207,6 +74349,7 @@ export namespace Prisma {
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
     _count?: boolean | ExpenseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
@@ -74214,6 +74357,7 @@ export namespace Prisma {
     id?: boolean
     projectId?: boolean
     submittedById?: boolean
+    employeeId?: boolean
     title?: boolean
     category?: boolean
     totalAmount?: boolean
@@ -74230,12 +74374,14 @@ export namespace Prisma {
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
   export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
     submittedById?: boolean
+    employeeId?: boolean
     title?: boolean
     category?: boolean
     totalAmount?: boolean
@@ -74252,12 +74398,14 @@ export namespace Prisma {
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
   }, ExtArgs["result"]["expense"]>
 
   export type ExpenseSelectScalar = {
     id?: boolean
     projectId?: boolean
     submittedById?: boolean
+    employeeId?: boolean
     title?: boolean
     category?: boolean
     totalAmount?: boolean
@@ -74272,13 +74420,14 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "submittedById" | "title" | "category" | "totalAmount" | "currency" | "status" | "approvedById" | "approvedAt" | "rejectedReason" | "processInstanceId" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["expense"]>
+  export type ExpenseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "submittedById" | "employeeId" | "title" | "category" | "totalAmount" | "currency" | "status" | "approvedById" | "approvedAt" | "rejectedReason" | "processInstanceId" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["expense"]>
   export type ExpenseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | Expense$itemsArgs<ExtArgs>
     project?: boolean | Expense$projectArgs<ExtArgs>
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
     _count?: boolean | ExpenseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ExpenseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -74286,12 +74435,14 @@ export namespace Prisma {
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
   }
   export type ExpenseIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | Expense$projectArgs<ExtArgs>
     submittedBy?: boolean | UserDefaultArgs<ExtArgs>
     approvedBy?: boolean | Expense$approvedByArgs<ExtArgs>
     processInstance?: boolean | Expense$processInstanceArgs<ExtArgs>
+    employee?: boolean | Expense$employeeArgs<ExtArgs>
   }
 
   export type $ExpensePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -74302,11 +74453,13 @@ export namespace Prisma {
       submittedBy: Prisma.$UserPayload<ExtArgs>
       approvedBy: Prisma.$UserPayload<ExtArgs> | null
       processInstance: Prisma.$ProcessInstancePayload<ExtArgs> | null
+      employee: Prisma.$EmployeePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       projectId: string | null
       submittedById: string
+      employeeId: string | null
       title: string
       category: $Enums.ExpenseCategory
       totalAmount: Prisma.Decimal
@@ -74718,6 +74871,7 @@ export namespace Prisma {
     submittedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     approvedBy<T extends Expense$approvedByArgs<ExtArgs> = {}>(args?: Subset<T, Expense$approvedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     processInstance<T extends Expense$processInstanceArgs<ExtArgs> = {}>(args?: Subset<T, Expense$processInstanceArgs<ExtArgs>>): Prisma__ProcessInstanceClient<$Result.GetResult<Prisma.$ProcessInstancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    employee<T extends Expense$employeeArgs<ExtArgs> = {}>(args?: Subset<T, Expense$employeeArgs<ExtArgs>>): Prisma__EmployeeClient<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -74750,6 +74904,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Expense", 'String'>
     readonly projectId: FieldRef<"Expense", 'String'>
     readonly submittedById: FieldRef<"Expense", 'String'>
+    readonly employeeId: FieldRef<"Expense", 'String'>
     readonly title: FieldRef<"Expense", 'String'>
     readonly category: FieldRef<"Expense", 'ExpenseCategory'>
     readonly totalAmount: FieldRef<"Expense", 'Decimal'>
@@ -75241,6 +75396,25 @@ export namespace Prisma {
      */
     include?: ProcessInstanceInclude<ExtArgs> | null
     where?: ProcessInstanceWhereInput
+  }
+
+  /**
+   * Expense.employee
+   */
+  export type Expense$employeeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Employee
+     */
+    select?: EmployeeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Employee
+     */
+    omit?: EmployeeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: EmployeeInclude<ExtArgs> | null
+    where?: EmployeeWhereInput
   }
 
   /**
@@ -167752,6 +167926,8 @@ export namespace Prisma {
     note: 'note',
     signedAt: 'signedAt',
     signedById: 'signedById',
+    renewalCount: 'renewalCount',
+    previousContractId: 'previousContractId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     tenantId: 'tenantId',
@@ -167901,6 +168077,7 @@ export namespace Prisma {
     id: 'id',
     projectId: 'projectId',
     submittedById: 'submittedById',
+    employeeId: 'employeeId',
     title: 'title',
     category: 'category',
     totalAmount: 'totalAmount',
@@ -170779,6 +170956,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceListRelationFilter
     shiftAssignments?: ShiftAssignmentListRelationFilter
     workScheduleEnrollments?: WorkScheduleEnrollmentListRelationFilter
+    submittedExpenses?: ExpenseListRelationFilter
   }
 
   export type EmployeeOrderByWithRelationInput = {
@@ -170850,6 +171028,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceOrderByRelationAggregateInput
     shiftAssignments?: ShiftAssignmentOrderByRelationAggregateInput
     workScheduleEnrollments?: WorkScheduleEnrollmentOrderByRelationAggregateInput
+    submittedExpenses?: ExpenseOrderByRelationAggregateInput
   }
 
   export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
@@ -170925,6 +171104,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceListRelationFilter
     shiftAssignments?: ShiftAssignmentListRelationFilter
     workScheduleEnrollments?: WorkScheduleEnrollmentListRelationFilter
+    submittedExpenses?: ExpenseListRelationFilter
   }, "id" | "userId" | "email" | "tenantId_code">
 
   export type EmployeeOrderByWithAggregationInput = {
@@ -173789,12 +173969,16 @@ export namespace Prisma {
     note?: StringNullableFilter<"Contract"> | string | null
     signedAt?: DateTimeNullableFilter<"Contract"> | Date | string | null
     signedById?: StringNullableFilter<"Contract"> | string | null
+    renewalCount?: IntFilter<"Contract"> | number
+    previousContractId?: StringNullableFilter<"Contract"> | string | null
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
     tenantId?: StringNullableFilter<"Contract"> | string | null
     deletedAt?: DateTimeNullableFilter<"Contract"> | Date | string | null
     employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
     signedBy?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    previousContract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
+    renewals?: ContractListRelationFilter
     tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
     allowances?: ContractAllowanceListRelationFilter
   }
@@ -173811,12 +173995,16 @@ export namespace Prisma {
     note?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
     signedById?: SortOrderInput | SortOrder
+    renewalCount?: SortOrder
+    previousContractId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenantId?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     employee?: EmployeeOrderByWithRelationInput
     signedBy?: EmployeeOrderByWithRelationInput
+    previousContract?: ContractOrderByWithRelationInput
+    renewals?: ContractOrderByRelationAggregateInput
     tenant?: TenantOrderByWithRelationInput
     allowances?: ContractAllowanceOrderByRelationAggregateInput
   }
@@ -173836,12 +174024,16 @@ export namespace Prisma {
     note?: StringNullableFilter<"Contract"> | string | null
     signedAt?: DateTimeNullableFilter<"Contract"> | Date | string | null
     signedById?: StringNullableFilter<"Contract"> | string | null
+    renewalCount?: IntFilter<"Contract"> | number
+    previousContractId?: StringNullableFilter<"Contract"> | string | null
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
     tenantId?: StringNullableFilter<"Contract"> | string | null
     deletedAt?: DateTimeNullableFilter<"Contract"> | Date | string | null
     employee?: XOR<EmployeeScalarRelationFilter, EmployeeWhereInput>
     signedBy?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
+    previousContract?: XOR<ContractNullableScalarRelationFilter, ContractWhereInput> | null
+    renewals?: ContractListRelationFilter
     tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
     allowances?: ContractAllowanceListRelationFilter
   }, "id">
@@ -173858,6 +174050,8 @@ export namespace Prisma {
     note?: SortOrderInput | SortOrder
     signedAt?: SortOrderInput | SortOrder
     signedById?: SortOrderInput | SortOrder
+    renewalCount?: SortOrder
+    previousContractId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenantId?: SortOrderInput | SortOrder
@@ -173884,6 +174078,8 @@ export namespace Prisma {
     note?: StringNullableWithAggregatesFilter<"Contract"> | string | null
     signedAt?: DateTimeNullableWithAggregatesFilter<"Contract"> | Date | string | null
     signedById?: StringNullableWithAggregatesFilter<"Contract"> | string | null
+    renewalCount?: IntWithAggregatesFilter<"Contract"> | number
+    previousContractId?: StringNullableWithAggregatesFilter<"Contract"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Contract"> | Date | string
     tenantId?: StringNullableWithAggregatesFilter<"Contract"> | string | null
@@ -174641,6 +174837,7 @@ export namespace Prisma {
     id?: StringFilter<"Expense"> | string
     projectId?: StringNullableFilter<"Expense"> | string | null
     submittedById?: StringFilter<"Expense"> | string
+    employeeId?: StringNullableFilter<"Expense"> | string | null
     title?: StringFilter<"Expense"> | string
     category?: EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
     totalAmount?: DecimalFilter<"Expense"> | Decimal | DecimalJsLike | number | string
@@ -174658,12 +174855,14 @@ export namespace Prisma {
     submittedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processInstance?: XOR<ProcessInstanceNullableScalarRelationFilter, ProcessInstanceWhereInput> | null
+    employee?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
   }
 
   export type ExpenseOrderByWithRelationInput = {
     id?: SortOrder
     projectId?: SortOrderInput | SortOrder
     submittedById?: SortOrder
+    employeeId?: SortOrderInput | SortOrder
     title?: SortOrder
     category?: SortOrder
     totalAmount?: SortOrder
@@ -174681,6 +174880,7 @@ export namespace Prisma {
     submittedBy?: UserOrderByWithRelationInput
     approvedBy?: UserOrderByWithRelationInput
     processInstance?: ProcessInstanceOrderByWithRelationInput
+    employee?: EmployeeOrderByWithRelationInput
   }
 
   export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
@@ -174690,6 +174890,7 @@ export namespace Prisma {
     NOT?: ExpenseWhereInput | ExpenseWhereInput[]
     projectId?: StringNullableFilter<"Expense"> | string | null
     submittedById?: StringFilter<"Expense"> | string
+    employeeId?: StringNullableFilter<"Expense"> | string | null
     title?: StringFilter<"Expense"> | string
     category?: EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
     totalAmount?: DecimalFilter<"Expense"> | Decimal | DecimalJsLike | number | string
@@ -174707,12 +174908,14 @@ export namespace Prisma {
     submittedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     approvedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     processInstance?: XOR<ProcessInstanceNullableScalarRelationFilter, ProcessInstanceWhereInput> | null
+    employee?: XOR<EmployeeNullableScalarRelationFilter, EmployeeWhereInput> | null
   }, "id">
 
   export type ExpenseOrderByWithAggregationInput = {
     id?: SortOrder
     projectId?: SortOrderInput | SortOrder
     submittedById?: SortOrder
+    employeeId?: SortOrderInput | SortOrder
     title?: SortOrder
     category?: SortOrder
     totalAmount?: SortOrder
@@ -174739,6 +174942,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Expense"> | string
     projectId?: StringNullableWithAggregatesFilter<"Expense"> | string | null
     submittedById?: StringWithAggregatesFilter<"Expense"> | string
+    employeeId?: StringNullableWithAggregatesFilter<"Expense"> | string | null
     title?: StringWithAggregatesFilter<"Expense"> | string
     category?: EnumExpenseCategoryWithAggregatesFilter<"Expense"> | $Enums.ExpenseCategory
     totalAmount?: DecimalWithAggregatesFilter<"Expense"> | Decimal | DecimalJsLike | number | string
@@ -181815,6 +182019,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateInput = {
@@ -181880,6 +182085,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUpdateInput = {
@@ -181945,6 +182151,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateInput = {
@@ -182010,6 +182217,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateManyInput = {
@@ -185017,11 +185225,14 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     employee: EmployeeCreateNestedOneWithoutContractsInput
     signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
     tenant?: TenantCreateNestedOneWithoutContractsInput
     allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
   }
@@ -185038,10 +185249,13 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
     deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
     allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
   }
 
@@ -185055,11 +185269,14 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
     signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
     tenant?: TenantUpdateOneWithoutContractsNestedInput
     allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
   }
@@ -185076,10 +185293,13 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
     allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
   }
 
@@ -185095,6 +185315,8 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
@@ -185111,6 +185333,7 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -185128,6 +185351,8 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -185963,12 +186188,14 @@ export namespace Prisma {
     submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
     approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
     processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateInput = {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -186001,12 +186228,14 @@ export namespace Prisma {
     submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
     processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -186026,6 +186255,7 @@ export namespace Prisma {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -186058,6 +186288,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -196605,6 +196836,11 @@ export namespace Prisma {
     not?: NestedEnumContractStatusFilter<$PrismaModel> | $Enums.ContractStatus
   }
 
+  export type ContractNullableScalarRelationFilter = {
+    is?: ContractWhereInput | null
+    isNot?: ContractWhereInput | null
+  }
+
   export type ContractAllowanceListRelationFilter = {
     every?: ContractAllowanceWhereInput
     some?: ContractAllowanceWhereInput
@@ -196627,6 +196863,8 @@ export namespace Prisma {
     note?: SortOrder
     signedAt?: SortOrder
     signedById?: SortOrder
+    renewalCount?: SortOrder
+    previousContractId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenantId?: SortOrder
@@ -196635,6 +196873,7 @@ export namespace Prisma {
 
   export type ContractAvgOrderByAggregateInput = {
     salaryMonthly?: SortOrder
+    renewalCount?: SortOrder
   }
 
   export type ContractMaxOrderByAggregateInput = {
@@ -196649,6 +196888,8 @@ export namespace Prisma {
     note?: SortOrder
     signedAt?: SortOrder
     signedById?: SortOrder
+    renewalCount?: SortOrder
+    previousContractId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenantId?: SortOrder
@@ -196667,6 +196908,8 @@ export namespace Prisma {
     note?: SortOrder
     signedAt?: SortOrder
     signedById?: SortOrder
+    renewalCount?: SortOrder
+    previousContractId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenantId?: SortOrder
@@ -196675,6 +196918,7 @@ export namespace Prisma {
 
   export type ContractSumOrderByAggregateInput = {
     salaryMonthly?: SortOrder
+    renewalCount?: SortOrder
   }
 
   export type EnumContractTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -197307,6 +197551,7 @@ export namespace Prisma {
     id?: SortOrder
     projectId?: SortOrder
     submittedById?: SortOrder
+    employeeId?: SortOrder
     title?: SortOrder
     category?: SortOrder
     totalAmount?: SortOrder
@@ -197329,6 +197574,7 @@ export namespace Prisma {
     id?: SortOrder
     projectId?: SortOrder
     submittedById?: SortOrder
+    employeeId?: SortOrder
     title?: SortOrder
     category?: SortOrder
     totalAmount?: SortOrder
@@ -197347,6 +197593,7 @@ export namespace Prisma {
     id?: SortOrder
     projectId?: SortOrder
     submittedById?: SortOrder
+    employeeId?: SortOrder
     title?: SortOrder
     category?: SortOrder
     totalAmount?: SortOrder
@@ -204595,6 +204842,13 @@ export namespace Prisma {
     connect?: WorkScheduleEnrollmentWhereUniqueInput | WorkScheduleEnrollmentWhereUniqueInput[]
   }
 
+  export type ExpenseCreateNestedManyWithoutEmployeeInput = {
+    create?: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput> | ExpenseCreateWithoutEmployeeInput[] | ExpenseUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutEmployeeInput | ExpenseCreateOrConnectWithoutEmployeeInput[]
+    createMany?: ExpenseCreateManyEmployeeInputEnvelope
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+  }
+
   export type AllocationUncheckedCreateNestedManyWithoutEmployeeInput = {
     create?: XOR<AllocationCreateWithoutEmployeeInput, AllocationUncheckedCreateWithoutEmployeeInput> | AllocationCreateWithoutEmployeeInput[] | AllocationUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutEmployeeInput | AllocationCreateOrConnectWithoutEmployeeInput[]
@@ -204786,6 +205040,13 @@ export namespace Prisma {
     connectOrCreate?: WorkScheduleEnrollmentCreateOrConnectWithoutEmployeeInput | WorkScheduleEnrollmentCreateOrConnectWithoutEmployeeInput[]
     createMany?: WorkScheduleEnrollmentCreateManyEmployeeInputEnvelope
     connect?: WorkScheduleEnrollmentWhereUniqueInput | WorkScheduleEnrollmentWhereUniqueInput[]
+  }
+
+  export type ExpenseUncheckedCreateNestedManyWithoutEmployeeInput = {
+    create?: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput> | ExpenseCreateWithoutEmployeeInput[] | ExpenseUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutEmployeeInput | ExpenseCreateOrConnectWithoutEmployeeInput[]
+    createMany?: ExpenseCreateManyEmployeeInputEnvelope
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -205247,6 +205508,20 @@ export namespace Prisma {
     deleteMany?: WorkScheduleEnrollmentScalarWhereInput | WorkScheduleEnrollmentScalarWhereInput[]
   }
 
+  export type ExpenseUpdateManyWithoutEmployeeNestedInput = {
+    create?: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput> | ExpenseCreateWithoutEmployeeInput[] | ExpenseUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutEmployeeInput | ExpenseCreateOrConnectWithoutEmployeeInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutEmployeeInput | ExpenseUpsertWithWhereUniqueWithoutEmployeeInput[]
+    createMany?: ExpenseCreateManyEmployeeInputEnvelope
+    set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutEmployeeInput | ExpenseUpdateWithWhereUniqueWithoutEmployeeInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutEmployeeInput | ExpenseUpdateManyWithWhereWithoutEmployeeInput[]
+    deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+  }
+
   export type AllocationUncheckedUpdateManyWithoutEmployeeNestedInput = {
     create?: XOR<AllocationCreateWithoutEmployeeInput, AllocationUncheckedCreateWithoutEmployeeInput> | AllocationCreateWithoutEmployeeInput[] | AllocationUncheckedCreateWithoutEmployeeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutEmployeeInput | AllocationCreateOrConnectWithoutEmployeeInput[]
@@ -205625,6 +205900,20 @@ export namespace Prisma {
     update?: WorkScheduleEnrollmentUpdateWithWhereUniqueWithoutEmployeeInput | WorkScheduleEnrollmentUpdateWithWhereUniqueWithoutEmployeeInput[]
     updateMany?: WorkScheduleEnrollmentUpdateManyWithWhereWithoutEmployeeInput | WorkScheduleEnrollmentUpdateManyWithWhereWithoutEmployeeInput[]
     deleteMany?: WorkScheduleEnrollmentScalarWhereInput | WorkScheduleEnrollmentScalarWhereInput[]
+  }
+
+  export type ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput = {
+    create?: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput> | ExpenseCreateWithoutEmployeeInput[] | ExpenseUncheckedCreateWithoutEmployeeInput[]
+    connectOrCreate?: ExpenseCreateOrConnectWithoutEmployeeInput | ExpenseCreateOrConnectWithoutEmployeeInput[]
+    upsert?: ExpenseUpsertWithWhereUniqueWithoutEmployeeInput | ExpenseUpsertWithWhereUniqueWithoutEmployeeInput[]
+    createMany?: ExpenseCreateManyEmployeeInputEnvelope
+    set?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    disconnect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    delete?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+    update?: ExpenseUpdateWithWhereUniqueWithoutEmployeeInput | ExpenseUpdateWithWhereUniqueWithoutEmployeeInput[]
+    updateMany?: ExpenseUpdateManyWithWhereWithoutEmployeeInput | ExpenseUpdateManyWithWhereWithoutEmployeeInput[]
+    deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
   }
 
   export type EmployeeSkillCreateNestedManyWithoutSkillInput = {
@@ -207878,6 +208167,19 @@ export namespace Prisma {
     connect?: EmployeeWhereUniqueInput
   }
 
+  export type ContractCreateNestedOneWithoutRenewalsInput = {
+    create?: XOR<ContractCreateWithoutRenewalsInput, ContractUncheckedCreateWithoutRenewalsInput>
+    connectOrCreate?: ContractCreateOrConnectWithoutRenewalsInput
+    connect?: ContractWhereUniqueInput
+  }
+
+  export type ContractCreateNestedManyWithoutPreviousContractInput = {
+    create?: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput> | ContractCreateWithoutPreviousContractInput[] | ContractUncheckedCreateWithoutPreviousContractInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutPreviousContractInput | ContractCreateOrConnectWithoutPreviousContractInput[]
+    createMany?: ContractCreateManyPreviousContractInputEnvelope
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+  }
+
   export type TenantCreateNestedOneWithoutContractsInput = {
     create?: XOR<TenantCreateWithoutContractsInput, TenantUncheckedCreateWithoutContractsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutContractsInput
@@ -207889,6 +208191,13 @@ export namespace Prisma {
     connectOrCreate?: ContractAllowanceCreateOrConnectWithoutContractInput | ContractAllowanceCreateOrConnectWithoutContractInput[]
     createMany?: ContractAllowanceCreateManyContractInputEnvelope
     connect?: ContractAllowanceWhereUniqueInput | ContractAllowanceWhereUniqueInput[]
+  }
+
+  export type ContractUncheckedCreateNestedManyWithoutPreviousContractInput = {
+    create?: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput> | ContractCreateWithoutPreviousContractInput[] | ContractUncheckedCreateWithoutPreviousContractInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutPreviousContractInput | ContractCreateOrConnectWithoutPreviousContractInput[]
+    createMany?: ContractCreateManyPreviousContractInputEnvelope
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
   }
 
   export type ContractAllowanceUncheckedCreateNestedManyWithoutContractInput = {
@@ -207924,6 +208233,30 @@ export namespace Prisma {
     update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutSignedContractsInput, EmployeeUpdateWithoutSignedContractsInput>, EmployeeUncheckedUpdateWithoutSignedContractsInput>
   }
 
+  export type ContractUpdateOneWithoutRenewalsNestedInput = {
+    create?: XOR<ContractCreateWithoutRenewalsInput, ContractUncheckedCreateWithoutRenewalsInput>
+    connectOrCreate?: ContractCreateOrConnectWithoutRenewalsInput
+    upsert?: ContractUpsertWithoutRenewalsInput
+    disconnect?: ContractWhereInput | boolean
+    delete?: ContractWhereInput | boolean
+    connect?: ContractWhereUniqueInput
+    update?: XOR<XOR<ContractUpdateToOneWithWhereWithoutRenewalsInput, ContractUpdateWithoutRenewalsInput>, ContractUncheckedUpdateWithoutRenewalsInput>
+  }
+
+  export type ContractUpdateManyWithoutPreviousContractNestedInput = {
+    create?: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput> | ContractCreateWithoutPreviousContractInput[] | ContractUncheckedCreateWithoutPreviousContractInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutPreviousContractInput | ContractCreateOrConnectWithoutPreviousContractInput[]
+    upsert?: ContractUpsertWithWhereUniqueWithoutPreviousContractInput | ContractUpsertWithWhereUniqueWithoutPreviousContractInput[]
+    createMany?: ContractCreateManyPreviousContractInputEnvelope
+    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    update?: ContractUpdateWithWhereUniqueWithoutPreviousContractInput | ContractUpdateWithWhereUniqueWithoutPreviousContractInput[]
+    updateMany?: ContractUpdateManyWithWhereWithoutPreviousContractInput | ContractUpdateManyWithWhereWithoutPreviousContractInput[]
+    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
+  }
+
   export type TenantUpdateOneWithoutContractsNestedInput = {
     create?: XOR<TenantCreateWithoutContractsInput, TenantUncheckedCreateWithoutContractsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutContractsInput
@@ -207946,6 +208279,20 @@ export namespace Prisma {
     update?: ContractAllowanceUpdateWithWhereUniqueWithoutContractInput | ContractAllowanceUpdateWithWhereUniqueWithoutContractInput[]
     updateMany?: ContractAllowanceUpdateManyWithWhereWithoutContractInput | ContractAllowanceUpdateManyWithWhereWithoutContractInput[]
     deleteMany?: ContractAllowanceScalarWhereInput | ContractAllowanceScalarWhereInput[]
+  }
+
+  export type ContractUncheckedUpdateManyWithoutPreviousContractNestedInput = {
+    create?: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput> | ContractCreateWithoutPreviousContractInput[] | ContractUncheckedCreateWithoutPreviousContractInput[]
+    connectOrCreate?: ContractCreateOrConnectWithoutPreviousContractInput | ContractCreateOrConnectWithoutPreviousContractInput[]
+    upsert?: ContractUpsertWithWhereUniqueWithoutPreviousContractInput | ContractUpsertWithWhereUniqueWithoutPreviousContractInput[]
+    createMany?: ContractCreateManyPreviousContractInputEnvelope
+    set?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    disconnect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    delete?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    connect?: ContractWhereUniqueInput | ContractWhereUniqueInput[]
+    update?: ContractUpdateWithWhereUniqueWithoutPreviousContractInput | ContractUpdateWithWhereUniqueWithoutPreviousContractInput[]
+    updateMany?: ContractUpdateManyWithWhereWithoutPreviousContractInput | ContractUpdateManyWithWhereWithoutPreviousContractInput[]
+    deleteMany?: ContractScalarWhereInput | ContractScalarWhereInput[]
   }
 
   export type ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput = {
@@ -208515,6 +208862,12 @@ export namespace Prisma {
     connect?: ProcessInstanceWhereUniqueInput
   }
 
+  export type EmployeeCreateNestedOneWithoutSubmittedExpensesInput = {
+    create?: XOR<EmployeeCreateWithoutSubmittedExpensesInput, EmployeeUncheckedCreateWithoutSubmittedExpensesInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutSubmittedExpensesInput
+    connect?: EmployeeWhereUniqueInput
+  }
+
   export type ExpenseItemUncheckedCreateNestedManyWithoutExpenseInput = {
     create?: XOR<ExpenseItemCreateWithoutExpenseInput, ExpenseItemUncheckedCreateWithoutExpenseInput> | ExpenseItemCreateWithoutExpenseInput[] | ExpenseItemUncheckedCreateWithoutExpenseInput[]
     connectOrCreate?: ExpenseItemCreateOrConnectWithoutExpenseInput | ExpenseItemCreateOrConnectWithoutExpenseInput[]
@@ -208580,6 +208933,16 @@ export namespace Prisma {
     delete?: ProcessInstanceWhereInput | boolean
     connect?: ProcessInstanceWhereUniqueInput
     update?: XOR<XOR<ProcessInstanceUpdateToOneWithWhereWithoutExpensesInput, ProcessInstanceUpdateWithoutExpensesInput>, ProcessInstanceUncheckedUpdateWithoutExpensesInput>
+  }
+
+  export type EmployeeUpdateOneWithoutSubmittedExpensesNestedInput = {
+    create?: XOR<EmployeeCreateWithoutSubmittedExpensesInput, EmployeeUncheckedCreateWithoutSubmittedExpensesInput>
+    connectOrCreate?: EmployeeCreateOrConnectWithoutSubmittedExpensesInput
+    upsert?: EmployeeUpsertWithoutSubmittedExpensesInput
+    disconnect?: EmployeeWhereInput | boolean
+    delete?: EmployeeWhereInput | boolean
+    connect?: EmployeeWhereUniqueInput
+    update?: XOR<XOR<EmployeeUpdateToOneWithWhereWithoutSubmittedExpensesInput, EmployeeUpdateWithoutSubmittedExpensesInput>, EmployeeUncheckedUpdateWithoutSubmittedExpensesInput>
   }
 
   export type ExpenseItemUncheckedUpdateManyWithoutExpenseNestedInput = {
@@ -214871,6 +215234,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutUserInput = {
@@ -214935,6 +215299,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutUserInput = {
@@ -215544,11 +215909,13 @@ export namespace Prisma {
     project?: ProjectCreateNestedOneWithoutExpensesInput
     approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
     processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutSubmittedByInput = {
     id?: string
     projectId?: string | null
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -215590,12 +215957,14 @@ export namespace Prisma {
     project?: ProjectCreateNestedOneWithoutExpensesInput
     submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
     processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutApprovedByInput = {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -216571,6 +216940,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutUserInput = {
@@ -216635,6 +217005,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
@@ -217135,6 +217506,7 @@ export namespace Prisma {
     id?: StringFilter<"Expense"> | string
     projectId?: StringNullableFilter<"Expense"> | string | null
     submittedById?: StringFilter<"Expense"> | string
+    employeeId?: StringNullableFilter<"Expense"> | string | null
     title?: StringFilter<"Expense"> | string
     category?: EnumExpenseCategoryFilter<"Expense"> | $Enums.ExpenseCategory
     totalAmount?: DecimalFilter<"Expense"> | Decimal | DecimalJsLike | number | string
@@ -217863,6 +218235,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutOrgUnitInput = {
@@ -217927,6 +218300,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutOrgUnitInput = {
@@ -218163,6 +218537,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeadingOrgUnitInput = {
@@ -218227,6 +218602,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeadingOrgUnitInput = {
@@ -218880,6 +219256,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeadingOrgUnitInput = {
@@ -218944,6 +219321,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type ProcessDefinitionUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -219222,10 +219600,13 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
     tenant?: TenantCreateNestedOneWithoutContractsInput
     allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
   }
@@ -219241,10 +219622,13 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
     deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
     allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
   }
 
@@ -220126,6 +220510,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutDirectReportsInput = {
@@ -220190,6 +220575,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutDirectReportsInput = {
@@ -220259,6 +220645,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutDirectManagerInput = {
@@ -220323,6 +220710,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutDirectManagerInput = {
@@ -220432,10 +220820,13 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     employee: EmployeeCreateNestedOneWithoutContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
     tenant?: TenantCreateNestedOneWithoutContractsInput
     allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
   }
@@ -220451,10 +220842,13 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
     deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
     allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
   }
 
@@ -220797,6 +221191,54 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ExpenseCreateWithoutEmployeeInput = {
+    id?: string
+    title: string
+    category?: $Enums.ExpenseCategory
+    totalAmount: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    status?: $Enums.ExpenseStatus
+    approvedAt?: Date | string | null
+    rejectedReason?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: ExpenseItemCreateNestedManyWithoutExpenseInput
+    project?: ProjectCreateNestedOneWithoutExpensesInput
+    submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
+    approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
+    processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+  }
+
+  export type ExpenseUncheckedCreateWithoutEmployeeInput = {
+    id?: string
+    projectId?: string | null
+    submittedById: string
+    title: string
+    category?: $Enums.ExpenseCategory
+    totalAmount: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    status?: $Enums.ExpenseStatus
+    approvedById?: string | null
+    approvedAt?: Date | string | null
+    rejectedReason?: string | null
+    processInstanceId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: ExpenseItemUncheckedCreateNestedManyWithoutExpenseInput
+  }
+
+  export type ExpenseCreateOrConnectWithoutEmployeeInput = {
+    where: ExpenseWhereUniqueInput
+    create: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput>
+  }
+
+  export type ExpenseCreateManyEmployeeInputEnvelope = {
+    data: ExpenseCreateManyEmployeeInput | ExpenseCreateManyEmployeeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationUpsertWithWhereUniqueWithoutEmployeeInput = {
     where: AllocationWhereUniqueInput
     update: XOR<AllocationUpdateWithoutEmployeeInput, AllocationUncheckedUpdateWithoutEmployeeInput>
@@ -220862,6 +221304,8 @@ export namespace Prisma {
     note?: StringNullableFilter<"Contract"> | string | null
     signedAt?: DateTimeNullableFilter<"Contract"> | Date | string | null
     signedById?: StringNullableFilter<"Contract"> | string | null
+    renewalCount?: IntFilter<"Contract"> | number
+    previousContractId?: StringNullableFilter<"Contract"> | string | null
     createdAt?: DateTimeFilter<"Contract"> | Date | string
     updatedAt?: DateTimeFilter<"Contract"> | Date | string
     tenantId?: StringNullableFilter<"Contract"> | string | null
@@ -221624,6 +222068,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutDirectReportsInput = {
@@ -221688,6 +222133,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUpsertWithWhereUniqueWithoutDirectManagerInput = {
@@ -222112,6 +222558,22 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"WorkScheduleEnrollment"> | Date | string
   }
 
+  export type ExpenseUpsertWithWhereUniqueWithoutEmployeeInput = {
+    where: ExpenseWhereUniqueInput
+    update: XOR<ExpenseUpdateWithoutEmployeeInput, ExpenseUncheckedUpdateWithoutEmployeeInput>
+    create: XOR<ExpenseCreateWithoutEmployeeInput, ExpenseUncheckedCreateWithoutEmployeeInput>
+  }
+
+  export type ExpenseUpdateWithWhereUniqueWithoutEmployeeInput = {
+    where: ExpenseWhereUniqueInput
+    data: XOR<ExpenseUpdateWithoutEmployeeInput, ExpenseUncheckedUpdateWithoutEmployeeInput>
+  }
+
+  export type ExpenseUpdateManyWithWhereWithoutEmployeeInput = {
+    where: ExpenseScalarWhereInput
+    data: XOR<ExpenseUpdateManyMutationInput, ExpenseUncheckedUpdateManyWithoutEmployeeInput>
+  }
+
   export type EmployeeSkillCreateWithoutSkillInput = {
     id?: string
     level?: $Enums.SkillLevel
@@ -222220,6 +222682,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutSkillsInput = {
@@ -222284,6 +222747,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutSkillsInput = {
@@ -222387,6 +222851,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutSkillsInput = {
@@ -222451,6 +222916,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type SkillUpsertWithoutEmployeesInput = {
@@ -222544,6 +223010,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutRatesInput = {
@@ -222608,6 +223075,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutRatesInput = {
@@ -222688,6 +223156,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutRatesInput = {
@@ -222752,6 +223221,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type AlertConfigCreateWithoutProjectInput = {
@@ -222908,11 +223378,13 @@ export namespace Prisma {
     submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
     approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
     processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutProjectInput = {
     id?: string
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -223780,6 +224252,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutAllocationsInput = {
@@ -223844,6 +224317,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutAllocationsInput = {
@@ -224060,6 +224534,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAllocationsInput = {
@@ -224124,6 +224599,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type ProjectUpsertWithoutMembersInput = {
@@ -224463,6 +224939,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTasksInput = {
@@ -224527,6 +225004,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTasksInput = {
@@ -225047,6 +225525,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTasksInput = {
@@ -225111,6 +225590,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type TaskUpsertWithoutChildrenInput = {
@@ -227943,12 +228423,14 @@ export namespace Prisma {
     project?: ProjectCreateNestedOneWithoutExpensesInput
     submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
     approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutProcessInstanceInput = {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -233070,6 +233552,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutContractsInput = {
@@ -233134,6 +233617,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutContractsInput = {
@@ -233203,6 +233687,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutSignedContractsInput = {
@@ -233267,11 +233752,111 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutSignedContractsInput = {
     where: EmployeeWhereUniqueInput
     create: XOR<EmployeeCreateWithoutSignedContractsInput, EmployeeUncheckedCreateWithoutSignedContractsInput>
+  }
+
+  export type ContractCreateWithoutRenewalsInput = {
+    id?: string
+    type?: $Enums.ContractType
+    status?: $Enums.ContractStatus
+    startDate: Date | string
+    endDate?: Date | string | null
+    salaryMonthly: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    note?: string | null
+    signedAt?: Date | string | null
+    renewalCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    employee: EmployeeCreateNestedOneWithoutContractsInput
+    signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    tenant?: TenantCreateNestedOneWithoutContractsInput
+    allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutRenewalsInput = {
+    id?: string
+    employeeId: string
+    type?: $Enums.ContractType
+    status?: $Enums.ContractStatus
+    startDate: Date | string
+    endDate?: Date | string | null
+    salaryMonthly: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    note?: string | null
+    signedAt?: Date | string | null
+    signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    deletedAt?: Date | string | null
+    allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutRenewalsInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutRenewalsInput, ContractUncheckedCreateWithoutRenewalsInput>
+  }
+
+  export type ContractCreateWithoutPreviousContractInput = {
+    id?: string
+    type?: $Enums.ContractType
+    status?: $Enums.ContractStatus
+    startDate: Date | string
+    endDate?: Date | string | null
+    salaryMonthly: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    note?: string | null
+    signedAt?: Date | string | null
+    renewalCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    employee: EmployeeCreateNestedOneWithoutContractsInput
+    signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
+    tenant?: TenantCreateNestedOneWithoutContractsInput
+    allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractUncheckedCreateWithoutPreviousContractInput = {
+    id?: string
+    employeeId: string
+    type?: $Enums.ContractType
+    status?: $Enums.ContractStatus
+    startDate: Date | string
+    endDate?: Date | string | null
+    salaryMonthly: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    note?: string | null
+    signedAt?: Date | string | null
+    signedById?: string | null
+    renewalCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
+    allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
+  }
+
+  export type ContractCreateOrConnectWithoutPreviousContractInput = {
+    where: ContractWhereUniqueInput
+    create: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput>
+  }
+
+  export type ContractCreateManyPreviousContractInputEnvelope = {
+    data: ContractCreateManyPreviousContractInput | ContractCreateManyPreviousContractInput[]
+    skipDuplicates?: boolean
   }
 
   export type TenantCreateWithoutContractsInput = {
@@ -233446,6 +234031,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutContractsInput = {
@@ -233510,6 +234096,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUpsertWithoutSignedContractsInput = {
@@ -233585,6 +234172,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutSignedContractsInput = {
@@ -233649,6 +234237,76 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
+  }
+
+  export type ContractUpsertWithoutRenewalsInput = {
+    update: XOR<ContractUpdateWithoutRenewalsInput, ContractUncheckedUpdateWithoutRenewalsInput>
+    create: XOR<ContractCreateWithoutRenewalsInput, ContractUncheckedCreateWithoutRenewalsInput>
+    where?: ContractWhereInput
+  }
+
+  export type ContractUpdateToOneWithWhereWithoutRenewalsInput = {
+    where?: ContractWhereInput
+    data: XOR<ContractUpdateWithoutRenewalsInput, ContractUncheckedUpdateWithoutRenewalsInput>
+  }
+
+  export type ContractUpdateWithoutRenewalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMonthly?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
+    signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    tenant?: TenantUpdateOneWithoutContractsNestedInput
+    allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateWithoutRenewalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    type?: EnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMonthly?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUpsertWithWhereUniqueWithoutPreviousContractInput = {
+    where: ContractWhereUniqueInput
+    update: XOR<ContractUpdateWithoutPreviousContractInput, ContractUncheckedUpdateWithoutPreviousContractInput>
+    create: XOR<ContractCreateWithoutPreviousContractInput, ContractUncheckedCreateWithoutPreviousContractInput>
+  }
+
+  export type ContractUpdateWithWhereUniqueWithoutPreviousContractInput = {
+    where: ContractWhereUniqueInput
+    data: XOR<ContractUpdateWithoutPreviousContractInput, ContractUncheckedUpdateWithoutPreviousContractInput>
+  }
+
+  export type ContractUpdateManyWithWhereWithoutPreviousContractInput = {
+    where: ContractScalarWhereInput
+    data: XOR<ContractUpdateManyMutationInput, ContractUncheckedUpdateManyWithoutPreviousContractInput>
   }
 
   export type TenantUpsertWithoutContractsInput = {
@@ -233769,11 +234427,14 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     employee: EmployeeCreateNestedOneWithoutContractsInput
     signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
     tenant?: TenantCreateNestedOneWithoutContractsInput
   }
 
@@ -233789,10 +234450,13 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
     deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
   }
 
   export type ContractCreateOrConnectWithoutAllowancesInput = {
@@ -233852,11 +234516,14 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
     signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
     tenant?: TenantUpdateOneWithoutContractsNestedInput
   }
 
@@ -233872,10 +234539,13 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
   }
 
   export type AllowanceTypeUpsertWithoutContractAllowancesInput = {
@@ -234083,6 +234753,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
@@ -234147,6 +234818,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveRequestsInput = {
@@ -234479,6 +235151,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -234543,6 +235216,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type LeaveTypeUpsertWithoutRequestsInput = {
@@ -234883,6 +235557,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
@@ -234947,6 +235622,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeaveBalancesInput = {
@@ -235131,6 +235807,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
@@ -235195,6 +235872,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type LeaveTypeUpsertWithoutBalancesInput = {
@@ -235375,6 +236053,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutOvertimeRequestsInput = {
@@ -235439,6 +236118,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutOvertimeRequestsInput = {
@@ -235667,6 +236347,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutOvertimeRequestsInput = {
@@ -235731,6 +236412,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type UserUpsertWithoutApprovedOvertimesInput = {
@@ -236446,6 +237128,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPayrollRecordsInput = {
@@ -236510,6 +237193,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPayrollRecordsInput = {
@@ -236679,6 +237363,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPayrollRecordsInput = {
@@ -236743,6 +237428,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeAllowanceUpsertWithWhereUniqueWithoutPayrollRecordInput = {
@@ -237139,6 +237825,141 @@ export namespace Prisma {
     create: XOR<ProcessInstanceCreateWithoutExpensesInput, ProcessInstanceUncheckedCreateWithoutExpensesInput>
   }
 
+  export type EmployeeCreateWithoutSubmittedExpensesInput = {
+    id?: string
+    code: string
+    fullName: string
+    birthdate?: Date | string | null
+    techStack?: EmployeeCreatetechStackInput | string[]
+    level?: $Enums.EmployeeLevel
+    cccd?: string | null
+    cccdIssueDate?: Date | string | null
+    cccdIssuePlace?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    isActive?: boolean
+    employeeStatus?: $Enums.EmployeeStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    email?: string | null
+    deletedAt?: Date | string | null
+    idType?: $Enums.IdType | null
+    idNumber?: string | null
+    idIssueDate?: Date | string | null
+    idIssuePlace?: string | null
+    permanentAddress?: string | null
+    currentAddress?: string | null
+    ethnicity?: string | null
+    religion?: string | null
+    nationality?: string | null
+    bankAccount?: string | null
+    bankName?: string | null
+    allocations?: AllocationCreateNestedManyWithoutEmployeeInput
+    contracts?: ContractCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutEmployeeInput
+    rates?: EmployeeRateCreateNestedManyWithoutEmployeeInput
+    orgUnit: OrgUnitCreateNestedOneWithoutEmployeesInput
+    user?: UserCreateNestedOneWithoutEmployeeInput
+    tasks?: TaskCreateNestedManyWithoutAssigneeInput
+    assetAssignments?: AssetAssignmentCreateNestedManyWithoutEmployeeInput
+    trainingRecords?: TrainingRecordCreateNestedManyWithoutEmployeeInput
+    performanceReviews?: PerformanceReviewCreateNestedManyWithoutEmployeeInput
+    reviewsAsReviewer?: PerformanceReviewCreateNestedManyWithoutReviewerInput
+    taxProfile?: EmployeeTaxProfileCreateNestedOneWithoutEmployeeInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillCreateNestedManyWithoutEmployeeInput
+    position?: PositionCreateNestedOneWithoutEmployeesInput
+    hrDecisions?: HrDecisionCreateNestedManyWithoutEmployeeInput
+    workHistories?: WorkHistoryCreateNestedManyWithoutEmployeeInput
+    salaryRecords?: SalaryRecordCreateNestedManyWithoutEmployeeInput
+    positionHistories?: PositionHistoryCreateNestedManyWithoutEmployeeInput
+    directManager?: EmployeeCreateNestedOneWithoutDirectReportsInput
+    directReports?: EmployeeCreateNestedManyWithoutDirectManagerInput
+    leadingOrgUnit?: OrgUnitCreateNestedOneWithoutLeaderInput
+    overtimeRequests?: OvertimeRequestCreateNestedManyWithoutEmployeeInput
+    signedContracts?: ContractCreateNestedManyWithoutSignedByInput
+    tenant?: TenantCreateNestedOneWithoutEmployeesInput
+    leavePolicy?: LeavePolicyCreateNestedOneWithoutEmployeesInput
+    insuranceEnrollments?: InsuranceEnrollmentCreateNestedManyWithoutEmployeeInput
+    socialInsuranceBook?: SocialInsuranceBookCreateNestedOneWithoutEmployeeInput
+    attendanceRecords?: AttendanceRecordCreateNestedManyWithoutEmployeeInput
+    monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
+    shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
+    workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+  }
+
+  export type EmployeeUncheckedCreateWithoutSubmittedExpensesInput = {
+    id?: string
+    code: string
+    userId?: string | null
+    orgUnitId: string
+    fullName: string
+    birthdate?: Date | string | null
+    techStack?: EmployeeCreatetechStackInput | string[]
+    level?: $Enums.EmployeeLevel
+    cccd?: string | null
+    cccdIssueDate?: Date | string | null
+    cccdIssuePlace?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    isActive?: boolean
+    employeeStatus?: $Enums.EmployeeStatus
+    positionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    email?: string | null
+    directManagerId?: string | null
+    tenantId?: string | null
+    deletedAt?: Date | string | null
+    leavePolicyId?: string | null
+    idType?: $Enums.IdType | null
+    idNumber?: string | null
+    idIssueDate?: Date | string | null
+    idIssuePlace?: string | null
+    permanentAddress?: string | null
+    currentAddress?: string | null
+    ethnicity?: string | null
+    religion?: string | null
+    nationality?: string | null
+    bankAccount?: string | null
+    bankName?: string | null
+    allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    rates?: EmployeeRateUncheckedCreateNestedManyWithoutEmployeeInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    assetAssignments?: AssetAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+    trainingRecords?: TrainingRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    performanceReviews?: PerformanceReviewUncheckedCreateNestedManyWithoutEmployeeInput
+    reviewsAsReviewer?: PerformanceReviewUncheckedCreateNestedManyWithoutReviewerInput
+    taxProfile?: EmployeeTaxProfileUncheckedCreateNestedOneWithoutEmployeeInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedCreateNestedManyWithoutEmployeeInput
+    skills?: EmployeeSkillUncheckedCreateNestedManyWithoutEmployeeInput
+    hrDecisions?: HrDecisionUncheckedCreateNestedManyWithoutEmployeeInput
+    workHistories?: WorkHistoryUncheckedCreateNestedManyWithoutEmployeeInput
+    salaryRecords?: SalaryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    positionHistories?: PositionHistoryUncheckedCreateNestedManyWithoutEmployeeInput
+    directReports?: EmployeeUncheckedCreateNestedManyWithoutDirectManagerInput
+    leadingOrgUnit?: OrgUnitUncheckedCreateNestedOneWithoutLeaderInput
+    overtimeRequests?: OvertimeRequestUncheckedCreateNestedManyWithoutEmployeeInput
+    signedContracts?: ContractUncheckedCreateNestedManyWithoutSignedByInput
+    insuranceEnrollments?: InsuranceEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    socialInsuranceBook?: SocialInsuranceBookUncheckedCreateNestedOneWithoutEmployeeInput
+    attendanceRecords?: AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+    monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
+    shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+    workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+  }
+
+  export type EmployeeCreateOrConnectWithoutSubmittedExpensesInput = {
+    where: EmployeeWhereUniqueInput
+    create: XOR<EmployeeCreateWithoutSubmittedExpensesInput, EmployeeUncheckedCreateWithoutSubmittedExpensesInput>
+  }
+
   export type ExpenseItemUpsertWithWhereUniqueWithoutExpenseInput = {
     where: ExpenseItemWhereUniqueInput
     update: XOR<ExpenseItemUpdateWithoutExpenseInput, ExpenseItemUncheckedUpdateWithoutExpenseInput>
@@ -237507,6 +238328,147 @@ export namespace Prisma {
     overtimeRequests?: OvertimeRequestUncheckedUpdateManyWithoutProcessInstanceNestedInput
   }
 
+  export type EmployeeUpsertWithoutSubmittedExpensesInput = {
+    update: XOR<EmployeeUpdateWithoutSubmittedExpensesInput, EmployeeUncheckedUpdateWithoutSubmittedExpensesInput>
+    create: XOR<EmployeeCreateWithoutSubmittedExpensesInput, EmployeeUncheckedCreateWithoutSubmittedExpensesInput>
+    where?: EmployeeWhereInput
+  }
+
+  export type EmployeeUpdateToOneWithWhereWithoutSubmittedExpensesInput = {
+    where?: EmployeeWhereInput
+    data: XOR<EmployeeUpdateWithoutSubmittedExpensesInput, EmployeeUncheckedUpdateWithoutSubmittedExpensesInput>
+  }
+
+  export type EmployeeUpdateWithoutSubmittedExpensesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    techStack?: EmployeeUpdatetechStackInput | string[]
+    level?: EnumEmployeeLevelFieldUpdateOperationsInput | $Enums.EmployeeLevel
+    cccd?: NullableStringFieldUpdateOperationsInput | string | null
+    cccdIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cccdIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    employeeStatus?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idType?: NullableEnumIdTypeFieldUpdateOperationsInput | $Enums.IdType | null
+    idNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    idIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    ethnicity?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: NullableStringFieldUpdateOperationsInput | string | null
+    nationality?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
+    contracts?: ContractUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutEmployeeNestedInput
+    rates?: EmployeeRateUpdateManyWithoutEmployeeNestedInput
+    orgUnit?: OrgUnitUpdateOneRequiredWithoutEmployeesNestedInput
+    user?: UserUpdateOneWithoutEmployeeNestedInput
+    tasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    assetAssignments?: AssetAssignmentUpdateManyWithoutEmployeeNestedInput
+    trainingRecords?: TrainingRecordUpdateManyWithoutEmployeeNestedInput
+    performanceReviews?: PerformanceReviewUpdateManyWithoutEmployeeNestedInput
+    reviewsAsReviewer?: PerformanceReviewUpdateManyWithoutReviewerNestedInput
+    taxProfile?: EmployeeTaxProfileUpdateOneWithoutEmployeeNestedInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUpdateManyWithoutEmployeeNestedInput
+    position?: PositionUpdateOneWithoutEmployeesNestedInput
+    hrDecisions?: HrDecisionUpdateManyWithoutEmployeeNestedInput
+    workHistories?: WorkHistoryUpdateManyWithoutEmployeeNestedInput
+    salaryRecords?: SalaryRecordUpdateManyWithoutEmployeeNestedInput
+    positionHistories?: PositionHistoryUpdateManyWithoutEmployeeNestedInput
+    directManager?: EmployeeUpdateOneWithoutDirectReportsNestedInput
+    directReports?: EmployeeUpdateManyWithoutDirectManagerNestedInput
+    leadingOrgUnit?: OrgUnitUpdateOneWithoutLeaderNestedInput
+    overtimeRequests?: OvertimeRequestUpdateManyWithoutEmployeeNestedInput
+    signedContracts?: ContractUpdateManyWithoutSignedByNestedInput
+    tenant?: TenantUpdateOneWithoutEmployeesNestedInput
+    leavePolicy?: LeavePolicyUpdateOneWithoutEmployeesNestedInput
+    insuranceEnrollments?: InsuranceEnrollmentUpdateManyWithoutEmployeeNestedInput
+    socialInsuranceBook?: SocialInsuranceBookUpdateOneWithoutEmployeeNestedInput
+    attendanceRecords?: AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+    monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
+    shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+    workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+  }
+
+  export type EmployeeUncheckedUpdateWithoutSubmittedExpensesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    orgUnitId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    techStack?: EmployeeUpdatetechStackInput | string[]
+    level?: EnumEmployeeLevelFieldUpdateOperationsInput | $Enums.EmployeeLevel
+    cccd?: NullableStringFieldUpdateOperationsInput | string | null
+    cccdIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    cccdIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    employeeStatus?: EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+    positionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    directManagerId?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
+    idType?: NullableEnumIdTypeFieldUpdateOperationsInput | $Enums.IdType | null
+    idNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    idIssueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    idIssuePlace?: NullableStringFieldUpdateOperationsInput | string | null
+    permanentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    currentAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    ethnicity?: NullableStringFieldUpdateOperationsInput | string | null
+    religion?: NullableStringFieldUpdateOperationsInput | string | null
+    nationality?: NullableStringFieldUpdateOperationsInput | string | null
+    bankAccount?: NullableStringFieldUpdateOperationsInput | string | null
+    bankName?: NullableStringFieldUpdateOperationsInput | string | null
+    allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    rates?: EmployeeRateUncheckedUpdateManyWithoutEmployeeNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    assetAssignments?: AssetAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    trainingRecords?: TrainingRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    performanceReviews?: PerformanceReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+    reviewsAsReviewer?: PerformanceReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    taxProfile?: EmployeeTaxProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+    yearlySummaries?: EmployeeYearlyTaxSummaryUncheckedUpdateManyWithoutEmployeeNestedInput
+    skills?: EmployeeSkillUncheckedUpdateManyWithoutEmployeeNestedInput
+    hrDecisions?: HrDecisionUncheckedUpdateManyWithoutEmployeeNestedInput
+    workHistories?: WorkHistoryUncheckedUpdateManyWithoutEmployeeNestedInput
+    salaryRecords?: SalaryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    positionHistories?: PositionHistoryUncheckedUpdateManyWithoutEmployeeNestedInput
+    directReports?: EmployeeUncheckedUpdateManyWithoutDirectManagerNestedInput
+    leadingOrgUnit?: OrgUnitUncheckedUpdateOneWithoutLeaderNestedInput
+    overtimeRequests?: OvertimeRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+    signedContracts?: ContractUncheckedUpdateManyWithoutSignedByNestedInput
+    insuranceEnrollments?: InsuranceEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    socialInsuranceBook?: SocialInsuranceBookUncheckedUpdateOneWithoutEmployeeNestedInput
+    attendanceRecords?: AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+    monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
+    shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  }
+
   export type ExpenseCreateWithoutItemsInput = {
     id?: string
     title: string
@@ -237523,12 +238485,14 @@ export namespace Prisma {
     submittedBy: UserCreateNestedOneWithoutSubmittedExpensesInput
     approvedBy?: UserCreateNestedOneWithoutApprovedExpensesInput
     processInstance?: ProcessInstanceCreateNestedOneWithoutExpensesInput
+    employee?: EmployeeCreateNestedOneWithoutSubmittedExpensesInput
   }
 
   export type ExpenseUncheckedCreateWithoutItemsInput = {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -237575,12 +238539,14 @@ export namespace Prisma {
     submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
     processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -240856,6 +241822,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutAssetAssignmentsInput = {
@@ -240920,6 +241887,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutAssetAssignmentsInput = {
@@ -241051,6 +242019,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAssetAssignmentsInput = {
@@ -241115,6 +242084,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type AssetCreateWithoutMaintenanceLogsInput = {
@@ -241556,6 +242526,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTrainingRecordsInput = {
@@ -241620,6 +242591,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTrainingRecordsInput = {
@@ -241731,6 +242703,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTrainingRecordsInput = {
@@ -241795,6 +242768,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateWithoutPerformanceReviewsInput = {
@@ -241859,6 +242833,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPerformanceReviewsInput = {
@@ -241923,6 +242898,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPerformanceReviewsInput = {
@@ -241992,6 +242968,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutReviewsAsReviewerInput = {
@@ -242056,6 +243033,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutReviewsAsReviewerInput = {
@@ -242136,6 +243114,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPerformanceReviewsInput = {
@@ -242200,6 +243179,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUpsertWithoutReviewsAsReviewerInput = {
@@ -242275,6 +243255,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutReviewsAsReviewerInput = {
@@ -242339,6 +243320,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateWithoutTaxProfileInput = {
@@ -242403,6 +243385,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTaxProfileInput = {
@@ -242467,6 +243450,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTaxProfileInput = {
@@ -242577,6 +243561,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTaxProfileInput = {
@@ -242641,6 +243626,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type DependentUpsertWithWhereUniqueWithoutTaxProfileInput = {
@@ -243193,6 +244179,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutYearlySummariesInput = {
@@ -243257,6 +244244,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutYearlySummariesInput = {
@@ -243337,6 +244325,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutYearlySummariesInput = {
@@ -243401,6 +244390,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type PayrollRecordCreateWithoutEmployeeAllowancesInput = {
@@ -248439,6 +249429,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutTenantInput = {
@@ -248503,6 +249494,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutTenantInput = {
@@ -248951,11 +249943,14 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     employee: EmployeeCreateNestedOneWithoutContractsInput
     signedBy?: EmployeeCreateNestedOneWithoutSignedContractsInput
+    previousContract?: ContractCreateNestedOneWithoutRenewalsInput
+    renewals?: ContractCreateNestedManyWithoutPreviousContractInput
     allowances?: ContractAllowanceCreateNestedManyWithoutContractInput
   }
 
@@ -248971,9 +249966,12 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    renewals?: ContractUncheckedCreateNestedManyWithoutPreviousContractInput
     allowances?: ContractAllowanceUncheckedCreateNestedManyWithoutContractInput
   }
 
@@ -249913,6 +250911,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPositionInput = {
@@ -249977,6 +250976,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPositionInput = {
@@ -250228,6 +251228,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutPositionHistoriesInput = {
@@ -250292,6 +251293,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutPositionHistoriesInput = {
@@ -250411,6 +251413,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPositionHistoriesInput = {
@@ -250475,6 +251478,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeCreateWithoutHrDecisionsInput = {
@@ -250539,6 +251543,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutHrDecisionsInput = {
@@ -250603,6 +251608,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutHrDecisionsInput = {
@@ -250747,6 +251753,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutHrDecisionsInput = {
@@ -250811,6 +251818,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type WorkHistoryUpsertWithWhereUniqueWithoutHrDecisionInput = {
@@ -250907,6 +251915,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutWorkHistoriesInput = {
@@ -250971,6 +251980,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutWorkHistoriesInput = {
@@ -251104,6 +252114,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutWorkHistoriesInput = {
@@ -251168,6 +252179,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type HrDecisionUpsertWithoutWorkHistoriesInput = {
@@ -251291,6 +252303,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutSalaryRecordsInput = {
@@ -251355,6 +252368,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutSalaryRecordsInput = {
@@ -251488,6 +252502,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutSalaryRecordsInput = {
@@ -251552,6 +252567,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type HrDecisionUpsertWithoutSalaryRecordsInput = {
@@ -251675,6 +252691,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutLeavePolicyInput = {
@@ -251739,6 +252756,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutLeavePolicyInput = {
@@ -251829,6 +252847,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutInsuranceEnrollmentsInput = {
@@ -251893,6 +252912,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutInsuranceEnrollmentsInput = {
@@ -252032,6 +253052,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutInsuranceEnrollmentsInput = {
@@ -252096,6 +253117,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type SocialInsuranceBookUpsertWithoutEnrollmentInput = {
@@ -252225,6 +253247,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutSocialInsuranceBookInput = {
@@ -252289,6 +253312,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutSocialInsuranceBookInput = {
@@ -252400,6 +253424,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutSocialInsuranceBookInput = {
@@ -252464,6 +253489,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type InsuranceEnrollmentUpsertWithoutSocialInsuranceBookInput = {
@@ -252633,6 +253659,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutAttendanceRecordsInput = {
@@ -252697,6 +253724,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutAttendanceRecordsInput = {
@@ -252818,6 +253846,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutAttendanceRecordsInput = {
@@ -252882,6 +253911,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type MonthlyAttendanceUpsertWithoutRecordsInput = {
@@ -252993,6 +254023,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutMonthlyAttendancesInput = {
@@ -253057,6 +254088,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutMonthlyAttendancesInput = {
@@ -253189,6 +254221,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutMonthlyAttendancesInput = {
@@ -253253,6 +254286,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type AttendanceRecordUpsertWithWhereUniqueWithoutMonthlyAttendanceInput = {
@@ -253428,6 +254462,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordCreateNestedManyWithoutEmployeeInput
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutShiftAssignmentsInput = {
@@ -253492,6 +254527,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutShiftAssignmentsInput = {
@@ -253607,6 +254643,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUpdateManyWithoutEmployeeNestedInput
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutShiftAssignmentsInput = {
@@ -253671,6 +254708,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type WorkShiftUpsertWithoutAssignmentsInput = {
@@ -253998,6 +255036,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordCreateNestedManyWithoutEmployeeInput
     monthlyAttendances?: MonthlyAttendanceCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeUncheckedCreateWithoutWorkScheduleEnrollmentsInput = {
@@ -254062,6 +255101,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
     monthlyAttendances?: MonthlyAttendanceUncheckedCreateNestedManyWithoutEmployeeInput
     shiftAssignments?: ShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutEmployeeInput
   }
 
   export type EmployeeCreateOrConnectWithoutWorkScheduleEnrollmentsInput = {
@@ -254169,6 +255209,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUpdateManyWithoutEmployeeNestedInput
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutWorkScheduleEnrollmentsInput = {
@@ -254233,6 +255274,7 @@ export namespace Prisma {
     attendanceRecords?: AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type WorkScheduleUpsertWithoutEnrollmentsInput = {
@@ -254568,6 +255610,7 @@ export namespace Prisma {
   export type ExpenseCreateManySubmittedByInput = {
     id?: string
     projectId?: string | null
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -254586,6 +255629,7 @@ export namespace Prisma {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -255789,11 +256833,13 @@ export namespace Prisma {
     project?: ProjectUpdateOneWithoutExpensesNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
     processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutSubmittedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -255812,6 +256858,7 @@ export namespace Prisma {
   export type ExpenseUncheckedUpdateManyWithoutSubmittedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -255842,12 +256889,14 @@ export namespace Prisma {
     project?: ProjectUpdateOneWithoutExpensesNestedInput
     submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
     processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutApprovedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -255866,6 +256915,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -256761,6 +257811,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutOrgUnitInput = {
@@ -256825,6 +257876,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -257295,6 +258347,8 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
@@ -257580,6 +258634,8 @@ export namespace Prisma {
     currency?: $Enums.BudgetCurrency
     note?: string | null
     signedAt?: Date | string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tenantId?: string | null
@@ -257654,6 +258710,24 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type ExpenseCreateManyEmployeeInput = {
+    id?: string
+    projectId?: string | null
+    submittedById: string
+    title: string
+    category?: $Enums.ExpenseCategory
+    totalAmount: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    status?: $Enums.ExpenseStatus
+    approvedById?: string | null
+    approvedAt?: Date | string | null
+    rejectedReason?: string | null
+    processInstanceId?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AllocationUpdateWithoutEmployeeInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
@@ -257706,10 +258780,13 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
     tenant?: TenantUpdateOneWithoutContractsNestedInput
     allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
   }
@@ -257725,10 +258802,13 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
     allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
   }
 
@@ -257743,6 +258823,8 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -258475,6 +259557,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutDirectManagerInput = {
@@ -258539,6 +259622,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutDirectManagerInput = {
@@ -258635,10 +259719,13 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
     tenant?: TenantUpdateOneWithoutContractsNestedInput
     allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
   }
@@ -258654,10 +259741,13 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
     allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
   }
 
@@ -258672,6 +259762,8 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -258888,6 +259980,62 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ExpenseUpdateWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: ExpenseItemUpdateManyWithoutExpenseNestedInput
+    project?: ProjectUpdateOneWithoutExpensesNestedInput
+    submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
+    approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
+    processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+  }
+
+  export type ExpenseUncheckedUpdateWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    submittedById?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: ExpenseItemUncheckedUpdateManyWithoutExpenseNestedInput
+  }
+
+  export type ExpenseUncheckedUpdateManyWithoutEmployeeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    submittedById?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
+    totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    status?: EnumExpenseStatusFieldUpdateOperationsInput | $Enums.ExpenseStatus
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rejectedReason?: NullableStringFieldUpdateOperationsInput | string | null
+    processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeSkillCreateManySkillInput = {
     id?: string
     employeeId: string
@@ -258981,6 +260129,7 @@ export namespace Prisma {
   export type ExpenseCreateManyProjectInput = {
     id?: string
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -259201,11 +260350,13 @@ export namespace Prisma {
     submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
     processInstance?: ProcessInstanceUpdateOneWithoutExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -259224,6 +260375,7 @@ export namespace Prisma {
   export type ExpenseUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -259625,6 +260777,7 @@ export namespace Prisma {
     id?: string
     projectId?: string | null
     submittedById: string
+    employeeId?: string | null
     title: string
     category?: $Enums.ExpenseCategory
     totalAmount: Decimal | DecimalJsLike | number | string
@@ -259787,12 +260940,14 @@ export namespace Prisma {
     project?: ProjectUpdateOneWithoutExpensesNestedInput
     submittedBy?: UserUpdateOneRequiredWithoutSubmittedExpensesNestedInput
     approvedBy?: UserUpdateOneWithoutApprovedExpensesNestedInput
+    employee?: EmployeeUpdateOneWithoutSubmittedExpensesNestedInput
   }
 
   export type ExpenseUncheckedUpdateWithoutProcessInstanceInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -259811,6 +260966,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     submittedById?: StringFieldUpdateOperationsInput | string
+    employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     title?: StringFieldUpdateOperationsInput | string
     category?: EnumExpenseCategoryFieldUpdateOperationsInput | $Enums.ExpenseCategory
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -260180,11 +261336,91 @@ export namespace Prisma {
     includeChildren?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type ContractCreateManyPreviousContractInput = {
+    id?: string
+    employeeId: string
+    type?: $Enums.ContractType
+    status?: $Enums.ContractStatus
+    startDate: Date | string
+    endDate?: Date | string | null
+    salaryMonthly: Decimal | DecimalJsLike | number | string
+    currency?: $Enums.BudgetCurrency
+    note?: string | null
+    signedAt?: Date | string | null
+    signedById?: string | null
+    renewalCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    deletedAt?: Date | string | null
+  }
+
   export type ContractAllowanceCreateManyContractInput = {
     id?: string
     allowanceTypeId: string
     amount: Decimal | DecimalJsLike | number | string
     note?: string | null
+  }
+
+  export type ContractUpdateWithoutPreviousContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMonthly?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
+    signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
+    tenant?: TenantUpdateOneWithoutContractsNestedInput
+    allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateWithoutPreviousContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    type?: EnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMonthly?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
+    allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
+  }
+
+  export type ContractUncheckedUpdateManyWithoutPreviousContractInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    employeeId?: StringFieldUpdateOperationsInput | string
+    type?: EnumContractTypeFieldUpdateOperationsInput | $Enums.ContractType
+    status?: EnumContractStatusFieldUpdateOperationsInput | $Enums.ContractStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    salaryMonthly?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ContractAllowanceUpdateWithoutContractInput = {
@@ -262533,6 +263769,8 @@ export namespace Prisma {
     note?: string | null
     signedAt?: Date | string | null
     signedById?: string | null
+    renewalCount?: number
+    previousContractId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -262888,6 +264126,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutTenantInput = {
@@ -262952,6 +264191,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutTenantInput = {
@@ -263496,11 +264736,14 @@ export namespace Prisma {
     currency?: EnumBudgetCurrencyFieldUpdateOperationsInput | $Enums.BudgetCurrency
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employee?: EmployeeUpdateOneRequiredWithoutContractsNestedInput
     signedBy?: EmployeeUpdateOneWithoutSignedContractsNestedInput
+    previousContract?: ContractUpdateOneWithoutRenewalsNestedInput
+    renewals?: ContractUpdateManyWithoutPreviousContractNestedInput
     allowances?: ContractAllowanceUpdateManyWithoutContractNestedInput
   }
 
@@ -263516,9 +264759,12 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    renewals?: ContractUncheckedUpdateManyWithoutPreviousContractNestedInput
     allowances?: ContractAllowanceUncheckedUpdateManyWithoutContractNestedInput
   }
 
@@ -263534,6 +264780,8 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     signedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     signedById?: NullableStringFieldUpdateOperationsInput | string | null
+    renewalCount?: IntFieldUpdateOperationsInput | number
+    previousContractId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -264134,6 +265382,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutPositionInput = {
@@ -264198,6 +265447,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutPositionInput = {
@@ -264446,6 +265696,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateWithoutLeavePolicyInput = {
@@ -264510,6 +265761,7 @@ export namespace Prisma {
     monthlyAttendances?: MonthlyAttendanceUncheckedUpdateManyWithoutEmployeeNestedInput
     shiftAssignments?: ShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
     workScheduleEnrollments?: WorkScheduleEnrollmentUncheckedUpdateManyWithoutEmployeeNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutEmployeeNestedInput
   }
 
   export type EmployeeUncheckedUpdateManyWithoutLeavePolicyInput = {

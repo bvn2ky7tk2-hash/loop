@@ -490,4 +490,110 @@ export class AccountingService implements OnModuleInit {
 
     return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
   }
+
+  // ── Export bảng cân đối kế toán sang Excel ────────────────────────────────
+
+  async exportBalanceSheet(asOfDate: string): Promise<Buffer> {
+    const data = await this.getBalanceSheet(asOfDate);
+    const wb = new ExcelJS.Workbook();
+    const sheet = wb.addWorksheet('Bảng cân đối kế toán');
+
+    sheet.columns = [
+      { header: 'Khoản mục', key: 'name', width: 45 },
+      { header: 'Mã', key: 'code', width: 14 },
+      { header: 'Cuối kỳ (VNĐ)', key: 'balance', width: 22 },
+    ];
+    sheet.getRow(1).font = { bold: true };
+
+    // Phần A: Tài sản
+    sheet.addRow({ name: 'A. TÀI SẢN', code: '', balance: '' });
+    for (const r of data.assets) {
+      sheet.addRow({ name: r.name, code: r.code, balance: r.balance });
+    }
+    const totalAssetsRow = sheet.addRow({ name: 'Tổng tài sản', code: '', balance: data.totalAssets });
+    totalAssetsRow.font = { bold: true };
+    sheet.addRow({});
+
+    // Phần B: Nợ phải trả
+    sheet.addRow({ name: 'B. NỢ PHẢI TRẢ', code: '', balance: '' });
+    for (const r of data.liabilities) {
+      sheet.addRow({ name: r.name, code: r.code, balance: r.balance });
+    }
+    const totalLiabRow = sheet.addRow({ name: 'Tổng nợ phải trả', code: '', balance: data.totalLiabilities });
+    totalLiabRow.font = { bold: true };
+    sheet.addRow({});
+
+    // Phần C: Vốn chủ sở hữu
+    sheet.addRow({ name: 'C. VỐN CHỦ SỞ HỮU', code: '', balance: '' });
+    for (const r of data.equity) {
+      sheet.addRow({ name: r.name, code: r.code, balance: r.balance });
+    }
+    const totalEquityRow = sheet.addRow({ name: 'Tổng vốn chủ sở hữu', code: '', balance: data.totalEquity });
+    totalEquityRow.font = { bold: true };
+    sheet.addRow({});
+
+    const totalSourceRow = sheet.addRow({ name: 'TỔNG NGUỒN VỐN (B + C)', code: '', balance: data.totalLiabilitiesAndEquity });
+    totalSourceRow.font = { bold: true };
+
+    return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
+  }
+
+  // ── Export báo cáo KQKD sang Excel ──────────────────────────────────────────
+
+  async exportIncomeStatement(fromDate: string, toDate: string): Promise<Buffer> {
+    const data = await this.getIncomeStatement(fromDate, toDate);
+    const wb = new ExcelJS.Workbook();
+    const sheet = wb.addWorksheet('Báo cáo KQKD');
+
+    sheet.columns = [
+      { header: 'Mã', key: 'code', width: 10 },
+      { header: 'Chỉ tiêu', key: 'name', width: 50 },
+      { header: 'Kỳ này (VNĐ)', key: 'amount', width: 22 },
+    ];
+    sheet.getRow(1).font = { bold: true };
+
+    for (const item of data.lineItems) {
+      const row = sheet.addRow({ code: item.code, name: item.name, amount: item.amount });
+      if (item.isSubtotal) row.font = { bold: true };
+    }
+
+    return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
+  }
+
+  // ── Export lưu chuyển tiền tệ sang Excel ─────────────────────────────────────
+
+  async exportCashFlowStatement(fromDate: string, toDate: string): Promise<Buffer> {
+    const data = await this.getCashFlowStatement(fromDate, toDate);
+    const wb = new ExcelJS.Workbook();
+    const sheet = wb.addWorksheet('Lưu chuyển tiền tệ');
+
+    sheet.columns = [
+      { header: 'Mã', key: 'code', width: 10 },
+      { header: 'Chỉ tiêu', key: 'name', width: 50 },
+      { header: 'Kỳ này (VNĐ)', key: 'amount', width: 22 },
+    ];
+    sheet.getRow(1).font = { bold: true };
+
+    for (const section of data.sections) {
+      // Tiêu đề section
+      const titleRow = sheet.addRow({ code: '', name: section.title, amount: '' });
+      titleRow.font = { bold: true };
+
+      // Các dòng trong section
+      for (const item of section.items) {
+        sheet.addRow({ code: item.code, name: item.name, amount: item.amount });
+      }
+
+      // Tổng của section
+      const subtotalRow = sheet.addRow({ code: '', name: `Lưu chuyển tiền thuần — ${section.title}`, amount: section.subtotal });
+      subtotalRow.font = { bold: true };
+      sheet.addRow({});
+    }
+
+    // Dòng tổng cuối cùng
+    const netRow = sheet.addRow({ code: '', name: 'TĂNG/GIẢM TIỀN THUẦN TRONG KỲ', amount: data.netCashChange });
+    netRow.font = { bold: true };
+
+    return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
+  }
 }

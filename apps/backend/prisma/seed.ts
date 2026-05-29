@@ -3225,7 +3225,7 @@ async function seedEnrichedDemo() {
       const binhContractExists = await prisma.contract.findFirst({ where: { employeeId: binhEmp.id } });
       if (!binhContractExists) {
         await prisma.contract.create({
-          data: { employeeId: binhEmp.id, type: 'FULL_TIME', status: 'ACTIVE',
+          data: { employeeId: binhEmp.id, type: 'INDEFINITE', status: 'ACTIVE',
             startDate: new Date('2026-06-01'), endDate: new Date('2027-05-31'),
             salaryMonthly: 57_000_000 },
         });
@@ -3975,7 +3975,7 @@ async function seedRecruitEnriched() {
     // Contracts
     for (const { emp, salary } of [{ emp: namEmp, salary: 16_000_000 }, { emp: huongEmp, salary: 15_000_000 }]) {
       const ct = await prisma.contract.findFirst({ where: { employeeId: emp.id } });
-      if (!ct) await prisma.contract.create({ data: { employeeId: emp.id, type: 'FULL_TIME', status: 'ACTIVE', startDate: emp.startDate, endDate: new Date('2027-04-30'), salaryMonthly: salary } });
+      if (!ct) await prisma.contract.create({ data: { employeeId: emp.id, type: 'INDEFINITE', status: 'ACTIVE', startDate: emp.startDate, endDate: new Date('2027-04-30'), salaryMonthly: salary } });
     }
     console.log('  ✓ EMP009 (Nguyễn Hữu Nam) + EMP010 (Ngô Thị Hương) → QA team, HIRED + contracts');
 
