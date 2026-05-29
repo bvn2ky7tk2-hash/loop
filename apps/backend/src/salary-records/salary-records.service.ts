@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { CreateSalaryRecordDto } from './dto/salary-record.dto';
 
-@Injectable()
-export class SalaryRecordsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class SalaryRecordsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
 
   async findByEmployee(employeeId: string) {
     const employee = await this.prisma.employee.findUnique({

@@ -6,6 +6,7 @@ import {
   UnprocessableEntityException,
   Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, DealStage, ProjectType, ProjectStatus } from '../../generated/prisma';
@@ -14,6 +15,7 @@ import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
 import { WonDealDto } from './dto/won-deal.dto';
 import { LostDealDto } from './dto/lost-deal.dto';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
 // Stage transitions được phép
 const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
@@ -24,15 +26,13 @@ const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
   [DealStage.LOST]:          [],
 };
 
-@Injectable()
-export class DealsService {
+@Injectable({ scope: Scope.REQUEST })
+export class DealsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
   }
 
   async findAll(
@@ -42,12 +42,11 @@ export class DealsService {
     page = 1,
     limit = 50,
   ): Promise<PaginatedResult<any>> {
-    const tenantId = this.getTenantId();
-    const where: any = { deletedAt: null };
-    if (stage) where.stage = stage;
-    if (customerId) where.customerId = customerId;
-    if (assigneeId) where.assigneeId = assigneeId;
-    if (tenantId) where.tenantId = tenantId;
+    const extra: any = { deletedAt: null };
+    if (stage) extra.stage = stage;
+    if (customerId) extra.customerId = customerId;
+    if (assigneeId) extra.assigneeId = assigneeId;
+    const where = this.tenantWhere(extra);
 
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
@@ -81,7 +80,7 @@ export class DealsService {
 
   async create(dto: CreateDealDto) {
     try {
-      return await this.prisma.deal.create({ data: dto });
+      return await this.prisma.deal.create({ data: { ...dto, tenantId: this.getTenantId() ?? null } });
     } catch (err: any) {
       if (err?.code === 'P2002') {
         throw new ConflictException(`Mã deal "${dto.code}" đã tồn tại`);

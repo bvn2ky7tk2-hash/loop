@@ -3,17 +3,26 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
+  Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
-import { LeadSource, LeadStatus, DealStage } from '../../generated/prisma';
+import { LeadStatus, DealStage } from '../../generated/prisma';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { ConvertLeadDto } from './dto/convert-lead.dto';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
-@Injectable()
-export class LeadsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class LeadsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
 
   async findAll(
     status?: LeadStatus,
@@ -21,9 +30,10 @@ export class LeadsService {
     page = 1,
     limit = 50,
   ): Promise<PaginatedResult<any>> {
-    const where: any = {};
-    if (status) where.status = status;
-    if (assigneeId) where.assigneeId = assigneeId;
+    const extra: any = {};
+    if (status) extra.status = status;
+    if (assigneeId) extra.assigneeId = assigneeId;
+    const where = this.tenantWhere(extra);
 
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
@@ -55,7 +65,7 @@ export class LeadsService {
   }
 
   async create(dto: CreateLeadDto) {
-    return this.prisma.lead.create({ data: dto });
+    return this.prisma.lead.create({ data: { ...dto, tenantId: this.getTenantId() ?? null } });
   }
 
   async update(id: string, dto: UpdateLeadDto) {
@@ -83,6 +93,7 @@ export class LeadsService {
           data: {
             code: `CUST-${Date.now()}`,
             name: lead.title,
+            tenantId: this.getTenantId() ?? null,
           },
         });
         customerId = customer.id;
@@ -97,6 +108,7 @@ export class LeadsService {
           stage:      DealStage.QUALIFICATION,
           value:      dto.dealValue ?? lead.estimatedValue,
           currency:   lead.currency ?? 'VND',
+          tenantId:   this.getTenantId() ?? null,
         },
       });
 

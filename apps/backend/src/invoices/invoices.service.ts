@@ -1,9 +1,10 @@
 import {
-  Injectable, NotFoundException, UnprocessableEntityException, Logger, Inject,
+  Injectable, NotFoundException, UnprocessableEntityException, Logger, Inject, Scope,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { InvoiceStatus } from '../generated/prisma';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
@@ -43,18 +44,16 @@ function calcTotals(items: { quantity: number; unitPrice: number; taxRate?: numb
   return { subtotal, taxAmount, totalAmount: subtotal + taxAmount };
 }
 
-@Injectable()
-export class InvoicesService {
+@Injectable({ scope: Scope.REQUEST })
+export class InvoicesService extends TenantAwareService {
   private readonly logger = new Logger(InvoicesService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
   }
 
   async create(dto: CreateInvoiceDto, userId: string) {
@@ -95,19 +94,19 @@ export class InvoicesService {
     const limit = dto.limit ?? 50;
     const skip  = (page - 1) * limit;
 
-    const tenantId = this.getTenantId();
-    const where: Record<string, unknown> = { deletedAt: null };
-    if (tenantId)       where.tenantId   = tenantId;
-    if (dto.type)       where.type       = dto.type;
-    if (dto.status)     where.status     = dto.status;
-    if (dto.customerId) where.customerId = dto.customerId;
-    if (dto.projectId)  where.projectId  = dto.projectId;
-    if (dto.dateFrom || dto.dateTo) {
-      where.issueDate = {
-        ...(dto.dateFrom ? { gte: new Date(dto.dateFrom) } : {}),
-        ...(dto.dateTo   ? { lte: new Date(dto.dateTo)   } : {}),
-      };
-    }
+    const where = this.tenantWhere({
+      deletedAt: null,
+      ...(dto.type       ? { type:       dto.type       } : {}),
+      ...(dto.status     ? { status:     dto.status     } : {}),
+      ...(dto.customerId ? { customerId: dto.customerId } : {}),
+      ...(dto.projectId  ? { projectId:  dto.projectId  } : {}),
+      ...(dto.dateFrom || dto.dateTo ? {
+        issueDate: {
+          ...(dto.dateFrom ? { gte: new Date(dto.dateFrom) } : {}),
+          ...(dto.dateTo   ? { lte: new Date(dto.dateTo)   } : {}),
+        },
+      } : {}),
+    });
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.invoice.findMany({

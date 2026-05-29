@@ -4,29 +4,25 @@ import {
   ConflictException,
   Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
-@Injectable()
-export class CustomersService {
+@Injectable({ scope: Scope.REQUEST })
+export class CustomersService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
   }
 
   async findAll(page = 1, limit = 50): Promise<PaginatedResult<any>> {
-    const tenantId = this.getTenantId();
-    const where: any = {
-      deletedAt: null,
-      ...(tenantId ? { tenantId } : {}),
-    };
+    const where: any = this.tenantWhere({ deletedAt: null });
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
       this.prisma.customer.findMany({
@@ -65,7 +61,7 @@ export class CustomersService {
   async create(dto: CreateCustomerDto) {
     try {
       return await this.prisma.customer.create({
-        data: { ...dto, tenantId: this.getTenantId() },
+        data: { ...dto, tenantId: this.getTenantId() ?? null },
       });
     } catch (err: any) {
       if (err?.code === 'P2002') {

@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   PaginatedResult,
@@ -12,17 +14,23 @@ import {
   InsuranceQueryDto,
   UpdateSocialInsuranceBookDto,
 } from './dto/insurance.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class HrInsuranceService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class HrInsuranceService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   // ── Enrollments ─────────────────────────────────────────────────────────────
 
   async listEnrollments(query: InsuranceQueryDto): Promise<PaginatedResult<any>> {
     const { page = 1, limit = 50, orgUnitId, status, search } = query;
 
-    const where: any = {
+    const where: any = this.tenantWhere({
       ...(status ? { status: status as InsuranceEnrollmentStatus } : {}),
       employee: {
         ...(orgUnitId ? { orgUnitId } : {}),
@@ -35,7 +43,7 @@ export class HrInsuranceService {
             }
           : {}),
       },
-    };
+    });
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.insuranceEnrollment.findMany({

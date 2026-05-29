@@ -2,9 +2,13 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  Scope,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { PayrollStatus } from '../generated/prisma';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
@@ -15,8 +19,8 @@ import { PayslipQueueService } from './payslip-queue.service';
 import { StorageService } from '../storage/storage.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 
-@Injectable()
-export class PayrollService {
+@Injectable({ scope: Scope.REQUEST })
+export class PayrollService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
@@ -24,7 +28,10 @@ export class PayrollService {
     private readonly payslipQueue: PayslipQueueService,
     private readonly storage: StorageService,
     private readonly auditLog: AuditLogService,
-  ) {}
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
 
   // ── List kỳ lương ──────────────────────────────────────────────────────────
   async listPeriods(page = 1, limit = 20): Promise<PaginatedResult<any>> {

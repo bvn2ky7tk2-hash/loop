@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
+import { Scope } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateContractDto, RenewContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
@@ -52,15 +54,13 @@ function addMonths(date: Date, months: number): Date {
   return d;
 }
 
-@Injectable()
-export class ContractsService {
+@Injectable({ scope: Scope.REQUEST })
+export class ContractsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
-
-  private getTenantId(): string | undefined {
-    return this.request?.user?.tenantId ?? this.request?.__tenantId ?? process.env.DEFAULT_TENANT_ID;
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
   }
 
   async findAll(
@@ -68,10 +68,7 @@ export class ContractsService {
     page = 1,
     limit = 20,
   ): Promise<PaginatedResult<any>> {
-    const tenantId = this.getTenantId();
-    const where: any = { deletedAt: null };
-    if (employeeId) where.employeeId = employeeId;
-    if (tenantId) where.tenantId = tenantId;
+    const where = this.tenantWhere({ deletedAt: null, ...(employeeId ? { employeeId } : {}) });
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.contract.findMany({

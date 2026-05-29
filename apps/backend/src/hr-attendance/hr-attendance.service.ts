@@ -2,7 +2,10 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   PaginatedResult,
@@ -17,13 +20,17 @@ import {
 } from './dto/attendance.dto';
 import { AttendanceStatus, MonthlyAttendanceStatus } from '../generated/prisma';
 import { WorkShiftsService } from '../work-shifts/work-shifts.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class HrAttendanceService {
+@Injectable({ scope: Scope.REQUEST })
+export class HrAttendanceService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly workShiftsService: WorkShiftsService,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   // ─── Tính toán chỉ số ca làm việc từ giờ check-in/out thực tế ───────────────
   calculateShiftMetrics(
@@ -71,7 +78,7 @@ export class HrAttendanceService {
     const page = query.page ?? 1;
     const limit = query.limit ?? 50;
 
-    const where: any = {};
+    const where: any = this.tenantWhere();
     if (query.employeeId) where.employeeId = query.employeeId;
     if (query.status) where.status = query.status;
     if (query.dateFrom || query.dateTo) {

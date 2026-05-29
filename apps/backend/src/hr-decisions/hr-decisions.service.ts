@@ -4,7 +4,10 @@ import {
   BadRequestException,
   ForbiddenException,
   OnModuleInit,
+  Inject,
 } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import {
@@ -21,6 +24,7 @@ import {
   HrDecisionQueryDto,
 } from './dto/hr-decision.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 // Map loại quyết định → ký hiệu viết tắt cho mã quyết định tự động
 const TYPE_ABBR: Record<HrDecisionType, string> = {
@@ -50,12 +54,15 @@ const TYPE_TO_EVENT: Record<HrDecisionType, WorkHistoryEventType> = {
   SECONDMENT: WorkHistoryEventType.HR_DECISION,
 };
 
-@Injectable()
-export class HrDecisionsService implements OnModuleInit {
+@Injectable({ scope: Scope.REQUEST })
+export class HrDecisionsService extends TenantAwareService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   onModuleInit() {
     this.eventBus.onCompleted(async (payload) => {
@@ -98,7 +105,7 @@ export class HrDecisionsService implements OnModuleInit {
     const limit = query.limit ?? 50;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = this.tenantWhere();
 
     if (query.employeeId) {
       where['employeeId'] = query.employeeId;
@@ -190,6 +197,7 @@ export class HrDecisionsService implements OnModuleInit {
         fromSalary: dto.fromSalary,
         toSalary: dto.toSalary,
         createdById,
+        ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
       },
       include: {
         employee: { select: { id: true, fullName: true, code: true } },

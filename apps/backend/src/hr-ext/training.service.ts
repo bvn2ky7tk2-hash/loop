@@ -1,12 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { CreateTrainingProgramDto, CreateTrainingRecordDto, FilterTrainingDto } from './dto/training.dto';
 import { TrainingStatus } from '../generated/prisma';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class TrainingService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class TrainingService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   // ── Programs ────────────────────────────────────────────────────────────────
 
@@ -22,11 +30,11 @@ export class TrainingService {
 
   async listRecords(dto: FilterTrainingDto) {
     const { page = 1, limit = 50, employeeId, programId, status } = dto;
-    const where = {
+    const where = this.tenantWhere({
       ...(employeeId ? { employeeId } : {}),
       ...(programId  ? { programId  } : {}),
       ...(status     ? { status: status as TrainingStatus } : {}),
-    };
+    });
     const [data, total] = await this.prisma.$transaction([
       this.prisma.trainingRecord.findMany({
         where, skip: (page - 1) * limit, take: limit,

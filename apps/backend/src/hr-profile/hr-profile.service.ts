@@ -1,11 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { InsuranceEnrollmentStatus } from '../generated/prisma';
 import { UpdatePersonalInfoDto } from './dto/hr-profile.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable()
-export class HrProfileService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class HrProfileService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   // ── Profile 360° ─────────────────────────────────────────────────────────────
 

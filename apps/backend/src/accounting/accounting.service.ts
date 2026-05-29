@@ -1,6 +1,8 @@
-import { Injectable, Logger, OnModuleInit, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, NotFoundException, UnprocessableEntityException, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { FinanceEventBus } from './finance-event-bus.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { CreateJournalDto } from './dto/create-journal.dto';
@@ -19,13 +21,15 @@ const ACC = {
 };
 
 @Injectable()
-export class AccountingService implements OnModuleInit {
+export class AccountingService extends TenantAwareService implements OnModuleInit {
   private readonly logger = new Logger(AccountingService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly bus: FinanceEventBus,
-  ) {}
+  ) {
+    super(); // AccountingService là singleton (onModuleInit cần chạy khi khởi động)
+  }
 
   onModuleInit() {
     this.bus.on('invoice.paid', (e) => this.handleInvoicePaid(e.refId, e.amount, e.userId));

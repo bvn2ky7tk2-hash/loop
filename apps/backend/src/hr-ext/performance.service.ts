@@ -1,26 +1,34 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { CreatePerformanceReviewDto, UpdatePerformanceReviewDto, FilterPerformanceDto } from './dto/performance.dto';
 import { ReviewStatus } from '../generated/prisma';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 const INCLUDE = {
   employee: { select: { id: true, fullName: true, code: true } },
   reviewer: { select: { id: true, fullName: true, code: true } },
 } as const;
 
-@Injectable()
-export class PerformanceService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class PerformanceService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async list(dto: FilterPerformanceDto) {
     const { page = 1, limit = 50, employeeId, reviewerId, period, status } = dto;
-    const where = {
+    const where = this.tenantWhere({
       ...(employeeId ? { employeeId } : {}),
       ...(reviewerId ? { reviewerId } : {}),
       ...(period     ? { period } : {}),
       ...(status     ? { status: status as ReviewStatus } : {}),
-    };
+    });
     const [data, total] = await this.prisma.$transaction([
       this.prisma.performanceReview.findMany({
         where, skip: (page - 1) * limit, take: limit,

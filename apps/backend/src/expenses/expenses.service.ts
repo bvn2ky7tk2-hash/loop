@@ -4,9 +4,13 @@ import {
   BadRequestException,
   OnModuleInit,
   Optional,
+  Inject,
+  Scope,
 } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { ExpenseStatus, DefinitionStatus } from '../generated/prisma';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ApproveExpenseDto } from './dto/approve-expense.dto';
@@ -22,15 +26,18 @@ const EXPENSE_INCLUDE = {
   project:     { select: { id: true, name: true } },
 } as const;
 
-@Injectable()
-export class ExpensesService implements OnModuleInit {
+@Injectable({ scope: Scope.REQUEST })
+export class ExpensesService extends TenantAwareService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
     private readonly financeEventBus: FinanceEventBus,
     private readonly auditLog: AuditLogService,
+    @Inject(REQUEST) req: any,
     @Optional() private readonly notificationsService?: NotificationsService,
-  ) {}
+  ) {
+    super(req);
+  }
 
   onModuleInit() {
     this.eventBus.onCompleted(async (payload) => {

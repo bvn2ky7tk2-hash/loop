@@ -1,19 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
-@Injectable()
-export class ContactsService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class ContactsService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req: any,
+  ) {
+    super(req);
+  }
 
   async findAll(
     customerId?: string,
     page = 1,
     limit = 50,
   ): Promise<PaginatedResult<any>> {
-    const where = customerId ? { customerId } : {};
+    const where = this.tenantWhere(customerId ? { customerId } : {});
     const skip = (page - 1) * limit;
     const [data, total] = await this.prisma.$transaction([
       this.prisma.contact.findMany({
@@ -48,7 +56,7 @@ export class ContactsService {
   }
 
   async create(dto: CreateContactDto) {
-    return this.prisma.contact.create({ data: dto });
+    return this.prisma.contact.create({ data: { ...dto, tenantId: this.getTenantId() ?? null } });
   }
 
   async update(id: string, dto: UpdateContactDto) {

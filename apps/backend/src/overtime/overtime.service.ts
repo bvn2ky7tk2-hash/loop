@@ -1,9 +1,12 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { OtStatus, DefinitionStatus } from '../generated/prisma';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
 import { CreateOvertimeRequestDto, ListOtQueryDto, RejectOtDto } from './dto/overtime-request.dto';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 // Key định danh ProcessDefinition cho quy trình duyệt tăng ca
 const OT_PROCESS_KEY = 'overtime-approval';
@@ -12,12 +15,15 @@ const OT_INCLUDE = {
   employee: { select: { id: true, fullName: true, userId: true } },
 } as const;
 
-@Injectable()
-export class OvertimeService implements OnModuleInit {
+@Injectable({ scope: Scope.REQUEST })
+export class OvertimeService extends TenantAwareService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   onModuleInit() {
     this.eventBus.onCompleted(async (payload) => {
@@ -72,6 +78,7 @@ export class OvertimeService implements OnModuleInit {
         hours: dto.hours,
         reason: dto.reason,
         status: OtStatus.PENDING,
+        ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
       },
       include: OT_INCLUDE,
     });
@@ -124,7 +131,7 @@ export class OvertimeService implements OnModuleInit {
   async list(query: ListOtQueryDto): Promise<PaginatedResult<any>> {
     const { employeeId, status, month, year, page = 1, limit = 50 } = query;
 
-    const where: any = {};
+    const where: any = this.tenantWhere();
     if (employeeId) where.employeeId = employeeId;
     if (status) where.status = status;
 

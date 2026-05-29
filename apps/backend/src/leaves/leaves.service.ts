@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Optional } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Optional, Inject } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { LeaveStatus, DefinitionStatus } from '../generated/prisma';
@@ -8,6 +10,7 @@ import { ApproveLeaveDto } from './dto/approve-leave.dto';
 import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
+import { TenantAwareService } from '../common/services/tenant-aware.service';
 
 const LEAVE_REQUEST_INCLUDE = {
   employee: { select: { id: true, fullName: true, userId: true } },
@@ -15,14 +18,17 @@ const LEAVE_REQUEST_INCLUDE = {
   approvedBy: { select: { id: true, name: true } },
 } as const;
 
-@Injectable()
-export class LeavesService implements OnModuleInit {
+@Injectable({ scope: Scope.REQUEST })
+export class LeavesService extends TenantAwareService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventBus: ProcessEventBus,
     private readonly auditLog: AuditLogService,
     @Optional() private readonly notificationsService?: NotificationsService,
-  ) {}
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   onModuleInit() {
     this.eventBus.onCompleted(async (payload) => {
@@ -75,7 +81,7 @@ export class LeavesService implements OnModuleInit {
     page = 1,
     limit = 20,
   ): Promise<PaginatedResult<any>> {
-    const where: any = {};
+    const where: any = this.tenantWhere();
     if (employeeId) where.employeeId = employeeId;
     if (status) where.status = status;
 
@@ -140,6 +146,7 @@ export class LeavesService implements OnModuleInit {
         days:        dto.days,
         reason:      dto.reason,
         status:      LeaveStatus.PENDING,
+        ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
       },
       include: LEAVE_REQUEST_INCLUDE,
     });
