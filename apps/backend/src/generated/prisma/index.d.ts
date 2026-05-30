@@ -723,6 +723,41 @@ export type WorkSchedulePhase = $Result.DefaultSelection<Prisma.$WorkSchedulePha
  * 
  */
 export type WorkScheduleEnrollment = $Result.DefaultSelection<Prisma.$WorkScheduleEnrollmentPayload>
+/**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = $Result.DefaultSelection<Prisma.$NotificationPreferencePayload>
+/**
+ * Model SavedFilterPreset
+ * 
+ */
+export type SavedFilterPreset = $Result.DefaultSelection<Prisma.$SavedFilterPresetPayload>
+/**
+ * Model AppChangelog
+ * 
+ */
+export type AppChangelog = $Result.DefaultSelection<Prisma.$AppChangelogPayload>
+/**
+ * Model SystemAnnouncement
+ * 
+ */
+export type SystemAnnouncement = $Result.DefaultSelection<Prisma.$SystemAnnouncementPayload>
+/**
+ * Model EmailLog
+ * 
+ */
+export type EmailLog = $Result.DefaultSelection<Prisma.$EmailLogPayload>
+/**
+ * Model ApiKey
+ * 
+ */
+export type ApiKey = $Result.DefaultSelection<Prisma.$ApiKeyPayload>
+/**
+ * Model NotificationTemplate
+ * 
+ */
+export type NotificationTemplate = $Result.DefaultSelection<Prisma.$NotificationTemplatePayload>
 
 /**
  * Enums
@@ -1673,6 +1708,15 @@ export const ShiftType: {
 
 export type ShiftType = (typeof ShiftType)[keyof typeof ShiftType]
 
+
+export const NotificationChannel: {
+  EMAIL: 'EMAIL',
+  IN_APP: 'IN_APP',
+  BOTH: 'BOTH'
+};
+
+export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
+
 }
 
 export type SkillCategory = $Enums.SkillCategory
@@ -2030,6 +2074,10 @@ export const ExplanationStatus: typeof $Enums.ExplanationStatus
 export type ShiftType = $Enums.ShiftType
 
 export const ShiftType: typeof $Enums.ShiftType
+
+export type NotificationChannel = $Enums.NotificationChannel
+
+export const NotificationChannel: typeof $Enums.NotificationChannel
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3571,6 +3619,76 @@ export class PrismaClient<
     * ```
     */
   get workScheduleEnrollment(): Prisma.WorkScheduleEnrollmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.notificationPreference`: Exposes CRUD operations for the **NotificationPreference** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NotificationPreferences
+    * const notificationPreferences = await prisma.notificationPreference.findMany()
+    * ```
+    */
+  get notificationPreference(): Prisma.NotificationPreferenceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.savedFilterPreset`: Exposes CRUD operations for the **SavedFilterPreset** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SavedFilterPresets
+    * const savedFilterPresets = await prisma.savedFilterPreset.findMany()
+    * ```
+    */
+  get savedFilterPreset(): Prisma.SavedFilterPresetDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.appChangelog`: Exposes CRUD operations for the **AppChangelog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AppChangelogs
+    * const appChangelogs = await prisma.appChangelog.findMany()
+    * ```
+    */
+  get appChangelog(): Prisma.AppChangelogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.systemAnnouncement`: Exposes CRUD operations for the **SystemAnnouncement** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SystemAnnouncements
+    * const systemAnnouncements = await prisma.systemAnnouncement.findMany()
+    * ```
+    */
+  get systemAnnouncement(): Prisma.SystemAnnouncementDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.emailLog`: Exposes CRUD operations for the **EmailLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more EmailLogs
+    * const emailLogs = await prisma.emailLog.findMany()
+    * ```
+    */
+  get emailLog(): Prisma.EmailLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.apiKey`: Exposes CRUD operations for the **ApiKey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ApiKeys
+    * const apiKeys = await prisma.apiKey.findMany()
+    * ```
+    */
+  get apiKey(): Prisma.ApiKeyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.notificationTemplate`: Exposes CRUD operations for the **NotificationTemplate** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NotificationTemplates
+    * const notificationTemplates = await prisma.notificationTemplate.findMany()
+    * ```
+    */
+  get notificationTemplate(): Prisma.NotificationTemplateDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -4146,7 +4264,14 @@ export namespace Prisma {
     ShiftAssignment: 'ShiftAssignment',
     WorkSchedule: 'WorkSchedule',
     WorkSchedulePhase: 'WorkSchedulePhase',
-    WorkScheduleEnrollment: 'WorkScheduleEnrollment'
+    WorkScheduleEnrollment: 'WorkScheduleEnrollment',
+    NotificationPreference: 'NotificationPreference',
+    SavedFilterPreset: 'SavedFilterPreset',
+    AppChangelog: 'AppChangelog',
+    SystemAnnouncement: 'SystemAnnouncement',
+    EmailLog: 'EmailLog',
+    ApiKey: 'ApiKey',
+    NotificationTemplate: 'NotificationTemplate'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -4162,7 +4287,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "contractAllowance" | "leaveType" | "leaveRequest" | "leaveBalance" | "overtimeRequest" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "leadFollowUpSchedule" | "customerSurveySchedule" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "automationRuleLog" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "budgetPlan" | "budgetLine" | "budgetTransaction" | "performanceBonusConfig" | "performanceBonus" | "calendarEvent" | "delegationRule" | "invoiceAccountMapping" | "projectCostSnapshot" | "projectCostByEmployee" | "projectJournal" | "salaryBand" | "salaryReviewSuggestion" | "tenant" | "jobTitle" | "position" | "positionHistory" | "hrDecision" | "workHistory" | "salaryRecord" | "leavePolicy" | "holidayCalendar" | "insuranceEnrollment" | "socialInsuranceBook" | "insuranceEvent" | "attendanceRecord" | "monthlyAttendance" | "attendanceExplanation" | "workShift" | "shiftAssignment" | "workSchedule" | "workSchedulePhase" | "workScheduleEnrollment"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "contractAllowance" | "leaveType" | "leaveRequest" | "leaveBalance" | "overtimeRequest" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "leadFollowUpSchedule" | "customerSurveySchedule" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "automationRuleLog" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "budgetPlan" | "budgetLine" | "budgetTransaction" | "performanceBonusConfig" | "performanceBonus" | "calendarEvent" | "delegationRule" | "invoiceAccountMapping" | "projectCostSnapshot" | "projectCostByEmployee" | "projectJournal" | "salaryBand" | "salaryReviewSuggestion" | "tenant" | "jobTitle" | "position" | "positionHistory" | "hrDecision" | "workHistory" | "salaryRecord" | "leavePolicy" | "holidayCalendar" | "insuranceEnrollment" | "socialInsuranceBook" | "insuranceEvent" | "attendanceRecord" | "monthlyAttendance" | "attendanceExplanation" | "workShift" | "shiftAssignment" | "workSchedule" | "workSchedulePhase" | "workScheduleEnrollment" | "notificationPreference" | "savedFilterPreset" | "appChangelog" | "systemAnnouncement" | "emailLog" | "apiKey" | "notificationTemplate"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -14674,6 +14799,524 @@ export namespace Prisma {
           }
         }
       }
+      NotificationPreference: {
+        payload: Prisma.$NotificationPreferencePayload<ExtArgs>
+        fields: Prisma.NotificationPreferenceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationPreferenceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationPreferenceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationPreferenceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationPreferenceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          findMany: {
+            args: Prisma.NotificationPreferenceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+          }
+          create: {
+            args: Prisma.NotificationPreferenceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          createMany: {
+            args: Prisma.NotificationPreferenceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NotificationPreferenceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+          }
+          delete: {
+            args: Prisma.NotificationPreferenceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          update: {
+            args: Prisma.NotificationPreferenceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationPreferenceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationPreferenceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NotificationPreferenceUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+          }
+          upsert: {
+            args: Prisma.NotificationPreferenceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationPreferenceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotificationPreference>
+          }
+          groupBy: {
+            args: Prisma.NotificationPreferenceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationPreferenceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationPreferenceCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationPreferenceCountAggregateOutputType> | number
+          }
+        }
+      }
+      SavedFilterPreset: {
+        payload: Prisma.$SavedFilterPresetPayload<ExtArgs>
+        fields: Prisma.SavedFilterPresetFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SavedFilterPresetFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SavedFilterPresetFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          findFirst: {
+            args: Prisma.SavedFilterPresetFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SavedFilterPresetFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          findMany: {
+            args: Prisma.SavedFilterPresetFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>[]
+          }
+          create: {
+            args: Prisma.SavedFilterPresetCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          createMany: {
+            args: Prisma.SavedFilterPresetCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SavedFilterPresetCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>[]
+          }
+          delete: {
+            args: Prisma.SavedFilterPresetDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          update: {
+            args: Prisma.SavedFilterPresetUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          deleteMany: {
+            args: Prisma.SavedFilterPresetDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SavedFilterPresetUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SavedFilterPresetUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>[]
+          }
+          upsert: {
+            args: Prisma.SavedFilterPresetUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SavedFilterPresetPayload>
+          }
+          aggregate: {
+            args: Prisma.SavedFilterPresetAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSavedFilterPreset>
+          }
+          groupBy: {
+            args: Prisma.SavedFilterPresetGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SavedFilterPresetGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SavedFilterPresetCountArgs<ExtArgs>
+            result: $Utils.Optional<SavedFilterPresetCountAggregateOutputType> | number
+          }
+        }
+      }
+      AppChangelog: {
+        payload: Prisma.$AppChangelogPayload<ExtArgs>
+        fields: Prisma.AppChangelogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AppChangelogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AppChangelogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          findFirst: {
+            args: Prisma.AppChangelogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AppChangelogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          findMany: {
+            args: Prisma.AppChangelogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>[]
+          }
+          create: {
+            args: Prisma.AppChangelogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          createMany: {
+            args: Prisma.AppChangelogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AppChangelogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>[]
+          }
+          delete: {
+            args: Prisma.AppChangelogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          update: {
+            args: Prisma.AppChangelogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          deleteMany: {
+            args: Prisma.AppChangelogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AppChangelogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AppChangelogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>[]
+          }
+          upsert: {
+            args: Prisma.AppChangelogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AppChangelogPayload>
+          }
+          aggregate: {
+            args: Prisma.AppChangelogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAppChangelog>
+          }
+          groupBy: {
+            args: Prisma.AppChangelogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AppChangelogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AppChangelogCountArgs<ExtArgs>
+            result: $Utils.Optional<AppChangelogCountAggregateOutputType> | number
+          }
+        }
+      }
+      SystemAnnouncement: {
+        payload: Prisma.$SystemAnnouncementPayload<ExtArgs>
+        fields: Prisma.SystemAnnouncementFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SystemAnnouncementFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SystemAnnouncementFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          findFirst: {
+            args: Prisma.SystemAnnouncementFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SystemAnnouncementFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          findMany: {
+            args: Prisma.SystemAnnouncementFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>[]
+          }
+          create: {
+            args: Prisma.SystemAnnouncementCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          createMany: {
+            args: Prisma.SystemAnnouncementCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SystemAnnouncementCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>[]
+          }
+          delete: {
+            args: Prisma.SystemAnnouncementDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          update: {
+            args: Prisma.SystemAnnouncementUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          deleteMany: {
+            args: Prisma.SystemAnnouncementDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SystemAnnouncementUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SystemAnnouncementUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>[]
+          }
+          upsert: {
+            args: Prisma.SystemAnnouncementUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SystemAnnouncementPayload>
+          }
+          aggregate: {
+            args: Prisma.SystemAnnouncementAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSystemAnnouncement>
+          }
+          groupBy: {
+            args: Prisma.SystemAnnouncementGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SystemAnnouncementGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SystemAnnouncementCountArgs<ExtArgs>
+            result: $Utils.Optional<SystemAnnouncementCountAggregateOutputType> | number
+          }
+        }
+      }
+      EmailLog: {
+        payload: Prisma.$EmailLogPayload<ExtArgs>
+        fields: Prisma.EmailLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.EmailLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.EmailLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          findFirst: {
+            args: Prisma.EmailLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.EmailLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          findMany: {
+            args: Prisma.EmailLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+          }
+          create: {
+            args: Prisma.EmailLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          createMany: {
+            args: Prisma.EmailLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.EmailLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+          }
+          delete: {
+            args: Prisma.EmailLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          update: {
+            args: Prisma.EmailLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.EmailLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.EmailLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.EmailLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.EmailLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$EmailLogPayload>
+          }
+          aggregate: {
+            args: Prisma.EmailLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEmailLog>
+          }
+          groupBy: {
+            args: Prisma.EmailLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<EmailLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.EmailLogCountArgs<ExtArgs>
+            result: $Utils.Optional<EmailLogCountAggregateOutputType> | number
+          }
+        }
+      }
+      ApiKey: {
+        payload: Prisma.$ApiKeyPayload<ExtArgs>
+        fields: Prisma.ApiKeyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ApiKeyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ApiKeyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          findFirst: {
+            args: Prisma.ApiKeyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ApiKeyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          findMany: {
+            args: Prisma.ApiKeyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          }
+          create: {
+            args: Prisma.ApiKeyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          createMany: {
+            args: Prisma.ApiKeyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ApiKeyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          }
+          delete: {
+            args: Prisma.ApiKeyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          update: {
+            args: Prisma.ApiKeyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          deleteMany: {
+            args: Prisma.ApiKeyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ApiKeyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ApiKeyUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          }
+          upsert: {
+            args: Prisma.ApiKeyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          }
+          aggregate: {
+            args: Prisma.ApiKeyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateApiKey>
+          }
+          groupBy: {
+            args: Prisma.ApiKeyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ApiKeyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ApiKeyCountArgs<ExtArgs>
+            result: $Utils.Optional<ApiKeyCountAggregateOutputType> | number
+          }
+        }
+      }
+      NotificationTemplate: {
+        payload: Prisma.$NotificationTemplatePayload<ExtArgs>
+        fields: Prisma.NotificationTemplateFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationTemplateFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationTemplateFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationTemplateFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationTemplateFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          findMany: {
+            args: Prisma.NotificationTemplateFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>[]
+          }
+          create: {
+            args: Prisma.NotificationTemplateCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          createMany: {
+            args: Prisma.NotificationTemplateCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NotificationTemplateCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>[]
+          }
+          delete: {
+            args: Prisma.NotificationTemplateDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          update: {
+            args: Prisma.NotificationTemplateUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationTemplateDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationTemplateUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NotificationTemplateUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>[]
+          }
+          upsert: {
+            args: Prisma.NotificationTemplateUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationTemplatePayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationTemplateAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotificationTemplate>
+          }
+          groupBy: {
+            args: Prisma.NotificationTemplateGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationTemplateGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationTemplateCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationTemplateCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -14924,6 +15567,13 @@ export namespace Prisma {
     workSchedule?: WorkScheduleOmit
     workSchedulePhase?: WorkSchedulePhaseOmit
     workScheduleEnrollment?: WorkScheduleEnrollmentOmit
+    notificationPreference?: NotificationPreferenceOmit
+    savedFilterPreset?: SavedFilterPresetOmit
+    appChangelog?: AppChangelogOmit
+    systemAnnouncement?: SystemAnnouncementOmit
+    emailLog?: EmailLogOmit
+    apiKey?: ApiKeyOmit
+    notificationTemplate?: NotificationTemplateOmit
   }
 
   /* Types for Logging */
@@ -15048,6 +15698,9 @@ export namespace Prisma {
     projectJournals: number
     leadFollowUpSchedules: number
     customerSurveySchedules: number
+    notificationPreferences: number
+    savedFilterPresets: number
+    apiKeys: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15095,6 +15748,9 @@ export namespace Prisma {
     projectJournals?: boolean | UserCountOutputTypeCountProjectJournalsArgs
     leadFollowUpSchedules?: boolean | UserCountOutputTypeCountLeadFollowUpSchedulesArgs
     customerSurveySchedules?: boolean | UserCountOutputTypeCountCustomerSurveySchedulesArgs
+    notificationPreferences?: boolean | UserCountOutputTypeCountNotificationPreferencesArgs
+    savedFilterPresets?: boolean | UserCountOutputTypeCountSavedFilterPresetsArgs
+    apiKeys?: boolean | UserCountOutputTypeCountApiKeysArgs
   }
 
   // Custom InputTypes
@@ -15414,6 +16070,27 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCustomerSurveySchedulesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CustomerSurveyScheduleWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationPreferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationPreferenceWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSavedFilterPresetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SavedFilterPresetWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApiKeyWhereInput
   }
 
 
@@ -17686,6 +18363,9 @@ export namespace Prisma {
     projectJournals: number
     leadFollowUps: number
     customerSurveys: number
+    announcements: number
+    apiKeys: number
+    notifTemplates: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17727,6 +18407,9 @@ export namespace Prisma {
     projectJournals?: boolean | TenantCountOutputTypeCountProjectJournalsArgs
     leadFollowUps?: boolean | TenantCountOutputTypeCountLeadFollowUpsArgs
     customerSurveys?: boolean | TenantCountOutputTypeCountCustomerSurveysArgs
+    announcements?: boolean | TenantCountOutputTypeCountAnnouncementsArgs
+    apiKeys?: boolean | TenantCountOutputTypeCountApiKeysArgs
+    notifTemplates?: boolean | TenantCountOutputTypeCountNotifTemplatesArgs
   }
 
   // Custom InputTypes
@@ -18004,6 +18687,27 @@ export namespace Prisma {
    */
   export type TenantCountOutputTypeCountCustomerSurveysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CustomerSurveyScheduleWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountAnnouncementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SystemAnnouncementWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountApiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApiKeyWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
+  export type TenantCountOutputTypeCountNotifTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationTemplateWhereInput
   }
 
 
@@ -18603,6 +19307,9 @@ export namespace Prisma {
     projectJournals?: boolean | User$projectJournalsArgs<ExtArgs>
     leadFollowUpSchedules?: boolean | User$leadFollowUpSchedulesArgs<ExtArgs>
     customerSurveySchedules?: boolean | User$customerSurveySchedulesArgs<ExtArgs>
+    notificationPreferences?: boolean | User$notificationPreferencesArgs<ExtArgs>
+    savedFilterPresets?: boolean | User$savedFilterPresetsArgs<ExtArgs>
+    apiKeys?: boolean | User$apiKeysArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -18701,6 +19408,9 @@ export namespace Prisma {
     projectJournals?: boolean | User$projectJournalsArgs<ExtArgs>
     leadFollowUpSchedules?: boolean | User$leadFollowUpSchedulesArgs<ExtArgs>
     customerSurveySchedules?: boolean | User$customerSurveySchedulesArgs<ExtArgs>
+    notificationPreferences?: boolean | User$notificationPreferencesArgs<ExtArgs>
+    savedFilterPresets?: boolean | User$savedFilterPresetsArgs<ExtArgs>
+    apiKeys?: boolean | User$apiKeysArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18762,6 +19472,9 @@ export namespace Prisma {
       projectJournals: Prisma.$ProjectJournalPayload<ExtArgs>[]
       leadFollowUpSchedules: Prisma.$LeadFollowUpSchedulePayload<ExtArgs>[]
       customerSurveySchedules: Prisma.$CustomerSurveySchedulePayload<ExtArgs>[]
+      notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[]
+      savedFilterPresets: Prisma.$SavedFilterPresetPayload<ExtArgs>[]
+      apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19216,6 +19929,9 @@ export namespace Prisma {
     projectJournals<T extends User$projectJournalsArgs<ExtArgs> = {}>(args?: Subset<T, User$projectJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     leadFollowUpSchedules<T extends User$leadFollowUpSchedulesArgs<ExtArgs> = {}>(args?: Subset<T, User$leadFollowUpSchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadFollowUpSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     customerSurveySchedules<T extends User$customerSurveySchedulesArgs<ExtArgs> = {}>(args?: Subset<T, User$customerSurveySchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerSurveySchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notificationPreferences<T extends User$notificationPreferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    savedFilterPresets<T extends User$savedFilterPresetsArgs<ExtArgs> = {}>(args?: Subset<T, User$savedFilterPresetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    apiKeys<T extends User$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, User$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20767,6 +21483,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CustomerSurveyScheduleScalarFieldEnum | CustomerSurveyScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * User.notificationPreferences
+   */
+  export type User$notificationPreferencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    where?: NotificationPreferenceWhereInput
+    orderBy?: NotificationPreferenceOrderByWithRelationInput | NotificationPreferenceOrderByWithRelationInput[]
+    cursor?: NotificationPreferenceWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationPreferenceScalarFieldEnum | NotificationPreferenceScalarFieldEnum[]
+  }
+
+  /**
+   * User.savedFilterPresets
+   */
+  export type User$savedFilterPresetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    where?: SavedFilterPresetWhereInput
+    orderBy?: SavedFilterPresetOrderByWithRelationInput | SavedFilterPresetOrderByWithRelationInput[]
+    cursor?: SavedFilterPresetWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SavedFilterPresetScalarFieldEnum | SavedFilterPresetScalarFieldEnum[]
+  }
+
+  /**
+   * User.apiKeys
+   */
+  export type User$apiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    where?: ApiKeyWhereInput
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    cursor?: ApiKeyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
   }
 
   /**
@@ -45433,6 +46221,7 @@ export namespace Prisma {
     status: $Enums.UserTaskStatus | null
     dueDate: Date | null
     completedAt: Date | null
+    lastEscalatedAt: Date | null
   }
 
   export type ProcessUserTaskMaxAggregateOutputType = {
@@ -45444,6 +46233,7 @@ export namespace Prisma {
     status: $Enums.UserTaskStatus | null
     dueDate: Date | null
     completedAt: Date | null
+    lastEscalatedAt: Date | null
   }
 
   export type ProcessUserTaskCountAggregateOutputType = {
@@ -45457,6 +46247,7 @@ export namespace Prisma {
     status: number
     dueDate: number
     completedAt: number
+    lastEscalatedAt: number
     _all: number
   }
 
@@ -45470,6 +46261,7 @@ export namespace Prisma {
     status?: true
     dueDate?: true
     completedAt?: true
+    lastEscalatedAt?: true
   }
 
   export type ProcessUserTaskMaxAggregateInputType = {
@@ -45481,6 +46273,7 @@ export namespace Prisma {
     status?: true
     dueDate?: true
     completedAt?: true
+    lastEscalatedAt?: true
   }
 
   export type ProcessUserTaskCountAggregateInputType = {
@@ -45494,6 +46287,7 @@ export namespace Prisma {
     status?: true
     dueDate?: true
     completedAt?: true
+    lastEscalatedAt?: true
     _all?: true
   }
 
@@ -45580,6 +46374,7 @@ export namespace Prisma {
     status: $Enums.UserTaskStatus
     dueDate: Date | null
     completedAt: Date | null
+    lastEscalatedAt: Date | null
     _count: ProcessUserTaskCountAggregateOutputType | null
     _min: ProcessUserTaskMinAggregateOutputType | null
     _max: ProcessUserTaskMaxAggregateOutputType | null
@@ -45610,6 +46405,7 @@ export namespace Prisma {
     status?: boolean
     dueDate?: boolean
     completedAt?: boolean
+    lastEscalatedAt?: boolean
     assignee?: boolean | ProcessUserTask$assigneeArgs<ExtArgs>
     instance?: boolean | ProcessInstanceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["processUserTask"]>
@@ -45625,6 +46421,7 @@ export namespace Prisma {
     status?: boolean
     dueDate?: boolean
     completedAt?: boolean
+    lastEscalatedAt?: boolean
     assignee?: boolean | ProcessUserTask$assigneeArgs<ExtArgs>
     instance?: boolean | ProcessInstanceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["processUserTask"]>
@@ -45640,6 +46437,7 @@ export namespace Prisma {
     status?: boolean
     dueDate?: boolean
     completedAt?: boolean
+    lastEscalatedAt?: boolean
     assignee?: boolean | ProcessUserTask$assigneeArgs<ExtArgs>
     instance?: boolean | ProcessInstanceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["processUserTask"]>
@@ -45655,9 +46453,10 @@ export namespace Prisma {
     status?: boolean
     dueDate?: boolean
     completedAt?: boolean
+    lastEscalatedAt?: boolean
   }
 
-  export type ProcessUserTaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "instanceId" | "activityId" | "name" | "assigneeId" | "candidateRoles" | "formData" | "status" | "dueDate" | "completedAt", ExtArgs["result"]["processUserTask"]>
+  export type ProcessUserTaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "instanceId" | "activityId" | "name" | "assigneeId" | "candidateRoles" | "formData" | "status" | "dueDate" | "completedAt" | "lastEscalatedAt", ExtArgs["result"]["processUserTask"]>
   export type ProcessUserTaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assignee?: boolean | ProcessUserTask$assigneeArgs<ExtArgs>
     instance?: boolean | ProcessInstanceDefaultArgs<ExtArgs>
@@ -45688,6 +46487,7 @@ export namespace Prisma {
       status: $Enums.UserTaskStatus
       dueDate: Date | null
       completedAt: Date | null
+      lastEscalatedAt: Date | null
     }, ExtArgs["result"]["processUserTask"]>
     composites: {}
   }
@@ -46123,6 +46923,7 @@ export namespace Prisma {
     readonly status: FieldRef<"ProcessUserTask", 'UserTaskStatus'>
     readonly dueDate: FieldRef<"ProcessUserTask", 'DateTime'>
     readonly completedAt: FieldRef<"ProcessUserTask", 'DateTime'>
+    readonly lastEscalatedAt: FieldRef<"ProcessUserTask", 'DateTime'>
   }
     
 
@@ -166500,6 +167301,9 @@ export namespace Prisma {
     projectJournals?: boolean | Tenant$projectJournalsArgs<ExtArgs>
     leadFollowUps?: boolean | Tenant$leadFollowUpsArgs<ExtArgs>
     customerSurveys?: boolean | Tenant$customerSurveysArgs<ExtArgs>
+    announcements?: boolean | Tenant$announcementsArgs<ExtArgs>
+    apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
+    notifTemplates?: boolean | Tenant$notifTemplatesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -166591,6 +167395,9 @@ export namespace Prisma {
     projectJournals?: boolean | Tenant$projectJournalsArgs<ExtArgs>
     leadFollowUps?: boolean | Tenant$leadFollowUpsArgs<ExtArgs>
     customerSurveys?: boolean | Tenant$customerSurveysArgs<ExtArgs>
+    announcements?: boolean | Tenant$announcementsArgs<ExtArgs>
+    apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
+    notifTemplates?: boolean | Tenant$notifTemplatesArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -166637,6 +167444,9 @@ export namespace Prisma {
       projectJournals: Prisma.$ProjectJournalPayload<ExtArgs>[]
       leadFollowUps: Prisma.$LeadFollowUpSchedulePayload<ExtArgs>[]
       customerSurveys: Prisma.$CustomerSurveySchedulePayload<ExtArgs>[]
+      announcements: Prisma.$SystemAnnouncementPayload<ExtArgs>[]
+      apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
+      notifTemplates: Prisma.$NotificationTemplatePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -167084,6 +167894,9 @@ export namespace Prisma {
     projectJournals<T extends Tenant$projectJournalsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$projectJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     leadFollowUps<T extends Tenant$leadFollowUpsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$leadFollowUpsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LeadFollowUpSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     customerSurveys<T extends Tenant$customerSurveysArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$customerSurveysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerSurveySchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    announcements<T extends Tenant$announcementsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    apiKeys<T extends Tenant$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notifTemplates<T extends Tenant$notifTemplatesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$notifTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -168428,6 +169241,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CustomerSurveyScheduleScalarFieldEnum | CustomerSurveyScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.announcements
+   */
+  export type Tenant$announcementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    where?: SystemAnnouncementWhereInput
+    orderBy?: SystemAnnouncementOrderByWithRelationInput | SystemAnnouncementOrderByWithRelationInput[]
+    cursor?: SystemAnnouncementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SystemAnnouncementScalarFieldEnum | SystemAnnouncementScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.apiKeys
+   */
+  export type Tenant$apiKeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    where?: ApiKeyWhereInput
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    cursor?: ApiKeyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.notifTemplates
+   */
+  export type Tenant$notifTemplatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    where?: NotificationTemplateWhereInput
+    orderBy?: NotificationTemplateOrderByWithRelationInput | NotificationTemplateOrderByWithRelationInput[]
+    cursor?: NotificationTemplateWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationTemplateScalarFieldEnum | NotificationTemplateScalarFieldEnum[]
   }
 
   /**
@@ -190936,6 +191821,7634 @@ export namespace Prisma {
 
 
   /**
+   * Model NotificationPreference
+   */
+
+  export type AggregateNotificationPreference = {
+    _count: NotificationPreferenceCountAggregateOutputType | null
+    _min: NotificationPreferenceMinAggregateOutputType | null
+    _max: NotificationPreferenceMaxAggregateOutputType | null
+  }
+
+  export type NotificationPreferenceMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    moduleType: string | null
+    channel: $Enums.NotificationChannel | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationPreferenceMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    moduleType: string | null
+    channel: $Enums.NotificationChannel | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationPreferenceCountAggregateOutputType = {
+    id: number
+    userId: number
+    moduleType: number
+    channel: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type NotificationPreferenceMinAggregateInputType = {
+    id?: true
+    userId?: true
+    moduleType?: true
+    channel?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationPreferenceMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    moduleType?: true
+    channel?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationPreferenceCountAggregateInputType = {
+    id?: true
+    userId?: true
+    moduleType?: true
+    channel?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type NotificationPreferenceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationPreference to aggregate.
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationPreferences to fetch.
+     */
+    orderBy?: NotificationPreferenceOrderByWithRelationInput | NotificationPreferenceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationPreferenceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationPreferences from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationPreferences.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NotificationPreferences
+    **/
+    _count?: true | NotificationPreferenceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationPreferenceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationPreferenceMaxAggregateInputType
+  }
+
+  export type GetNotificationPreferenceAggregateType<T extends NotificationPreferenceAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotificationPreference]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotificationPreference[P]>
+      : GetScalarType<T[P], AggregateNotificationPreference[P]>
+  }
+
+
+
+
+  export type NotificationPreferenceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationPreferenceWhereInput
+    orderBy?: NotificationPreferenceOrderByWithAggregationInput | NotificationPreferenceOrderByWithAggregationInput[]
+    by: NotificationPreferenceScalarFieldEnum[] | NotificationPreferenceScalarFieldEnum
+    having?: NotificationPreferenceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationPreferenceCountAggregateInputType | true
+    _min?: NotificationPreferenceMinAggregateInputType
+    _max?: NotificationPreferenceMaxAggregateInputType
+  }
+
+  export type NotificationPreferenceGroupByOutputType = {
+    id: string
+    userId: string
+    moduleType: string
+    channel: $Enums.NotificationChannel
+    createdAt: Date
+    updatedAt: Date
+    _count: NotificationPreferenceCountAggregateOutputType | null
+    _min: NotificationPreferenceMinAggregateOutputType | null
+    _max: NotificationPreferenceMaxAggregateOutputType | null
+  }
+
+  type GetNotificationPreferenceGroupByPayload<T extends NotificationPreferenceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationPreferenceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationPreferenceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationPreferenceGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationPreferenceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationPreferenceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    moduleType?: boolean
+    channel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationPreference"]>
+
+  export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    moduleType?: boolean
+    channel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationPreference"]>
+
+  export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    moduleType?: boolean
+    channel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationPreference"]>
+
+  export type NotificationPreferenceSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    moduleType?: boolean
+    channel?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type NotificationPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "moduleType" | "channel" | "createdAt" | "updatedAt", ExtArgs["result"]["notificationPreference"]>
+  export type NotificationPreferenceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationPreferenceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NotificationPreferenceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $NotificationPreferencePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NotificationPreference"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      moduleType: string
+      channel: $Enums.NotificationChannel
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["notificationPreference"]>
+    composites: {}
+  }
+
+  type NotificationPreferenceGetPayload<S extends boolean | null | undefined | NotificationPreferenceDefaultArgs> = $Result.GetResult<Prisma.$NotificationPreferencePayload, S>
+
+  type NotificationPreferenceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NotificationPreferenceFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NotificationPreferenceCountAggregateInputType | true
+    }
+
+  export interface NotificationPreferenceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NotificationPreference'], meta: { name: 'NotificationPreference' } }
+    /**
+     * Find zero or one NotificationPreference that matches the filter.
+     * @param {NotificationPreferenceFindUniqueArgs} args - Arguments to find a NotificationPreference
+     * @example
+     * // Get one NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationPreferenceFindUniqueArgs>(args: SelectSubset<T, NotificationPreferenceFindUniqueArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NotificationPreference that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NotificationPreferenceFindUniqueOrThrowArgs} args - Arguments to find a NotificationPreference
+     * @example
+     * // Get one NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationPreferenceFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationPreferenceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationPreference that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceFindFirstArgs} args - Arguments to find a NotificationPreference
+     * @example
+     * // Get one NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationPreferenceFindFirstArgs>(args?: SelectSubset<T, NotificationPreferenceFindFirstArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationPreference that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceFindFirstOrThrowArgs} args - Arguments to find a NotificationPreference
+     * @example
+     * // Get one NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationPreferenceFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationPreferenceFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NotificationPreferences that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NotificationPreferences
+     * const notificationPreferences = await prisma.notificationPreference.findMany()
+     * 
+     * // Get first 10 NotificationPreferences
+     * const notificationPreferences = await prisma.notificationPreference.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationPreferenceWithIdOnly = await prisma.notificationPreference.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationPreferenceFindManyArgs>(args?: SelectSubset<T, NotificationPreferenceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NotificationPreference.
+     * @param {NotificationPreferenceCreateArgs} args - Arguments to create a NotificationPreference.
+     * @example
+     * // Create one NotificationPreference
+     * const NotificationPreference = await prisma.notificationPreference.create({
+     *   data: {
+     *     // ... data to create a NotificationPreference
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationPreferenceCreateArgs>(args: SelectSubset<T, NotificationPreferenceCreateArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NotificationPreferences.
+     * @param {NotificationPreferenceCreateManyArgs} args - Arguments to create many NotificationPreferences.
+     * @example
+     * // Create many NotificationPreferences
+     * const notificationPreference = await prisma.notificationPreference.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationPreferenceCreateManyArgs>(args?: SelectSubset<T, NotificationPreferenceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NotificationPreferences and returns the data saved in the database.
+     * @param {NotificationPreferenceCreateManyAndReturnArgs} args - Arguments to create many NotificationPreferences.
+     * @example
+     * // Create many NotificationPreferences
+     * const notificationPreference = await prisma.notificationPreference.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NotificationPreferences and only return the `id`
+     * const notificationPreferenceWithIdOnly = await prisma.notificationPreference.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NotificationPreferenceCreateManyAndReturnArgs>(args?: SelectSubset<T, NotificationPreferenceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NotificationPreference.
+     * @param {NotificationPreferenceDeleteArgs} args - Arguments to delete one NotificationPreference.
+     * @example
+     * // Delete one NotificationPreference
+     * const NotificationPreference = await prisma.notificationPreference.delete({
+     *   where: {
+     *     // ... filter to delete one NotificationPreference
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationPreferenceDeleteArgs>(args: SelectSubset<T, NotificationPreferenceDeleteArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NotificationPreference.
+     * @param {NotificationPreferenceUpdateArgs} args - Arguments to update one NotificationPreference.
+     * @example
+     * // Update one NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationPreferenceUpdateArgs>(args: SelectSubset<T, NotificationPreferenceUpdateArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NotificationPreferences.
+     * @param {NotificationPreferenceDeleteManyArgs} args - Arguments to filter NotificationPreferences to delete.
+     * @example
+     * // Delete a few NotificationPreferences
+     * const { count } = await prisma.notificationPreference.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationPreferenceDeleteManyArgs>(args?: SelectSubset<T, NotificationPreferenceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationPreferences.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NotificationPreferences
+     * const notificationPreference = await prisma.notificationPreference.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationPreferenceUpdateManyArgs>(args: SelectSubset<T, NotificationPreferenceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationPreferences and returns the data updated in the database.
+     * @param {NotificationPreferenceUpdateManyAndReturnArgs} args - Arguments to update many NotificationPreferences.
+     * @example
+     * // Update many NotificationPreferences
+     * const notificationPreference = await prisma.notificationPreference.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NotificationPreferences and only return the `id`
+     * const notificationPreferenceWithIdOnly = await prisma.notificationPreference.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NotificationPreferenceUpdateManyAndReturnArgs>(args: SelectSubset<T, NotificationPreferenceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NotificationPreference.
+     * @param {NotificationPreferenceUpsertArgs} args - Arguments to update or create a NotificationPreference.
+     * @example
+     * // Update or create a NotificationPreference
+     * const notificationPreference = await prisma.notificationPreference.upsert({
+     *   create: {
+     *     // ... data to create a NotificationPreference
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NotificationPreference we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationPreferenceUpsertArgs>(args: SelectSubset<T, NotificationPreferenceUpsertArgs<ExtArgs>>): Prisma__NotificationPreferenceClient<$Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NotificationPreferences.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceCountArgs} args - Arguments to filter NotificationPreferences to count.
+     * @example
+     * // Count the number of NotificationPreferences
+     * const count = await prisma.notificationPreference.count({
+     *   where: {
+     *     // ... the filter for the NotificationPreferences we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationPreferenceCountArgs>(
+      args?: Subset<T, NotificationPreferenceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationPreferenceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NotificationPreference.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationPreferenceAggregateArgs>(args: Subset<T, NotificationPreferenceAggregateArgs>): Prisma.PrismaPromise<GetNotificationPreferenceAggregateType<T>>
+
+    /**
+     * Group by NotificationPreference.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationPreferenceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationPreferenceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationPreferenceGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationPreferenceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationPreferenceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationPreferenceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NotificationPreference model
+   */
+  readonly fields: NotificationPreferenceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NotificationPreference.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationPreferenceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NotificationPreference model
+   */
+  interface NotificationPreferenceFieldRefs {
+    readonly id: FieldRef<"NotificationPreference", 'String'>
+    readonly userId: FieldRef<"NotificationPreference", 'String'>
+    readonly moduleType: FieldRef<"NotificationPreference", 'String'>
+    readonly channel: FieldRef<"NotificationPreference", 'NotificationChannel'>
+    readonly createdAt: FieldRef<"NotificationPreference", 'DateTime'>
+    readonly updatedAt: FieldRef<"NotificationPreference", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NotificationPreference findUnique
+   */
+  export type NotificationPreferenceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationPreference to fetch.
+     */
+    where: NotificationPreferenceWhereUniqueInput
+  }
+
+  /**
+   * NotificationPreference findUniqueOrThrow
+   */
+  export type NotificationPreferenceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationPreference to fetch.
+     */
+    where: NotificationPreferenceWhereUniqueInput
+  }
+
+  /**
+   * NotificationPreference findFirst
+   */
+  export type NotificationPreferenceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationPreference to fetch.
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationPreferences to fetch.
+     */
+    orderBy?: NotificationPreferenceOrderByWithRelationInput | NotificationPreferenceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationPreferences.
+     */
+    cursor?: NotificationPreferenceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationPreferences from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationPreferences.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationPreferences.
+     */
+    distinct?: NotificationPreferenceScalarFieldEnum | NotificationPreferenceScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationPreference findFirstOrThrow
+   */
+  export type NotificationPreferenceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationPreference to fetch.
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationPreferences to fetch.
+     */
+    orderBy?: NotificationPreferenceOrderByWithRelationInput | NotificationPreferenceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationPreferences.
+     */
+    cursor?: NotificationPreferenceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationPreferences from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationPreferences.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationPreferences.
+     */
+    distinct?: NotificationPreferenceScalarFieldEnum | NotificationPreferenceScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationPreference findMany
+   */
+  export type NotificationPreferenceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationPreferences to fetch.
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationPreferences to fetch.
+     */
+    orderBy?: NotificationPreferenceOrderByWithRelationInput | NotificationPreferenceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NotificationPreferences.
+     */
+    cursor?: NotificationPreferenceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationPreferences from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationPreferences.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationPreferences.
+     */
+    distinct?: NotificationPreferenceScalarFieldEnum | NotificationPreferenceScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationPreference create
+   */
+  export type NotificationPreferenceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a NotificationPreference.
+     */
+    data: XOR<NotificationPreferenceCreateInput, NotificationPreferenceUncheckedCreateInput>
+  }
+
+  /**
+   * NotificationPreference createMany
+   */
+  export type NotificationPreferenceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NotificationPreferences.
+     */
+    data: NotificationPreferenceCreateManyInput | NotificationPreferenceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NotificationPreference createManyAndReturn
+   */
+  export type NotificationPreferenceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * The data used to create many NotificationPreferences.
+     */
+    data: NotificationPreferenceCreateManyInput | NotificationPreferenceCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NotificationPreference update
+   */
+  export type NotificationPreferenceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a NotificationPreference.
+     */
+    data: XOR<NotificationPreferenceUpdateInput, NotificationPreferenceUncheckedUpdateInput>
+    /**
+     * Choose, which NotificationPreference to update.
+     */
+    where: NotificationPreferenceWhereUniqueInput
+  }
+
+  /**
+   * NotificationPreference updateMany
+   */
+  export type NotificationPreferenceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NotificationPreferences.
+     */
+    data: XOR<NotificationPreferenceUpdateManyMutationInput, NotificationPreferenceUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationPreferences to update
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * Limit how many NotificationPreferences to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationPreference updateManyAndReturn
+   */
+  export type NotificationPreferenceUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * The data used to update NotificationPreferences.
+     */
+    data: XOR<NotificationPreferenceUpdateManyMutationInput, NotificationPreferenceUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationPreferences to update
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * Limit how many NotificationPreferences to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NotificationPreference upsert
+   */
+  export type NotificationPreferenceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the NotificationPreference to update in case it exists.
+     */
+    where: NotificationPreferenceWhereUniqueInput
+    /**
+     * In case the NotificationPreference found by the `where` argument doesn't exist, create a new NotificationPreference with this data.
+     */
+    create: XOR<NotificationPreferenceCreateInput, NotificationPreferenceUncheckedCreateInput>
+    /**
+     * In case the NotificationPreference was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationPreferenceUpdateInput, NotificationPreferenceUncheckedUpdateInput>
+  }
+
+  /**
+   * NotificationPreference delete
+   */
+  export type NotificationPreferenceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+    /**
+     * Filter which NotificationPreference to delete.
+     */
+    where: NotificationPreferenceWhereUniqueInput
+  }
+
+  /**
+   * NotificationPreference deleteMany
+   */
+  export type NotificationPreferenceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationPreferences to delete
+     */
+    where?: NotificationPreferenceWhereInput
+    /**
+     * Limit how many NotificationPreferences to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationPreference without action
+   */
+  export type NotificationPreferenceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationPreference
+     */
+    select?: NotificationPreferenceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationPreference
+     */
+    omit?: NotificationPreferenceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationPreferenceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SavedFilterPreset
+   */
+
+  export type AggregateSavedFilterPreset = {
+    _count: SavedFilterPresetCountAggregateOutputType | null
+    _min: SavedFilterPresetMinAggregateOutputType | null
+    _max: SavedFilterPresetMaxAggregateOutputType | null
+  }
+
+  export type SavedFilterPresetMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    pageKey: string | null
+    name: string | null
+    createdAt: Date | null
+  }
+
+  export type SavedFilterPresetMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    pageKey: string | null
+    name: string | null
+    createdAt: Date | null
+  }
+
+  export type SavedFilterPresetCountAggregateOutputType = {
+    id: number
+    userId: number
+    pageKey: number
+    name: number
+    filters: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SavedFilterPresetMinAggregateInputType = {
+    id?: true
+    userId?: true
+    pageKey?: true
+    name?: true
+    createdAt?: true
+  }
+
+  export type SavedFilterPresetMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    pageKey?: true
+    name?: true
+    createdAt?: true
+  }
+
+  export type SavedFilterPresetCountAggregateInputType = {
+    id?: true
+    userId?: true
+    pageKey?: true
+    name?: true
+    filters?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SavedFilterPresetAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SavedFilterPreset to aggregate.
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SavedFilterPresets to fetch.
+     */
+    orderBy?: SavedFilterPresetOrderByWithRelationInput | SavedFilterPresetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SavedFilterPresetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SavedFilterPresets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SavedFilterPresets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SavedFilterPresets
+    **/
+    _count?: true | SavedFilterPresetCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SavedFilterPresetMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SavedFilterPresetMaxAggregateInputType
+  }
+
+  export type GetSavedFilterPresetAggregateType<T extends SavedFilterPresetAggregateArgs> = {
+        [P in keyof T & keyof AggregateSavedFilterPreset]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSavedFilterPreset[P]>
+      : GetScalarType<T[P], AggregateSavedFilterPreset[P]>
+  }
+
+
+
+
+  export type SavedFilterPresetGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SavedFilterPresetWhereInput
+    orderBy?: SavedFilterPresetOrderByWithAggregationInput | SavedFilterPresetOrderByWithAggregationInput[]
+    by: SavedFilterPresetScalarFieldEnum[] | SavedFilterPresetScalarFieldEnum
+    having?: SavedFilterPresetScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SavedFilterPresetCountAggregateInputType | true
+    _min?: SavedFilterPresetMinAggregateInputType
+    _max?: SavedFilterPresetMaxAggregateInputType
+  }
+
+  export type SavedFilterPresetGroupByOutputType = {
+    id: string
+    userId: string
+    pageKey: string
+    name: string
+    filters: JsonValue
+    createdAt: Date
+    _count: SavedFilterPresetCountAggregateOutputType | null
+    _min: SavedFilterPresetMinAggregateOutputType | null
+    _max: SavedFilterPresetMaxAggregateOutputType | null
+  }
+
+  type GetSavedFilterPresetGroupByPayload<T extends SavedFilterPresetGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SavedFilterPresetGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SavedFilterPresetGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SavedFilterPresetGroupByOutputType[P]>
+            : GetScalarType<T[P], SavedFilterPresetGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SavedFilterPresetSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    pageKey?: boolean
+    name?: boolean
+    filters?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["savedFilterPreset"]>
+
+  export type SavedFilterPresetSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    pageKey?: boolean
+    name?: boolean
+    filters?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["savedFilterPreset"]>
+
+  export type SavedFilterPresetSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    pageKey?: boolean
+    name?: boolean
+    filters?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["savedFilterPreset"]>
+
+  export type SavedFilterPresetSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    pageKey?: boolean
+    name?: boolean
+    filters?: boolean
+    createdAt?: boolean
+  }
+
+  export type SavedFilterPresetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "pageKey" | "name" | "filters" | "createdAt", ExtArgs["result"]["savedFilterPreset"]>
+  export type SavedFilterPresetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SavedFilterPresetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SavedFilterPresetIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SavedFilterPresetPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SavedFilterPreset"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      pageKey: string
+      name: string
+      filters: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["savedFilterPreset"]>
+    composites: {}
+  }
+
+  type SavedFilterPresetGetPayload<S extends boolean | null | undefined | SavedFilterPresetDefaultArgs> = $Result.GetResult<Prisma.$SavedFilterPresetPayload, S>
+
+  type SavedFilterPresetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SavedFilterPresetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SavedFilterPresetCountAggregateInputType | true
+    }
+
+  export interface SavedFilterPresetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SavedFilterPreset'], meta: { name: 'SavedFilterPreset' } }
+    /**
+     * Find zero or one SavedFilterPreset that matches the filter.
+     * @param {SavedFilterPresetFindUniqueArgs} args - Arguments to find a SavedFilterPreset
+     * @example
+     * // Get one SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SavedFilterPresetFindUniqueArgs>(args: SelectSubset<T, SavedFilterPresetFindUniqueArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SavedFilterPreset that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SavedFilterPresetFindUniqueOrThrowArgs} args - Arguments to find a SavedFilterPreset
+     * @example
+     * // Get one SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SavedFilterPresetFindUniqueOrThrowArgs>(args: SelectSubset<T, SavedFilterPresetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SavedFilterPreset that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetFindFirstArgs} args - Arguments to find a SavedFilterPreset
+     * @example
+     * // Get one SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SavedFilterPresetFindFirstArgs>(args?: SelectSubset<T, SavedFilterPresetFindFirstArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SavedFilterPreset that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetFindFirstOrThrowArgs} args - Arguments to find a SavedFilterPreset
+     * @example
+     * // Get one SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SavedFilterPresetFindFirstOrThrowArgs>(args?: SelectSubset<T, SavedFilterPresetFindFirstOrThrowArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SavedFilterPresets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SavedFilterPresets
+     * const savedFilterPresets = await prisma.savedFilterPreset.findMany()
+     * 
+     * // Get first 10 SavedFilterPresets
+     * const savedFilterPresets = await prisma.savedFilterPreset.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const savedFilterPresetWithIdOnly = await prisma.savedFilterPreset.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SavedFilterPresetFindManyArgs>(args?: SelectSubset<T, SavedFilterPresetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SavedFilterPreset.
+     * @param {SavedFilterPresetCreateArgs} args - Arguments to create a SavedFilterPreset.
+     * @example
+     * // Create one SavedFilterPreset
+     * const SavedFilterPreset = await prisma.savedFilterPreset.create({
+     *   data: {
+     *     // ... data to create a SavedFilterPreset
+     *   }
+     * })
+     * 
+     */
+    create<T extends SavedFilterPresetCreateArgs>(args: SelectSubset<T, SavedFilterPresetCreateArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SavedFilterPresets.
+     * @param {SavedFilterPresetCreateManyArgs} args - Arguments to create many SavedFilterPresets.
+     * @example
+     * // Create many SavedFilterPresets
+     * const savedFilterPreset = await prisma.savedFilterPreset.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SavedFilterPresetCreateManyArgs>(args?: SelectSubset<T, SavedFilterPresetCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SavedFilterPresets and returns the data saved in the database.
+     * @param {SavedFilterPresetCreateManyAndReturnArgs} args - Arguments to create many SavedFilterPresets.
+     * @example
+     * // Create many SavedFilterPresets
+     * const savedFilterPreset = await prisma.savedFilterPreset.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SavedFilterPresets and only return the `id`
+     * const savedFilterPresetWithIdOnly = await prisma.savedFilterPreset.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SavedFilterPresetCreateManyAndReturnArgs>(args?: SelectSubset<T, SavedFilterPresetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SavedFilterPreset.
+     * @param {SavedFilterPresetDeleteArgs} args - Arguments to delete one SavedFilterPreset.
+     * @example
+     * // Delete one SavedFilterPreset
+     * const SavedFilterPreset = await prisma.savedFilterPreset.delete({
+     *   where: {
+     *     // ... filter to delete one SavedFilterPreset
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SavedFilterPresetDeleteArgs>(args: SelectSubset<T, SavedFilterPresetDeleteArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SavedFilterPreset.
+     * @param {SavedFilterPresetUpdateArgs} args - Arguments to update one SavedFilterPreset.
+     * @example
+     * // Update one SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SavedFilterPresetUpdateArgs>(args: SelectSubset<T, SavedFilterPresetUpdateArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SavedFilterPresets.
+     * @param {SavedFilterPresetDeleteManyArgs} args - Arguments to filter SavedFilterPresets to delete.
+     * @example
+     * // Delete a few SavedFilterPresets
+     * const { count } = await prisma.savedFilterPreset.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SavedFilterPresetDeleteManyArgs>(args?: SelectSubset<T, SavedFilterPresetDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SavedFilterPresets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SavedFilterPresets
+     * const savedFilterPreset = await prisma.savedFilterPreset.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SavedFilterPresetUpdateManyArgs>(args: SelectSubset<T, SavedFilterPresetUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SavedFilterPresets and returns the data updated in the database.
+     * @param {SavedFilterPresetUpdateManyAndReturnArgs} args - Arguments to update many SavedFilterPresets.
+     * @example
+     * // Update many SavedFilterPresets
+     * const savedFilterPreset = await prisma.savedFilterPreset.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SavedFilterPresets and only return the `id`
+     * const savedFilterPresetWithIdOnly = await prisma.savedFilterPreset.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SavedFilterPresetUpdateManyAndReturnArgs>(args: SelectSubset<T, SavedFilterPresetUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SavedFilterPreset.
+     * @param {SavedFilterPresetUpsertArgs} args - Arguments to update or create a SavedFilterPreset.
+     * @example
+     * // Update or create a SavedFilterPreset
+     * const savedFilterPreset = await prisma.savedFilterPreset.upsert({
+     *   create: {
+     *     // ... data to create a SavedFilterPreset
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SavedFilterPreset we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SavedFilterPresetUpsertArgs>(args: SelectSubset<T, SavedFilterPresetUpsertArgs<ExtArgs>>): Prisma__SavedFilterPresetClient<$Result.GetResult<Prisma.$SavedFilterPresetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SavedFilterPresets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetCountArgs} args - Arguments to filter SavedFilterPresets to count.
+     * @example
+     * // Count the number of SavedFilterPresets
+     * const count = await prisma.savedFilterPreset.count({
+     *   where: {
+     *     // ... the filter for the SavedFilterPresets we want to count
+     *   }
+     * })
+    **/
+    count<T extends SavedFilterPresetCountArgs>(
+      args?: Subset<T, SavedFilterPresetCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SavedFilterPresetCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SavedFilterPreset.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SavedFilterPresetAggregateArgs>(args: Subset<T, SavedFilterPresetAggregateArgs>): Prisma.PrismaPromise<GetSavedFilterPresetAggregateType<T>>
+
+    /**
+     * Group by SavedFilterPreset.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SavedFilterPresetGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SavedFilterPresetGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SavedFilterPresetGroupByArgs['orderBy'] }
+        : { orderBy?: SavedFilterPresetGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SavedFilterPresetGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSavedFilterPresetGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SavedFilterPreset model
+   */
+  readonly fields: SavedFilterPresetFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SavedFilterPreset.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SavedFilterPresetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SavedFilterPreset model
+   */
+  interface SavedFilterPresetFieldRefs {
+    readonly id: FieldRef<"SavedFilterPreset", 'String'>
+    readonly userId: FieldRef<"SavedFilterPreset", 'String'>
+    readonly pageKey: FieldRef<"SavedFilterPreset", 'String'>
+    readonly name: FieldRef<"SavedFilterPreset", 'String'>
+    readonly filters: FieldRef<"SavedFilterPreset", 'Json'>
+    readonly createdAt: FieldRef<"SavedFilterPreset", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SavedFilterPreset findUnique
+   */
+  export type SavedFilterPresetFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter, which SavedFilterPreset to fetch.
+     */
+    where: SavedFilterPresetWhereUniqueInput
+  }
+
+  /**
+   * SavedFilterPreset findUniqueOrThrow
+   */
+  export type SavedFilterPresetFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter, which SavedFilterPreset to fetch.
+     */
+    where: SavedFilterPresetWhereUniqueInput
+  }
+
+  /**
+   * SavedFilterPreset findFirst
+   */
+  export type SavedFilterPresetFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter, which SavedFilterPreset to fetch.
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SavedFilterPresets to fetch.
+     */
+    orderBy?: SavedFilterPresetOrderByWithRelationInput | SavedFilterPresetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SavedFilterPresets.
+     */
+    cursor?: SavedFilterPresetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SavedFilterPresets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SavedFilterPresets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SavedFilterPresets.
+     */
+    distinct?: SavedFilterPresetScalarFieldEnum | SavedFilterPresetScalarFieldEnum[]
+  }
+
+  /**
+   * SavedFilterPreset findFirstOrThrow
+   */
+  export type SavedFilterPresetFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter, which SavedFilterPreset to fetch.
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SavedFilterPresets to fetch.
+     */
+    orderBy?: SavedFilterPresetOrderByWithRelationInput | SavedFilterPresetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SavedFilterPresets.
+     */
+    cursor?: SavedFilterPresetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SavedFilterPresets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SavedFilterPresets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SavedFilterPresets.
+     */
+    distinct?: SavedFilterPresetScalarFieldEnum | SavedFilterPresetScalarFieldEnum[]
+  }
+
+  /**
+   * SavedFilterPreset findMany
+   */
+  export type SavedFilterPresetFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter, which SavedFilterPresets to fetch.
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SavedFilterPresets to fetch.
+     */
+    orderBy?: SavedFilterPresetOrderByWithRelationInput | SavedFilterPresetOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SavedFilterPresets.
+     */
+    cursor?: SavedFilterPresetWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SavedFilterPresets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SavedFilterPresets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SavedFilterPresets.
+     */
+    distinct?: SavedFilterPresetScalarFieldEnum | SavedFilterPresetScalarFieldEnum[]
+  }
+
+  /**
+   * SavedFilterPreset create
+   */
+  export type SavedFilterPresetCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SavedFilterPreset.
+     */
+    data: XOR<SavedFilterPresetCreateInput, SavedFilterPresetUncheckedCreateInput>
+  }
+
+  /**
+   * SavedFilterPreset createMany
+   */
+  export type SavedFilterPresetCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SavedFilterPresets.
+     */
+    data: SavedFilterPresetCreateManyInput | SavedFilterPresetCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SavedFilterPreset createManyAndReturn
+   */
+  export type SavedFilterPresetCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * The data used to create many SavedFilterPresets.
+     */
+    data: SavedFilterPresetCreateManyInput | SavedFilterPresetCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SavedFilterPreset update
+   */
+  export type SavedFilterPresetUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SavedFilterPreset.
+     */
+    data: XOR<SavedFilterPresetUpdateInput, SavedFilterPresetUncheckedUpdateInput>
+    /**
+     * Choose, which SavedFilterPreset to update.
+     */
+    where: SavedFilterPresetWhereUniqueInput
+  }
+
+  /**
+   * SavedFilterPreset updateMany
+   */
+  export type SavedFilterPresetUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SavedFilterPresets.
+     */
+    data: XOR<SavedFilterPresetUpdateManyMutationInput, SavedFilterPresetUncheckedUpdateManyInput>
+    /**
+     * Filter which SavedFilterPresets to update
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * Limit how many SavedFilterPresets to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SavedFilterPreset updateManyAndReturn
+   */
+  export type SavedFilterPresetUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * The data used to update SavedFilterPresets.
+     */
+    data: XOR<SavedFilterPresetUpdateManyMutationInput, SavedFilterPresetUncheckedUpdateManyInput>
+    /**
+     * Filter which SavedFilterPresets to update
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * Limit how many SavedFilterPresets to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SavedFilterPreset upsert
+   */
+  export type SavedFilterPresetUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SavedFilterPreset to update in case it exists.
+     */
+    where: SavedFilterPresetWhereUniqueInput
+    /**
+     * In case the SavedFilterPreset found by the `where` argument doesn't exist, create a new SavedFilterPreset with this data.
+     */
+    create: XOR<SavedFilterPresetCreateInput, SavedFilterPresetUncheckedCreateInput>
+    /**
+     * In case the SavedFilterPreset was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SavedFilterPresetUpdateInput, SavedFilterPresetUncheckedUpdateInput>
+  }
+
+  /**
+   * SavedFilterPreset delete
+   */
+  export type SavedFilterPresetDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+    /**
+     * Filter which SavedFilterPreset to delete.
+     */
+    where: SavedFilterPresetWhereUniqueInput
+  }
+
+  /**
+   * SavedFilterPreset deleteMany
+   */
+  export type SavedFilterPresetDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SavedFilterPresets to delete
+     */
+    where?: SavedFilterPresetWhereInput
+    /**
+     * Limit how many SavedFilterPresets to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SavedFilterPreset without action
+   */
+  export type SavedFilterPresetDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SavedFilterPreset
+     */
+    select?: SavedFilterPresetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SavedFilterPreset
+     */
+    omit?: SavedFilterPresetOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SavedFilterPresetInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AppChangelog
+   */
+
+  export type AggregateAppChangelog = {
+    _count: AppChangelogCountAggregateOutputType | null
+    _min: AppChangelogMinAggregateOutputType | null
+    _max: AppChangelogMaxAggregateOutputType | null
+  }
+
+  export type AppChangelogMinAggregateOutputType = {
+    id: string | null
+    version: string | null
+    title: string | null
+    publishedAt: Date | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type AppChangelogMaxAggregateOutputType = {
+    id: string | null
+    version: string | null
+    title: string | null
+    publishedAt: Date | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type AppChangelogCountAggregateOutputType = {
+    id: number
+    version: number
+    title: number
+    items: number
+    publishedAt: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AppChangelogMinAggregateInputType = {
+    id?: true
+    version?: true
+    title?: true
+    publishedAt?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type AppChangelogMaxAggregateInputType = {
+    id?: true
+    version?: true
+    title?: true
+    publishedAt?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type AppChangelogCountAggregateInputType = {
+    id?: true
+    version?: true
+    title?: true
+    items?: true
+    publishedAt?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AppChangelogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppChangelog to aggregate.
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppChangelogs to fetch.
+     */
+    orderBy?: AppChangelogOrderByWithRelationInput | AppChangelogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AppChangelogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppChangelogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppChangelogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AppChangelogs
+    **/
+    _count?: true | AppChangelogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AppChangelogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AppChangelogMaxAggregateInputType
+  }
+
+  export type GetAppChangelogAggregateType<T extends AppChangelogAggregateArgs> = {
+        [P in keyof T & keyof AggregateAppChangelog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAppChangelog[P]>
+      : GetScalarType<T[P], AggregateAppChangelog[P]>
+  }
+
+
+
+
+  export type AppChangelogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AppChangelogWhereInput
+    orderBy?: AppChangelogOrderByWithAggregationInput | AppChangelogOrderByWithAggregationInput[]
+    by: AppChangelogScalarFieldEnum[] | AppChangelogScalarFieldEnum
+    having?: AppChangelogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AppChangelogCountAggregateInputType | true
+    _min?: AppChangelogMinAggregateInputType
+    _max?: AppChangelogMaxAggregateInputType
+  }
+
+  export type AppChangelogGroupByOutputType = {
+    id: string
+    version: string
+    title: string
+    items: JsonValue
+    publishedAt: Date
+    createdById: string | null
+    createdAt: Date
+    _count: AppChangelogCountAggregateOutputType | null
+    _min: AppChangelogMinAggregateOutputType | null
+    _max: AppChangelogMaxAggregateOutputType | null
+  }
+
+  type GetAppChangelogGroupByPayload<T extends AppChangelogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AppChangelogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AppChangelogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AppChangelogGroupByOutputType[P]>
+            : GetScalarType<T[P], AppChangelogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AppChangelogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    version?: boolean
+    title?: boolean
+    items?: boolean
+    publishedAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["appChangelog"]>
+
+  export type AppChangelogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    version?: boolean
+    title?: boolean
+    items?: boolean
+    publishedAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["appChangelog"]>
+
+  export type AppChangelogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    version?: boolean
+    title?: boolean
+    items?: boolean
+    publishedAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["appChangelog"]>
+
+  export type AppChangelogSelectScalar = {
+    id?: boolean
+    version?: boolean
+    title?: boolean
+    items?: boolean
+    publishedAt?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type AppChangelogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "version" | "title" | "items" | "publishedAt" | "createdById" | "createdAt", ExtArgs["result"]["appChangelog"]>
+
+  export type $AppChangelogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AppChangelog"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      version: string
+      title: string
+      items: Prisma.JsonValue
+      publishedAt: Date
+      createdById: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["appChangelog"]>
+    composites: {}
+  }
+
+  type AppChangelogGetPayload<S extends boolean | null | undefined | AppChangelogDefaultArgs> = $Result.GetResult<Prisma.$AppChangelogPayload, S>
+
+  type AppChangelogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AppChangelogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AppChangelogCountAggregateInputType | true
+    }
+
+  export interface AppChangelogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AppChangelog'], meta: { name: 'AppChangelog' } }
+    /**
+     * Find zero or one AppChangelog that matches the filter.
+     * @param {AppChangelogFindUniqueArgs} args - Arguments to find a AppChangelog
+     * @example
+     * // Get one AppChangelog
+     * const appChangelog = await prisma.appChangelog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AppChangelogFindUniqueArgs>(args: SelectSubset<T, AppChangelogFindUniqueArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AppChangelog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AppChangelogFindUniqueOrThrowArgs} args - Arguments to find a AppChangelog
+     * @example
+     * // Get one AppChangelog
+     * const appChangelog = await prisma.appChangelog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AppChangelogFindUniqueOrThrowArgs>(args: SelectSubset<T, AppChangelogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AppChangelog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogFindFirstArgs} args - Arguments to find a AppChangelog
+     * @example
+     * // Get one AppChangelog
+     * const appChangelog = await prisma.appChangelog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AppChangelogFindFirstArgs>(args?: SelectSubset<T, AppChangelogFindFirstArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AppChangelog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogFindFirstOrThrowArgs} args - Arguments to find a AppChangelog
+     * @example
+     * // Get one AppChangelog
+     * const appChangelog = await prisma.appChangelog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AppChangelogFindFirstOrThrowArgs>(args?: SelectSubset<T, AppChangelogFindFirstOrThrowArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AppChangelogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AppChangelogs
+     * const appChangelogs = await prisma.appChangelog.findMany()
+     * 
+     * // Get first 10 AppChangelogs
+     * const appChangelogs = await prisma.appChangelog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const appChangelogWithIdOnly = await prisma.appChangelog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AppChangelogFindManyArgs>(args?: SelectSubset<T, AppChangelogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AppChangelog.
+     * @param {AppChangelogCreateArgs} args - Arguments to create a AppChangelog.
+     * @example
+     * // Create one AppChangelog
+     * const AppChangelog = await prisma.appChangelog.create({
+     *   data: {
+     *     // ... data to create a AppChangelog
+     *   }
+     * })
+     * 
+     */
+    create<T extends AppChangelogCreateArgs>(args: SelectSubset<T, AppChangelogCreateArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AppChangelogs.
+     * @param {AppChangelogCreateManyArgs} args - Arguments to create many AppChangelogs.
+     * @example
+     * // Create many AppChangelogs
+     * const appChangelog = await prisma.appChangelog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AppChangelogCreateManyArgs>(args?: SelectSubset<T, AppChangelogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AppChangelogs and returns the data saved in the database.
+     * @param {AppChangelogCreateManyAndReturnArgs} args - Arguments to create many AppChangelogs.
+     * @example
+     * // Create many AppChangelogs
+     * const appChangelog = await prisma.appChangelog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AppChangelogs and only return the `id`
+     * const appChangelogWithIdOnly = await prisma.appChangelog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AppChangelogCreateManyAndReturnArgs>(args?: SelectSubset<T, AppChangelogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AppChangelog.
+     * @param {AppChangelogDeleteArgs} args - Arguments to delete one AppChangelog.
+     * @example
+     * // Delete one AppChangelog
+     * const AppChangelog = await prisma.appChangelog.delete({
+     *   where: {
+     *     // ... filter to delete one AppChangelog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AppChangelogDeleteArgs>(args: SelectSubset<T, AppChangelogDeleteArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AppChangelog.
+     * @param {AppChangelogUpdateArgs} args - Arguments to update one AppChangelog.
+     * @example
+     * // Update one AppChangelog
+     * const appChangelog = await prisma.appChangelog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AppChangelogUpdateArgs>(args: SelectSubset<T, AppChangelogUpdateArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AppChangelogs.
+     * @param {AppChangelogDeleteManyArgs} args - Arguments to filter AppChangelogs to delete.
+     * @example
+     * // Delete a few AppChangelogs
+     * const { count } = await prisma.appChangelog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AppChangelogDeleteManyArgs>(args?: SelectSubset<T, AppChangelogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppChangelogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AppChangelogs
+     * const appChangelog = await prisma.appChangelog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AppChangelogUpdateManyArgs>(args: SelectSubset<T, AppChangelogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AppChangelogs and returns the data updated in the database.
+     * @param {AppChangelogUpdateManyAndReturnArgs} args - Arguments to update many AppChangelogs.
+     * @example
+     * // Update many AppChangelogs
+     * const appChangelog = await prisma.appChangelog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AppChangelogs and only return the `id`
+     * const appChangelogWithIdOnly = await prisma.appChangelog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AppChangelogUpdateManyAndReturnArgs>(args: SelectSubset<T, AppChangelogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AppChangelog.
+     * @param {AppChangelogUpsertArgs} args - Arguments to update or create a AppChangelog.
+     * @example
+     * // Update or create a AppChangelog
+     * const appChangelog = await prisma.appChangelog.upsert({
+     *   create: {
+     *     // ... data to create a AppChangelog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AppChangelog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AppChangelogUpsertArgs>(args: SelectSubset<T, AppChangelogUpsertArgs<ExtArgs>>): Prisma__AppChangelogClient<$Result.GetResult<Prisma.$AppChangelogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AppChangelogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogCountArgs} args - Arguments to filter AppChangelogs to count.
+     * @example
+     * // Count the number of AppChangelogs
+     * const count = await prisma.appChangelog.count({
+     *   where: {
+     *     // ... the filter for the AppChangelogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends AppChangelogCountArgs>(
+      args?: Subset<T, AppChangelogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AppChangelogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AppChangelog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AppChangelogAggregateArgs>(args: Subset<T, AppChangelogAggregateArgs>): Prisma.PrismaPromise<GetAppChangelogAggregateType<T>>
+
+    /**
+     * Group by AppChangelog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AppChangelogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AppChangelogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AppChangelogGroupByArgs['orderBy'] }
+        : { orderBy?: AppChangelogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AppChangelogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAppChangelogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AppChangelog model
+   */
+  readonly fields: AppChangelogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AppChangelog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AppChangelogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AppChangelog model
+   */
+  interface AppChangelogFieldRefs {
+    readonly id: FieldRef<"AppChangelog", 'String'>
+    readonly version: FieldRef<"AppChangelog", 'String'>
+    readonly title: FieldRef<"AppChangelog", 'String'>
+    readonly items: FieldRef<"AppChangelog", 'Json'>
+    readonly publishedAt: FieldRef<"AppChangelog", 'DateTime'>
+    readonly createdById: FieldRef<"AppChangelog", 'String'>
+    readonly createdAt: FieldRef<"AppChangelog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AppChangelog findUnique
+   */
+  export type AppChangelogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter, which AppChangelog to fetch.
+     */
+    where: AppChangelogWhereUniqueInput
+  }
+
+  /**
+   * AppChangelog findUniqueOrThrow
+   */
+  export type AppChangelogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter, which AppChangelog to fetch.
+     */
+    where: AppChangelogWhereUniqueInput
+  }
+
+  /**
+   * AppChangelog findFirst
+   */
+  export type AppChangelogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter, which AppChangelog to fetch.
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppChangelogs to fetch.
+     */
+    orderBy?: AppChangelogOrderByWithRelationInput | AppChangelogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppChangelogs.
+     */
+    cursor?: AppChangelogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppChangelogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppChangelogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppChangelogs.
+     */
+    distinct?: AppChangelogScalarFieldEnum | AppChangelogScalarFieldEnum[]
+  }
+
+  /**
+   * AppChangelog findFirstOrThrow
+   */
+  export type AppChangelogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter, which AppChangelog to fetch.
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppChangelogs to fetch.
+     */
+    orderBy?: AppChangelogOrderByWithRelationInput | AppChangelogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AppChangelogs.
+     */
+    cursor?: AppChangelogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppChangelogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppChangelogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppChangelogs.
+     */
+    distinct?: AppChangelogScalarFieldEnum | AppChangelogScalarFieldEnum[]
+  }
+
+  /**
+   * AppChangelog findMany
+   */
+  export type AppChangelogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter, which AppChangelogs to fetch.
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AppChangelogs to fetch.
+     */
+    orderBy?: AppChangelogOrderByWithRelationInput | AppChangelogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AppChangelogs.
+     */
+    cursor?: AppChangelogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AppChangelogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AppChangelogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AppChangelogs.
+     */
+    distinct?: AppChangelogScalarFieldEnum | AppChangelogScalarFieldEnum[]
+  }
+
+  /**
+   * AppChangelog create
+   */
+  export type AppChangelogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AppChangelog.
+     */
+    data: XOR<AppChangelogCreateInput, AppChangelogUncheckedCreateInput>
+  }
+
+  /**
+   * AppChangelog createMany
+   */
+  export type AppChangelogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AppChangelogs.
+     */
+    data: AppChangelogCreateManyInput | AppChangelogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppChangelog createManyAndReturn
+   */
+  export type AppChangelogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * The data used to create many AppChangelogs.
+     */
+    data: AppChangelogCreateManyInput | AppChangelogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AppChangelog update
+   */
+  export type AppChangelogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AppChangelog.
+     */
+    data: XOR<AppChangelogUpdateInput, AppChangelogUncheckedUpdateInput>
+    /**
+     * Choose, which AppChangelog to update.
+     */
+    where: AppChangelogWhereUniqueInput
+  }
+
+  /**
+   * AppChangelog updateMany
+   */
+  export type AppChangelogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AppChangelogs.
+     */
+    data: XOR<AppChangelogUpdateManyMutationInput, AppChangelogUncheckedUpdateManyInput>
+    /**
+     * Filter which AppChangelogs to update
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * Limit how many AppChangelogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AppChangelog updateManyAndReturn
+   */
+  export type AppChangelogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * The data used to update AppChangelogs.
+     */
+    data: XOR<AppChangelogUpdateManyMutationInput, AppChangelogUncheckedUpdateManyInput>
+    /**
+     * Filter which AppChangelogs to update
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * Limit how many AppChangelogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AppChangelog upsert
+   */
+  export type AppChangelogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AppChangelog to update in case it exists.
+     */
+    where: AppChangelogWhereUniqueInput
+    /**
+     * In case the AppChangelog found by the `where` argument doesn't exist, create a new AppChangelog with this data.
+     */
+    create: XOR<AppChangelogCreateInput, AppChangelogUncheckedCreateInput>
+    /**
+     * In case the AppChangelog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AppChangelogUpdateInput, AppChangelogUncheckedUpdateInput>
+  }
+
+  /**
+   * AppChangelog delete
+   */
+  export type AppChangelogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+    /**
+     * Filter which AppChangelog to delete.
+     */
+    where: AppChangelogWhereUniqueInput
+  }
+
+  /**
+   * AppChangelog deleteMany
+   */
+  export type AppChangelogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AppChangelogs to delete
+     */
+    where?: AppChangelogWhereInput
+    /**
+     * Limit how many AppChangelogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AppChangelog without action
+   */
+  export type AppChangelogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AppChangelog
+     */
+    select?: AppChangelogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AppChangelog
+     */
+    omit?: AppChangelogOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SystemAnnouncement
+   */
+
+  export type AggregateSystemAnnouncement = {
+    _count: SystemAnnouncementCountAggregateOutputType | null
+    _min: SystemAnnouncementMinAggregateOutputType | null
+    _max: SystemAnnouncementMaxAggregateOutputType | null
+  }
+
+  export type SystemAnnouncementMinAggregateOutputType = {
+    id: string | null
+    message: string | null
+    type: string | null
+    targetRole: string | null
+    startAt: Date | null
+    endAt: Date | null
+    tenantId: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type SystemAnnouncementMaxAggregateOutputType = {
+    id: string | null
+    message: string | null
+    type: string | null
+    targetRole: string | null
+    startAt: Date | null
+    endAt: Date | null
+    tenantId: string | null
+    createdById: string | null
+    createdAt: Date | null
+  }
+
+  export type SystemAnnouncementCountAggregateOutputType = {
+    id: number
+    message: number
+    type: number
+    targetRole: number
+    startAt: number
+    endAt: number
+    tenantId: number
+    createdById: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SystemAnnouncementMinAggregateInputType = {
+    id?: true
+    message?: true
+    type?: true
+    targetRole?: true
+    startAt?: true
+    endAt?: true
+    tenantId?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type SystemAnnouncementMaxAggregateInputType = {
+    id?: true
+    message?: true
+    type?: true
+    targetRole?: true
+    startAt?: true
+    endAt?: true
+    tenantId?: true
+    createdById?: true
+    createdAt?: true
+  }
+
+  export type SystemAnnouncementCountAggregateInputType = {
+    id?: true
+    message?: true
+    type?: true
+    targetRole?: true
+    startAt?: true
+    endAt?: true
+    tenantId?: true
+    createdById?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SystemAnnouncementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SystemAnnouncement to aggregate.
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SystemAnnouncements to fetch.
+     */
+    orderBy?: SystemAnnouncementOrderByWithRelationInput | SystemAnnouncementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SystemAnnouncementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SystemAnnouncements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SystemAnnouncements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SystemAnnouncements
+    **/
+    _count?: true | SystemAnnouncementCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SystemAnnouncementMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SystemAnnouncementMaxAggregateInputType
+  }
+
+  export type GetSystemAnnouncementAggregateType<T extends SystemAnnouncementAggregateArgs> = {
+        [P in keyof T & keyof AggregateSystemAnnouncement]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSystemAnnouncement[P]>
+      : GetScalarType<T[P], AggregateSystemAnnouncement[P]>
+  }
+
+
+
+
+  export type SystemAnnouncementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SystemAnnouncementWhereInput
+    orderBy?: SystemAnnouncementOrderByWithAggregationInput | SystemAnnouncementOrderByWithAggregationInput[]
+    by: SystemAnnouncementScalarFieldEnum[] | SystemAnnouncementScalarFieldEnum
+    having?: SystemAnnouncementScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SystemAnnouncementCountAggregateInputType | true
+    _min?: SystemAnnouncementMinAggregateInputType
+    _max?: SystemAnnouncementMaxAggregateInputType
+  }
+
+  export type SystemAnnouncementGroupByOutputType = {
+    id: string
+    message: string
+    type: string
+    targetRole: string | null
+    startAt: Date
+    endAt: Date | null
+    tenantId: string | null
+    createdById: string | null
+    createdAt: Date
+    _count: SystemAnnouncementCountAggregateOutputType | null
+    _min: SystemAnnouncementMinAggregateOutputType | null
+    _max: SystemAnnouncementMaxAggregateOutputType | null
+  }
+
+  type GetSystemAnnouncementGroupByPayload<T extends SystemAnnouncementGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SystemAnnouncementGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SystemAnnouncementGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SystemAnnouncementGroupByOutputType[P]>
+            : GetScalarType<T[P], SystemAnnouncementGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SystemAnnouncementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    message?: boolean
+    type?: boolean
+    targetRole?: boolean
+    startAt?: boolean
+    endAt?: boolean
+    tenantId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["systemAnnouncement"]>
+
+  export type SystemAnnouncementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    message?: boolean
+    type?: boolean
+    targetRole?: boolean
+    startAt?: boolean
+    endAt?: boolean
+    tenantId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["systemAnnouncement"]>
+
+  export type SystemAnnouncementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    message?: boolean
+    type?: boolean
+    targetRole?: boolean
+    startAt?: boolean
+    endAt?: boolean
+    tenantId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["systemAnnouncement"]>
+
+  export type SystemAnnouncementSelectScalar = {
+    id?: boolean
+    message?: boolean
+    type?: boolean
+    targetRole?: boolean
+    startAt?: boolean
+    endAt?: boolean
+    tenantId?: boolean
+    createdById?: boolean
+    createdAt?: boolean
+  }
+
+  export type SystemAnnouncementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "message" | "type" | "targetRole" | "startAt" | "endAt" | "tenantId" | "createdById" | "createdAt", ExtArgs["result"]["systemAnnouncement"]>
+  export type SystemAnnouncementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }
+  export type SystemAnnouncementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }
+  export type SystemAnnouncementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | SystemAnnouncement$tenantArgs<ExtArgs>
+  }
+
+  export type $SystemAnnouncementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SystemAnnouncement"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      message: string
+      type: string
+      targetRole: string | null
+      startAt: Date
+      endAt: Date | null
+      tenantId: string | null
+      createdById: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["systemAnnouncement"]>
+    composites: {}
+  }
+
+  type SystemAnnouncementGetPayload<S extends boolean | null | undefined | SystemAnnouncementDefaultArgs> = $Result.GetResult<Prisma.$SystemAnnouncementPayload, S>
+
+  type SystemAnnouncementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SystemAnnouncementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SystemAnnouncementCountAggregateInputType | true
+    }
+
+  export interface SystemAnnouncementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SystemAnnouncement'], meta: { name: 'SystemAnnouncement' } }
+    /**
+     * Find zero or one SystemAnnouncement that matches the filter.
+     * @param {SystemAnnouncementFindUniqueArgs} args - Arguments to find a SystemAnnouncement
+     * @example
+     * // Get one SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SystemAnnouncementFindUniqueArgs>(args: SelectSubset<T, SystemAnnouncementFindUniqueArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SystemAnnouncement that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SystemAnnouncementFindUniqueOrThrowArgs} args - Arguments to find a SystemAnnouncement
+     * @example
+     * // Get one SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SystemAnnouncementFindUniqueOrThrowArgs>(args: SelectSubset<T, SystemAnnouncementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SystemAnnouncement that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementFindFirstArgs} args - Arguments to find a SystemAnnouncement
+     * @example
+     * // Get one SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SystemAnnouncementFindFirstArgs>(args?: SelectSubset<T, SystemAnnouncementFindFirstArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SystemAnnouncement that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementFindFirstOrThrowArgs} args - Arguments to find a SystemAnnouncement
+     * @example
+     * // Get one SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SystemAnnouncementFindFirstOrThrowArgs>(args?: SelectSubset<T, SystemAnnouncementFindFirstOrThrowArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SystemAnnouncements that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SystemAnnouncements
+     * const systemAnnouncements = await prisma.systemAnnouncement.findMany()
+     * 
+     * // Get first 10 SystemAnnouncements
+     * const systemAnnouncements = await prisma.systemAnnouncement.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const systemAnnouncementWithIdOnly = await prisma.systemAnnouncement.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SystemAnnouncementFindManyArgs>(args?: SelectSubset<T, SystemAnnouncementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SystemAnnouncement.
+     * @param {SystemAnnouncementCreateArgs} args - Arguments to create a SystemAnnouncement.
+     * @example
+     * // Create one SystemAnnouncement
+     * const SystemAnnouncement = await prisma.systemAnnouncement.create({
+     *   data: {
+     *     // ... data to create a SystemAnnouncement
+     *   }
+     * })
+     * 
+     */
+    create<T extends SystemAnnouncementCreateArgs>(args: SelectSubset<T, SystemAnnouncementCreateArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SystemAnnouncements.
+     * @param {SystemAnnouncementCreateManyArgs} args - Arguments to create many SystemAnnouncements.
+     * @example
+     * // Create many SystemAnnouncements
+     * const systemAnnouncement = await prisma.systemAnnouncement.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SystemAnnouncementCreateManyArgs>(args?: SelectSubset<T, SystemAnnouncementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SystemAnnouncements and returns the data saved in the database.
+     * @param {SystemAnnouncementCreateManyAndReturnArgs} args - Arguments to create many SystemAnnouncements.
+     * @example
+     * // Create many SystemAnnouncements
+     * const systemAnnouncement = await prisma.systemAnnouncement.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SystemAnnouncements and only return the `id`
+     * const systemAnnouncementWithIdOnly = await prisma.systemAnnouncement.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SystemAnnouncementCreateManyAndReturnArgs>(args?: SelectSubset<T, SystemAnnouncementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SystemAnnouncement.
+     * @param {SystemAnnouncementDeleteArgs} args - Arguments to delete one SystemAnnouncement.
+     * @example
+     * // Delete one SystemAnnouncement
+     * const SystemAnnouncement = await prisma.systemAnnouncement.delete({
+     *   where: {
+     *     // ... filter to delete one SystemAnnouncement
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SystemAnnouncementDeleteArgs>(args: SelectSubset<T, SystemAnnouncementDeleteArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SystemAnnouncement.
+     * @param {SystemAnnouncementUpdateArgs} args - Arguments to update one SystemAnnouncement.
+     * @example
+     * // Update one SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SystemAnnouncementUpdateArgs>(args: SelectSubset<T, SystemAnnouncementUpdateArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SystemAnnouncements.
+     * @param {SystemAnnouncementDeleteManyArgs} args - Arguments to filter SystemAnnouncements to delete.
+     * @example
+     * // Delete a few SystemAnnouncements
+     * const { count } = await prisma.systemAnnouncement.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SystemAnnouncementDeleteManyArgs>(args?: SelectSubset<T, SystemAnnouncementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SystemAnnouncements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SystemAnnouncements
+     * const systemAnnouncement = await prisma.systemAnnouncement.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SystemAnnouncementUpdateManyArgs>(args: SelectSubset<T, SystemAnnouncementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SystemAnnouncements and returns the data updated in the database.
+     * @param {SystemAnnouncementUpdateManyAndReturnArgs} args - Arguments to update many SystemAnnouncements.
+     * @example
+     * // Update many SystemAnnouncements
+     * const systemAnnouncement = await prisma.systemAnnouncement.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SystemAnnouncements and only return the `id`
+     * const systemAnnouncementWithIdOnly = await prisma.systemAnnouncement.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SystemAnnouncementUpdateManyAndReturnArgs>(args: SelectSubset<T, SystemAnnouncementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SystemAnnouncement.
+     * @param {SystemAnnouncementUpsertArgs} args - Arguments to update or create a SystemAnnouncement.
+     * @example
+     * // Update or create a SystemAnnouncement
+     * const systemAnnouncement = await prisma.systemAnnouncement.upsert({
+     *   create: {
+     *     // ... data to create a SystemAnnouncement
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SystemAnnouncement we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SystemAnnouncementUpsertArgs>(args: SelectSubset<T, SystemAnnouncementUpsertArgs<ExtArgs>>): Prisma__SystemAnnouncementClient<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SystemAnnouncements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementCountArgs} args - Arguments to filter SystemAnnouncements to count.
+     * @example
+     * // Count the number of SystemAnnouncements
+     * const count = await prisma.systemAnnouncement.count({
+     *   where: {
+     *     // ... the filter for the SystemAnnouncements we want to count
+     *   }
+     * })
+    **/
+    count<T extends SystemAnnouncementCountArgs>(
+      args?: Subset<T, SystemAnnouncementCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SystemAnnouncementCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SystemAnnouncement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SystemAnnouncementAggregateArgs>(args: Subset<T, SystemAnnouncementAggregateArgs>): Prisma.PrismaPromise<GetSystemAnnouncementAggregateType<T>>
+
+    /**
+     * Group by SystemAnnouncement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SystemAnnouncementGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SystemAnnouncementGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SystemAnnouncementGroupByArgs['orderBy'] }
+        : { orderBy?: SystemAnnouncementGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SystemAnnouncementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSystemAnnouncementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SystemAnnouncement model
+   */
+  readonly fields: SystemAnnouncementFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SystemAnnouncement.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SystemAnnouncementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends SystemAnnouncement$tenantArgs<ExtArgs> = {}>(args?: Subset<T, SystemAnnouncement$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SystemAnnouncement model
+   */
+  interface SystemAnnouncementFieldRefs {
+    readonly id: FieldRef<"SystemAnnouncement", 'String'>
+    readonly message: FieldRef<"SystemAnnouncement", 'String'>
+    readonly type: FieldRef<"SystemAnnouncement", 'String'>
+    readonly targetRole: FieldRef<"SystemAnnouncement", 'String'>
+    readonly startAt: FieldRef<"SystemAnnouncement", 'DateTime'>
+    readonly endAt: FieldRef<"SystemAnnouncement", 'DateTime'>
+    readonly tenantId: FieldRef<"SystemAnnouncement", 'String'>
+    readonly createdById: FieldRef<"SystemAnnouncement", 'String'>
+    readonly createdAt: FieldRef<"SystemAnnouncement", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SystemAnnouncement findUnique
+   */
+  export type SystemAnnouncementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter, which SystemAnnouncement to fetch.
+     */
+    where: SystemAnnouncementWhereUniqueInput
+  }
+
+  /**
+   * SystemAnnouncement findUniqueOrThrow
+   */
+  export type SystemAnnouncementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter, which SystemAnnouncement to fetch.
+     */
+    where: SystemAnnouncementWhereUniqueInput
+  }
+
+  /**
+   * SystemAnnouncement findFirst
+   */
+  export type SystemAnnouncementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter, which SystemAnnouncement to fetch.
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SystemAnnouncements to fetch.
+     */
+    orderBy?: SystemAnnouncementOrderByWithRelationInput | SystemAnnouncementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SystemAnnouncements.
+     */
+    cursor?: SystemAnnouncementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SystemAnnouncements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SystemAnnouncements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SystemAnnouncements.
+     */
+    distinct?: SystemAnnouncementScalarFieldEnum | SystemAnnouncementScalarFieldEnum[]
+  }
+
+  /**
+   * SystemAnnouncement findFirstOrThrow
+   */
+  export type SystemAnnouncementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter, which SystemAnnouncement to fetch.
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SystemAnnouncements to fetch.
+     */
+    orderBy?: SystemAnnouncementOrderByWithRelationInput | SystemAnnouncementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SystemAnnouncements.
+     */
+    cursor?: SystemAnnouncementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SystemAnnouncements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SystemAnnouncements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SystemAnnouncements.
+     */
+    distinct?: SystemAnnouncementScalarFieldEnum | SystemAnnouncementScalarFieldEnum[]
+  }
+
+  /**
+   * SystemAnnouncement findMany
+   */
+  export type SystemAnnouncementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter, which SystemAnnouncements to fetch.
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SystemAnnouncements to fetch.
+     */
+    orderBy?: SystemAnnouncementOrderByWithRelationInput | SystemAnnouncementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SystemAnnouncements.
+     */
+    cursor?: SystemAnnouncementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SystemAnnouncements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SystemAnnouncements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SystemAnnouncements.
+     */
+    distinct?: SystemAnnouncementScalarFieldEnum | SystemAnnouncementScalarFieldEnum[]
+  }
+
+  /**
+   * SystemAnnouncement create
+   */
+  export type SystemAnnouncementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SystemAnnouncement.
+     */
+    data: XOR<SystemAnnouncementCreateInput, SystemAnnouncementUncheckedCreateInput>
+  }
+
+  /**
+   * SystemAnnouncement createMany
+   */
+  export type SystemAnnouncementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SystemAnnouncements.
+     */
+    data: SystemAnnouncementCreateManyInput | SystemAnnouncementCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SystemAnnouncement createManyAndReturn
+   */
+  export type SystemAnnouncementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * The data used to create many SystemAnnouncements.
+     */
+    data: SystemAnnouncementCreateManyInput | SystemAnnouncementCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SystemAnnouncement update
+   */
+  export type SystemAnnouncementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SystemAnnouncement.
+     */
+    data: XOR<SystemAnnouncementUpdateInput, SystemAnnouncementUncheckedUpdateInput>
+    /**
+     * Choose, which SystemAnnouncement to update.
+     */
+    where: SystemAnnouncementWhereUniqueInput
+  }
+
+  /**
+   * SystemAnnouncement updateMany
+   */
+  export type SystemAnnouncementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SystemAnnouncements.
+     */
+    data: XOR<SystemAnnouncementUpdateManyMutationInput, SystemAnnouncementUncheckedUpdateManyInput>
+    /**
+     * Filter which SystemAnnouncements to update
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * Limit how many SystemAnnouncements to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SystemAnnouncement updateManyAndReturn
+   */
+  export type SystemAnnouncementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * The data used to update SystemAnnouncements.
+     */
+    data: XOR<SystemAnnouncementUpdateManyMutationInput, SystemAnnouncementUncheckedUpdateManyInput>
+    /**
+     * Filter which SystemAnnouncements to update
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * Limit how many SystemAnnouncements to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SystemAnnouncement upsert
+   */
+  export type SystemAnnouncementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SystemAnnouncement to update in case it exists.
+     */
+    where: SystemAnnouncementWhereUniqueInput
+    /**
+     * In case the SystemAnnouncement found by the `where` argument doesn't exist, create a new SystemAnnouncement with this data.
+     */
+    create: XOR<SystemAnnouncementCreateInput, SystemAnnouncementUncheckedCreateInput>
+    /**
+     * In case the SystemAnnouncement was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SystemAnnouncementUpdateInput, SystemAnnouncementUncheckedUpdateInput>
+  }
+
+  /**
+   * SystemAnnouncement delete
+   */
+  export type SystemAnnouncementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+    /**
+     * Filter which SystemAnnouncement to delete.
+     */
+    where: SystemAnnouncementWhereUniqueInput
+  }
+
+  /**
+   * SystemAnnouncement deleteMany
+   */
+  export type SystemAnnouncementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SystemAnnouncements to delete
+     */
+    where?: SystemAnnouncementWhereInput
+    /**
+     * Limit how many SystemAnnouncements to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SystemAnnouncement.tenant
+   */
+  export type SystemAnnouncement$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    where?: TenantWhereInput
+  }
+
+  /**
+   * SystemAnnouncement without action
+   */
+  export type SystemAnnouncementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SystemAnnouncement
+     */
+    select?: SystemAnnouncementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SystemAnnouncement
+     */
+    omit?: SystemAnnouncementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SystemAnnouncementInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model EmailLog
+   */
+
+  export type AggregateEmailLog = {
+    _count: EmailLogCountAggregateOutputType | null
+    _min: EmailLogMinAggregateOutputType | null
+    _max: EmailLogMaxAggregateOutputType | null
+  }
+
+  export type EmailLogMinAggregateOutputType = {
+    id: string | null
+    toEmail: string | null
+    subject: string | null
+    status: string | null
+    module: string | null
+    error: string | null
+    sentAt: Date | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type EmailLogMaxAggregateOutputType = {
+    id: string | null
+    toEmail: string | null
+    subject: string | null
+    status: string | null
+    module: string | null
+    error: string | null
+    sentAt: Date | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type EmailLogCountAggregateOutputType = {
+    id: number
+    toEmail: number
+    subject: number
+    status: number
+    module: number
+    error: number
+    sentAt: number
+    tenantId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type EmailLogMinAggregateInputType = {
+    id?: true
+    toEmail?: true
+    subject?: true
+    status?: true
+    module?: true
+    error?: true
+    sentAt?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type EmailLogMaxAggregateInputType = {
+    id?: true
+    toEmail?: true
+    subject?: true
+    status?: true
+    module?: true
+    error?: true
+    sentAt?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type EmailLogCountAggregateInputType = {
+    id?: true
+    toEmail?: true
+    subject?: true
+    status?: true
+    module?: true
+    error?: true
+    sentAt?: true
+    tenantId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type EmailLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailLog to aggregate.
+     */
+    where?: EmailLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailLogs to fetch.
+     */
+    orderBy?: EmailLogOrderByWithRelationInput | EmailLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: EmailLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned EmailLogs
+    **/
+    _count?: true | EmailLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: EmailLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: EmailLogMaxAggregateInputType
+  }
+
+  export type GetEmailLogAggregateType<T extends EmailLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateEmailLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEmailLog[P]>
+      : GetScalarType<T[P], AggregateEmailLog[P]>
+  }
+
+
+
+
+  export type EmailLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: EmailLogWhereInput
+    orderBy?: EmailLogOrderByWithAggregationInput | EmailLogOrderByWithAggregationInput[]
+    by: EmailLogScalarFieldEnum[] | EmailLogScalarFieldEnum
+    having?: EmailLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: EmailLogCountAggregateInputType | true
+    _min?: EmailLogMinAggregateInputType
+    _max?: EmailLogMaxAggregateInputType
+  }
+
+  export type EmailLogGroupByOutputType = {
+    id: string
+    toEmail: string
+    subject: string
+    status: string
+    module: string | null
+    error: string | null
+    sentAt: Date | null
+    tenantId: string | null
+    createdAt: Date
+    _count: EmailLogCountAggregateOutputType | null
+    _min: EmailLogMinAggregateOutputType | null
+    _max: EmailLogMaxAggregateOutputType | null
+  }
+
+  type GetEmailLogGroupByPayload<T extends EmailLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<EmailLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof EmailLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], EmailLogGroupByOutputType[P]>
+            : GetScalarType<T[P], EmailLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type EmailLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    toEmail?: boolean
+    subject?: boolean
+    status?: boolean
+    module?: boolean
+    error?: boolean
+    sentAt?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["emailLog"]>
+
+  export type EmailLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    toEmail?: boolean
+    subject?: boolean
+    status?: boolean
+    module?: boolean
+    error?: boolean
+    sentAt?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["emailLog"]>
+
+  export type EmailLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    toEmail?: boolean
+    subject?: boolean
+    status?: boolean
+    module?: boolean
+    error?: boolean
+    sentAt?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["emailLog"]>
+
+  export type EmailLogSelectScalar = {
+    id?: boolean
+    toEmail?: boolean
+    subject?: boolean
+    status?: boolean
+    module?: boolean
+    error?: boolean
+    sentAt?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }
+
+  export type EmailLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "toEmail" | "subject" | "status" | "module" | "error" | "sentAt" | "tenantId" | "createdAt", ExtArgs["result"]["emailLog"]>
+
+  export type $EmailLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "EmailLog"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      toEmail: string
+      subject: string
+      status: string
+      module: string | null
+      error: string | null
+      sentAt: Date | null
+      tenantId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["emailLog"]>
+    composites: {}
+  }
+
+  type EmailLogGetPayload<S extends boolean | null | undefined | EmailLogDefaultArgs> = $Result.GetResult<Prisma.$EmailLogPayload, S>
+
+  type EmailLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmailLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: EmailLogCountAggregateInputType | true
+    }
+
+  export interface EmailLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmailLog'], meta: { name: 'EmailLog' } }
+    /**
+     * Find zero or one EmailLog that matches the filter.
+     * @param {EmailLogFindUniqueArgs} args - Arguments to find a EmailLog
+     * @example
+     * // Get one EmailLog
+     * const emailLog = await prisma.emailLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends EmailLogFindUniqueArgs>(args: SelectSubset<T, EmailLogFindUniqueArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one EmailLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {EmailLogFindUniqueOrThrowArgs} args - Arguments to find a EmailLog
+     * @example
+     * // Get one EmailLog
+     * const emailLog = await prisma.emailLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends EmailLogFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogFindFirstArgs} args - Arguments to find a EmailLog
+     * @example
+     * // Get one EmailLog
+     * const emailLog = await prisma.emailLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends EmailLogFindFirstArgs>(args?: SelectSubset<T, EmailLogFindFirstArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first EmailLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogFindFirstOrThrowArgs} args - Arguments to find a EmailLog
+     * @example
+     * // Get one EmailLog
+     * const emailLog = await prisma.emailLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends EmailLogFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more EmailLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all EmailLogs
+     * const emailLogs = await prisma.emailLog.findMany()
+     * 
+     * // Get first 10 EmailLogs
+     * const emailLogs = await prisma.emailLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const emailLogWithIdOnly = await prisma.emailLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends EmailLogFindManyArgs>(args?: SelectSubset<T, EmailLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a EmailLog.
+     * @param {EmailLogCreateArgs} args - Arguments to create a EmailLog.
+     * @example
+     * // Create one EmailLog
+     * const EmailLog = await prisma.emailLog.create({
+     *   data: {
+     *     // ... data to create a EmailLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends EmailLogCreateArgs>(args: SelectSubset<T, EmailLogCreateArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many EmailLogs.
+     * @param {EmailLogCreateManyArgs} args - Arguments to create many EmailLogs.
+     * @example
+     * // Create many EmailLogs
+     * const emailLog = await prisma.emailLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends EmailLogCreateManyArgs>(args?: SelectSubset<T, EmailLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many EmailLogs and returns the data saved in the database.
+     * @param {EmailLogCreateManyAndReturnArgs} args - Arguments to create many EmailLogs.
+     * @example
+     * // Create many EmailLogs
+     * const emailLog = await prisma.emailLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many EmailLogs and only return the `id`
+     * const emailLogWithIdOnly = await prisma.emailLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends EmailLogCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a EmailLog.
+     * @param {EmailLogDeleteArgs} args - Arguments to delete one EmailLog.
+     * @example
+     * // Delete one EmailLog
+     * const EmailLog = await prisma.emailLog.delete({
+     *   where: {
+     *     // ... filter to delete one EmailLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends EmailLogDeleteArgs>(args: SelectSubset<T, EmailLogDeleteArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one EmailLog.
+     * @param {EmailLogUpdateArgs} args - Arguments to update one EmailLog.
+     * @example
+     * // Update one EmailLog
+     * const emailLog = await prisma.emailLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends EmailLogUpdateArgs>(args: SelectSubset<T, EmailLogUpdateArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more EmailLogs.
+     * @param {EmailLogDeleteManyArgs} args - Arguments to filter EmailLogs to delete.
+     * @example
+     * // Delete a few EmailLogs
+     * const { count } = await prisma.emailLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends EmailLogDeleteManyArgs>(args?: SelectSubset<T, EmailLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many EmailLogs
+     * const emailLog = await prisma.emailLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends EmailLogUpdateManyArgs>(args: SelectSubset<T, EmailLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more EmailLogs and returns the data updated in the database.
+     * @param {EmailLogUpdateManyAndReturnArgs} args - Arguments to update many EmailLogs.
+     * @example
+     * // Update many EmailLogs
+     * const emailLog = await prisma.emailLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more EmailLogs and only return the `id`
+     * const emailLogWithIdOnly = await prisma.emailLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends EmailLogUpdateManyAndReturnArgs>(args: SelectSubset<T, EmailLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one EmailLog.
+     * @param {EmailLogUpsertArgs} args - Arguments to update or create a EmailLog.
+     * @example
+     * // Update or create a EmailLog
+     * const emailLog = await prisma.emailLog.upsert({
+     *   create: {
+     *     // ... data to create a EmailLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the EmailLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends EmailLogUpsertArgs>(args: SelectSubset<T, EmailLogUpsertArgs<ExtArgs>>): Prisma__EmailLogClient<$Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of EmailLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogCountArgs} args - Arguments to filter EmailLogs to count.
+     * @example
+     * // Count the number of EmailLogs
+     * const count = await prisma.emailLog.count({
+     *   where: {
+     *     // ... the filter for the EmailLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends EmailLogCountArgs>(
+      args?: Subset<T, EmailLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], EmailLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a EmailLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends EmailLogAggregateArgs>(args: Subset<T, EmailLogAggregateArgs>): Prisma.PrismaPromise<GetEmailLogAggregateType<T>>
+
+    /**
+     * Group by EmailLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {EmailLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends EmailLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: EmailLogGroupByArgs['orderBy'] }
+        : { orderBy?: EmailLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, EmailLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEmailLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the EmailLog model
+   */
+  readonly fields: EmailLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for EmailLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__EmailLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the EmailLog model
+   */
+  interface EmailLogFieldRefs {
+    readonly id: FieldRef<"EmailLog", 'String'>
+    readonly toEmail: FieldRef<"EmailLog", 'String'>
+    readonly subject: FieldRef<"EmailLog", 'String'>
+    readonly status: FieldRef<"EmailLog", 'String'>
+    readonly module: FieldRef<"EmailLog", 'String'>
+    readonly error: FieldRef<"EmailLog", 'String'>
+    readonly sentAt: FieldRef<"EmailLog", 'DateTime'>
+    readonly tenantId: FieldRef<"EmailLog", 'String'>
+    readonly createdAt: FieldRef<"EmailLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * EmailLog findUnique
+   */
+  export type EmailLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter, which EmailLog to fetch.
+     */
+    where: EmailLogWhereUniqueInput
+  }
+
+  /**
+   * EmailLog findUniqueOrThrow
+   */
+  export type EmailLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter, which EmailLog to fetch.
+     */
+    where: EmailLogWhereUniqueInput
+  }
+
+  /**
+   * EmailLog findFirst
+   */
+  export type EmailLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter, which EmailLog to fetch.
+     */
+    where?: EmailLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailLogs to fetch.
+     */
+    orderBy?: EmailLogOrderByWithRelationInput | EmailLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailLogs.
+     */
+    cursor?: EmailLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailLogs.
+     */
+    distinct?: EmailLogScalarFieldEnum | EmailLogScalarFieldEnum[]
+  }
+
+  /**
+   * EmailLog findFirstOrThrow
+   */
+  export type EmailLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter, which EmailLog to fetch.
+     */
+    where?: EmailLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailLogs to fetch.
+     */
+    orderBy?: EmailLogOrderByWithRelationInput | EmailLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for EmailLogs.
+     */
+    cursor?: EmailLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailLogs.
+     */
+    distinct?: EmailLogScalarFieldEnum | EmailLogScalarFieldEnum[]
+  }
+
+  /**
+   * EmailLog findMany
+   */
+  export type EmailLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter, which EmailLogs to fetch.
+     */
+    where?: EmailLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of EmailLogs to fetch.
+     */
+    orderBy?: EmailLogOrderByWithRelationInput | EmailLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing EmailLogs.
+     */
+    cursor?: EmailLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` EmailLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` EmailLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of EmailLogs.
+     */
+    distinct?: EmailLogScalarFieldEnum | EmailLogScalarFieldEnum[]
+  }
+
+  /**
+   * EmailLog create
+   */
+  export type EmailLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * The data needed to create a EmailLog.
+     */
+    data: XOR<EmailLogCreateInput, EmailLogUncheckedCreateInput>
+  }
+
+  /**
+   * EmailLog createMany
+   */
+  export type EmailLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many EmailLogs.
+     */
+    data: EmailLogCreateManyInput | EmailLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmailLog createManyAndReturn
+   */
+  export type EmailLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many EmailLogs.
+     */
+    data: EmailLogCreateManyInput | EmailLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * EmailLog update
+   */
+  export type EmailLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * The data needed to update a EmailLog.
+     */
+    data: XOR<EmailLogUpdateInput, EmailLogUncheckedUpdateInput>
+    /**
+     * Choose, which EmailLog to update.
+     */
+    where: EmailLogWhereUniqueInput
+  }
+
+  /**
+   * EmailLog updateMany
+   */
+  export type EmailLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update EmailLogs.
+     */
+    data: XOR<EmailLogUpdateManyMutationInput, EmailLogUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailLogs to update
+     */
+    where?: EmailLogWhereInput
+    /**
+     * Limit how many EmailLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailLog updateManyAndReturn
+   */
+  export type EmailLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * The data used to update EmailLogs.
+     */
+    data: XOR<EmailLogUpdateManyMutationInput, EmailLogUncheckedUpdateManyInput>
+    /**
+     * Filter which EmailLogs to update
+     */
+    where?: EmailLogWhereInput
+    /**
+     * Limit how many EmailLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailLog upsert
+   */
+  export type EmailLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * The filter to search for the EmailLog to update in case it exists.
+     */
+    where: EmailLogWhereUniqueInput
+    /**
+     * In case the EmailLog found by the `where` argument doesn't exist, create a new EmailLog with this data.
+     */
+    create: XOR<EmailLogCreateInput, EmailLogUncheckedCreateInput>
+    /**
+     * In case the EmailLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<EmailLogUpdateInput, EmailLogUncheckedUpdateInput>
+  }
+
+  /**
+   * EmailLog delete
+   */
+  export type EmailLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+    /**
+     * Filter which EmailLog to delete.
+     */
+    where: EmailLogWhereUniqueInput
+  }
+
+  /**
+   * EmailLog deleteMany
+   */
+  export type EmailLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which EmailLogs to delete
+     */
+    where?: EmailLogWhereInput
+    /**
+     * Limit how many EmailLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * EmailLog without action
+   */
+  export type EmailLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EmailLog
+     */
+    select?: EmailLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailLog
+     */
+    omit?: EmailLogOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ApiKey
+   */
+
+  export type AggregateApiKey = {
+    _count: ApiKeyCountAggregateOutputType | null
+    _min: ApiKeyMinAggregateOutputType | null
+    _max: ApiKeyMaxAggregateOutputType | null
+  }
+
+  export type ApiKeyMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    keyPrefix: string | null
+    keyHash: string | null
+    expiresAt: Date | null
+    lastUsedAt: Date | null
+    isActive: boolean | null
+    createdById: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type ApiKeyMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    keyPrefix: string | null
+    keyHash: string | null
+    expiresAt: Date | null
+    lastUsedAt: Date | null
+    isActive: boolean | null
+    createdById: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type ApiKeyCountAggregateOutputType = {
+    id: number
+    name: number
+    keyPrefix: number
+    keyHash: number
+    scopes: number
+    expiresAt: number
+    lastUsedAt: number
+    isActive: number
+    createdById: number
+    tenantId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ApiKeyMinAggregateInputType = {
+    id?: true
+    name?: true
+    keyPrefix?: true
+    keyHash?: true
+    expiresAt?: true
+    lastUsedAt?: true
+    isActive?: true
+    createdById?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type ApiKeyMaxAggregateInputType = {
+    id?: true
+    name?: true
+    keyPrefix?: true
+    keyHash?: true
+    expiresAt?: true
+    lastUsedAt?: true
+    isActive?: true
+    createdById?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type ApiKeyCountAggregateInputType = {
+    id?: true
+    name?: true
+    keyPrefix?: true
+    keyHash?: true
+    scopes?: true
+    expiresAt?: true
+    lastUsedAt?: true
+    isActive?: true
+    createdById?: true
+    tenantId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ApiKeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApiKey to aggregate.
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApiKeys to fetch.
+     */
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ApiKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApiKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApiKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ApiKeys
+    **/
+    _count?: true | ApiKeyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ApiKeyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ApiKeyMaxAggregateInputType
+  }
+
+  export type GetApiKeyAggregateType<T extends ApiKeyAggregateArgs> = {
+        [P in keyof T & keyof AggregateApiKey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateApiKey[P]>
+      : GetScalarType<T[P], AggregateApiKey[P]>
+  }
+
+
+
+
+  export type ApiKeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApiKeyWhereInput
+    orderBy?: ApiKeyOrderByWithAggregationInput | ApiKeyOrderByWithAggregationInput[]
+    by: ApiKeyScalarFieldEnum[] | ApiKeyScalarFieldEnum
+    having?: ApiKeyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ApiKeyCountAggregateInputType | true
+    _min?: ApiKeyMinAggregateInputType
+    _max?: ApiKeyMaxAggregateInputType
+  }
+
+  export type ApiKeyGroupByOutputType = {
+    id: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes: string[]
+    expiresAt: Date | null
+    lastUsedAt: Date | null
+    isActive: boolean
+    createdById: string
+    tenantId: string | null
+    createdAt: Date
+    _count: ApiKeyCountAggregateOutputType | null
+    _min: ApiKeyMinAggregateOutputType | null
+    _max: ApiKeyMaxAggregateOutputType | null
+  }
+
+  type GetApiKeyGroupByPayload<T extends ApiKeyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ApiKeyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ApiKeyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ApiKeyGroupByOutputType[P]>
+            : GetScalarType<T[P], ApiKeyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ApiKeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    keyPrefix?: boolean
+    keyHash?: boolean
+    scopes?: boolean
+    expiresAt?: boolean
+    lastUsedAt?: boolean
+    isActive?: boolean
+    createdById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["apiKey"]>
+
+  export type ApiKeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    keyPrefix?: boolean
+    keyHash?: boolean
+    scopes?: boolean
+    expiresAt?: boolean
+    lastUsedAt?: boolean
+    isActive?: boolean
+    createdById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["apiKey"]>
+
+  export type ApiKeySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    keyPrefix?: boolean
+    keyHash?: boolean
+    scopes?: boolean
+    expiresAt?: boolean
+    lastUsedAt?: boolean
+    isActive?: boolean
+    createdById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["apiKey"]>
+
+  export type ApiKeySelectScalar = {
+    id?: boolean
+    name?: boolean
+    keyPrefix?: boolean
+    keyHash?: boolean
+    scopes?: boolean
+    expiresAt?: boolean
+    lastUsedAt?: boolean
+    isActive?: boolean
+    createdById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }
+
+  export type ApiKeyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "keyPrefix" | "keyHash" | "scopes" | "expiresAt" | "lastUsedAt" | "isActive" | "createdById" | "tenantId" | "createdAt", ExtArgs["result"]["apiKey"]>
+  export type ApiKeyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }
+  export type ApiKeyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }
+  export type ApiKeyIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | ApiKey$tenantArgs<ExtArgs>
+  }
+
+  export type $ApiKeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ApiKey"
+    objects: {
+      createdBy: Prisma.$UserPayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      keyPrefix: string
+      keyHash: string
+      scopes: string[]
+      expiresAt: Date | null
+      lastUsedAt: Date | null
+      isActive: boolean
+      createdById: string
+      tenantId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["apiKey"]>
+    composites: {}
+  }
+
+  type ApiKeyGetPayload<S extends boolean | null | undefined | ApiKeyDefaultArgs> = $Result.GetResult<Prisma.$ApiKeyPayload, S>
+
+  type ApiKeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ApiKeyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ApiKeyCountAggregateInputType | true
+    }
+
+  export interface ApiKeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ApiKey'], meta: { name: 'ApiKey' } }
+    /**
+     * Find zero or one ApiKey that matches the filter.
+     * @param {ApiKeyFindUniqueArgs} args - Arguments to find a ApiKey
+     * @example
+     * // Get one ApiKey
+     * const apiKey = await prisma.apiKey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ApiKeyFindUniqueArgs>(args: SelectSubset<T, ApiKeyFindUniqueArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ApiKey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ApiKeyFindUniqueOrThrowArgs} args - Arguments to find a ApiKey
+     * @example
+     * // Get one ApiKey
+     * const apiKey = await prisma.apiKey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ApiKeyFindUniqueOrThrowArgs>(args: SelectSubset<T, ApiKeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApiKey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyFindFirstArgs} args - Arguments to find a ApiKey
+     * @example
+     * // Get one ApiKey
+     * const apiKey = await prisma.apiKey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ApiKeyFindFirstArgs>(args?: SelectSubset<T, ApiKeyFindFirstArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ApiKey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyFindFirstOrThrowArgs} args - Arguments to find a ApiKey
+     * @example
+     * // Get one ApiKey
+     * const apiKey = await prisma.apiKey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ApiKeyFindFirstOrThrowArgs>(args?: SelectSubset<T, ApiKeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ApiKeys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ApiKeys
+     * const apiKeys = await prisma.apiKey.findMany()
+     * 
+     * // Get first 10 ApiKeys
+     * const apiKeys = await prisma.apiKey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const apiKeyWithIdOnly = await prisma.apiKey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ApiKeyFindManyArgs>(args?: SelectSubset<T, ApiKeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ApiKey.
+     * @param {ApiKeyCreateArgs} args - Arguments to create a ApiKey.
+     * @example
+     * // Create one ApiKey
+     * const ApiKey = await prisma.apiKey.create({
+     *   data: {
+     *     // ... data to create a ApiKey
+     *   }
+     * })
+     * 
+     */
+    create<T extends ApiKeyCreateArgs>(args: SelectSubset<T, ApiKeyCreateArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ApiKeys.
+     * @param {ApiKeyCreateManyArgs} args - Arguments to create many ApiKeys.
+     * @example
+     * // Create many ApiKeys
+     * const apiKey = await prisma.apiKey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ApiKeyCreateManyArgs>(args?: SelectSubset<T, ApiKeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ApiKeys and returns the data saved in the database.
+     * @param {ApiKeyCreateManyAndReturnArgs} args - Arguments to create many ApiKeys.
+     * @example
+     * // Create many ApiKeys
+     * const apiKey = await prisma.apiKey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ApiKeys and only return the `id`
+     * const apiKeyWithIdOnly = await prisma.apiKey.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ApiKeyCreateManyAndReturnArgs>(args?: SelectSubset<T, ApiKeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ApiKey.
+     * @param {ApiKeyDeleteArgs} args - Arguments to delete one ApiKey.
+     * @example
+     * // Delete one ApiKey
+     * const ApiKey = await prisma.apiKey.delete({
+     *   where: {
+     *     // ... filter to delete one ApiKey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ApiKeyDeleteArgs>(args: SelectSubset<T, ApiKeyDeleteArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ApiKey.
+     * @param {ApiKeyUpdateArgs} args - Arguments to update one ApiKey.
+     * @example
+     * // Update one ApiKey
+     * const apiKey = await prisma.apiKey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ApiKeyUpdateArgs>(args: SelectSubset<T, ApiKeyUpdateArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ApiKeys.
+     * @param {ApiKeyDeleteManyArgs} args - Arguments to filter ApiKeys to delete.
+     * @example
+     * // Delete a few ApiKeys
+     * const { count } = await prisma.apiKey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ApiKeyDeleteManyArgs>(args?: SelectSubset<T, ApiKeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApiKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ApiKeys
+     * const apiKey = await prisma.apiKey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ApiKeyUpdateManyArgs>(args: SelectSubset<T, ApiKeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ApiKeys and returns the data updated in the database.
+     * @param {ApiKeyUpdateManyAndReturnArgs} args - Arguments to update many ApiKeys.
+     * @example
+     * // Update many ApiKeys
+     * const apiKey = await prisma.apiKey.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ApiKeys and only return the `id`
+     * const apiKeyWithIdOnly = await prisma.apiKey.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ApiKeyUpdateManyAndReturnArgs>(args: SelectSubset<T, ApiKeyUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ApiKey.
+     * @param {ApiKeyUpsertArgs} args - Arguments to update or create a ApiKey.
+     * @example
+     * // Update or create a ApiKey
+     * const apiKey = await prisma.apiKey.upsert({
+     *   create: {
+     *     // ... data to create a ApiKey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ApiKey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ApiKeyUpsertArgs>(args: SelectSubset<T, ApiKeyUpsertArgs<ExtArgs>>): Prisma__ApiKeyClient<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ApiKeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyCountArgs} args - Arguments to filter ApiKeys to count.
+     * @example
+     * // Count the number of ApiKeys
+     * const count = await prisma.apiKey.count({
+     *   where: {
+     *     // ... the filter for the ApiKeys we want to count
+     *   }
+     * })
+    **/
+    count<T extends ApiKeyCountArgs>(
+      args?: Subset<T, ApiKeyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ApiKeyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ApiKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ApiKeyAggregateArgs>(args: Subset<T, ApiKeyAggregateArgs>): Prisma.PrismaPromise<GetApiKeyAggregateType<T>>
+
+    /**
+     * Group by ApiKey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ApiKeyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ApiKeyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ApiKeyGroupByArgs['orderBy'] }
+        : { orderBy?: ApiKeyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ApiKeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetApiKeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ApiKey model
+   */
+  readonly fields: ApiKeyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ApiKey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ApiKeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    tenant<T extends ApiKey$tenantArgs<ExtArgs> = {}>(args?: Subset<T, ApiKey$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ApiKey model
+   */
+  interface ApiKeyFieldRefs {
+    readonly id: FieldRef<"ApiKey", 'String'>
+    readonly name: FieldRef<"ApiKey", 'String'>
+    readonly keyPrefix: FieldRef<"ApiKey", 'String'>
+    readonly keyHash: FieldRef<"ApiKey", 'String'>
+    readonly scopes: FieldRef<"ApiKey", 'String[]'>
+    readonly expiresAt: FieldRef<"ApiKey", 'DateTime'>
+    readonly lastUsedAt: FieldRef<"ApiKey", 'DateTime'>
+    readonly isActive: FieldRef<"ApiKey", 'Boolean'>
+    readonly createdById: FieldRef<"ApiKey", 'String'>
+    readonly tenantId: FieldRef<"ApiKey", 'String'>
+    readonly createdAt: FieldRef<"ApiKey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ApiKey findUnique
+   */
+  export type ApiKeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which ApiKey to fetch.
+     */
+    where: ApiKeyWhereUniqueInput
+  }
+
+  /**
+   * ApiKey findUniqueOrThrow
+   */
+  export type ApiKeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which ApiKey to fetch.
+     */
+    where: ApiKeyWhereUniqueInput
+  }
+
+  /**
+   * ApiKey findFirst
+   */
+  export type ApiKeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which ApiKey to fetch.
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApiKeys to fetch.
+     */
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApiKeys.
+     */
+    cursor?: ApiKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApiKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApiKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApiKeys.
+     */
+    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * ApiKey findFirstOrThrow
+   */
+  export type ApiKeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which ApiKey to fetch.
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApiKeys to fetch.
+     */
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ApiKeys.
+     */
+    cursor?: ApiKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApiKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApiKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApiKeys.
+     */
+    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * ApiKey findMany
+   */
+  export type ApiKeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter, which ApiKeys to fetch.
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ApiKeys to fetch.
+     */
+    orderBy?: ApiKeyOrderByWithRelationInput | ApiKeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ApiKeys.
+     */
+    cursor?: ApiKeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ApiKeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ApiKeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ApiKeys.
+     */
+    distinct?: ApiKeyScalarFieldEnum | ApiKeyScalarFieldEnum[]
+  }
+
+  /**
+   * ApiKey create
+   */
+  export type ApiKeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ApiKey.
+     */
+    data: XOR<ApiKeyCreateInput, ApiKeyUncheckedCreateInput>
+  }
+
+  /**
+   * ApiKey createMany
+   */
+  export type ApiKeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ApiKeys.
+     */
+    data: ApiKeyCreateManyInput | ApiKeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ApiKey createManyAndReturn
+   */
+  export type ApiKeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * The data used to create many ApiKeys.
+     */
+    data: ApiKeyCreateManyInput | ApiKeyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApiKey update
+   */
+  export type ApiKeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ApiKey.
+     */
+    data: XOR<ApiKeyUpdateInput, ApiKeyUncheckedUpdateInput>
+    /**
+     * Choose, which ApiKey to update.
+     */
+    where: ApiKeyWhereUniqueInput
+  }
+
+  /**
+   * ApiKey updateMany
+   */
+  export type ApiKeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ApiKeys.
+     */
+    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which ApiKeys to update
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * Limit how many ApiKeys to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApiKey updateManyAndReturn
+   */
+  export type ApiKeyUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * The data used to update ApiKeys.
+     */
+    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyInput>
+    /**
+     * Filter which ApiKeys to update
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * Limit how many ApiKeys to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ApiKey upsert
+   */
+  export type ApiKeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ApiKey to update in case it exists.
+     */
+    where: ApiKeyWhereUniqueInput
+    /**
+     * In case the ApiKey found by the `where` argument doesn't exist, create a new ApiKey with this data.
+     */
+    create: XOR<ApiKeyCreateInput, ApiKeyUncheckedCreateInput>
+    /**
+     * In case the ApiKey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ApiKeyUpdateInput, ApiKeyUncheckedUpdateInput>
+  }
+
+  /**
+   * ApiKey delete
+   */
+  export type ApiKeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+    /**
+     * Filter which ApiKey to delete.
+     */
+    where: ApiKeyWhereUniqueInput
+  }
+
+  /**
+   * ApiKey deleteMany
+   */
+  export type ApiKeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ApiKeys to delete
+     */
+    where?: ApiKeyWhereInput
+    /**
+     * Limit how many ApiKeys to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ApiKey.tenant
+   */
+  export type ApiKey$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    where?: TenantWhereInput
+  }
+
+  /**
+   * ApiKey without action
+   */
+  export type ApiKeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ApiKey
+     */
+    select?: ApiKeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ApiKey
+     */
+    omit?: ApiKeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApiKeyInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model NotificationTemplate
+   */
+
+  export type AggregateNotificationTemplate = {
+    _count: NotificationTemplateCountAggregateOutputType | null
+    _min: NotificationTemplateMinAggregateOutputType | null
+    _max: NotificationTemplateMaxAggregateOutputType | null
+  }
+
+  export type NotificationTemplateMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    key: string | null
+    subject: string | null
+    bodyHtml: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationTemplateMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    key: string | null
+    subject: string | null
+    bodyHtml: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NotificationTemplateCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    key: number
+    subject: number
+    bodyHtml: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type NotificationTemplateMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    key?: true
+    subject?: true
+    bodyHtml?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationTemplateMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    key?: true
+    subject?: true
+    bodyHtml?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NotificationTemplateCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    key?: true
+    subject?: true
+    bodyHtml?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type NotificationTemplateAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationTemplate to aggregate.
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationTemplates to fetch.
+     */
+    orderBy?: NotificationTemplateOrderByWithRelationInput | NotificationTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NotificationTemplates
+    **/
+    _count?: true | NotificationTemplateCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationTemplateMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationTemplateMaxAggregateInputType
+  }
+
+  export type GetNotificationTemplateAggregateType<T extends NotificationTemplateAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotificationTemplate]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotificationTemplate[P]>
+      : GetScalarType<T[P], AggregateNotificationTemplate[P]>
+  }
+
+
+
+
+  export type NotificationTemplateGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationTemplateWhereInput
+    orderBy?: NotificationTemplateOrderByWithAggregationInput | NotificationTemplateOrderByWithAggregationInput[]
+    by: NotificationTemplateScalarFieldEnum[] | NotificationTemplateScalarFieldEnum
+    having?: NotificationTemplateScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationTemplateCountAggregateInputType | true
+    _min?: NotificationTemplateMinAggregateInputType
+    _max?: NotificationTemplateMaxAggregateInputType
+  }
+
+  export type NotificationTemplateGroupByOutputType = {
+    id: string
+    tenantId: string | null
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt: Date
+    updatedAt: Date
+    _count: NotificationTemplateCountAggregateOutputType | null
+    _min: NotificationTemplateMinAggregateOutputType | null
+    _max: NotificationTemplateMaxAggregateOutputType | null
+  }
+
+  type GetNotificationTemplateGroupByPayload<T extends NotificationTemplateGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationTemplateGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationTemplateGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationTemplateGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationTemplateGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationTemplateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    key?: boolean
+    subject?: boolean
+    bodyHtml?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationTemplate"]>
+
+  export type NotificationTemplateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    key?: boolean
+    subject?: boolean
+    bodyHtml?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationTemplate"]>
+
+  export type NotificationTemplateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    key?: boolean
+    subject?: boolean
+    bodyHtml?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }, ExtArgs["result"]["notificationTemplate"]>
+
+  export type NotificationTemplateSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    key?: boolean
+    subject?: boolean
+    bodyHtml?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type NotificationTemplateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "key" | "subject" | "bodyHtml" | "createdAt" | "updatedAt", ExtArgs["result"]["notificationTemplate"]>
+  export type NotificationTemplateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }
+  export type NotificationTemplateIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }
+  export type NotificationTemplateIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | NotificationTemplate$tenantArgs<ExtArgs>
+  }
+
+  export type $NotificationTemplatePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NotificationTemplate"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string | null
+      key: string
+      subject: string
+      bodyHtml: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["notificationTemplate"]>
+    composites: {}
+  }
+
+  type NotificationTemplateGetPayload<S extends boolean | null | undefined | NotificationTemplateDefaultArgs> = $Result.GetResult<Prisma.$NotificationTemplatePayload, S>
+
+  type NotificationTemplateCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NotificationTemplateFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NotificationTemplateCountAggregateInputType | true
+    }
+
+  export interface NotificationTemplateDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NotificationTemplate'], meta: { name: 'NotificationTemplate' } }
+    /**
+     * Find zero or one NotificationTemplate that matches the filter.
+     * @param {NotificationTemplateFindUniqueArgs} args - Arguments to find a NotificationTemplate
+     * @example
+     * // Get one NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationTemplateFindUniqueArgs>(args: SelectSubset<T, NotificationTemplateFindUniqueArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NotificationTemplate that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NotificationTemplateFindUniqueOrThrowArgs} args - Arguments to find a NotificationTemplate
+     * @example
+     * // Get one NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationTemplateFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationTemplateFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationTemplate that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateFindFirstArgs} args - Arguments to find a NotificationTemplate
+     * @example
+     * // Get one NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationTemplateFindFirstArgs>(args?: SelectSubset<T, NotificationTemplateFindFirstArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NotificationTemplate that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateFindFirstOrThrowArgs} args - Arguments to find a NotificationTemplate
+     * @example
+     * // Get one NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationTemplateFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationTemplateFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NotificationTemplates that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NotificationTemplates
+     * const notificationTemplates = await prisma.notificationTemplate.findMany()
+     * 
+     * // Get first 10 NotificationTemplates
+     * const notificationTemplates = await prisma.notificationTemplate.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationTemplateWithIdOnly = await prisma.notificationTemplate.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationTemplateFindManyArgs>(args?: SelectSubset<T, NotificationTemplateFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NotificationTemplate.
+     * @param {NotificationTemplateCreateArgs} args - Arguments to create a NotificationTemplate.
+     * @example
+     * // Create one NotificationTemplate
+     * const NotificationTemplate = await prisma.notificationTemplate.create({
+     *   data: {
+     *     // ... data to create a NotificationTemplate
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationTemplateCreateArgs>(args: SelectSubset<T, NotificationTemplateCreateArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NotificationTemplates.
+     * @param {NotificationTemplateCreateManyArgs} args - Arguments to create many NotificationTemplates.
+     * @example
+     * // Create many NotificationTemplates
+     * const notificationTemplate = await prisma.notificationTemplate.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationTemplateCreateManyArgs>(args?: SelectSubset<T, NotificationTemplateCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NotificationTemplates and returns the data saved in the database.
+     * @param {NotificationTemplateCreateManyAndReturnArgs} args - Arguments to create many NotificationTemplates.
+     * @example
+     * // Create many NotificationTemplates
+     * const notificationTemplate = await prisma.notificationTemplate.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NotificationTemplates and only return the `id`
+     * const notificationTemplateWithIdOnly = await prisma.notificationTemplate.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NotificationTemplateCreateManyAndReturnArgs>(args?: SelectSubset<T, NotificationTemplateCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NotificationTemplate.
+     * @param {NotificationTemplateDeleteArgs} args - Arguments to delete one NotificationTemplate.
+     * @example
+     * // Delete one NotificationTemplate
+     * const NotificationTemplate = await prisma.notificationTemplate.delete({
+     *   where: {
+     *     // ... filter to delete one NotificationTemplate
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationTemplateDeleteArgs>(args: SelectSubset<T, NotificationTemplateDeleteArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NotificationTemplate.
+     * @param {NotificationTemplateUpdateArgs} args - Arguments to update one NotificationTemplate.
+     * @example
+     * // Update one NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationTemplateUpdateArgs>(args: SelectSubset<T, NotificationTemplateUpdateArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NotificationTemplates.
+     * @param {NotificationTemplateDeleteManyArgs} args - Arguments to filter NotificationTemplates to delete.
+     * @example
+     * // Delete a few NotificationTemplates
+     * const { count } = await prisma.notificationTemplate.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationTemplateDeleteManyArgs>(args?: SelectSubset<T, NotificationTemplateDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NotificationTemplates
+     * const notificationTemplate = await prisma.notificationTemplate.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationTemplateUpdateManyArgs>(args: SelectSubset<T, NotificationTemplateUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NotificationTemplates and returns the data updated in the database.
+     * @param {NotificationTemplateUpdateManyAndReturnArgs} args - Arguments to update many NotificationTemplates.
+     * @example
+     * // Update many NotificationTemplates
+     * const notificationTemplate = await prisma.notificationTemplate.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NotificationTemplates and only return the `id`
+     * const notificationTemplateWithIdOnly = await prisma.notificationTemplate.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NotificationTemplateUpdateManyAndReturnArgs>(args: SelectSubset<T, NotificationTemplateUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NotificationTemplate.
+     * @param {NotificationTemplateUpsertArgs} args - Arguments to update or create a NotificationTemplate.
+     * @example
+     * // Update or create a NotificationTemplate
+     * const notificationTemplate = await prisma.notificationTemplate.upsert({
+     *   create: {
+     *     // ... data to create a NotificationTemplate
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NotificationTemplate we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationTemplateUpsertArgs>(args: SelectSubset<T, NotificationTemplateUpsertArgs<ExtArgs>>): Prisma__NotificationTemplateClient<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NotificationTemplates.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateCountArgs} args - Arguments to filter NotificationTemplates to count.
+     * @example
+     * // Count the number of NotificationTemplates
+     * const count = await prisma.notificationTemplate.count({
+     *   where: {
+     *     // ... the filter for the NotificationTemplates we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationTemplateCountArgs>(
+      args?: Subset<T, NotificationTemplateCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationTemplateCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NotificationTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationTemplateAggregateArgs>(args: Subset<T, NotificationTemplateAggregateArgs>): Prisma.PrismaPromise<GetNotificationTemplateAggregateType<T>>
+
+    /**
+     * Group by NotificationTemplate.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationTemplateGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationTemplateGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationTemplateGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationTemplateGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationTemplateGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationTemplateGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NotificationTemplate model
+   */
+  readonly fields: NotificationTemplateFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NotificationTemplate.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationTemplateClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends NotificationTemplate$tenantArgs<ExtArgs> = {}>(args?: Subset<T, NotificationTemplate$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NotificationTemplate model
+   */
+  interface NotificationTemplateFieldRefs {
+    readonly id: FieldRef<"NotificationTemplate", 'String'>
+    readonly tenantId: FieldRef<"NotificationTemplate", 'String'>
+    readonly key: FieldRef<"NotificationTemplate", 'String'>
+    readonly subject: FieldRef<"NotificationTemplate", 'String'>
+    readonly bodyHtml: FieldRef<"NotificationTemplate", 'String'>
+    readonly createdAt: FieldRef<"NotificationTemplate", 'DateTime'>
+    readonly updatedAt: FieldRef<"NotificationTemplate", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NotificationTemplate findUnique
+   */
+  export type NotificationTemplateFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationTemplate to fetch.
+     */
+    where: NotificationTemplateWhereUniqueInput
+  }
+
+  /**
+   * NotificationTemplate findUniqueOrThrow
+   */
+  export type NotificationTemplateFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationTemplate to fetch.
+     */
+    where: NotificationTemplateWhereUniqueInput
+  }
+
+  /**
+   * NotificationTemplate findFirst
+   */
+  export type NotificationTemplateFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationTemplate to fetch.
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationTemplates to fetch.
+     */
+    orderBy?: NotificationTemplateOrderByWithRelationInput | NotificationTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationTemplates.
+     */
+    cursor?: NotificationTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationTemplates.
+     */
+    distinct?: NotificationTemplateScalarFieldEnum | NotificationTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationTemplate findFirstOrThrow
+   */
+  export type NotificationTemplateFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationTemplate to fetch.
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationTemplates to fetch.
+     */
+    orderBy?: NotificationTemplateOrderByWithRelationInput | NotificationTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NotificationTemplates.
+     */
+    cursor?: NotificationTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationTemplates.
+     */
+    distinct?: NotificationTemplateScalarFieldEnum | NotificationTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationTemplate findMany
+   */
+  export type NotificationTemplateFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter, which NotificationTemplates to fetch.
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NotificationTemplates to fetch.
+     */
+    orderBy?: NotificationTemplateOrderByWithRelationInput | NotificationTemplateOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NotificationTemplates.
+     */
+    cursor?: NotificationTemplateWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NotificationTemplates from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NotificationTemplates.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NotificationTemplates.
+     */
+    distinct?: NotificationTemplateScalarFieldEnum | NotificationTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * NotificationTemplate create
+   */
+  export type NotificationTemplateCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to create a NotificationTemplate.
+     */
+    data: XOR<NotificationTemplateCreateInput, NotificationTemplateUncheckedCreateInput>
+  }
+
+  /**
+   * NotificationTemplate createMany
+   */
+  export type NotificationTemplateCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NotificationTemplates.
+     */
+    data: NotificationTemplateCreateManyInput | NotificationTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NotificationTemplate createManyAndReturn
+   */
+  export type NotificationTemplateCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * The data used to create many NotificationTemplates.
+     */
+    data: NotificationTemplateCreateManyInput | NotificationTemplateCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NotificationTemplate update
+   */
+  export type NotificationTemplateUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * The data needed to update a NotificationTemplate.
+     */
+    data: XOR<NotificationTemplateUpdateInput, NotificationTemplateUncheckedUpdateInput>
+    /**
+     * Choose, which NotificationTemplate to update.
+     */
+    where: NotificationTemplateWhereUniqueInput
+  }
+
+  /**
+   * NotificationTemplate updateMany
+   */
+  export type NotificationTemplateUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NotificationTemplates.
+     */
+    data: XOR<NotificationTemplateUpdateManyMutationInput, NotificationTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationTemplates to update
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * Limit how many NotificationTemplates to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationTemplate updateManyAndReturn
+   */
+  export type NotificationTemplateUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * The data used to update NotificationTemplates.
+     */
+    data: XOR<NotificationTemplateUpdateManyMutationInput, NotificationTemplateUncheckedUpdateManyInput>
+    /**
+     * Filter which NotificationTemplates to update
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * Limit how many NotificationTemplates to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NotificationTemplate upsert
+   */
+  export type NotificationTemplateUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * The filter to search for the NotificationTemplate to update in case it exists.
+     */
+    where: NotificationTemplateWhereUniqueInput
+    /**
+     * In case the NotificationTemplate found by the `where` argument doesn't exist, create a new NotificationTemplate with this data.
+     */
+    create: XOR<NotificationTemplateCreateInput, NotificationTemplateUncheckedCreateInput>
+    /**
+     * In case the NotificationTemplate was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationTemplateUpdateInput, NotificationTemplateUncheckedUpdateInput>
+  }
+
+  /**
+   * NotificationTemplate delete
+   */
+  export type NotificationTemplateDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+    /**
+     * Filter which NotificationTemplate to delete.
+     */
+    where: NotificationTemplateWhereUniqueInput
+  }
+
+  /**
+   * NotificationTemplate deleteMany
+   */
+  export type NotificationTemplateDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NotificationTemplates to delete
+     */
+    where?: NotificationTemplateWhereInput
+    /**
+     * Limit how many NotificationTemplates to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NotificationTemplate.tenant
+   */
+  export type NotificationTemplate$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    where?: TenantWhereInput
+  }
+
+  /**
+   * NotificationTemplate without action
+   */
+  export type NotificationTemplateDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NotificationTemplate
+     */
+    select?: NotificationTemplateSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NotificationTemplate
+     */
+    omit?: NotificationTemplateOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationTemplateInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -191313,7 +199826,8 @@ export namespace Prisma {
     formData: 'formData',
     status: 'status',
     dueDate: 'dueDate',
-    completedAt: 'completedAt'
+    completedAt: 'completedAt',
+    lastEscalatedAt: 'lastEscalatedAt'
   };
 
   export type ProcessUserTaskScalarFieldEnum = (typeof ProcessUserTaskScalarFieldEnum)[keyof typeof ProcessUserTaskScalarFieldEnum]
@@ -193271,6 +201785,103 @@ export namespace Prisma {
   export type WorkScheduleEnrollmentScalarFieldEnum = (typeof WorkScheduleEnrollmentScalarFieldEnum)[keyof typeof WorkScheduleEnrollmentScalarFieldEnum]
 
 
+  export const NotificationPreferenceScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    moduleType: 'moduleType',
+    channel: 'channel',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+  export const SavedFilterPresetScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    pageKey: 'pageKey',
+    name: 'name',
+    filters: 'filters',
+    createdAt: 'createdAt'
+  };
+
+  export type SavedFilterPresetScalarFieldEnum = (typeof SavedFilterPresetScalarFieldEnum)[keyof typeof SavedFilterPresetScalarFieldEnum]
+
+
+  export const AppChangelogScalarFieldEnum: {
+    id: 'id',
+    version: 'version',
+    title: 'title',
+    items: 'items',
+    publishedAt: 'publishedAt',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type AppChangelogScalarFieldEnum = (typeof AppChangelogScalarFieldEnum)[keyof typeof AppChangelogScalarFieldEnum]
+
+
+  export const SystemAnnouncementScalarFieldEnum: {
+    id: 'id',
+    message: 'message',
+    type: 'type',
+    targetRole: 'targetRole',
+    startAt: 'startAt',
+    endAt: 'endAt',
+    tenantId: 'tenantId',
+    createdById: 'createdById',
+    createdAt: 'createdAt'
+  };
+
+  export type SystemAnnouncementScalarFieldEnum = (typeof SystemAnnouncementScalarFieldEnum)[keyof typeof SystemAnnouncementScalarFieldEnum]
+
+
+  export const EmailLogScalarFieldEnum: {
+    id: 'id',
+    toEmail: 'toEmail',
+    subject: 'subject',
+    status: 'status',
+    module: 'module',
+    error: 'error',
+    sentAt: 'sentAt',
+    tenantId: 'tenantId',
+    createdAt: 'createdAt'
+  };
+
+  export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
+
+
+  export const ApiKeyScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    keyPrefix: 'keyPrefix',
+    keyHash: 'keyHash',
+    scopes: 'scopes',
+    expiresAt: 'expiresAt',
+    lastUsedAt: 'lastUsedAt',
+    isActive: 'isActive',
+    createdById: 'createdById',
+    tenantId: 'tenantId',
+    createdAt: 'createdAt'
+  };
+
+  export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+
+
+  export const NotificationTemplateScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    key: 'key',
+    subject: 'subject',
+    bodyHtml: 'bodyHtml',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type NotificationTemplateScalarFieldEnum = (typeof NotificationTemplateScalarFieldEnum)[keyof typeof NotificationTemplateScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -194659,6 +203270,20 @@ export namespace Prisma {
    */
   export type ListEnumShiftTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShiftType[]'>
     
+
+
+  /**
+   * Reference to a field of type 'NotificationChannel'
+   */
+  export type EnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel'>
+    
+
+
+  /**
+   * Reference to a field of type 'NotificationChannel[]'
+   */
+  export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel[]'>
+    
   /**
    * Deep Input Types
    */
@@ -194726,6 +203351,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalListRelationFilter
     leadFollowUpSchedules?: LeadFollowUpScheduleListRelationFilter
     customerSurveySchedules?: CustomerSurveyScheduleListRelationFilter
+    notificationPreferences?: NotificationPreferenceListRelationFilter
+    savedFilterPresets?: SavedFilterPresetListRelationFilter
+    apiKeys?: ApiKeyListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -194787,6 +203415,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalOrderByRelationAggregateInput
     leadFollowUpSchedules?: LeadFollowUpScheduleOrderByRelationAggregateInput
     customerSurveySchedules?: CustomerSurveyScheduleOrderByRelationAggregateInput
+    notificationPreferences?: NotificationPreferenceOrderByRelationAggregateInput
+    savedFilterPresets?: SavedFilterPresetOrderByRelationAggregateInput
+    apiKeys?: ApiKeyOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -194851,6 +203482,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalListRelationFilter
     leadFollowUpSchedules?: LeadFollowUpScheduleListRelationFilter
     customerSurveySchedules?: CustomerSurveyScheduleListRelationFilter
+    notificationPreferences?: NotificationPreferenceListRelationFilter
+    savedFilterPresets?: SavedFilterPresetListRelationFilter
+    apiKeys?: ApiKeyListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -196882,6 +205516,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFilter<"ProcessUserTask"> | $Enums.UserTaskStatus
     dueDate?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
+    lastEscalatedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
     assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     instance?: XOR<ProcessInstanceScalarRelationFilter, ProcessInstanceWhereInput>
   }
@@ -196897,6 +205532,7 @@ export namespace Prisma {
     status?: SortOrder
     dueDate?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
+    lastEscalatedAt?: SortOrderInput | SortOrder
     assignee?: UserOrderByWithRelationInput
     instance?: ProcessInstanceOrderByWithRelationInput
   }
@@ -196915,6 +205551,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFilter<"ProcessUserTask"> | $Enums.UserTaskStatus
     dueDate?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
+    lastEscalatedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
     assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     instance?: XOR<ProcessInstanceScalarRelationFilter, ProcessInstanceWhereInput>
   }, "id">
@@ -196930,6 +205567,7 @@ export namespace Prisma {
     status?: SortOrder
     dueDate?: SortOrderInput | SortOrder
     completedAt?: SortOrderInput | SortOrder
+    lastEscalatedAt?: SortOrderInput | SortOrder
     _count?: ProcessUserTaskCountOrderByAggregateInput
     _max?: ProcessUserTaskMaxOrderByAggregateInput
     _min?: ProcessUserTaskMinOrderByAggregateInput
@@ -196949,6 +205587,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusWithAggregatesFilter<"ProcessUserTask"> | $Enums.UserTaskStatus
     dueDate?: DateTimeNullableWithAggregatesFilter<"ProcessUserTask"> | Date | string | null
     completedAt?: DateTimeNullableWithAggregatesFilter<"ProcessUserTask"> | Date | string | null
+    lastEscalatedAt?: DateTimeNullableWithAggregatesFilter<"ProcessUserTask"> | Date | string | null
   }
 
   export type ProcessActivityLogWhereInput = {
@@ -205676,6 +214315,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalListRelationFilter
     leadFollowUps?: LeadFollowUpScheduleListRelationFilter
     customerSurveys?: CustomerSurveyScheduleListRelationFilter
+    announcements?: SystemAnnouncementListRelationFilter
+    apiKeys?: ApiKeyListRelationFilter
+    notifTemplates?: NotificationTemplateListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -205730,6 +214372,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalOrderByRelationAggregateInput
     leadFollowUps?: LeadFollowUpScheduleOrderByRelationAggregateInput
     customerSurveys?: CustomerSurveyScheduleOrderByRelationAggregateInput
+    announcements?: SystemAnnouncementOrderByRelationAggregateInput
+    apiKeys?: ApiKeyOrderByRelationAggregateInput
+    notifTemplates?: NotificationTemplateOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -205787,6 +214432,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalListRelationFilter
     leadFollowUps?: LeadFollowUpScheduleListRelationFilter
     customerSurveys?: CustomerSurveyScheduleListRelationFilter
+    announcements?: SystemAnnouncementListRelationFilter
+    apiKeys?: ApiKeyListRelationFilter
+    notifTemplates?: NotificationTemplateListRelationFilter
   }, "id" | "slug">
 
   export type TenantOrderByWithAggregationInput = {
@@ -207467,6 +216115,490 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"WorkScheduleEnrollment"> | Date | string
   }
 
+  export type NotificationPreferenceWhereInput = {
+    AND?: NotificationPreferenceWhereInput | NotificationPreferenceWhereInput[]
+    OR?: NotificationPreferenceWhereInput[]
+    NOT?: NotificationPreferenceWhereInput | NotificationPreferenceWhereInput[]
+    id?: StringFilter<"NotificationPreference"> | string
+    userId?: StringFilter<"NotificationPreference"> | string
+    moduleType?: StringFilter<"NotificationPreference"> | string
+    channel?: EnumNotificationChannelFilter<"NotificationPreference"> | $Enums.NotificationChannel
+    createdAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type NotificationPreferenceOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    moduleType?: SortOrder
+    channel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_moduleType?: NotificationPreferenceUserIdModuleTypeCompoundUniqueInput
+    AND?: NotificationPreferenceWhereInput | NotificationPreferenceWhereInput[]
+    OR?: NotificationPreferenceWhereInput[]
+    NOT?: NotificationPreferenceWhereInput | NotificationPreferenceWhereInput[]
+    userId?: StringFilter<"NotificationPreference"> | string
+    moduleType?: StringFilter<"NotificationPreference"> | string
+    channel?: EnumNotificationChannelFilter<"NotificationPreference"> | $Enums.NotificationChannel
+    createdAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_moduleType">
+
+  export type NotificationPreferenceOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    moduleType?: SortOrder
+    channel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: NotificationPreferenceCountOrderByAggregateInput
+    _max?: NotificationPreferenceMaxOrderByAggregateInput
+    _min?: NotificationPreferenceMinOrderByAggregateInput
+  }
+
+  export type NotificationPreferenceScalarWhereWithAggregatesInput = {
+    AND?: NotificationPreferenceScalarWhereWithAggregatesInput | NotificationPreferenceScalarWhereWithAggregatesInput[]
+    OR?: NotificationPreferenceScalarWhereWithAggregatesInput[]
+    NOT?: NotificationPreferenceScalarWhereWithAggregatesInput | NotificationPreferenceScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NotificationPreference"> | string
+    userId?: StringWithAggregatesFilter<"NotificationPreference"> | string
+    moduleType?: StringWithAggregatesFilter<"NotificationPreference"> | string
+    channel?: EnumNotificationChannelWithAggregatesFilter<"NotificationPreference"> | $Enums.NotificationChannel
+    createdAt?: DateTimeWithAggregatesFilter<"NotificationPreference"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"NotificationPreference"> | Date | string
+  }
+
+  export type SavedFilterPresetWhereInput = {
+    AND?: SavedFilterPresetWhereInput | SavedFilterPresetWhereInput[]
+    OR?: SavedFilterPresetWhereInput[]
+    NOT?: SavedFilterPresetWhereInput | SavedFilterPresetWhereInput[]
+    id?: StringFilter<"SavedFilterPreset"> | string
+    userId?: StringFilter<"SavedFilterPreset"> | string
+    pageKey?: StringFilter<"SavedFilterPreset"> | string
+    name?: StringFilter<"SavedFilterPreset"> | string
+    filters?: JsonFilter<"SavedFilterPreset">
+    createdAt?: DateTimeFilter<"SavedFilterPreset"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SavedFilterPresetOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    pageKey?: SortOrder
+    name?: SortOrder
+    filters?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SavedFilterPresetWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SavedFilterPresetWhereInput | SavedFilterPresetWhereInput[]
+    OR?: SavedFilterPresetWhereInput[]
+    NOT?: SavedFilterPresetWhereInput | SavedFilterPresetWhereInput[]
+    userId?: StringFilter<"SavedFilterPreset"> | string
+    pageKey?: StringFilter<"SavedFilterPreset"> | string
+    name?: StringFilter<"SavedFilterPreset"> | string
+    filters?: JsonFilter<"SavedFilterPreset">
+    createdAt?: DateTimeFilter<"SavedFilterPreset"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type SavedFilterPresetOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    pageKey?: SortOrder
+    name?: SortOrder
+    filters?: SortOrder
+    createdAt?: SortOrder
+    _count?: SavedFilterPresetCountOrderByAggregateInput
+    _max?: SavedFilterPresetMaxOrderByAggregateInput
+    _min?: SavedFilterPresetMinOrderByAggregateInput
+  }
+
+  export type SavedFilterPresetScalarWhereWithAggregatesInput = {
+    AND?: SavedFilterPresetScalarWhereWithAggregatesInput | SavedFilterPresetScalarWhereWithAggregatesInput[]
+    OR?: SavedFilterPresetScalarWhereWithAggregatesInput[]
+    NOT?: SavedFilterPresetScalarWhereWithAggregatesInput | SavedFilterPresetScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SavedFilterPreset"> | string
+    userId?: StringWithAggregatesFilter<"SavedFilterPreset"> | string
+    pageKey?: StringWithAggregatesFilter<"SavedFilterPreset"> | string
+    name?: StringWithAggregatesFilter<"SavedFilterPreset"> | string
+    filters?: JsonWithAggregatesFilter<"SavedFilterPreset">
+    createdAt?: DateTimeWithAggregatesFilter<"SavedFilterPreset"> | Date | string
+  }
+
+  export type AppChangelogWhereInput = {
+    AND?: AppChangelogWhereInput | AppChangelogWhereInput[]
+    OR?: AppChangelogWhereInput[]
+    NOT?: AppChangelogWhereInput | AppChangelogWhereInput[]
+    id?: StringFilter<"AppChangelog"> | string
+    version?: StringFilter<"AppChangelog"> | string
+    title?: StringFilter<"AppChangelog"> | string
+    items?: JsonFilter<"AppChangelog">
+    publishedAt?: DateTimeFilter<"AppChangelog"> | Date | string
+    createdById?: StringNullableFilter<"AppChangelog"> | string | null
+    createdAt?: DateTimeFilter<"AppChangelog"> | Date | string
+  }
+
+  export type AppChangelogOrderByWithRelationInput = {
+    id?: SortOrder
+    version?: SortOrder
+    title?: SortOrder
+    items?: SortOrder
+    publishedAt?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AppChangelogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AppChangelogWhereInput | AppChangelogWhereInput[]
+    OR?: AppChangelogWhereInput[]
+    NOT?: AppChangelogWhereInput | AppChangelogWhereInput[]
+    version?: StringFilter<"AppChangelog"> | string
+    title?: StringFilter<"AppChangelog"> | string
+    items?: JsonFilter<"AppChangelog">
+    publishedAt?: DateTimeFilter<"AppChangelog"> | Date | string
+    createdById?: StringNullableFilter<"AppChangelog"> | string | null
+    createdAt?: DateTimeFilter<"AppChangelog"> | Date | string
+  }, "id">
+
+  export type AppChangelogOrderByWithAggregationInput = {
+    id?: SortOrder
+    version?: SortOrder
+    title?: SortOrder
+    items?: SortOrder
+    publishedAt?: SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AppChangelogCountOrderByAggregateInput
+    _max?: AppChangelogMaxOrderByAggregateInput
+    _min?: AppChangelogMinOrderByAggregateInput
+  }
+
+  export type AppChangelogScalarWhereWithAggregatesInput = {
+    AND?: AppChangelogScalarWhereWithAggregatesInput | AppChangelogScalarWhereWithAggregatesInput[]
+    OR?: AppChangelogScalarWhereWithAggregatesInput[]
+    NOT?: AppChangelogScalarWhereWithAggregatesInput | AppChangelogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AppChangelog"> | string
+    version?: StringWithAggregatesFilter<"AppChangelog"> | string
+    title?: StringWithAggregatesFilter<"AppChangelog"> | string
+    items?: JsonWithAggregatesFilter<"AppChangelog">
+    publishedAt?: DateTimeWithAggregatesFilter<"AppChangelog"> | Date | string
+    createdById?: StringNullableWithAggregatesFilter<"AppChangelog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AppChangelog"> | Date | string
+  }
+
+  export type SystemAnnouncementWhereInput = {
+    AND?: SystemAnnouncementWhereInput | SystemAnnouncementWhereInput[]
+    OR?: SystemAnnouncementWhereInput[]
+    NOT?: SystemAnnouncementWhereInput | SystemAnnouncementWhereInput[]
+    id?: StringFilter<"SystemAnnouncement"> | string
+    message?: StringFilter<"SystemAnnouncement"> | string
+    type?: StringFilter<"SystemAnnouncement"> | string
+    targetRole?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    startAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+    endAt?: DateTimeNullableFilter<"SystemAnnouncement"> | Date | string | null
+    tenantId?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdById?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }
+
+  export type SystemAnnouncementOrderByWithRelationInput = {
+    id?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    targetRole?: SortOrderInput | SortOrder
+    startAt?: SortOrder
+    endAt?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+  }
+
+  export type SystemAnnouncementWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SystemAnnouncementWhereInput | SystemAnnouncementWhereInput[]
+    OR?: SystemAnnouncementWhereInput[]
+    NOT?: SystemAnnouncementWhereInput | SystemAnnouncementWhereInput[]
+    message?: StringFilter<"SystemAnnouncement"> | string
+    type?: StringFilter<"SystemAnnouncement"> | string
+    targetRole?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    startAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+    endAt?: DateTimeNullableFilter<"SystemAnnouncement"> | Date | string | null
+    tenantId?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdById?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }, "id">
+
+  export type SystemAnnouncementOrderByWithAggregationInput = {
+    id?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    targetRole?: SortOrderInput | SortOrder
+    startAt?: SortOrder
+    endAt?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: SystemAnnouncementCountOrderByAggregateInput
+    _max?: SystemAnnouncementMaxOrderByAggregateInput
+    _min?: SystemAnnouncementMinOrderByAggregateInput
+  }
+
+  export type SystemAnnouncementScalarWhereWithAggregatesInput = {
+    AND?: SystemAnnouncementScalarWhereWithAggregatesInput | SystemAnnouncementScalarWhereWithAggregatesInput[]
+    OR?: SystemAnnouncementScalarWhereWithAggregatesInput[]
+    NOT?: SystemAnnouncementScalarWhereWithAggregatesInput | SystemAnnouncementScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SystemAnnouncement"> | string
+    message?: StringWithAggregatesFilter<"SystemAnnouncement"> | string
+    type?: StringWithAggregatesFilter<"SystemAnnouncement"> | string
+    targetRole?: StringNullableWithAggregatesFilter<"SystemAnnouncement"> | string | null
+    startAt?: DateTimeWithAggregatesFilter<"SystemAnnouncement"> | Date | string
+    endAt?: DateTimeNullableWithAggregatesFilter<"SystemAnnouncement"> | Date | string | null
+    tenantId?: StringNullableWithAggregatesFilter<"SystemAnnouncement"> | string | null
+    createdById?: StringNullableWithAggregatesFilter<"SystemAnnouncement"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SystemAnnouncement"> | Date | string
+  }
+
+  export type EmailLogWhereInput = {
+    AND?: EmailLogWhereInput | EmailLogWhereInput[]
+    OR?: EmailLogWhereInput[]
+    NOT?: EmailLogWhereInput | EmailLogWhereInput[]
+    id?: StringFilter<"EmailLog"> | string
+    toEmail?: StringFilter<"EmailLog"> | string
+    subject?: StringFilter<"EmailLog"> | string
+    status?: StringFilter<"EmailLog"> | string
+    module?: StringNullableFilter<"EmailLog"> | string | null
+    error?: StringNullableFilter<"EmailLog"> | string | null
+    sentAt?: DateTimeNullableFilter<"EmailLog"> | Date | string | null
+    tenantId?: StringNullableFilter<"EmailLog"> | string | null
+    createdAt?: DateTimeFilter<"EmailLog"> | Date | string
+  }
+
+  export type EmailLogOrderByWithRelationInput = {
+    id?: SortOrder
+    toEmail?: SortOrder
+    subject?: SortOrder
+    status?: SortOrder
+    module?: SortOrderInput | SortOrder
+    error?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: EmailLogWhereInput | EmailLogWhereInput[]
+    OR?: EmailLogWhereInput[]
+    NOT?: EmailLogWhereInput | EmailLogWhereInput[]
+    toEmail?: StringFilter<"EmailLog"> | string
+    subject?: StringFilter<"EmailLog"> | string
+    status?: StringFilter<"EmailLog"> | string
+    module?: StringNullableFilter<"EmailLog"> | string | null
+    error?: StringNullableFilter<"EmailLog"> | string | null
+    sentAt?: DateTimeNullableFilter<"EmailLog"> | Date | string | null
+    tenantId?: StringNullableFilter<"EmailLog"> | string | null
+    createdAt?: DateTimeFilter<"EmailLog"> | Date | string
+  }, "id">
+
+  export type EmailLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    toEmail?: SortOrder
+    subject?: SortOrder
+    status?: SortOrder
+    module?: SortOrderInput | SortOrder
+    error?: SortOrderInput | SortOrder
+    sentAt?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: EmailLogCountOrderByAggregateInput
+    _max?: EmailLogMaxOrderByAggregateInput
+    _min?: EmailLogMinOrderByAggregateInput
+  }
+
+  export type EmailLogScalarWhereWithAggregatesInput = {
+    AND?: EmailLogScalarWhereWithAggregatesInput | EmailLogScalarWhereWithAggregatesInput[]
+    OR?: EmailLogScalarWhereWithAggregatesInput[]
+    NOT?: EmailLogScalarWhereWithAggregatesInput | EmailLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"EmailLog"> | string
+    toEmail?: StringWithAggregatesFilter<"EmailLog"> | string
+    subject?: StringWithAggregatesFilter<"EmailLog"> | string
+    status?: StringWithAggregatesFilter<"EmailLog"> | string
+    module?: StringNullableWithAggregatesFilter<"EmailLog"> | string | null
+    error?: StringNullableWithAggregatesFilter<"EmailLog"> | string | null
+    sentAt?: DateTimeNullableWithAggregatesFilter<"EmailLog"> | Date | string | null
+    tenantId?: StringNullableWithAggregatesFilter<"EmailLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"EmailLog"> | Date | string
+  }
+
+  export type ApiKeyWhereInput = {
+    AND?: ApiKeyWhereInput | ApiKeyWhereInput[]
+    OR?: ApiKeyWhereInput[]
+    NOT?: ApiKeyWhereInput | ApiKeyWhereInput[]
+    id?: StringFilter<"ApiKey"> | string
+    name?: StringFilter<"ApiKey"> | string
+    keyPrefix?: StringFilter<"ApiKey"> | string
+    keyHash?: StringFilter<"ApiKey"> | string
+    scopes?: StringNullableListFilter<"ApiKey">
+    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    isActive?: BoolFilter<"ApiKey"> | boolean
+    createdById?: StringFilter<"ApiKey"> | string
+    tenantId?: StringNullableFilter<"ApiKey"> | string | null
+    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }
+
+  export type ApiKeyOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    keyPrefix?: SortOrder
+    keyHash?: SortOrder
+    scopes?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdById?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    createdBy?: UserOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
+  }
+
+  export type ApiKeyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    keyHash?: string
+    AND?: ApiKeyWhereInput | ApiKeyWhereInput[]
+    OR?: ApiKeyWhereInput[]
+    NOT?: ApiKeyWhereInput | ApiKeyWhereInput[]
+    name?: StringFilter<"ApiKey"> | string
+    keyPrefix?: StringFilter<"ApiKey"> | string
+    scopes?: StringNullableListFilter<"ApiKey">
+    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    isActive?: BoolFilter<"ApiKey"> | boolean
+    createdById?: StringFilter<"ApiKey"> | string
+    tenantId?: StringNullableFilter<"ApiKey"> | string | null
+    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }, "id" | "keyHash">
+
+  export type ApiKeyOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    keyPrefix?: SortOrder
+    keyHash?: SortOrder
+    scopes?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdById?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: ApiKeyCountOrderByAggregateInput
+    _max?: ApiKeyMaxOrderByAggregateInput
+    _min?: ApiKeyMinOrderByAggregateInput
+  }
+
+  export type ApiKeyScalarWhereWithAggregatesInput = {
+    AND?: ApiKeyScalarWhereWithAggregatesInput | ApiKeyScalarWhereWithAggregatesInput[]
+    OR?: ApiKeyScalarWhereWithAggregatesInput[]
+    NOT?: ApiKeyScalarWhereWithAggregatesInput | ApiKeyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ApiKey"> | string
+    name?: StringWithAggregatesFilter<"ApiKey"> | string
+    keyPrefix?: StringWithAggregatesFilter<"ApiKey"> | string
+    keyHash?: StringWithAggregatesFilter<"ApiKey"> | string
+    scopes?: StringNullableListFilter<"ApiKey">
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
+    lastUsedAt?: DateTimeNullableWithAggregatesFilter<"ApiKey"> | Date | string | null
+    isActive?: BoolWithAggregatesFilter<"ApiKey"> | boolean
+    createdById?: StringWithAggregatesFilter<"ApiKey"> | string
+    tenantId?: StringNullableWithAggregatesFilter<"ApiKey"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ApiKey"> | Date | string
+  }
+
+  export type NotificationTemplateWhereInput = {
+    AND?: NotificationTemplateWhereInput | NotificationTemplateWhereInput[]
+    OR?: NotificationTemplateWhereInput[]
+    NOT?: NotificationTemplateWhereInput | NotificationTemplateWhereInput[]
+    id?: StringFilter<"NotificationTemplate"> | string
+    tenantId?: StringNullableFilter<"NotificationTemplate"> | string | null
+    key?: StringFilter<"NotificationTemplate"> | string
+    subject?: StringFilter<"NotificationTemplate"> | string
+    bodyHtml?: StringFilter<"NotificationTemplate"> | string
+    createdAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }
+
+  export type NotificationTemplateOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    key?: SortOrder
+    subject?: SortOrder
+    bodyHtml?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+  }
+
+  export type NotificationTemplateWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId_key?: NotificationTemplateTenantIdKeyCompoundUniqueInput
+    AND?: NotificationTemplateWhereInput | NotificationTemplateWhereInput[]
+    OR?: NotificationTemplateWhereInput[]
+    NOT?: NotificationTemplateWhereInput | NotificationTemplateWhereInput[]
+    tenantId?: StringNullableFilter<"NotificationTemplate"> | string | null
+    key?: StringFilter<"NotificationTemplate"> | string
+    subject?: StringFilter<"NotificationTemplate"> | string
+    bodyHtml?: StringFilter<"NotificationTemplate"> | string
+    createdAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }, "id" | "tenantId_key">
+
+  export type NotificationTemplateOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    key?: SortOrder
+    subject?: SortOrder
+    bodyHtml?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: NotificationTemplateCountOrderByAggregateInput
+    _max?: NotificationTemplateMaxOrderByAggregateInput
+    _min?: NotificationTemplateMinOrderByAggregateInput
+  }
+
+  export type NotificationTemplateScalarWhereWithAggregatesInput = {
+    AND?: NotificationTemplateScalarWhereWithAggregatesInput | NotificationTemplateScalarWhereWithAggregatesInput[]
+    OR?: NotificationTemplateScalarWhereWithAggregatesInput[]
+    NOT?: NotificationTemplateScalarWhereWithAggregatesInput | NotificationTemplateScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NotificationTemplate"> | string
+    tenantId?: StringNullableWithAggregatesFilter<"NotificationTemplate"> | string | null
+    key?: StringWithAggregatesFilter<"NotificationTemplate"> | string
+    subject?: StringWithAggregatesFilter<"NotificationTemplate"> | string
+    bodyHtml?: StringWithAggregatesFilter<"NotificationTemplate"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"NotificationTemplate"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"NotificationTemplate"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -207524,6 +216656,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -207583,6 +216718,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUpdateInput = {
@@ -207642,6 +216780,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -207701,6 +216842,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -209926,6 +219070,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
     assignee?: UserCreateNestedOneWithoutAssignedProcessTasksInput
     instance: ProcessInstanceCreateNestedOneWithoutUserTasksInput
   }
@@ -209941,6 +219086,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type ProcessUserTaskUpdateInput = {
@@ -209952,6 +219098,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignee?: UserUpdateOneWithoutAssignedProcessTasksNestedInput
     instance?: ProcessInstanceUpdateOneRequiredWithoutUserTasksNestedInput
   }
@@ -209967,6 +219114,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProcessUserTaskCreateManyInput = {
@@ -209980,6 +219128,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type ProcessUserTaskUpdateManyMutationInput = {
@@ -209991,6 +219140,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProcessUserTaskUncheckedUpdateManyInput = {
@@ -210004,6 +219154,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProcessActivityLogCreateInput = {
@@ -219418,6 +228569,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -219472,6 +228626,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -219526,6 +228683,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -219580,6 +228740,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -221440,6 +230603,532 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type NotificationPreferenceCreateInput = {
+    id?: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationPreferencesInput
+  }
+
+  export type NotificationPreferenceUncheckedCreateInput = {
+    id?: string
+    userId: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationPreferencesNestedInput
+  }
+
+  export type NotificationPreferenceUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationPreferenceCreateManyInput = {
+    id?: string
+    userId: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationPreferenceUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetCreateInput = {
+    id?: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSavedFilterPresetsInput
+  }
+
+  export type SavedFilterPresetUncheckedCreateInput = {
+    id?: string
+    userId: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type SavedFilterPresetUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSavedFilterPresetsNestedInput
+  }
+
+  export type SavedFilterPresetUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetCreateManyInput = {
+    id?: string
+    userId: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type SavedFilterPresetUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppChangelogCreateInput = {
+    id?: string
+    version: string
+    title: string
+    items: JsonNullValueInput | InputJsonValue
+    publishedAt: Date | string
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AppChangelogUncheckedCreateInput = {
+    id?: string
+    version: string
+    title: string
+    items: JsonNullValueInput | InputJsonValue
+    publishedAt: Date | string
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AppChangelogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    items?: JsonNullValueInput | InputJsonValue
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppChangelogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    items?: JsonNullValueInput | InputJsonValue
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppChangelogCreateManyInput = {
+    id?: string
+    version: string
+    title: string
+    items: JsonNullValueInput | InputJsonValue
+    publishedAt: Date | string
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AppChangelogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    items?: JsonNullValueInput | InputJsonValue
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AppChangelogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    version?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    items?: JsonNullValueInput | InputJsonValue
+    publishedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementCreateInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    createdById?: string | null
+    createdAt?: Date | string
+    tenant?: TenantCreateNestedOneWithoutAnnouncementsInput
+  }
+
+  export type SystemAnnouncementUncheckedCreateInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    tenantId?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SystemAnnouncementUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneWithoutAnnouncementsNestedInput
+  }
+
+  export type SystemAnnouncementUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementCreateManyInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    tenantId?: string | null
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SystemAnnouncementUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailLogCreateInput = {
+    id?: string
+    toEmail: string
+    subject: string
+    status?: string
+    module?: string | null
+    error?: string | null
+    sentAt?: Date | string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailLogUncheckedCreateInput = {
+    id?: string
+    toEmail: string
+    subject: string
+    status?: string
+    module?: string | null
+    error?: string | null
+    sentAt?: Date | string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toEmail?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    module?: NullableStringFieldUpdateOperationsInput | string | null
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toEmail?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    module?: NullableStringFieldUpdateOperationsInput | string | null
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailLogCreateManyInput = {
+    id?: string
+    toEmail: string
+    subject: string
+    status?: string
+    module?: string | null
+    error?: string | null
+    sentAt?: Date | string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type EmailLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toEmail?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    module?: NullableStringFieldUpdateOperationsInput | string | null
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type EmailLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toEmail?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    module?: NullableStringFieldUpdateOperationsInput | string | null
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    sentAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyCreateInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutApiKeysInput
+    tenant?: TenantCreateNestedOneWithoutApiKeysInput
+  }
+
+  export type ApiKeyUncheckedCreateInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdById: string
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutApiKeysNestedInput
+    tenant?: TenantUpdateOneWithoutApiKeysNestedInput
+  }
+
+  export type ApiKeyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdById?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyCreateManyInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdById: string
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdById?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateCreateInput = {
+    id?: string
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenant?: TenantCreateNestedOneWithoutNotifTemplatesInput
+  }
+
+  export type NotificationTemplateUncheckedCreateInput = {
+    id?: string
+    tenantId?: string | null
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationTemplateUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneWithoutNotifTemplatesNestedInput
+  }
+
+  export type NotificationTemplateUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateCreateManyInput = {
+    id?: string
+    tenantId?: string | null
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationTemplateUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -221730,6 +231419,24 @@ export namespace Prisma {
     none?: CustomerSurveyScheduleWhereInput
   }
 
+  export type NotificationPreferenceListRelationFilter = {
+    every?: NotificationPreferenceWhereInput
+    some?: NotificationPreferenceWhereInput
+    none?: NotificationPreferenceWhereInput
+  }
+
+  export type SavedFilterPresetListRelationFilter = {
+    every?: SavedFilterPresetWhereInput
+    some?: SavedFilterPresetWhereInput
+    none?: SavedFilterPresetWhereInput
+  }
+
+  export type ApiKeyListRelationFilter = {
+    every?: ApiKeyWhereInput
+    some?: ApiKeyWhereInput
+    none?: ApiKeyWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -221880,6 +231587,18 @@ export namespace Prisma {
   }
 
   export type CustomerSurveyScheduleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificationPreferenceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SavedFilterPresetOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ApiKeyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -223984,6 +233703,7 @@ export namespace Prisma {
     status?: SortOrder
     dueDate?: SortOrder
     completedAt?: SortOrder
+    lastEscalatedAt?: SortOrder
   }
 
   export type ProcessUserTaskMaxOrderByAggregateInput = {
@@ -223995,6 +233715,7 @@ export namespace Prisma {
     status?: SortOrder
     dueDate?: SortOrder
     completedAt?: SortOrder
+    lastEscalatedAt?: SortOrder
   }
 
   export type ProcessUserTaskMinOrderByAggregateInput = {
@@ -224006,6 +233727,7 @@ export namespace Prisma {
     status?: SortOrder
     dueDate?: SortOrder
     completedAt?: SortOrder
+    lastEscalatedAt?: SortOrder
   }
 
   export type EnumUserTaskStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -230413,6 +240135,18 @@ export namespace Prisma {
     none?: VendorWhereInput
   }
 
+  export type SystemAnnouncementListRelationFilter = {
+    every?: SystemAnnouncementWhereInput
+    some?: SystemAnnouncementWhereInput
+    none?: SystemAnnouncementWhereInput
+  }
+
+  export type NotificationTemplateListRelationFilter = {
+    every?: NotificationTemplateWhereInput
+    some?: NotificationTemplateWhereInput
+    none?: NotificationTemplateWhereInput
+  }
+
   export type CustomerOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -230422,6 +240156,14 @@ export namespace Prisma {
   }
 
   export type VendorOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SystemAnnouncementOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NotificationTemplateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -231645,6 +241387,255 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumNotificationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelFilter<$PrismaModel> | $Enums.NotificationChannel
+  }
+
+  export type NotificationPreferenceUserIdModuleTypeCompoundUniqueInput = {
+    userId: string
+    moduleType: string
+  }
+
+  export type NotificationPreferenceCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    moduleType?: SortOrder
+    channel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationPreferenceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    moduleType?: SortOrder
+    channel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationPreferenceMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    moduleType?: SortOrder
+    channel?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumNotificationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel> | $Enums.NotificationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationChannelFilter<$PrismaModel>
+    _max?: NestedEnumNotificationChannelFilter<$PrismaModel>
+  }
+
+  export type SavedFilterPresetCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    pageKey?: SortOrder
+    name?: SortOrder
+    filters?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SavedFilterPresetMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    pageKey?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SavedFilterPresetMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    pageKey?: SortOrder
+    name?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AppChangelogCountOrderByAggregateInput = {
+    id?: SortOrder
+    version?: SortOrder
+    title?: SortOrder
+    items?: SortOrder
+    publishedAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AppChangelogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    version?: SortOrder
+    title?: SortOrder
+    publishedAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AppChangelogMinOrderByAggregateInput = {
+    id?: SortOrder
+    version?: SortOrder
+    title?: SortOrder
+    publishedAt?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SystemAnnouncementCountOrderByAggregateInput = {
+    id?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    targetRole?: SortOrder
+    startAt?: SortOrder
+    endAt?: SortOrder
+    tenantId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SystemAnnouncementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    targetRole?: SortOrder
+    startAt?: SortOrder
+    endAt?: SortOrder
+    tenantId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SystemAnnouncementMinOrderByAggregateInput = {
+    id?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    targetRole?: SortOrder
+    startAt?: SortOrder
+    endAt?: SortOrder
+    tenantId?: SortOrder
+    createdById?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    toEmail?: SortOrder
+    subject?: SortOrder
+    status?: SortOrder
+    module?: SortOrder
+    error?: SortOrder
+    sentAt?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    toEmail?: SortOrder
+    subject?: SortOrder
+    status?: SortOrder
+    module?: SortOrder
+    error?: SortOrder
+    sentAt?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EmailLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    toEmail?: SortOrder
+    subject?: SortOrder
+    status?: SortOrder
+    module?: SortOrder
+    error?: SortOrder
+    sentAt?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ApiKeyCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    keyPrefix?: SortOrder
+    keyHash?: SortOrder
+    scopes?: SortOrder
+    expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
+    isActive?: SortOrder
+    createdById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ApiKeyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    keyPrefix?: SortOrder
+    keyHash?: SortOrder
+    expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
+    isActive?: SortOrder
+    createdById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ApiKeyMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    keyPrefix?: SortOrder
+    keyHash?: SortOrder
+    expiresAt?: SortOrder
+    lastUsedAt?: SortOrder
+    isActive?: SortOrder
+    createdById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationTemplateTenantIdKeyCompoundUniqueInput = {
+    tenantId: string
+    key: string
+  }
+
+  export type NotificationTemplateCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    key?: SortOrder
+    subject?: SortOrder
+    bodyHtml?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationTemplateMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    key?: SortOrder
+    subject?: SortOrder
+    bodyHtml?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NotificationTemplateMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    key?: SortOrder
+    subject?: SortOrder
+    bodyHtml?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -231971,6 +241962,27 @@ export namespace Prisma {
     connect?: CustomerSurveyScheduleWhereUniqueInput | CustomerSurveyScheduleWhereUniqueInput[]
   }
 
+  export type NotificationPreferenceCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput> | NotificationPreferenceCreateWithoutUserInput[] | NotificationPreferenceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput | NotificationPreferenceCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationPreferenceCreateManyUserInputEnvelope
+    connect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+  }
+
+  export type SavedFilterPresetCreateNestedManyWithoutUserInput = {
+    create?: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput> | SavedFilterPresetCreateWithoutUserInput[] | SavedFilterPresetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SavedFilterPresetCreateOrConnectWithoutUserInput | SavedFilterPresetCreateOrConnectWithoutUserInput[]
+    createMany?: SavedFilterPresetCreateManyUserInputEnvelope
+    connect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+  }
+
+  export type ApiKeyCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput> | ApiKeyCreateWithoutCreatedByInput[] | ApiKeyUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutCreatedByInput | ApiKeyCreateOrConnectWithoutCreatedByInput[]
+    createMany?: ApiKeyCreateManyCreatedByInputEnvelope
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+  }
+
   export type BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -232283,6 +242295,27 @@ export namespace Prisma {
     connectOrCreate?: CustomerSurveyScheduleCreateOrConnectWithoutAssigneeInput | CustomerSurveyScheduleCreateOrConnectWithoutAssigneeInput[]
     createMany?: CustomerSurveyScheduleCreateManyAssigneeInputEnvelope
     connect?: CustomerSurveyScheduleWhereUniqueInput | CustomerSurveyScheduleWhereUniqueInput[]
+  }
+
+  export type NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput> | NotificationPreferenceCreateWithoutUserInput[] | NotificationPreferenceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput | NotificationPreferenceCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationPreferenceCreateManyUserInputEnvelope
+    connect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+  }
+
+  export type SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput> | SavedFilterPresetCreateWithoutUserInput[] | SavedFilterPresetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SavedFilterPresetCreateOrConnectWithoutUserInput | SavedFilterPresetCreateOrConnectWithoutUserInput[]
+    createMany?: SavedFilterPresetCreateManyUserInputEnvelope
+    connect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+  }
+
+  export type ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput> | ApiKeyCreateWithoutCreatedByInput[] | ApiKeyUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutCreatedByInput | ApiKeyCreateOrConnectWithoutCreatedByInput[]
+    createMany?: ApiKeyCreateManyCreatedByInputEnvelope
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -232951,6 +242984,48 @@ export namespace Prisma {
     deleteMany?: CustomerSurveyScheduleScalarWhereInput | CustomerSurveyScheduleScalarWhereInput[]
   }
 
+  export type NotificationPreferenceUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput> | NotificationPreferenceCreateWithoutUserInput[] | NotificationPreferenceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput | NotificationPreferenceCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationPreferenceUpsertWithWhereUniqueWithoutUserInput | NotificationPreferenceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationPreferenceCreateManyUserInputEnvelope
+    set?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    disconnect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    delete?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    connect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    update?: NotificationPreferenceUpdateWithWhereUniqueWithoutUserInput | NotificationPreferenceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationPreferenceUpdateManyWithWhereWithoutUserInput | NotificationPreferenceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationPreferenceScalarWhereInput | NotificationPreferenceScalarWhereInput[]
+  }
+
+  export type SavedFilterPresetUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput> | SavedFilterPresetCreateWithoutUserInput[] | SavedFilterPresetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SavedFilterPresetCreateOrConnectWithoutUserInput | SavedFilterPresetCreateOrConnectWithoutUserInput[]
+    upsert?: SavedFilterPresetUpsertWithWhereUniqueWithoutUserInput | SavedFilterPresetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SavedFilterPresetCreateManyUserInputEnvelope
+    set?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    disconnect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    delete?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    connect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    update?: SavedFilterPresetUpdateWithWhereUniqueWithoutUserInput | SavedFilterPresetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SavedFilterPresetUpdateManyWithWhereWithoutUserInput | SavedFilterPresetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SavedFilterPresetScalarWhereInput | SavedFilterPresetScalarWhereInput[]
+  }
+
+  export type ApiKeyUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput> | ApiKeyCreateWithoutCreatedByInput[] | ApiKeyUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutCreatedByInput | ApiKeyCreateOrConnectWithoutCreatedByInput[]
+    upsert?: ApiKeyUpsertWithWhereUniqueWithoutCreatedByInput | ApiKeyUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: ApiKeyCreateManyCreatedByInputEnvelope
+    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    update?: ApiKeyUpdateWithWhereUniqueWithoutCreatedByInput | ApiKeyUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: ApiKeyUpdateManyWithWhereWithoutCreatedByInput | ApiKeyUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+  }
+
   export type BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput = {
     create?: XOR<BugAttachmentCreateWithoutUploaderInput, BugAttachmentUncheckedCreateWithoutUploaderInput> | BugAttachmentCreateWithoutUploaderInput[] | BugAttachmentUncheckedCreateWithoutUploaderInput[]
     connectOrCreate?: BugAttachmentCreateOrConnectWithoutUploaderInput | BugAttachmentCreateOrConnectWithoutUploaderInput[]
@@ -233575,6 +243650,48 @@ export namespace Prisma {
     update?: CustomerSurveyScheduleUpdateWithWhereUniqueWithoutAssigneeInput | CustomerSurveyScheduleUpdateWithWhereUniqueWithoutAssigneeInput[]
     updateMany?: CustomerSurveyScheduleUpdateManyWithWhereWithoutAssigneeInput | CustomerSurveyScheduleUpdateManyWithWhereWithoutAssigneeInput[]
     deleteMany?: CustomerSurveyScheduleScalarWhereInput | CustomerSurveyScheduleScalarWhereInput[]
+  }
+
+  export type NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput> | NotificationPreferenceCreateWithoutUserInput[] | NotificationPreferenceUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationPreferenceCreateOrConnectWithoutUserInput | NotificationPreferenceCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationPreferenceUpsertWithWhereUniqueWithoutUserInput | NotificationPreferenceUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationPreferenceCreateManyUserInputEnvelope
+    set?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    disconnect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    delete?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    connect?: NotificationPreferenceWhereUniqueInput | NotificationPreferenceWhereUniqueInput[]
+    update?: NotificationPreferenceUpdateWithWhereUniqueWithoutUserInput | NotificationPreferenceUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationPreferenceUpdateManyWithWhereWithoutUserInput | NotificationPreferenceUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationPreferenceScalarWhereInput | NotificationPreferenceScalarWhereInput[]
+  }
+
+  export type SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput> | SavedFilterPresetCreateWithoutUserInput[] | SavedFilterPresetUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SavedFilterPresetCreateOrConnectWithoutUserInput | SavedFilterPresetCreateOrConnectWithoutUserInput[]
+    upsert?: SavedFilterPresetUpsertWithWhereUniqueWithoutUserInput | SavedFilterPresetUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SavedFilterPresetCreateManyUserInputEnvelope
+    set?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    disconnect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    delete?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    connect?: SavedFilterPresetWhereUniqueInput | SavedFilterPresetWhereUniqueInput[]
+    update?: SavedFilterPresetUpdateWithWhereUniqueWithoutUserInput | SavedFilterPresetUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SavedFilterPresetUpdateManyWithWhereWithoutUserInput | SavedFilterPresetUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SavedFilterPresetScalarWhereInput | SavedFilterPresetScalarWhereInput[]
+  }
+
+  export type ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput> | ApiKeyCreateWithoutCreatedByInput[] | ApiKeyUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutCreatedByInput | ApiKeyCreateOrConnectWithoutCreatedByInput[]
+    upsert?: ApiKeyUpsertWithWhereUniqueWithoutCreatedByInput | ApiKeyUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: ApiKeyCreateManyCreatedByInputEnvelope
+    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    update?: ApiKeyUpdateWithWhereUniqueWithoutCreatedByInput | ApiKeyUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: ApiKeyUpdateManyWithWhereWithoutCreatedByInput | ApiKeyUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
   }
 
   export type EmployeeCreateNestedManyWithoutOrgUnitInput = {
@@ -242938,6 +253055,27 @@ export namespace Prisma {
     connect?: CustomerSurveyScheduleWhereUniqueInput | CustomerSurveyScheduleWhereUniqueInput[]
   }
 
+  export type SystemAnnouncementCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput> | SystemAnnouncementCreateWithoutTenantInput[] | SystemAnnouncementUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemAnnouncementCreateOrConnectWithoutTenantInput | SystemAnnouncementCreateOrConnectWithoutTenantInput[]
+    createMany?: SystemAnnouncementCreateManyTenantInputEnvelope
+    connect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+  }
+
+  export type ApiKeyCreateNestedManyWithoutTenantInput = {
+    create?: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput> | ApiKeyCreateWithoutTenantInput[] | ApiKeyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
+    createMany?: ApiKeyCreateManyTenantInputEnvelope
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+  }
+
+  export type NotificationTemplateCreateNestedManyWithoutTenantInput = {
+    create?: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput> | NotificationTemplateCreateWithoutTenantInput[] | NotificationTemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: NotificationTemplateCreateOrConnectWithoutTenantInput | NotificationTemplateCreateOrConnectWithoutTenantInput[]
+    createMany?: NotificationTemplateCreateManyTenantInputEnvelope
+    connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -243202,6 +253340,27 @@ export namespace Prisma {
     connectOrCreate?: CustomerSurveyScheduleCreateOrConnectWithoutTenantInput | CustomerSurveyScheduleCreateOrConnectWithoutTenantInput[]
     createMany?: CustomerSurveyScheduleCreateManyTenantInputEnvelope
     connect?: CustomerSurveyScheduleWhereUniqueInput | CustomerSurveyScheduleWhereUniqueInput[]
+  }
+
+  export type SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput> | SystemAnnouncementCreateWithoutTenantInput[] | SystemAnnouncementUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemAnnouncementCreateOrConnectWithoutTenantInput | SystemAnnouncementCreateOrConnectWithoutTenantInput[]
+    createMany?: SystemAnnouncementCreateManyTenantInputEnvelope
+    connect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+  }
+
+  export type ApiKeyUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput> | ApiKeyCreateWithoutTenantInput[] | ApiKeyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
+    createMany?: ApiKeyCreateManyTenantInputEnvelope
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+  }
+
+  export type NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput> | NotificationTemplateCreateWithoutTenantInput[] | NotificationTemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: NotificationTemplateCreateOrConnectWithoutTenantInput | NotificationTemplateCreateOrConnectWithoutTenantInput[]
+    createMany?: NotificationTemplateCreateManyTenantInputEnvelope
+    connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
   }
 
   export type UserUpdateManyWithoutTenantNestedInput = {
@@ -243736,6 +253895,48 @@ export namespace Prisma {
     deleteMany?: CustomerSurveyScheduleScalarWhereInput | CustomerSurveyScheduleScalarWhereInput[]
   }
 
+  export type SystemAnnouncementUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput> | SystemAnnouncementCreateWithoutTenantInput[] | SystemAnnouncementUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemAnnouncementCreateOrConnectWithoutTenantInput | SystemAnnouncementCreateOrConnectWithoutTenantInput[]
+    upsert?: SystemAnnouncementUpsertWithWhereUniqueWithoutTenantInput | SystemAnnouncementUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SystemAnnouncementCreateManyTenantInputEnvelope
+    set?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    disconnect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    delete?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    connect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    update?: SystemAnnouncementUpdateWithWhereUniqueWithoutTenantInput | SystemAnnouncementUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SystemAnnouncementUpdateManyWithWhereWithoutTenantInput | SystemAnnouncementUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SystemAnnouncementScalarWhereInput | SystemAnnouncementScalarWhereInput[]
+  }
+
+  export type ApiKeyUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput> | ApiKeyCreateWithoutTenantInput[] | ApiKeyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
+    upsert?: ApiKeyUpsertWithWhereUniqueWithoutTenantInput | ApiKeyUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: ApiKeyCreateManyTenantInputEnvelope
+    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    update?: ApiKeyUpdateWithWhereUniqueWithoutTenantInput | ApiKeyUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: ApiKeyUpdateManyWithWhereWithoutTenantInput | ApiKeyUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+  }
+
+  export type NotificationTemplateUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput> | NotificationTemplateCreateWithoutTenantInput[] | NotificationTemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: NotificationTemplateCreateOrConnectWithoutTenantInput | NotificationTemplateCreateOrConnectWithoutTenantInput[]
+    upsert?: NotificationTemplateUpsertWithWhereUniqueWithoutTenantInput | NotificationTemplateUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: NotificationTemplateCreateManyTenantInputEnvelope
+    set?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    disconnect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    delete?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    update?: NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput | NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: NotificationTemplateUpdateManyWithWhereWithoutTenantInput | NotificationTemplateUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -244266,6 +254467,48 @@ export namespace Prisma {
     update?: CustomerSurveyScheduleUpdateWithWhereUniqueWithoutTenantInput | CustomerSurveyScheduleUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: CustomerSurveyScheduleUpdateManyWithWhereWithoutTenantInput | CustomerSurveyScheduleUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: CustomerSurveyScheduleScalarWhereInput | CustomerSurveyScheduleScalarWhereInput[]
+  }
+
+  export type SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput> | SystemAnnouncementCreateWithoutTenantInput[] | SystemAnnouncementUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: SystemAnnouncementCreateOrConnectWithoutTenantInput | SystemAnnouncementCreateOrConnectWithoutTenantInput[]
+    upsert?: SystemAnnouncementUpsertWithWhereUniqueWithoutTenantInput | SystemAnnouncementUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: SystemAnnouncementCreateManyTenantInputEnvelope
+    set?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    disconnect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    delete?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    connect?: SystemAnnouncementWhereUniqueInput | SystemAnnouncementWhereUniqueInput[]
+    update?: SystemAnnouncementUpdateWithWhereUniqueWithoutTenantInput | SystemAnnouncementUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: SystemAnnouncementUpdateManyWithWhereWithoutTenantInput | SystemAnnouncementUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: SystemAnnouncementScalarWhereInput | SystemAnnouncementScalarWhereInput[]
+  }
+
+  export type ApiKeyUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput> | ApiKeyCreateWithoutTenantInput[] | ApiKeyUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApiKeyCreateOrConnectWithoutTenantInput | ApiKeyCreateOrConnectWithoutTenantInput[]
+    upsert?: ApiKeyUpsertWithWhereUniqueWithoutTenantInput | ApiKeyUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: ApiKeyCreateManyTenantInputEnvelope
+    set?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    disconnect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    delete?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    connect?: ApiKeyWhereUniqueInput | ApiKeyWhereUniqueInput[]
+    update?: ApiKeyUpdateWithWhereUniqueWithoutTenantInput | ApiKeyUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: ApiKeyUpdateManyWithWhereWithoutTenantInput | ApiKeyUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+  }
+
+  export type NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput> | NotificationTemplateCreateWithoutTenantInput[] | NotificationTemplateUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: NotificationTemplateCreateOrConnectWithoutTenantInput | NotificationTemplateCreateOrConnectWithoutTenantInput[]
+    upsert?: NotificationTemplateUpsertWithWhereUniqueWithoutTenantInput | NotificationTemplateUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: NotificationTemplateCreateManyTenantInputEnvelope
+    set?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    disconnect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    delete?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+    update?: NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput | NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: NotificationTemplateUpdateManyWithWhereWithoutTenantInput | NotificationTemplateUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
   }
 
   export type PositionCreateNestedManyWithoutJobTitleInput = {
@@ -245346,6 +255589,109 @@ export namespace Prisma {
     upsert?: WorkScheduleUpsertWithoutEnrollmentsInput
     connect?: WorkScheduleWhereUniqueInput
     update?: XOR<XOR<WorkScheduleUpdateToOneWithWhereWithoutEnrollmentsInput, WorkScheduleUpdateWithoutEnrollmentsInput>, WorkScheduleUncheckedUpdateWithoutEnrollmentsInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationPreferencesInput = {
+    create?: XOR<UserCreateWithoutNotificationPreferencesInput, UserUncheckedCreateWithoutNotificationPreferencesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationPreferencesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumNotificationChannelFieldUpdateOperationsInput = {
+    set?: $Enums.NotificationChannel
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationPreferencesNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationPreferencesInput, UserUncheckedCreateWithoutNotificationPreferencesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationPreferencesInput
+    upsert?: UserUpsertWithoutNotificationPreferencesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationPreferencesInput, UserUpdateWithoutNotificationPreferencesInput>, UserUncheckedUpdateWithoutNotificationPreferencesInput>
+  }
+
+  export type UserCreateNestedOneWithoutSavedFilterPresetsInput = {
+    create?: XOR<UserCreateWithoutSavedFilterPresetsInput, UserUncheckedCreateWithoutSavedFilterPresetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSavedFilterPresetsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSavedFilterPresetsNestedInput = {
+    create?: XOR<UserCreateWithoutSavedFilterPresetsInput, UserUncheckedCreateWithoutSavedFilterPresetsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSavedFilterPresetsInput
+    upsert?: UserUpsertWithoutSavedFilterPresetsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSavedFilterPresetsInput, UserUpdateWithoutSavedFilterPresetsInput>, UserUncheckedUpdateWithoutSavedFilterPresetsInput>
+  }
+
+  export type TenantCreateNestedOneWithoutAnnouncementsInput = {
+    create?: XOR<TenantCreateWithoutAnnouncementsInput, TenantUncheckedCreateWithoutAnnouncementsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutAnnouncementsInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type TenantUpdateOneWithoutAnnouncementsNestedInput = {
+    create?: XOR<TenantCreateWithoutAnnouncementsInput, TenantUncheckedCreateWithoutAnnouncementsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutAnnouncementsInput
+    upsert?: TenantUpsertWithoutAnnouncementsInput
+    disconnect?: TenantWhereInput | boolean
+    delete?: TenantWhereInput | boolean
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutAnnouncementsInput, TenantUpdateWithoutAnnouncementsInput>, TenantUncheckedUpdateWithoutAnnouncementsInput>
+  }
+
+  export type ApiKeyCreatescopesInput = {
+    set: string[]
+  }
+
+  export type UserCreateNestedOneWithoutApiKeysInput = {
+    create?: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
+    connectOrCreate?: UserCreateOrConnectWithoutApiKeysInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TenantCreateNestedOneWithoutApiKeysInput = {
+    create?: XOR<TenantCreateWithoutApiKeysInput, TenantUncheckedCreateWithoutApiKeysInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutApiKeysInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type ApiKeyUpdatescopesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type UserUpdateOneRequiredWithoutApiKeysNestedInput = {
+    create?: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
+    connectOrCreate?: UserCreateOrConnectWithoutApiKeysInput
+    upsert?: UserUpsertWithoutApiKeysInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutApiKeysInput, UserUpdateWithoutApiKeysInput>, UserUncheckedUpdateWithoutApiKeysInput>
+  }
+
+  export type TenantUpdateOneWithoutApiKeysNestedInput = {
+    create?: XOR<TenantCreateWithoutApiKeysInput, TenantUncheckedCreateWithoutApiKeysInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutApiKeysInput
+    upsert?: TenantUpsertWithoutApiKeysInput
+    disconnect?: TenantWhereInput | boolean
+    delete?: TenantWhereInput | boolean
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutApiKeysInput, TenantUpdateWithoutApiKeysInput>, TenantUncheckedUpdateWithoutApiKeysInput>
+  }
+
+  export type TenantCreateNestedOneWithoutNotifTemplatesInput = {
+    create?: XOR<TenantCreateWithoutNotifTemplatesInput, TenantUncheckedCreateWithoutNotifTemplatesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutNotifTemplatesInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type TenantUpdateOneWithoutNotifTemplatesNestedInput = {
+    create?: XOR<TenantCreateWithoutNotifTemplatesInput, TenantUncheckedCreateWithoutNotifTemplatesInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutNotifTemplatesInput
+    upsert?: TenantUpsertWithoutNotifTemplatesInput
+    disconnect?: TenantWhereInput | boolean
+    delete?: TenantWhereInput | boolean
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutNotifTemplatesInput, TenantUpdateWithoutNotifTemplatesInput>, TenantUncheckedUpdateWithoutNotifTemplatesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -247195,6 +257541,23 @@ export namespace Prisma {
     _max?: NestedEnumShiftTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumNotificationChannelFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelFilter<$PrismaModel> | $Enums.NotificationChannel
+  }
+
+  export type NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.NotificationChannel | EnumNotificationChannelFieldRefInput<$PrismaModel>
+    in?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.NotificationChannel[] | ListEnumNotificationChannelFieldRefInput<$PrismaModel>
+    not?: NestedEnumNotificationChannelWithAggregatesFilter<$PrismaModel> | $Enums.NotificationChannel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumNotificationChannelFilter<$PrismaModel>
+    _max?: NestedEnumNotificationChannelFilter<$PrismaModel>
+  }
+
   export type BugAttachmentCreateWithoutUploaderInput = {
     id?: string
     filename: string
@@ -247695,6 +258058,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
     instance: ProcessInstanceCreateNestedOneWithoutUserTasksInput
   }
 
@@ -247708,6 +258072,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type ProcessUserTaskCreateOrConnectWithoutAssigneeInput = {
@@ -249038,6 +259403,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutUsersInput = {
@@ -249091,6 +259459,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutUsersInput = {
@@ -249317,6 +259688,94 @@ export namespace Prisma {
 
   export type CustomerSurveyScheduleCreateManyAssigneeInputEnvelope = {
     data: CustomerSurveyScheduleCreateManyAssigneeInput | CustomerSurveyScheduleCreateManyAssigneeInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationPreferenceCreateWithoutUserInput = {
+    id?: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceUncheckedCreateWithoutUserInput = {
+    id?: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationPreferenceCreateOrConnectWithoutUserInput = {
+    where: NotificationPreferenceWhereUniqueInput
+    create: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationPreferenceCreateManyUserInputEnvelope = {
+    data: NotificationPreferenceCreateManyUserInput | NotificationPreferenceCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SavedFilterPresetCreateWithoutUserInput = {
+    id?: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type SavedFilterPresetUncheckedCreateWithoutUserInput = {
+    id?: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type SavedFilterPresetCreateOrConnectWithoutUserInput = {
+    where: SavedFilterPresetWhereUniqueInput
+    create: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput>
+  }
+
+  export type SavedFilterPresetCreateManyUserInputEnvelope = {
+    data: SavedFilterPresetCreateManyUserInput | SavedFilterPresetCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ApiKeyCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    tenant?: TenantCreateNestedOneWithoutApiKeysInput
+  }
+
+  export type ApiKeyUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyCreateOrConnectWithoutCreatedByInput = {
+    where: ApiKeyWhereUniqueInput
+    create: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type ApiKeyCreateManyCreatedByInputEnvelope = {
+    data: ApiKeyCreateManyCreatedByInput | ApiKeyCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -249702,6 +260161,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFilter<"ProcessUserTask"> | $Enums.UserTaskStatus
     dueDate?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
     completedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
+    lastEscalatedAt?: DateTimeNullableFilter<"ProcessUserTask"> | Date | string | null
   }
 
   export type ProjectUpsertWithWhereUniqueWithoutPmInput = {
@@ -250763,6 +261223,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -250816,6 +261279,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type DelegationRuleUpsertWithWhereUniqueWithoutDelegatorInput = {
@@ -251001,6 +261467,95 @@ export namespace Prisma {
     isActive?: BoolFilter<"CustomerSurveySchedule"> | boolean
     tenantId?: StringNullableFilter<"CustomerSurveySchedule"> | string | null
     createdAt?: DateTimeFilter<"CustomerSurveySchedule"> | Date | string
+  }
+
+  export type NotificationPreferenceUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationPreferenceWhereUniqueInput
+    update: XOR<NotificationPreferenceUpdateWithoutUserInput, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationPreferenceCreateWithoutUserInput, NotificationPreferenceUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationPreferenceUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationPreferenceWhereUniqueInput
+    data: XOR<NotificationPreferenceUpdateWithoutUserInput, NotificationPreferenceUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationPreferenceUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationPreferenceScalarWhereInput
+    data: XOR<NotificationPreferenceUpdateManyMutationInput, NotificationPreferenceUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationPreferenceScalarWhereInput = {
+    AND?: NotificationPreferenceScalarWhereInput | NotificationPreferenceScalarWhereInput[]
+    OR?: NotificationPreferenceScalarWhereInput[]
+    NOT?: NotificationPreferenceScalarWhereInput | NotificationPreferenceScalarWhereInput[]
+    id?: StringFilter<"NotificationPreference"> | string
+    userId?: StringFilter<"NotificationPreference"> | string
+    moduleType?: StringFilter<"NotificationPreference"> | string
+    channel?: EnumNotificationChannelFilter<"NotificationPreference"> | $Enums.NotificationChannel
+    createdAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationPreference"> | Date | string
+  }
+
+  export type SavedFilterPresetUpsertWithWhereUniqueWithoutUserInput = {
+    where: SavedFilterPresetWhereUniqueInput
+    update: XOR<SavedFilterPresetUpdateWithoutUserInput, SavedFilterPresetUncheckedUpdateWithoutUserInput>
+    create: XOR<SavedFilterPresetCreateWithoutUserInput, SavedFilterPresetUncheckedCreateWithoutUserInput>
+  }
+
+  export type SavedFilterPresetUpdateWithWhereUniqueWithoutUserInput = {
+    where: SavedFilterPresetWhereUniqueInput
+    data: XOR<SavedFilterPresetUpdateWithoutUserInput, SavedFilterPresetUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SavedFilterPresetUpdateManyWithWhereWithoutUserInput = {
+    where: SavedFilterPresetScalarWhereInput
+    data: XOR<SavedFilterPresetUpdateManyMutationInput, SavedFilterPresetUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SavedFilterPresetScalarWhereInput = {
+    AND?: SavedFilterPresetScalarWhereInput | SavedFilterPresetScalarWhereInput[]
+    OR?: SavedFilterPresetScalarWhereInput[]
+    NOT?: SavedFilterPresetScalarWhereInput | SavedFilterPresetScalarWhereInput[]
+    id?: StringFilter<"SavedFilterPreset"> | string
+    userId?: StringFilter<"SavedFilterPreset"> | string
+    pageKey?: StringFilter<"SavedFilterPreset"> | string
+    name?: StringFilter<"SavedFilterPreset"> | string
+    filters?: JsonFilter<"SavedFilterPreset">
+    createdAt?: DateTimeFilter<"SavedFilterPreset"> | Date | string
+  }
+
+  export type ApiKeyUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: ApiKeyWhereUniqueInput
+    update: XOR<ApiKeyUpdateWithoutCreatedByInput, ApiKeyUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<ApiKeyCreateWithoutCreatedByInput, ApiKeyUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type ApiKeyUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: ApiKeyWhereUniqueInput
+    data: XOR<ApiKeyUpdateWithoutCreatedByInput, ApiKeyUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type ApiKeyUpdateManyWithWhereWithoutCreatedByInput = {
+    where: ApiKeyScalarWhereInput
+    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type ApiKeyScalarWhereInput = {
+    AND?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+    OR?: ApiKeyScalarWhereInput[]
+    NOT?: ApiKeyScalarWhereInput | ApiKeyScalarWhereInput[]
+    id?: StringFilter<"ApiKey"> | string
+    name?: StringFilter<"ApiKey"> | string
+    keyPrefix?: StringFilter<"ApiKey"> | string
+    keyHash?: StringFilter<"ApiKey"> | string
+    scopes?: StringNullableListFilter<"ApiKey">
+    expiresAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    lastUsedAt?: DateTimeNullableFilter<"ApiKey"> | Date | string | null
+    isActive?: BoolFilter<"ApiKey"> | boolean
+    createdById?: StringFilter<"ApiKey"> | string
+    tenantId?: StringNullableFilter<"ApiKey"> | string | null
+    createdAt?: DateTimeFilter<"ApiKey"> | Date | string
   }
 
   export type EmployeeCreateWithoutOrgUnitInput = {
@@ -251640,6 +262195,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOrgUnitInput = {
@@ -251698,6 +262256,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOrgUnitInput = {
@@ -251831,6 +262392,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutOrgUnitsInput = {
@@ -251884,6 +262448,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutOrgUnitsInput = {
@@ -252506,6 +263073,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutOrgUnitsInput = {
@@ -252559,6 +263129,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type BudgetPlanUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -252979,6 +263552,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutEmployeeInput = {
@@ -253037,6 +263613,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutEmployeeInput = {
@@ -254009,6 +264588,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutEmployeesInput = {
@@ -254062,6 +264644,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutEmployeesInput = {
@@ -254897,6 +265482,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmployeeInput = {
@@ -254955,6 +265543,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutAssigneeInput = {
@@ -255661,6 +266252,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutEmployeesInput = {
@@ -255714,6 +266308,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type LeavePolicyUpsertWithoutEmployeesInput = {
@@ -257134,6 +267731,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutLedProjectsInput = {
@@ -257192,6 +267792,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutLedProjectsInput = {
@@ -257353,6 +267956,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProjectsInput = {
@@ -257406,6 +268012,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProjectsInput = {
@@ -257807,6 +268416,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLedProjectsInput = {
@@ -257865,6 +268477,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutProjectInput = {
@@ -257996,6 +268611,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProjectsInput = {
@@ -258049,6 +268667,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type BudgetPlanUpsertWithWhereUniqueWithoutProjectInput = {
@@ -258396,6 +269017,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAllocationsInput = {
@@ -258449,6 +269073,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAllocationsInput = {
@@ -258744,6 +269371,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAllocationsInput = {
@@ -258797,6 +269427,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type BugTaskCreateWithoutTaskInput = {
@@ -258873,6 +269506,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTaskApprovalsInput = {
@@ -258931,6 +269567,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTaskApprovalsInput = {
@@ -259368,6 +270007,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTasksInput = {
@@ -259421,6 +270063,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTasksInput = {
@@ -259519,6 +270164,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTaskApprovalsInput = {
@@ -259577,6 +270225,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type EmployeeUpsertWithoutTasksInput = {
@@ -259986,6 +270637,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTasksInput = {
@@ -260039,6 +270693,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TaskCreateWithoutTimeLogsInput = {
@@ -260150,6 +270807,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeLogsInput = {
@@ -260208,6 +270868,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeLogsInput = {
@@ -260341,6 +271004,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeLogsInput = {
@@ -260399,6 +271065,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutWorkStatusesInput = {
@@ -260457,6 +271126,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutWorkStatusesInput = {
@@ -260515,6 +271187,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutWorkStatusesInput = {
@@ -260589,6 +271264,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWorkStatusesInput = {
@@ -260647,6 +271325,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTimeEntriesInput = {
@@ -260705,6 +271386,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimeEntriesInput = {
@@ -260763,6 +271447,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimeEntriesInput = {
@@ -260821,6 +271508,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTimeEntriesInput = {
@@ -260874,6 +271564,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTimeEntriesInput = {
@@ -260948,6 +271641,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimeEntriesInput = {
@@ -261006,6 +271702,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutTimeEntriesInput = {
@@ -261070,6 +271769,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTimeEntriesInput = {
@@ -261123,6 +271825,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -261181,6 +271886,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedTimesheetsInput = {
@@ -261239,6 +271947,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedTimesheetsInput = {
@@ -261302,6 +272013,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTimesheetsInput = {
@@ -261360,6 +272074,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTimesheetsInput = {
@@ -261434,6 +272151,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedTimesheetsInput = {
@@ -261492,6 +272212,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutTimesheetsInput = {
@@ -261561,6 +272284,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTimesheetsInput = {
@@ -261619,6 +272345,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutAlertConfigsInput = {
@@ -261821,6 +272550,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -261879,6 +272611,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -261953,6 +272688,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -262011,6 +272749,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutPushTokensInput = {
@@ -262069,6 +272810,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPushTokensInput = {
@@ -262127,6 +272871,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPushTokensInput = {
@@ -262201,6 +272948,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPushTokensInput = {
@@ -262259,6 +273009,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TaskCreateWithoutTelegramMessagesInput = {
@@ -262515,6 +273268,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProcessDefinitionsInput = {
@@ -262568,6 +273324,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProcessDefinitionsInput = {
@@ -262706,6 +273465,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProcessDefinitionsInput = {
@@ -262759,6 +273521,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ProcessActivityLogCreateWithoutInstanceInput = {
@@ -262955,6 +273720,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutStartedProcessesInput = {
@@ -263013,6 +273781,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutStartedProcessesInput = {
@@ -263029,6 +273800,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
     assignee?: UserCreateNestedOneWithoutAssignedProcessTasksInput
   }
 
@@ -263042,6 +273814,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type ProcessUserTaskCreateOrConnectWithoutInstanceInput = {
@@ -263241,6 +274014,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProcessInstancesInput = {
@@ -263294,6 +274070,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProcessInstancesInput = {
@@ -263518,6 +274297,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStartedProcessesInput = {
@@ -263576,6 +274358,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessUserTaskUpsertWithWhereUniqueWithoutInstanceInput = {
@@ -263704,6 +274489,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProcessInstancesInput = {
@@ -263757,6 +274545,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutAssignedProcessTasksInput = {
@@ -263815,6 +274606,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProcessTasksInput = {
@@ -263873,6 +274667,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProcessTasksInput = {
@@ -263986,6 +274783,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProcessTasksInput = {
@@ -264044,6 +274844,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutUserTasksInput = {
@@ -264323,6 +275126,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedBugsInput = {
@@ -264381,6 +275187,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedBugsInput = {
@@ -264444,6 +275253,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPmApprovedBugsInput = {
@@ -264502,6 +275314,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPmApprovedBugsInput = {
@@ -264634,6 +275449,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutReportedBugsInput = {
@@ -264692,6 +275510,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutReportedBugsInput = {
@@ -264750,6 +275571,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutBugsInput = {
@@ -264803,6 +275627,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutBugsInput = {
@@ -264949,6 +275776,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedBugsInput = {
@@ -265007,6 +275837,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutPmApprovedBugsInput = {
@@ -265076,6 +275909,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPmApprovedBugsInput = {
@@ -265134,6 +275970,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectUpsertWithoutBugsInput = {
@@ -265278,6 +276117,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportedBugsInput = {
@@ -265336,6 +276178,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutBugsInput = {
@@ -265400,6 +276245,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutBugsInput = {
@@ -265453,6 +276301,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -265824,6 +276675,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugAttachmentsInput = {
@@ -265882,6 +276736,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugAttachmentsInput = {
@@ -266027,6 +276884,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugAttachmentsInput = {
@@ -266085,6 +276945,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutBugCommentsInput = {
@@ -266143,6 +277006,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutBugCommentsInput = {
@@ -266201,6 +277067,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutBugCommentsInput = {
@@ -266340,6 +277209,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBugCommentsInput = {
@@ -266398,6 +277270,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BugUpsertWithoutCommentsInput = {
@@ -267004,6 +277879,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutUserPermissionsInput = {
@@ -267062,6 +277940,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutUserPermissionsInput = {
@@ -267169,6 +278050,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPermissionsInput = {
@@ -267227,6 +278111,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ModuleRolePermissionCreateWithoutRoleInput = {
@@ -267498,6 +278385,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutModuleRolesInput = {
@@ -267556,6 +278446,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutModuleRolesInput = {
@@ -267661,6 +278554,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutModuleRolesInput = {
@@ -267719,6 +278615,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -267777,6 +278676,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -267835,6 +278737,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -267909,6 +278814,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -267967,6 +278875,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type GroupPermissionCreateWithoutGroupInput = {
@@ -268197,6 +279108,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutGroupMembershipsInput = {
@@ -268255,6 +279169,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutGroupMembershipsInput = {
@@ -268356,6 +279273,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -268414,6 +279334,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserGroupUpsertWithoutMembersInput = {
@@ -269053,6 +279976,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutContractsInput = {
@@ -269106,6 +280032,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutContractsInput = {
@@ -269572,6 +280501,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutContractsInput = {
@@ -269625,6 +280557,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ContractAllowanceUpsertWithWhereUniqueWithoutContractInput = {
@@ -270170,6 +281105,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedLeavesInput = {
@@ -270228,6 +281166,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedLeavesInput = {
@@ -270325,6 +281266,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeaveRequestsInput = {
@@ -270378,6 +281322,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeaveRequestsInput = {
@@ -270642,6 +281589,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedLeavesInput = {
@@ -270700,6 +281650,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutLeaveRequestsInput = {
@@ -270809,6 +281762,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -270862,6 +281818,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type EmployeeCreateWithoutLeaveBalancesInput = {
@@ -271093,6 +282052,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeaveBalancesInput = {
@@ -271146,6 +282108,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeaveBalancesInput = {
@@ -271405,6 +282370,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeaveBalancesInput = {
@@ -271458,6 +282426,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type EmployeeCreateWithoutOvertimeRequestsInput = {
@@ -271661,6 +282632,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedOvertimesInput = {
@@ -271719,6 +282693,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedOvertimesInput = {
@@ -271983,6 +282960,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedOvertimesInput = {
@@ -272041,6 +283021,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutOvertimeRequestsInput = {
@@ -272230,6 +283213,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProcessedPayrollsInput = {
@@ -272288,6 +283274,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProcessedPayrollsInput = {
@@ -272425,6 +283414,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPayrollPeriodsInput = {
@@ -272478,6 +283470,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPayrollPeriodsInput = {
@@ -272568,6 +283563,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProcessedPayrollsInput = {
@@ -272626,6 +283624,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PayrollPeriodUpsertWithoutAdjustmentsInput = {
@@ -272749,6 +283750,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPayrollPeriodsInput = {
@@ -272802,6 +283806,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type PayrollPeriodCreateWithoutRecordsInput = {
@@ -273085,6 +284092,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPayrollRecordsInput = {
@@ -273138,6 +284148,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPayrollRecordsInput = {
@@ -273455,6 +284468,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPayrollRecordsInput = {
@@ -273508,6 +284524,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ExpenseItemCreateWithoutExpenseInput = {
@@ -273657,6 +284676,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSubmittedExpensesInput = {
@@ -273715,6 +284737,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSubmittedExpensesInput = {
@@ -273778,6 +284803,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedExpensesInput = {
@@ -273836,6 +284864,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedExpensesInput = {
@@ -274195,6 +285226,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubmittedExpensesInput = {
@@ -274253,6 +285287,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutApprovedExpensesInput = {
@@ -274322,6 +285359,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedExpensesInput = {
@@ -274380,6 +285420,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProcessInstanceUpsertWithoutExpensesInput = {
@@ -275125,6 +286168,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomersInput = {
@@ -275178,6 +286224,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomersInput = {
@@ -275484,6 +286533,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomersInput = {
@@ -275537,6 +286589,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutContactsInput = {
@@ -275679,6 +286734,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutContactsInput = {
@@ -275732,6 +286790,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutContactsInput = {
@@ -275888,6 +286949,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutContactsInput = {
@@ -275941,6 +287005,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ContactCreateWithoutLeadsInput = {
@@ -276023,6 +287090,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeadsInput = {
@@ -276076,6 +287146,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeadsInput = {
@@ -276214,6 +287287,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeadsInput = {
@@ -276267,6 +287343,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type LeadFollowUpScheduleUpsertWithWhereUniqueWithoutLeadInput = {
@@ -276381,6 +287460,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDealsInput = {
@@ -276434,6 +287516,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDealsInput = {
@@ -276652,6 +287737,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDealsInput = {
@@ -276705,6 +287793,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutDealInput = {
@@ -276909,6 +288000,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCrmActivitiesInput = {
@@ -276967,6 +288061,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCrmActivitiesInput = {
@@ -277025,6 +288122,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCrmActivitiesInput = {
@@ -277078,6 +288178,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCrmActivitiesInput = {
@@ -277278,6 +288381,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -277336,6 +288442,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutCrmActivitiesInput = {
@@ -277400,6 +288509,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -277453,6 +288565,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type LeadCreateWithoutFollowUpSchedulesInput = {
@@ -277601,6 +288716,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutLeadFollowUpSchedulesInput = {
@@ -277659,6 +288777,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutLeadFollowUpSchedulesInput = {
@@ -277717,6 +288838,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeadFollowUpsInput = {
@@ -277770,6 +288894,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeadFollowUpsInput = {
@@ -277946,6 +289073,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLeadFollowUpSchedulesInput = {
@@ -278004,6 +289134,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutLeadFollowUpsInput = {
@@ -278068,6 +289201,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeadFollowUpsInput = {
@@ -278121,6 +289257,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutSurveySchedulesInput = {
@@ -278224,6 +289363,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCustomerSurveySchedulesInput = {
@@ -278282,6 +289424,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCustomerSurveySchedulesInput = {
@@ -278340,6 +289485,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomerSurveysInput = {
@@ -278393,6 +289541,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomerSurveysInput = {
@@ -278518,6 +289669,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCustomerSurveySchedulesInput = {
@@ -278576,6 +289730,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutCustomerSurveysInput = {
@@ -278640,6 +289797,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomerSurveysInput = {
@@ -278693,6 +289853,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -278889,6 +290052,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutClientContractsInput = {
@@ -278942,6 +290108,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutClientContractsInput = {
@@ -279110,6 +290279,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutClientContractsInput = {
@@ -279163,6 +290335,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type InvoiceCreateWithoutMilestoneInput = {
@@ -279640,6 +290815,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInvoicesInput = {
@@ -279693,6 +290871,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInvoicesInput = {
@@ -279987,6 +291168,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInvoicesInput = {
@@ -280040,6 +291224,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type InvoiceCreateWithoutItemsInput = {
@@ -280265,6 +291452,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutJobOpeningsInput = {
@@ -280318,6 +291508,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutJobOpeningsInput = {
@@ -280425,6 +291618,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutJobOpeningsInput = {
@@ -280478,6 +291674,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type JobOpeningCreateWithoutCandidatesInput = {
@@ -280610,6 +291809,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCandidatesInput = {
@@ -280663,6 +291865,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCandidatesInput = {
@@ -280812,6 +292017,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCandidatesInput = {
@@ -280865,6 +292073,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CandidateCreateWithoutInterviewsInput = {
@@ -280961,6 +292172,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInterviewsInput = {
@@ -281014,6 +292228,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInterviewsInput = {
@@ -281132,6 +292349,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInterviewsInput = {
@@ -281185,6 +292405,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type OrgUnitCreateWithoutAssetsInput = {
@@ -281343,6 +292566,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAssetsInput = {
@@ -281396,6 +292622,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAssetsInput = {
@@ -281564,6 +292793,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAssetsInput = {
@@ -281617,6 +292849,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type AssetCreateWithoutAssignmentsInput = {
@@ -284997,6 +296232,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutOkrObjectivesInput = {
@@ -285055,6 +296293,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutOkrObjectivesInput = {
@@ -285145,6 +296386,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutOkrObjectivesInput = {
@@ -285198,6 +296442,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutOkrObjectivesInput = {
@@ -285272,6 +296519,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -285330,6 +296580,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type OkrKeyResultUpsertWithWhereUniqueWithoutObjectiveInput = {
@@ -285425,6 +296678,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -285478,6 +296734,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type OkrObjectiveCreateWithoutKeyResultsInput = {
@@ -285821,6 +297080,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutKbArticlesInput = {
@@ -285879,6 +297141,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutKbArticlesInput = {
@@ -285937,6 +297202,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutKbArticlesInput = {
@@ -285990,6 +297258,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutKbArticlesInput = {
@@ -286097,6 +297368,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutKbArticlesInput = {
@@ -286155,6 +297429,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutKbArticlesInput = {
@@ -286219,6 +297496,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutKbArticlesInput = {
@@ -286272,6 +297552,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutPortalsInput = {
@@ -286408,6 +297691,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomerPortalsInput = {
@@ -286461,6 +297747,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomerPortalsInput = {
@@ -286615,6 +297904,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomerPortalsInput = {
@@ -286668,6 +297960,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type CustomerPortalCreateWithoutTicketsInput = {
@@ -286845,6 +298140,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutVendorsInput = {
@@ -286898,6 +298196,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutVendorsInput = {
@@ -286983,6 +298284,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutVendorsInput = {
@@ -287036,6 +298340,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type VendorCreateWithoutPurchaseOrdersInput = {
@@ -287139,6 +298446,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPoRequestsInput = {
@@ -287197,6 +298507,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPoRequestsInput = {
@@ -287260,6 +298573,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutPoApprovalsInput = {
@@ -287318,6 +298634,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutPoApprovalsInput = {
@@ -287412,6 +298731,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPurchaseOrdersInput = {
@@ -287465,6 +298787,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPurchaseOrdersInput = {
@@ -287590,6 +298915,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoRequestsInput = {
@@ -287648,6 +298976,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutPoApprovalsInput = {
@@ -287717,6 +299048,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPoApprovalsInput = {
@@ -287775,6 +299109,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type PurchaseOrderItemUpsertWithWhereUniqueWithoutPoInput = {
@@ -287872,6 +299209,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPurchaseOrdersInput = {
@@ -287925,6 +299265,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type PurchaseOrderCreateWithoutItemsInput = {
@@ -288083,6 +299426,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -288141,6 +299487,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -288262,6 +299611,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCommentsInput = {
@@ -288315,6 +299667,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCommentsInput = {
@@ -288389,6 +299744,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -288447,6 +299805,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type CommentUpsertWithoutRepliesInput = {
@@ -288562,6 +299923,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCommentsInput = {
@@ -288615,6 +299979,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutFeedPostsInput = {
@@ -288673,6 +300040,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutFeedPostsInput = {
@@ -288731,6 +300101,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutFeedPostsInput = {
@@ -288829,6 +300202,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedPostsInput = {
@@ -288887,6 +300263,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type FeedReactionUpsertWithWhereUniqueWithoutPostInput = {
@@ -288996,6 +300375,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutFeedReactionsInput = {
@@ -289054,6 +300436,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutFeedReactionsInput = {
@@ -289169,6 +300554,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeedReactionsInput = {
@@ -289227,6 +300615,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type AutomationRuleLogCreateWithoutRuleInput = {
@@ -289637,6 +301028,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutRoomBookingsInput = {
@@ -289695,6 +301089,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutRoomBookingsInput = {
@@ -289804,6 +301201,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRoomBookingsInput = {
@@ -289862,6 +301262,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type VehicleRequestCreateWithoutVehicleInput = {
@@ -289962,6 +301365,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVehiclesInput = {
@@ -290020,6 +301426,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVehiclesInput = {
@@ -290110,6 +301519,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehiclesInput = {
@@ -290168,6 +301580,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type VehicleCreateWithoutRequestsInput = {
@@ -290257,6 +301672,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVehicleRequestsInput = {
@@ -290315,6 +301733,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVehicleRequestsInput = {
@@ -290378,6 +301799,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutVehicleApprovalsInput = {
@@ -290436,6 +301860,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutVehicleApprovalsInput = {
@@ -290547,6 +301974,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehicleRequestsInput = {
@@ -290605,6 +302035,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutVehicleApprovalsInput = {
@@ -290674,6 +302107,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVehicleApprovalsInput = {
@@ -290732,6 +302168,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type BudgetLineCreateWithoutPlanInput = {
@@ -291994,6 +303433,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutCalendarEventsInput = {
@@ -292052,6 +303494,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutCalendarEventsInput = {
@@ -292126,6 +303571,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCalendarEventsInput = {
@@ -292184,6 +303632,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutDelegatorRulesInput = {
@@ -292242,6 +303693,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDelegatorRulesInput = {
@@ -292300,6 +303754,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDelegatorRulesInput = {
@@ -292363,6 +303820,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutDelegateRulesInput = {
@@ -292421,6 +303881,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutDelegateRulesInput = {
@@ -292479,6 +303942,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDelegationRulesInput = {
@@ -292532,6 +303998,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDelegationRulesInput = {
@@ -292606,6 +304075,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDelegatorRulesInput = {
@@ -292664,6 +304136,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUpsertWithoutDelegateRulesInput = {
@@ -292733,6 +304208,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDelegateRulesInput = {
@@ -292791,6 +304269,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutDelegationRulesInput = {
@@ -292855,6 +304336,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDelegationRulesInput = {
@@ -292908,6 +304392,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ChartOfAccountCreateWithoutDebitMappingsInput = {
@@ -293054,6 +304541,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInvoiceMappingsInput = {
@@ -293107,6 +304597,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInvoiceMappingsInput = {
@@ -293287,6 +304780,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInvoiceMappingsInput = {
@@ -293340,6 +304836,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ProjectCreateWithoutCostSnapshotsInput = {
@@ -294017,6 +305516,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectJournalsInput = {
@@ -294075,6 +305577,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectJournalsInput = {
@@ -294133,6 +305638,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProjectJournalsInput = {
@@ -294186,6 +305694,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProjectJournalsInput = {
@@ -294335,6 +305846,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectJournalsInput = {
@@ -294393,6 +305907,9 @@ export namespace Prisma {
     salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type TenantUpsertWithoutProjectJournalsInput = {
@@ -294457,6 +305974,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProjectJournalsInput = {
@@ -294510,6 +306030,9 @@ export namespace Prisma {
     attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type PositionCreateWithoutSalaryBandsInput = {
@@ -294872,6 +306395,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutSalaryReviewApprovalsInput = {
@@ -294930,6 +306456,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutSalaryReviewApprovalsInput = {
@@ -295188,6 +306717,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSalaryReviewApprovalsInput = {
@@ -295246,6 +306778,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserCreateWithoutTenantInput = {
@@ -295304,6 +306839,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserUncheckedCreateWithoutTenantInput = {
@@ -295362,6 +306900,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
   }
 
   export type UserCreateOrConnectWithoutTenantInput = {
@@ -297218,6 +308759,102 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type SystemAnnouncementCreateWithoutTenantInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SystemAnnouncementUncheckedCreateWithoutTenantInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type SystemAnnouncementCreateOrConnectWithoutTenantInput = {
+    where: SystemAnnouncementWhereUniqueInput
+    create: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SystemAnnouncementCreateManyTenantInputEnvelope = {
+    data: SystemAnnouncementCreateManyTenantInput | SystemAnnouncementCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ApiKeyCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutApiKeysInput
+  }
+
+  export type ApiKeyUncheckedCreateWithoutTenantInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyCreateOrConnectWithoutTenantInput = {
+    where: ApiKeyWhereUniqueInput
+    create: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput>
+  }
+
+  export type ApiKeyCreateManyTenantInputEnvelope = {
+    data: ApiKeyCreateManyTenantInput | ApiKeyCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NotificationTemplateCreateWithoutTenantInput = {
+    id?: string
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationTemplateUncheckedCreateWithoutTenantInput = {
+    id?: string
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NotificationTemplateCreateOrConnectWithoutTenantInput = {
+    where: NotificationTemplateWhereUniqueInput
+    create: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput>
+  }
+
+  export type NotificationTemplateCreateManyTenantInputEnvelope = {
+    data: NotificationTemplateCreateManyTenantInput | NotificationTemplateCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithWhereUniqueWithoutTenantInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutTenantInput, UserUncheckedUpdateWithoutTenantInput>
@@ -297883,6 +309520,82 @@ export namespace Prisma {
   export type CustomerSurveyScheduleUpdateManyWithWhereWithoutTenantInput = {
     where: CustomerSurveyScheduleScalarWhereInput
     data: XOR<CustomerSurveyScheduleUpdateManyMutationInput, CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type SystemAnnouncementUpsertWithWhereUniqueWithoutTenantInput = {
+    where: SystemAnnouncementWhereUniqueInput
+    update: XOR<SystemAnnouncementUpdateWithoutTenantInput, SystemAnnouncementUncheckedUpdateWithoutTenantInput>
+    create: XOR<SystemAnnouncementCreateWithoutTenantInput, SystemAnnouncementUncheckedCreateWithoutTenantInput>
+  }
+
+  export type SystemAnnouncementUpdateWithWhereUniqueWithoutTenantInput = {
+    where: SystemAnnouncementWhereUniqueInput
+    data: XOR<SystemAnnouncementUpdateWithoutTenantInput, SystemAnnouncementUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type SystemAnnouncementUpdateManyWithWhereWithoutTenantInput = {
+    where: SystemAnnouncementScalarWhereInput
+    data: XOR<SystemAnnouncementUpdateManyMutationInput, SystemAnnouncementUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type SystemAnnouncementScalarWhereInput = {
+    AND?: SystemAnnouncementScalarWhereInput | SystemAnnouncementScalarWhereInput[]
+    OR?: SystemAnnouncementScalarWhereInput[]
+    NOT?: SystemAnnouncementScalarWhereInput | SystemAnnouncementScalarWhereInput[]
+    id?: StringFilter<"SystemAnnouncement"> | string
+    message?: StringFilter<"SystemAnnouncement"> | string
+    type?: StringFilter<"SystemAnnouncement"> | string
+    targetRole?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    startAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+    endAt?: DateTimeNullableFilter<"SystemAnnouncement"> | Date | string | null
+    tenantId?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdById?: StringNullableFilter<"SystemAnnouncement"> | string | null
+    createdAt?: DateTimeFilter<"SystemAnnouncement"> | Date | string
+  }
+
+  export type ApiKeyUpsertWithWhereUniqueWithoutTenantInput = {
+    where: ApiKeyWhereUniqueInput
+    update: XOR<ApiKeyUpdateWithoutTenantInput, ApiKeyUncheckedUpdateWithoutTenantInput>
+    create: XOR<ApiKeyCreateWithoutTenantInput, ApiKeyUncheckedCreateWithoutTenantInput>
+  }
+
+  export type ApiKeyUpdateWithWhereUniqueWithoutTenantInput = {
+    where: ApiKeyWhereUniqueInput
+    data: XOR<ApiKeyUpdateWithoutTenantInput, ApiKeyUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type ApiKeyUpdateManyWithWhereWithoutTenantInput = {
+    where: ApiKeyScalarWhereInput
+    data: XOR<ApiKeyUpdateManyMutationInput, ApiKeyUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type NotificationTemplateUpsertWithWhereUniqueWithoutTenantInput = {
+    where: NotificationTemplateWhereUniqueInput
+    update: XOR<NotificationTemplateUpdateWithoutTenantInput, NotificationTemplateUncheckedUpdateWithoutTenantInput>
+    create: XOR<NotificationTemplateCreateWithoutTenantInput, NotificationTemplateUncheckedCreateWithoutTenantInput>
+  }
+
+  export type NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput = {
+    where: NotificationTemplateWhereUniqueInput
+    data: XOR<NotificationTemplateUpdateWithoutTenantInput, NotificationTemplateUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type NotificationTemplateUpdateManyWithWhereWithoutTenantInput = {
+    where: NotificationTemplateScalarWhereInput
+    data: XOR<NotificationTemplateUpdateManyMutationInput, NotificationTemplateUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type NotificationTemplateScalarWhereInput = {
+    AND?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
+    OR?: NotificationTemplateScalarWhereInput[]
+    NOT?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
+    id?: StringFilter<"NotificationTemplate"> | string
+    tenantId?: StringNullableFilter<"NotificationTemplate"> | string | null
+    key?: StringFilter<"NotificationTemplate"> | string
+    subject?: StringFilter<"NotificationTemplate"> | string
+    bodyHtml?: StringFilter<"NotificationTemplate"> | string
+    createdAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+    updatedAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
   }
 
   export type PositionCreateWithoutJobTitleInput = {
@@ -302100,6 +313813,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAttendanceExplanationsInput = {
@@ -302153,6 +313869,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAttendanceExplanationsInput = {
@@ -302428,6 +314147,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAttendanceExplanationsInput = {
@@ -302481,6 +314203,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
     leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type ShiftAssignmentCreateWithoutShiftInput = {
@@ -303528,6 +315253,1506 @@ export namespace Prisma {
     phases?: WorkSchedulePhaseUncheckedUpdateManyWithoutWorkScheduleNestedInput
   }
 
+  export type UserCreateWithoutNotificationPreferencesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestCreateNestedManyWithoutApprovedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
+    delegatorRules?: DelegationRuleCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    delegatorRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationPreferencesInput, UserUncheckedCreateWithoutNotificationPreferencesInput>
+  }
+
+  export type UserUpsertWithoutNotificationPreferencesInput = {
+    update: XOR<UserUpdateWithoutNotificationPreferencesInput, UserUncheckedUpdateWithoutNotificationPreferencesInput>
+    create: XOR<UserCreateWithoutNotificationPreferencesInput, UserUncheckedCreateWithoutNotificationPreferencesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationPreferencesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationPreferencesInput, UserUncheckedUpdateWithoutNotificationPreferencesInput>
+  }
+
+  export type UserUpdateWithoutNotificationPreferencesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUpdateManyWithoutApprovedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
+    delegatorRules?: DelegationRuleUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    delegatorRules?: DelegationRuleUncheckedUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUncheckedUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserCreateWithoutSavedFilterPresetsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestCreateNestedManyWithoutApprovedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
+    delegatorRules?: DelegationRuleCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutSavedFilterPresetsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    delegatorRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutSavedFilterPresetsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSavedFilterPresetsInput, UserUncheckedCreateWithoutSavedFilterPresetsInput>
+  }
+
+  export type UserUpsertWithoutSavedFilterPresetsInput = {
+    update: XOR<UserUpdateWithoutSavedFilterPresetsInput, UserUncheckedUpdateWithoutSavedFilterPresetsInput>
+    create: XOR<UserCreateWithoutSavedFilterPresetsInput, UserUncheckedCreateWithoutSavedFilterPresetsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSavedFilterPresetsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSavedFilterPresetsInput, UserUncheckedUpdateWithoutSavedFilterPresetsInput>
+  }
+
+  export type UserUpdateWithoutSavedFilterPresetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUpdateManyWithoutApprovedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
+    delegatorRules?: DelegationRuleUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSavedFilterPresetsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    delegatorRules?: DelegationRuleUncheckedUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUncheckedUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type TenantCreateWithoutAnnouncementsInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitCreateNestedManyWithoutTenantInput
+    employees?: EmployeeCreateNestedManyWithoutTenantInput
+    projects?: ProjectCreateNestedManyWithoutTenantInput
+    tasks?: TaskCreateNestedManyWithoutTenantInput
+    bugs?: BugCreateNestedManyWithoutTenantInput
+    deals?: DealCreateNestedManyWithoutTenantInput
+    customers?: CustomerCreateNestedManyWithoutTenantInput
+    contacts?: ContactCreateNestedManyWithoutTenantInput
+    leads?: LeadCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceCreateNestedManyWithoutTenantInput
+    contracts?: ContractCreateNestedManyWithoutTenantInput
+    assets?: AssetCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutTenantInput
+    allocations?: AllocationCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningCreateNestedManyWithoutTenantInput
+    candidates?: CandidateCreateNestedManyWithoutTenantInput
+    interviews?: InterviewCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalCreateNestedManyWithoutTenantInput
+    vendors?: VendorCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderCreateNestedManyWithoutTenantInput
+    comments?: CommentCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutAnnouncementsInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutTenantInput
+    employees?: EmployeeUncheckedCreateNestedManyWithoutTenantInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutTenantInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutTenantInput
+    bugs?: BugUncheckedCreateNestedManyWithoutTenantInput
+    deals?: DealUncheckedCreateNestedManyWithoutTenantInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutTenantInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutTenantInput
+    leads?: LeadUncheckedCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutTenantInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutTenantInput
+    assets?: AssetUncheckedCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+    allocations?: AllocationUncheckedCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceUncheckedCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionUncheckedCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodUncheckedCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractUncheckedCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningUncheckedCreateNestedManyWithoutTenantInput
+    candidates?: CandidateUncheckedCreateNestedManyWithoutTenantInput
+    interviews?: InterviewUncheckedCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalUncheckedCreateNestedManyWithoutTenantInput
+    vendors?: VendorUncheckedCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderUncheckedCreateNestedManyWithoutTenantInput
+    comments?: CommentUncheckedCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleUncheckedCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutAnnouncementsInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutAnnouncementsInput, TenantUncheckedCreateWithoutAnnouncementsInput>
+  }
+
+  export type TenantUpsertWithoutAnnouncementsInput = {
+    update: XOR<TenantUpdateWithoutAnnouncementsInput, TenantUncheckedUpdateWithoutAnnouncementsInput>
+    create: XOR<TenantCreateWithoutAnnouncementsInput, TenantUncheckedCreateWithoutAnnouncementsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutAnnouncementsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutAnnouncementsInput, TenantUncheckedUpdateWithoutAnnouncementsInput>
+  }
+
+  export type TenantUpdateWithoutAnnouncementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUpdateManyWithoutTenantNestedInput
+    bugs?: BugUpdateManyWithoutTenantNestedInput
+    deals?: DealUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUpdateManyWithoutTenantNestedInput
+    leads?: LeadUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUpdateManyWithoutTenantNestedInput
+    assets?: AssetUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUpdateManyWithoutTenantNestedInput
+    comments?: CommentUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutAnnouncementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUncheckedUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUncheckedUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutTenantNestedInput
+    bugs?: BugUncheckedUpdateManyWithoutTenantNestedInput
+    deals?: DealUncheckedUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutTenantNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutTenantNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUncheckedUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUncheckedUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUncheckedUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUncheckedUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUncheckedUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUncheckedUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUncheckedUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUncheckedUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUncheckedUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUncheckedUpdateManyWithoutTenantNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUncheckedUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type UserCreateWithoutApiKeysInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bugAttachments?: BugAttachmentCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugCreateNestedManyWithoutReporterInput
+    employee?: EmployeeCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseCreateNestedManyWithoutApprovedByInput
+    orgUnit?: OrgUnitCreateNestedOneWithoutUsersInput
+    workStatuses?: WorkStatusCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderCreateNestedManyWithoutApproverInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestCreateNestedManyWithoutApprovedByInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
+    delegatorRules?: DelegationRuleCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutApiKeysInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    name: string
+    role?: $Enums.Role
+    orgUnitId?: string | null
+    refreshToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    bugAttachments?: BugAttachmentUncheckedCreateNestedManyWithoutUploaderInput
+    bugComments?: BugCommentUncheckedCreateNestedManyWithoutAuthorInput
+    assignedBugs?: BugUncheckedCreateNestedManyWithoutAssigneeInput
+    pmApprovedBugs?: BugUncheckedCreateNestedManyWithoutPmApproverInput
+    reportedBugs?: BugUncheckedCreateNestedManyWithoutReporterInput
+    employee?: EmployeeUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    startedProcesses?: ProcessInstanceUncheckedCreateNestedManyWithoutStartedByUserInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedCreateNestedManyWithoutAssigneeInput
+    ledProjects?: ProjectUncheckedCreateNestedManyWithoutPmInput
+    pushTokens?: PushTokenUncheckedCreateNestedManyWithoutUserInput
+    taskApprovals?: TaskUncheckedCreateNestedManyWithoutApproverInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutUserInput
+    timeLogs?: TimeLogUncheckedCreateNestedManyWithoutUserInput
+    approvedTimesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutApprovedByInput
+    timesheets?: TimesheetRecordUncheckedCreateNestedManyWithoutUserInput
+    moduleRoles?: UserModuleRoleUncheckedCreateNestedManyWithoutUserInput
+    userPermissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    groupMemberships?: GroupMembershipUncheckedCreateNestedManyWithoutUserInput
+    approvedLeaves?: LeaveRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    processedPayrolls?: PayrollPeriodUncheckedCreateNestedManyWithoutProcessedByInput
+    submittedExpenses?: ExpenseUncheckedCreateNestedManyWithoutSubmittedByInput
+    approvedExpenses?: ExpenseUncheckedCreateNestedManyWithoutApprovedByInput
+    workStatuses?: WorkStatusUncheckedCreateNestedManyWithoutUserInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutUserInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutCreatedByInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutOwnerInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutAuthorInput
+    poRequests?: PurchaseOrderUncheckedCreateNestedManyWithoutRequesterInput
+    poApprovals?: PurchaseOrderUncheckedCreateNestedManyWithoutApproverInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    feedPosts?: FeedPostUncheckedCreateNestedManyWithoutAuthorInput
+    feedReactions?: FeedReactionUncheckedCreateNestedManyWithoutUserInput
+    roomBookings?: RoomBookingUncheckedCreateNestedManyWithoutBookedByInput
+    vehicles?: VehicleUncheckedCreateNestedManyWithoutDriverInput
+    vehicleRequests?: VehicleRequestUncheckedCreateNestedManyWithoutRequestedByInput
+    vehicleApprovals?: VehicleRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    calendarEvents?: CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput
+    approvedOvertimes?: OvertimeRequestUncheckedCreateNestedManyWithoutApprovedByInput
+    delegatorRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegatorInput
+    delegateRules?: DelegationRuleUncheckedCreateNestedManyWithoutDelegateInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedCreateNestedManyWithoutApprovedByInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutCreatedByInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutAssigneeInput
+    notificationPreferences?: NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+    savedFilterPresets?: SavedFilterPresetUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutApiKeysInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
+  }
+
+  export type TenantCreateWithoutApiKeysInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitCreateNestedManyWithoutTenantInput
+    employees?: EmployeeCreateNestedManyWithoutTenantInput
+    projects?: ProjectCreateNestedManyWithoutTenantInput
+    tasks?: TaskCreateNestedManyWithoutTenantInput
+    bugs?: BugCreateNestedManyWithoutTenantInput
+    deals?: DealCreateNestedManyWithoutTenantInput
+    customers?: CustomerCreateNestedManyWithoutTenantInput
+    contacts?: ContactCreateNestedManyWithoutTenantInput
+    leads?: LeadCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceCreateNestedManyWithoutTenantInput
+    contracts?: ContractCreateNestedManyWithoutTenantInput
+    assets?: AssetCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutTenantInput
+    allocations?: AllocationCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningCreateNestedManyWithoutTenantInput
+    candidates?: CandidateCreateNestedManyWithoutTenantInput
+    interviews?: InterviewCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalCreateNestedManyWithoutTenantInput
+    vendors?: VendorCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderCreateNestedManyWithoutTenantInput
+    comments?: CommentCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutApiKeysInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutTenantInput
+    employees?: EmployeeUncheckedCreateNestedManyWithoutTenantInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutTenantInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutTenantInput
+    bugs?: BugUncheckedCreateNestedManyWithoutTenantInput
+    deals?: DealUncheckedCreateNestedManyWithoutTenantInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutTenantInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutTenantInput
+    leads?: LeadUncheckedCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutTenantInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutTenantInput
+    assets?: AssetUncheckedCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+    allocations?: AllocationUncheckedCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceUncheckedCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionUncheckedCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodUncheckedCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractUncheckedCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningUncheckedCreateNestedManyWithoutTenantInput
+    candidates?: CandidateUncheckedCreateNestedManyWithoutTenantInput
+    interviews?: InterviewUncheckedCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalUncheckedCreateNestedManyWithoutTenantInput
+    vendors?: VendorUncheckedCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderUncheckedCreateNestedManyWithoutTenantInput
+    comments?: CommentUncheckedCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleUncheckedCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutApiKeysInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutApiKeysInput, TenantUncheckedCreateWithoutApiKeysInput>
+  }
+
+  export type UserUpsertWithoutApiKeysInput = {
+    update: XOR<UserUpdateWithoutApiKeysInput, UserUncheckedUpdateWithoutApiKeysInput>
+    create: XOR<UserCreateWithoutApiKeysInput, UserUncheckedCreateWithoutApiKeysInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutApiKeysInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutApiKeysInput, UserUncheckedUpdateWithoutApiKeysInput>
+  }
+
+  export type UserUpdateWithoutApiKeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bugAttachments?: BugAttachmentUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUpdateManyWithoutApprovedByNestedInput
+    orgUnit?: OrgUnitUpdateOneWithoutUsersNestedInput
+    workStatuses?: WorkStatusUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUpdateManyWithoutApproverNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUpdateManyWithoutApprovedByNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
+    delegatorRules?: DelegationRuleUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutApiKeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    bugAttachments?: BugAttachmentUncheckedUpdateManyWithoutUploaderNestedInput
+    bugComments?: BugCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    assignedBugs?: BugUncheckedUpdateManyWithoutAssigneeNestedInput
+    pmApprovedBugs?: BugUncheckedUpdateManyWithoutPmApproverNestedInput
+    reportedBugs?: BugUncheckedUpdateManyWithoutReporterNestedInput
+    employee?: EmployeeUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    startedProcesses?: ProcessInstanceUncheckedUpdateManyWithoutStartedByUserNestedInput
+    assignedProcessTasks?: ProcessUserTaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    ledProjects?: ProjectUncheckedUpdateManyWithoutPmNestedInput
+    pushTokens?: PushTokenUncheckedUpdateManyWithoutUserNestedInput
+    taskApprovals?: TaskUncheckedUpdateManyWithoutApproverNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutUserNestedInput
+    timeLogs?: TimeLogUncheckedUpdateManyWithoutUserNestedInput
+    approvedTimesheets?: TimesheetRecordUncheckedUpdateManyWithoutApprovedByNestedInput
+    timesheets?: TimesheetRecordUncheckedUpdateManyWithoutUserNestedInput
+    moduleRoles?: UserModuleRoleUncheckedUpdateManyWithoutUserNestedInput
+    userPermissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    groupMemberships?: GroupMembershipUncheckedUpdateManyWithoutUserNestedInput
+    approvedLeaves?: LeaveRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    processedPayrolls?: PayrollPeriodUncheckedUpdateManyWithoutProcessedByNestedInput
+    submittedExpenses?: ExpenseUncheckedUpdateManyWithoutSubmittedByNestedInput
+    approvedExpenses?: ExpenseUncheckedUpdateManyWithoutApprovedByNestedInput
+    workStatuses?: WorkStatusUncheckedUpdateManyWithoutUserNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutUserNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutCreatedByNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutOwnerNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    poRequests?: PurchaseOrderUncheckedUpdateManyWithoutRequesterNestedInput
+    poApprovals?: PurchaseOrderUncheckedUpdateManyWithoutApproverNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    feedPosts?: FeedPostUncheckedUpdateManyWithoutAuthorNestedInput
+    feedReactions?: FeedReactionUncheckedUpdateManyWithoutUserNestedInput
+    roomBookings?: RoomBookingUncheckedUpdateManyWithoutBookedByNestedInput
+    vehicles?: VehicleUncheckedUpdateManyWithoutDriverNestedInput
+    vehicleRequests?: VehicleRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+    vehicleApprovals?: VehicleRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    calendarEvents?: CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput
+    approvedOvertimes?: OvertimeRequestUncheckedUpdateManyWithoutApprovedByNestedInput
+    delegatorRules?: DelegationRuleUncheckedUpdateManyWithoutDelegatorNestedInput
+    delegateRules?: DelegationRuleUncheckedUpdateManyWithoutDelegateNestedInput
+    salaryReviewApprovals?: SalaryReviewSuggestionUncheckedUpdateManyWithoutApprovedByNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
+    leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TenantUpsertWithoutApiKeysInput = {
+    update: XOR<TenantUpdateWithoutApiKeysInput, TenantUncheckedUpdateWithoutApiKeysInput>
+    create: XOR<TenantCreateWithoutApiKeysInput, TenantUncheckedCreateWithoutApiKeysInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutApiKeysInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutApiKeysInput, TenantUncheckedUpdateWithoutApiKeysInput>
+  }
+
+  export type TenantUpdateWithoutApiKeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUpdateManyWithoutTenantNestedInput
+    bugs?: BugUpdateManyWithoutTenantNestedInput
+    deals?: DealUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUpdateManyWithoutTenantNestedInput
+    leads?: LeadUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUpdateManyWithoutTenantNestedInput
+    assets?: AssetUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUpdateManyWithoutTenantNestedInput
+    comments?: CommentUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutApiKeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUncheckedUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUncheckedUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutTenantNestedInput
+    bugs?: BugUncheckedUpdateManyWithoutTenantNestedInput
+    deals?: DealUncheckedUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutTenantNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutTenantNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUncheckedUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUncheckedUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUncheckedUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUncheckedUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUncheckedUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUncheckedUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUncheckedUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUncheckedUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUncheckedUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUncheckedUpdateManyWithoutTenantNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUncheckedUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantCreateWithoutNotifTemplatesInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitCreateNestedManyWithoutTenantInput
+    employees?: EmployeeCreateNestedManyWithoutTenantInput
+    projects?: ProjectCreateNestedManyWithoutTenantInput
+    tasks?: TaskCreateNestedManyWithoutTenantInput
+    bugs?: BugCreateNestedManyWithoutTenantInput
+    deals?: DealCreateNestedManyWithoutTenantInput
+    customers?: CustomerCreateNestedManyWithoutTenantInput
+    contacts?: ContactCreateNestedManyWithoutTenantInput
+    leads?: LeadCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceCreateNestedManyWithoutTenantInput
+    contracts?: ContractCreateNestedManyWithoutTenantInput
+    assets?: AssetCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutTenantInput
+    allocations?: AllocationCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningCreateNestedManyWithoutTenantInput
+    candidates?: CandidateCreateNestedManyWithoutTenantInput
+    interviews?: InterviewCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalCreateNestedManyWithoutTenantInput
+    vendors?: VendorCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderCreateNestedManyWithoutTenantInput
+    comments?: CommentCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutNotifTemplatesInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutTenantInput
+    employees?: EmployeeUncheckedCreateNestedManyWithoutTenantInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutTenantInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutTenantInput
+    bugs?: BugUncheckedCreateNestedManyWithoutTenantInput
+    deals?: DealUncheckedCreateNestedManyWithoutTenantInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutTenantInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutTenantInput
+    leads?: LeadUncheckedCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutTenantInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutTenantInput
+    assets?: AssetUncheckedCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+    allocations?: AllocationUncheckedCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceUncheckedCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionUncheckedCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodUncheckedCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractUncheckedCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningUncheckedCreateNestedManyWithoutTenantInput
+    candidates?: CandidateUncheckedCreateNestedManyWithoutTenantInput
+    interviews?: InterviewUncheckedCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalUncheckedCreateNestedManyWithoutTenantInput
+    vendors?: VendorUncheckedCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderUncheckedCreateNestedManyWithoutTenantInput
+    comments?: CommentUncheckedCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleUncheckedCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutNotifTemplatesInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutNotifTemplatesInput, TenantUncheckedCreateWithoutNotifTemplatesInput>
+  }
+
+  export type TenantUpsertWithoutNotifTemplatesInput = {
+    update: XOR<TenantUpdateWithoutNotifTemplatesInput, TenantUncheckedUpdateWithoutNotifTemplatesInput>
+    create: XOR<TenantCreateWithoutNotifTemplatesInput, TenantUncheckedCreateWithoutNotifTemplatesInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutNotifTemplatesInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutNotifTemplatesInput, TenantUncheckedUpdateWithoutNotifTemplatesInput>
+  }
+
+  export type TenantUpdateWithoutNotifTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUpdateManyWithoutTenantNestedInput
+    bugs?: BugUpdateManyWithoutTenantNestedInput
+    deals?: DealUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUpdateManyWithoutTenantNestedInput
+    leads?: LeadUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUpdateManyWithoutTenantNestedInput
+    assets?: AssetUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUpdateManyWithoutTenantNestedInput
+    comments?: CommentUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutNotifTemplatesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUncheckedUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUncheckedUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutTenantNestedInput
+    bugs?: BugUncheckedUpdateManyWithoutTenantNestedInput
+    deals?: DealUncheckedUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutTenantNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutTenantNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUncheckedUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUncheckedUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUncheckedUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUncheckedUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUncheckedUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUncheckedUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUncheckedUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUncheckedUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUncheckedUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUncheckedUpdateManyWithoutTenantNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUncheckedUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
   export type BugAttachmentCreateManyUploaderInput = {
     id?: string
     bugId: string
@@ -303659,6 +316884,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type ProjectCreateManyPmInput = {
@@ -304178,6 +317404,35 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type NotificationPreferenceCreateManyUserInput = {
+    id?: string
+    moduleType: string
+    channel?: $Enums.NotificationChannel
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SavedFilterPresetCreateManyUserInput = {
+    id?: string
+    pageKey: string
+    name: string
+    filters: JsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyCreateManyCreatedByInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
   export type BugAttachmentUpdateWithoutUploaderInput = {
     id?: StringFieldUpdateOperationsInput | string
     filename?: StringFieldUpdateOperationsInput | string
@@ -304584,6 +317839,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     instance?: ProcessInstanceUpdateOneRequiredWithoutUserTasksNestedInput
   }
 
@@ -304597,6 +317853,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProcessUserTaskUncheckedUpdateManyWithoutAssigneeInput = {
@@ -304609,6 +317866,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProjectUpdateWithoutPmInput = {
@@ -306210,6 +319468,93 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type NotificationPreferenceUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationPreferenceUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    moduleType?: StringFieldUpdateOperationsInput | string
+    channel?: EnumNotificationChannelFieldUpdateOperationsInput | $Enums.NotificationChannel
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SavedFilterPresetUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pageKey?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    filters?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneWithoutApiKeysNestedInput
+  }
+
+  export type ApiKeyUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmployeeCreateManyOrgUnitInput = {
     id?: string
     code: string
@@ -306825,6 +320170,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrgUnitInput = {
@@ -306883,6 +320231,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -310060,6 +323411,7 @@ export namespace Prisma {
     status?: $Enums.UserTaskStatus
     dueDate?: Date | string | null
     completedAt?: Date | string | null
+    lastEscalatedAt?: Date | string | null
   }
 
   export type LeaveRequestCreateManyProcessInstanceInput = {
@@ -310153,6 +323505,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignee?: UserUpdateOneWithoutAssignedProcessTasksNestedInput
   }
 
@@ -310166,6 +323519,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProcessUserTaskUncheckedUpdateManyWithoutInstanceInput = {
@@ -310178,6 +323532,7 @@ export namespace Prisma {
     status?: EnumUserTaskStatusFieldUpdateOperationsInput | $Enums.UserTaskStatus
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastEscalatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type LeaveRequestUpdateWithoutProcessInstanceInput = {
@@ -314336,6 +327691,39 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type SystemAnnouncementCreateManyTenantInput = {
+    id?: string
+    message: string
+    type?: string
+    targetRole?: string | null
+    startAt: Date | string
+    endAt?: Date | string | null
+    createdById?: string | null
+    createdAt?: Date | string
+  }
+
+  export type ApiKeyCreateManyTenantInput = {
+    id?: string
+    name: string
+    keyPrefix: string
+    keyHash: string
+    scopes?: ApiKeyCreatescopesInput | string[]
+    expiresAt?: Date | string | null
+    lastUsedAt?: Date | string | null
+    isActive?: boolean
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type NotificationTemplateCreateManyTenantInput = {
+    id?: string
+    key: string
+    subject: string
+    bodyHtml: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -314392,6 +327780,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTenantInput = {
@@ -314450,6 +327841,9 @@ export namespace Prisma {
     projectJournals?: ProjectJournalUncheckedUpdateManyWithoutCreatedByNestedInput
     leadFollowUpSchedules?: LeadFollowUpScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
     customerSurveySchedules?: CustomerSurveyScheduleUncheckedUpdateManyWithoutAssigneeNestedInput
+    notificationPreferences?: NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+    savedFilterPresets?: SavedFilterPresetUncheckedUpdateManyWithoutUserNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutTenantInput = {
@@ -316576,6 +329970,105 @@ export namespace Prisma {
     assigneeId?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SystemAnnouncementUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    targetRole?: NullableStringFieldUpdateOperationsInput | string | null
+    startAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutApiKeysNestedInput
+  }
+
+  export type ApiKeyUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApiKeyUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    keyPrefix?: StringFieldUpdateOperationsInput | string
+    keyHash?: StringFieldUpdateOperationsInput | string
+    scopes?: ApiKeyUpdatescopesInput | string[]
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationTemplateUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    subject?: StringFieldUpdateOperationsInput | string
+    bodyHtml?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PositionCreateManyJobTitleInput = {

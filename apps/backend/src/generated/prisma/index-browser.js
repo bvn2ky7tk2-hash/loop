@@ -424,7 +424,8 @@ exports.Prisma.ProcessUserTaskScalarFieldEnum = {
   formData: 'formData',
   status: 'status',
   dueDate: 'dueDate',
-  completedAt: 'completedAt'
+  completedAt: 'completedAt',
+  lastEscalatedAt: 'lastEscalatedAt'
 };
 
 exports.Prisma.ProcessActivityLogScalarFieldEnum = {
@@ -2016,6 +2017,82 @@ exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  moduleType: 'moduleType',
+  channel: 'channel',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SavedFilterPresetScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  pageKey: 'pageKey',
+  name: 'name',
+  filters: 'filters',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AppChangelogScalarFieldEnum = {
+  id: 'id',
+  version: 'version',
+  title: 'title',
+  items: 'items',
+  publishedAt: 'publishedAt',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SystemAnnouncementScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  type: 'type',
+  targetRole: 'targetRole',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  tenantId: 'tenantId',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.EmailLogScalarFieldEnum = {
+  id: 'id',
+  toEmail: 'toEmail',
+  subject: 'subject',
+  status: 'status',
+  module: 'module',
+  error: 'error',
+  sentAt: 'sentAt',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ApiKeyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  keyPrefix: 'keyPrefix',
+  keyHash: 'keyHash',
+  scopes: 'scopes',
+  expiresAt: 'expiresAt',
+  lastUsedAt: 'lastUsedAt',
+  isActive: 'isActive',
+  createdById: 'createdById',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.NotificationTemplateScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  key: 'key',
+  subject: 'subject',
+  bodyHtml: 'bodyHtml',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2724,6 +2801,12 @@ exports.ShiftType = exports.$Enums.ShiftType = {
   LINH_HOAT: 'LINH_HOAT'
 };
 
+exports.NotificationChannel = exports.$Enums.NotificationChannel = {
+  EMAIL: 'EMAIL',
+  IN_APP: 'IN_APP',
+  BOTH: 'BOTH'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -2866,7 +2949,14 @@ exports.Prisma.ModelName = {
   ShiftAssignment: 'ShiftAssignment',
   WorkSchedule: 'WorkSchedule',
   WorkSchedulePhase: 'WorkSchedulePhase',
-  WorkScheduleEnrollment: 'WorkScheduleEnrollment'
+  WorkScheduleEnrollment: 'WorkScheduleEnrollment',
+  NotificationPreference: 'NotificationPreference',
+  SavedFilterPreset: 'SavedFilterPreset',
+  AppChangelog: 'AppChangelog',
+  SystemAnnouncement: 'SystemAnnouncement',
+  EmailLog: 'EmailLog',
+  ApiKey: 'ApiKey',
+  NotificationTemplate: 'NotificationTemplate'
 };
 
 /**

@@ -66,6 +66,9 @@ model User {
   projectJournals          ProjectJournal[]         @relation("JournalCreator")
   leadFollowUpSchedules    LeadFollowUpSchedule[]
   customerSurveySchedules  CustomerSurveySchedule[]
+  notificationPreferences  NotificationPreference[]
+  savedFilterPresets       SavedFilterPreset[]
+  apiKeys                  ApiKey[]                 @relation("ApiKeyCreator")
 
   @@map("users")
 }
@@ -556,8 +559,9 @@ model ProcessUserTask {
   candidateRoles String[]        @default([]) @map("candidate_roles")
   formData       Json?           @map("form_data")
   status         UserTaskStatus  @default(PENDING)
-  dueDate        DateTime?       @map("due_date")
-  completedAt    DateTime?       @map("completed_at")
+  dueDate          DateTime?       @map("due_date")
+  completedAt      DateTime?       @map("completed_at")
+  lastEscalatedAt  DateTime?       @map("last_escalated_at")
   assignee       User?           @relation("ProcessTaskAssignee", fields: [assigneeId], references: [id])
   instance       ProcessInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
@@ -3290,6 +3294,9 @@ model Tenant {
   projectJournals          ProjectJournal[]           @relation("TenantProjectJournals")
   leadFollowUps            LeadFollowUpSchedule[]     @relation("TenantLeadFollowUps")
   customerSurveys          CustomerSurveySchedule[]   @relation("TenantCustomerSurveys")
+  announcements            SystemAnnouncement[]       @relation("TenantAnnouncements")
+  apiKeys                  ApiKey[]                   @relation("TenantApiKeys")
+  notifTemplates           NotificationTemplate[]     @relation("TenantNotifTemplates")
 
   @@map("tenants")
 }
@@ -3805,4 +3812,128 @@ model WorkScheduleEnrollment {
 
   @@index([employeeId])
   @@map("work_schedule_enrollments")
+}
+
+// ─── E23: Notification Preferences ───────────────────────────────────────────
+
+enum NotificationChannel {
+  EMAIL
+  IN_APP
+  BOTH
+
+  @@map("notification_channel")
+}
+
+model NotificationPreference {
+  id         String              @id @default(uuid())
+  userId     String              @map("user_id")
+  moduleType String              @map("module_type")
+  channel    NotificationChannel @default(BOTH)
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleType])
+  @@map("notification_preferences")
+}
+
+// ─── E25: Saved Filter Presets ────────────────────────────────────────────────
+
+model SavedFilterPreset {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  pageKey   String   @map("page_key")
+  name      String
+  filters   Json
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, pageKey])
+  @@map("saved_filter_presets")
+}
+
+// ─── E26: App Changelog ───────────────────────────────────────────────────────
+
+model AppChangelog {
+  id            String   @id @default(uuid())
+  version       String
+  title         String
+  items         Json
+  publishedAt   DateTime @map("published_at")
+  createdById   String?  @map("created_by_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("app_changelogs")
+}
+
+// ─── E26: System Announcement ─────────────────────────────────────────────────
+
+model SystemAnnouncement {
+  id            String   @id @default(uuid())
+  message       String   @db.Text
+  type          String   @default("INFO")
+  targetRole    String?  @map("target_role")
+  startAt       DateTime @map("start_at")
+  endAt         DateTime? @map("end_at")
+  tenantId      String?  @map("tenant_id")
+  createdById   String?  @map("created_by_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  tenant        Tenant?  @relation("TenantAnnouncements", fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("system_announcements")
+}
+
+// ─── E26: Email Log ───────────────────────────────────────────────────────────
+
+model EmailLog {
+  id        String    @id @default(uuid())
+  toEmail   String    @map("to_email")
+  subject   String
+  status    String    @default("PENDING")
+  module    String?
+  error     String?   @db.Text
+  sentAt    DateTime? @map("sent_at")
+  tenantId  String?   @map("tenant_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([tenantId, status])
+  @@map("email_logs")
+}
+
+// ─── E26: API Key ─────────────────────────────────────────────────────────────
+
+model ApiKey {
+  id           String    @id @default(uuid())
+  name         String
+  keyPrefix    String    @map("key_prefix")
+  keyHash      String    @unique @map("key_hash")
+  scopes       String[]
+  expiresAt    DateTime? @map("expires_at")
+  lastUsedAt   DateTime? @map("last_used_at")
+  isActive     Boolean   @default(true) @map("is_active")
+  createdById  String    @map("created_by_id")
+  tenantId     String?   @map("tenant_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  createdBy    User      @relation("ApiKeyCreator", fields: [createdById], references: [id])
+  tenant       Tenant?   @relation("TenantApiKeys", fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@map("api_keys")
+}
+
+// ─── E26: Notification Template ───────────────────────────────────────────────
+
+model NotificationTemplate {
+  id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
+  key       String
+  subject   String
+  bodyHtml  String   @map("body_html") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tenant    Tenant?  @relation("TenantNotifTemplates", fields: [tenantId], references: [id])
+
+  @@unique([tenantId, key])
+  @@map("notification_templates")
 }
