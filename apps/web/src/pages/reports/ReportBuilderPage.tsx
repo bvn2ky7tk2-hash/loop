@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Row,
   Col,
@@ -7,7 +7,6 @@ import {
   Button,
   Input,
   Table,
-  Tooltip,
   Modal,
   Form,
   App,
@@ -15,6 +14,8 @@ import {
   Divider,
   Space,
   Tag,
+  Spin,
+  Steps,
 } from 'antd';
 import {
   BuildOutlined,
@@ -23,16 +24,21 @@ import {
   SaveOutlined,
   PlusOutlined,
   DeleteOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 
 const { Text } = Typography;
 
-// ── Entity & Column definitions ──────────────────────────────────────────────
+// ── Types ──────────────────────────────────────────────────────────────────────
 
-type EntityKey = 'Employee' | 'Project' | 'Invoice' | 'Leave' | 'Expense';
+type EntityKey = string;
 
 interface ColumnDef {
   key: string;
@@ -40,145 +46,49 @@ interface ColumnDef {
   type: 'text' | 'number' | 'date' | 'status';
 }
 
-const entityColumnMap: Record<EntityKey, ColumnDef[]> = {
-  Employee: [
-    { key: 'id',         label: 'Mã NV',       type: 'text' },
-    { key: 'fullName',   label: 'Họ tên',       type: 'text' },
-    { key: 'email',      label: 'Email',        type: 'text' },
-    { key: 'department', label: 'Phòng ban',    type: 'text' },
-    { key: 'position',   label: 'Chức vụ',      type: 'text' },
-    { key: 'startDate',  label: 'Ngày vào làm', type: 'date' },
-    { key: 'status',     label: 'Trạng thái',   type: 'status' },
-  ],
-  Project: [
-    { key: 'name',      label: 'Tên dự án',    type: 'text' },
-    { key: 'status',    label: 'Trạng thái',   type: 'status' },
-    { key: 'pm',        label: 'PM',           type: 'text' },
-    { key: 'startDate', label: 'Ngày bắt đầu', type: 'date' },
-    { key: 'endDate',   label: 'Ngày kết thúc',type: 'date' },
-    { key: 'budget',    label: 'Ngân sách',    type: 'number' },
-    { key: 'margin',    label: 'Margin %',     type: 'number' },
-  ],
-  Invoice: [
-    { key: 'code',     label: 'Số hoá đơn',   type: 'text' },
-    { key: 'customer', label: 'Khách hàng',   type: 'text' },
-    { key: 'type',     label: 'Loại',         type: 'status' },
-    { key: 'amount',   label: 'Số tiền',      type: 'number' },
-    { key: 'status',   label: 'Trạng thái',   type: 'status' },
-    { key: 'dueDate',  label: 'Hạn thanh toán',type: 'date' },
-  ],
-  Leave: [
-    { key: 'employee',  label: 'Nhân viên',  type: 'text' },
-    { key: 'type',      label: 'Loại phép',  type: 'text' },
-    { key: 'startDate', label: 'Từ ngày',    type: 'date' },
-    { key: 'days',      label: 'Số ngày',    type: 'number' },
-    { key: 'status',    label: 'Trạng thái', type: 'status' },
-  ],
-  Expense: [
-    { key: 'title',       label: 'Tiêu đề',     type: 'text' },
-    { key: 'employee',    label: 'Nhân viên',    type: 'text' },
-    { key: 'amount',      label: 'Số tiền',      type: 'number' },
-    { key: 'category',    label: 'Danh mục',     type: 'text' },
-    { key: 'status',      label: 'Trạng thái',   type: 'status' },
-    { key: 'submittedAt', label: 'Ngày nộp',     type: 'date' },
-  ],
-};
-
-// ── Mock data generators ──────────────────────────────────────────────────────
-
-function generateMockRows(entity: EntityKey, columns: string[]): Record<string, unknown>[] {
-  const rows10: Record<string, unknown>[] = [];
-
-  const EMPLOYEES = ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Hoàng Cường', 'Phạm Thị Dung', 'Võ Minh Đức', 'Hoàng Tuấn Anh', 'Đặng Thị Hoa', 'Bùi Văn Khoa', 'Ngô Thị Lan', 'Vũ Mạnh Hùng'];
-  const DEPTS = ['Kỹ thuật', 'Marketing', 'Kinh doanh', 'HR', 'Finance'];
-  const POSITIONS = ['Senior Dev', 'PM', 'Business Analyst', 'Designer', 'Tester'];
-  const STATUSES = ['ACTIVE', 'INACTIVE', 'ON_LEAVE'];
-  const PROJECTS = ['Loop ERP v5', 'CRM Nâng cấp', 'Mobile App', 'Data Platform', 'Portal KH', 'BI Dashboard', 'AI Assistant', 'API Gateway', 'Cloud Migration', 'Security Audit'];
-  const PROJ_STATUSES = ['ACTIVE', 'COMPLETED', 'ON_HOLD', 'PLANNING'];
-  const CUSTOMERS = ['Công ty ABC', 'Tập đoàn XYZ', 'Cty TNHH DEF', 'MSC Corp', 'TechVN Ltd'];
-  const LEAVE_TYPES = ['Phép năm', 'Nghỉ ốm', 'Phép đặc biệt', 'Nghỉ bù'];
-  const LEAVE_STATUSES = ['PENDING', 'APPROVED', 'REJECTED'];
-  const EXPENSE_CATS = ['Di chuyển', 'Văn phòng phẩm', 'Đào tạo', 'Khách hàng', 'Khác'];
-  const EXPENSE_STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'PAID'];
-  const INV_TYPES = ['SALE', 'SERVICE', 'REFUND'];
-  const INV_STATUSES = ['DRAFT', 'SENT', 'PAID', 'OVERDUE'];
-
-  for (let i = 0; i < 10; i++) {
-    const row: Record<string, unknown> = { _key: i };
-    if (entity === 'Employee') {
-      if (columns.includes('id'))         row.id         = `NV-${String(1000 + i + 1).slice(-4)}`;
-      if (columns.includes('fullName'))   row.fullName   = EMPLOYEES[i];
-      if (columns.includes('email'))      row.email      = `${EMPLOYEES[i].split(' ').pop()?.toLowerCase() ?? 'user'}${i + 1}@loop.vn`;
-      if (columns.includes('department')) row.department = DEPTS[i % DEPTS.length];
-      if (columns.includes('position'))   row.position   = POSITIONS[i % POSITIONS.length];
-      if (columns.includes('startDate'))  row.startDate  = dayjs().subtract(i * 6 + 3, 'month').format('DD/MM/YYYY');
-      if (columns.includes('status'))     row.status     = STATUSES[i % STATUSES.length];
-    } else if (entity === 'Project') {
-      if (columns.includes('name'))      row.name      = PROJECTS[i];
-      if (columns.includes('status'))    row.status    = PROJ_STATUSES[i % PROJ_STATUSES.length];
-      if (columns.includes('pm'))        row.pm        = EMPLOYEES[i % EMPLOYEES.length];
-      if (columns.includes('startDate')) row.startDate = dayjs().subtract(i * 2 + 1, 'month').format('DD/MM/YYYY');
-      if (columns.includes('endDate'))   row.endDate   = dayjs().add(i * 1.5 + 2, 'month').format('DD/MM/YYYY');
-      if (columns.includes('budget'))    row.budget    = `${(500 + i * 200).toLocaleString('vi-VN')} tr`;
-      if (columns.includes('margin'))    row.margin    = `${18 + i * 2}%`;
-    } else if (entity === 'Invoice') {
-      if (columns.includes('code'))     row.code     = `INV-2026-${String(40 + i + 1).padStart(3, '0')}`;
-      if (columns.includes('customer')) row.customer = CUSTOMERS[i % CUSTOMERS.length];
-      if (columns.includes('type'))     row.type     = INV_TYPES[i % INV_TYPES.length];
-      if (columns.includes('amount'))   row.amount   = `${(10 + i * 5).toLocaleString('vi-VN')} tr`;
-      if (columns.includes('status'))   row.status   = INV_STATUSES[i % INV_STATUSES.length];
-      if (columns.includes('dueDate'))  row.dueDate  = dayjs().add(i * 5 - 10, 'day').format('DD/MM/YYYY');
-    } else if (entity === 'Leave') {
-      if (columns.includes('employee'))  row.employee  = EMPLOYEES[i];
-      if (columns.includes('type'))      row.type      = LEAVE_TYPES[i % LEAVE_TYPES.length];
-      if (columns.includes('startDate')) row.startDate = dayjs().subtract(i * 3, 'day').format('DD/MM/YYYY');
-      if (columns.includes('days'))      row.days      = 1 + (i % 5);
-      if (columns.includes('status'))    row.status    = LEAVE_STATUSES[i % LEAVE_STATUSES.length];
-    } else if (entity === 'Expense') {
-      if (columns.includes('title'))       row.title       = `Chi phí ${EXPENSE_CATS[i % EXPENSE_CATS.length].toLowerCase()} tháng ${dayjs().month() + 1}`;
-      if (columns.includes('employee'))    row.employee    = EMPLOYEES[i];
-      if (columns.includes('amount'))      row.amount      = `${(200 + i * 150).toLocaleString('vi-VN')} K`;
-      if (columns.includes('category'))    row.category    = EXPENSE_CATS[i % EXPENSE_CATS.length];
-      if (columns.includes('status'))      row.status      = EXPENSE_STATUSES[i % EXPENSE_STATUSES.length];
-      if (columns.includes('submittedAt')) row.submittedAt = dayjs().subtract(i * 2, 'day').format('DD/MM/YYYY');
-    }
-    rows10.push(row);
-  }
-  return rows10;
-}
-
-// ── Filter row type ───────────────────────────────────────────────────────────
-
 interface FilterRow {
   id: number;
   field: string;
-  operator: string;
+  operator: '=' | '>' | '<' | 'contains';
   value: string;
 }
 
-const OPERATORS = [
-  { value: '=',        label: '= bằng' },
+interface PreviewResult {
+  rows: Record<string, unknown>[];
+  total: number;
+}
+
+const OPERATORS: { value: FilterRow['operator']; label: string }[] = [
+  { value: '=',        label: '= bằng'    },
   { value: '>',        label: '> lớn hơn' },
   { value: '<',        label: '< nhỏ hơn' },
-  { value: 'contains', label: 'contains' },
+  { value: 'contains', label: 'contains'  },
 ];
 
-// ── Status pill helper ────────────────────────────────────────────────────────
+const ENTITY_LABELS: Record<string, string> = {
+  Employee: 'Employee — Nhân viên',
+  Project:  'Project — Dự án',
+  Invoice:  'Invoice — Hoá đơn',
+  Leave:    'Leave — Nghỉ phép',
+  Expense:  'Expense — Chi phí',
+  Payroll:  'Payroll — Bảng lương',
+};
+
+// ── Status pill helper ─────────────────────────────────────────────────────────
 
 const STATUS_COLOR: Record<string, { bg: string; color: string }> = {
-  ACTIVE:       { bg: '#ECFDF5', color: '#065F46' },
-  INACTIVE:     { bg: '#F1F5F9', color: '#475569' },
-  APPROVED:     { bg: '#ECFDF5', color: '#065F46' },
-  PENDING:      { bg: '#FFFBEB', color: '#92400E' },
-  REJECTED:     { bg: '#FEF2F2', color: '#991B1B' },
-  PAID:         { bg: '#EEF2FF', color: '#3730A3' },
-  OVERDUE:      { bg: '#FEF2F2', color: '#991B1B' },
-  SENT:         { bg: '#EFF6FF', color: '#1D4ED8' },
-  DRAFT:        { bg: '#F8FAFC', color: '#475569' },
-  COMPLETED:    { bg: '#ECFDF5', color: '#065F46' },
-  ON_HOLD:      { bg: '#FFFBEB', color: '#92400E' },
-  PLANNING:     { bg: '#EEF2FF', color: '#3730A3' },
-  ON_LEAVE:     { bg: '#FFF7ED', color: '#9A3412' },
+  ACTIVE:    { bg: '#ECFDF5', color: '#065F46' },
+  INACTIVE:  { bg: '#F1F5F9', color: '#475569' },
+  APPROVED:  { bg: '#ECFDF5', color: '#065F46' },
+  PENDING:   { bg: '#FFFBEB', color: '#92400E' },
+  REJECTED:  { bg: '#FEF2F2', color: '#991B1B' },
+  PAID:      { bg: '#EEF2FF', color: '#3730A3' },
+  OVERDUE:   { bg: '#FEF2F2', color: '#991B1B' },
+  SENT:      { bg: '#EFF6FF', color: '#1D4ED8' },
+  DRAFT:     { bg: '#F8FAFC', color: '#475569' },
+  COMPLETED: { bg: '#ECFDF5', color: '#065F46' },
+  ON_HOLD:   { bg: '#FFFBEB', color: '#92400E' },
+  PLANNING:  { bg: '#EEF2FF', color: '#3730A3' },
 };
 
 function StatusPill({ value }: { value: string }) {
@@ -192,32 +102,43 @@ function StatusPill({ value }: { value: string }) {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
+const MAX_COLS = 8;
+const STEPS = ['Chọn Entity', 'Chọn Cột', 'Bộ lọc', 'Preview & Export'];
+
 export default function ReportBuilderPage() {
   const { message } = App.useApp();
   const { isDark, textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
 
-  const [entity, setEntity]           = useState<EntityKey>('Employee');
-  const [selectedCols, setSelectedCols] = useState<string[]>(['id', 'fullName', 'email', 'department']);
-  const [filters, setFilters]           = useState<FilterRow[]>([]);
-  const [filterIdSeq, setFilterIdSeq]   = useState(1);
-  const [hasRun, setHasRun]             = useState(false);
-  const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const [saveForm] = Form.useForm<{ reportName: string }>();
+  const [step, setStep]                       = useState(0);
+  const [entity, setEntity]                   = useState<EntityKey>('Employee');
+  const [selectedCols, setSelectedCols]       = useState<string[]>([]);
+  const [filters, setFilters]                 = useState<FilterRow[]>([]);
+  const [filterIdSeq, setFilterIdSeq]         = useState(1);
+  const [previewData, setPreviewData]         = useState<PreviewResult | null>(null);
+  const [saveModalOpen, setSaveModalOpen]     = useState(false);
+  const [saveForm]                            = Form.useForm<{ reportName: string }>();
 
-  const availableCols = entityColumnMap[entity] ?? [];
-  const MAX_COLS = 8;
+  // Load entities from API
+  const { data: entitiesMap = {}, isLoading: loadingEntities } = useQuery<Record<string, ColumnDef[]>>({
+    queryKey: ['builder-entities'],
+    queryFn: () => axios.get('/api/v1/reports/builder/entities').then(r => r.data),
+    staleTime: 3_600_000,
+  });
 
-  // Limit selected cols to first MAX_COLS when entity changes
+  const availableCols: ColumnDef[] = entitiesMap[entity] ?? [];
+
+  // Auto-select first 4 cols when entity changes
   const handleEntityChange = (val: EntityKey) => {
     setEntity(val);
-    const defaultCols = (entityColumnMap[val] ?? []).slice(0, 4).map((c) => c.key);
-    setSelectedCols(defaultCols);
-    setHasRun(false);
+    const cols = (entitiesMap[val] ?? []).slice(0, 4).map(c => c.key);
+    setSelectedCols(cols);
+    setPreviewData(null);
+    setFilters([]);
   };
 
   const toggleCol = (key: string) => {
-    setSelectedCols((prev) => {
-      if (prev.includes(key)) return prev.filter((k) => k !== key);
+    setSelectedCols(prev => {
+      if (prev.includes(key)) return prev.filter(k => k !== key);
       if (prev.length >= MAX_COLS) {
         void message.warning(`Tối đa ${MAX_COLS} cột`);
         return prev;
@@ -228,57 +149,89 @@ export default function ReportBuilderPage() {
 
   const addFilter = () => {
     const firstField = availableCols[0]?.key ?? '';
-    setFilters((prev) => [...prev, { id: filterIdSeq, field: firstField, operator: '=', value: '' }]);
-    setFilterIdSeq((n) => n + 1);
+    setFilters(prev => [...prev, { id: filterIdSeq, field: firstField, operator: '=', value: '' }]);
+    setFilterIdSeq(n => n + 1);
   };
 
-  const removeFilter = (id: number) => setFilters((prev) => prev.filter((f) => f.id !== id));
-
+  const removeFilter = (id: number) => setFilters(prev => prev.filter(f => f.id !== id));
   const updateFilter = (id: number, patch: Partial<FilterRow>) =>
-    setFilters((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
+    setFilters(prev => prev.map(f => f.id === id ? { ...f, ...patch } : f));
 
-  const handleRun = () => {
-    if (selectedCols.length === 0) {
-      void message.warning('Hãy chọn ít nhất 1 cột');
-      return;
-    }
-    setHasRun(true);
-    void message.success('Báo cáo đã được tạo');
-  };
+  // Preview mutation
+  const previewMutation = useMutation({
+    mutationFn: () =>
+      axios.post<PreviewResult>('/api/v1/reports/builder/preview', {
+        entity,
+        columns: selectedCols,
+        filters: filters.map(f => ({ field: f.field, op: f.operator, value: f.value })),
+      }).then(r => r.data),
+    onSuccess: (data) => {
+      setPreviewData(data);
+      void message.success(`Tải ${data.total} dòng thành công`);
+    },
+    onError: () => void message.error('Lỗi tải dữ liệu'),
+  });
 
-  const handleSave = async (values: { reportName: string }) => {
+  // Export mutation
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      axios.post('/api/v1/reports/builder/export', {
+        entity,
+        columns: selectedCols,
+        filters: filters.map(f => ({ field: f.field, op: f.operator, value: f.value })),
+      }, { responseType: 'blob' }).then(r => r.data as Blob),
+    onSuccess: (blob) => {
+      const url  = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href  = url;
+      link.download = `report-${entity.toLowerCase()}-${dayjs().format('YYYYMMDD')}.xlsx`;
+      link.click();
+      URL.revokeObjectURL(url);
+      void message.success('Đã tải Excel');
+    },
+    onError: () => void message.error('Lỗi xuất Excel'),
+  });
+
+  // Table columns derived from selected cols
+  const tableColumns = useMemo(() =>
+    selectedCols.map(key => {
+      const colDef = availableCols.find(c => c.key === key);
+      return {
+        title: <Text style={{ color: textMuted }}>{colDef?.label ?? key}</Text>,
+        dataIndex: key,
+        key,
+        ellipsis: true,
+        render: (v: unknown) => {
+          if (v === undefined || v === null) return <Text style={{ color: textMuted }}>—</Text>;
+          const str = String(v);
+          if (colDef?.type === 'status')  return <StatusPill value={str} />;
+          if (colDef?.type === 'number')  return <Text style={{ color: linkColor, fontWeight: 600 }}>{str}</Text>;
+          return <Text style={{ color: textPrimary }}>{str}</Text>;
+        },
+      };
+    }),
+    [selectedCols, availableCols, textMuted, textPrimary, linkColor],
+  );
+
+  const handleSave = (values: { reportName: string }) => {
     void message.success(`Đã lưu báo cáo "${values.reportName}"`);
     setSaveModalOpen(false);
     saveForm.resetFields();
   };
-
-  // Build table columns + data
-  const tableColumns = selectedCols.map((key) => {
-    const colDef = availableCols.find((c) => c.key === key);
-    return {
-      title: colDef?.label ?? key,
-      dataIndex: key,
-      key,
-      ellipsis: true,
-      render: (v: unknown) => {
-        if (v === undefined || v === null) return <Text style={{ color: textMuted }}>—</Text>;
-        const strVal = String(v);
-        if (colDef?.type === 'status') return <StatusPill value={strVal} />;
-        if (colDef?.type === 'number') return <Text style={{ color: linkColor, fontWeight: 600 }}>{strVal}</Text>;
-        return <Text style={{ color: textPrimary }}>{strVal}</Text>;
-      },
-    };
-  });
-
-  const tableData = hasRun ? generateMockRows(entity, selectedCols) : [];
 
   const panelStyle: React.CSSProperties = {
     background: bgContainer,
     border: `1px solid ${borderColor}`,
     borderRadius: 12,
     padding: 20,
-    height: '100%',
   };
+
+  const canNext = [
+    true,                        // step 0 always valid
+    selectedCols.length > 0,     // step 1 needs cols
+    true,                        // step 2 filters optional
+    false,                       // step 3 is final
+  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -288,224 +241,272 @@ export default function ReportBuilderPage() {
         iconColor="#6366F1"
       />
 
-      <Row gutter={[16, 16]} align="stretch">
-        {/* ── Left panel: Config ─────────────────────────────────────────────── */}
+      {/* Steps header */}
+      <div style={{ ...panelStyle, marginBottom: 20 }}>
+        <Steps
+          current={step}
+          size="small"
+          items={STEPS.map((title, i) => ({
+            title: <Text style={{ color: i === step ? linkColor : i < step ? '#10B981' : textMuted, fontSize: 13 }}>{title}</Text>,
+            icon: i < step ? <CheckOutlined style={{ color: '#10B981' }} /> : undefined,
+          }))}
+        />
+      </div>
+
+      <Row gutter={[16, 16]}>
+        {/* ── Left panel ───────────────────────────────────────────────────── */}
         <Col xs={24} lg={8}>
           <div style={panelStyle}>
-            {/* Entity selector */}
-            <div style={{ marginBottom: 20 }}>
-              <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 8 }}>
-                Entity
-              </Text>
-              <Select
-                value={entity}
-                onChange={handleEntityChange}
-                style={{ width: '100%' }}
-                options={[
-                  { value: 'Employee', label: 'Employee — Nhân viên' },
-                  { value: 'Project',  label: 'Project — Dự án' },
-                  { value: 'Invoice',  label: 'Invoice — Hoá đơn' },
-                  { value: 'Leave',    label: 'Leave — Nghỉ phép' },
-                  { value: 'Expense',  label: 'Expense — Chi phí' },
-                ]}
-              />
-            </div>
-
-            <Divider style={{ borderColor: borderColor, margin: '0 0 16px' }} />
-
-            {/* Columns */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  Cột hiển thị
-                </Text>
-                <Text style={{ color: textMuted, fontSize: 11 }}>
-                  {selectedCols.length}/{MAX_COLS}
-                </Text>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {availableCols.map((col) => (
-                  <div
-                    key={col.key}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '6px 10px',
-                      borderRadius: 8,
-                      background: selectedCols.includes(col.key) ? (isDark ? `${linkColor}18` : '#EEF2FF') : bgCard,
-                      border: `1px solid ${selectedCols.includes(col.key) ? (isDark ? `${linkColor}40` : '#C7D2FE') : borderColor}`,
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => toggleCol(col.key)}
-                    role="checkbox"
-                    aria-checked={selectedCols.includes(col.key)}
-                    tabIndex={0}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Checkbox
-                        checked={selectedCols.includes(col.key)}
-                        onChange={() => toggleCol(col.key)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <Text style={{ color: textPrimary, fontSize: 13 }}>{col.label}</Text>
+            {loadingEntities ? (
+              <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
+            ) : (
+              <>
+                {/* Step 0: Entity */}
+                {step === 0 && (
+                  <div>
+                    <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
+                      Chọn nguồn dữ liệu
+                    </Text>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {Object.keys(entitiesMap).map(key => (
+                        <div
+                          key={key}
+                          style={{
+                            padding: '12px 16px',
+                            borderRadius: 10,
+                            border: `2px solid ${entity === key ? (isDark ? linkColor : '#6366F1') : borderColor}`,
+                            background: entity === key ? (isDark ? `${linkColor}15` : '#EEF2FF') : bgCard,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => handleEntityChange(key)}
+                          role="radio"
+                          aria-checked={entity === key}
+                          tabIndex={0}
+                        >
+                          <Text style={{ color: entity === key ? linkColor : textPrimary, fontWeight: entity === key ? 600 : 400, fontSize: 14 }}>
+                            {ENTITY_LABELS[key] ?? key}
+                          </Text>
+                        </div>
+                      ))}
                     </div>
-                    <Tag style={{ fontSize: 10, padding: '0 4px', marginRight: 0, opacity: 0.6 }}>
-                      {col.type}
-                    </Tag>
                   </div>
-                ))}
-              </div>
-            </div>
+                )}
 
-            <Divider style={{ borderColor: borderColor, margin: '0 0 16px' }} />
+                {/* Step 1: Columns */}
+                {step === 1 && (
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                        Cột hiển thị
+                      </Text>
+                      <Text style={{ color: textMuted, fontSize: 11 }}>{selectedCols.length}/{MAX_COLS}</Text>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {availableCols.map(col => (
+                        <div
+                          key={col.key}
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            padding: '8px 10px', borderRadius: 8,
+                            background: selectedCols.includes(col.key) ? (isDark ? `${linkColor}18` : '#EEF2FF') : bgCard,
+                            border: `1px solid ${selectedCols.includes(col.key) ? (isDark ? `${linkColor}40` : '#C7D2FE') : borderColor}`,
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => toggleCol(col.key)}
+                          role="checkbox"
+                          aria-checked={selectedCols.includes(col.key)}
+                          tabIndex={0}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Checkbox
+                              checked={selectedCols.includes(col.key)}
+                              onChange={() => toggleCol(col.key)}
+                              onClick={e => e.stopPropagation()}
+                            />
+                            <Text style={{ color: textPrimary, fontSize: 13 }}>{col.label}</Text>
+                          </div>
+                          <Tag style={{ fontSize: 10, padding: '0 4px', marginRight: 0, opacity: 0.6 }}>{col.type}</Tag>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            {/* Filters */}
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                  Bộ lọc
-                </Text>
-                <Button
-                  type="link"
-                  size="small"
-                  icon={<PlusOutlined />}
-                  style={{ color: linkColor, padding: 0 }}
-                  onClick={addFilter}
-                >
-                  Thêm
-                </Button>
-              </div>
+                {/* Step 2: Filters */}
+                {step === 2 && (
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                      <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                        Bộ lọc
+                      </Text>
+                      <Button
+                        type="link" size="small" icon={<PlusOutlined />}
+                        style={{ color: linkColor, padding: 0 }}
+                        onClick={addFilter}
+                      >
+                        Thêm điều kiện
+                      </Button>
+                    </div>
 
-              {filters.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                  <Text style={{ color: textMuted, fontSize: 12 }}>Chưa có bộ lọc nào</Text>
+                    {filters.length === 0 && (
+                      <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                        <Text style={{ color: textMuted, fontSize: 12 }}>Chưa có bộ lọc — bỏ qua để lấy tất cả</Text>
+                      </div>
+                    )}
+
+                    {filters.map(f => (
+                      <div
+                        key={f.id}
+                        style={{ display: 'flex', gap: 6, marginBottom: 8, padding: '8px 10px', borderRadius: 8, background: bgCard, border: `1px solid ${borderColor}` }}
+                      >
+                        <Select
+                          size="small" value={f.field}
+                          onChange={v => updateFilter(f.id, { field: v })}
+                          style={{ flex: 2, minWidth: 0 }}
+                          options={availableCols.map(c => ({ value: c.key, label: c.label }))}
+                        />
+                        <Select
+                          size="small" value={f.operator}
+                          onChange={v => updateFilter(f.id, { operator: v as FilterRow['operator'] })}
+                          style={{ flex: 1.5, minWidth: 0 }}
+                          options={OPERATORS}
+                        />
+                        <Input
+                          size="small" value={f.value}
+                          onChange={e => updateFilter(f.id, { value: e.target.value })}
+                          placeholder="Giá trị"
+                          style={{ flex: 2, minWidth: 0 }}
+                        />
+                        <Button type="text" danger size="small" icon={<DeleteOutlined />} onClick={() => removeFilter(f.id)} style={{ flexShrink: 0 }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Step 3: Actions */}
+                {step === 3 && (
+                  <div>
+                    <Text style={{ color: textMuted, fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', display: 'block', marginBottom: 12 }}>
+                      Tuỳ chọn
+                    </Text>
+                    <div style={{ marginBottom: 12 }}>
+                      <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 4 }}>Entity:</Text>
+                      <Text style={{ color: textPrimary, fontWeight: 600 }}>{ENTITY_LABELS[entity] ?? entity}</Text>
+                    </div>
+                    <div style={{ marginBottom: 12 }}>
+                      <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 4 }}>Cột đã chọn:</Text>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                        {selectedCols.map(k => {
+                          const col = availableCols.find(c => c.key === k);
+                          return <Tag key={k} style={{ fontSize: 11 }}>{col?.label ?? k}</Tag>;
+                        })}
+                      </div>
+                    </div>
+                    <div style={{ marginBottom: 16 }}>
+                      <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 4 }}>Bộ lọc:</Text>
+                      {filters.length === 0
+                        ? <Text style={{ color: textMuted, fontSize: 12 }}>Không có</Text>
+                        : filters.map(f => (
+                          <Text key={f.id} style={{ color: textMuted, fontSize: 12, display: 'block' }}>
+                            {f.field} {f.operator} "{f.value}"
+                          </Text>
+                        ))
+                      }
+                    </div>
+                    <Space direction="vertical" style={{ width: '100%' }}>
+                      <Button
+                        type="primary" block icon={<PlayCircleOutlined />}
+                        loading={previewMutation.isPending}
+                        onClick={() => previewMutation.mutate()}
+                        style={{ borderRadius: 8, height: 40, fontWeight: 600 }}
+                      >
+                        Chạy báo cáo
+                      </Button>
+                      <Button
+                        block icon={<DownloadOutlined />}
+                        loading={exportMutation.isPending}
+                        disabled={!previewData}
+                        onClick={() => exportMutation.mutate()}
+                        style={{ borderRadius: 8, height: 36 }}
+                      >
+                        Export Excel
+                      </Button>
+                      <Button
+                        block icon={<SaveOutlined />} ghost
+                        disabled={!previewData}
+                        onClick={() => setSaveModalOpen(true)}
+                        style={{ borderRadius: 8, height: 36 }}
+                      >
+                        Lưu báo cáo
+                      </Button>
+                    </Space>
+                  </div>
+                )}
+
+                <Divider style={{ borderColor, margin: '16px 0' }} />
+
+                {/* Nav buttons */}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {step > 0 && (
+                    <Button icon={<ArrowLeftOutlined />} onClick={() => setStep(s => s - 1)} style={{ flex: 1 }}>
+                      Quay lại
+                    </Button>
+                  )}
+                  {step < STEPS.length - 1 && (
+                    <Button
+                      type="primary" icon={<ArrowRightOutlined />}
+                      disabled={!canNext[step]}
+                      onClick={() => setStep(s => s + 1)}
+                      style={{ flex: 1 }}
+                    >
+                      Tiếp tục
+                    </Button>
+                  )}
                 </div>
-              )}
-
-              {filters.map((f) => (
-                <div
-                  key={f.id}
-                  style={{
-                    display: 'flex',
-                    gap: 6,
-                    marginBottom: 8,
-                    padding: '8px 10px',
-                    borderRadius: 8,
-                    background: bgCard,
-                    border: `1px solid ${borderColor}`,
-                  }}
-                >
-                  <Select
-                    size="small"
-                    value={f.field}
-                    onChange={(v) => updateFilter(f.id, { field: v })}
-                    style={{ flex: 2, minWidth: 0 }}
-                    options={availableCols.map((c) => ({ value: c.key, label: c.label }))}
-                  />
-                  <Select
-                    size="small"
-                    value={f.operator}
-                    onChange={(v) => updateFilter(f.id, { operator: v })}
-                    style={{ flex: 1.5, minWidth: 0 }}
-                    options={OPERATORS}
-                  />
-                  <Input
-                    size="small"
-                    value={f.value}
-                    onChange={(e) => updateFilter(f.id, { value: e.target.value })}
-                    placeholder="Giá trị"
-                    style={{ flex: 2, minWidth: 0 }}
-                  />
-                  <Button
-                    type="text"
-                    danger
-                    size="small"
-                    icon={<DeleteOutlined />}
-                    onClick={() => removeFilter(f.id)}
-                    style={{ flexShrink: 0 }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <Button
-              type="primary"
-              block
-              icon={<PlayCircleOutlined />}
-              onClick={handleRun}
-              style={{ borderRadius: 8, height: 40, fontWeight: 600 }}
-            >
-              Chạy báo cáo
-            </Button>
+              </>
+            )}
           </div>
         </Col>
 
-        {/* ── Right panel: Preview ───────────────────────────────────────────── */}
+        {/* ── Right panel: Preview ──────────────────────────────────────────── */}
         <Col xs={24} lg={16}>
-          <div style={{ ...panelStyle, display: 'flex', flexDirection: 'column' }}>
-            {/* Header */}
+          <div style={{ ...panelStyle, display: 'flex', flexDirection: 'column', minHeight: 480 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
                 <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 15 }}>
-                  Preview — {entity}
+                  Preview — {ENTITY_LABELS[entity] ?? entity}
                 </Text>
-                {hasRun && (
+                {previewData && (
                   <Text style={{ color: textMuted, fontSize: 12, marginLeft: 10 }}>
-                    {tableData.length} dòng · {selectedCols.length} cột
+                    {previewData.total} dòng · {selectedCols.length} cột
                   </Text>
                 )}
               </div>
-              <Space>
-                <Tooltip title="Tính năng đang phát triển">
-                  <Button
-                    icon={<DownloadOutlined />}
-                    disabled
-                  >
-                    Export Excel
-                  </Button>
-                </Tooltip>
-                <Button
-                  icon={<SaveOutlined />}
-                  type="primary"
-                  ghost
-                  onClick={() => setSaveModalOpen(true)}
-                  disabled={!hasRun}
-                >
-                  Lưu báo cáo
-                </Button>
-              </Space>
             </div>
 
-            {/* Preview table */}
-            {!hasRun ? (
+            {!previewData ? (
               <div
                 style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 48,
-                  background: bgCard,
-                  borderRadius: 10,
+                  flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  justifyContent: 'center', padding: 48, background: bgCard, borderRadius: 10,
                   border: `1px dashed ${borderColor}`,
                 }}
               >
                 <BuildOutlined style={{ fontSize: 48, color: textMuted, marginBottom: 16 }} />
                 <Text style={{ color: textMuted, fontSize: 14 }}>
-                  Chọn entity, cột và nhấn "Chạy báo cáo" để xem kết quả
+                  Hoàn tất các bước và nhấn "Chạy báo cáo" để xem kết quả
                 </Text>
               </div>
             ) : (
               <div style={{ flex: 1, overflow: 'auto' }}>
                 <Table
-                  rowKey="_key"
+                  rowKey={(_, i) => String(i)}
                   columns={tableColumns}
-                  dataSource={tableData}
+                  dataSource={previewData.rows}
                   size="small"
                   pagination={false}
                   scroll={{ x: 'max-content' }}
+                  locale={{ emptyText: <Text style={{ color: textMuted }}>Không có dữ liệu</Text> }}
                 />
               </div>
             )}
@@ -522,11 +523,7 @@ export default function ReportBuilderPage() {
         centered
         styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
       >
-        <Form
-          form={saveForm}
-          layout="vertical"
-          onFinish={handleSave}
-        >
+        <Form form={saveForm} layout="vertical" onFinish={handleSave}>
           <Form.Item
             name="reportName"
             label={<Text style={{ color: textPrimary }}>Tên báo cáo</Text>}
@@ -540,9 +537,7 @@ export default function ReportBuilderPage() {
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Space>
               <Button onClick={() => setSaveModalOpen(false)}>Huỷ</Button>
-              <Button type="primary" htmlType="submit">
-                Lưu
-              </Button>
+              <Button type="primary" htmlType="submit">Lưu</Button>
             </Space>
           </Form.Item>
         </Form>

@@ -34,4 +34,12 @@ export class FinanceAnalyticsController {
   getMonthlyPL() {
     return this.service.getMonthlyPL();
   }
+
+  @Get('budget-vs-actual')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission(PERMISSIONS.FINANCE_READ)
+  @ApiOperation({ summary: 'E24.4 — Budget vs Actual: group by category từ BudgetLine ACTIVE' })
+  getBudgetVsActual() {
+    return this.service.getBudgetVsActual();
+  }
 }

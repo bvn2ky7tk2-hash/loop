@@ -3,7 +3,7 @@ import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { ContractStatus } from '../generated/prisma';
+import { ContractStatus, JobStatus } from '../generated/prisma';
 
 @Injectable({ scope: Scope.REQUEST })
 export class HrAnalyticsService extends TenantAwareService {
@@ -20,32 +20,31 @@ export class HrAnalyticsService extends TenantAwareService {
     const sixtyDaysLater = new Date(now);
     sixtyDaysLater.setDate(now.getDate() + 60);
 
-    // Tháng này — dùng để tính attrition rate (nghỉ việc trong tháng / headcount)
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const yearStart  = new Date(now.getFullYear(), 0, 1);
 
     const [
       headcount,
-      headcountPrevMonth,
-      resignedThisMonth,
-      expiringContracts,
+      newHiresThisMonth,
+      attritionYtd,
+      contractsExpiring60d,
       openPositions,
     ] = await Promise.all([
       // Headcount hiện tại
       this.prisma.employee.count({
         where: this.tenantWhere({ isActive: true, deletedAt: null }),
       }),
-      // Headcount tháng trước (tại ngày đầu tháng hiện tại)
+      // Nhân viên mới tháng này
       this.prisma.employee.count({
         where: this.tenantWhere({
-          startDate: { lte: monthStart },
-          isActive: true,
+          startDate: { gte: monthStart, lte: now },
           deletedAt: null,
         }),
       }),
-      // Số người nghỉ việc trong tháng hiện tại
+      // Nghỉ việc từ đầu năm
       this.prisma.employee.count({
         where: this.tenantWhere({
-          endDate: { gte: monthStart, lte: now },
+          endDate: { gte: yearStart, lte: now },
         }),
       }),
       // Hợp đồng sắp hết hạn trong 60 ngày
@@ -56,23 +55,21 @@ export class HrAnalyticsService extends TenantAwareService {
           deletedAt: null,
         }),
       }),
-      // Vị trí đang tuyển (positions chưa có employee active)
-      this.prisma.position.count({
-        where: this.tenantWhere({ isActive: true }),
+      // Vị trí đang tuyển
+      this.prisma.jobOpening.count({
+        where: this.tenantWhere({ status: JobStatus.OPEN }),
       }),
     ]);
 
     // Tính lương bình quân từ SalaryRecord gần nhất của mỗi employee
-    // Dùng Prisma ORM thay vì raw SQL để tránh inject risk
     const latestSalaryRecords = await this.prisma.salaryRecord.findMany({
       where: tid
         ? { employee: { tenantId: tid, isActive: true, deletedAt: null } }
         : { employee: { isActive: true, deletedAt: null } },
       orderBy: { effectiveDate: 'desc' },
-      select: { employeeId: true, basicSalary: true, effectiveDate: true },
+      select: { employeeId: true, basicSalary: true },
       take: 5000,
     });
-    // Lấy bản ghi mới nhất cho mỗi employee
     const latestByEmployee = new Map<string, number>();
     for (const r of latestSalaryRecords) {
       if (!latestByEmployee.has(r.employeeId)) {
@@ -80,37 +77,30 @@ export class HrAnalyticsService extends TenantAwareService {
       }
     }
     const salaryValues = Array.from(latestByEmployee.values());
-    const avgSalaryPerPerson =
+    const avgSalaryPerHead =
       salaryValues.length > 0
         ? Math.round(salaryValues.reduce((s, v) => s + v, 0) / salaryValues.length)
         : 0;
 
-    const attritionRate =
-      headcountPrevMonth > 0
-        ? Math.round((resignedThisMonth / headcountPrevMonth) * 100 * 10) / 10
-        : 0;
-
-    const headcountDelta = headcount - headcountPrevMonth;
-
     return {
       headcount,
-      headcountDelta,
-      attritionRate,
-      expiringContracts60days: expiringContracts,
+      newHiresThisMonth,
+      attritionYtd,
+      contractsExpiring60d,
       openPositions,
-      avgSalaryPerPerson,
+      avgSalaryPerHead,
     };
   }
 
-  async getHeadcountTrend() {
+  async getHeadcountTrend(months = 12) {
     const results: {
       month: string;
-      hire: number;
-      resign: number;
-      headcount: number;
+      total: number;
+      newHires: number;
+      resigns: number;
     }[] = [];
 
-    for (let i = 11; i >= 0; i--) {
+    for (let i = months - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(1);
       d.setMonth(d.getMonth() - i);
@@ -120,7 +110,7 @@ export class HrAnalyticsService extends TenantAwareService {
       const periodStart = new Date(year, month, 1);
       const periodEnd   = new Date(year, month + 1, 0, 23, 59, 59);
 
-      const [hire, resign, headcount] = await Promise.all([
+      const [newHires, resigns, total] = await Promise.all([
         this.prisma.employee.count({
           where: this.tenantWhere({
             startDate: { gte: periodStart, lte: periodEnd },
@@ -139,7 +129,7 @@ export class HrAnalyticsService extends TenantAwareService {
         }),
       ]);
 
-      results.push({ month: monthStr, hire, resign, headcount });
+      results.push({ month: monthStr, total, newHires, resigns });
     }
 
     return results;
@@ -169,14 +159,53 @@ export class HrAnalyticsService extends TenantAwareService {
         ]);
         const total = active + resigned;
         return {
-          orgUnitName: ou.name,
+          deptName: ou.name,
+          count: resigned,
           attritionRate: total > 0 ? Math.round((resigned / total) * 100 * 10) / 10 : 0,
         };
       }),
     );
 
     return results
-      .filter((r) => r.attritionRate > 0)
+      .filter((r) => r.count > 0)
       .sort((a, b) => b.attritionRate - a.attritionRate);
+  }
+
+  async getSalaryDistribution() {
+    // Lấy salary từ Contract ACTIVE — 1 contract mới nhất mỗi employee
+    const contracts = await this.prisma.contract.findMany({
+      where: this.tenantWhere({
+        status: ContractStatus.ACTIVE,
+        deletedAt: null,
+      }),
+      orderBy: { startDate: 'desc' },
+      select: { employeeId: true, salaryMonthly: true },
+      take: 5000,
+    });
+
+    // Lấy giá trị mới nhất mỗi employee
+    const latestByEmployee = new Map<string, number>();
+    for (const c of contracts) {
+      if (!latestByEmployee.has(c.employeeId)) {
+        latestByEmployee.set(c.employeeId, Number(c.salaryMonthly));
+      }
+    }
+    const salaries = Array.from(latestByEmployee.values());
+
+    const ranges = [
+      { range: '<10M',   min: 0,          max: 10_000_000,  count: 0 },
+      { range: '10-15M', min: 10_000_000, max: 15_000_000,  count: 0 },
+      { range: '15-20M', min: 15_000_000, max: 20_000_000,  count: 0 },
+      { range: '20-25M', min: 20_000_000, max: 25_000_000,  count: 0 },
+      { range: '25-30M', min: 25_000_000, max: 30_000_000,  count: 0 },
+      { range: '>30M',   min: 30_000_000, max: Infinity,    count: 0 },
+    ];
+
+    for (const s of salaries) {
+      const bucket = ranges.find(r => s >= r.min && s < r.max);
+      if (bucket) bucket.count++;
+    }
+
+    return ranges.map(({ range, count }) => ({ range, count }));
   }
 }

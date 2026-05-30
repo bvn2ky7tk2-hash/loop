@@ -1,76 +1,80 @@
-import { Row, Col, Card, Table, Typography, Progress, Tag } from 'antd';
+import { Row, Col, Card, Typography, Progress, Tag, Skeleton } from 'antd';
 import {
   ProjectOutlined,
   FundOutlined,
   CheckCircleOutlined,
-  PauseCircleOutlined,
   DollarOutlined,
   FieldTimeOutlined,
   ExclamationCircleOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip as RTooltip,
-  ResponsiveContainer, CartesianGrid, Legend,
+  ResponsiveContainer, CartesianGrid, Legend, Cell,
 } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { SparklineCard } from '../../components/ui/SparklineCard';
 import { FilterBar } from '../../components/FilterBar';
+import { formatCompact, formatHours } from '../../utils/format';
 
 const { Text } = Typography;
 
-// TODO: replace with real API call to GET /analytics/projects
-const MOCK_STATS = {
-  active: 12,
-  completed: 38,
-  onHold: 4,
-  revenueYtd: '4.850.000.000',
-  avgUtilization: 78,
-  overdueTasks: 23,
-};
+// ── API types ──────────────────────────────────────────────────────────────────
 
-// TODO: replace with real API call to GET /analytics/projects/revenue-cost?months=6
-const MOCK_REVENUE_COST = [
-  { month: 'T1', revenue: 820, cost: 640 },
-  { month: 'T2', revenue: 910, cost: 700 },
-  { month: 'T3', revenue: 780, cost: 590 },
-  { month: 'T4', revenue: 1050, cost: 810 },
-  { month: 'T5', revenue: 960, cost: 730 },
-  { month: 'T6', revenue: 1120, cost: 850 },
-];
-
-// TODO: replace with real API call to GET /analytics/projects/task-completion?days=30
-const MOCK_TASK_COMPLETION = Array.from({ length: 30 }, (_, i) => ({
-  day: `${i + 1}`,
-  completed: Math.floor(Math.random() * 18) + 4,
-}));
-
-// TODO: replace with real API call to GET /analytics/projects/portfolio
-interface PortfolioRow {
-  id: string;
-  name: string;
-  pm: string;
-  budget: number;
-  cost: number;
-  margin: number;
-  status: string;
+interface ProjectSummary {
+  activeProjects:   number;
+  completedProjects: number;
+  totalRevenue:     number;
+  grossMarginPct:   number;
+  avgUtilization:   number;
+  overdueTasks:     number;
 }
 
-const MOCK_PORTFOLIO: PortfolioRow[] = [
-  { id: '1', name: 'Loop ERP v5',       pm: 'Nguyễn Minh',   budget: 850, cost: 620, margin: 27, status: 'ACTIVE' },
-  { id: '2', name: 'CRM Integration',   pm: 'Trần Hoa',      budget: 320, cost: 210, margin: 34, status: 'ACTIVE' },
-  { id: '3', name: 'Mobile App v2',     pm: 'Lê Văn Đức',    budget: 500, cost: 480, margin: 4,  status: 'ON_HOLD' },
-  { id: '4', name: 'HR Revamp',         pm: 'Phạm Thu',      budget: 400, cost: 395, margin: 1,  status: 'ON_HOLD' },
-  { id: '5', name: 'Finance Analytics', pm: 'Nguyễn Minh',   budget: 280, cost: 165, margin: 41, status: 'ACTIVE' },
-  { id: '6', name: 'Portal v3',         pm: 'Hoàng Lan',     budget: 200, cost: 195, margin: 3,  status: 'COMPLETED' },
-  { id: '7', name: 'Payroll Engine',    pm: 'Trần Hoa',      budget: 350, cost: 220, margin: 37, status: 'COMPLETED' },
-];
+interface PortfolioItem {
+  id:          string;
+  name:        string;
+  code:        string;
+  status:      string;
+  revenue:     number;
+  cost:        number;
+  margin:      number;
+  duration:    number;
+  actualHours: number;
+  memberCount: number;
+  progress:    number;
+}
 
-const STATUS_MAP: Record<string, { label: string; lightColor: string; darkBg: string; darkColor: string; darkBorder: string }> = {
+interface RevenueVsCostItem {
+  month:   string;
+  revenue: number;
+  cost:    number;
+  margin:  number;
+}
+
+interface UtilizationItem {
+  employeeId:   string;
+  employeeName: string;
+  employeeCode: string;
+  totalHours:   number;
+  laborCost:    number;
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+const STATUS_MAP: Record<string, {
+  label:       string;
+  lightColor:  string;
+  darkBg:      string;
+  darkColor:   string;
+  darkBorder:  string;
+}> = {
   ACTIVE:    { label: 'Đang chạy',  lightColor: 'green',  darkBg: 'rgba(52,211,153,0.15)', darkColor: '#6EE7B7', darkBorder: 'rgba(52,211,153,0.3)' },
-  COMPLETED: { label: 'Hoàn thành', lightColor: 'blue',   darkBg: 'rgba(96,165,250,0.15)', darkColor: '#93C5FD', darkBorder: 'rgba(96,165,250,0.3)' },
+  CLOSED:    { label: 'Hoàn thành', lightColor: 'blue',   darkBg: 'rgba(96,165,250,0.15)', darkColor: '#93C5FD', darkBorder: 'rgba(96,165,250,0.3)' },
   ON_HOLD:   { label: 'Tạm dừng',   lightColor: 'orange', darkBg: 'rgba(251,191,36,0.15)', darkColor: '#FCD34D', darkBorder: 'rgba(251,191,36,0.3)' },
+  CANCELLED: { label: 'Hủy',        lightColor: 'red',    darkBg: 'rgba(248,113,113,0.15)', darkColor: '#FCA5A5', darkBorder: 'rgba(248,113,113,0.3)' },
 };
 
 function MarginBar({ margin }: { margin: number }) {
@@ -78,7 +82,7 @@ function MarginBar({ margin }: { margin: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
       <Progress
-        percent={Math.min(margin, 100)}
+        percent={Math.min(Math.max(margin, 0), 100)}
         strokeColor={color}
         showInfo={false}
         style={{ width: 80, marginBottom: 0 }}
@@ -88,6 +92,8 @@ function MarginBar({ margin }: { margin: number }) {
     </div>
   );
 }
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ProjectAnalyticsPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
@@ -102,6 +108,38 @@ export default function ProjectAnalyticsPage() {
     border: `1px solid ${borderColor}`,
   };
 
+  // ── Queries ──
+  const { data: summary, isLoading: loadingSummary } = useQuery<ProjectSummary>({
+    queryKey: ['project-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/projects/analytics/summary').then(r => r.data),
+    staleTime: 300_000,
+  });
+
+  const { data: portfolio = [], isLoading: loadingPortfolio } = useQuery<PortfolioItem[]>({
+    queryKey: ['project-analytics-portfolio'],
+    queryFn: () => axios.get('/api/v1/projects/analytics/portfolio').then(r => r.data),
+    staleTime: 300_000,
+  });
+
+  const { data: revenueCost = [], isLoading: loadingRevCost } = useQuery<RevenueVsCostItem[]>({
+    queryKey: ['project-analytics-revenue-vs-cost'],
+    queryFn: () => axios.get('/api/v1/projects/analytics/revenue-vs-cost?months=12').then(r => r.data),
+    staleTime: 300_000,
+  });
+
+  const { data: utilization = [], isLoading: loadingUtil } = useQuery<UtilizationItem[]>({
+    queryKey: ['project-analytics-utilization'],
+    queryFn: () => axios.get('/api/v1/projects/analytics/utilization').then(r => r.data),
+    staleTime: 300_000,
+  });
+
+  const isLoading = loadingSummary || loadingPortfolio || loadingRevCost || loadingUtil;
+
+  if (isLoading) {
+    return <div style={{ padding: 40 }}><Skeleton active /></div>;
+  }
+
+  // ── Columns ──
   const columns = [
     {
       title: 'Dự án',
@@ -110,30 +148,50 @@ export default function ProjectAnalyticsPage() {
       render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>,
     },
     {
-      title: 'PM',
-      dataIndex: 'pm',
-      key: 'pm',
-      render: (v: string) => <Text style={{ color: textMuted }}>{v}</Text>,
+      title: 'Code',
+      dataIndex: 'code',
+      key: 'code',
+      render: (v: string) => <Text style={{ color: textMuted, fontSize: 12 }}>{v}</Text>,
     },
     {
-      title: 'Budget (tr.đ)',
-      dataIndex: 'budget',
-      key: 'budget',
+      title: 'Tiến độ',
+      dataIndex: 'progress',
+      key: 'progress',
+      render: (v: number) => (
+        <Progress
+          percent={v}
+          size="small"
+          strokeColor="#6366F1"
+          style={{ width: 100, marginBottom: 0 }}
+        />
+      ),
+    },
+    {
+      title: 'Doanh thu',
+      dataIndex: 'revenue',
+      key: 'revenue',
       align: 'right' as const,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{v.toLocaleString('vi-VN')}</Text>,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCompact(v)}</Text>,
     },
     {
-      title: 'Cost (tr.đ)',
+      title: 'Chi phí',
       dataIndex: 'cost',
       key: 'cost',
       align: 'right' as const,
-      render: (v: number) => <Text style={{ color: textMuted }}>{v.toLocaleString('vi-VN')}</Text>,
+      render: (v: number) => <Text style={{ color: textMuted }}>{formatCompact(v)}</Text>,
     },
     {
-      title: 'Margin%',
+      title: 'Margin',
       dataIndex: 'margin',
       key: 'margin',
       render: (v: number) => <MarginBar margin={v} />,
+    },
+    {
+      title: 'Nhân sự',
+      dataIndex: 'memberCount',
+      key: 'memberCount',
+      align: 'right' as const,
+      render: (v: number) => <Text style={{ color: textMuted }}>{v}</Text>,
     },
     {
       title: 'Trạng thái',
@@ -153,6 +211,36 @@ export default function ProjectAnalyticsPage() {
     },
   ];
 
+  // ── Utilization columns ──
+  const utilColumns = [
+    {
+      title: 'Nhân viên',
+      dataIndex: 'employeeName',
+      key: 'employeeName',
+      render: (v: string, r: UtilizationItem) => (
+        <div>
+          <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>
+          <br />
+          <Text style={{ color: textMuted, fontSize: 11 }}>{r.employeeCode}</Text>
+        </div>
+      ),
+    },
+    {
+      title: 'Tổng giờ',
+      dataIndex: 'totalHours',
+      key: 'totalHours',
+      align: 'right' as const,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatHours(v)}</Text>,
+    },
+    {
+      title: 'Labor Cost',
+      dataIndex: 'laborCost',
+      key: 'laborCost',
+      align: 'right' as const,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCompact(v)} đ</Text>,
+    },
+  ];
+
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
@@ -162,7 +250,7 @@ export default function ProjectAnalyticsPage() {
       />
 
       <FilterBar>
-        {/* TODO: thêm filter theo năm, PM, trạng thái khi kết nối API thực */}
+        {/* Placeholder — có thể thêm filter năm, PM, status khi cần */}
       </FilterBar>
 
       {/* ── StatCards ── */}
@@ -170,7 +258,7 @@ export default function ProjectAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Dự án đang chạy"
-            value={MOCK_STATS.active}
+            value={summary?.activeProjects ?? 0}
             color="#6366F1"
             icon={<ProjectOutlined />}
           />
@@ -178,104 +266,153 @@ export default function ProjectAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Đã hoàn thành"
-            value={MOCK_STATS.completed}
+            value={summary?.completedProjects ?? 0}
             color="#10B981"
             icon={<CheckCircleOutlined />}
           />
         </Col>
         <Col xs={12} sm={8} lg={4}>
           <StatCard
-            label="Tạm dừng"
-            value={MOCK_STATS.onHold}
-            color="#F59E0B"
-            icon={<PauseCircleOutlined />}
-          />
-        </Col>
-        <Col xs={12} sm={8} lg={4}>
-          <StatCard
             label="Doanh thu YTD"
-            value={MOCK_STATS.revenueYtd}
+            value={formatCompact(summary?.totalRevenue)}
             color="#3B82F6"
             icon={<DollarOutlined />}
           />
         </Col>
         <Col xs={12} sm={8} lg={4}>
           <StatCard
-            label="Avg Utilization"
-            value={`${MOCK_STATS.avgUtilization}%`}
+            label="Gross Margin"
+            value={`${summary?.grossMarginPct ?? 0}%`}
             color="#F97316"
+            icon={<FundOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={8} lg={4}>
+          <StatCard
+            label="Avg Utilization"
+            value={`${summary?.avgUtilization ?? 0}%`}
+            color="#8B5CF6"
             icon={<FieldTimeOutlined />}
           />
         </Col>
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Task quá hạn"
-            value={MOCK_STATS.overdueTasks}
+            value={summary?.overdueTasks ?? 0}
             color="#EF4444"
             icon={<ExclamationCircleOutlined />}
           />
         </Col>
       </Row>
 
-      {/* ── Charts row ── */}
+      {/* ── Revenue vs Cost grouped bar chart ── */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        {/* SparklineCard: Revenue vs Cost 6 tháng */}
-        <Col xs={24} lg={12}>
-          <SparklineCard
-            label="Revenue vs Cost"
-            value="6 tháng"
-            color="#3B82F6"
-            filled
-            icon={<FundOutlined />}
-            data={MOCK_REVENUE_COST.map(d => ({ day: d.month, value: d.revenue }))}
-            variant="line"
-            style={{ height: '100%' }}
-          />
-          {/* TODO: upgrade SparklineCard dual-line khi có requirement — hiện tại hiển thị revenue line */}
-        </Col>
-
-        {/* BarChart: Task completion rate 30 ngày */}
-        <Col xs={24} lg={12}>
-          <Card title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Task hoàn thành — 30 ngày qua</Text>} style={chartCardStyle}>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={MOCK_TASK_COMPLETION} margin={{ top: 8, right: 12, left: -16, bottom: 0 }} barCategoryGap="30%">
+        <Col xs={24}>
+          <Card
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Revenue vs Cost — 12 tháng gần nhất</Text>}
+            style={chartCardStyle}
+          >
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart
+                data={revenueCost}
+                margin={{ top: 8, right: 16, left: -8, bottom: 0 }}
+                barCategoryGap="25%"
+                barGap={4}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-                <XAxis
-                  dataKey="day"
-                  tick={{ fill: axisColor, fontSize: 10 }}
-                  interval={4}
-                  tickLine={false}
-                />
-                <YAxis tick={{ fill: axisColor, fontSize: 12 }} />
+                <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} />
+                <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => formatCompact(v)} />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number) => [v, 'Tasks hoàn thành']}
+                  formatter={(v: number, name: string) => [
+                    formatCompact(v) + ' đ',
+                    name === 'revenue' ? 'Doanh thu' : name === 'cost' ? 'Chi phí' : 'Margin%',
+                  ]}
                 />
-                <Bar dataKey="completed" name="Hoàn thành" fill="#10B981" radius={[4, 4, 0, 0]} />
+                <Legend iconType="circle" iconSize={8} />
+                <Bar dataKey="revenue" name="Doanh thu" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="cost"    name="Chi phí"   fill="#EF4444" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
         </Col>
       </Row>
 
-      {/* ── Revenue vs Cost dual-line chart ── */}
+      {/* ── Revenue vs Cost line + Portfolio table ── */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24}>
-          <Card title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Revenue vs Cost — 6 tháng (chi tiết)</Text>} style={chartCardStyle}>
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={MOCK_REVENUE_COST} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
+        {/* Line chart margin trend */}
+        <Col xs={24} lg={10}>
+          <Card
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Margin trend — 12 tháng</Text>}
+            style={{ ...chartCardStyle, height: '100%' }}
+          >
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={revenueCost} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-                <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 12 }} />
-                <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}M`} />
+                <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} />
+                <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}%`} />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number, name: string) => [`${v}M ₫`, name === 'revenue' ? 'Doanh thu' : 'Chi phí']}
+                  formatter={(v: number) => [`${v}%`, 'Margin']}
                 />
-                <Legend iconType="circle" iconSize={8} />
-                <Line type="monotone" dataKey="revenue" name="Doanh thu" stroke="#3B82F6" strokeWidth={2.5} dot={{ r: 4 }} />
-                <Line type="monotone" dataKey="cost"    name="Chi phí"   stroke="#EF4444" strokeWidth={2.5} dot={{ r: 4 }} strokeDasharray="5 3" />
+                <Line
+                  type="monotone"
+                  dataKey="margin"
+                  name="Margin%"
+                  stroke="#10B981"
+                  strokeWidth={2.5}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
               </LineChart>
             </ResponsiveContainer>
+          </Card>
+        </Col>
+
+        {/* Utilization per employee — horizontal bar */}
+        <Col xs={24} lg={14}>
+          <Card
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}><UserOutlined /> Utilization — Top nhân viên</Text>}
+            style={{ ...chartCardStyle, height: '100%' }}
+          >
+            {utilization.length === 0 ? (
+              <Text style={{ color: textMuted }}>Chưa có dữ liệu snapshot</Text>
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart
+                  layout="vertical"
+                  data={utilization.slice(0, 10)}
+                  margin={{ top: 8, right: 32, left: 8, bottom: 0 }}
+                  barCategoryGap="30%"
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+                  <XAxis
+                    type="number"
+                    tick={{ fill: axisColor, fontSize: 11 }}
+                    tickFormatter={v => `${v}h`}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="employeeName"
+                    tick={{ fill: textMuted, fontSize: 11 }}
+                    width={110}
+                  />
+                  <RTooltip
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
+                    formatter={(v: number, name: string) => [
+                      name === 'totalHours' ? `${v}h` : formatCompact(v) + ' đ',
+                      name === 'totalHours' ? 'Giờ làm việc' : 'Labor Cost',
+                    ]}
+                  />
+                  <Legend iconType="circle" iconSize={8} />
+                  <Bar dataKey="totalHours" name="Giờ làm việc" fill="#6366F1" radius={[0, 4, 4, 0]}>
+                    {utilization.slice(0, 10).map((_, i) => (
+                      <Cell key={i} fill={i % 2 === 0 ? '#6366F1' : '#8B5CF6'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
       </Row>
@@ -285,15 +422,61 @@ export default function ProjectAnalyticsPage() {
         title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Project Portfolio</Text>}
         style={chartCardStyle}
       >
-        {/* TODO: kết nối GET /analytics/projects/portfolio?page=1&limit=50 */}
-        <Table
-          rowKey="id"
-          dataSource={MOCK_PORTFOLIO}
-          columns={columns}
-          pagination={false}
-          size="middle"
-          scroll={{ x: 700 }}
-        />
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                {columns.map(col => (
+                  <th
+                    key={col.key}
+                    style={{
+                      padding: '10px 12px',
+                      textAlign: (col as any).align ?? 'left',
+                      color: textMuted,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      borderBottom: `1px solid ${borderColor}`,
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {col.title}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {portfolio.map((row) => (
+                <tr key={row.id} style={{ borderBottom: `1px solid ${borderColor}` }}>
+                  {columns.map(col => (
+                    <td
+                      key={col.key}
+                      style={{
+                        padding: '10px 12px',
+                        textAlign: (col as any).align ?? 'left',
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {(col.render as any)?.(
+                        (row as any)[col.dataIndex as string],
+                        row,
+                      ) ?? (row as any)[col.dataIndex as string]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              {portfolio.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    style={{ padding: 24, textAlign: 'center', color: textMuted }}
+                  >
+                    Không có dữ liệu
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   );

@@ -338,55 +338,6 @@ export default function CrmAnalyticsPage() {
         </Col>
       </Row>
 
-      {/* Row 4 — Win Rate bar chart */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={10}>
-          <div style={cardStyle}>
-            {sectionTitle(<RiseOutlined />, 'Doanh thu theo khách hàng', '#10B981')}
-            {topCustomers.length === 0 ? (
-              <div style={{ color: textMuted, textAlign: 'center', padding: 32 }}>Chưa có dữ liệu</div>
-            ) : (
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart
-                  data={topCustomers}
-                  layout="vertical"
-                  margin={{ top: 2, right: 24, left: 8, bottom: 0 }}
-                >
-                  <XAxis type="number" tick={{ fontSize: 11, fill: textMuted as string }} tickFormatter={(v) => formatValue(v)} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: textPrimary as string }} width={110} />
-                  <RTooltip
-                    contentStyle={{
-                      background: bgContainer,
-                      border: `1px solid ${borderColor}`,
-                      borderRadius: 8, fontSize: 12, color: textPrimary as string,
-                    }}
-                    formatter={(v: number) => [formatValue(v), 'Doanh thu Won']}
-                  />
-                  <Bar dataKey="revenue" radius={[0, 4, 4, 0]} maxBarSize={18}>
-                    {topCustomers.map((_, i) => (
-                      <Cell key={i} fill={['#10B981', '#6366F1', '#3B82F6', '#F59E0B', '#F97316'][i % 5]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </Col>
-
-        <Col xs={24} lg={14}>
-          <div style={cardStyle}>
-            {sectionTitle(<TrophyOutlined />, 'Top khách hàng — Won Deals & Doanh thu', '#F59E0B')}
-            <Table
-              dataSource={topCustomers}
-              columns={topCustomersColumns}
-              rowKey="customerId"
-              size="small"
-              pagination={false}
-              locale={{ emptyText: <Text style={{ color: textMuted }}>Chưa có dữ liệu</Text> }}
-            />
-          </div>
-        </Col>
-      </Row>
     </div>
   );
 }

@@ -4,6 +4,17 @@ import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { ProjectStatus, InvoiceType, InvoiceStatus, TaskStatus } from '../generated/prisma';
+import { IsOptional, IsInt, Min, Max } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class RevenueVsCostQueryDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(24)
+  months?: number = 12;
+}
 
 @Injectable({ scope: Scope.REQUEST })
 export class ProjectAnalyticsService extends TenantAwareService {
@@ -95,6 +106,90 @@ export class ProjectAnalyticsService extends TenantAwareService {
       avgUtilization,
       overdueTasks,
     };
+  }
+
+  /**
+   * E24.3 — Revenue vs Cost theo tháng (N tháng gần nhất).
+   * Revenue = Invoice SALES PAID, Cost = ProjectCostSnapshot aggregated.
+   */
+  async getRevenueVsCost(months = 12) {
+    const results: {
+      month: string;
+      revenue: number;
+      cost: number;
+      margin: number;
+    }[] = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth() - i);
+      const year      = d.getFullYear();
+      const month     = d.getMonth();
+      const monthStr  = `T${month + 1}/${String(year).slice(2)}`;
+      const start     = new Date(year, month, 1);
+      const end       = new Date(year, month + 1, 0, 23, 59, 59);
+
+      const [revenueAgg, costAgg] = await Promise.all([
+        this.prisma.invoice.aggregate({
+          where: this.tenantWhere({
+            type:      InvoiceType.SALES,
+            status:    InvoiceStatus.PAID,
+            paidAt:    { gte: start, lte: end },
+            deletedAt: null,
+          }),
+          _sum: { totalAmount: true },
+        }),
+        // Cost = tổng snapshot cuối tháng của tất cả project
+        this.prisma.projectCostSnapshot.aggregate({
+          where: {
+            snapshotDate: { gte: start, lte: end },
+          },
+          _sum: { totalCost: true },
+        }),
+      ]);
+
+      const revenue = Math.round(Number(revenueAgg._sum.totalAmount ?? 0));
+      const cost    = Math.round(Number(costAgg._sum.totalCost      ?? 0));
+      const margin  = revenue > 0 ? Math.round(((revenue - cost) / revenue) * 100 * 10) / 10 : 0;
+
+      results.push({ month: monthStr, revenue, cost, margin });
+    }
+
+    return results;
+  }
+
+  /**
+   * E24.3 — Utilization per employee (tổng hợp từ ProjectCostByEmployee).
+   * Lấy top 20 nhân viên theo laborCost.
+   */
+  async getUtilization() {
+    // Tổng hợp theo employee từ tất cả ProjectCostByEmployee
+    const rawRows = await this.prisma.projectCostByEmployee.groupBy({
+      by: ['employeeId'],
+      _sum: { hours: true, cost: true },
+      orderBy: { _sum: { cost: 'desc' } },
+      take: 20,
+    });
+
+    if (rawRows.length === 0) return [];
+
+    // Lấy thông tin employee
+    const employeeIds = rawRows.map((r) => r.employeeId);
+    const employees = await this.prisma.employee.findMany({
+      where: { id: { in: employeeIds }, deletedAt: null },
+      select: { id: true, fullName: true, code: true },
+      take: 20,
+    });
+    const empMap = Object.fromEntries(employees.map((e) => [e.id, e]));
+
+    return rawRows.map((r) => ({
+      employeeId:   r.employeeId,
+      employeeName: empMap[r.employeeId]?.fullName ?? 'N/A',
+      employeeCode: empMap[r.employeeId]?.code ?? '',
+      totalHours:   Math.round(Number(r._sum.hours ?? 0) * 10) / 10,
+      laborCost:    Math.round(Number(r._sum.cost ?? 0)),
+    }));
   }
 
   async getPortfolio() {

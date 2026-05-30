@@ -3,7 +3,7 @@ import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { PayrollPeriodType, OtStatus } from '../generated/prisma';
+import { PayrollPeriodType, PayrollStatus } from '../generated/prisma';
 
 @Injectable({ scope: Scope.REQUEST })
 export class PayrollAnalyticsService extends TenantAwareService {
@@ -15,63 +15,55 @@ export class PayrollAnalyticsService extends TenantAwareService {
   }
 
   async getSummary() {
-    const now       = new Date();
+    const now        = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-    const tid        = this.getTenantId();
 
-    // Lấy period tháng này (gần nhất đã PAID hoặc APPROVED)
+    // Lấy period tháng này (APPROVED hoặc PAID)
     const currentPeriod = await this.prisma.payrollPeriod.findFirst({
       where: this.tenantWhere({
         startDate: { lte: monthEnd },
         endDate:   { gte: monthStart },
+        status:    { in: [PayrollStatus.APPROVED, PayrollStatus.PAID] },
       }),
       orderBy: { startDate: 'desc' },
     });
 
     if (!currentPeriod) {
       return {
-        totalPayrollCost: 0,
-        totalLaborCost: 0,
-        otCostThisMonth: 0,
-        payslipsSent: 0,
+        totalGross:          0,
+        totalNet:            0,
+        totalEmployerCost:   0,
+        avgNetSalary:        0,
       };
     }
 
-    const [payrollAgg, otCostAgg, payslipsSent] = await Promise.all([
+    const [agg, headcount] = await Promise.all([
       this.prisma.payrollRecord.aggregate({
         where: this.tenantWhere({ periodId: currentPeriod.id }),
         _sum: {
           grossSalary:    true,
+          netSalary:      true,
           totalLaborCost: true,
-          overtimePay:    true,
+        },
+        _avg: {
+          netSalary: true,
         },
       }),
-      // OT cost từ OvertimeRequest đã approved trong tháng
-      this.prisma.payrollRecord.aggregate({
-        where: this.tenantWhere({
-          periodId: currentPeriod.id,
-        }),
-        _sum: { overtimePay: true },
-      }),
-      // Số payslip đã gửi (có payslipPath)
       this.prisma.payrollRecord.count({
-        where: this.tenantWhere({
-          periodId: currentPeriod.id,
-          payslipPath: { not: null },
-        }),
+        where: this.tenantWhere({ periodId: currentPeriod.id }),
       }),
     ]);
 
     return {
-      totalPayrollCost: Number(payrollAgg._sum.grossSalary   ?? 0),
-      totalLaborCost:   Number(payrollAgg._sum.totalLaborCost ?? 0),
-      otCostThisMonth:  Number(otCostAgg._sum.overtimePay    ?? 0),
-      payslipsSent,
+      totalGross:        Number(agg._sum.grossSalary    ?? 0),
+      totalNet:          Number(agg._sum.netSalary      ?? 0),
+      totalEmployerCost: Number(agg._sum.totalLaborCost ?? 0),
+      avgNetSalary:      headcount > 0 ? Math.round(Number(agg._sum.netSalary ?? 0) / headcount) : 0,
     };
   }
 
-  async getSalaryTrend() {
+  async getSalaryTrend(months = 12) {
     const results: {
       month: string;
       baseSalary: number;
@@ -80,7 +72,7 @@ export class PayrollAnalyticsService extends TenantAwareService {
       overtimePay: number;
     }[] = [];
 
-    for (let i = 11; i >= 0; i--) {
+    for (let i = months - 1; i >= 0; i--) {
       const d = new Date();
       d.setDate(1);
       d.setMonth(d.getMonth() - i);
@@ -131,12 +123,22 @@ export class PayrollAnalyticsService extends TenantAwareService {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-    const otRequests = await this.prisma.overtimeRequest.findMany({
-      where: {
-        status: OtStatus.APPROVED,
-        date: { gte: monthStart, lte: monthEnd },
-      },
-      include: {
+    const period = await this.prisma.payrollPeriod.findFirst({
+      where: this.tenantWhere({
+        startDate: { lte: monthEnd },
+        endDate:   { gte: monthStart },
+        type: PayrollPeriodType.REGULAR,
+      }),
+      orderBy: { startDate: 'desc' },
+    });
+
+    if (!period) return [];
+
+    const records = await this.prisma.payrollRecord.findMany({
+      where: this.tenantWhere({ periodId: period.id }),
+      select: {
+        overtimeHours: true,
+        overtimePay:   true,
         employee: {
           select: { orgUnit: { select: { id: true, name: true } } },
         },
@@ -144,51 +146,50 @@ export class PayrollAnalyticsService extends TenantAwareService {
       take: 5000,
     });
 
-    // Group theo dept
-    const deptMap: Record<string, { orgUnitName: string; totalHours: number; totalCost: number }> = {};
-
-    for (const req of otRequests) {
-      const ouId   = req.employee.orgUnit.id;
-      const ouName = req.employee.orgUnit.name;
+    const deptMap: Record<string, { deptName: string; otHours: number; otPay: number }> = {};
+    for (const r of records) {
+      const ouId = r.employee.orgUnit.id;
       if (!deptMap[ouId]) {
-        deptMap[ouId] = { orgUnitName: ouName, totalHours: 0, totalCost: 0 };
+        deptMap[ouId] = { deptName: r.employee.orgUnit.name, otHours: 0, otPay: 0 };
       }
-      deptMap[ouId].totalHours += Number(req.hours);
+      deptMap[ouId].otHours += Number(r.overtimeHours ?? 0);
+      deptMap[ouId].otPay   += Number(r.overtimePay   ?? 0);
     }
 
-    // Lấy overtime cost từ PayrollRecord tháng này
-    const monthStart2 = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthEnd2   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    return Object.values(deptMap)
+      .filter((d) => d.otHours > 0)
+      .sort((a, b) => b.otHours - a.otHours);
+  }
 
-    const period = await this.prisma.payrollPeriod.findFirst({
+  async getTopEarners(limit = 10) {
+    // Lấy period gần nhất có data
+    const latestPeriod = await this.prisma.payrollPeriod.findFirst({
       where: this.tenantWhere({
-        startDate: { lte: monthEnd2 },
-        endDate:   { gte: monthStart2 },
-        type: PayrollPeriodType.REGULAR,
+        status: { in: [PayrollStatus.APPROVED, PayrollStatus.PAID] },
       }),
       orderBy: { startDate: 'desc' },
     });
 
-    if (period) {
-      const records = await this.prisma.payrollRecord.findMany({
-        where: this.tenantWhere({ periodId: period.id }),
-        select: {
-          overtimePay: true,
-          employee: { select: { orgUnit: { select: { id: true, name: true } } } },
+    if (!latestPeriod) return [];
+
+    const records = await this.prisma.payrollRecord.findMany({
+      where: this.tenantWhere({ periodId: latestPeriod.id }),
+      orderBy: { grossSalary: 'desc' },
+      take: Math.min(limit, 50),
+      select: {
+        grossSalary: true,
+        netSalary:   true,
+        employee: {
+          select: { fullName: true },
         },
-        take: 2000,
-      });
+      },
+    });
 
-      for (const r of records) {
-        const ouId = r.employee.orgUnit.id;
-        if (deptMap[ouId]) {
-          deptMap[ouId].totalCost += Number(r.overtimePay ?? 0);
-        }
-      }
-    }
-
-    return Object.values(deptMap)
-      .filter((d) => d.totalHours > 0)
-      .sort((a, b) => b.totalHours - a.totalHours);
+    return records.map((r, idx) => ({
+      rank:  idx + 1,
+      name:  r.employee.fullName,
+      gross: Number(r.grossSalary),
+      net:   Number(r.netSalary),
+    }));
   }
 }

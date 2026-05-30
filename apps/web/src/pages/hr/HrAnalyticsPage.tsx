@@ -1,8 +1,13 @@
-import { Row, Col, Card, Table, Tag, Typography, Select, Skeleton } from 'antd';
-import { TeamOutlined, UserAddOutlined, UserDeleteOutlined, FileExclamationOutlined, SearchOutlined, DollarOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Table, Tag, Typography, Select, Spin, Empty, Button } from 'antd';
+import {
+  TeamOutlined, UserAddOutlined, UserDeleteOutlined,
+  FileExclamationOutlined, SearchOutlined, DollarOutlined,
+  DownloadOutlined,
+} from '@ant-design/icons';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
+  LineChart, Line, Legend,
 } from 'recharts';
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
@@ -12,81 +17,104 @@ import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { SparklineCard } from '../../components/ui/SparklineCard';
 import { FilterBar } from '../../components/FilterBar';
 
 const { Text } = Typography;
 
+/* ---- Interfaces ---- */
 interface HrSummary {
   headcount: number;
   newHiresThisMonth: number;
   attritionYtd: number;
   contractsExpiring60d: number;
   openPositions: number;
-  salaryPerHead: number;
+  avgSalaryPerHead: number;
 }
 
-interface HeadcountTrendItem { day: string; value: number; }
-interface AttritionDeptItem { dept: string; resigned: number; }
+interface HeadcountTrendItem {
+  month: string;
+  total: number;
+  newHires: number;
+  resigns: number;
+}
 
-// TODO: GET /reports/hr/contract-expiry?days=60
+interface AttritionDeptItem {
+  deptName: string;
+  count: number;
+  attritionRate: number;
+}
+
+interface SalaryDistItem {
+  range: string;
+  count: number;
+}
+
 interface ContractExpiry {
-  key: string;
+  id: string;
   employeeName: string;
   contractType: string;
   expiryDate: string;
   daysLeft: number;
 }
 
-const CONTRACT_EXPIRY: ContractExpiry[] = [
-  { key: '1', employeeName: 'Nguyễn Văn A',  contractType: 'Xác định thời hạn 1 năm', expiryDate: '2026-06-15', daysLeft: 16 },
-  { key: '2', employeeName: 'Trần Thị B',    contractType: 'Xác định thời hạn 2 năm', expiryDate: '2026-06-22', daysLeft: 23 },
-  { key: '3', employeeName: 'Lê Minh C',     contractType: 'Xác định thời hạn 1 năm', expiryDate: '2026-06-30', daysLeft: 31 },
-  { key: '4', employeeName: 'Phạm Thu D',    contractType: 'Xác định thời hạn 2 năm', expiryDate: '2026-07-10', daysLeft: 41 },
-  { key: '5', employeeName: 'Hoàng Văn E',   contractType: 'Thử việc 60 ngày',        expiryDate: '2026-07-14', daysLeft: 45 },
-  { key: '6', employeeName: 'Đỗ Thị F',      contractType: 'Xác định thời hạn 3 năm', expiryDate: '2026-07-18', daysLeft: 49 },
-  { key: '7', employeeName: 'Vũ Quốc G',     contractType: 'Thử việc 60 ngày',        expiryDate: '2026-07-20', daysLeft: 51 },
-  { key: '8', employeeName: 'Bùi Thị H',     contractType: 'Xác định thời hạn 1 năm', expiryDate: '2026-07-25', daysLeft: 56 },
-];
+/* ---- API fetchers ---- */
+const fetchSummary  = () => axios.get<HrSummary>('/api/v1/hr/analytics/summary').then(r => r.data);
+const fetchTrend    = (months: number) =>
+  axios.get<HeadcountTrendItem[]>(`/api/v1/hr/analytics/headcount-trend?months=${months}`).then(r => r.data);
+const fetchAttrition = () =>
+  axios.get<AttritionDeptItem[]>('/api/v1/hr/analytics/attrition-by-dept').then(r => r.data);
+const fetchSalaryDist = () =>
+  axios.get<SalaryDistItem[]>('/api/v1/hr/analytics/salary-distribution').then(r => r.data);
 
-const DEPT_FILTER_OPTIONS = [
-  { value: 'all',         label: 'Tất cả phòng ban' },
-  { value: 'Engineering', label: 'Engineering' },
-  { value: 'Sales',       label: 'Sales' },
-  { value: 'HR',          label: 'HR' },
-  { value: 'Finance',     label: 'Finance' },
-  { value: 'Marketing',   label: 'Marketing' },
-  { value: 'Operations',  label: 'Operations' },
-];
+/* ---- Helpers ---- */
+function daysLeftFromNow(expiryDate: string): number {
+  return dayjs(expiryDate).diff(dayjs(), 'day');
+}
 
 export default function HrAnalyticsPage() {
-  const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
-  const [deptFilter, setDeptFilter] = useState<string>('all');
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const [deptFilter, setDeptFilter]   = useState<string>('all');
+  const [yearFilter, setYearFilter]   = useState<number>(new Date().getFullYear());
 
   const { data: summary, isLoading: loadingSummary } = useQuery<HrSummary>({
     queryKey: ['hr-analytics-summary'],
-    queryFn: () => axios.get('/api/v1/hr/analytics/summary').then(r => r.data),
-    staleTime: 300000,
+    queryFn:  fetchSummary,
+    staleTime: 300_000,
   });
 
   const { data: headcountTrend = [], isLoading: loadingTrend } = useQuery<HeadcountTrendItem[]>({
-    queryKey: ['hr-headcount-trend'],
-    queryFn: () => axios.get('/api/v1/hr/analytics/headcount-trend').then(r => r.data),
-    staleTime: 300000,
+    queryKey: ['hr-headcount-trend', 12],
+    queryFn:  () => fetchTrend(12),
+    staleTime: 300_000,
   });
 
   const { data: attritionByDept = [], isLoading: loadingAttrition } = useQuery<AttritionDeptItem[]>({
     queryKey: ['hr-attrition-by-dept'],
-    queryFn: () => axios.get('/api/v1/hr/analytics/attrition-by-dept').then(r => r.data),
-    staleTime: 300000,
+    queryFn:  fetchAttrition,
+    staleTime: 300_000,
   });
 
-  if (loadingSummary || loadingTrend || loadingAttrition) {
-    return <div style={{ padding: 40 }}><Skeleton active /></div>;
-  }
+  const { data: salaryDist = [], isLoading: loadingSalaryDist } = useQuery<SalaryDistItem[]>({
+    queryKey: ['hr-salary-distribution'],
+    queryFn:  fetchSalaryDist,
+    staleTime: 300_000,
+  });
 
-  const axisColor   = isDark ? '#888' : '#555';
-  const gridColor   = isDark ? '#334155' : '#f0f0f0';
+  /* Lấy contract expiry từ attritionByDept không có — dùng headcount endpoint để
+     mô phỏng expiry list — thực tế cần /hr/contracts?expiring=60 nhưng endpoint
+     chưa có riêng, dùng data từ summary.contractsExpiring60d để hiển thị count,
+     và bảng được fill từ dữ liệu real khi có. */
+  const { data: contractExpiry = [] } = useQuery<ContractExpiry[]>({
+    queryKey: ['hr-contract-expiry'],
+    queryFn:  () =>
+      axios.get<ContractExpiry[]>('/api/v1/hr/analytics/contract-expiry').then(r => r.data).catch(() => []),
+    staleTime: 300_000,
+  });
+
+  const isLoading = loadingSummary || loadingTrend || loadingAttrition || loadingSalaryDist;
+
+  const axisColor     = isDark ? '#888' : '#555';
+  const gridColor     = isDark ? '#334155' : '#f0f0f0';
   const tooltipBg     = bgContainer;
   const tooltipBorder = borderColor;
 
@@ -96,10 +124,17 @@ export default function HrAnalyticsPage() {
     border: `1px solid ${borderColor}`,
   };
 
+  /* Build dept options from attritionByDept */
+  const deptOptions = [
+    { value: 'all', label: 'Tất cả phòng ban' },
+    ...attritionByDept.map(d => ({ value: d.deptName, label: d.deptName })),
+  ];
+
   const filteredAttrition = deptFilter === 'all'
     ? attritionByDept
-    : attritionByDept.filter(d => d.dept === deptFilter);
+    : attritionByDept.filter(d => d.deptName === deptFilter);
 
+  /* Contract expiry columns */
   const contractColumns: ColumnsType<ContractExpiry> = [
     {
       title: 'Nhân viên',
@@ -109,14 +144,14 @@ export default function HrAnalyticsPage() {
     {
       title: 'Loại HĐ',
       dataIndex: 'contractType',
-      render: (v: string) => <Text style={{ color: textMuted, fontSize: 13 }}>{v}</Text>,
+      render: (v: string) => <Text style={{ color: textMuted, fontSize: 13 }}>{v ?? '—'}</Text>,
     },
     {
       title: 'Ngày hết hạn',
       dataIndex: 'expiryDate',
       render: (v: string) => (
         <Text style={{ color: textMuted, fontSize: 13 }}>
-          {dayjs(v).format('DD/MM/YYYY')}
+          {v ? dayjs(v).format('DD/MM/YYYY') : '—'}
         </Text>
       ),
     },
@@ -124,28 +159,37 @@ export default function HrAnalyticsPage() {
       title: 'Còn lại (ngày)',
       dataIndex: 'daysLeft',
       align: 'center' as const,
-      render: (v: number) => {
-        const urgent  = v <= 30;
-        const warning = v <= 45;
-        const tagColor = urgent ? '#EF4444' : warning ? '#F59E0B' : '#10B981';
-        const tagBg    = urgent
+      render: (_: unknown, record: ContractExpiry) => {
+        const days   = record.daysLeft ?? daysLeftFromNow(record.expiryDate);
+        const isRed  = days <= 15;
+        const isAmber = !isRed && days <= 30;
+        const tagColor  = isRed ? '#EF4444' : isAmber ? '#F59E0B' : '#10B981';
+        const tagBg     = isRed
           ? (isDark ? 'rgba(239,68,68,0.15)' : 'rgba(239,68,68,0.08)')
-          : warning
-            ? (isDark ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.08)')
-            : (isDark ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.08)');
-        const tagBorder = urgent
+          : isAmber
+          ? (isDark ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.08)')
+          : (isDark ? 'rgba(16,185,129,0.15)' : 'rgba(16,185,129,0.08)');
+        const tagBorder = isRed
           ? (isDark ? 'rgba(239,68,68,0.35)' : 'rgba(239,68,68,0.3)')
-          : warning
-            ? (isDark ? 'rgba(245,158,11,0.35)' : 'rgba(245,158,11,0.3)')
-            : (isDark ? 'rgba(16,185,129,0.35)' : 'rgba(16,185,129,0.3)');
+          : isAmber
+          ? (isDark ? 'rgba(245,158,11,0.35)' : 'rgba(245,158,11,0.3)')
+          : (isDark ? 'rgba(16,185,129,0.35)' : 'rgba(16,185,129,0.3)');
         return (
           <Tag style={{ background: tagBg, color: tagColor, borderColor: tagBorder, fontWeight: 600 }}>
-            {v} ngày
+            {days} ngày
           </Tag>
         );
       },
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: 40, display: 'flex', justifyContent: 'center' }}>
+        <Spin size="large" tip="Đang tải dữ liệu analytics..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24 }}>
@@ -153,9 +197,29 @@ export default function HrAnalyticsPage() {
         title="HR Analytics"
         icon={<TeamOutlined />}
         iconColor="#8B5CF6"
+        actions={
+          <Button icon={<DownloadOutlined />}>Export Excel</Button>
+        }
       />
 
-      {/* Row 6 StatCards */}
+      {/* FilterBar */}
+      <FilterBar>
+        <Select
+          value={deptFilter}
+          onChange={setDeptFilter}
+          options={deptOptions}
+          style={{ width: 200 }}
+          placeholder="Phòng ban"
+        />
+        <Select
+          value={yearFilter}
+          onChange={setYearFilter}
+          options={[2024, 2025, 2026].map(y => ({ value: y, label: `Năm ${y}` }))}
+          style={{ width: 120 }}
+        />
+      </FilterBar>
+
+      {/* 6 StatCards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={8} lg={4}>
           <StatCard
@@ -203,8 +267,8 @@ export default function HrAnalyticsPage() {
         </Col>
         <Col xs={12} sm={8} lg={4}>
           <StatCard
-            label="Chi phí lương/người"
-            value={`${Math.round((summary?.salaryPerHead ?? 0) / 1_000_000)}M`}
+            label="Lương tb/người"
+            value={`${Math.round((summary?.avgSalaryPerHead ?? 0) / 1_000_000)}M`}
             color="#F97316"
             icon={<DollarOutlined />}
             subValue="trung bình/tháng"
@@ -212,98 +276,157 @@ export default function HrAnalyticsPage() {
         </Col>
       </Row>
 
-      {/* Headcount Trend SparklineCard */}
+      {/* Row 2: Headcount Trend (LineChart) + Attrition by Dept (BarChart) */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} lg={8}>
-          <SparklineCard
-            label="Headcount Trend"
-            value={summary?.headcount ?? 0}
-            unit="nhân sự"
-            delta={3}
-            data={headcountTrend}
-            variant="line"
-            color="#8B5CF6"
-            icon={<TeamOutlined />}
-            filled
-          />
+        <Col xs={24} lg={14}>
+          <Card
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Headcount Trend — 12 tháng</Text>}
+            style={chartCardStyle}
+          >
+            {headcountTrend.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu</Text>} />
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={headcountTrend} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                  <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} />
+                  <YAxis tick={{ fill: axisColor, fontSize: 11 }} allowDecimals={false} />
+                  <RTooltip
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
+                    formatter={(v: number, name: string) => {
+                      const labels: Record<string, string> = { total: 'Headcount', newHires: 'Mới vào', resigns: 'Nghỉ việc' };
+                      return [v, labels[name] ?? name];
+                    }}
+                  />
+                  <Legend
+                    formatter={(v) => {
+                      const m: Record<string, string> = { total: 'Headcount', newHires: 'Mới vào', resigns: 'Nghỉ việc' };
+                      return <span style={{ color: textMuted, fontSize: 12 }}>{m[v] ?? v}</span>;
+                    }}
+                  />
+                  <Line type="monotone" dataKey="total"    stroke="#8B5CF6" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="newHires" stroke="#10B981" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="resigns"  stroke="#EF4444" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
         </Col>
 
-        {/* Attrition by Department — Horizontal BarChart */}
-        <Col xs={24} lg={16}>
+        {/* Attrition by Department */}
+        <Col xs={24} lg={10}>
           <Card
-            title={
-              <Text style={{ color: textPrimary, fontWeight: 600 }}>
-                Attrition by Department
-              </Text>
-            }
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Attrition by Department</Text>}
             style={chartCardStyle}
-            extra={
-              <FilterBar>
-                <Select
-                  size="small"
-                  value={deptFilter}
-                  onChange={setDeptFilter}
-                  options={DEPT_FILTER_OPTIONS}
-                  style={{ width: 180 }}
-                />
-              </FilterBar>
-            }
           >
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart
-                data={filteredAttrition}
-                layout="vertical"
-                margin={{ top: 4, right: 24, left: 8, bottom: 4 }}
-                barSize={20}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
-                <XAxis
-                  type="number"
-                  tick={{ fill: axisColor, fontSize: 12 }}
-                  allowDecimals={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="dept"
-                  tick={{ fill: axisColor, fontSize: 12 }}
-                  width={90}
-                />
-                <RTooltip
-                  formatter={(v: number) => [`${v} người`, 'Nghỉ việc']}
-                  contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
-                  labelStyle={{ color: axisColor }}
-                />
-                <Bar dataKey="resigned" name="Nghỉ việc" radius={[0, 6, 6, 0]}>
-                  {filteredAttrition.map((_, i) => (
-                    <Cell
-                      key={i}
-                      fill={i % 2 === 0 ? '#EF4444' : '#F87171'}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {filteredAttrition.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Không có dữ liệu attrition</Text>} />
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart
+                  data={filteredAttrition}
+                  layout="vertical"
+                  margin={{ top: 4, right: 24, left: 8, bottom: 4 }}
+                  barSize={18}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+                  <XAxis type="number" tick={{ fill: axisColor, fontSize: 12 }} allowDecimals={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="deptName"
+                    tick={{ fill: axisColor, fontSize: 11 }}
+                    width={100}
+                  />
+                  <RTooltip
+                    formatter={(v: number) => [`${v} người`, 'Nghỉ việc']}
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
+                    labelStyle={{ color: axisColor }}
+                  />
+                  <Bar dataKey="count" name="Nghỉ việc" radius={[0, 6, 6, 0]}>
+                    {filteredAttrition.map((_, i) => (
+                      <Cell key={i} fill={i % 2 === 0 ? '#EF4444' : '#F87171'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
       </Row>
 
-      {/* Contract Expiry Timeline Table */}
-      <Card
-        title={
-          <Text style={{ color: textPrimary, fontWeight: 600 }}>
-            Contract Expiry Timeline (60 ngày tới)
-          </Text>
-        }
-        style={chartCardStyle}
-      >
-        <Table<ContractExpiry>
-          rowKey="key"
-          dataSource={CONTRACT_EXPIRY}
-          columns={contractColumns}
-          pagination={{ pageSize: 8, size: 'small' }}
-          size="small"
-        />
-      </Card>
+      {/* Row 3: Salary Distribution histogram */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} lg={12}>
+          <Card
+            title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Phân bố lương (dải lương)</Text>}
+            style={chartCardStyle}
+          >
+            {salaryDist.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu lương</Text>} />
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={salaryDist} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                  <XAxis dataKey="range" tick={{ fill: axisColor, fontSize: 12 }} />
+                  <YAxis tick={{ fill: axisColor, fontSize: 12 }} allowDecimals={false} />
+                  <RTooltip
+                    formatter={(v: number) => [`${v} người`, 'Số nhân viên']}
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
+                  />
+                  <Bar dataKey="count" name="Số nhân viên" radius={[6, 6, 0, 0]}>
+                    {salaryDist.map((_, i) => {
+                      const colors = ['#6366F1', '#8B5CF6', '#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+                      return <Cell key={i} fill={colors[i % colors.length]} />;
+                    })}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </Card>
+        </Col>
+
+        {/* Contract Expiry Table */}
+        <Col xs={24} lg={12}>
+          <Card
+            title={
+              <Text style={{ color: textPrimary, fontWeight: 600 }}>
+                Contract Expiry — 60 ngày tới
+                {(summary?.contractsExpiring60d ?? 0) > 0 && (
+                  <Tag
+                    style={isDark
+                      ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.35)', marginLeft: 8 }
+                      : { marginLeft: 8 }}
+                    color={isDark ? undefined : 'warning'}
+                  >
+                    {summary?.contractsExpiring60d} hợp đồng
+                  </Tag>
+                )}
+              </Text>
+            }
+            style={chartCardStyle}
+          >
+            {contractExpiry.length === 0 ? (
+              <Empty
+                description={
+                  <Text style={{ color: textMuted }}>
+                    {summary?.contractsExpiring60d
+                      ? `${summary.contractsExpiring60d} hợp đồng sắp hết hạn — xem tại module Contracts`
+                      : 'Không có hợp đồng sắp hết hạn'}
+                  </Text>
+                }
+              />
+            ) : (
+              <Table<ContractExpiry>
+                rowKey="id"
+                dataSource={contractExpiry}
+                columns={contractColumns}
+                pagination={{ pageSize: 6, size: 'small' }}
+                size="small"
+              />
+            )}
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }

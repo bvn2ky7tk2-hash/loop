@@ -111,4 +111,13 @@ export class DashboardV3Controller {
     const tenantId: string | undefined = req.user?.tenantId ?? undefined;
     return this.service.getTodayEvents(tenantId);
   }
+
+  // ── E24.6: Executive Dashboard ─────────────────────────────────────────────
+
+  @Get('executive')
+  @ApiOperation({ summary: 'Executive Command Center — business KPIs, operations, risks' })
+  getExecutive(@Request() req: any) {
+    const tenantId: string | undefined = req.user?.tenantId ?? undefined;
+    return this.service.getExecutive(tenantId);
+  }
 }

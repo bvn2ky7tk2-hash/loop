@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param, Query, Res, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { ReportsService, type GenerateReportDto } from './reports.service';
+import { ReportsService, type GenerateReportDto, type BuilderPreviewDto } from './reports.service';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 
@@ -86,6 +86,35 @@ export class ReportsController {
   @ApiOperation({ summary: 'Tạo báo cáo tham số (Story 8.3) — trả về file xlsx' })
   async generateReport(@Body() dto: GenerateReportDto, @Res() res: Response) {
     const { buffer, filename } = await this.service.generateReport(dto);
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+    res.send(buffer);
+  }
+
+  // ── E24.7: Report Builder ─────────────────────────────────────────────────
+
+  @Get('builder/entities')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Danh sách entity + columns cho Report Builder' })
+  getBuilderEntities() {
+    return this.service.getBuilderEntities();
+  }
+
+  @Post('builder/preview')
+  @RequirePermission(PERMISSIONS.REPORTS_READ)
+  @ApiOperation({ summary: 'Preview 20 rows đầu theo entity/columns/filters' })
+  builderPreview(@Body() dto: BuilderPreviewDto) {
+    return this.service.builderPreview(dto);
+  }
+
+  @Post('builder/export')
+  @RequirePermission(PERMISSIONS.REPORTS_EXPORT)
+  @ApiOperation({ summary: 'Export Excel từ Report Builder' })
+  async builderExport(@Body() dto: BuilderPreviewDto, @Res() res: Response) {
+    const buffer = await this.service.builderExport(dto);
+    const filename = `loop-builder-${dto.entity.toLowerCase()}-${new Date().toISOString().slice(0, 10)}.xlsx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="${filename}"`,

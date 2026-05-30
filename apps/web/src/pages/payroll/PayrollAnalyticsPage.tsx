@@ -1,83 +1,62 @@
-import { Row, Col, Card, Table, Tag, Typography } from 'antd';
+import { Row, Col, Card, Table, Tag, Typography, Spin, Empty } from 'antd';
 import {
   CreditCardOutlined, DollarOutlined, FieldTimeOutlined, FileDoneOutlined,
 } from '@ant-design/icons';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
-  AreaChart, Area,
+  AreaChart, Area, Legend,
 } from 'recharts';
 import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { SparklineCard } from '../../components/ui/SparklineCard';
 import { useAuthStore } from '../../store/auth.store';
 import { formatCurrency } from '../../utils/format';
 
 const { Text } = Typography;
 
-// TODO: GET /reports/payroll/analytics/summary
-const MOCK_SUMMARY = {
-  totalSalaryCost:    1_240_000_000,
-  laborCostRatio:     0.42,
-  otThisMonth:        312,
-  payslipsIssued:     248,
-};
-
-// TODO: GET /reports/payroll/salary-trend?months=12
-const SALARY_TREND = Array.from({ length: 12 }, (_, i) => {
-  const month = dayjs().subtract(11 - i, 'month');
-  const base = 1_100_000_000 + i * 12_000_000;
-  return {
-    month: month.format('T[M]M'),
-    grossSalary: base,
-    allowances:  Math.round(base * 0.12),
-    otPay:       Math.round(base * 0.05),
-  };
-});
-
-// TODO: GET /reports/payroll/ot-by-department
-const OT_BY_DEPT = [
-  { dept: 'Engineering', hours: 98 },
-  { dept: 'Sales',       hours: 72 },
-  { dept: 'Operations',  hours: 56 },
-  { dept: 'Finance',     hours: 34 },
-  { dept: 'HR',          hours: 28 },
-  { dept: 'Marketing',   hours: 24 },
-];
-
-// SparklineCard data — lấy tổng salary mỗi tháng (triệu)
-const SALARY_SPARKLINE = SALARY_TREND.map(d => ({
-  day: d.month,
-  value: Math.round(d.grossSalary / 1_000_000),
-}));
-
-// TODO: GET /reports/payroll/top-earners?limit=10
-interface TopEarner {
-  key: string;
-  rank: number;
-  name: string;
-  department: string;
-  position: string;
-  grossSalary: number;
+/* ---- Interfaces ---- */
+interface PayrollSummary {
+  totalGross:        number;
+  totalNet:          number;
+  totalEmployerCost: number;
+  avgNetSalary:      number;
 }
 
-const TOP_EARNERS: TopEarner[] = [
-  { key: '1',  rank: 1,  name: 'Nguyễn Minh A',  department: 'Engineering',  position: 'Lead Engineer',       grossSalary: 65_000_000 },
-  { key: '2',  rank: 2,  name: 'Trần Thị B',      department: 'Engineering',  position: 'Senior Engineer',     grossSalary: 58_000_000 },
-  { key: '3',  rank: 3,  name: 'Lê Văn C',        department: 'Sales',        position: 'Sales Director',      grossSalary: 55_000_000 },
-  { key: '4',  rank: 4,  name: 'Phạm Thu D',      department: 'Finance',      position: 'CFO',                 grossSalary: 52_000_000 },
-  { key: '5',  rank: 5,  name: 'Hoàng Văn E',     department: 'Engineering',  position: 'Senior Engineer',     grossSalary: 50_000_000 },
-  { key: '6',  rank: 6,  name: 'Đỗ Ngọc F',       department: 'Operations',   position: 'Ops Manager',         grossSalary: 48_000_000 },
-  { key: '7',  rank: 7,  name: 'Vũ Quốc G',       department: 'Marketing',    position: 'Marketing Director',  grossSalary: 46_000_000 },
-  { key: '8',  rank: 8,  name: 'Bùi Thị H',       department: 'HR',           position: 'HR Manager',          grossSalary: 44_000_000 },
-  { key: '9',  rank: 9,  name: 'Đinh Văn I',      department: 'Engineering',  position: 'Backend Engineer',    grossSalary: 42_000_000 },
-  { key: '10', rank: 10, name: 'Ngô Thị K',       department: 'Finance',      position: 'Senior Accountant',   grossSalary: 40_000_000 },
-];
+interface SalaryTrendItem {
+  month:       string;
+  baseSalary:  number;
+  allowances:  number;
+  bonus:       number;
+  overtimePay: number;
+}
 
-function formatMillions(v: number) {
+interface OtByDeptItem {
+  deptName: string;
+  otHours:  number;
+  otPay:    number;
+}
+
+interface TopEarner {
+  rank:  number;
+  name:  string;
+  gross: number;
+  net:   number;
+}
+
+/* ---- API fetchers ---- */
+const fetchSummary    = () => axios.get<PayrollSummary>('/api/v1/payroll/analytics/summary').then(r => r.data);
+const fetchTrend      = (months: number) =>
+  axios.get<SalaryTrendItem[]>(`/api/v1/payroll/analytics/salary-trend?months=${months}`).then(r => r.data);
+const fetchOtByDept   = () => axios.get<OtByDeptItem[]>('/api/v1/payroll/analytics/ot-by-dept').then(r => r.data);
+const fetchTopEarners = (limit: number) =>
+  axios.get<TopEarner[]>(`/api/v1/payroll/analytics/top-earners?limit=${limit}`).then(r => r.data);
+
+/* ---- Helper ---- */
+function formatMillions(v: number): string {
   if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1)}T`;
   if (v >= 1_000_000)     return `${(v / 1_000_000).toFixed(0)}M`;
   return String(v);
@@ -85,8 +64,34 @@ function formatMillions(v: number) {
 
 export default function PayrollAnalyticsPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
-  const user = useAuthStore(s => s.user);
+  const user    = useAuthStore(s => s.user);
   const isAdmin = user?.role === 'ADMIN' || user?.role === 'admin';
+
+  const { data: summary, isLoading: loadingSummary } = useQuery<PayrollSummary>({
+    queryKey: ['payroll-analytics-summary'],
+    queryFn:  fetchSummary,
+    staleTime: 300_000,
+  });
+
+  const { data: salaryTrend = [], isLoading: loadingTrend } = useQuery<SalaryTrendItem[]>({
+    queryKey: ['payroll-salary-trend', 12],
+    queryFn:  () => fetchTrend(12),
+    staleTime: 300_000,
+  });
+
+  const { data: otByDept = [], isLoading: loadingOt } = useQuery<OtByDeptItem[]>({
+    queryKey: ['payroll-ot-by-dept'],
+    queryFn:  fetchOtByDept,
+    staleTime: 300_000,
+  });
+
+  const { data: topEarners = [], isLoading: loadingTop } = useQuery<TopEarner[]>({
+    queryKey: ['payroll-top-earners', 10],
+    queryFn:  () => fetchTopEarners(10),
+    staleTime: 300_000,
+  });
+
+  const isLoading = loadingSummary || loadingTrend || loadingOt || loadingTop;
 
   const axisColor     = isDark ? '#888' : '#555';
   const gridColor     = isDark ? '#334155' : '#f0f0f0';
@@ -99,12 +104,13 @@ export default function PayrollAnalyticsPage() {
     border: `1px solid ${borderColor}`,
   };
 
-  // Stacked area chart data (triệu VNĐ)
-  const areaData = SALARY_TREND.map(d => ({
+  // Stacked area data (triệu VNĐ)
+  const areaData = salaryTrend.map(d => ({
     month:       d.month,
-    grossSalary: Math.round(d.grossSalary / 1_000_000),
-    allowances:  Math.round(d.allowances / 1_000_000),
-    otPay:       Math.round(d.otPay / 1_000_000),
+    baseSalary:  Math.round(d.baseSalary  / 1_000_000),
+    allowances:  Math.round(d.allowances  / 1_000_000),
+    bonus:       Math.round(d.bonus       / 1_000_000),
+    overtimePay: Math.round(d.overtimePay / 1_000_000),
   }));
 
   const topEarnerColumns: ColumnsType<TopEarner> = [
@@ -112,43 +118,38 @@ export default function PayrollAnalyticsPage() {
       title: '#',
       dataIndex: 'rank',
       width: 48,
-      render: (v: number) => (
-        <Text style={{ color: textMuted, fontWeight: 600, fontSize: 13 }}>{v}</Text>
-      ),
+      render: (v: number) => <Text style={{ color: textMuted, fontWeight: 600, fontSize: 13 }}>{v}</Text>,
     },
     {
       title: 'Nhân viên',
       dataIndex: 'name',
-      render: (v: string) => (
-        <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>
-      ),
-    },
-    {
-      title: 'Phòng ban',
-      dataIndex: 'department',
-      render: (v: string) => {
-        const color = isDark
-          ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' }
-          : {};
-        return <Tag style={isDark ? color : {}} color={isDark ? undefined : 'blue'}>{v}</Tag>;
-      },
-    },
-    {
-      title: 'Vị trí',
-      dataIndex: 'position',
-      render: (v: string) => (
-        <Text style={{ color: textMuted, fontSize: 13 }}>{v}</Text>
-      ),
+      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>,
     },
     {
       title: 'Gross Salary',
-      dataIndex: 'grossSalary',
+      dataIndex: 'gross',
       align: 'right' as const,
       render: (v: number) => isAdmin
         ? <Text style={{ color: '#10B981', fontWeight: 600 }}>{formatCurrency(v)}</Text>
         : <Text style={{ color: textMuted, letterSpacing: 2, fontSize: 16 }}>***</Text>,
     },
+    {
+      title: 'Net Salary',
+      dataIndex: 'net',
+      align: 'right' as const,
+      render: (v: number) => isAdmin
+        ? <Text style={{ color: '#6366F1', fontWeight: 600 }}>{formatCurrency(v)}</Text>
+        : <Text style={{ color: textMuted, letterSpacing: 2, fontSize: 16 }}>***</Text>,
+    },
   ];
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: 40, display: 'flex', justifyContent: 'center' }}>
+        <Spin size="large" tip="Đang tải dữ liệu payroll analytics..." />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24 }}>
@@ -158,12 +159,12 @@ export default function PayrollAnalyticsPage() {
         iconColor="#10B981"
       />
 
-      {/* Row 4 StatCards */}
+      {/* 4 StatCards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={12} lg={6}>
           <StatCard
-            label="Tổng chi phí lương"
-            value={`${Math.round(MOCK_SUMMARY.totalSalaryCost / 1_000_000)}M`}
+            label="Tổng Gross"
+            value={`${Math.round((summary?.totalGross ?? 0) / 1_000_000)}M`}
             color="#6366F1"
             icon={<DollarOutlined />}
             subValue="tháng này"
@@ -171,142 +172,145 @@ export default function PayrollAnalyticsPage() {
         </Col>
         <Col xs={12} sm={12} lg={6}>
           <StatCard
-            label="Chi phí lao động"
-            value={`${Math.round(MOCK_SUMMARY.laborCostRatio * 100)}%`}
-            color="#EF4444"
-            icon={<CreditCardOutlined />}
-            subValue="% doanh thu"
-          />
-        </Col>
-        <Col xs={12} sm={12} lg={6}>
-          <StatCard
-            label="OT tháng này"
-            value={MOCK_SUMMARY.otThisMonth}
-            color="#F97316"
-            icon={<FieldTimeOutlined />}
-            subValue="giờ tăng ca"
-          />
-        </Col>
-        <Col xs={12} sm={12} lg={6}>
-          <StatCard
-            label="Phiếu lương đã phát"
-            value={MOCK_SUMMARY.payslipsIssued}
+            label="Tổng Net"
+            value={`${Math.round((summary?.totalNet ?? 0) / 1_000_000)}M`}
             color="#10B981"
             icon={<FileDoneOutlined />}
-            subValue="nhân viên"
+            subValue="thực nhận"
+          />
+        </Col>
+        <Col xs={12} sm={12} lg={6}>
+          <StatCard
+            label="Chi phí NSDLĐ"
+            value={`${Math.round((summary?.totalEmployerCost ?? 0) / 1_000_000)}M`}
+            color="#EF4444"
+            icon={<CreditCardOutlined />}
+            subValue="bao gồm BHXH"
+          />
+        </Col>
+        <Col xs={12} sm={12} lg={6}>
+          <StatCard
+            label="Net tb/người"
+            value={`${Math.round((summary?.avgNetSalary ?? 0) / 1_000_000)}M`}
+            color="#F97316"
+            icon={<FieldTimeOutlined />}
+            subValue="trung bình"
           />
         </Col>
       </Row>
 
-      {/* Salary Trend SparklineCard + OT BarChart */}
+      {/* Salary Stacked Area — 12 tháng */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} lg={8}>
-          <SparklineCard
-            label="Salary Trend"
-            value={`${Math.round(MOCK_SUMMARY.totalSalaryCost / 1_000_000)}M`}
-            unit="VNĐ"
-            delta={2}
-            data={SALARY_SPARKLINE}
-            variant="line"
-            color="#6366F1"
-            icon={<DollarOutlined />}
-            filled
-          />
-        </Col>
-
-        {/* Salary Stacked Area — 12 tháng */}
-        <Col xs={24} lg={16}>
+        <Col xs={24}>
           <Card
             title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Cơ cấu chi phí lương 12 tháng (triệu VNĐ)</Text>}
             style={chartCardStyle}
           >
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart
-                data={areaData}
-                margin={{ top: 8, right: 16, left: -8, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="gradGross" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#6366F1" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0.04} />
-                  </linearGradient>
-                  <linearGradient id="gradAllowance" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#10B981" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0.04} />
-                  </linearGradient>
-                  <linearGradient id="gradOt" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#F97316" stopOpacity={0.45} />
-                    <stop offset="95%" stopColor="#F97316" stopOpacity={0.04} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-                <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} />
-                <YAxis
-                  tick={{ fill: axisColor, fontSize: 11 }}
-                  tickFormatter={v => `${v}M`}
-                />
-                <RTooltip
-                  formatter={(v: number, name: string) => {
-                    const labels: Record<string, string> = {
-                      grossSalary: 'Lương cơ bản',
-                      allowances:  'Phụ cấp',
-                      otPay:       'OT',
-                    };
-                    return [`${v}M`, labels[name] ?? name];
-                  }}
-                  contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
-                />
-                <Area type="monotone" dataKey="grossSalary" name="grossSalary" stackId="1" stroke="#6366F1" fill="url(#gradGross)"    strokeWidth={2} dot={false} />
-                <Area type="monotone" dataKey="allowances"  name="allowances"  stackId="1" stroke="#10B981" fill="url(#gradAllowance)" strokeWidth={2} dot={false} />
-                <Area type="monotone" dataKey="otPay"       name="otPay"       stackId="1" stroke="#F97316" fill="url(#gradOt)"        strokeWidth={2} dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
+            {areaData.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu payroll</Text>} />
+            ) : (
+              <ResponsiveContainer width="100%" height={240}>
+                <AreaChart data={areaData} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="gradBase" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#6366F1" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0.04} />
+                    </linearGradient>
+                    <linearGradient id="gradAllowance" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#10B981" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0.04} />
+                    </linearGradient>
+                    <linearGradient id="gradBonus" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#3B82F6" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.04} />
+                    </linearGradient>
+                    <linearGradient id="gradOt" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%"  stopColor="#F97316" stopOpacity={0.45} />
+                      <stop offset="95%" stopColor="#F97316" stopOpacity={0.04} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                  <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} />
+                  <YAxis
+                    tick={{ fill: axisColor, fontSize: 11 }}
+                    tickFormatter={v => `${v}M`}
+                  />
+                  <RTooltip
+                    formatter={(v: number, name: string) => {
+                      const labels: Record<string, string> = {
+                        baseSalary:  'Lương cơ bản',
+                        allowances:  'Phụ cấp',
+                        bonus:       'Thưởng',
+                        overtimePay: 'OT',
+                      };
+                      return [`${formatMillions(v * 1_000_000)}`, labels[name] ?? name];
+                    }}
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
+                  />
+                  <Legend
+                    formatter={(v) => {
+                      const m: Record<string, string> = {
+                        baseSalary: 'Lương cơ bản', allowances: 'Phụ cấp',
+                        bonus: 'Thưởng', overtimePay: 'OT',
+                      };
+                      return <span style={{ color: textMuted, fontSize: 12 }}>{m[v] ?? v}</span>;
+                    }}
+                  />
+                  <Area type="monotone" dataKey="baseSalary"  stackId="1" stroke="#6366F1" fill="url(#gradBase)"     strokeWidth={2} dot={false} />
+                  <Area type="monotone" dataKey="allowances"  stackId="1" stroke="#10B981" fill="url(#gradAllowance)" strokeWidth={2} dot={false} />
+                  <Area type="monotone" dataKey="bonus"       stackId="1" stroke="#3B82F6" fill="url(#gradBonus)"     strokeWidth={2} dot={false} />
+                  <Area type="monotone" dataKey="overtimePay" stackId="1" stroke="#F97316" fill="url(#gradOt)"        strokeWidth={2} dot={false} />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
       </Row>
 
-      {/* OT Hours by Department */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      {/* OT by Dept + Top Earners */}
+      <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card
             title={<Text style={{ color: textPrimary, fontWeight: 600 }}>OT Hours by Department</Text>}
             style={chartCardStyle}
           >
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart
-                data={OT_BY_DEPT}
-                layout="vertical"
-                margin={{ top: 4, right: 24, left: 8, bottom: 4 }}
-                barSize={22}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
-                <XAxis
-                  type="number"
-                  tick={{ fill: axisColor, fontSize: 12 }}
-                  allowDecimals={false}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="dept"
-                  tick={{ fill: axisColor, fontSize: 12 }}
-                  width={90}
-                />
-                <RTooltip
-                  formatter={(v: number) => [`${v} giờ`, 'OT']}
-                  contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
-                  labelStyle={{ color: axisColor }}
-                />
-                <Bar dataKey="hours" name="OT" radius={[0, 6, 6, 0]}>
-                  {OT_BY_DEPT.map((_, i) => (
-                    <Cell key={i} fill={i % 2 === 0 ? '#F97316' : '#FDBA74'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            {otByDept.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Không có dữ liệu OT tháng này</Text>} />
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart
+                  data={otByDept}
+                  layout="vertical"
+                  margin={{ top: 4, right: 24, left: 8, bottom: 4 }}
+                  barSize={22}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+                  <XAxis type="number" tick={{ fill: axisColor, fontSize: 12 }} allowDecimals={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="deptName"
+                    tick={{ fill: axisColor, fontSize: 12 }}
+                    width={100}
+                  />
+                  <RTooltip
+                    formatter={(v: number, name: string) => {
+                      if (name === 'otHours') return [`${v} giờ`, 'OT Hours'];
+                      return [`${formatMillions(v)}`, 'OT Pay'];
+                    }}
+                    contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
+                    labelStyle={{ color: axisColor }}
+                  />
+                  <Bar dataKey="otHours" name="otHours" radius={[0, 6, 6, 0]}>
+                    {otByDept.map((_, i) => (
+                      <Cell key={i} fill={i % 2 === 0 ? '#F97316' : '#FDBA74'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Card>
         </Col>
 
-        {/* Top Earners Table */}
         <Col xs={24} lg={12}>
           <Card
             title={
@@ -326,14 +330,18 @@ export default function PayrollAnalyticsPage() {
             }
             style={chartCardStyle}
           >
-            <Table<TopEarner>
-              rowKey="key"
-              dataSource={TOP_EARNERS}
-              columns={topEarnerColumns}
-              pagination={false}
-              size="small"
-              scroll={{ y: 280 }}
-            />
+            {topEarners.length === 0 ? (
+              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu payroll</Text>} />
+            ) : (
+              <Table<TopEarner>
+                rowKey="rank"
+                dataSource={topEarners}
+                columns={topEarnerColumns}
+                pagination={false}
+                size="small"
+                scroll={{ y: 280 }}
+              />
+            )}
           </Card>
         </Col>
       </Row>

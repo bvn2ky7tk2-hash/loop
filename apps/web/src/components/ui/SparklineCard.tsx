@@ -15,6 +15,7 @@ interface SparklineCardProps {
   label: string;
   value: number | string;
   unit?: string;
+  subValue?: string;
   delta?: number;
   data?: SparklinePoint[];
   variant?: 'bar' | 'line';
@@ -23,6 +24,7 @@ interface SparklineCardProps {
   loading?: boolean;
   filled?: boolean; // nền đặc theo màu, chữ trắng
   style?: CSSProperties;
+  onClick?: () => void;
 }
 
 function DeltaBadge({ delta, filled }: { delta: number; filled?: boolean }) {
@@ -47,6 +49,7 @@ export function SparklineCard({
   label,
   value,
   unit,
+  subValue,
   delta,
   data = [],
   variant = 'bar',
@@ -55,6 +58,7 @@ export function SparklineCard({
   loading = false,
   filled = false,
   style,
+  onClick,
 }: SparklineCardProps) {
   const { isDark, textPrimary, textMuted, bgContainer: bgContainerPalette } = useThemePalette();
 
@@ -86,12 +90,14 @@ export function SparklineCard({
 
     return (
       <Card
+        onClick={onClick}
         style={{
           borderRadius: 12,
           overflow: 'hidden',
           background: cardBg,
           border: 'none',
           boxShadow: `0 4px 20px ${resolvedColor}55`,
+          cursor: onClick ? 'pointer' : undefined,
           ...style,
         }}
         styles={{ body: { padding: '16px 18px 12px' } }}
@@ -118,13 +124,16 @@ export function SparklineCard({
         </div>
 
         {/* Value row */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: subValue ? 4 : 10 }}>
           <span style={{ fontSize: 30, fontWeight: 800, color: '#fff', lineHeight: 1, letterSpacing: -1 }}>
             {value}
           </span>
           {unit && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{unit}</span>}
           {delta !== undefined && <DeltaBadge delta={delta} filled />}
         </div>
+        {subValue && (
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 8 }}>{subValue}</div>
+        )}
 
         {/* Sparkline */}
         {data.length > 0 && (
@@ -177,12 +186,14 @@ export function SparklineCard({
 
   return (
     <Card
+      onClick={onClick}
       style={{
         borderRadius: 12,
         overflow: 'hidden',
         borderTop: isCssVar
           ? '3px solid var(--color-primary)'
           : `3px solid ${resolvedColor}`,
+        cursor: onClick ? 'pointer' : undefined,
         ...style,
       }}
       styles={{ body: { padding: '16px 18px 12px' } }}
@@ -209,7 +220,7 @@ export function SparklineCard({
         )}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: subValue ? 4 : 10 }}>
         <span style={{
           fontSize: 30, fontWeight: 800,
           color: textPrimary,
@@ -220,6 +231,9 @@ export function SparklineCard({
         {unit && <span style={{ fontSize: 13, color: textMuted, fontWeight: 500 }}>{unit}</span>}
         {delta !== undefined && <DeltaBadge delta={delta} />}
       </div>
+      {subValue && (
+        <div style={{ fontSize: 12, color: textMuted, marginBottom: 8 }}>{subValue}</div>
+      )}
 
       {data.length > 0 && (
         <div style={{ height: 44, marginLeft: -4, marginRight: -4 }}>

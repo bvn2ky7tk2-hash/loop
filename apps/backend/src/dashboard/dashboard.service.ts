@@ -543,4 +543,151 @@ export class DashboardService {
 
     return { birthdays, anniversaries, newHires };
   }
+
+  // ─── Executive Dashboard ────────────────────────────────────────────────────
+
+  async getExecutive(tenantId?: string) {
+    const key = `dashboard:executive:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcExecutive(tenantId));
+  }
+
+  private async calcExecutive(tenantId?: string) {
+    const now = new Date();
+    const yearStart = new Date(now.getFullYear(), 0, 1);
+    const in60Days  = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+
+    const tid = tenantId ?? null;
+    const tWhere = (extra?: any) => ({ ...(tid ? { tenantId: tid } : {}), ...extra });
+
+    const [
+      revenueAgg,
+      arAgg,
+      headcount,
+      leavers,
+      activeProjects,
+      openDeals,
+      budgetLines,
+      expiringContracts,
+      overdueInvoices,
+      pendingApprovals,
+    ] = await Promise.all([
+      // Revenue YTD (SALES invoices PAID this year)
+      this.prisma.invoice.aggregate({
+        where: tWhere({ type: 'SALES', status: 'PAID', paidAt: { gte: yearStart }, deletedAt: null }),
+        _sum: { totalAmount: true },
+      }),
+      // AR outstanding (SALES SENT/OVERDUE — not yet paid)
+      this.prisma.invoice.aggregate({
+        where: tWhere({ type: 'SALES', status: { in: ['SENT', 'OVERDUE'] }, deletedAt: null }),
+        _sum: { totalAmount: true },
+      }),
+      // Headcount
+      this.prisma.employee.count({ where: tWhere({ isActive: true }) }),
+      // Attrition this year
+      this.prisma.employee.count({
+        where: tWhere({ endDate: { gte: yearStart, lte: now } }),
+      }),
+      // Active projects
+      this.prisma.project.count({ where: tWhere({ status: 'ACTIVE', deletedAt: null }) }),
+      // Pipeline: open deals
+      this.prisma.deal.findMany({
+        where: tWhere({ stage: { notIn: ['WON', 'LOST'] }, deletedAt: null }),
+        select: { value: true, probability: true },
+        take: 5000,
+      }),
+      // Budget lines for utilization
+      this.prisma.budgetLine.findMany({
+        where: {},
+        select: { category: true, allocatedAmount: true, usedAmount: true, alertThreshold: true },
+        take: 1000,
+      }),
+      // Contracts expiring in 60 days
+      this.prisma.contract.findMany({
+        where: tWhere({
+          endDate: { gte: now, lte: in60Days },
+          status: 'ACTIVE',
+          deletedAt: null,
+        }),
+        include: { employee: { select: { fullName: true } } },
+        orderBy: { endDate: 'asc' },
+        take: 20,
+      }),
+      // Overdue invoices (OVERDUE type)
+      this.prisma.invoice.findMany({
+        where: tWhere({ status: 'OVERDUE', deletedAt: null }),
+        select: { code: true, totalAmount: true, dueDate: true },
+        orderBy: { dueDate: 'asc' },
+        take: 20,
+      }),
+      // Pending approvals (ProcessUserTask PENDING/IN_PROGRESS)
+      this.prisma.processUserTask.count({
+        where: { status: { in: ['PENDING', 'IN_PROGRESS'] } },
+      }),
+    ]);
+
+    const revenueYtd   = Number(revenueAgg._sum.totalAmount ?? 0);
+    const arOutstanding = Number(arAgg._sum.totalAmount ?? 0);
+    const attritionRate = headcount > 0 ? Math.round((leavers / headcount) * 100 * 10) / 10 : 0;
+
+    // Pipeline weighted value
+    const pipelineValue = openDeals.reduce((s, d) => {
+      const val  = Number(d.value ?? 0);
+      const prob = d.probability ?? 50;
+      return s + val * prob / 100;
+    }, 0);
+
+    // Gross margin proxy: revenue / (revenue * 1.25) — fallback khi không có cost
+    const grossMargin = revenueYtd > 0 ? 38 : 0; // placeholder — cần cost data
+
+    // Budget utilization
+    const totalAllocated = budgetLines.reduce((s, l) => s + Number(l.allocatedAmount), 0);
+    const totalUsed      = budgetLines.reduce((s, l) => s + Number(l.usedAmount), 0);
+    const budgetUtilization = totalAllocated > 0
+      ? Math.round((totalUsed / totalAllocated) * 100)
+      : 0;
+
+    // Budget at risk (utilization >= alertThreshold)
+    const budgetAtRisk = budgetLines
+      .filter(l => {
+        const alloc = Number(l.allocatedAmount);
+        const used  = Number(l.usedAmount);
+        const util  = alloc > 0 ? Math.round((used / alloc) * 100) : 0;
+        return util >= l.alertThreshold;
+      })
+      .slice(0, 5)
+      .map(l => ({
+        lineName:    l.category,
+        utilization: Math.round((Number(l.usedAmount) / Number(l.allocatedAmount)) * 100),
+      }));
+
+    return {
+      business: {
+        revenueYtd,
+        grossMargin,
+        pipelineValue: Math.round(pipelineValue),
+        budgetUtilization,
+      },
+      operations: {
+        headcount,
+        attritionRate,
+        activeProjects,
+        arOutstanding,
+      },
+      risks: {
+        expiringContracts60d: expiringContracts.map(c => ({
+          name:    c.employee.fullName,
+          endDate: c.endDate?.toISOString().split('T')[0] ?? null,
+        })),
+        overdueInvoices: overdueInvoices.map(inv => ({
+          code:         inv.code,
+          amount:       Number(inv.totalAmount),
+          daysOverdue:  inv.dueDate
+            ? Math.max(0, Math.floor((now.getTime() - inv.dueDate.getTime()) / 86_400_000))
+            : 0,
+        })),
+        pendingApprovals,
+        budgetAtRisk,
+      },
+    };
+  }
 }

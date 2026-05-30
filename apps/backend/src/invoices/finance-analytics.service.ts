@@ -152,6 +152,57 @@ export class FinanceAnalyticsService extends TenantAwareService {
     }));
   }
 
+  /**
+   * E24.4 — Budget vs Actual: tổng hợp theo category từ BudgetLine ACTIVE.
+   * Group by category, sum allocatedAmount và usedAmount.
+   */
+  async getBudgetVsActual() {
+    const tid = this.getTenantId();
+    const lines = await this.prisma.budgetLine.findMany({
+      where: {
+        plan: {
+          status: 'ACTIVE',
+          // BudgetPlan không có tenantId trực tiếp — filter qua orgUnit nếu có tenantId
+          ...(tid
+            ? { orgUnit: { tenantId: tid } }
+            : {}),
+        },
+      },
+      select: {
+        category:        true,
+        allocatedAmount: true,
+        usedAmount:      true,
+      },
+      take: 500,
+    });
+
+    // Group by category
+    const categoryMap = new Map<string, { allocated: number; used: number }>();
+    for (const line of lines) {
+      const cat = line.category;
+      const existing = categoryMap.get(cat);
+      const allocated = Number(line.allocatedAmount);
+      const used      = Number(line.usedAmount);
+      if (existing) {
+        existing.allocated += allocated;
+        existing.used      += used;
+      } else {
+        categoryMap.set(cat, { allocated, used });
+      }
+    }
+
+    return Array.from(categoryMap.entries())
+      .map(([name, data]) => ({
+        name,
+        allocated:   Math.round(data.allocated),
+        used:        Math.round(data.used),
+        utilization: data.allocated > 0
+          ? Math.round((data.used / data.allocated) * 100 * 10) / 10
+          : 0,
+      }))
+      .sort((a, b) => b.allocated - a.allocated);
+  }
+
   async getMonthlyPL() {
     const results: {
       month: string;
