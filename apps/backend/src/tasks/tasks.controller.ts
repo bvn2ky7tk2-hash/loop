@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Put, Body, Param, Query, Res,
+  Controller, Get, Post, Put, Delete, Body, Param, Query, Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -91,6 +91,14 @@ export class TasksController {
   @ApiOperation({ summary: 'Cập nhật task' })
   update(@Param('id') id: string, @Body() dto: Partial<CreateTaskDto>) {
     return this.service.update(id, dto);
+  }
+
+  @Delete('tasks/:id')
+  @Roles(Role.ADMIN, Role.PM)
+  @RequirePermission(PERMISSIONS.TASKS_DELETE)
+  @ApiOperation({ summary: 'Xóa task' })
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 
   @Post('tasks/:id/approve')

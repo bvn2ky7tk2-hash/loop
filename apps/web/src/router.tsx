@@ -110,6 +110,10 @@ const ProjectAnalyticsPage   = lazy(() => import('./pages/projects/ProjectAnalyt
 const FinanceAnalyticsPage   = lazy(() => import('./pages/finance/FinanceAnalyticsPage'));
 const SalaryBandPage         = lazy(() => import('./pages/hr/SalaryBandPage'));
 const DelegationPage         = lazy(() => import('./pages/settings/DelegationPage'));
+// HR v5.1
+const OffboardingPage              = lazy(() => import('./pages/hr/OffboardingPage'));
+const PerformanceBonusConfigPage   = lazy(() => import('./pages/hr/PerformanceBonusConfigPage'));
+const SalaryReviewPage             = lazy(() => import('./pages/hr/SalaryReviewPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -243,6 +247,10 @@ export const router = createBrowserRouter([
       { path: 'finance/analytics',    element: wrap(FinanceAnalyticsPage) },
       { path: 'hr/salary-bands',      element: wrap(SalaryBandPage) },
       { path: 'settings/delegation',  element: wrap(DelegationPage) },
+      // HR v5.1
+      { path: 'hr/offboarding',                 element: wrap(OffboardingPage) },
+      { path: 'hr/performance/bonus-config',    element: wrap(PerformanceBonusConfigPage) },
+      { path: 'hr/performance/salary-review',   element: wrap(SalaryReviewPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

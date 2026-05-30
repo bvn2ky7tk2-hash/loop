@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { HrEventBus } from '../common/events/hr-event-bus.service';
 
 /**
  * E18.1 — Cron task kiểm tra HĐ sắp hết hạn và tự động expire.
@@ -13,7 +14,10 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ContractExpiryTask {
   private readonly logger = new Logger(ContractExpiryTask.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly hrEventBus: HrEventBus,
+  ) {}
 
   @Cron('0 8 * * *')
   async handleContractExpiry(): Promise<void> {
@@ -92,6 +96,7 @@ export class ContractExpiryTask {
     }
 
     // 2. Tự động chuyển ACTIVE → EXPIRED cho HĐ đã quá ngày kết thúc
+    //    và emit HrEventBus event để lifecycle handler xử lý BPM renewal
     const expired = await this.prisma.contract.findMany({
       where: {
         status: 'ACTIVE',
@@ -99,16 +104,27 @@ export class ContractExpiryTask {
         autoExpireHandled: false,
         endDate: { lt: today },
       },
-      select: { id: true },
+      include: { employee: { select: { userId: true } } },
       take: 500,
     });
 
     if (expired.length > 0) {
+      // Emit event trước khi update để lifecycle handler có thể đọc status=ACTIVE
+      for (const contract of expired) {
+        await this.hrEventBus.emit({
+          type: 'contract.expiring',
+          refId: contract.id,
+          employeeId: contract.employeeId,
+          userId: contract.employee.userId ?? undefined,
+          metadata: { daysLeft: 0 },
+        });
+      }
+
       await this.prisma.contract.updateMany({
         where: { id: { in: expired.map(c => c.id) } },
-        data: { status: 'EXPIRED', autoExpireHandled: true },
+        data: { status: 'EXPIRED' },
       });
-      this.logger.log(`[ContractExpiryTask] Đã expire ${expired.length} HĐ`);
+      this.logger.log(`[ContractExpiryTask] Đã expire ${expired.length} HĐ và emit contract.expiring events`);
     }
 
     this.logger.log('[ContractExpiryTask] Hoàn tất.');

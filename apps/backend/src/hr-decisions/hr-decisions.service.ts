@@ -17,6 +17,9 @@ import {
   EmployeeStatus,
   Role,
   DefinitionStatus,
+  ContractStatus,
+  InsuranceEnrollmentStatus,
+  InsuranceEventType,
 } from '../generated/prisma';
 import {
   CreateHrDecisionDto,
@@ -392,9 +395,11 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       employeeId: string;
       effectiveDate: Date;
       toOrgUnitId?: string | null;
+      fromOrgUnitId?: string | null;
       toPositionId?: string | null;
       fromPositionId?: string | null;
       toSalary?: unknown;
+      fromSalary?: unknown;
       decisionNumber?: string | null;
     },
   ) {
@@ -430,6 +435,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
 
       // Tạo PositionHistory nếu position thay đổi
       if (decision.toPositionId && decision.toPositionId !== decision.fromPositionId) {
+        // Đóng record cũ — tránh overlap
+        await tx.positionHistory.updateMany({
+          where: { employeeId: decision.employeeId, endDate: null },
+          data: {
+            endDate: new Date(decision.effectiveDate.getTime() - 86_400_000),
+          },
+        });
         await tx.positionHistory.create({
           data: {
             positionId: decision.toPositionId,
@@ -452,6 +464,38 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
             hrDecisionId: decision.id,
           },
         });
+
+        // Sync Contract.salaryMonthly để PayrollEngine tính lương đúng
+        await tx.contract.updateMany({
+          where: {
+            employeeId: decision.employeeId,
+            status: ContractStatus.ACTIVE,
+          },
+          data: { salaryMonthly: decision.toSalary as number },
+        });
+
+        // Auto tạo InsuranceEvent để không cần HR làm tay 2 lần
+        const activeEnrollment = await tx.insuranceEnrollment.findFirst({
+          where: {
+            employeeId: decision.employeeId,
+            status: InsuranceEnrollmentStatus.ACTIVE,
+          },
+        });
+        if (activeEnrollment) {
+          await tx.insuranceEvent.create({
+            data: {
+              enrollmentId: activeEnrollment.id,
+              eventType: InsuranceEventType.SALARY_CHANGE,
+              insuranceSalary: decision.toSalary as number,
+              effectiveDate: decision.effectiveDate,
+              hrDecisionId: decision.id,
+            },
+          });
+          await tx.insuranceEnrollment.update({
+            where: { id: activeEnrollment.id },
+            data: { insuranceSalary: decision.toSalary as number },
+          });
+        }
       }
       // Nếu PROMOTION cũng kèm thay đổi position
       if (decision.type === HrDecisionType.PROMOTION && decision.toPositionId) {
@@ -463,6 +507,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
           },
         });
         if (decision.toPositionId !== decision.fromPositionId) {
+          // Đóng record cũ — tránh overlap
+          await tx.positionHistory.updateMany({
+            where: { employeeId: decision.employeeId, endDate: null },
+            data: {
+              endDate: new Date(decision.effectiveDate.getTime() - 86_400_000),
+            },
+          });
           await tx.positionHistory.create({
             data: {
               positionId: decision.toPositionId,
@@ -488,19 +539,68 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       });
     }
 
-    // Luôn tạo WorkHistory
+    // Luôn tạo WorkHistory với description chi tiết
+    const description = await this.buildDecisionDescription(decision, tx);
     await tx.workHistory.create({
       data: {
         employeeId: decision.employeeId,
         eventType,
         eventDate: decision.effectiveDate,
         title: titleMap[decision.type],
-        description: decision.decisionNumber
-          ? `Quyết định số ${decision.decisionNumber}`
-          : undefined,
+        description: description || undefined,
         hrDecisionId: decision.id,
       },
     });
+  }
+
+  // Helper tạo description chi tiết cho WorkHistory
+  private async buildDecisionDescription(
+    decision: {
+      type: HrDecisionType;
+      fromOrgUnitId?: string | null;
+      toOrgUnitId?: string | null;
+      fromSalary?: unknown;
+      toSalary?: unknown;
+      decisionNumber?: string | null;
+    },
+    tx: Parameters<Parameters<PrismaService['$transaction']>[0]>[0],
+  ): Promise<string> {
+    const parts: string[] = [];
+    if (decision.decisionNumber) parts.push(`QĐ ${decision.decisionNumber}`);
+
+    if (
+      (decision.type === HrDecisionType.TRANSFER ||
+        decision.type === HrDecisionType.POSITION_CHANGE) &&
+      decision.fromOrgUnitId &&
+      decision.toOrgUnitId
+    ) {
+      const [from, to] = await Promise.all([
+        tx.orgUnit.findUnique({ where: { id: decision.fromOrgUnitId }, select: { name: true } }),
+        tx.orgUnit.findUnique({ where: { id: decision.toOrgUnitId }, select: { name: true } }),
+      ]);
+      if (from && to) parts.push(`${from.name} → ${to.name}`);
+    }
+
+    if (
+      decision.type === HrDecisionType.SALARY_CHANGE &&
+      decision.fromSalary != null &&
+      decision.toSalary != null
+    ) {
+      parts.push(
+        `Lương: ${Number(decision.fromSalary).toLocaleString('vi-VN')} → ${Number(decision.toSalary).toLocaleString('vi-VN')} đ`,
+      );
+    }
+
+    if (decision.type === HrDecisionType.PROMOTION) {
+      parts.push('Thăng chức');
+      if (decision.fromSalary != null && decision.toSalary != null) {
+        parts.push(
+          `${Number(decision.fromSalary).toLocaleString('vi-VN')} → ${Number(decision.toSalary).toLocaleString('vi-VN')} đ`,
+        );
+      }
+    }
+
+    return parts.join(' | ');
   }
 
   async findByEmployee(employeeId: string) {

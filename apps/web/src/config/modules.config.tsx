@@ -59,6 +59,7 @@ import {
   BuildOutlined,
   FieldTimeOutlined,
   DotChartOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -214,6 +215,14 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/hr/skill-matrix', label: 'Ma trận kỹ năng',   visible: true },
           { key: '/hr/okr',          label: 'OKR & KPI',         visible: true },
           { key: '/hr/analytics',    label: 'HR Analytics',      visible: true },
+          { key: '/hr/performance/bonus-config',  label: 'Cấu hình Bonus',    visible: true },
+          { key: '/hr/performance/salary-review', label: 'Xem xét Lương',     visible: true },
+        ],
+      },
+      {
+        key: 'g-people-offboard', label: 'Offboarding', visible: true,
+        items: [
+          { key: '/hr/offboarding', label: 'Danh sách Offboarding', visible: true },
         ],
       },
       {
@@ -512,4 +521,8 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/holidays':                   <CalendarOutlined />,
   '/hr/leave-policies':             <FileTextOutlined />,
   '/hr/insurance':                  <SafetyCertificateOutlined />,
+  // HR v5.1
+  '/hr/offboarding':                <LogoutOutlined />,
+  '/hr/performance/bonus-config':   <TrophyOutlined />,
+  '/hr/performance/salary-review':  <DollarOutlined />,
 };

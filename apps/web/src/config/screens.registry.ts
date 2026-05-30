@@ -78,7 +78,11 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/okr',                module: 'people', label: 'OKR & KPI',                icon: 'AimOutlined',          permCode: 'okr:read',                   sortOrder: 16 },
   { route: '/hr/analytics',          module: 'people', label: 'HR Analytics',             icon: 'BarChartOutlined',     permCode: 'employees:read',             sortOrder: 17 },
   { route: '/payroll/analytics',     module: 'people', label: 'Payroll Analytics',         icon: 'CreditCardOutlined',   permCode: 'payroll:read',               sortOrder: 22 },
-  { route: '/hr/salary-bands',       module: 'people', label: 'Band lương & Đề xuất',       icon: 'DollarOutlined',       permCode: 'employees:manage',           sortOrder: 23 },
+  { route: '/hr/salary-bands',                  module: 'people', label: 'Band lương & Đề xuất',       icon: 'DollarOutlined',       permCode: 'employees:manage',           sortOrder: 23 },
+  // HR v5.1
+  { route: '/hr/offboarding',               module: 'people', label: 'Offboarding',                 icon: 'LogoutOutlined',       permCode: 'employees:manage',           sortOrder: 24 },
+  { route: '/hr/performance/bonus-config',  module: 'people', label: 'Cấu hình Bonus Hiệu suất',    icon: 'TrophyOutlined',       permCode: 'performance:read',           sortOrder: 25 },
+  { route: '/hr/performance/salary-review', module: 'people', label: 'Xem xét Lương',               icon: 'DollarOutlined',       permCode: 'employees:manage',           sortOrder: 26 },
   { route: '/recruit/pipeline',      module: 'people', label: 'Phễu tuyển dụng',          icon: 'AppstoreAddOutlined',  permCode: 'recruit_pipeline:read',      sortOrder: 18 },
   { route: '/recruit/candidates',    module: 'people', label: 'Ứng viên',                 icon: 'UsergroupAddOutlined', permCode: 'recruit_candidates:read',    sortOrder: 19 },
   { route: '/recruit/interviews',    module: 'people', label: 'Lịch phỏng vấn',           icon: 'ScheduleFilled',       permCode: 'recruit_interviews:read',    sortOrder: 20 },

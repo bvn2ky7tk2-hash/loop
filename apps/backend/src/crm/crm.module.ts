@@ -9,6 +9,7 @@ import { ForecastModule } from './forecast/forecast.module';
 import { CrmAnalyticsService } from './crm-analytics.service';
 import { CrmAnalyticsController } from './crm-analytics.controller';
 import { PrismaModule } from '../prisma/prisma.module';
+import { CrmReminderTask } from './crm-reminder.task';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { PrismaModule } from '../prisma/prisma.module';
     CrmActivitiesModule,
     ForecastModule,
   ],
-  providers: [CrmAnalyticsService],
+  providers: [CrmAnalyticsService, CrmReminderTask],
   controllers: [CrmAnalyticsController],
 })
 export class CrmModule {}

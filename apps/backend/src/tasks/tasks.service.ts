@@ -71,6 +71,13 @@ export class TasksService extends TenantAwareService {
       this.notifyAssigneeAsync(task.assigneeId, task.id, task.title, task.projectId).catch(() => {});
     }
 
+    // Trigger re-calculate parent progress khi thêm child mới
+    if (task.parentId) {
+      await this.rollUpProgress(task.parentId, task.projectId);
+    } else {
+      await this.syncProjectProgress(task.projectId);
+    }
+
     return { ...task, ...(warning ? { warning } : {}) };
   }
 
@@ -505,6 +512,22 @@ export class TasksService extends TenantAwareService {
 
     const buf = await wb.xlsx.writeBuffer();
     return Buffer.from(buf);
+  }
+
+  async remove(id: string): Promise<{ id: string }> {
+    const task = await this.prisma.task.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy task');
+
+    await this.prisma.task.delete({ where: { id } });
+
+    // Trigger re-calculate sau khi xóa — project progress không còn bị stale
+    if (task.parentId) {
+      await this.rollUpProgress(task.parentId, task.projectId);
+    } else {
+      await this.syncProjectProgress(task.projectId);
+    }
+
+    return { id };
   }
 
   private async findOrThrow(id: string): Promise<Task> {
