@@ -264,4 +264,75 @@ export class PortalService {
 
     return { issue, ticketId, issueId: issue.id };
   }
+
+  // ─── E22.1: createBugFromTicket ───────────────────────────────────────────
+
+  /**
+   * Tạo Bug (itemType=BUG) từ CustomerTicket fields.
+   * Khác với linkToIssue (tạo ISSUE), method này tạo Bug thực sự trong project tracking.
+   */
+  async createBugFromTicket(ticketId: string, projectId: string, createdById: string) {
+    const ticket = await this.prisma.customerTicket.findUnique({
+      where: { id: ticketId },
+      include: {
+        portal: {
+          select: {
+            id: true,
+            customerId: true,
+            customer: { select: { name: true } },
+          },
+        },
+      },
+    });
+    if (!ticket) throw new NotFoundException('Ticket không tồn tại');
+
+    const severity = PRIORITY_TO_SEVERITY[ticket.priority] ?? BugSeverity.MEDIUM;
+
+    const bug = await this.prisma.$transaction(async (tx) => {
+      const newBug = await tx.bug.create({
+        data: {
+          projectId,
+          reporterId:    createdById,
+          title:         ticket.title,
+          description:   ticket.description,
+          severity,
+          itemType:      BugItemType.BUG,
+          status:        BugStatus.OPEN,
+          requesterName: ticket.submittedBy ?? undefined,
+        },
+      });
+
+      // Ghi lại issueId trên ticket để tránh tạo trùng
+      if (!ticket.issueId) {
+        await tx.customerTicket.update({
+          where: { id: ticketId },
+          data:  { issueId: newBug.id },
+        });
+      }
+
+      return newBug;
+    });
+
+    // Notify team
+    const csTeam = await this.prisma.user.findMany({
+      where: { role: { in: [Role.ADMIN, Role.PM] }, isActive: true },
+      select: { id: true },
+      take: 50,
+    });
+
+    await Promise.all(
+      csTeam.map((u) =>
+        this.notifications.createInApp(u.id, {
+          type:       NotificationType.ISSUE_ASSIGNED,
+          title:      'Bug mới từ khách hàng',
+          body:       `Ticket "${ticket.title}" (${ticket.portal.customer?.name ?? ''}) đã được tạo thành Bug #${bug.id.slice(0, 8)}`,
+          link:       `/bugs/${bug.id}`,
+          entityType: 'Bug',
+          entityId:   bug.id,
+        }),
+      ),
+    );
+
+    return { bug, ticketId, bugId: bug.id };
+  }
 }

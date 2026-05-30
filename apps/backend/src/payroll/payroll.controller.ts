@@ -103,6 +103,14 @@ export class PayrollController {
     return this.service.markPaid(id);
   }
 
+  // ── E16G.7: Tính lương tháng 13 ───────────────────────────────────────────
+  @Post('periods/:id/calculate-13th')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @ApiOperation({ summary: 'Tính lương tháng 13 — BQ các kỳ REGULAR APPROVED trong năm' })
+  calculate13thMonth(@Param('id') id: string) {
+    return this.service.calculate13thMonth(id);
+  }
+
   // ── Lấy URL phiếu lương PDF ────────────────────────────────────────────────
   @Get('records/:recordId/payslip')
   @ApiOperation({ summary: 'Lấy presigned URL phiếu lương PDF (chỉ xem của mình)' })

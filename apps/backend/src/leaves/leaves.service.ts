@@ -10,6 +10,7 @@ import { ApproveLeaveDto } from './dto/approve-leave.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { HrEventBus } from '../common/events/hr-event-bus.service';
 
 const LEAVE_REQUEST_INCLUDE = {
   employee: { select: { id: true, fullName: true, userId: true } },
@@ -22,6 +23,7 @@ export class LeavesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly auditLog: AuditLogService,
+    private readonly hrEventBus: HrEventBus,
     @Optional() private readonly notificationsService?: NotificationsService,
     @Inject(REQUEST) req?: any,
   ) {
@@ -215,6 +217,23 @@ export class LeavesService extends TenantAwareService {
         link: '/hr/leaves',
         entityType: 'LEAVE',
         entityId: id,
+      }).catch(() => {});
+    }
+
+    // E16F.4 — Emit leave.approved để HrAttendanceService cập nhật TimesheetRecord
+    if (dto.status === 'APPROVED') {
+      const leaveType = request.leaveType as any;
+      this.hrEventBus.emit({
+        type: 'leave.approved',
+        refId: id,
+        employeeId: request.employeeId,
+        metadata: {
+          employeeId: request.employeeId,
+          startDate: (request.startDate as Date).toISOString(),
+          endDate: (request.endDate as Date).toISOString(),
+          isPaid: leaveType?.isPaid ?? true,
+          days: Number(request.days),
+        } as any,
       }).catch(() => {});
     }
 

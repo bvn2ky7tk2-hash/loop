@@ -143,7 +143,6 @@ export class ClientContractsService {
           milestoneId,
           milestone.name,
           Number(milestone.amount),
-          milestone.dueDate,
         );
       } catch (err) {
         // Ghi log nhưng không fail request chính
@@ -159,20 +158,27 @@ export class ClientContractsService {
     milestoneId: string,
     milestoneName: string,
     amount: number,
-    milestoneDate: Date,
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const contract = await (this.prisma.clientContract as any).findUnique({
+    const contract = await this.prisma.clientContract.findUnique({
       where: { id: contractId },
-      select: { customerId: true, paymentTermsDays: true },
-    }) as { customerId: string; paymentTermsDays: number | null } | null;
+      select: { customerId: true, paymentTermsDays: true, dealId: true },
+    });
     if (!contract) return;
 
-    const code = await generateInvoiceCode(this.prisma);
+    // Lấy projectId từ deal (nếu có)
+    let projectId: string | null = null;
+    if (contract.dealId) {
+      const deal = await this.prisma.deal.findUnique({
+        where: { id: contract.dealId },
+        select: { projectId: true },
+      });
+      projectId = deal?.projectId ?? null;
+    }
+
+    const code = `INV-${milestoneId.slice(0, 8)}`;
     const issueDate = new Date();
-    // dueDate = milestone.dueDate + paymentTermsDays (mặc định 30)
     const paymentDays = contract.paymentTermsDays ?? 30;
-    const dueDate = new Date(milestoneDate.getTime() + paymentDays * 86_400_000);
+    const dueDate = new Date(issueDate.getTime() + paymentDays * 86_400_000);
 
     // Tìm admin để gán createdById
     const adminUser = await this.prisma.user.findFirst({
@@ -184,15 +190,17 @@ export class ClientContractsService {
     const invoice = await this.prisma.invoice.create({
       data: {
         code,
-        type:        'SALES',
-        customerId:  contract.customerId,
+        type:             'SALES',
+        customerId:       contract.customerId,
+        clientContractId: contractId,
+        ...(projectId ? { projectId } : {}),
         issueDate,
         dueDate,
-        currency:    'VND',
-        notes:       `Tự động tạo từ milestone: ${milestoneName}`,
-        subtotal:    amount,
-        taxAmount:   0,
-        totalAmount: amount,
+        currency:         'VND',
+        notes:            `Tự động tạo từ milestone: ${milestoneName}`,
+        subtotal:         amount,
+        taxAmount:        0,
+        totalAmount:      amount,
         createdById,
         items: {
           create: [{

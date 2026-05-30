@@ -9,7 +9,7 @@ import { REQUEST } from '@nestjs/core';
 import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { PayrollStatus } from '../generated/prisma';
+import { PayrollStatus, PayrollPeriodType } from '../generated/prisma';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
@@ -66,6 +66,7 @@ export class PayrollService extends TenantAwareService {
         startDate: start,
         endDate: end,
         status: PayrollStatus.DRAFT,
+        type: dto.type ?? PayrollPeriodType.REGULAR,
       },
     });
   }
@@ -251,6 +252,107 @@ export class PayrollService extends TenantAwareService {
 
     const url = await this.storage.presignedUrl(record.payslipPath, undefined, 3600);
     return { url, pending: false };
+  }
+
+  // ── E16G.7: Tính lương tháng 13 ──────────────────────────────────────────
+  async calculate13thMonth(periodId: string) {
+    const period = await this.prisma.payrollPeriod.findUnique({ where: { id: periodId } });
+    if (!period) throw new NotFoundException(`Kỳ lương ${periodId} không tìm thấy`);
+    if (period.type !== PayrollPeriodType.MONTH_13) {
+      throw new BadRequestException('Kỳ lương này không phải loại MONTH_13');
+    }
+
+    // Xác định năm của kỳ tháng 13 (lấy từ startDate)
+    const year = new Date(period.startDate).getFullYear();
+    const yearStart = new Date(`${year}-01-01`);
+    const yearEnd   = new Date(`${year}-12-31`);
+
+    // Lấy toàn bộ PayrollRecord từ kỳ REGULAR đã APPROVED trong năm
+    const regularRecords = await this.prisma.payrollRecord.findMany({
+      where: {
+        period: {
+          type:   PayrollPeriodType.REGULAR,
+          status: PayrollStatus.APPROVED,
+          startDate: { gte: yearStart, lte: yearEnd },
+        },
+      },
+      select: {
+        employeeId: true,
+        baseSalary:  true,
+        overtimePay: true,
+        bonus:       true,
+        // allowances KHÔNG tính (theo spec)
+      },
+    });
+
+    if (regularRecords.length === 0) {
+      return { periodId, generated: 0, message: 'Không có kỳ lương REGULAR APPROVED nào trong năm' };
+    }
+
+    // Group by employeeId: tổng month13_base và đếm số kỳ
+    type EmpAccum = { totalBase: number; months: number };
+    const map = new Map<string, EmpAccum>();
+    for (const r of regularRecords) {
+      const base = Number(r.baseSalary) + Number(r.overtimePay) + Number(r.bonus);
+      const cur = map.get(r.employeeId) ?? { totalBase: 0, months: 0 };
+      map.set(r.employeeId, { totalBase: cur.totalBase + base, months: cur.months + 1 });
+    }
+
+    let generated = 0;
+    for (const [employeeId, { totalBase, months }] of map) {
+      const month13 = Math.round(totalBase / months); // bình quân tháng
+      const pit     = month13 >= 2_000_000 ? Math.round(month13 * 0.1) : 0;
+      const net     = month13 - pit;
+
+      // Upsert PayrollRecord cho kỳ MONTH_13
+      await this.prisma.payrollRecord.upsert({
+        where: { periodId_employeeId: { periodId, employeeId } },
+        create: {
+          periodId,
+          employeeId,
+          workDays:     0,
+          baseSalary:   month13,   // lưu bình quân vào baseSalary để hiện thị
+          grossSalary:  month13,
+          overtimePay:  0,
+          allowances:   0,
+          deductions:   0,
+          bonus:        0,
+          bhxhEmployee: 0,
+          bhytEmployee: 0,
+          bhtnEmployee: 0,
+          bhxhEmployer: 0,
+          bhytEmployer: 0,
+          bhtnEmployer: 0,
+          tnldEmployer: 0,
+          taxableIncome: month13,
+          selfDeduction: 0,
+          dependentDeduction: 0,
+          dependentCount: 0,
+          pitAmount:    pit,
+          totalLaborCost: month13,
+          netSalary:    net,
+          note:         `Tháng 13 — BQ ${months} tháng REGULAR trong năm ${year}`,
+        },
+        update: {
+          baseSalary:   month13,
+          grossSalary:  month13,
+          taxableIncome: month13,
+          pitAmount:    pit,
+          totalLaborCost: month13,
+          netSalary:    net,
+          note:         `Tháng 13 — BQ ${months} tháng REGULAR trong năm ${year}`,
+        },
+      });
+      generated++;
+    }
+
+    // Cập nhật trạng thái kỳ → PROCESSING
+    await this.prisma.payrollPeriod.update({
+      where: { id: periodId },
+      data:  { status: PayrollStatus.PROCESSING },
+    });
+
+    return { periodId, generated, year, status: PayrollStatus.PROCESSING };
   }
 
   // ── L-10: Payslip Excel ───────────────────────────────────────────────────

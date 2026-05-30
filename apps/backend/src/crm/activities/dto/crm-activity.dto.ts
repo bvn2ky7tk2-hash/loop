@@ -12,10 +12,14 @@ import {
 import { PartialType } from '@nestjs/swagger';
 
 export enum ActivityType {
-  CALL = 'CALL',
-  EMAIL = 'EMAIL',
-  MEETING = 'MEETING',
-  NOTE = 'NOTE',
+  CALL       = 'CALL',
+  EMAIL      = 'EMAIL',
+  MEETING    = 'MEETING',
+  NOTE       = 'NOTE',
+  DEMO       = 'DEMO',
+  SITE_VISIT = 'SITE_VISIT',
+  SURVEY     = 'SURVEY',
+  TASK       = 'TASK',
 }
 
 export class CreateActivityDto {

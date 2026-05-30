@@ -1,105 +1,27 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form,
-  Select, Checkbox, Row, Col, message, DatePicker,
+  Select, Checkbox, Row, Col, DatePicker, App,
 } from 'antd';
 import {
   PlusOutlined, DeleteOutlined,
   UsergroupAddOutlined, CheckCircleOutlined, WarningOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { FilterBar } from '../../components/FilterBar';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { delegationApi, type DelegationRule } from '../../api/delegation';
+import { usersApi } from '../../api/users';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type DelegationModule =
-  | 'leaves'
-  | 'overtime'
-  | 'expenses'
-  | 'procurement'
-  | 'contracts'
-  | 'all';
-
-interface Delegation {
-  id: string;
-  delegatorName: string;
-  delegatorAvatar?: string;
-  delegateeName: string;
-  delegateeEmail: string;
-  modules: DelegationModule[];
-  fromDate: string;
-  toDate: string;
-  note?: string;
-  isActive: boolean;
-  daysRemaining: number;
-}
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const TODAY = dayjs();
-
-function calcDaysRemaining(toDate: string): number {
-  return dayjs(toDate).diff(TODAY, 'day');
-}
-
-const MOCK_DELEGATIONS: Delegation[] = [
-  {
-    id: '1',
-    delegatorName: 'Nguyễn Văn An',
-    delegateeName: 'Trần Thị Bình',
-    delegateeEmail: 'binh.tran@loop.vn',
-    modules: ['leaves', 'overtime'],
-    fromDate: '2026-05-28',
-    toDate: '2026-06-10',
-    note: 'Nghỉ phép hè, ủy quyền duyệt OT và nghỉ phép cho team',
-    isActive: true,
-    daysRemaining: calcDaysRemaining('2026-06-10'),
-  },
-  {
-    id: '2',
-    delegatorName: 'Lê Thị Cúc',
-    delegateeName: 'Hoàng Văn Đức',
-    delegateeEmail: 'duc.hoang@loop.vn',
-    modules: ['expenses', 'procurement'],
-    fromDate: '2026-06-01',
-    toDate: '2026-06-05',
-    note: 'Công tác nước ngoài',
-    isActive: true,
-    daysRemaining: calcDaysRemaining('2026-06-05'),
-  },
-  {
-    id: '3',
-    delegatorName: 'Phạm Minh Đức',
-    delegateeName: 'Vũ Thị Giang',
-    delegateeEmail: 'giang.vu@loop.vn',
-    modules: ['all'],
-    fromDate: '2026-05-01',
-    toDate: '2026-05-15',
-    note: 'Toàn quyền duyệt trong thời gian nghỉ thai sản',
-    isActive: false,
-    daysRemaining: calcDaysRemaining('2026-05-15'),
-  },
-  {
-    id: '4',
-    delegatorName: 'Đinh Hồng Hà',
-    delegateeName: 'Nguyễn Thị Khánh',
-    delegateeEmail: 'khanh.nguyen@loop.vn',
-    modules: ['contracts'],
-    fromDate: '2026-06-03',
-    toDate: '2026-06-07',
-    isActive: true,
-    daysRemaining: calcDaysRemaining('2026-06-07'),
-  },
-];
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -112,7 +34,7 @@ const MODULE_OPTIONS = [
   { value: 'all',         label: 'Tất cả' },
 ];
 
-const MODULE_LABELS: Record<DelegationModule, string> = {
+const MODULE_LABELS: Record<string, string> = {
   leaves:      'Nghỉ phép',
   overtime:    'OT',
   expenses:    'Chi phí',
@@ -123,7 +45,7 @@ const MODULE_LABELS: Record<DelegationModule, string> = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function ModuleTags({ modules, isDark }: { modules: DelegationModule[]; isDark: boolean }) {
+function ModuleTags({ modules, isDark }: { modules: string[]; isDark: boolean }) {
   if (modules.includes('all')) {
     return (
       <Tag
@@ -142,23 +64,18 @@ function ModuleTags({ modules, isDark }: { modules: DelegationModule[]; isDark: 
           style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}
           color={isDark ? undefined : 'blue'}
         >
-          {MODULE_LABELS[m]}
+          {MODULE_LABELS[m] ?? m}
         </Tag>
       ))}
     </Space>
   );
 }
 
-function DaysRemainingBadge({ days, isActive }: { days: number; isActive: boolean }) {
-  if (!isActive) {
-    return <Tag color="default">Hết hạn</Tag>;
-  }
-  if (days <= 0) {
-    return <Tag color="red">Hết hạn</Tag>;
-  }
-  if (days <= 3) {
-    return <Tag color="orange">{days} ngày</Tag>;
-  }
+function DaysRemainingBadge({ endDate, isActive }: { endDate: string; isActive: boolean }) {
+  const days = dayjs(endDate).diff(dayjs(), 'day');
+  if (!isActive || days < 0) return <Tag color="default">Hết hạn</Tag>;
+  if (days === 0) return <Tag color="orange">Hôm nay</Tag>;
+  if (days <= 3) return <Tag color="orange">{days} ngày</Tag>;
   return <Tag color="green">{days} ngày</Tag>;
 }
 
@@ -166,86 +83,97 @@ function DaysRemainingBadge({ days, isActive }: { days: number; isActive: boolea
 
 export default function DelegationPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
-  const [msgApi, msgCtx] = message.useMessage();
+  const { message } = App.useApp();
+  const qc = useQueryClient();
 
-  const [delegations, setDelegations] = useState<Delegation[]>(MOCK_DELEGATIONS);
   const [modalOpen, setModalOpen] = useState(false);
   const [form] = Form.useForm();
 
+  // ── Data queries ──
+  const { data: paginatedData, isLoading } = useQuery({
+    queryKey: ['delegation-rules'],
+    queryFn: () => delegationApi.list(1, 100),
+  });
+  const delegations: DelegationRule[] = paginatedData?.data ?? [];
+
+  const { data: users = [] } = useQuery({
+    queryKey: ['users'],
+    queryFn: usersApi.list,
+  });
+  const activeUsers = users.filter((u) => u.isActive);
+
+  // ── Mutations ──
+  const createMut = useMutation({
+    mutationFn: delegationApi.create,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['delegation-rules'] });
+      message.success('Đã tạo ủy quyền duyệt');
+      setModalOpen(false);
+      form.resetFields();
+    },
+    onError: () => message.error('Không thể tạo ủy quyền. Vui lòng thử lại.'),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: delegationApi.delete,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['delegation-rules'] });
+      message.success('Đã xóa ủy quyền');
+    },
+    onError: () => message.error('Không thể xóa ủy quyền'),
+  });
+
   // ── Stats ──
-  const activeCount = delegations.filter((d) => d.isActive && d.daysRemaining > 0).length;
-  const expiringSoonCount = delegations.filter(
-    (d) => d.isActive && d.daysRemaining > 0 && d.daysRemaining <= 7,
-  ).length;
+  const activeCount = delegations.filter((d) => {
+    return d.isActive && dayjs(d.endDate).diff(dayjs(), 'day') >= 0;
+  }).length;
+  const expiringSoonCount = delegations.filter((d) => {
+    const days = dayjs(d.endDate).diff(dayjs(), 'day');
+    return d.isActive && days >= 0 && days <= 7;
+  }).length;
 
   // ── Handlers ──
-  const handleOpenCreate = () => {
-    form.resetFields();
-    setModalOpen(true);
-  };
-
-  const handleDelete = (item: Delegation) => {
+  const handleDelete = (item: DelegationRule) => {
+    const delegateeName = item.delegate?.name ?? 'người được ủy quyền';
     confirmDelete({
-      itemName: `ủy quyền của ${item.delegatorName} cho ${item.delegateeName}`,
-      onConfirm: () => {
-        setDelegations((prev) => prev.filter((d) => d.id !== item.id));
-        msgApi.success('Đã xóa ủy quyền');
-      },
+      itemName: `ủy quyền cho ${delegateeName}`,
+      onConfirm: () => deleteMut.mutate(item.id),
     });
   };
 
   const handleSubmit = async () => {
     const values = await form.validateFields();
     const [from, to] = (values.dateRange as [Dayjs, Dayjs]) ?? [];
-    const fromDate = from?.format('YYYY-MM-DD') ?? '';
-    const toDate = to?.format('YYYY-MM-DD') ?? '';
-    const daysRemaining = calcDaysRemaining(toDate);
 
-    setDelegations((prev) => [
-      {
-        id: String(Date.now()),
-        delegatorName: 'Người dùng hiện tại',
-        delegateeName: values.delegateeName,
-        delegateeEmail: values.delegateeEmail ?? '',
-        modules: values.modules,
-        fromDate,
-        toDate,
-        note: values.note,
-        isActive: true,
-        daysRemaining,
-      },
-      ...prev,
-    ]);
-    msgApi.success('Đã tạo ủy quyền duyệt');
-    setModalOpen(false);
-    form.resetFields();
+    createMut.mutate({
+      delegateId: values.delegateId,
+      moduleTypes: values.moduleTypes,
+      startDate: from.format('YYYY-MM-DD'),
+      endDate: to.format('YYYY-MM-DD'),
+      note: Array.isArray(values.note) ? values.note.join('; ') : (values.note ?? undefined),
+    });
   };
 
   // ── Columns ──
-  const columns: ColumnsType<Delegation> = [
-    {
-      title: 'Người ủy quyền',
-      dataIndex: 'delegatorName',
-      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 600 }}>{v}</Text>,
-    },
+  const columns: ColumnsType<DelegationRule> = [
     {
       title: 'Người được ủy quyền',
-      dataIndex: 'delegateeName',
-      render: (v: string, record: Delegation) => (
+      key: 'delegate',
+      render: (_: unknown, record: DelegationRule) => (
         <Space direction="vertical" size={0}>
-          <Text style={{ color: textPrimary }}>{v}</Text>
-          <Text style={{ color: linkColor, fontSize: 12 }}>{record.delegateeEmail}</Text>
+          <Text style={{ color: textPrimary, fontWeight: 600 }}>{record.delegate?.name ?? '—'}</Text>
+          <Text style={{ color: linkColor, fontSize: 12 }}>{record.delegate?.email ?? ''}</Text>
         </Space>
       ),
     },
     {
       title: 'Phân hệ được ủy quyền',
-      dataIndex: 'modules',
-      render: (v: DelegationModule[]) => <ModuleTags modules={v} isDark={isDark} />,
+      dataIndex: 'moduleTypes',
+      render: (v: string[]) => <ModuleTags modules={v} isDark={isDark} />,
     },
     {
       title: 'Từ ngày',
-      dataIndex: 'fromDate',
+      dataIndex: 'startDate',
       width: 120,
       render: (v: string) => (
         <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>
@@ -253,7 +181,7 @@ export default function DelegationPage() {
     },
     {
       title: 'Đến ngày',
-      dataIndex: 'toDate',
+      dataIndex: 'endDate',
       width: 120,
       render: (v: string) => (
         <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>
@@ -261,24 +189,32 @@ export default function DelegationPage() {
     },
     {
       title: 'Còn lại',
-      dataIndex: 'daysRemaining',
+      key: 'remaining',
       width: 110,
       align: 'center',
-      render: (v: number, record: Delegation) => (
-        <DaysRemainingBadge days={v} isActive={record.isActive} />
+      render: (_: unknown, record: DelegationRule) => (
+        <DaysRemainingBadge endDate={record.endDate} isActive={record.isActive} />
       ),
+    },
+    {
+      title: 'Ghi chú',
+      dataIndex: 'note',
+      render: (v?: string) => v
+        ? <Text style={{ color: textMuted }}>{v}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: '',
       key: 'actions',
       width: 70,
       align: 'right',
-      render: (_: unknown, record: Delegation) => (
+      render: (_: unknown, record: DelegationRule) => (
         <Button
           type="text"
           size="small"
           danger
           icon={<DeleteOutlined />}
+          loading={deleteMut.isPending}
           onClick={() => handleDelete(record)}
         />
       ),
@@ -287,14 +223,12 @@ export default function DelegationPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      {msgCtx}
-
       <PageHeader
         title="Ủy quyền duyệt"
         icon={<UsergroupAddOutlined />}
         iconColor="#6366F1"
         actions={
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenCreate}>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
             Thêm ủy quyền
           </Button>
         }
@@ -320,6 +254,11 @@ export default function DelegationPage() {
         </Col>
       </Row>
 
+      {/* Filter bar placeholder */}
+      <FilterBar>
+        <span />
+      </FilterBar>
+
       {/* Table */}
       <div
         style={{
@@ -333,6 +272,7 @@ export default function DelegationPage() {
           rowKey="id"
           columns={columns}
           dataSource={delegations}
+          loading={isLoading}
           pagination={{
             pageSize: 10,
             showTotal: (t) => `Tổng ${t} ủy quyền`,
@@ -351,15 +291,10 @@ export default function DelegationPage() {
         width={540}
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-            <Button
-              onClick={() => {
-                setModalOpen(false);
-                form.resetFields();
-              }}
-            >
+            <Button onClick={() => { setModalOpen(false); form.resetFields(); }}>
               Hủy
             </Button>
-            <Button type="primary" onClick={handleSubmit}>
+            <Button type="primary" loading={createMut.isPending} onClick={handleSubmit}>
               Tạo ủy quyền
             </Button>
           </div>
@@ -367,21 +302,14 @@ export default function DelegationPage() {
       >
         <Form form={form} layout="vertical" requiredMark="optional">
           <Form.Item
-            name="delegateeName"
+            name="delegateId"
             label="Người được ủy quyền"
             rules={[{ required: true, message: 'Chọn người được ủy quyền' }]}
           >
             <Select
               placeholder="Chọn nhân viên..."
               showSearch
-              options={[
-                { value: 'Trần Thị Bình', label: 'Trần Thị Bình' },
-                { value: 'Hoàng Văn Đức', label: 'Hoàng Văn Đức' },
-                { value: 'Vũ Thị Giang', label: 'Vũ Thị Giang' },
-                { value: 'Nguyễn Thị Khánh', label: 'Nguyễn Thị Khánh' },
-                { value: 'Lê Minh Toàn', label: 'Lê Minh Toàn' },
-                { value: 'Phạm Thị Loan', label: 'Phạm Thị Loan' },
-              ]}
+              options={activeUsers.map((u) => ({ value: u.id, label: u.name }))}
               filterOption={(input, option) =>
                 (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
               }
@@ -389,12 +317,12 @@ export default function DelegationPage() {
           </Form.Item>
 
           <Form.Item
-            name="modules"
+            name="moduleTypes"
             label="Phân hệ được ủy quyền"
             rules={[
               { required: true, message: 'Chọn ít nhất một phân hệ' },
               {
-                validator(_, value: DelegationModule[]) {
+                validator(_, value: string[]) {
                   if (value?.includes('all') && value.length > 1) {
                     return Promise.reject('Khi chọn "Tất cả" không cần chọn thêm phân hệ khác');
                   }
@@ -422,7 +350,7 @@ export default function DelegationPage() {
             <RangePicker
               style={{ width: '100%' }}
               format="DD/MM/YYYY"
-              disabledDate={(current) => current && current < TODAY.startOf('day')}
+              disabledDate={(current) => current && current < dayjs().startOf('day')}
               placeholder={['Từ ngày', 'Đến ngày']}
             />
           </Form.Item>

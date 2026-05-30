@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, IsDateString, IsOptional, IsEnum } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PayrollPeriodType } from '../../generated/prisma';
 
 export class CreatePayrollPeriodDto {
   @ApiProperty({ example: 'Lương tháng 5/2025' })
@@ -14,4 +15,9 @@ export class CreatePayrollPeriodDto {
   @ApiProperty({ example: '2025-05-31' })
   @IsDateString()
   endDate: string;
+
+  @ApiPropertyOptional({ enum: PayrollPeriodType, default: PayrollPeriodType.REGULAR })
+  @IsOptional()
+  @IsEnum(PayrollPeriodType)
+  type?: PayrollPeriodType;
 }

@@ -3,6 +3,7 @@ import { apiClient } from './client';
 const BASE = '/api/v1/payroll';
 
 export type PayrollStatus = 'DRAFT' | 'PROCESSING' | 'REVIEWED' | 'APPROVED' | 'PAID';
+export type PayrollPeriodType = 'REGULAR' | 'ADJUSTMENT' | 'MONTH_13';
 export type SalaryColumnSource = 'CONTRACT_SALARY' | 'ALLOWANCE_TYPE' | 'FIXED_VALUE' | 'FORMULA';
 export type SalaryColumnType = 'EARNING' | 'DEDUCTION';
 export type AllowanceCalculationMode = 'FIXED' | 'PER_WORK_DAY';
@@ -13,6 +14,7 @@ export interface PayrollPeriod {
   startDate: string;
   endDate: string;
   status: PayrollStatus;
+  type?: PayrollPeriodType;
   processedAt?: string;
   processedBy?: { id: string; name: string };
   _count?: { records: number };
@@ -169,6 +171,12 @@ export const payrollApi = {
 
   markPaid: (periodId: string) =>
     apiClient.post<PayrollPeriod>(`${BASE}/periods/${periodId}/pay`).then(r => r.data),
+
+  calculate13thMonth: (periodId: string) =>
+    apiClient.post<{ periodId: string; generated: number; year: number; status: string }>(`${BASE}/periods/${periodId}/calculate-13th`).then(r => r.data),
+
+  createMonth13Period: (data: { name: string; startDate: string; endDate: string }) =>
+    apiClient.post<PayrollPeriod>(`${BASE}/periods`, { ...data, type: 'MONTH_13' }).then(r => r.data),
 
   // ── Records ────────────────────────────────────────────────────────────────
   getPeriodRecords: (periodId: string, page = 1, limit = 50) =>

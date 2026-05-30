@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  BonusStatus,
   ContractType,
   ContractStatus,
   PayrollStatus,
@@ -51,6 +52,21 @@ export class PayrollEngineService {
       select: { id: true, userId: true },
     });
 
+    // E16G.3: Query tất cả PerformanceBonus APPROVED trong period một lần, group theo employeeId
+    const approvedBonuses = await this.prisma.performanceBonus.findMany({
+      where: {
+        status: BonusStatus.APPROVED,
+        approvedAt: { gte: period.startDate, lte: period.endDate },
+      },
+      select: { employeeId: true, bonusAmount: true },
+      take: 10000,
+    });
+    const bonusByEmployee = new Map<string, number>();
+    for (const b of approvedBonuses) {
+      const prev = bonusByEmployee.get(b.employeeId) ?? 0;
+      bonusByEmployee.set(b.employeeId, prev + Number(b.bonusAmount));
+    }
+
     let processed = 0;
 
     for (const emp of employees) {
@@ -86,6 +102,16 @@ export class PayrollEngineService {
         include: { employeeAllowances: true },
       });
 
+      // E16G.6: Query SalaryRecord trong period để tính weighted avg salary
+      const salaryRecordsInPeriod = await this.prisma.salaryRecord.findMany({
+        where: {
+          employeeId: emp.id,
+          effectiveDate: { gt: period.startDate, lte: period.endDate },
+        },
+        orderBy: { effectiveDate: 'asc' },
+        take: 50,
+      });
+
       const recordData = this.computeRecord({
         contract,
         timesheet,
@@ -97,6 +123,8 @@ export class PayrollEngineService {
         salaryColumns,
         period,
         configSnapshot,
+        performanceBonus: bonusByEmployee.get(emp.id) ?? 0,
+        salaryRecordsInPeriod,
       });
 
       await this.prisma.payrollRecord.upsert({
@@ -159,16 +187,21 @@ export class PayrollEngineService {
     salaryColumns: any[];
     period: any;
     configSnapshot: any;
+    performanceBonus: number;
+    salaryRecordsInPeriod: any[];
   }) {
     const {
       contract, timesheet, taxProfile, existingAllowances,
       insuranceConfig, taxBracket, taxDeduction, salaryColumns, period, configSnapshot,
+      performanceBonus, salaryRecordsInPeriod,
     } = ctx;
 
     const contractType: ContractType = contract.type;
     const rawSalary = Number(contract.salaryMonthly);
-    // Điều 25 Luật Lao động: thử việc chỉ hưởng 85% lương HĐLĐ
-    const contractSalary = contractType === ContractType.PROBATION ? rawSalary * 0.85 : rawSalary;
+
+    // E16G.6: Weighted average salary nếu có thay đổi lương giữa kỳ
+    // rawSalary = contract.salaryMonthly (cuối kỳ) — dùng cho BHXH; computeWeightedSalary áp 85% probation nội bộ
+    const contractSalary = this.computeWeightedSalary(rawSalary, salaryRecordsInPeriod, period, contractType);
 
     const workDays = timesheet ? Number(timesheet.workingDays) : 0;
     const standardDays = timesheet ? Math.max(Number(timesheet.standardDays), 1) : 26;
@@ -195,11 +228,25 @@ export class PayrollEngineService {
       existingAllowances.map((a: any) => [a.allowanceTypeId, Number(a.amount)]),
     );
 
+    // E16G.2: Tính OT pay theo hệ số chuẩn Luật Lao động trước khi đưa vào grossEarnings
+    const hourlyRate = contractSalary / (26 * 8);
+    const otPayFixed =
+      otWeekdayHours * hourlyRate * 1.5 +
+      otWeekendHours * hourlyRate * 2.0 +
+      otHolidayHours * hourlyRate * 3.0;
+
     let grossEarnings = 0;
     let grossDeductions = 0;
     let allowancesTotal = 0;
-    let overtimePay = 0;
+    // Cộng OT tính sẵn vào tổng; các cột FORMULA OT override nếu có sẽ cộng thêm bên dưới
+    let overtimePay = otPayFixed;
+    // E16G.1: Track tổng khoản được miễn thuế TNCN từ các cột salary
+    let pitExemptTotal = 0;
     const columnBreakdown: Record<string, number> = {};
+
+    // Cộng OT vào breakdown và grossEarnings ngay từ đầu
+    grossEarnings += otPayFixed;
+    columnBreakdown['__OT_base__'] = Math.round(otPayFixed);
 
     for (const col of salaryColumns) {
       let amount = 0;
@@ -231,11 +278,19 @@ export class PayrollEngineService {
 
         case SalaryColumnSource.FORMULA:
           amount = this.evalFormula(col.formula ?? '', vars);
-          // Cột OT nếu formula tham chiếu giờ OT
+          // Cột FORMULA OT — nếu có thì ghi đè otPayFixed, không cộng thêm
           if (col.formula && /otWeekday|otWeekend|otHoliday|overtimeHours/.test(col.formula)) {
-            overtimePay += amount;
+            // Trừ otPayFixed đã cộng trước, thay bằng giá trị từ formula
+            grossEarnings -= otPayFixed;
+            overtimePay = amount;
           }
           break;
+      }
+
+      // E16G.1: Track khoản PIT-exempt
+      if (col.isPitExempt && col.type === SalaryColumnType.EARNING) {
+        const ceiling = col.pitExemptCeiling ? Number(col.pitExemptCeiling) : null;
+        pitExemptTotal += ceiling !== null ? Math.min(amount, ceiling) : amount;
       }
 
       columnBreakdown[col.name] = Math.round(amount);
@@ -247,6 +302,10 @@ export class PayrollEngineService {
       }
     }
 
+    // E16G.3: Cộng performance bonus vào grossEarnings
+    grossEarnings += performanceBonus;
+    columnBreakdown['__performanceBonus__'] = Math.round(performanceBonus);
+
     const grossSalary = Math.max(grossEarnings - grossDeductions, 0);
     const baseSalary = (contractSalary / standardDays) * workDays;
 
@@ -254,11 +313,16 @@ export class PayrollEngineService {
     let bhxhEmployee = 0, bhytEmployee = 0, bhtnEmployee = 0;
     let bhxhEmployer = 0, bhytEmployer = 0, bhtnEmployer = 0, tnldEmployer = 0;
 
-    // FREELANCE không đóng BHXH; unpaidLeaveDays >= 14 được miễn BHXH tháng đó
-    if (contractType !== ContractType.PART_TIME && insuranceConfig && unpaidLeaveDays < 14) {
+    // E16G.4: Skip BHXH nếu PART_TIME, hoặc PROBATION với bhxhExemptForProbation=true, hoặc nghỉ không lương >= 14 ngày
+    const bhxhExempt =
+      contractType === ContractType.PART_TIME ||
+      unpaidLeaveDays >= 14 ||
+      (contractType === ContractType.PROBATION && insuranceConfig?.bhxhExemptForProbation === true);
+
+    if (!bhxhExempt && insuranceConfig) {
       const ceiling = Number(insuranceConfig.wageBase) * insuranceConfig.bhxhCeilingMultiple;
-      // BHXH base = contractSalary (không phải grossSalary), giới hạn ceiling
-      const bhxhBase = Math.min(contractSalary, ceiling);
+      // BHXH base = rawSalary (contract.salaryMonthly hiện tại, cuối kỳ), không phải weighted avg
+      const bhxhBase = Math.min(rawSalary, ceiling);
 
       bhxhEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployeeRate));
       bhytEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployeeRate));
@@ -300,8 +364,9 @@ export class PayrollEngineService {
       // Cư trú: thuế lũy tiến theo biểu thuế hiện hành
       selfDeductionAmt = Number(taxDeduction.selfDeduction);
       dependentDeductionAmt = Number(taxDeduction.dependentDeduction) * dependentCount;
+      // E16G.1: Trừ thêm phần được miễn thuế TNCN từ các khoản isPitExempt
       taxableIncome = Math.max(
-        grossSalary - totalInsuranceEmployee - selfDeductionAmt - dependentDeductionAmt,
+        grossSalary - totalInsuranceEmployee - selfDeductionAmt - dependentDeductionAmt - pitExemptTotal,
         0,
       );
       if (taxableIncome > 0) {
@@ -332,7 +397,7 @@ export class PayrollEngineService {
       overtimePay: Math.round(overtimePay),
       allowances: Math.round(allowancesTotal),
       deductions: Math.round(grossDeductions),
-      bonus: 0,
+      bonus: Math.round(performanceBonus),
       bhxhEmployee,
       bhytEmployee,
       bhtnEmployee,
@@ -352,6 +417,61 @@ export class PayrollEngineService {
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+  // E16G.6: Tính lương weighted average khi có thay đổi lương giữa kỳ
+  // salaryRecords: các bản ghi đổi lương trong period (effectiveDate > startDate, <= endDate)
+  // contractSalaryEndOfPeriod: mức lương hiện tại (cuối kỳ) từ contract
+  private computeWeightedSalary(
+    contractSalaryEndOfPeriod: number,
+    salaryRecords: any[],
+    period: { startDate: Date; endDate: Date },
+    contractType: ContractType,
+  ): number {
+    // Không có thay đổi lương giữa kỳ → dùng nguyên mức hợp đồng
+    if (!salaryRecords || salaryRecords.length === 0) return contractSalaryEndOfPeriod;
+
+    const periodStart = new Date(period.startDate);
+    const periodEnd = new Date(period.endDate);
+    // Số ngày calendar tổng của kỳ (inclusive)
+    const totalDays = Math.round((periodEnd.getTime() - periodStart.getTime()) / 86_400_000) + 1;
+
+    // Xây dựng các đoạn lương: [segStart, segEnd, salaryRate]
+    // Sắp xếp theo effectiveDate tăng dần (đã query sẵn)
+    const segments: Array<{ from: Date; to: Date; salary: number }> = [];
+
+    // Đoạn đầu: từ startDate đến ngày trước bản ghi đầu tiên
+    // Mức lương đoạn đầu = bản ghi cũ nhất trừ 1 hoặc mức hợp đồng nếu không có bản ghi trước đó
+    // Vì không lưu history đầy đủ, ta dùng contractSalaryEndOfPeriod cho đoạn CUỐI (sau record cuối)
+    // và truy ngược để suy ra mức trước đó — không đủ dữ liệu → dùng basicSalary từ record đầu tiên
+    let prevSalary = Number(salaryRecords[0].basicSalary); // mức lương đầu kỳ (trước thay đổi đầu)
+    let segStart = new Date(periodStart);
+
+    for (const rec of salaryRecords) {
+      const effDate = new Date(rec.effectiveDate);
+      // Đoạn trước effective date của record này
+      const segEnd = new Date(effDate);
+      segEnd.setDate(segEnd.getDate() - 1);
+      if (segEnd >= segStart) {
+        segments.push({ from: segStart, to: segEnd, salary: prevSalary });
+      }
+      prevSalary = Number(rec.basicSalary);
+      segStart = new Date(effDate);
+    }
+
+    // Đoạn cuối: từ effectiveDate của record cuối đến periodEnd — dùng contractSalaryEndOfPeriod
+    segments.push({ from: segStart, to: periodEnd, salary: contractSalaryEndOfPeriod });
+
+    // Tính weighted average
+    let weightedSum = 0;
+    for (const seg of segments) {
+      const days = Math.round((seg.to.getTime() - seg.from.getTime()) / 86_400_000) + 1;
+      weightedSum += seg.salary * days;
+    }
+
+    const weighted = weightedSum / totalDays;
+    // Thử việc vẫn hưởng 85% lương weighted
+    return contractType === ContractType.PROBATION ? weighted * 0.85 : weighted;
+  }
 
   private evalFormula(formula: string, vars: Record<string, number>): number {
     if (!formula) return 0;

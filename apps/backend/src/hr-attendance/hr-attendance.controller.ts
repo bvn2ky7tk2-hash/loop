@@ -9,6 +9,7 @@ import {
   DefaultValuePipe,
 } from '@nestjs/common';
 import { HrAttendanceService } from './hr-attendance.service';
+import { AttendanceExplanationService } from './attendance-explanation.service';
 import {
   AttendanceQueryDto,
   CalendarQueryDto,
@@ -17,6 +18,11 @@ import {
   MonthlyAttendanceQueryDto,
   SummarizeMonthDto,
 } from './dto/attendance.dto';
+import {
+  CreateExplanationDto,
+  ExplanationQueryDto,
+  ReviewExplanationDto,
+} from './dto/attendance-explanation.dto';
 import { Role } from '../generated/prisma';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
@@ -24,7 +30,10 @@ import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('api/v1/hr-attendance')
 export class HrAttendanceController {
-  constructor(private readonly svc: HrAttendanceService) {}
+  constructor(
+    private readonly svc: HrAttendanceService,
+    private readonly explanationSvc: AttendanceExplanationService,
+  ) {}
 
   // GET /api/v1/hr-attendance
   @Get()
@@ -70,5 +79,45 @@ export class HrAttendanceController {
   @Roles(Role.ADMIN)
   lock(@Body() dto: LockMonthDto, @CurrentUser() user: any) {
     return this.svc.lockMonth(dto, user.sub);
+  }
+
+  // ─── E16F.8 — Attendance Explanation ─────────────────────────────────────────
+
+  // POST /api/v1/hr-attendance/explanations
+  @Post('explanations')
+  @RequirePermission('attendance:write')
+  createExplanation(
+    @Body() dto: CreateExplanationDto,
+  ) {
+    return this.explanationSvc.create(dto);
+  }
+
+  // GET /api/v1/hr-attendance/explanations
+  @Get('explanations')
+  @RequirePermission('attendance:read')
+  listExplanations(@Query() query: ExplanationQueryDto) {
+    return this.explanationSvc.list(query);
+  }
+
+  // POST /api/v1/hr-attendance/explanations/:id/approve
+  @Post('explanations/:id/approve')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  approveExplanation(
+    @Param('id') id: string,
+    @Body() dto: ReviewExplanationDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.explanationSvc.approve(id, user.sub, dto);
+  }
+
+  // POST /api/v1/hr-attendance/explanations/:id/reject
+  @Post('explanations/:id/reject')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  rejectExplanation(
+    @Param('id') id: string,
+    @Body() dto: ReviewExplanationDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.explanationSvc.reject(id, user.sub, dto);
   }
 }

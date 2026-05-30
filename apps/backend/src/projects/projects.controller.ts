@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Req, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Req, HttpCode, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
@@ -9,8 +9,10 @@ import type { User } from '../generated/prisma';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ProjectsService } from './projects.service';
 import { ProjectCostService } from './project-cost.service';
+import { ProjectJournalService } from './project-journal.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
+import { CreateJournalDto, UpdateJournalDto, ConvertToTaskDto } from './dto/create-journal.dto';
 
 @ApiTags('projects')
 @ApiBearerAuth()
@@ -19,6 +21,7 @@ export class ProjectsController {
   constructor(
     private readonly service: ProjectsService,
     private readonly costService: ProjectCostService,
+    private readonly journalService: ProjectJournalService,
   ) {}
 
   @Post()
@@ -114,5 +117,61 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Chi phí dự án — snapshot mới nhất + trend 30 ngày' })
   getCostSummary(@Param('id') id: string) {
     return this.costService.getProjectCostSummary(id);
+  }
+
+  // ── E20.4+E20.5: Project Journal ────────────────────────────────────────────
+
+  @Post(':id/journals')
+  @Roles(Role.ADMIN, Role.PM, Role.MEMBER)
+  @RequirePermission(PERMISSIONS.PROJECTS_UPDATE)
+  @ApiOperation({ summary: 'Ghi nhật ký dự án mới' })
+  createJournal(
+    @Param('id') id: string,
+    @Body() dto: CreateJournalDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.journalService.create(id, dto, user.id);
+  }
+
+  @Get(':id/journals')
+  @RequirePermission(PERMISSIONS.PROJECTS_READ)
+  @ApiOperation({ summary: 'Danh sách nhật ký dự án' })
+  listJournals(
+    @Param('id') id: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.journalService.list(id, page ? Number(page) : 1, limit ? Number(limit) : 50);
+  }
+
+  @Get(':id/journals/unresolved')
+  @RequirePermission(PERMISSIONS.PROJECTS_READ)
+  @ApiOperation({ summary: 'Tổng hợp items chưa chốt của dự án' })
+  unresolvedSummary(@Param('id') id: string) {
+    return this.journalService.unresolvedSummary(id);
+  }
+
+  @Patch('journals/:journalId')
+  @Roles(Role.ADMIN, Role.PM, Role.MEMBER)
+  @RequirePermission(PERMISSIONS.PROJECTS_UPDATE)
+  @ApiOperation({ summary: 'Cập nhật nhật ký' })
+  updateJournal(
+    @Param('journalId') journalId: string,
+    @Body() dto: UpdateJournalDto,
+  ) {
+    return this.journalService.update(journalId, dto);
+  }
+
+  @Post('journals/:journalId/items/:itemId/convert')
+  @Roles(Role.ADMIN, Role.PM, Role.MEMBER)
+  @RequirePermission(PERMISSIONS.PROJECTS_UPDATE)
+  @ApiOperation({ summary: 'Chuyển unresolved item thành Task' })
+  convertItemToTask(
+    @Param('journalId') journalId: string,
+    @Param('itemId') itemId: string,
+    @Body() dto: ConvertToTaskDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.journalService.convertToTask(journalId, itemId, dto, user.id);
   }
 }

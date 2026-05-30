@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { Queue, Worker } from 'bullmq';
 
-export type HrEventType = 'contract.expiring' | 'performance.approved' | 'offboarding.started' | 'payroll.processed';
+export type HrEventType = 'contract.expiring' | 'performance.approved' | 'offboarding.started' | 'payroll.processed' | 'leave.approved';
 
 export interface HrEvent {
   type: HrEventType;
@@ -9,6 +9,15 @@ export interface HrEvent {
   employeeId: string;
   userId?: string;
   metadata?: Record<string, unknown>;
+}
+
+/** Payload cho event leave.approved */
+export interface LeaveApprovedPayload {
+  employeeId: string;
+  startDate: string; // ISO date string
+  endDate: string;   // ISO date string
+  isPaid: boolean;
+  days: number;
 }
 
 const QUEUE_PREFIX = 'hr';
@@ -27,7 +36,7 @@ export class HrEventBus implements OnModuleInit, OnModuleDestroy {
   }
 
   onModuleInit() {
-    const types: HrEventType[] = ['contract.expiring', 'performance.approved', 'offboarding.started', 'payroll.processed'];
+    const types: HrEventType[] = ['contract.expiring', 'performance.approved', 'offboarding.started', 'payroll.processed', 'leave.approved'];
     for (const type of types) {
       const queueName = `${QUEUE_PREFIX}.${type}`;
       this.queues.set(type, new Queue<HrEvent>(queueName, { connection: this.connection }));

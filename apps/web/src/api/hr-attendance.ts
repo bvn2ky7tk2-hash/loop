@@ -114,6 +114,80 @@ export const leavePoliciesApi = {
     apiClient.get(`/leave-policies/entitlement/${employeeId}`, { params: { year } }).then(r => r.data),
 };
 
+export type ExplanationType =
+  | 'MISSING_CHECKIN'
+  | 'MISSING_CHECKOUT'
+  | 'LATE_ARRIVAL'
+  | 'EARLY_DEPARTURE'
+  | 'BUSINESS_TRIP'
+  | 'ONSITE'
+  | 'WFH';
+
+export type ExplanationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface AttendanceExplanation {
+  id: string;
+  employeeId: string;
+  employee?: { id: string; fullName: string; userId?: string };
+  date: string;
+  attendanceRecordId?: string;
+  attendanceRecord?: {
+    id: string;
+    date: string;
+    checkIn?: string;
+    checkOut?: string;
+    status: string;
+    lateMinutes?: number;
+    earlyLeaveMinutes?: number;
+    totalHours?: number;
+  };
+  type: ExplanationType;
+  reason: string;
+  requestedCheckIn?: string;
+  requestedCheckOut?: string;
+  status: ExplanationStatus;
+  reviewedById?: string;
+  reviewedAt?: string;
+  rejectReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const attendanceExplanationApi = {
+  list: (params?: {
+    employeeId?: string;
+    status?: ExplanationStatus;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    limit?: number;
+  }) =>
+    apiClient
+      .get<PaginatedResult<AttendanceExplanation>>('/hr-attendance/explanations', { params })
+      .then(r => r.data),
+
+  create: (data: {
+    employeeId: string;
+    date: string;
+    attendanceRecordId?: string;
+    type: ExplanationType;
+    reason: string;
+    requestedCheckIn?: string;
+    requestedCheckOut?: string;
+  }) =>
+    apiClient
+      .post<AttendanceExplanation>('/hr-attendance/explanations', data)
+      .then(r => r.data),
+
+  approve: (id: string) =>
+    apiClient.post<AttendanceExplanation>(`/hr-attendance/explanations/${id}/approve`, {}).then(r => r.data),
+
+  reject: (id: string, rejectReason?: string) =>
+    apiClient
+      .post<AttendanceExplanation>(`/hr-attendance/explanations/${id}/reject`, { rejectReason })
+      .then(r => r.data),
+};
+
 export const hrHolidaysApi = {
   list: (year?: number) =>
     apiClient.get<HolidayCalendar[]>('/hr-holidays', { params: { year } }).then(r => r.data),

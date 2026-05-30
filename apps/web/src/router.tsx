@@ -247,6 +247,7 @@ export const router = createBrowserRouter([
       { path: 'finance/analytics',    element: wrap(FinanceAnalyticsPage) },
       { path: 'hr/salary-bands',      element: wrap(SalaryBandPage) },
       { path: 'settings/delegation',  element: wrap(DelegationPage) },
+      { path: 'admin/delegation',     element: wrap(DelegationPage) },
       // HR v5.1
       { path: 'hr/offboarding',                 element: wrap(OffboardingPage) },
       { path: 'hr/performance/bonus-config',    element: wrap(PerformanceBonusConfigPage) },

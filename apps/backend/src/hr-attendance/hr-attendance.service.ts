@@ -18,7 +18,7 @@ import {
   MonthlyAttendanceQueryDto,
   SummarizeMonthDto,
 } from './dto/attendance.dto';
-import { AttendanceStatus, MonthlyAttendanceStatus } from '../generated/prisma';
+import { AttendanceStatus, MonthlyAttendanceStatus, TimesheetStatus } from '../generated/prisma';
 import { WorkShiftsService } from '../work-shifts/work-shifts.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 
@@ -338,7 +338,53 @@ export class HrAttendanceService extends TenantAwareService {
       });
     });
 
-    await this.prisma.$transaction(upserts);
+    const monthlyResults = await this.prisma.$transaction(upserts);
+
+    // E16F.2 — Sau khi upsert MonthlyAttendance, sync sang TimesheetRecord
+    // TimesheetRecord dùng userId (User), Monthly dùng employeeId (Employee)
+    // Cần map employeeId → userId qua Employee.userId
+    const periodStart = new Date(year, month - 1, 1);
+
+    // Lấy userId cho từng employee có kết quả (filter out null userId)
+    const employeeIds = employees.map((e) => e.id);
+    const employeesWithUser = await this.prisma.employee.findMany({
+      where: { id: { in: employeeIds }, userId: { not: null } },
+      select: { id: true, userId: true },
+    });
+    const empToUser = new Map(
+      employeesWithUser.map((e) => [e.id, e.userId as string]),
+    );
+
+    // Upsert TimesheetRecord cho từng nhân viên có account User
+    const timesheetSyncs = monthlyResults
+      .filter((m: any) => empToUser.has(m.employeeId))
+      .map((m: any) => {
+        const userId = empToUser.get(m.employeeId)!;
+        return this.prisma.timesheetRecord.upsert({
+          where: { userId_periodStart: { userId, periodStart } },
+          create: {
+            userId,
+            periodStart,
+            periodEnd: new Date(year, month, 0), // cuối tháng
+            workingDays: m.workDays,
+            leaveDays: m.paidLeaveDays,
+            unpaidLeaveDays: m.unpaidLeaveDays,
+            standardDays: 0, // sẽ được tính lại khi generatePeriod
+            overtimeHours: m.otHours,
+            status: TimesheetStatus.APPROVED,
+          },
+          update: {
+            workingDays: m.workDays,
+            leaveDays: m.paidLeaveDays,
+            unpaidLeaveDays: m.unpaidLeaveDays,
+            status: TimesheetStatus.APPROVED,
+          },
+        });
+      });
+
+    if (timesheetSyncs.length > 0) {
+      await this.prisma.$transaction(timesheetSyncs);
+    }
 
     return {
       message: `Đã tổng hợp bảng công cho ${employees.length} nhân viên`,

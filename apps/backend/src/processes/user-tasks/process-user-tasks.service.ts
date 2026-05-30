@@ -194,6 +194,78 @@ export class ProcessUserTasksService {
     return { data: updated };
   }
 
+  /**
+   * Duyệt/Từ chối nhiều user tasks cùng lúc.
+   * APPROVE/REJECT → set variables { decision } rồi complete engine.
+   * Task không thuộc userId hoặc sai trạng thái → ghi vào errors[].
+   */
+  async batchApprove(taskIds: string[], decision: 'APPROVE' | 'REJECT', userId: string) {
+    const results: { id: string; status: 'ok' | 'error'; message?: string }[] = [];
+
+    for (const id of taskIds) {
+      try {
+        const task = await this.prisma.processUserTask.findUnique({ where: { id } });
+
+        if (!task) {
+          results.push({ id, status: 'error', message: 'Task không tồn tại' });
+          continue;
+        }
+
+        if (task.status !== UserTaskStatus.PENDING && task.status !== UserTaskStatus.IN_PROGRESS) {
+          results.push({ id, status: 'error', message: `Task ở trạng thái ${task.status}, không thể xử lý` });
+          continue;
+        }
+
+        if (task.assigneeId && task.assigneeId !== userId) {
+          results.push({ id, status: 'error', message: 'Task đã được giao cho người khác' });
+          continue;
+        }
+
+        const variables = { decision };
+
+        await this.prisma.processUserTask.update({
+          where: { id },
+          data: { status: UserTaskStatus.COMPLETED, completedAt: new Date(), formData: variables as never },
+        });
+
+        const inst = await this.prisma.processInstance.findUnique({
+          where: { id: task.instanceId },
+          select: { variables: true },
+        });
+        await this.prisma.processInstance.update({
+          where: { id: task.instanceId },
+          data: { variables: { ...(inst?.variables as Record<string, unknown> ?? {}), decision } as never },
+        });
+
+        await this.prisma.processActivityLog.create({
+          data: {
+            instanceId: task.instanceId,
+            activityId: task.activityId,
+            activityName: `${task.name} (batch-${decision.toLowerCase()})`,
+            activityType: 'bpmn:UserTask',
+            performedBy: userId,
+            completedAt: new Date(),
+          },
+        });
+
+        try {
+          await this.engineService.completeUserTask(task.instanceId, task.activityId, variables);
+        } catch {
+          // Engine error không block kết quả batch
+        }
+
+        results.push({ id, status: 'ok' });
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Lỗi không xác định';
+        results.push({ id, status: 'error', message: msg });
+      }
+    }
+
+    const okCount = results.filter((r) => r.status === 'ok').length;
+    const errCount = results.filter((r) => r.status === 'error').length;
+    return { data: results, meta: { total: taskIds.length, ok: okCount, errors: errCount } };
+  }
+
   async returnTask(id: string, userId: string, dto: ReturnTaskDto) {
     const task = await this.prisma.processUserTask.findUnique({ where: { id } });
     if (!task) throw new NotFoundException('Không tìm thấy user task');

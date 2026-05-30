@@ -116,7 +116,7 @@ export class DealsService extends TenantAwareService {
       );
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const updatedDeal = await this.prisma.$transaction(async (tx) => {
       // Lấy orgUnitId của assignee
       const assigneeUser = await tx.user.findUnique({
         where: { id: deal.assigneeId },
@@ -144,7 +144,7 @@ export class DealsService extends TenantAwareService {
         },
       });
 
-      const updatedDeal = await tx.deal.update({
+      return tx.deal.update({
         where: { id },
         data: {
           stage:     DealStage.WON,
@@ -152,9 +152,35 @@ export class DealsService extends TenantAwareService {
           projectId: project.id,
         },
       });
-
-      return updatedDeal;
     });
+
+    // E20.3: Khởi động BPM 'deal-to-project-kickoff-v1' sau khi tạo project
+    // Không block markWon nếu BPM không khởi động được
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: 'deal-to-project-kickoff-v1', status: 'ACTIVE' },
+        select: { id: true },
+      });
+      if (definition && updatedDeal.projectId) {
+        await this.processInstancesService.start(
+          {
+            definitionId: definition.id,
+            projectId:    updatedDeal.projectId,
+            variables: {
+              dealId:     id,
+              projectId:  updatedDeal.projectId,
+              customerId: updatedDeal.customerId ?? undefined,
+              dealValue:  Number(deal.value ?? 0),
+            },
+          },
+          'system',
+        );
+      }
+    } catch (_) {
+      // BPM không bắt buộc — chỉ ghi log, không fail
+    }
+
+    return updatedDeal;
   }
 
   async markLost(id: string, dto: LostDealDto) {

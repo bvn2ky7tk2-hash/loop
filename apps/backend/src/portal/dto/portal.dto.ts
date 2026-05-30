@@ -77,3 +77,9 @@ export class LinkTicketToIssueDto {
   @IsString() @IsNotEmpty()
   reporterId: string;
 }
+
+/** E22.1 — Tạo Bug từ CustomerTicket */
+export class CreateBugFromTicketDto {
+  @IsString() @IsNotEmpty()
+  projectId: string;
+}

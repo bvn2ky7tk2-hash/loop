@@ -7,6 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 import {
   PhoneOutlined, MailOutlined, TeamOutlined, FileTextOutlined,
   PlusOutlined, EditOutlined, DeleteOutlined, CalendarOutlined,
+  PlayCircleOutlined, EnvironmentOutlined, FormOutlined, CheckSquareOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -24,10 +25,14 @@ const { Text } = Typography;
 const { TextArea } = Input;
 
 const TYPE_META: Record<ActivityType, { label: string; icon: React.ReactNode; color: string; darkBg: string; darkColor: string; darkBorder: string }> = {
-  CALL:    { label: 'Cuộc gọi',  icon: <PhoneOutlined />,    color: 'blue',  darkBg: 'rgba(96,165,250,0.15)',  darkColor: '#93C5FD', darkBorder: 'rgba(96,165,250,0.3)' },
-  EMAIL:   { label: 'Email',     icon: <MailOutlined />,      color: 'purple',darkBg: 'rgba(167,139,250,0.15)', darkColor: '#C4B5FD', darkBorder: 'rgba(167,139,250,0.3)' },
-  MEETING: { label: 'Họp mặt',  icon: <TeamOutlined />,      color: 'green', darkBg: 'rgba(52,211,153,0.15)',  darkColor: '#6EE7B7', darkBorder: 'rgba(52,211,153,0.3)' },
-  NOTE:    { label: 'Ghi chú',   icon: <FileTextOutlined />,  color: 'orange',darkBg: 'rgba(251,191,36,0.15)',  darkColor: '#FCD34D', darkBorder: 'rgba(251,191,36,0.3)' },
+  CALL:       { label: 'Cuộc gọi',   icon: <PhoneOutlined />,       color: 'blue',    darkBg: 'rgba(96,165,250,0.15)',   darkColor: '#93C5FD', darkBorder: 'rgba(96,165,250,0.3)' },
+  EMAIL:      { label: 'Email',      icon: <MailOutlined />,         color: 'purple',  darkBg: 'rgba(167,139,250,0.15)', darkColor: '#C4B5FD', darkBorder: 'rgba(167,139,250,0.3)' },
+  MEETING:    { label: 'Họp mặt',   icon: <TeamOutlined />,         color: 'green',   darkBg: 'rgba(52,211,153,0.15)',  darkColor: '#6EE7B7', darkBorder: 'rgba(52,211,153,0.3)' },
+  NOTE:       { label: 'Ghi chú',    icon: <FileTextOutlined />,     color: 'orange',  darkBg: 'rgba(251,191,36,0.15)',  darkColor: '#FCD34D', darkBorder: 'rgba(251,191,36,0.3)' },
+  DEMO:       { label: 'Demo',       icon: <PlayCircleOutlined />,   color: 'geekblue',darkBg: 'rgba(99,102,241,0.15)',  darkColor: '#A5B4FC', darkBorder: 'rgba(99,102,241,0.3)' },
+  SITE_VISIT: { label: 'Thực địa',  icon: <EnvironmentOutlined />,  color: 'cyan',    darkBg: 'rgba(34,211,238,0.15)',  darkColor: '#67E8F9', darkBorder: 'rgba(34,211,238,0.3)' },
+  SURVEY:     { label: 'Khảo sát',  icon: <FormOutlined />,         color: 'gold',    darkBg: 'rgba(245,158,11,0.15)',  darkColor: '#FCD34D', darkBorder: 'rgba(245,158,11,0.3)' },
+  TASK:       { label: 'Task',       icon: <CheckSquareOutlined />,  color: 'lime',    darkBg: 'rgba(132,204,22,0.15)',  darkColor: '#BEF264', darkBorder: 'rgba(132,204,22,0.3)' },
 };
 
 export default function ActivitiesPage() {
@@ -198,10 +203,14 @@ export default function ActivitiesPage() {
           value={typeFilter}
           onChange={v => { setTypeFilter(v); setPage(1); }}
           options={[
-            { value: 'CALL',    label: 'Cuộc gọi' },
-            { value: 'EMAIL',   label: 'Email' },
-            { value: 'MEETING', label: 'Họp mặt' },
-            { value: 'NOTE',    label: 'Ghi chú' },
+            { value: 'CALL',       label: 'Cuộc gọi' },
+            { value: 'EMAIL',      label: 'Email' },
+            { value: 'MEETING',    label: 'Họp mặt' },
+            { value: 'NOTE',       label: 'Ghi chú' },
+            { value: 'DEMO',       label: 'Demo' },
+            { value: 'SITE_VISIT', label: 'Thực địa' },
+            { value: 'SURVEY',     label: 'Khảo sát' },
+            { value: 'TASK',       label: 'Task' },
           ]}
         />
       </FilterBar>
@@ -277,10 +286,14 @@ export default function ActivitiesPage() {
             <Col span={8}>
               <Form.Item name="type" label="Loại" rules={[{ required: true }]}>
                 <Select options={[
-                  { value: 'CALL',    label: 'Cuộc gọi' },
-                  { value: 'EMAIL',   label: 'Email' },
-                  { value: 'MEETING', label: 'Họp mặt' },
-                  { value: 'NOTE',    label: 'Ghi chú' },
+                  { value: 'CALL',       label: 'Cuộc gọi' },
+                  { value: 'EMAIL',      label: 'Email' },
+                  { value: 'MEETING',    label: 'Họp mặt' },
+                  { value: 'NOTE',       label: 'Ghi chú' },
+                  { value: 'DEMO',       label: 'Demo' },
+                  { value: 'SITE_VISIT', label: 'Thực địa' },
+                  { value: 'SURVEY',     label: 'Khảo sát' },
+                  { value: 'TASK',       label: 'Task' },
                 ]} />
               </Form.Item>
             </Col>

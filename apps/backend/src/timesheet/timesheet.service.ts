@@ -20,6 +20,7 @@ import { CheckInDto, CheckOutDto } from './dto/checkin.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { GeneratePeriodDto, RejectTimesheetDto } from './dto/generate-period.dto';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { WorkShiftsService } from '../work-shifts/work-shifts.service';
 
 // Mon=1 … Fri=5 (ISO weekday)
 const WORK_DAYS = new Set([1, 2, 3, 4, 5]);
@@ -49,6 +50,7 @@ function eachWorkDay(start: Date, end: Date): Date[] {
 export class TimesheetService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly workShiftsService: WorkShiftsService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
@@ -209,6 +211,28 @@ export class TimesheetService extends TenantAwareService {
     });
   }
 
+  // ── E16F.1 — Work-day count excluding holidays ────────────────────────────────
+  // Trả số ngày làm việc T2-T6 trong khoảng [start, end], loại trừ ngày lễ
+  // từ HolidayCalendar. Được dùng để tính standardDays.
+  async getWorkDaysInPeriod(start: Date, end: Date): Promise<Date[]> {
+    const allWorkDays = eachWorkDay(start, end);
+
+    // Query ngày lễ trong khoảng thời gian
+    const holidays = await this.prisma.holidayCalendar.findMany({
+      where: { date: { gte: start, lte: end } },
+      select: { date: true },
+    });
+
+    const holidaySet = new Set(
+      holidays.map((h) => h.date.toISOString().slice(0, 10)),
+    );
+
+    // Loại ngày lễ ra khỏi danh sách ngày làm việc
+    return allWorkDays.filter(
+      (d) => !holidaySet.has(d.toISOString().slice(0, 10)),
+    );
+  }
+
   // ── Period Generation ───────────────────────────────────────────────────────
 
   async generatePeriod(callerId: string, callerRole: Role, dto: GeneratePeriodDto) {
@@ -218,8 +242,25 @@ export class TimesheetService extends TenantAwareService {
 
     const start = toDateOnly(dto.periodStart);
     const end = toDateOnly(dto.periodEnd);
-    const workDays = eachWorkDay(start, end);
+
+    // E16F.1 — standardDays loại trừ ngày lễ
+    const workDays = await this.getWorkDaysInPeriod(start, end);
     const standardDays = workDays.length;
+
+    // Lấy danh sách ngày lễ để phân loại OT (E16F.3)
+    const holidays = await this.prisma.holidayCalendar.findMany({
+      where: { date: { gte: start, lte: end } },
+      select: { date: true },
+    });
+    const holidaySet = new Set(
+      holidays.map((h) => h.date.toISOString().slice(0, 10)),
+    );
+
+    // Lấy thông tin employee để query ca làm việc (E16F.3)
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId: targetUserId },
+      select: { id: true },
+    });
 
     const entries = await this.prisma.timeEntry.findMany({
       where: this.tenantWhere({
@@ -233,22 +274,67 @@ export class TimesheetService extends TenantAwareService {
     );
 
     let workingDays = 0;
-    let overtimeHours = 0;
+    let otWeekdayHours = 0;
+    let otWeekendHours = 0;
+    let otHolidayHours = 0;
 
-    for (const day of workDays) {
+    // Duyệt tất cả ngày trong kỳ (bao gồm cả T7/CN) để tính OT cuối tuần/ngày lễ
+    const allDays: Date[] = [];
+    const cur = toDateOnly(start);
+    const fin = toDateOnly(end);
+    while (cur <= fin) {
+      allDays.push(new Date(cur));
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    for (const day of allDays) {
       const key = day.toISOString().slice(0, 10);
       const e = entryByDate.get(key);
-      if (e?.checkInAt && e.checkOutAt) {
+      if (!e?.checkInAt || !e.checkOutAt) continue;
+
+      const rawHours =
+        (e.checkOutAt.getTime() - e.checkInAt.getTime()) / 3_600_000;
+
+      // E16F.3 — Lấy ca làm việc active để tính giờ OT chuẩn xác
+      let effectiveShiftHours = 8; // fallback: ca hành chính 8-17, nghỉ trưa 1h = 8h
+      let breakHours = 1;          // fallback break = 1h
+      if (employee?.id) {
+        const shift = await this.workShiftsService.getActiveShift(employee.id, day);
+        if (shift) {
+          const shiftDuration = this.calcShiftDurationHours(shift.startTime, shift.endTime);
+          breakHours = shift.breakMinutes / 60;
+          effectiveShiftHours = shiftDuration - breakHours;
+        }
+      }
+
+      const workedHours = rawHours - breakHours;
+      const otHours = Math.max(0, workedHours - effectiveShiftHours);
+
+      const dayOfWeek = day.getDay(); // 0=Sun, 6=Sat
+      const isHoliday = holidaySet.has(key);
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      // Đếm ngày công chỉ cho T2-T6 không phải ngày lễ
+      if (!isWeekend && !isHoliday) {
         workingDays += 1;
-        const hours =
-          (e.checkOutAt.getTime() - e.checkInAt.getTime()) / 3_600_000;
-        if (hours > 8) overtimeHours += hours - 8;
+      }
+
+      // Phân loại OT theo thứ tự ưu tiên: holiday > weekend > weekday
+      if (otHours > 0) {
+        if (isHoliday) {
+          otHolidayHours += otHours;
+        } else if (isWeekend) {
+          otWeekendHours += otHours;
+        } else {
+          otWeekdayHours += otHours;
+        }
       }
     }
 
+    const totalOvertimeHours = otWeekdayHours + otWeekendHours + otHolidayHours;
+
     const record = await this.prisma.timesheetRecord.upsert({
       where: {
-        // upsert by unique userId+periodStart
         userId_periodStart: { userId: targetUserId, periodStart: start },
       },
       create: {
@@ -257,20 +343,40 @@ export class TimesheetService extends TenantAwareService {
         periodEnd: end,
         workingDays,
         standardDays,
-        overtimeHours: +overtimeHours.toFixed(2),
+        overtimeHours: +totalOvertimeHours.toFixed(2),
+        otWeekdayHours: +otWeekdayHours.toFixed(2),
+        otWeekendHours: +otWeekendHours.toFixed(2),
+        otHolidayHours: +otHolidayHours.toFixed(2),
         leaveDays: 0,
         status: TimesheetStatus.DRAFT,
       },
       update: {
         workingDays,
         standardDays,
-        overtimeHours: +overtimeHours.toFixed(2),
+        overtimeHours: +totalOvertimeHours.toFixed(2),
+        otWeekdayHours: +otWeekdayHours.toFixed(2),
+        otWeekendHours: +otWeekendHours.toFixed(2),
+        otHolidayHours: +otHolidayHours.toFixed(2),
         periodEnd: end,
       },
     });
 
     return record;
   }
+
+  // Tính tổng thời lượng ca (giờ) từ startTime/endTime dạng "HH:MM"
+  // Xử lý ca đêm (endTime < startTime)
+  private calcShiftDurationHours(startTime: string, endTime: string): number {
+    const toMins = (t: string) => {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+    const startMins = toMins(startTime);
+    let endMins = toMins(endTime);
+    if (endMins <= startMins) endMins += 24 * 60; // ca đêm vắt qua ngày mới
+    return (endMins - startMins) / 60;
+  }
+
 
   // ── Period Detail ───────────────────────────────────────────────────────────
 

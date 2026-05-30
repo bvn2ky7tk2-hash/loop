@@ -10,6 +10,7 @@ import {
   DefaultValuePipe,
   UseGuards,
 } from '@nestjs/common';
+import { IsArray, IsIn, IsUUID, ArrayMinSize } from 'class-validator';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -17,6 +18,16 @@ import type { JwtUser } from '../../common/types/jwt-user.type';
 import { ProcessUserTasksService } from './process-user-tasks.service';
 import { CompleteTaskDto } from './dto/complete-task.dto';
 import { ReturnTaskDto } from './dto/return-task.dto';
+
+class BatchApproveDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsUUID('4', { each: true })
+  taskIds: string[];
+
+  @IsIn(['APPROVE', 'REJECT'])
+  decision: 'APPROVE' | 'REJECT';
+}
 
 @ApiTags('processes')
 @ApiBearerAuth()
@@ -72,5 +83,14 @@ export class ProcessUserTasksController {
     @Body() dto: ReturnTaskDto,
   ) {
     return this.service.returnTask(id, user.id, dto);
+  }
+
+  @Post('batch-approve')
+  @ApiOperation({ summary: 'Duyệt/Từ chối nhiều user tasks cùng lúc' })
+  batchApprove(
+    @CurrentUser() user: JwtUser,
+    @Body() dto: BatchApproveDto,
+  ) {
+    return this.service.batchApprove(dto.taskIds, dto.decision, user.id);
   }
 }

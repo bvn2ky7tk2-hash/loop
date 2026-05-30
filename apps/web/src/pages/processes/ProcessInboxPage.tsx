@@ -195,6 +195,7 @@ export default function ProcessInboxPage() {
         definitionIdFilter={defFilter}
         assigneeIdFilter={assigneeFilter}
         requesterIdFilter={requesterFilter}
+        enableBatchApprove
       />
 
       <Modal

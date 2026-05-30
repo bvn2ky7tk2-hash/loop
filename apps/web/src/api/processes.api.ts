@@ -245,6 +245,14 @@ export const processesApi = {
     apiClient
       .post<SingleResponse<ProcessUserTask>>(`/processes/user-tasks/${id}/return`, { reason })
       .then((r) => r.data),
+
+  batchApprove: (taskIds: string[], decision: 'APPROVE' | 'REJECT') =>
+    apiClient
+      .post<{ data: { id: string; status: 'ok' | 'error'; message?: string }[]; meta: { total: number; ok: number; errors: number } }>(
+        '/processes/user-tasks/batch-approve',
+        { taskIds, decision },
+      )
+      .then((r) => r.data),
 };
 
 // ─── TanStack Query Hooks ─────────────────────────────────────────────────────

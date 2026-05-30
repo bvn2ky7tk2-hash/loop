@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 
-export type ActivityType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE';
+export type ActivityType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE' | 'DEMO' | 'SITE_VISIT' | 'SURVEY' | 'TASK';
 
 export interface CrmActivity {
   id:              string;

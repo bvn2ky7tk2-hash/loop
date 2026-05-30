@@ -15,6 +15,7 @@ const ACC = {
   AR:           '1311',
   REVENUE:      '5111',
   AP:           '3311',
+  INVENTORY:    '1561', // Hàng hóa (dùng khi nhận hàng PO)
   PAYABLE_EMP:  '3341',
   EXPENSE:      '6421',
   SALARY:       '6411',
@@ -74,9 +75,11 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
     try {
       const inv = await this.prisma.invoice.findUnique({
         where: { id: invoiceId },
-        select: { id: true, code: true, type: true, taxAmount: true, paidAt: true },
+        select: { id: true, code: true, type: true, taxAmount: true, paidAt: true, journalEntryId: true },
       });
       if (!inv) return;
+      // Bỏ qua nếu đã có journal entry (tránh tạo duplicate)
+      if (inv.journalEntryId) return;
 
       // E21.1: Tra InvoiceAccountMapping nếu có, fallback về ACC mặc định
       const mapping = await this.prisma.invoiceAccountMapping.findFirst({
@@ -88,7 +91,8 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
         },
       });
 
-      const debitAcc  = mapping?.debitAccount?.code  ?? ACC.CASH;
+      // Fallback TT200: Nợ 131 (Phải thu khách hàng) / Có 511 (Doanh thu BH&CCDV)
+      const debitAcc  = mapping?.debitAccount?.code  ?? ACC.AR;
       const creditAcc = mapping?.creditAccount?.code ?? ACC.REVENUE;
       const vatAcc    = mapping?.vatAccount?.code;
 
@@ -105,7 +109,7 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
 
       const entry = await this.createAutoEntry(
         inv.paidAt ?? new Date(),
-        `Thu tiền hóa đơn ${inv.code}`,
+        `Ghi nhận doanh thu hóa đơn ${inv.code}`,
         `INV:${inv.code}`,
         lines,
         userId,
@@ -123,7 +127,7 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
     }
   }
 
-  // E21.2: PO RECEIVED → debit Expense, credit AP_PAYABLE
+  // E21.2: PO RECEIVED → debit 156 (Hàng hóa), credit 331 (Phải trả NCC)
   private async handlePoReceived(poId: string, amount: number, userId: string) {
     try {
       const po = await this.prisma.purchaseOrder.findUnique({
@@ -136,8 +140,8 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
         `Nhận hàng PO ${po.poNumber}`,
         `PO:${po.poNumber}`,
         [
-          { accountCode: ACC.EXPENSE, debit: amount, credit: 0 },
-          { accountCode: ACC.AP,      debit: 0,      credit: amount },
+          { accountCode: ACC.INVENTORY, debit: amount, credit: 0 },
+          { accountCode: ACC.AP,        debit: 0,      credit: amount },
         ],
         userId,
       );
@@ -152,7 +156,7 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
     }
   }
 
-  // E21.2: PO PAID → debit AP_PAYABLE, credit Cash
+  // E21.2: PO PAID → debit 331 (Phải trả NCC), credit 111 (Tiền mặt)
   private async handlePoPaid(poId: string, amount: number, userId: string) {
     try {
       const po = await this.prisma.purchaseOrder.findUnique({

@@ -8,7 +8,7 @@ import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { JwtUser } from '../common/types/jwt-user.type';
 import { PortalService } from './portal.service';
-import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto, LinkTicketToIssueDto } from './dto/portal.dto';
+import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto, LinkTicketToIssueDto, CreateBugFromTicketDto } from './dto/portal.dto';
 
 // ─── Admin endpoints (require JWT) ───────────────────────────────────────────
 @ApiTags('Customer Portal — Admin')
@@ -57,9 +57,21 @@ export class PortalAdminController {
   linkToIssue(@Param('id') id: string, @Body() dto: LinkTicketToIssueDto) {
     return this.svc.linkToIssue(id, dto);
   }
+
+  // ─── E22.1: Tạo Bug từ ticket ────────────────────────────────────────────
+
+  @Post('tickets/:id/create-bug')
+  @ApiOperation({ summary: 'E22.1 — Tạo Bug (type=BUG) từ CustomerTicket fields' })
+  createBugFromTicket(
+    @Param('id') id: string,
+    @Body() dto: CreateBugFromTicketDto,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.svc.createBugFromTicket(id, dto.projectId, user.id);
+  }
 }
 
-// ─── E22.1: Ticket → Issue endpoint (alias route /crm/portal) ────────────────
+// ─── E22.1: Ticket → Issue + Bug endpoints (alias route /crm/portal & /crm/tickets) ───
 @ApiTags('Customer Portal — Tickets')
 @ApiBearerAuth()
 @Controller('api/v1/crm/portal')
@@ -76,6 +88,24 @@ export class PortalTicketController {
     // Gán reporterId từ JWT nếu body không truyền (backward compat)
     const enriched = { ...dto, reporterId: dto.reporterId ?? user?.id };
     return this.svc.linkToIssue(id, enriched);
+  }
+}
+
+// ─── E22.1: POST /crm/tickets/:id/create-bug ─────────────────────────────────
+@ApiTags('CRM — Tickets')
+@ApiBearerAuth()
+@Controller('api/v1/crm/tickets')
+export class CrmTicketController {
+  constructor(private readonly svc: PortalService) {}
+
+  @Post(':id/create-bug')
+  @ApiOperation({ summary: 'E22.1 — Tạo Bug từ CustomerTicket fields, link issueId' })
+  createBug(
+    @Param('id') id: string,
+    @Body() dto: CreateBugFromTicketDto,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.svc.createBugFromTicket(id, dto.projectId, user.id);
   }
 }
 

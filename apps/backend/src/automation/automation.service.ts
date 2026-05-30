@@ -6,6 +6,12 @@ export interface ActionContext {
   entityId?: string;
   entityType?: string;
   userId?: string;
+  [key: string]: unknown;
+}
+
+export interface EvaluateResult {
+  matched: boolean;
+  reason: string;
 }
 
 @Injectable()
@@ -19,6 +25,59 @@ export class AutomationService {
 
   async listRules() {
     return this.prisma.automationRule.findMany({ orderBy: { createdAt: 'asc' } });
+  }
+
+  /** Wrapper: load rule theo key rồi gọi evaluateRule — dùng từ controller */
+  async evaluateRuleByKey(key: string, context: ActionContext): Promise<EvaluateResult & { ruleKey: string; ruleName: string }> {
+    const rule = await this.prisma.automationRule.findUnique({ where: { key } });
+    if (!rule) throw new NotFoundException('Rule không tồn tại');
+    const result = this.evaluateRule(rule, context);
+    return { ...result, ruleKey: rule.key, ruleName: rule.name };
+  }
+
+  /**
+   * Đánh giá tất cả các điều kiện (conditions JSON) của một rule so với context.
+   * Mỗi condition có dạng { field, operator, value }.
+   * Các operator: eq, neq, gt, gte, lt, lte, contains, in, notIn.
+   * Trả về matched=true khi tất cả conditions đều thỏa mãn (AND logic).
+   */
+  evaluateRule(rule: { conditions?: unknown; key: string }, context: ActionContext): EvaluateResult {
+    const conditions = (rule.conditions as Array<{ field: string; operator: string; value: unknown }> | null) ?? [];
+
+    if (conditions.length === 0) {
+      return { matched: true, reason: 'Không có điều kiện — rule luôn khớp' };
+    }
+
+    for (const cond of conditions) {
+      const ctxVal = context[cond.field];
+      const matched = this._evalCondition(ctxVal, cond.operator, cond.value);
+      if (!matched) {
+        return {
+          matched: false,
+          reason: `Điều kiện không thỏa mãn: ${cond.field} ${cond.operator} ${JSON.stringify(cond.value)} (thực tế: ${JSON.stringify(ctxVal)})`,
+        };
+      }
+    }
+
+    return { matched: true, reason: 'Tất cả điều kiện thỏa mãn' };
+  }
+
+  private _evalCondition(actual: unknown, operator: string, expected: unknown): boolean {
+    switch (operator) {
+      case 'eq':       return actual === expected;
+      case 'neq':      return actual !== expected;
+      case 'gt':       return typeof actual === 'number' && typeof expected === 'number' && actual > expected;
+      case 'gte':      return typeof actual === 'number' && typeof expected === 'number' && actual >= expected;
+      case 'lt':       return typeof actual === 'number' && typeof expected === 'number' && actual < expected;
+      case 'lte':      return typeof actual === 'number' && typeof expected === 'number' && actual <= expected;
+      case 'contains': return typeof actual === 'string' && typeof expected === 'string' && actual.includes(expected);
+      case 'in':       return Array.isArray(expected) && expected.includes(actual);
+      case 'notIn':    return Array.isArray(expected) && !expected.includes(actual);
+      default: {
+        this.logger.warn(`_evalCondition: unknown operator "${operator}"`);
+        return false;
+      }
+    }
   }
 
   async toggleRule(key: string, isActive: boolean) {

@@ -22,3 +22,39 @@ export class CrmKpiController {
     return this.svc.aggregateDealKpis(tenantId);
   }
 }
+
+/** E22.2 — /crm/kpi/summary: winRate + avgCycleTime + actualRevenue + pipeline */
+@ApiTags('CRM — KPI Analytics')
+@ApiBearerAuth()
+@Controller('api/v1/crm/kpi')
+export class CrmKpiExtController {
+  constructor(private readonly svc: CrmKpiService) {}
+
+  @Get('summary')
+  @ApiOperation({ summary: 'E22.2 — Win rate, avg cycle time, actual revenue, weighted pipeline' })
+  @ApiQuery({ name: 'tenantId', required: false })
+  getSummary(@Query('tenantId') tenantId?: string) {
+    return this.svc.getExtendedKpiSummary(tenantId);
+  }
+
+  @Get('win-rate')
+  @ApiOperation({ summary: 'E22.2 — Win rate: số deal WON / tổng đã đóng' })
+  @ApiQuery({ name: 'tenantId', required: false })
+  getWinRate(@Query('tenantId') tenantId?: string) {
+    return this.svc.getWinRate(tenantId);
+  }
+
+  @Get('avg-cycle-time')
+  @ApiOperation({ summary: 'E22.2 — Avg cycle time: số ngày trung bình chốt deal' })
+  @ApiQuery({ name: 'tenantId', required: false })
+  getAvgCycleTime(@Query('tenantId') tenantId?: string) {
+    return this.svc.getAvgCycleTime(tenantId);
+  }
+
+  @Get('actual-revenue')
+  @ApiOperation({ summary: 'E22.2 — Actual revenue: tổng doanh thu từ WON deals' })
+  @ApiQuery({ name: 'tenantId', required: false })
+  getActualRevenue(@Query('tenantId') tenantId?: string) {
+    return this.svc.getActualRevenue(tenantId);
+  }
+}

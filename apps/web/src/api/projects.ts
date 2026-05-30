@@ -50,3 +50,71 @@ export const projectsApi = {
     apiClient.put<Project>(`/projects/${id}`, data).then((r) => r.data),
   remove: (id: string) => apiClient.delete(`/projects/${id}`),
 };
+
+// ── Journal API ──────────────────────────────────────────────────────────────
+
+export interface JournalItem {
+  id: string;
+  text: string;
+  status?: 'OPEN' | 'CONVERTED' | 'IGNORED';
+  taskId?: string;
+}
+
+export interface ProjectJournal {
+  id: string;
+  projectId: string;
+  date: string;
+  title: string;
+  startTime?: string;
+  endTime?: string;
+  location?: string;
+  participants: string[];
+  content: string;
+  resolvedItems: JournalItem[];
+  unresolvedItems: JournalItem[];
+  attachments?: unknown;
+  createdById: string;
+  createdBy?: { id: string; name: string };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateJournalPayload {
+  date: string;
+  title: string;
+  startTime?: string;
+  endTime?: string;
+  location?: string;
+  participants?: string[];
+  content: string;
+  resolvedItems?: JournalItem[];
+  unresolvedItems?: JournalItem[];
+}
+
+export const projectJournalApi = {
+  list: (projectId: string, page = 1, limit = 50) =>
+    apiClient
+      .get<{ data: ProjectJournal[]; total: number; page: number; limit: number; totalPages: number }>(
+        `/projects/${projectId}/journals?page=${page}&limit=${limit}`,
+      )
+      .then((r) => r.data),
+
+  create: (projectId: string, data: CreateJournalPayload) =>
+    apiClient.post<ProjectJournal>(`/projects/${projectId}/journals`, data).then((r) => r.data),
+
+  update: (
+    journalId: string,
+    data: Partial<CreateJournalPayload> & { resolvedItems?: JournalItem[]; unresolvedItems?: JournalItem[] },
+  ) =>
+    apiClient.patch<ProjectJournal>(`/projects/journals/${journalId}`, data).then((r) => r.data),
+
+  unresolvedSummary: (projectId: string) =>
+    apiClient
+      .get<{ total: number; open: number; resolved: number }>(`/projects/${projectId}/journals/unresolved`)
+      .then((r) => r.data),
+
+  convertToTask: (journalId: string, itemId: string, data: { taskTitle: string; assigneeId?: string }) =>
+    apiClient
+      .post<{ taskId: string }>(`/projects/journals/${journalId}/items/${itemId}/convert`, data)
+      .then((r) => r.data),
+};

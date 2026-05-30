@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { DealStage } from '../generated/prisma';
 
-interface MonthlyPipeline {
+export interface MonthlyPipeline {
   month: string;   // "YYYY-MM"
   weighted: number;
 }
@@ -198,5 +198,81 @@ export class CrmKpiService {
   async getKpiSummary(tenantId?: string): Promise<KpiSummary> {
     // Tính live để đảm bảo fresh data
     return this.aggregateDealKpis(tenantId);
+  }
+
+  // ─── E22.2: Các phương thức KPI bổ sung ──────────────────────────────────
+
+  /** E22.2 — Win rate: số deal WON / tổng deal đã đóng */
+  async getWinRate(tenantId?: string): Promise<{ winRate: number; wonCount: number; lostCount: number }> {
+    const baseWhere: any = { deletedAt: null, stage: { in: [DealStage.WON, DealStage.LOST] } };
+    if (tenantId) baseWhere.tenantId = tenantId;
+
+    const [wonCount, lostCount] = await this.prisma.$transaction([
+      this.prisma.deal.count({ where: { ...baseWhere, stage: DealStage.WON } }),
+      this.prisma.deal.count({ where: { ...baseWhere, stage: DealStage.LOST } }),
+    ]);
+    const total    = wonCount + lostCount;
+    const winRate  = total > 0 ? Math.round((wonCount / total) * 100) : 0;
+    return { winRate, wonCount, lostCount };
+  }
+
+  /**
+   * E22.2 — Avg cycle time: trung bình số ngày từ createdAt → wonAt cho WON deals.
+   * Phụ thuộc trường wonAt được set khi stage chuyển WON.
+   */
+  async getAvgCycleTime(tenantId?: string): Promise<{ avgCycleDays: number; dealCount: number }> {
+    const where: any = { deletedAt: null, stage: DealStage.WON, wonAt: { not: null } };
+    if (tenantId) where.tenantId = tenantId;
+
+    const wonDeals = await this.prisma.deal.findMany({
+      where,
+      select: { createdAt: true, wonAt: true },
+      take: 2000,
+    });
+
+    if (wonDeals.length === 0) return { avgCycleDays: 0, dealCount: 0 };
+
+    const totalDays = wonDeals.reduce((sum, d) => {
+      const ms = (d.wonAt!.getTime() - d.createdAt.getTime());
+      return sum + ms / (1000 * 60 * 60 * 24);
+    }, 0);
+
+    return {
+      avgCycleDays: Math.round(totalDays / wonDeals.length),
+      dealCount:    wonDeals.length,
+    };
+  }
+
+  /** E22.2 — Doanh thu thực (WON deals value tổng) */
+  async getActualRevenue(tenantId?: string): Promise<{ actualRevenue: number; wonDeals: number }> {
+    const where: any = { deletedAt: null, stage: DealStage.WON };
+    if (tenantId) where.tenantId = tenantId;
+
+    const agg = await this.prisma.deal.aggregate({
+      where,
+      _sum:   { value: true },
+      _count: { id: true },
+    });
+
+    return {
+      actualRevenue: Math.round(Number(agg._sum.value ?? 0)),
+      wonDeals:      agg._count.id,
+    };
+  }
+
+  /** E22.2 — Tổng hợp KPI summary mới (winRate + cycleTime + actualRevenue + pipeline) */
+  async getExtendedKpiSummary(tenantId?: string) {
+    const [winRateData, cycleTimeData, revenueData, baseSummary] = await Promise.all([
+      this.getWinRate(tenantId),
+      this.getAvgCycleTime(tenantId),
+      this.getActualRevenue(tenantId),
+      this.aggregateDealKpis(tenantId),
+    ]);
+
+    return {
+      ...baseSummary,
+      avg_cycle_days:    cycleTimeData.avgCycleDays,
+      actual_revenue:    revenueData.actualRevenue,
+    };
   }
 }
