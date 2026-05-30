@@ -140,7 +140,7 @@ export class ExpensesService extends TenantAwareService {
     });
 
     // Tự động start process expense-approval nếu đang ACTIVE
-    const definition = await this.prisma.processDefinition.findUnique({
+    const definition = await this.prisma.processDefinition.findFirst({
       where: { key: 'expense-approval' },
       select: { id: true, status: true },
     });

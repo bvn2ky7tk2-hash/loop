@@ -84,7 +84,7 @@ export class OvertimeService extends TenantAwareService implements OnModuleInit 
     });
 
     // Tự động start BPM process nếu ProcessDefinition 'overtime-approval' tồn tại và ACTIVE
-    const definition = await this.prisma.processDefinition.findUnique({
+    const definition = await this.prisma.processDefinition.findFirst({
       where: { key: OT_PROCESS_KEY },
       select: { id: true, status: true },
     });

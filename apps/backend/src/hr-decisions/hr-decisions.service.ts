@@ -259,7 +259,7 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
     });
 
     // Tự động start process nếu có definition ACTIVE cho hr-decision-approval
-    const definition = await this.prisma.processDefinition.findUnique({
+    const definition = await this.prisma.processDefinition.findFirst({
       where: { key: 'hr-decision-approval' },
       select: { id: true, status: true },
     });

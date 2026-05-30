@@ -50,7 +50,7 @@ export class ProcurementService {
   }
 
   async createVendor(dto: CreateVendorDto) {
-    const exists = await this.prisma.vendor.findUnique({ where: { code: dto.code } });
+    const exists = await this.prisma.vendor.findFirst({ where: { code: dto.code } });
     if (exists) throw new BadRequestException('Mã nhà cung cấp đã tồn tại');
     return this.prisma.vendor.create({ data: dto as any });
   }

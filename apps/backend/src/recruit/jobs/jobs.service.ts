@@ -15,7 +15,7 @@ export class JobsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateJobDto): Promise<JobOpening> {
-    const existing = await this.prisma.jobOpening.findUnique({
+    const existing = await this.prisma.jobOpening.findFirst({
       where: { code: dto.code },
     });
     if (existing) {

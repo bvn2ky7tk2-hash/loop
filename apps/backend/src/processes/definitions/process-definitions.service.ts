@@ -139,7 +139,7 @@ export class ProcessDefinitionsService {
   }
 
   async findByKey(key: string) {
-    const def = await this.prisma.processDefinition.findUnique({
+    const def = await this.prisma.processDefinition.findFirst({
       where: { key },
     });
     if (!def) return null;

@@ -1595,17 +1595,21 @@ async function seedProcessDefinitions(orgUnitId: string) {
       stepConfig: def.stepConfig as any,
       taskFormFields: def.taskFormFields as any,
     };
-    await prisma.processDefinition.upsert({
-      where: { key: def.key },
-      update: {
-        name: data.name,
-        description: data.description,
-        bpmnXml: data.bpmnXml,
-        stepConfig: data.stepConfig,
-        taskFormFields: data.taskFormFields,
-      },
-      create: data,
-    });
+    const existing = await prisma.processDefinition.findFirst({ where: { key: def.key } });
+    if (existing) {
+      await prisma.processDefinition.update({
+        where: { id: existing.id },
+        data: {
+          name: data.name,
+          description: data.description,
+          bpmnXml: data.bpmnXml,
+          stepConfig: data.stepConfig,
+          taskFormFields: data.taskFormFields,
+        },
+      });
+    } else {
+      await prisma.processDefinition.create({ data });
+    }
     console.log(`  ✓ Process definition [${def.key}] seeded`);
   };
 
@@ -3932,7 +3936,7 @@ async function seedRecruitEnriched() {
     }
     // Load existing jobs
     for (const code of ['JOB-2026-001','JOB-2026-002','JOB-2026-003','JOB-2026-004']) {
-      const row = await prisma.jobOpening.findUnique({ where: { code } });
+      const row = await prisma.jobOpening.findFirst({ where: { code } });
       if (row) jobMap[code] = row.id;
     }
     console.log(`  ✓ ${newJobs.length} job openings mới`);

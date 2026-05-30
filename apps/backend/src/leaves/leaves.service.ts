@@ -111,7 +111,7 @@ export class LeavesService extends TenantAwareService {
     });
 
     if (leaveTypeWithProcess?.processDefinitionKey) {
-      const definition = await this.prisma.processDefinition.findUnique({
+      const definition = await this.prisma.processDefinition.findFirst({
         where: { key: leaveTypeWithProcess.processDefinitionKey },
         select: { id: true, status: true },
       });
