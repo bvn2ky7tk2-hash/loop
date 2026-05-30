@@ -62,7 +62,10 @@ model User {
   tenant               Tenant?           @relation(fields: [tenantId], references: [id])
   delegatorRules       DelegationRule[]  @relation("DelegatorRules")
   delegateRules        DelegationRule[]  @relation("DelegateRules")
-  salaryReviewApprovals SalaryReviewSuggestion[] @relation("SalaryReviewApprover")
+  salaryReviewApprovals    SalaryReviewSuggestion[] @relation("SalaryReviewApprover")
+  projectJournals          ProjectJournal[]         @relation("JournalCreator")
+  leadFollowUpSchedules    LeadFollowUpSchedule[]
+  customerSurveySchedules  CustomerSurveySchedule[]
 
   @@map("users")
 }
@@ -170,8 +173,9 @@ model Employee {
   submittedExpenses        Expense[]               @relation("ExpenseEmployee")
   performanceBonuses       PerformanceBonus[]
   approvedBonuses          PerformanceBonus[]      @relation("BonusApprover")
-  costBreakdowns           ProjectCostByEmployee[]
-  salaryReviews            SalaryReviewSuggestion[] @relation("EmployeeSalaryReviews")
+  costBreakdowns               ProjectCostByEmployee[]
+  salaryReviews                SalaryReviewSuggestion[] @relation("EmployeeSalaryReviews")
+  attendanceExplanations       AttendanceExplanation[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -272,6 +276,8 @@ model Project {
   deletedAt        DateTime?         @map("deleted_at")
   budgetPlans      BudgetPlan[]      @relation("BudgetPlanProject")
   costSnapshots    ProjectCostSnapshot[]
+  journals         ProjectJournal[]
+  crmActivities    CrmActivity[]     @relation("ProjectCrmActivities")
 
   @@unique([tenantId, code])
   @@index([customerId])
@@ -1331,18 +1337,19 @@ model Customer {
   industry        String?
   website         String?
   taxCode         String?          @map("tax_code")
-  contacts        Contact[]
-  deals           Deal[]
-  invoices        Invoice[]
-  clientContracts ClientContract[]
-  activities      CrmActivity[]
-  portals         CustomerPortal[]
-  projects        Project[]
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt      @map("updated_at")
-  tenantId        String?          @map("tenant_id")
-  tenant          Tenant?          @relation("TenantCustomers", fields: [tenantId], references: [id])
-  deletedAt       DateTime?        @map("deleted_at")
+  contacts         Contact[]
+  deals            Deal[]
+  invoices         Invoice[]
+  clientContracts  ClientContract[]
+  activities       CrmActivity[]
+  portals          CustomerPortal[]
+  projects         Project[]
+  surveySchedules  CustomerSurveySchedule[]
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt      @map("updated_at")
+  tenantId         String?          @map("tenant_id")
+  tenant           Tenant?          @relation("TenantCustomers", fields: [tenantId], references: [id])
+  deletedAt        DateTime?        @map("deleted_at")
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -1385,8 +1392,9 @@ model Lead {
   createdAt       DateTime   @default(now()) @map("created_at")
   updatedAt       DateTime   @updatedAt      @map("updated_at")
 
-  tenantId        String?    @map("tenant_id")
-  tenant          Tenant?    @relation("TenantLeads", fields: [tenantId], references: [id])
+  tenantId          String?               @map("tenant_id")
+  tenant            Tenant?               @relation("TenantLeads", fields: [tenantId], references: [id])
+  followUpSchedules LeadFollowUpSchedule[]
 
   @@index([assigneeId])
   @@index([status])
@@ -1416,6 +1424,8 @@ model Deal {
   tenantId          String?   @map("tenant_id")
   tenant            Tenant?   @relation("TenantDeals", fields: [tenantId], references: [id])
   deletedAt         DateTime? @map("deleted_at")
+  invoices          Invoice[] @relation("DealInvoices")
+  followUpSchedules LeadFollowUpSchedule[]
 
   @@unique([tenantId, code])
   @@index([customerId])
@@ -1464,6 +1474,10 @@ enum ActivityType {
   EMAIL
   MEETING
   NOTE
+  DEMO
+  SITE_VISIT
+  SURVEY
+  TASK
 
   @@map("activity_type")
 }
@@ -1478,6 +1492,8 @@ model CrmActivity {
   dealId          String?      @map("deal_id")
   contactId       String?      @map("contact_id")
   leadId          String?      @map("lead_id")
+  projectId       String?      @map("project_id")
+  project         Project?     @relation("ProjectCrmActivities", fields: [projectId], references: [id], onDelete: SetNull)
   scheduledAt     DateTime?    @map("scheduled_at")
   completedAt     DateTime?    @map("completed_at")
   duration        Int?
@@ -1495,9 +1511,72 @@ model CrmActivity {
   @@index([dealId])
   @@index([leadId])
   @@index([contactId])
+  @@index([projectId])
   @@index([createdById])
   @@index([tenantId])
   @@map("crm_activities")
+}
+
+// ─── Lead Follow-Up & Customer Survey Schedules ──────────────────────────────
+
+enum FollowUpStatus {
+  PENDING
+  DONE
+  SKIPPED
+
+  @@map("follow_up_status")
+}
+
+enum SurveyFrequency {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+
+  @@map("survey_frequency")
+}
+
+model LeadFollowUpSchedule {
+  id            String         @id @default(uuid())
+  leadId        String?        @map("lead_id")
+  dealId        String?        @map("deal_id")
+  scheduledDate DateTime       @map("scheduled_date") @db.Date
+  type          ActivityType
+  note          String?        @db.Text
+  status        FollowUpStatus @default(PENDING)
+  assigneeId    String         @map("assignee_id")
+  tenantId      String?        @map("tenant_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  lead          Lead?          @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  deal          Deal?          @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  assignee      User           @relation(fields: [assigneeId], references: [id])
+  tenant        Tenant?        @relation("TenantLeadFollowUps", fields: [tenantId], references: [id])
+
+  @@index([leadId])
+  @@index([dealId])
+  @@index([assigneeId])
+  @@index([tenantId])
+  @@map("lead_follow_up_schedules")
+}
+
+model CustomerSurveySchedule {
+  id              String          @id @default(uuid())
+  customerId      String          @map("customer_id")
+  frequency       SurveyFrequency @default(QUARTERLY)
+  lastSentAt      DateTime?       @map("last_sent_at")
+  nextDueAt       DateTime        @map("next_due_at") @db.Date
+  templateContent String?         @map("template_content") @db.Text
+  assigneeId      String          @map("assignee_id")
+  isActive        Boolean         @default(true) @map("is_active")
+  tenantId        String?         @map("tenant_id")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  customer        Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  assignee        User            @relation(fields: [assigneeId], references: [id])
+  tenant          Tenant?         @relation("TenantCustomerSurveys", fields: [tenantId], references: [id])
+
+  @@index([customerId])
+  @@index([assigneeId])
+  @@index([tenantId])
+  @@map("customer_survey_schedules")
 }
 
 // ─── Client Contracts ─────────────────────────────────────────────────────────
@@ -1521,6 +1600,7 @@ model ClientContract {
   updatedAt   DateTime             @updatedAt @map("updated_at")
   customer    Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
   milestones  ContractMilestone[]
+  invoices    Invoice[]            @relation("ClientContractInvoices")
   tenantId    String?              @map("tenant_id")
   tenant      Tenant?              @relation("TenantClientContracts", fields: [tenantId], references: [id])
 
@@ -1586,6 +1666,10 @@ model Invoice {
   customerId        String?       @map("customer_id")
   customer          Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
   projectId         String?       @map("project_id")
+  dealId            String?       @map("deal_id")
+  deal              Deal?         @relation("DealInvoices", fields: [dealId], references: [id], onDelete: SetNull)
+  clientContractId  String?       @map("client_contract_id")
+  clientContract    ClientContract? @relation("ClientContractInvoices", fields: [clientContractId], references: [id], onDelete: SetNull)
   issueDate         DateTime      @map("issue_date") @db.Date
   dueDate           DateTime      @map("due_date")   @db.Date
   status            InvoiceStatus @default(DRAFT)
@@ -1610,6 +1694,8 @@ model Invoice {
   @@index([status])
   @@index([customerId])
   @@index([projectId])
+  @@index([dealId])
+  @@index([clientContractId])
   @@index([tenantId])
   @@index([deletedAt])
   @@map("invoices")
@@ -1987,9 +2073,10 @@ model InsuranceConfig {
   bhytEmployerRate    Decimal  @map("bhyt_employer_rate") @db.Decimal(5, 4)
   bhtnEmployerRate    Decimal  @map("bhtn_employer_rate") @db.Decimal(5, 4)
   tnldRate            Decimal  @map("tnld_rate") @db.Decimal(5, 4)
-  bhxhCeilingMultiple Int      @default(20) @map("bhxh_ceiling_multiple")
-  wageBase            Decimal  @map("wage_base") @db.Decimal(12, 2)
-  createdAt           DateTime @default(now()) @map("created_at")
+  bhxhCeilingMultiple       Int      @default(20) @map("bhxh_ceiling_multiple")
+  wageBase                  Decimal  @map("wage_base") @db.Decimal(12, 2)
+  bhxhExemptForProbation    Boolean  @default(false) @map("bhxh_exempt_for_probation")
+  createdAt                 DateTime @default(now()) @map("created_at")
 
   @@unique([tenantId, effectiveFrom])
   @@map("insurance_configs")
@@ -2161,6 +2248,7 @@ model SalaryColumn {
 enum PayrollPeriodType {
   REGULAR
   ADJUSTMENT
+  MONTH_13
 
   @@map("payroll_period_type")
 }
@@ -3074,6 +3162,34 @@ model ProjectCostByEmployee {
   @@map("project_cost_by_employees")
 }
 
+// ─── Project Journal ─────────────────────────────────────────────────────────
+
+model ProjectJournal {
+  id               String    @id @default(uuid())
+  projectId        String    @map("project_id")
+  date             DateTime  @db.Date
+  startTime        String?   @map("start_time")
+  endTime          String?   @map("end_time")
+  title            String    @db.VarChar(300)
+  location         String?   @db.VarChar(300)
+  participants     Json      @default("[]")
+  content          String    @db.Text
+  resolvedItems    Json      @default("[]") @map("resolved_items")
+  unresolvedItems  Json      @default("[]") @map("unresolved_items")
+  attachments      Json?
+  createdById      String    @map("created_by_id")
+  tenantId         String?   @map("tenant_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  project          Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy        User      @relation("JournalCreator", fields: [createdById], references: [id])
+  tenant           Tenant?   @relation("TenantProjectJournals", fields: [tenantId], references: [id])
+
+  @@index([projectId, date])
+  @@index([tenantId])
+  @@map("project_journals")
+}
+
 // ─── Salary Band & Review Suggestion ─────────────────────────────────────────
 
 enum SalaryReviewStatus {
@@ -3168,8 +3284,12 @@ model Tenant {
   vendors             Vendor[]            @relation("TenantVendors")
   purchaseOrders      PurchaseOrder[]     @relation("TenantPurchaseOrders")
   comments            Comment[]           @relation("TenantComments")
-  invoiceMappings     InvoiceAccountMapping[] @relation("TenantInvoiceMappings")
-  delegationRules     DelegationRule[]    @relation("TenantDelegations")
+  invoiceMappings          InvoiceAccountMapping[]    @relation("TenantInvoiceMappings")
+  delegationRules          DelegationRule[]           @relation("TenantDelegations")
+  attendanceExplanations   AttendanceExplanation[]    @relation("TenantAttendanceExplanations")
+  projectJournals          ProjectJournal[]           @relation("TenantProjectJournals")
+  leadFollowUps            LeadFollowUpSchedule[]     @relation("TenantLeadFollowUps")
+  customerSurveys          CustomerSurveySchedule[]   @relation("TenantCustomerSurveys")
 
   @@map("tenants")
 }
@@ -3353,6 +3473,13 @@ enum CarryOverExpiryAction {
   @@map("carry_over_expiry_action")
 }
 
+enum LeaveAccrualMode {
+  ANNUAL_UPFRONT
+  MONTHLY_ACCRUAL
+
+  @@map("leave_accrual_mode")
+}
+
 model LeavePolicy {
   id                    String               @id @default(uuid())
   name                  String
@@ -3362,6 +3489,7 @@ model LeavePolicy {
   carryOverExpiry       String?              @map("carry_over_expiry")
   carryOverExpiryAction CarryOverExpiryAction @default(CLEAR) @map("carry_over_expiry_action")
   probationPolicy       Json?                @map("probation_policy")
+  accrualMode           LeaveAccrualMode     @default(ANNUAL_UPFRONT) @map("accrual_mode")
   isActive              Boolean              @default(true) @map("is_active")
   createdAt             DateTime             @default(now()) @map("created_at")
   updatedAt             DateTime             @updatedAt @map("updated_at")
@@ -3474,6 +3602,9 @@ enum AttendanceStatus {
   HOLIDAY
   LEAVE
   OT
+  BUSINESS_TRIP
+  ONSITE
+  WFH
 
   @@map("attendance_status")
 }
@@ -3508,6 +3639,7 @@ model AttendanceRecord {
   updatedAt           DateTime          @updatedAt @map("updated_at")
   employee            Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   monthlyAttendance   MonthlyAttendance? @relation(fields: [monthlyAttendanceId], references: [id])
+  explanations        AttendanceExplanation[]
 
   @@unique([employeeId, date])
   @@index([employeeId])
@@ -3538,6 +3670,55 @@ model MonthlyAttendance {
   @@map("monthly_attendances")
 }
 
+// ─── Attendance Explanation ───────────────────────────────────────────────────
+
+enum ExplanationType {
+  MISSING_CHECKIN
+  MISSING_CHECKOUT
+  LATE_ARRIVAL
+  EARLY_DEPARTURE
+  BUSINESS_TRIP
+  ONSITE
+  WFH
+
+  @@map("explanation_type")
+}
+
+enum ExplanationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("explanation_status")
+}
+
+model AttendanceExplanation {
+  id                   String             @id @default(uuid())
+  employeeId           String             @map("employee_id")
+  date                 DateTime           @db.Date
+  attendanceRecordId   String?            @map("attendance_record_id")
+  type                 ExplanationType
+  reason               String             @db.Text
+  attachments          Json?
+  requestedCheckIn     DateTime?          @map("requested_check_in")
+  requestedCheckOut    DateTime?          @map("requested_check_out")
+  status               ExplanationStatus  @default(PENDING)
+  processInstanceId    String?            @map("process_instance_id")
+  reviewedById         String?            @map("reviewed_by_id")
+  reviewedAt           DateTime?          @map("reviewed_at")
+  rejectReason         String?            @map("reject_reason")
+  tenantId             String?            @map("tenant_id")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  employee             Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  attendanceRecord     AttendanceRecord?  @relation(fields: [attendanceRecordId], references: [id], onDelete: SetNull)
+  tenant               Tenant?            @relation("TenantAttendanceExplanations", fields: [tenantId], references: [id])
+
+  @@index([employeeId, date])
+  @@index([tenantId])
+  @@map("attendance_explanations")
+}
+
 // ─── Work Shifts ──────────────────────────────────────────────────────────────
 
 enum ShiftType {
@@ -3557,7 +3738,7 @@ model WorkShift {
   type            ShiftType           @default(HANH_CHINH)
   startTime       String              @map("start_time")
   endTime         String              @map("end_time")
-  breakMinutes    Int                 @default(0) @map("break_minutes")
+  breakMinutes    Int                 @default(60) @map("break_minutes")
   isActive        Boolean             @default(true) @map("is_active")
   description     String?
   createdAt       DateTime            @default(now()) @map("created_at")

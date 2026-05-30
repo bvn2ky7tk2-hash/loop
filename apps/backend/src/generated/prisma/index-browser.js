@@ -829,6 +829,7 @@ exports.Prisma.CrmActivityScalarFieldEnum = {
   dealId: 'dealId',
   contactId: 'contactId',
   leadId: 'leadId',
+  projectId: 'projectId',
   scheduledAt: 'scheduledAt',
   completedAt: 'completedAt',
   duration: 'duration',
@@ -839,6 +840,32 @@ exports.Prisma.CrmActivityScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId'
+};
+
+exports.Prisma.LeadFollowUpScheduleScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  dealId: 'dealId',
+  scheduledDate: 'scheduledDate',
+  type: 'type',
+  note: 'note',
+  status: 'status',
+  assigneeId: 'assigneeId',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CustomerSurveyScheduleScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  frequency: 'frequency',
+  lastSentAt: 'lastSentAt',
+  nextDueAt: 'nextDueAt',
+  templateContent: 'templateContent',
+  assigneeId: 'assigneeId',
+  isActive: 'isActive',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.ClientContractScalarFieldEnum = {
@@ -854,6 +881,7 @@ exports.Prisma.ClientContractScalarFieldEnum = {
   endDate: 'endDate',
   signedAt: 'signedAt',
   status: 'status',
+  paymentTermsDays: 'paymentTermsDays',
   notes: 'notes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -879,6 +907,8 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   type: 'type',
   customerId: 'customerId',
   projectId: 'projectId',
+  dealId: 'dealId',
+  clientContractId: 'clientContractId',
   issueDate: 'issueDate',
   dueDate: 'dueDate',
   status: 'status',
@@ -1081,6 +1111,7 @@ exports.Prisma.InsuranceConfigScalarFieldEnum = {
   tnldRate: 'tnldRate',
   bhxhCeilingMultiple: 'bhxhCeilingMultiple',
   wageBase: 'wageBase',
+  bhxhExemptForProbation: 'bhxhExemptForProbation',
   createdAt: 'createdAt'
 };
 
@@ -1670,6 +1701,52 @@ exports.Prisma.ProjectCostByEmployeeScalarFieldEnum = {
   cost: 'cost'
 };
 
+exports.Prisma.ProjectJournalScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  date: 'date',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  title: 'title',
+  location: 'location',
+  participants: 'participants',
+  content: 'content',
+  resolvedItems: 'resolvedItems',
+  unresolvedItems: 'unresolvedItems',
+  attachments: 'attachments',
+  createdById: 'createdById',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SalaryBandScalarFieldEnum = {
+  id: 'id',
+  positionId: 'positionId',
+  minSalary: 'minSalary',
+  midSalary: 'midSalary',
+  maxSalary: 'maxSalary',
+  currency: 'currency',
+  effectiveFrom: 'effectiveFrom',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SalaryReviewSuggestionScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  employeeId: 'employeeId',
+  salaryBandId: 'salaryBandId',
+  currentSalary: 'currentSalary',
+  suggestedSalary: 'suggestedSalary',
+  increasePercent: 'increasePercent',
+  reason: 'reason',
+  status: 'status',
+  approvedById: 'approvedById',
+  appliedAt: 'appliedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.TenantScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1775,6 +1852,7 @@ exports.Prisma.LeavePolicyScalarFieldEnum = {
   carryOverExpiry: 'carryOverExpiry',
   carryOverExpiryAction: 'carryOverExpiryAction',
   probationPolicy: 'probationPolicy',
+  accrualMode: 'accrualMode',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1865,6 +1943,26 @@ exports.Prisma.MonthlyAttendanceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AttendanceExplanationScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  date: 'date',
+  attendanceRecordId: 'attendanceRecordId',
+  type: 'type',
+  reason: 'reason',
+  attachments: 'attachments',
+  requestedCheckIn: 'requestedCheckIn',
+  requestedCheckOut: 'requestedCheckOut',
+  status: 'status',
+  processInstanceId: 'processInstanceId',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  rejectReason: 'rejectReason',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.WorkShiftScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1916,35 +2014,6 @@ exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
   effectiveTo: 'effectiveTo',
   note: 'note',
   createdAt: 'createdAt'
-};
-
-exports.Prisma.SalaryBandScalarFieldEnum = {
-  id: 'id',
-  positionId: 'positionId',
-  minSalary: 'minSalary',
-  midSalary: 'midSalary',
-  maxSalary: 'maxSalary',
-  currency: 'currency',
-  note: 'note',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SalaryReviewSuggestionScalarFieldEnum = {
-  id: 'id',
-  reviewId: 'reviewId',
-  employeeId: 'employeeId',
-  currentSalary: 'currentSalary',
-  suggestedSalary: 'suggestedSalary',
-  increasePercent: 'increasePercent',
-  score: 'score',
-  status: 'status',
-  approverId: 'approverId',
-  approvedAt: 'approvedAt',
-  appliedAt: 'appliedAt',
-  note: 'note',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -2202,7 +2271,8 @@ exports.PayrollStatus = exports.$Enums.PayrollStatus = {
 
 exports.PayrollPeriodType = exports.$Enums.PayrollPeriodType = {
   REGULAR: 'REGULAR',
-  ADJUSTMENT: 'ADJUSTMENT'
+  ADJUSTMENT: 'ADJUSTMENT',
+  MONTH_13: 'MONTH_13'
 };
 
 exports.ExpenseCategory = exports.$Enums.ExpenseCategory = {
@@ -2250,7 +2320,23 @@ exports.ActivityType = exports.$Enums.ActivityType = {
   CALL: 'CALL',
   EMAIL: 'EMAIL',
   MEETING: 'MEETING',
-  NOTE: 'NOTE'
+  NOTE: 'NOTE',
+  DEMO: 'DEMO',
+  SITE_VISIT: 'SITE_VISIT',
+  SURVEY: 'SURVEY',
+  TASK: 'TASK'
+};
+
+exports.FollowUpStatus = exports.$Enums.FollowUpStatus = {
+  PENDING: 'PENDING',
+  DONE: 'DONE',
+  SKIPPED: 'SKIPPED'
+};
+
+exports.SurveyFrequency = exports.$Enums.SurveyFrequency = {
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY'
 };
 
 exports.ClientContractType = exports.$Enums.ClientContractType = {
@@ -2270,6 +2356,7 @@ exports.ClientContractStatus = exports.$Enums.ClientContractStatus = {
 
 exports.MilestoneStatus = exports.$Enums.MilestoneStatus = {
   PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
   INVOICED: 'INVOICED',
   PAID: 'PAID'
 };
@@ -2529,6 +2616,13 @@ exports.CalendarEventType = exports.$Enums.CalendarEventType = {
   OTHER: 'OTHER'
 };
 
+exports.SalaryReviewStatus = exports.$Enums.SalaryReviewStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  APPLIED: 'APPLIED'
+};
+
 exports.HrDecisionType = exports.$Enums.HrDecisionType = {
   HIRE: 'HIRE',
   PROBATION_END: 'PROBATION_END',
@@ -2560,6 +2654,11 @@ exports.CarryOverExpiryAction = exports.$Enums.CarryOverExpiryAction = {
   PAY_OUT: 'PAY_OUT'
 };
 
+exports.LeaveAccrualMode = exports.$Enums.LeaveAccrualMode = {
+  ANNUAL_UPFRONT: 'ANNUAL_UPFRONT',
+  MONTHLY_ACCRUAL: 'MONTHLY_ACCRUAL'
+};
+
 exports.HolidayType = exports.$Enums.HolidayType = {
   NATIONAL_HOLIDAY: 'NATIONAL_HOLIDAY',
   COMPANY_HOLIDAY: 'COMPANY_HOLIDAY',
@@ -2589,7 +2688,10 @@ exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   ON_LEAVE: 'ON_LEAVE',
   HOLIDAY: 'HOLIDAY',
   LEAVE: 'LEAVE',
-  OT: 'OT'
+  OT: 'OT',
+  BUSINESS_TRIP: 'BUSINESS_TRIP',
+  ONSITE: 'ONSITE',
+  WFH: 'WFH'
 };
 
 exports.MonthlyAttendanceStatus = exports.$Enums.MonthlyAttendanceStatus = {
@@ -2598,19 +2700,28 @@ exports.MonthlyAttendanceStatus = exports.$Enums.MonthlyAttendanceStatus = {
   APPROVED: 'APPROVED'
 };
 
+exports.ExplanationType = exports.$Enums.ExplanationType = {
+  MISSING_CHECKIN: 'MISSING_CHECKIN',
+  MISSING_CHECKOUT: 'MISSING_CHECKOUT',
+  LATE_ARRIVAL: 'LATE_ARRIVAL',
+  EARLY_DEPARTURE: 'EARLY_DEPARTURE',
+  BUSINESS_TRIP: 'BUSINESS_TRIP',
+  ONSITE: 'ONSITE',
+  WFH: 'WFH'
+};
+
+exports.ExplanationStatus = exports.$Enums.ExplanationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+};
+
 exports.ShiftType = exports.$Enums.ShiftType = {
   HANH_CHINH: 'HANH_CHINH',
   CA_SANG: 'CA_SANG',
   CA_CHIEU: 'CA_CHIEU',
   CA_DEM: 'CA_DEM',
   LINH_HOAT: 'LINH_HOAT'
-};
-
-exports.SalaryReviewStatus = exports.$Enums.SalaryReviewStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED',
-  APPLIED: 'APPLIED'
 };
 
 exports.Prisma.ModelName = {
@@ -2668,6 +2779,8 @@ exports.Prisma.ModelName = {
   Lead: 'Lead',
   Deal: 'Deal',
   CrmActivity: 'CrmActivity',
+  LeadFollowUpSchedule: 'LeadFollowUpSchedule',
+  CustomerSurveySchedule: 'CustomerSurveySchedule',
   ClientContract: 'ClientContract',
   ContractMilestone: 'ContractMilestone',
   Invoice: 'Invoice',
@@ -2731,6 +2844,9 @@ exports.Prisma.ModelName = {
   InvoiceAccountMapping: 'InvoiceAccountMapping',
   ProjectCostSnapshot: 'ProjectCostSnapshot',
   ProjectCostByEmployee: 'ProjectCostByEmployee',
+  ProjectJournal: 'ProjectJournal',
+  SalaryBand: 'SalaryBand',
+  SalaryReviewSuggestion: 'SalaryReviewSuggestion',
   Tenant: 'Tenant',
   JobTitle: 'JobTitle',
   Position: 'Position',
@@ -2745,13 +2861,12 @@ exports.Prisma.ModelName = {
   InsuranceEvent: 'InsuranceEvent',
   AttendanceRecord: 'AttendanceRecord',
   MonthlyAttendance: 'MonthlyAttendance',
+  AttendanceExplanation: 'AttendanceExplanation',
   WorkShift: 'WorkShift',
   ShiftAssignment: 'ShiftAssignment',
   WorkSchedule: 'WorkSchedule',
   WorkSchedulePhase: 'WorkSchedulePhase',
-  WorkScheduleEnrollment: 'WorkScheduleEnrollment',
-  SalaryBand: 'SalaryBand',
-  SalaryReviewSuggestion: 'SalaryReviewSuggestion'
+  WorkScheduleEnrollment: 'WorkScheduleEnrollment'
 };
 
 /**
