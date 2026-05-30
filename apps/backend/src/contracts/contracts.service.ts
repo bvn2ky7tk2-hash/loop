@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Inject, Logger } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Scope } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -56,6 +56,8 @@ function addMonths(date: Date, months: number): Date {
 
 @Injectable({ scope: Scope.REQUEST })
 export class ContractsService extends TenantAwareService {
+  private readonly logger = new Logger(ContractsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     @Inject(REQUEST) req: any,
@@ -269,5 +271,105 @@ export class ContractsService extends TenantAwareService {
     const contract = await this.prisma.contract.findUnique({ where: { id } });
     if (!contract) throw new NotFoundException(`Hợp đồng ${id} không tìm thấy`);
     return this.prisma.contract.update({ where: { id }, data: { deletedAt: null } });
+  }
+
+  /**
+   * E18.1 — Được gọi bởi cron job hằng ngày lúc 8h.
+   * 1. Gửi notification cảnh báo sắp hết hạn cho các ngưỡng [60, 30, 15, 7, 3] ngày.
+   * 2. Tự động chuyển trạng thái ACTIVE → EXPIRED cho HĐ đã quá hạn.
+   */
+  async checkContractExpiry(): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const THRESHOLDS = [60, 30, 15, 7, 3];
+
+    // Lấy admin users để notify (thay cho HR role chưa có)
+    const adminUsers = await this.prisma.user.findMany({
+      where: { role: 'ADMIN', isActive: true },
+      select: { id: true },
+      take: 50,
+    });
+
+    // 1. Gửi cảnh báo sắp hết hạn
+    for (const days of THRESHOLDS) {
+      const dateFrom = new Date(today);
+      dateFrom.setDate(dateFrom.getDate() + days);
+
+      const dateTo = new Date(dateFrom);
+      dateTo.setDate(dateTo.getDate() + 1);
+
+      const contracts = await this.prisma.contract.findMany({
+        where: {
+          status: 'ACTIVE',
+          deletedAt: null,
+          endDate: { gte: dateFrom, lt: dateTo },
+        },
+        include: {
+          employee: { select: { id: true, fullName: true, userId: true } },
+        },
+        take: 200,
+      });
+
+      for (const contract of contracts) {
+        const title = `Hợp đồng sắp hết hạn — còn ${days} ngày`;
+        const body = `Hợp đồng của ${contract.employee.fullName} sẽ hết hạn vào ${contract.endDate?.toLocaleDateString('vi-VN')}.`;
+        const link = `/hr/contracts/${contract.id}`;
+
+        // Notify employee
+        if (contract.employee.userId) {
+          await this.prisma.notification.create({
+            data: {
+              userId: contract.employee.userId,
+              type: 'CONTRACT_EXPIRING' as any,
+              title,
+              body,
+              link,
+              entityType: 'Contract',
+              entityId: contract.id,
+            },
+          });
+        }
+
+        // Notify admin/HR users
+        for (const admin of adminUsers) {
+          await this.prisma.notification.create({
+            data: {
+              userId: admin.id,
+              type: 'CONTRACT_EXPIRING' as any,
+              title,
+              body,
+              link,
+              entityType: 'Contract',
+              entityId: contract.id,
+            },
+          });
+        }
+      }
+
+      if (contracts.length > 0) {
+        this.logger.log(`[ContractExpiry] Đã gửi cảnh báo ${contracts.length} HĐ sắp hết hạn (${days} ngày)`);
+      }
+    }
+
+    // 2. Tự động expire HĐ đã quá ngày kết thúc
+    const expiredContracts = await this.prisma.contract.findMany({
+      where: {
+        status: 'ACTIVE',
+        deletedAt: null,
+        autoExpireHandled: false,
+        endDate: { lt: today },
+      },
+      select: { id: true },
+      take: 500,
+    });
+
+    if (expiredContracts.length > 0) {
+      await this.prisma.contract.updateMany({
+        where: { id: { in: expiredContracts.map(c => c.id) } },
+        data: { status: 'EXPIRED', autoExpireHandled: true },
+      });
+      this.logger.log(`[ContractExpiry] Đã chuyển ${expiredContracts.length} HĐ sang EXPIRED`);
+    }
   }
 }

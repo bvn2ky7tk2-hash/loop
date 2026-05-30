@@ -58,6 +58,7 @@ import {
   CarOutlined,
   BuildOutlined,
   FieldTimeOutlined,
+  DotChartOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -247,10 +248,11 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-finance-ops', label: 'Tài chính vận hành', visible: true,
         items: [
-          { key: '/cost',     label: 'Chi phí dự án',      visible: true },
-          { key: '/budget',   label: 'Ngân sách',          visible: true },
-          { key: '/expenses', label: 'Đề nghị thanh toán', visible: true },
-          { key: '/invoices', label: 'Hóa đơn',            visible: true },
+          { key: '/cost',           label: 'Chi phí dự án',      visible: true },
+          { key: '/budget',         label: 'Ngân sách dự án',    visible: true },
+          { key: '/finance/budget', label: 'Kế hoạch ngân sách', visible: true },
+          { key: '/expenses',       label: 'Đề nghị thanh toán', visible: true },
+          { key: '/invoices',       label: 'Hóa đơn',            visible: true },
         ],
       },
       {
@@ -449,6 +451,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/leaves':                <CalendarOutlined />,
   '/expenses':              <WalletOutlined />,
   '/budget':                <PieChartOutlined />,
+  '/finance/budget':        <DotChartOutlined />,
   '/org-chart':             <ApartmentOutlined />,
   '/contracts':             <AuditOutlined />,
   '/payroll':               <CreditCardOutlined />,

@@ -87,6 +87,7 @@ model OrgUnit {
   assets             Asset[]
   tenantId           String?             @map("tenant_id")
   tenant             Tenant?             @relation("TenantOrgUnits", fields: [tenantId], references: [id])
+  budgetPlans        BudgetPlan[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -164,6 +165,8 @@ model Employee {
   shiftAssignments     ShiftAssignment[]
   workScheduleEnrollments  WorkScheduleEnrollment[]
   submittedExpenses        Expense[]               @relation("ExpenseEmployee")
+  performanceBonuses       PerformanceBonus[]
+  approvedBonuses          PerformanceBonus[]      @relation("BonusApprover")
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -262,6 +265,7 @@ model Project {
   tenantId         String?           @map("tenant_id")
   tenant           Tenant?           @relation("TenantProjects", fields: [tenantId], references: [id])
   deletedAt        DateTime?         @map("deleted_at")
+  budgetPlans      BudgetPlan[]      @relation("BudgetPlanProject")
 
   @@unique([tenantId, code])
   @@index([customerId])
@@ -544,11 +548,9 @@ model ProcessUserTask {
   completedAt    DateTime?       @map("completed_at")
   assignee       User?           @relation("ProcessTaskAssignee", fields: [assigneeId], references: [id])
   instance       ProcessInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
-  tenantId       String?         @map("tenant_id")
 
   @@index([instanceId])
   @@index([assigneeId, status])
-  @@index([tenantId])
   @@map("process_user_tasks")
 }
 
@@ -852,6 +854,10 @@ enum NotificationType {
   LEAVE_REJECTED
   EXPENSE_APPROVED
   EXPENSE_REJECTED
+  CONTRACT_EXPIRING
+  CONTRACT_EXPIRED
+  BONUS_PENDING
+  BONUS_APPROVED
 }
 
 enum DefinitionStatus {
@@ -991,6 +997,7 @@ model Contract {
   // Gia hạn HĐ
   renewalCount        Int            @default(0) @map("renewal_count")
   previousContractId  String?        @map("previous_contract_id")
+  autoExpireHandled   Boolean        @default(false) @map("auto_expire_handled")
   createdAt           DateTime       @default(now()) @map("created_at")
   updatedAt           DateTime       @updatedAt @map("updated_at")
   employee            Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
@@ -1056,6 +1063,8 @@ model LeaveType {
   color                String         @default("#2563EB")
   isActive             Boolean        @default(true) @map("is_active")
   processDefinitionKey String?        @map("process_definition_key")
+  annualDays           Int            @default(0) @map("annual_days")
+  maxCarryOver         Int            @default(0) @map("max_carry_over")
   createdAt            DateTime       @default(now()) @map("created_at")
   requests             LeaveRequest[]
   balances             LeaveBalance[]
@@ -1130,6 +1139,12 @@ enum OtStatus {
   @@map("ot_status")
 }
 
+enum OtDayType {
+  WEEKDAY
+  WEEKEND
+  HOLIDAY
+}
+
 model OvertimeRequest {
   id                String    @id @default(uuid())
   employeeId        String    @map("employee_id")
@@ -1137,6 +1152,7 @@ model OvertimeRequest {
   fromTime          String?   @map("from_time")
   toTime            String?   @map("to_time")
   hours             Decimal   @db.Decimal(4, 1)
+  dayType           OtDayType @default(WEEKDAY) @map("day_type")
   reason            String?
   status            OtStatus  @default(PENDING)
   approvedById      String?   @map("approved_by_id")
@@ -1918,6 +1934,7 @@ model PerformanceReview {
   approvedAt        DateTime?    @map("approved_at")
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @updatedAt      @map("updated_at")
+  bonuses           PerformanceBonus[]
 
   @@unique([employeeId, period])
   @@index([reviewerId])
@@ -2768,6 +2785,148 @@ model VehicleRequest {
   @@map("vehicle_requests")
 }
 
+// ─── Epic E17: Budget Management ─────────────────────────────────────────────
+
+model BudgetPlan {
+  id             String           @id @default(uuid())
+  name           String
+  fiscalYear     Int              @map("fiscal_year")
+  type           BudgetPlanType   @default(DEPARTMENT)
+  status         BudgetPlanStatus @default(DRAFT)
+  orgUnitId      String?          @map("org_unit_id")
+  projectId      String?          @map("project_id")
+  totalAmount    Decimal          @map("total_amount") @db.Decimal(15, 2)
+  note           String?
+  createdById    String?          @map("created_by_id")
+  approvedById   String?          @map("approved_by_id")
+  approvedAt     DateTime?        @map("approved_at")
+  rejectedReason String?          @map("rejected_reason")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  lines          BudgetLine[]
+  orgUnit        OrgUnit?         @relation(fields: [orgUnitId], references: [id], onDelete: SetNull)
+  project        Project?         @relation("BudgetPlanProject", fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([fiscalYear])
+  @@index([orgUnitId])
+  @@index([status])
+  @@map("budget_plans")
+}
+
+model BudgetLine {
+  id              String              @id @default(uuid())
+  planId          String              @map("plan_id")
+  category        String
+  description     String?
+  allocatedAmount Decimal             @map("allocated_amount") @db.Decimal(15, 2)
+  usedAmount      Decimal             @default(0) @map("used_amount") @db.Decimal(15, 2)
+  committedAmount Decimal             @default(0) @map("committed_amount") @db.Decimal(15, 2)
+  alertThreshold  Int                 @default(80) @map("alert_threshold")
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+  plan            BudgetPlan          @relation(fields: [planId], references: [id], onDelete: Cascade)
+  transactions    BudgetTransaction[]
+
+  @@index([planId])
+  @@index([category])
+  @@map("budget_lines")
+}
+
+model BudgetTransaction {
+  id         String                @id @default(uuid())
+  lineId     String                @map("line_id")
+  sourceType String                @map("source_type")
+  sourceId   String                @map("source_id")
+  amount     Decimal               @db.Decimal(15, 2)
+  type       BudgetTransactionType @default(ACTUAL)
+  note       String?
+  createdAt  DateTime              @default(now()) @map("created_at")
+  line       BudgetLine            @relation(fields: [lineId], references: [id], onDelete: Cascade)
+
+  @@index([lineId])
+  @@index([sourceType, sourceId])
+  @@map("budget_transactions")
+}
+
+enum BudgetPlanType {
+  DEPARTMENT
+  PROJECT
+  COMPANY
+
+  @@map("budget_plan_type")
+}
+
+enum BudgetPlanStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  REJECTED
+  CLOSED
+
+  @@map("budget_plan_status")
+}
+
+enum BudgetTransactionType {
+  ACTUAL
+  COMMITTED
+
+  @@map("budget_transaction_type")
+}
+
+// ─── E19.1 — Performance Bonus ────────────────────────────────────────────────
+
+/// Cấu hình thưởng theo dải điểm đánh giá
+model PerformanceBonusConfig {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  label       String   @db.VarChar(100)
+  scoreMin    Decimal  @map("score_min") @db.Decimal(4, 1)
+  scoreMax    Decimal  @map("score_max") @db.Decimal(4, 1)
+  /// Hệ số nhân với lương cơ bản
+  coefficient Decimal  @db.Decimal(5, 2)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@map("performance_bonus_configs")
+}
+
+enum BonusStatus {
+  DRAFT
+  APPROVED
+  PAID
+
+  @@map("bonus_status")
+}
+
+/// Bản ghi thưởng hiệu suất cho từng kỳ đánh giá
+model PerformanceBonus {
+  id           String      @id @default(uuid())
+  tenantId     String?     @map("tenant_id")
+  employeeId   String      @map("employee_id")
+  reviewId     String      @map("review_id")
+  score        Decimal     @db.Decimal(3, 1)
+  baseSalary   Decimal     @map("base_salary") @db.Decimal(15, 2)
+  coefficient  Decimal     @db.Decimal(5, 2)
+  bonusAmount  Decimal     @map("bonus_amount") @db.Decimal(15, 2)
+  status       BonusStatus @default(DRAFT)
+  note         String?
+  approvedById String?     @map("approved_by_id")
+  approvedAt   DateTime?   @map("approved_at")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  employee   Employee          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  review     PerformanceReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  approvedBy Employee?         @relation("BonusApprover", fields: [approvedById], references: [id])
+
+  @@unique([reviewId, employeeId])
+  @@index([employeeId])
+  @@index([tenantId])
+  @@map("performance_bonuses")
+}
+
 // ─── Company Calendar ──────────────────────────────────────────────────────────
 
 enum CalendarEventType {
@@ -2835,10 +2994,17 @@ model Tenant {
   allocations   Allocation[]      @relation("TenantAllocations")
   processInstances    ProcessInstance[]   @relation("TenantProcessInstances")
   processDefinitions  ProcessDefinition[] @relation("TenantProcessDefinitions")
-  processUserTasks    ProcessUserTask[]   @relation("TenantProcessUserTasks")
   payrollPeriods      PayrollPeriod[]     @relation("TenantPayrollPeriods")
   payrollRecords      PayrollRecord[]     @relation("TenantPayrollRecords")
   crmActivities       CrmActivity[]       @relation("TenantCrmActivities")
+  clientContracts     ClientContract[]    @relation("TenantClientContracts")
+  jobOpenings         JobOpening[]        @relation("TenantJobOpenings")
+  candidates          Candidate[]         @relation("TenantCandidates")
+  interviews          Interview[]         @relation("TenantInterviews")
+  customerPortals     CustomerPortal[]    @relation("TenantCustomerPortals")
+  vendors             Vendor[]            @relation("TenantVendors")
+  purchaseOrders      PurchaseOrder[]     @relation("TenantPurchaseOrders")
+  comments            Comment[]           @relation("TenantComments")
 
   @@map("tenants")
 }

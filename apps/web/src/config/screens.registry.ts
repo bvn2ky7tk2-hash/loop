@@ -80,14 +80,15 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/recruit/jobs',          module: 'people', label: 'Vị trí tuyển dụng',        icon: 'SolutionOutlined',     permCode: 'recruit_jobs:read',          sortOrder: 21 },
 
   // ─── Finance — Tài chính ───────────────────────────────────────────────────
-  { route: '/projects',                      module: 'finance', label: 'Tất cả dự án',        icon: 'ProjectOutlined',    permCode: 'projects:read',           sortOrder: 1 },
-  { route: '/cost',                          module: 'finance', label: 'Chi phí dự án',        icon: 'DollarOutlined',     permCode: 'project_cost:read',       sortOrder: 2 },
-  { route: '/budget',                        module: 'finance', label: 'Ngân sách',             icon: 'PieChartOutlined',   permCode: 'budget:read',             sortOrder: 3 },
-  { route: '/expenses',                      module: 'finance', label: 'Đề nghị thanh toán',   icon: 'WalletOutlined',     permCode: 'expenses:read',           sortOrder: 4 },
-  { route: '/invoices',                      module: 'finance', label: 'Hoá đơn',               icon: 'FileTextOutlined',   permCode: 'invoices:read',           sortOrder: 5 },
-  { route: '/accounting/accounts',           module: 'finance', label: 'Hệ thống tài khoản',   icon: 'BankOutlined',       permCode: 'accounts:read',           sortOrder: 6 },
-  { route: '/accounting/journal',            module: 'finance', label: 'Nhật ký kế toán',       icon: 'BookOutlined',       permCode: 'journal:read',            sortOrder: 7 },
-  { route: '/accounting/financial-reports',  module: 'finance', label: 'Báo cáo tài chính',    icon: 'FundOutlined',       permCode: 'financial_reports:read',  sortOrder: 8 },
+  { route: '/projects',                      module: 'finance', label: 'Tất cả dự án',          icon: 'ProjectOutlined',    permCode: 'projects:read',           sortOrder: 1 },
+  { route: '/cost',                          module: 'finance', label: 'Chi phí dự án',          icon: 'DollarOutlined',     permCode: 'project_cost:read',       sortOrder: 2 },
+  { route: '/budget',                        module: 'finance', label: 'Ngân sách dự án',        icon: 'PieChartOutlined',   permCode: 'budget:read',             sortOrder: 3 },
+  { route: '/finance/budget',                module: 'finance', label: 'Kế hoạch ngân sách',     icon: 'DotChartOutlined',   permCode: 'budget:read',             sortOrder: 4 },
+  { route: '/expenses',                      module: 'finance', label: 'Đề nghị thanh toán',     icon: 'WalletOutlined',     permCode: 'expenses:read',           sortOrder: 5 },
+  { route: '/invoices',                      module: 'finance', label: 'Hoá đơn',                 icon: 'FileTextOutlined',   permCode: 'invoices:read',           sortOrder: 6 },
+  { route: '/accounting/accounts',           module: 'finance', label: 'Hệ thống tài khoản',     icon: 'BankOutlined',       permCode: 'accounts:read',           sortOrder: 7 },
+  { route: '/accounting/journal',            module: 'finance', label: 'Nhật ký kế toán',         icon: 'BookOutlined',       permCode: 'journal:read',            sortOrder: 8 },
+  { route: '/accounting/financial-reports',  module: 'finance', label: 'Báo cáo tài chính',      icon: 'FundOutlined',       permCode: 'financial_reports:read',  sortOrder: 9 },
 
   // ─── CRM ───────────────────────────────────────────────────────────────────
   { route: '/crm/leads',            module: 'crm', label: 'Khách hàng tiềm năng', icon: 'FunnelPlotOutlined', permCode: 'crm_leads:read',     sortOrder: 1 },

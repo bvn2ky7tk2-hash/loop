@@ -52,7 +52,11 @@
     "seed:permissions": "node prisma/seed-permissions.js",
     "seed:processes": "node prisma/seed-processes.js",
     "seed:skill-matrix": "node prisma/seed-skill-matrix.js",
-    "seed:tenant-migrate": "node prisma/seed-tenant-migrate.js"
+    "seed:tenant-migrate": "node prisma/seed-tenant-migrate.js",
+    "seed:bpm-v5": "ts-node -r tsconfig-paths/register prisma/seed-bpm-v5.ts",
+    "seed:payroll-ot-leave": "ts-node -r tsconfig-paths/register prisma/seed-payroll-ot-leave.ts",
+    "seed:budget": "npx tsx prisma/seed-budget.ts",
+    "seed:contract-lifecycle": "npx tsx prisma/seed-contract-lifecycle.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

@@ -34,6 +34,7 @@ const ContractsPage = lazy(() => import('./pages/contracts/ContractsPage'));
 const LeavePage = lazy(() => import('./pages/leaves/LeavePage'));
 const ExpensePage = lazy(() => import('./pages/expenses/ExpensePage'));
 const BudgetPage = lazy(() => import('./pages/budget/BudgetPage'));
+const FinanceBudgetPage = lazy(() => import('./pages/finance/BudgetPage'));
 const PayrollPage = lazy(() => import('./pages/payroll/PayrollPage'));
 const PayrollSettingsPage = lazy(() => import('./pages/payroll/PayrollSettingsPage'));
 const MyPayslipsPage = lazy(() => import('./pages/payroll/MyPayslipsPage'));
@@ -157,6 +158,7 @@ export const router = createBrowserRouter([
       { path: 'my-overtime',     element: wrap(MyOvertimePage) },
       { path: 'expenses',        element: wrap(ExpensePage) },
       { path: 'budget',          element: wrap(BudgetPage) },
+      { path: 'finance/budget',  element: wrap(FinanceBudgetPage) },
       { path: 'payroll',          element: wrap(PayrollPage) },
       { path: 'payroll/settings',   element: wrap(PayrollSettingsPage) },
       { path: 'payroll/my-payslips', element: wrap(MyPayslipsPage) },

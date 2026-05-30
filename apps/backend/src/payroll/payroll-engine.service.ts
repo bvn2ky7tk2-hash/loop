@@ -9,6 +9,14 @@ import {
   SalaryColumnType,
 } from '../generated/prisma';
 
+// E16 — OtDayType dùng cho tính OT từ nguồn thật
+const OtDayTypeValues = {
+  WEEKDAY: 'WEEKDAY',
+  WEEKEND: 'WEEKEND',
+  HOLIDAY: 'HOLIDAY',
+} as const;
+type OtDayType = (typeof OtDayTypeValues)[keyof typeof OtDayTypeValues];
+
 interface BracketItem {
   from: number;
   to: number | null;
@@ -86,6 +94,16 @@ export class PayrollEngineService {
         include: { employeeAllowances: true },
       });
 
+      // E16.1 — Tổng hợp giờ OT từ OvertimeRequest APPROVED (nguồn thật)
+      const otBreakdown = await this.computeOtFromRequests(emp.id, period.startDate, period.endDate);
+
+      // E16.2 — Tính ngày nghỉ không lương từ LeaveRequest APPROVED
+      const unpaidLeaveFromRequests = await this.computeUnpaidLeaveFromRequests(
+        emp.id,
+        period.startDate,
+        period.endDate,
+      );
+
       const recordData = this.computeRecord({
         contract,
         timesheet,
@@ -97,6 +115,8 @@ export class PayrollEngineService {
         salaryColumns,
         period,
         configSnapshot,
+        otBreakdown,
+        unpaidLeaveFromRequests,
       });
 
       await this.prisma.payrollRecord.upsert({
@@ -159,10 +179,14 @@ export class PayrollEngineService {
     salaryColumns: any[];
     period: any;
     configSnapshot: any;
+    // E16 — nguồn thật từ OvertimeRequest và LeaveRequest
+    otBreakdown?: { weekdayHours: number; weekendHours: number; holidayHours: number };
+    unpaidLeaveFromRequests?: number;
   }) {
     const {
       contract, timesheet, taxProfile, existingAllowances,
       insuranceConfig, taxBracket, taxDeduction, salaryColumns, period, configSnapshot,
+      otBreakdown, unpaidLeaveFromRequests,
     } = ctx;
 
     const contractType: ContractType = contract.type;
@@ -172,11 +196,20 @@ export class PayrollEngineService {
 
     const workDays = timesheet ? Number(timesheet.workingDays) : 0;
     const standardDays = timesheet ? Math.max(Number(timesheet.standardDays), 1) : 26;
-    const otWeekdayHours = timesheet ? Number(timesheet.otWeekdayHours) : 0;
-    const otWeekendHours = timesheet ? Number(timesheet.otWeekendHours) : 0;
-    const otHolidayHours = timesheet ? Number(timesheet.otHolidayHours) : 0;
+
+    // E16.1 — Ưu tiên giờ OT từ OvertimeRequest APPROVED; fallback sang timesheet nếu chưa có request
+    const otWeekdayHours = otBreakdown ? otBreakdown.weekdayHours
+      : (timesheet ? Number(timesheet.otWeekdayHours) : 0);
+    const otWeekendHours = otBreakdown ? otBreakdown.weekendHours
+      : (timesheet ? Number(timesheet.otWeekendHours) : 0);
+    const otHolidayHours = otBreakdown ? otBreakdown.holidayHours
+      : (timesheet ? Number(timesheet.otHolidayHours) : 0);
     const totalOtHours = otWeekdayHours + otWeekendHours + otHolidayHours;
-    const unpaidLeaveDays = timesheet ? Number(timesheet.unpaidLeaveDays) : 0;
+
+    // E16.2 — Ưu tiên ngày nghỉ không lương từ LeaveRequest; fallback sang timesheet
+    const unpaidLeaveDays = unpaidLeaveFromRequests !== undefined
+      ? unpaidLeaveFromRequests
+      : (timesheet ? Number(timesheet.unpaidLeaveDays) : 0);
     const leaveDays = timesheet ? Number(timesheet.leaveDays) : 0;
     const paidLeaveDays = Math.max(leaveDays - unpaidLeaveDays, 0);
 
@@ -312,7 +345,14 @@ export class PayrollEngineService {
       }
     }
 
-    const netSalary = Math.max(grossSalary - totalInsuranceEmployee - pitAmount, 0);
+    // E16.2 — Khấu trừ ngày nghỉ không lương từ LeaveRequest: unpaidLeaveDays * (monthlySalary / 26)
+    // Chỉ áp dụng khi nguồn từ LeaveRequest (unpaidLeaveFromRequests > 0); timesheet đã tính riêng
+    const unpaidLeaveDeduction = unpaidLeaveFromRequests !== undefined && unpaidLeaveFromRequests > 0
+      ? Math.round(unpaidLeaveFromRequests * (contractSalary / 26))
+      : 0;
+
+    const totalDeductions = grossDeductions + unpaidLeaveDeduction;
+    const netSalary = Math.max(grossSalary - unpaidLeaveDeduction - totalInsuranceEmployee - pitAmount, 0);
     const totalLaborCost =
       grossSalary + bhxhEmployer + bhytEmployer + bhtnEmployer + tnldEmployer;
 
@@ -326,12 +366,14 @@ export class PayrollEngineService {
         weekdayHours: otWeekdayHours,
         weekendHours: otWeekendHours,
         holidayHours: otHolidayHours,
+        // E16 metadata — lưu nguồn dữ liệu để audit
+        source: otBreakdown ? 'overtime_request' : 'timesheet',
       },
       baseSalary: Math.round(baseSalary),
       grossSalary: Math.round(grossSalary),
       overtimePay: Math.round(overtimePay),
       allowances: Math.round(allowancesTotal),
-      deductions: Math.round(grossDeductions),
+      deductions: Math.round(totalDeductions),
       bonus: 0,
       bhxhEmployee,
       bhytEmployee,
@@ -349,6 +391,175 @@ export class PayrollEngineService {
       totalLaborCost: Math.round(totalLaborCost),
       configSnapshot: { ...configSnapshot, columnBreakdown },
     };
+  }
+
+  // ─── E16.1 — Tổng hợp giờ OT theo loại ngày từ OvertimeRequest APPROVED ──────
+
+  private async computeOtFromRequests(
+    employeeId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<{ weekdayHours: number; weekendHours: number; holidayHours: number }> {
+    // Dùng raw query để tránh phụ thuộc generated type chưa cập nhật dayType
+    const rows = await this.prisma.$queryRaw<
+      { day_type: OtDayType; total_hours: string }[]
+    >`
+      SELECT day_type, SUM(hours) AS total_hours
+      FROM overtime_requests
+      WHERE employee_id = ${employeeId}
+        AND status = 'APPROVED'
+        AND date >= ${startDate}
+        AND date <= ${endDate}
+      GROUP BY day_type
+    `;
+
+    let weekdayHours = 0;
+    let weekendHours = 0;
+    let holidayHours = 0;
+
+    for (const row of rows) {
+      const h = Number(row.total_hours);
+      if (row.day_type === OtDayTypeValues.WEEKDAY) weekdayHours = h;
+      else if (row.day_type === OtDayTypeValues.WEEKEND) weekendHours = h;
+      else if (row.day_type === OtDayTypeValues.HOLIDAY) holidayHours = h;
+    }
+
+    return { weekdayHours, weekendHours, holidayHours };
+  }
+
+  // ─── E16.2 — Tính ngày nghỉ không lương từ LeaveRequest APPROVED ─────────────
+
+  private async computeUnpaidLeaveFromRequests(
+    employeeId: string,
+    periodStart: Date,
+    periodEnd: Date,
+  ): Promise<number> {
+    // Query các LeaveRequest APPROVED overlap với kỳ lương, isPaid = false
+    const requests = await this.prisma.leaveRequest.findMany({
+      where: {
+        employeeId,
+        status: 'APPROVED' as any,
+        leaveType: { isPaid: false },
+        // Overlap: request.startDate <= periodEnd AND request.endDate >= periodStart
+        startDate: { lte: periodEnd },
+        endDate: { gte: periodStart },
+      },
+      select: { days: true },
+      take: 200,
+    });
+
+    return requests.reduce((sum, r) => sum + Number(r.days), 0);
+  }
+
+  // ─── E16.3 — Quyết toán nghỉ phép cuối năm ───────────────────────────────────
+
+  async yearEndLeaveSettlement(tenantId?: string): Promise<{ processed: number; payoutTotal: number }> {
+    const currentYear = new Date().getFullYear();
+
+    // Lấy tất cả LeaveBalance active có leaveType.isPaid = true
+    const balances = await this.prisma.leaveBalance.findMany({
+      where: {
+        year: currentYear,
+        ...(tenantId ? { tenantId } : {}),
+        leaveType: { isPaid: true, isActive: true },
+      },
+      include: {
+        leaveType: true,
+        employee: {
+          select: { id: true, tenantId: true },
+        },
+      },
+      take: 5000,
+    });
+
+    let processed = 0;
+    let payoutTotal = 0;
+
+    for (const balance of balances) {
+      const remainingDays = Number(balance.totalDays) - Number(balance.usedDays);
+      if (remainingDays <= 0) continue;
+
+      // maxCarryOver từ LeaveType; fallback 0 nếu chưa có field
+      const maxCarryOver = (balance.leaveType as any).maxCarryOver ?? 0;
+      const carryOverDays = Math.min(remainingDays, maxCarryOver);
+      const payoutDays = remainingDays - carryOverDays;
+
+      if (payoutDays > 0) {
+        // Tìm payroll record gần nhất của employee để gắn bonus
+        const latestRecord = await this.prisma.payrollRecord.findFirst({
+          where: { employeeId: balance.employeeId },
+          orderBy: { period: { endDate: 'desc' } },
+          select: { id: true },
+        });
+
+        if (latestRecord) {
+          // Tìm BonusType LEAVE_PAYOUT hoặc tạo nếu chưa có
+          let bonusType = await this.prisma.bonusType.findFirst({
+            where: { name: 'LEAVE_PAYOUT' },
+          });
+
+          if (!bonusType) {
+            bonusType = await this.prisma.bonusType.create({
+              data: { name: 'LEAVE_PAYOUT', isBhxhExempt: true },
+            });
+          }
+
+          // Tìm hợp đồng active để tính lương ngày
+          const contract = await this.prisma.contract.findFirst({
+            where: {
+              employeeId: balance.employeeId,
+              status: ContractStatus.ACTIVE,
+            },
+            orderBy: { startDate: 'desc' },
+          });
+
+          const dailySalary = contract
+            ? Math.round(Number(contract.salaryMonthly) / 26)
+            : 0;
+          const payoutAmount = payoutDays * dailySalary;
+
+          if (payoutAmount > 0) {
+            // Upsert EmployeeBonus — tránh duplicate nếu chạy lại
+            await this.prisma.employeeBonus.upsert({
+              where: {
+                payrollRecordId_bonusTypeId: {
+                  payrollRecordId: latestRecord.id,
+                  bonusTypeId: bonusType.id,
+                },
+              },
+              create: {
+                payrollRecordId: latestRecord.id,
+                bonusTypeId: bonusType.id,
+                amount: payoutAmount,
+                note: `Quyết toán phép năm ${currentYear}: ${payoutDays} ngày x ${dailySalary.toLocaleString('vi-VN')}đ`,
+              },
+              update: {
+                amount: payoutAmount,
+                note: `Quyết toán phép năm ${currentYear}: ${payoutDays} ngày x ${dailySalary.toLocaleString('vi-VN')}đ`,
+              },
+            });
+            payoutTotal += payoutAmount;
+          }
+        }
+      }
+
+      // Reset LeaveBalance: carryOverDays + annualDays từ LeaveType cho năm mới
+      const annualDays = (balance.leaveType as any).annualDays ?? 0;
+      const newBalance = carryOverDays + annualDays;
+
+      await this.prisma.leaveBalance.update({
+        where: { id: balance.id },
+        data: {
+          year: currentYear + 1,
+          totalDays: newBalance,
+          usedDays: 0,
+        },
+      });
+
+      processed++;
+    }
+
+    return { processed, payoutTotal };
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────────────────

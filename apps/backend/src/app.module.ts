@@ -69,6 +69,8 @@ import { HrAttendanceModule } from './hr-attendance/hr-attendance.module';
 import { HrHolidaysModule } from './hr-holidays/hr-holidays.module';
 import { OvertimeModule } from './overtime/overtime.module';
 import { WorkShiftsModule } from './work-shifts/work-shifts.module';
+import { EventsModule } from './common/events/events.module';
+import { BudgetModule } from './budget/budget.module';
 
 @Module({
   providers: [
@@ -161,6 +163,9 @@ import { WorkShiftsModule } from './work-shifts/work-shifts.module';
     HrHolidaysModule,
     OvertimeModule,
     WorkShiftsModule,
+    EventsModule,
+    // Epic E17: Budget Management
+    BudgetModule,
   ],
 })
 export class AppModule {}

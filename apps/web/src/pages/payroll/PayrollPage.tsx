@@ -12,7 +12,7 @@ import {
   PlusOutlined, ThunderboltOutlined, CheckOutlined, DollarOutlined,
   EditOutlined, TeamOutlined, CalendarOutlined, EyeOutlined,
   ReloadOutlined, FileDoneOutlined, SettingOutlined, FilePdfOutlined,
-  FileExcelOutlined,
+  FileExcelOutlined, FieldTimeOutlined, MinusCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -536,7 +536,21 @@ export default function PayrollPage() {
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const [exportingTax, setExportingTax] = useState(false);
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+
+  // Mock data OT/Leave summary — API chưa sẵn sàng
+  const [otSummary] = useState({
+    totalHours: 124,
+    otPay: 18600000,
+    paidLeaveDays: 45,
+    unpaidLeaveDays: 8,
+    weeklyBreakdown: [
+      { week: 'Tuần 1', weekday: 12, weekend: 4, holiday: 0 },
+      { week: 'Tuần 2', weekday: 16, weekend: 8, holiday: 0 },
+      { week: 'Tuần 3', weekday: 8, weekend: 0, holiday: 16 },
+      { week: 'Tuần 4', weekday: 20, weekend: 8, holiday: 0 },
+    ],
+  });
 
   const handleExportTax = async () => {
     setExportingTax(true);
@@ -654,6 +668,122 @@ export default function PayrollPage() {
         <Col xs={12} sm={6}><StatCard label="Đã duyệt" value={totalApproved} color="#6366F1" icon={<CheckOutlined />} /></Col>
         <Col xs={12} sm={6}><StatCard label="Đã trả lương" value={totalPaid} color="#10B981" icon={<DollarOutlined />} /></Col>
       </Row>
+
+      {/* ── E16.4 — OT/Leave Summary ───────────────────────────────────────── */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}>
+          <StatCard
+            label="Tổng giờ OT"
+            value={`${otSummary.totalHours}h`}
+            color="#F97316"
+            icon={<FieldTimeOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <StatCard
+            label="Chi phí OT"
+            value={formatCurrency(otSummary.otPay)}
+            color="#EF4444"
+            icon={<DollarOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <StatCard
+            label="Ngày nghỉ có lương"
+            value={`${otSummary.paidLeaveDays} ngày`}
+            color="#10B981"
+            icon={<CalendarOutlined />}
+          />
+        </Col>
+        <Col xs={12} sm={6}>
+          <StatCard
+            label="Ngày nghỉ không lương"
+            value={`${otSummary.unpaidLeaveDays} ngày`}
+            color="#6366F1"
+            icon={<MinusCircleOutlined />}
+          />
+        </Col>
+      </Row>
+
+      {/* Bảng breakdown OT theo loại */}
+      <div style={{
+        background: bgCard,
+        border: `1px solid ${borderColor}`,
+        borderRadius: 8,
+        marginBottom: 20,
+        overflow: 'hidden',
+      }}>
+        <div style={{ padding: '12px 16px', borderBottom: `1px solid ${borderColor}` }}>
+          <Typography.Text style={{ color: textPrimary, fontWeight: 600, fontSize: 14 }}>
+            <FieldTimeOutlined style={{ marginRight: 8, color: '#F97316' }} />
+            Breakdown OT theo loại
+          </Typography.Text>
+        </div>
+        <Table<{ key: string; type: string; hours: number; rate: number; amount: number }>
+          rowKey="key"
+          size="small"
+          pagination={false}
+          dataSource={[
+            {
+              key: 'weekday',
+              type: 'Ngày thường',
+              hours: otSummary.weeklyBreakdown.reduce((s, w) => s + w.weekday, 0),
+              rate: 1.5,
+              amount: otSummary.weeklyBreakdown.reduce((s, w) => s + w.weekday, 0) * 100000 * 1.5,
+            },
+            {
+              key: 'weekend',
+              type: 'T7–CN',
+              hours: otSummary.weeklyBreakdown.reduce((s, w) => s + w.weekend, 0),
+              rate: 2.0,
+              amount: otSummary.weeklyBreakdown.reduce((s, w) => s + w.weekend, 0) * 100000 * 2.0,
+            },
+            {
+              key: 'holiday',
+              type: 'Ngày lễ',
+              hours: otSummary.weeklyBreakdown.reduce((s, w) => s + w.holiday, 0),
+              rate: 3.0,
+              amount: otSummary.weeklyBreakdown.reduce((s, w) => s + w.holiday, 0) * 100000 * 3.0,
+            },
+          ]}
+          columns={[
+            {
+              title: 'Loại',
+              dataIndex: 'type',
+              render: (v: string) => <Typography.Text style={{ color: textPrimary }}>{v}</Typography.Text>,
+            },
+            {
+              title: 'Số giờ',
+              dataIndex: 'hours',
+              width: 110,
+              align: 'right',
+              render: (v: number) => (
+                <Typography.Text style={{ color: textPrimary }}>{v}h</Typography.Text>
+              ),
+            },
+            {
+              title: 'Hệ số',
+              dataIndex: 'rate',
+              width: 100,
+              align: 'center',
+              render: (v: number) => (
+                <Typography.Text style={{ color: v >= 3 ? '#EF4444' : v >= 2 ? '#F59E0B' : '#10B981', fontWeight: 600 }}>
+                  x{v.toFixed(1)}
+                </Typography.Text>
+              ),
+            },
+            {
+              title: 'Thành tiền',
+              dataIndex: 'amount',
+              width: 160,
+              align: 'right',
+              render: (v: number) => (
+                <Typography.Text style={{ color: linkColor, fontWeight: 600 }}>{formatCurrency(v)}</Typography.Text>
+              ),
+            },
+          ]}
+        />
+      </div>
 
       <Table
         loading={isLoading}
