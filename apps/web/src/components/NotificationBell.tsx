@@ -374,7 +374,7 @@ export default function NotificationBell({ unreadCount }: Props) {
           icon={<CheckOutlined />}
           loading={markAllMutation.isPending}
           onClick={() => markAllMutation.mutate()}
-          disabled={unreadCount === 0 || markAllMutation.isPending}
+          disabled={unreadCount === 0}
           style={{ fontSize: 12 }}
         >
           Đánh dấu tất cả đã đọc

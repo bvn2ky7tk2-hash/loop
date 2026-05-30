@@ -342,8 +342,7 @@ export default function ActivitiesPage() {
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
             <Button onClick={closeModal}>Hủy</Button>
             <Button type="primary" htmlType="submit"
-              loading={createMutation.isPending || updateMutation.isPending}
-              disabled={createMutation.isPending || updateMutation.isPending}>
+              loading={createMutation.isPending || updateMutation.isPending}>
               {editing ? 'Lưu thay đổi' : 'Lưu hoạt động'}
             </Button>
           </div>

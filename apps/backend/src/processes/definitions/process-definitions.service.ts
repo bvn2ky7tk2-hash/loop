@@ -44,7 +44,7 @@ export class ProcessDefinitionsService {
   }
 
   async findOne(id: string) {
-    const def = await this.prisma.processDefinition.findUnique({ where: { id } });
+    const def = await this.prisma.processDefinition.findFirst({ where: { id } });
     if (!def) throw new NotFoundException('Không tìm thấy process definition');
     return { data: def };
   }
@@ -68,7 +68,7 @@ export class ProcessDefinitionsService {
   }
 
   async update(id: string, dto: UpdateDefinitionDto) {
-    const existing = await this.prisma.processDefinition.findUnique({ where: { id } });
+    const existing = await this.prisma.processDefinition.findFirst({ where: { id } });
     if (!existing) throw new NotFoundException('Không tìm thấy process definition');
 
     // Nếu definition đang ACTIVE và có thay đổi bpmnXml → tạo version mới, set cũ về DRAFT
@@ -112,7 +112,7 @@ export class ProcessDefinitionsService {
   }
 
   async patchStatus(id: string, status: DefinitionStatus) {
-    const existing = await this.prisma.processDefinition.findUnique({ where: { id } });
+    const existing = await this.prisma.processDefinition.findFirst({ where: { id } });
     if (!existing) throw new NotFoundException('Không tìm thấy process definition');
 
     if (status === DefinitionStatus.ACTIVE) {
@@ -129,7 +129,7 @@ export class ProcessDefinitionsService {
   }
 
   async remove(id: string) {
-    const existing = await this.prisma.processDefinition.findUnique({ where: { id } });
+    const existing = await this.prisma.processDefinition.findFirst({ where: { id } });
     if (!existing) throw new NotFoundException('Không tìm thấy process definition');
     if (existing.status === DefinitionStatus.ACTIVE) {
       throw new BadRequestException('Không thể xoá definition đang kích hoạt');

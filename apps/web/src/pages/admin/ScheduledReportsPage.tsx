@@ -276,7 +276,6 @@ export default function ScheduledReportsPage() {
               size="small"
               icon={<SendOutlined />}
               loading={sendNowMutation.isPending}
-              disabled={sendNowMutation.isPending}
               onClick={() => sendNowMutation.mutate(record.id)}
             />
           </Tooltip>
@@ -390,7 +389,6 @@ export default function ScheduledReportsPage() {
             <Button
               type="primary"
               loading={createMutation.isPending || updateMutation.isPending}
-              disabled={createMutation.isPending || updateMutation.isPending}
               onClick={handleSubmit}
             >
               {editingReport ? 'Lưu thay đổi' : 'Tạo báo cáo'}

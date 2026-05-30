@@ -60,6 +60,8 @@ model User {
   approvedOvertimes    OvertimeRequest[] @relation("OtApprover")
   tenantId             String?           @map("tenant_id")
   tenant               Tenant?           @relation(fields: [tenantId], references: [id])
+  delegatorRules       DelegationRule[]  @relation("DelegatorRules")
+  delegateRules        DelegationRule[]  @relation("DelegateRules")
 
   @@map("users")
 }
@@ -167,6 +169,7 @@ model Employee {
   submittedExpenses        Expense[]               @relation("ExpenseEmployee")
   performanceBonuses       PerformanceBonus[]
   approvedBonuses          PerformanceBonus[]      @relation("BonusApprover")
+  costBreakdowns           ProjectCostByEmployee[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -266,6 +269,7 @@ model Project {
   tenant           Tenant?           @relation("TenantProjects", fields: [tenantId], references: [id])
   deletedAt        DateTime?         @map("deleted_at")
   budgetPlans      BudgetPlan[]      @relation("BudgetPlanProject")
+  costSnapshots    ProjectCostSnapshot[]
 
   @@unique([tenantId, code])
   @@index([customerId])
@@ -1533,6 +1537,8 @@ model ContractMilestone {
   status     MilestoneStatus @default(PENDING)
   paidAt     DateTime?       @map("paid_at") @db.Date
   notes      String?
+  invoiceId  String?         @unique @map("invoice_id")
+  invoice    Invoice?        @relation("MilestoneInvoice", fields: [invoiceId], references: [id], onDelete: SetNull)
   createdAt  DateTime        @default(now()) @map("created_at")
   contract   ClientContract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
 
@@ -1587,7 +1593,9 @@ model Invoice {
   paidAt            DateTime?     @map("paid_at")
   processInstanceId String?       @map("process_instance_id")
   createdById       String        @map("created_by_id")
+  journalEntryId    String?       @unique @map("journal_entry_id")
   items             InvoiceItem[]
+  milestone         ContractMilestone? @relation("MilestoneInvoice")
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt      @map("updated_at")
   tenantId          String?       @map("tenant_id")
@@ -1838,6 +1846,9 @@ model ChartOfAccount {
   parentCode   String?       @map("parent_code") @db.VarChar(20)
   isActive     Boolean       @default(true) @map("is_active")
   journalLines JournalLine[]
+  debitMappings  InvoiceAccountMapping[] @relation("MappingDebit")
+  creditMappings InvoiceAccountMapping[] @relation("MappingCredit")
+  vatMappings    InvoiceAccountMapping[] @relation("MappingVat")
   createdAt    DateTime      @default(now()) @map("created_at")
 
   @@index([type])
@@ -2392,6 +2403,7 @@ model CustomerTicket {
   submittedBy  String?         @db.VarChar(100) @map("submitted_by")
   response     String?         @db.Text
   resolvedAt   DateTime?       @map("resolved_at")
+  issueId      String?         @map("issue_id") @db.VarChar(100)
   createdAt    DateTime        @default(now()) @map("created_at")
   updatedAt    DateTime        @updatedAt @map("updated_at")
 
@@ -2470,12 +2482,14 @@ model PurchaseOrder {
   notes        String?   @db.Text
   deliveryDate DateTime? @map("delivery_date")
   approvedAt   DateTime? @map("approved_at")
-  receivedAt   DateTime? @map("received_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  items        PurchaseOrderItem[]
-  tenantId     String?   @map("tenant_id")
-  tenant       Tenant?   @relation("TenantPurchaseOrders", fields: [tenantId], references: [id])
+  receivedAt     DateTime? @map("received_at")
+  paidAt         DateTime? @map("paid_at")
+  journalEntryId String?   @map("journal_entry_id") @db.VarChar(100)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  items          PurchaseOrderItem[]
+  tenantId       String?   @map("tenant_id")
+  tenant         Tenant?   @relation("TenantPurchaseOrders", fields: [tenantId], references: [id])
 
   @@unique([tenantId, poNumber])
   @@index([vendorId])
@@ -2571,6 +2585,12 @@ model FeedReaction {
 
 // ─── Automation Rules ─────────────────────────────────────────────────────────
 
+enum AutomationRunStatus {
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
 model AutomationRule {
   id          String    @id @default(uuid())
   key         String    @unique @db.VarChar(100)
@@ -2582,8 +2602,29 @@ model AutomationRule {
   runCount    Int       @default(0) @map("run_count")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
+  triggerType String    @default("SCHEDULE") @map("trigger_type")
+  entityType  String?   @map("entity_type")
+  conditions  Json?
+  actions     Json?
+  lastError   String?   @map("last_error")
+  logs        AutomationRuleLog[]
 
   @@map("automation_rules")
+}
+
+model AutomationRuleLog {
+  id          String              @id @default(uuid())
+  ruleId      String              @map("rule_id")
+  triggeredAt DateTime            @default(now()) @map("triggered_at")
+  entityId    String?             @map("entity_id")
+  entityType  String?             @map("entity_type")
+  status      AutomationRunStatus
+  message     String?
+  durationMs  Int?                @map("duration_ms")
+  rule        AutomationRule      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([ruleId])
+  @@map("automation_rule_logs")
 }
 
 // ─── Scheduled Reports ────────────────────────────────────────────────────────
@@ -2959,6 +3000,76 @@ model CalendarEvent {
   @@map("calendar_events")
 }
 
+model DelegationRule {
+  id           String   @id @default(uuid())
+  delegatorId  String   @map("delegator_id")
+  delegateId   String   @map("delegate_id")
+  moduleTypes  String[] @map("module_types")
+  startDate    DateTime @map("start_date") @db.Date
+  endDate      DateTime @map("end_date") @db.Date
+  isActive     Boolean  @default(true) @map("is_active")
+  note         String?
+  tenantId     String?  @map("tenant_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  delegator    User     @relation("DelegatorRules", fields: [delegatorId], references: [id])
+  delegate     User     @relation("DelegateRules", fields: [delegateId], references: [id])
+  tenant       Tenant?  @relation("TenantDelegations", fields: [tenantId], references: [id])
+
+  @@index([delegatorId, isActive])
+  @@index([delegateId, isActive])
+  @@map("delegation_rules")
+}
+
+model InvoiceAccountMapping {
+  id              String  @id @default(uuid())
+  tenantId        String? @map("tenant_id")
+  invoiceType     String  @map("invoice_type")
+  debitAccountId  String  @map("debit_account_id")
+  creditAccountId String  @map("credit_account_id")
+  vatAccountId    String? @map("vat_account_id")
+  debitAccount    ChartOfAccount  @relation("MappingDebit", fields: [debitAccountId], references: [id])
+  creditAccount   ChartOfAccount  @relation("MappingCredit", fields: [creditAccountId], references: [id])
+  vatAccount      ChartOfAccount? @relation("MappingVat", fields: [vatAccountId], references: [id])
+  tenant          Tenant? @relation("TenantInvoiceMappings", fields: [tenantId], references: [id])
+
+  @@unique([tenantId, invoiceType])
+  @@map("invoice_account_mappings")
+}
+
+model ProjectCostSnapshot {
+  id                String   @id @default(uuid())
+  projectId         String   @map("project_id")
+  snapshotDate      DateTime @map("snapshot_date") @db.Date
+  totalLaborCost    Decimal  @default(0) @db.Decimal(18,2) @map("total_labor_cost")
+  totalExpenseCost  Decimal  @default(0) @db.Decimal(18,2) @map("total_expense_cost")
+  totalCost         Decimal  @default(0) @db.Decimal(18,2) @map("total_cost")
+  billableHours     Decimal  @default(0) @db.Decimal(10,2) @map("billable_hours")
+  totalHours        Decimal  @default(0) @db.Decimal(10,2) @map("total_hours")
+  utilizationRate   Decimal  @default(0) @db.Decimal(5,2) @map("utilization_rate")
+  createdAt         DateTime @default(now()) @map("created_at")
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employeeBreakdown ProjectCostByEmployee[]
+
+  @@unique([projectId, snapshotDate])
+  @@index([projectId])
+  @@index([snapshotDate])
+  @@map("project_cost_snapshots")
+}
+
+model ProjectCostByEmployee {
+  id          String               @id @default(uuid())
+  snapshotId  String               @map("snapshot_id")
+  employeeId  String               @map("employee_id")
+  hours       Decimal              @db.Decimal(10,2)
+  ratePerHour Decimal              @db.Decimal(12,2) @map("rate_per_hour")
+  cost        Decimal              @db.Decimal(18,2)
+  snapshot    ProjectCostSnapshot  @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  employee    Employee             @relation(fields: [employeeId], references: [id])
+
+  @@index([snapshotId])
+  @@map("project_cost_by_employees")
+}
+
 model Tenant {
   id            String   @id @default(uuid())
   name          String
@@ -3005,6 +3116,8 @@ model Tenant {
   vendors             Vendor[]            @relation("TenantVendors")
   purchaseOrders      PurchaseOrder[]     @relation("TenantPurchaseOrders")
   comments            Comment[]           @relation("TenantComments")
+  invoiceMappings     InvoiceAccountMapping[] @relation("TenantInvoiceMappings")
+  delegationRules     DelegationRule[]    @relation("TenantDelegations")
 
   @@map("tenants")
 }

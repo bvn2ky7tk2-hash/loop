@@ -10,6 +10,8 @@ import { PayslipGeneratorService } from './payslip-generator.service';
 import { PayslipQueueService } from './payslip-queue.service';
 import { TaxReportService } from './tax-report.service';
 import { TaxReportController } from './tax-report.controller';
+import { PayrollAnalyticsService } from './payroll-analytics.service';
+import { PayrollAnalyticsController } from './payroll-analytics.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AccountingModule } from '../accounting/accounting.module';
 import { StorageModule } from '../storage/storage.module';
@@ -22,6 +24,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     PayrollConfigController,
     PayrollEmployeeController,
     TaxReportController,
+    PayrollAnalyticsController,
   ],
   providers: [
     PayrollService,
@@ -31,6 +34,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     PayslipGeneratorService,
     PayslipQueueService,
     TaxReportService,
+    PayrollAnalyticsService,
   ],
   exports: [
     PayrollService,

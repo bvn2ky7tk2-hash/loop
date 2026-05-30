@@ -120,7 +120,6 @@ export default function AutomationPage() {
             size="small"
             icon={<PlayCircleOutlined />}
             loading={triggerMut.isPending && triggerMut.variables === row.key}
-            disabled={triggerMut.isPending && triggerMut.variables === row.key}
             onClick={() => triggerMut.mutate(row.key)}
           >
             Chạy ngay

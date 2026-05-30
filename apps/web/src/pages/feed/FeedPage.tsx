@@ -255,7 +255,7 @@ function PostCard({ post, currentId, isAdmin }: { post: FeedPost; currentId?: st
           return (
             <Button key={emoji} size="small"
               type={active ? 'primary' : 'default'} ghost={active}
-              onClick={() => handleReact(emoji)} loading={reactMut.isPending} disabled={reactMut.isPending}
+              onClick={() => handleReact(emoji)} loading={reactMut.isPending}
               style={{ borderRadius: 20, fontSize: 13, padding: '0 10px' }}
             >
               {emoji}{count > 0 && <span style={{ marginLeft: 4 }}>{count}</span>}
@@ -690,7 +690,7 @@ export default function FeedPage() {
         footer={
           <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
             <Button onClick={closeCreate}>Huỷ</Button>
-            <Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={() => form.submit()}>
+            <Button type="primary" loading={createMut.isPending} onClick={() => form.submit()}>
               Đăng bài
             </Button>
           </Space>

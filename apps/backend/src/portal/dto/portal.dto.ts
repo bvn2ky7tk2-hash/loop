@@ -58,3 +58,22 @@ export class RespondTicketDto {
   @IsOptional() @IsString() @MaxLength(2000)
   response?: string;
 }
+
+export class LinkTicketToIssueDto {
+  @IsString() @IsNotEmpty() @MaxLength(300)
+  issueTitle: string;
+
+  @IsString() @IsNotEmpty()
+  issueDescription: string;
+
+  @IsOptional() @IsString() @IsIn(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'])
+  priority?: string;
+
+  /** projectId để gắn bug/issue — nếu không truyền sẽ tự resolve từ customer */
+  @IsOptional() @IsString()
+  projectId?: string;
+
+  /** userId của người thực hiện link (reporter) */
+  @IsString() @IsNotEmpty()
+  reporterId: string;
+}

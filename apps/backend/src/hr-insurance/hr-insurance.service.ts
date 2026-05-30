@@ -321,8 +321,6 @@ export class HrInsuranceService extends TenantAwareService {
         },
       },
       orderBy: { effectiveDate: 'asc' },
-      // Giới hạn an toàn — sự kiện BHXH trong 1 tháng không vượt 500 bản ghi
-      take: 500,
     });
 
     return {

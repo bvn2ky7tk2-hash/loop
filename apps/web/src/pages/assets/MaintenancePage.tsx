@@ -144,7 +144,7 @@ export default function AssetMaintenancePage() {
       {/* Log Bảo trì Drawer */}
       <CenteredModal title="Log bảo trì" open={drawerOpen} width={440}
         onClose={() => setDrawer(false)}
-        extra={<Button type="primary" loading={addMutation.isPending} disabled={addMutation.isPending} onClick={handleAdd}
+        extra={<Button type="primary" loading={addMutation.isPending} onClick={handleAdd}
           style={{ background: preset.primary, borderColor: preset.primary }}>Lưu</Button>}>
         <Form form={form} layout="vertical">
           <Form.Item name="assetId" label="Tài sản" rules={[{ required: true }]}>

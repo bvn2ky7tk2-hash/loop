@@ -71,6 +71,7 @@ import { OvertimeModule } from './overtime/overtime.module';
 import { WorkShiftsModule } from './work-shifts/work-shifts.module';
 import { EventsModule } from './common/events/events.module';
 import { BudgetModule } from './budget/budget.module';
+import { DelegationModule } from './delegation/delegation.module';
 
 @Module({
   providers: [
@@ -166,6 +167,8 @@ import { BudgetModule } from './budget/budget.module';
     EventsModule,
     // Epic E17: Budget Management
     BudgetModule,
+    // Epic E23: Delegation & Automation upgrade
+    DelegationModule,
   ],
 })
 export class AppModule {}

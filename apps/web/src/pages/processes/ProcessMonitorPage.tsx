@@ -91,7 +91,7 @@ export default function ProcessMonitorPage() {
 
         {instance.status === 'RUNNING' && (
           <Popconfirm title="Huỷ process instance này?" onConfirm={handleCancel}>
-            <Button danger icon={<StopOutlined />} loading={cancelMutation.isPending} disabled={cancelMutation.isPending}>
+            <Button danger icon={<StopOutlined />} loading={cancelMutation.isPending}>
               Huỷ
             </Button>
           </Popconfirm>

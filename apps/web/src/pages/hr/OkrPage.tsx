@@ -71,7 +71,7 @@ function KrRow({ kr, objId, onUpdate, onDelete }: { kr: OkrKeyResult; objId: str
         <Form.Item name="currentValue" label={<Text style={{ color: textMuted, fontSize: 12 }}>Giá trị hiện tại</Text>}>
           <InputNumber min={Number(kr.startValue)} style={{ width: 120 }} />
         </Form.Item>
-        <Button type="primary" size="small" htmlType="submit" loading={updateMutation.isPending} disabled={updateMutation.isPending}>Lưu</Button>
+        <Button type="primary" size="small" htmlType="submit" loading={updateMutation.isPending}>Lưu</Button>
         <Button size="small" onClick={() => setEditing(false)}>Hủy</Button>
       </Form>
     );
@@ -202,7 +202,6 @@ function OkrTab() {
             <Tooltip title="Khởi tạo quy trình review OKR qua BPM">
               <Button type="text" size="small" icon={<ApartmentOutlined />} style={{ color: linkColor }}
                 loading={startReview.isPending}
-                disabled={startReview.isPending}
                 onClick={() => startReview.mutate(obj.id)} />
             </Tooltip>
           )}
@@ -272,7 +271,7 @@ function OkrTab() {
                   <Form.Item name="unit">
                     <Input placeholder="Đơn vị" style={{ width: 80 }} />
                   </Form.Item>
-                  <Button type="primary" size="small" htmlType="submit" loading={addKr.isPending} disabled={addKr.isPending}>Thêm</Button>
+                  <Button type="primary" size="small" htmlType="submit" loading={addKr.isPending}>Thêm</Button>
                 </Form>
               </div>
               <Divider style={{ margin: '20px 0 8px' }}>Thảo luận</Divider>
@@ -316,7 +315,7 @@ function OkrTab() {
           </Form.Item>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button onClick={closeModal}>Hủy</Button>
-            <Button type="primary" htmlType="submit" loading={createObj.isPending || updateObj.isPending} disabled={createObj.isPending || updateObj.isPending}>
+            <Button type="primary" htmlType="submit" loading={createObj.isPending || updateObj.isPending}>
               {editing ? 'Lưu thay đổi' : 'Tạo Objective'}
             </Button>
           </div>
@@ -455,7 +454,7 @@ function KpiTab() {
           </Row>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button onClick={closeModal}>Hủy</Button>
-            <Button type="primary" htmlType="submit" loading={createMetric.isPending} disabled={createMetric.isPending}>Tạo KPI</Button>
+            <Button type="primary" htmlType="submit" loading={createMetric.isPending}>Tạo KPI</Button>
           </div>
         </Form>
       </CenteredModal>
@@ -476,7 +475,7 @@ function KpiTab() {
           </Form.Item>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button onClick={() => setRecordModal(null)}>Hủy</Button>
-            <Button type="primary" htmlType="submit" loading={addRecord.isPending} disabled={addRecord.isPending}>Lưu</Button>
+            <Button type="primary" htmlType="submit" loading={addRecord.isPending}>Lưu</Button>
           </div>
         </Form>
       </CenteredModal>

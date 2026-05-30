@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import {
@@ -11,8 +11,24 @@ const CONTRACT_INCLUDE = {
   milestones: { orderBy: { dueDate: 'asc' as const } },
 } as const;
 
+// INV-YYYYMM-NNNN (dùng lại cùng pattern với InvoicesService)
+async function generateInvoiceCode(prisma: PrismaService): Promise<string> {
+  const now = new Date();
+  const ym  = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const prefix = `INV-${ym}-`;
+  const last = await prisma.invoice.findFirst({
+    where: { code: { startsWith: prefix } },
+    orderBy: { code: 'desc' },
+    select: { code: true },
+  });
+  const seq = last ? parseInt(last.code.split('-')[2], 10) + 1 : 1;
+  return `${prefix}${String(seq).padStart(4, '0')}`;
+}
+
 @Injectable()
 export class ClientContractsService {
+  private readonly logger = new Logger(ClientContractsService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(
@@ -108,7 +124,8 @@ export class ClientContractsService {
       where: { id: milestoneId, contractId },
     });
     if (!milestone) throw new NotFoundException('Không tìm thấy milestone');
-    return this.prisma.contractMilestone.update({
+
+    const updated = await this.prisma.contractMilestone.update({
       where: { id: milestoneId },
       data: {
         ...dto,
@@ -116,6 +133,77 @@ export class ClientContractsService {
         paidAt:  dto.paidAt  ? new Date(dto.paidAt)  : undefined,
       },
     });
+
+    // E20.2: Khi milestone → INVOICED, tự động tạo Invoice DRAFT
+    if (dto.status === 'INVOICED' && milestone.status !== 'INVOICED' && !milestone.invoiceId) {
+      try {
+        await this.autoCreateMilestoneInvoice(contractId, milestoneId, milestone.name, Number(milestone.amount));
+      } catch (err) {
+        // Ghi log nhưng không fail request chính
+        this.logger.error(`Auto-draft invoice for milestone ${milestoneId} failed: ${err}`);
+      }
+    }
+
+    return updated;
+  }
+
+  private async autoCreateMilestoneInvoice(
+    contractId: string,
+    milestoneId: string,
+    milestoneName: string,
+    amount: number,
+  ) {
+    const contract = await this.prisma.clientContract.findUnique({
+      where: { id: contractId },
+      select: { customerId: true },
+    });
+    if (!contract) return;
+
+    const code = await generateInvoiceCode(this.prisma);
+    const today = new Date();
+    // Mặc định 30 ngày — ClientContract chưa có paymentTermsDays
+    const dueDate = new Date(today);
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    // Tìm admin để gán createdById
+    const adminUser = await this.prisma.user.findFirst({
+      where: { role: 'ADMIN' },
+      select: { id: true },
+    });
+    const createdById = adminUser?.id ?? 'system';
+
+    const invoice = await this.prisma.invoice.create({
+      data: {
+        code,
+        type:        'SALES',
+        customerId:  contract.customerId,
+        issueDate:   today,
+        dueDate,
+        currency:    'VND',
+        notes:       `Tự động tạo từ milestone: ${milestoneName}`,
+        subtotal:    amount,
+        taxAmount:   0,
+        totalAmount: amount,
+        createdById,
+        items: {
+          create: [{
+            description: milestoneName,
+            quantity:    1,
+            unitPrice:   amount,
+            amount:      amount,
+            taxRate:     0,
+          }],
+        },
+      },
+    });
+
+    // Gán invoiceId cho milestone
+    await this.prisma.contractMilestone.update({
+      where: { id: milestoneId },
+      data: { invoiceId: invoice.id },
+    });
+
+    this.logger.log(`Auto-drafted Invoice ${invoice.code} for milestone ${milestoneId}`);
   }
 
   async deleteMilestone(contractId: string, milestoneId: string) {

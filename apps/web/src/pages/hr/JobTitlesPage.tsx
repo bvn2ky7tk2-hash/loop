@@ -209,7 +209,6 @@ export default function JobTitlesPage() {
                 danger
                 icon={<StopOutlined />}
                 loading={deactivateMut.isPending}
-                disabled={deactivateMut.isPending}
               />
             </Popconfirm>
           )}

@@ -32,9 +32,11 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
   }
 
   onModuleInit() {
-    this.bus.on('invoice.paid', (e) => this.handleInvoicePaid(e.refId, e.amount, e.userId));
-    this.bus.on('expense.approved', (e) => this.handleExpenseApproved(e.refId, e.amount, e.userId));
-    this.bus.on('payroll.approved', (e) => this.handlePayrollApproved(e.refId, e.amount, e.userId));
+    this.bus.on('invoice.paid',      (e) => this.handleInvoicePaid(e.refId, e.amount, e.userId));
+    this.bus.on('expense.approved',  (e) => this.handleExpenseApproved(e.refId, e.amount, e.userId));
+    this.bus.on('payroll.approved',  (e) => this.handlePayrollApproved(e.refId, e.amount, e.userId));
+    this.bus.on('po.received',       (e) => this.handlePoReceived(e.refId, e.amount, e.userId));
+    this.bus.on('po.paid',           (e) => this.handlePoPaid(e.refId, e.amount, e.userId));
   }
 
   private async createAutoEntry(
@@ -50,9 +52,9 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
       where: { code: { in: codes }, isActive: true },
       select: { code: true },
     });
-    if (existing.length !== codes.length) return; // skip nếu thiếu tài khoản
+    if (existing.length !== codes.length) return null; // skip nếu thiếu tài khoản
 
-    await this.prisma.journalEntry.create({
+    return this.prisma.journalEntry.create({
       data: {
         date, description, reference,
         createdById: userId,
@@ -64,25 +66,118 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
           })),
         },
       },
+      select: { id: true },
     });
   }
 
   private async handleInvoicePaid(invoiceId: string, amount: number, userId: string) {
     try {
-      const inv = await this.prisma.invoice.findUnique({ where: { id: invoiceId }, select: { code: true, paidAt: true } });
+      const inv = await this.prisma.invoice.findUnique({
+        where: { id: invoiceId },
+        select: { id: true, code: true, type: true, taxAmount: true, paidAt: true },
+      });
       if (!inv) return;
-      await this.createAutoEntry(
+
+      // E21.1: Tra InvoiceAccountMapping nếu có, fallback về ACC mặc định
+      const mapping = await this.prisma.invoiceAccountMapping.findFirst({
+        where: { invoiceType: inv.type },
+        include: {
+          debitAccount:  { select: { code: true } },
+          creditAccount: { select: { code: true } },
+          vatAccount:    { select: { code: true } },
+        },
+      });
+
+      const debitAcc  = mapping?.debitAccount?.code  ?? ACC.CASH;
+      const creditAcc = mapping?.creditAccount?.code ?? ACC.REVENUE;
+      const vatAcc    = mapping?.vatAccount?.code;
+
+      const taxAmount = Number(inv.taxAmount ?? 0);
+      const netAmount = amount - taxAmount;
+
+      const lines: Array<{ accountCode: string; debit: number; credit: number }> = [
+        { accountCode: debitAcc, debit: amount, credit: 0 },
+        { accountCode: creditAcc, debit: 0, credit: netAmount },
+      ];
+      if (vatAcc && taxAmount > 0) {
+        lines.push({ accountCode: vatAcc, debit: 0, credit: taxAmount });
+      }
+
+      const entry = await this.createAutoEntry(
         inv.paidAt ?? new Date(),
         `Thu tiền hóa đơn ${inv.code}`,
         `INV:${inv.code}`,
+        lines,
+        userId,
+      );
+
+      // Gắn journalEntryId vào invoice nếu tạo thành công
+      if (entry) {
+        await this.prisma.invoice.update({
+          where: { id: invoiceId },
+          data: { journalEntryId: entry.id },
+        }).catch(() => {/* skip nếu không có cột */});
+      }
+    } catch (err) {
+      this.logger.error(`Auto-journal invoice.paid failed: ${err}`);
+    }
+  }
+
+  // E21.2: PO RECEIVED → debit Expense, credit AP_PAYABLE
+  private async handlePoReceived(poId: string, amount: number, userId: string) {
+    try {
+      const po = await this.prisma.purchaseOrder.findUnique({
+        where: { id: poId },
+        select: { id: true, poNumber: true, receivedAt: true },
+      });
+      if (!po) return;
+      const entry = await this.createAutoEntry(
+        po.receivedAt ?? new Date(),
+        `Nhận hàng PO ${po.poNumber}`,
+        `PO:${po.poNumber}`,
         [
-          { accountCode: ACC.CASH, debit: amount, credit: 0 },
-          { accountCode: ACC.REVENUE, debit: 0, credit: amount },
+          { accountCode: ACC.EXPENSE, debit: amount, credit: 0 },
+          { accountCode: ACC.AP,      debit: 0,      credit: amount },
         ],
         userId,
       );
+      if (entry) {
+        await this.prisma.purchaseOrder.update({
+          where: { id: poId },
+          data: { journalEntryId: entry.id },
+        }).catch(() => {});
+      }
     } catch (err) {
-      this.logger.error(`Auto-journal invoice.paid failed: ${err}`);
+      this.logger.error(`Auto-journal po.received failed: ${err}`);
+    }
+  }
+
+  // E21.2: PO PAID → debit AP_PAYABLE, credit Cash
+  private async handlePoPaid(poId: string, amount: number, userId: string) {
+    try {
+      const po = await this.prisma.purchaseOrder.findUnique({
+        where: { id: poId },
+        select: { id: true, poNumber: true, paidAt: true },
+      });
+      if (!po) return;
+      const entry = await this.createAutoEntry(
+        po.paidAt ?? new Date(),
+        `Thanh toán PO ${po.poNumber}`,
+        `PO-PAY:${po.poNumber}`,
+        [
+          { accountCode: ACC.AP,   debit: amount, credit: 0 },
+          { accountCode: ACC.CASH, debit: 0,      credit: amount },
+        ],
+        userId,
+      );
+      if (entry) {
+        await this.prisma.purchaseOrder.update({
+          where: { id: poId },
+          data: { journalEntryId: entry.id },
+        }).catch(() => {});
+      }
+    } catch (err) {
+      this.logger.error(`Auto-journal po.paid failed: ${err}`);
     }
   }
 

@@ -171,7 +171,6 @@ function MonthlyTab() {
             <Button
               icon={<CheckOutlined />}
               loading={summarizeMutation.isPending}
-              disabled={summarizeMutation.isPending}
               onClick={() => summarizeMutation.mutate()}
             >
               Tổng hợp tháng
@@ -184,7 +183,7 @@ function MonthlyTab() {
               cancelText="Hủy"
               okButtonProps={{ danger: true }}
             >
-              <Button danger icon={<LockOutlined />} loading={lockMutation.isPending} disabled={lockMutation.isPending}>
+              <Button danger icon={<LockOutlined />} loading={lockMutation.isPending}>
                 Khóa bảng công
               </Button>
             </Popconfirm>
@@ -494,7 +493,7 @@ function DetailTab() {
         footer={
           <Space>
             <Button onClick={() => { setSwapOpen(false); swapForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" icon={<SwapOutlined />} loading={swapMutation.isPending} disabled={swapMutation.isPending} onClick={handleSwapSave}>
+            <Button type="primary" icon={<SwapOutlined />} loading={swapMutation.isPending} onClick={handleSwapSave}>
               Đổi ca
             </Button>
           </Space>
@@ -538,7 +537,7 @@ function DetailTab() {
         footer={
           <Space>
             <Button onClick={() => { setRecalcOpen(false); recalcForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" icon={<ReloadOutlined />} loading={recalcMutation.isPending} disabled={recalcMutation.isPending} onClick={handleRecalcSave}>
+            <Button type="primary" icon={<ReloadOutlined />} loading={recalcMutation.isPending} onClick={handleRecalcSave}>
               Tính lại
             </Button>
           </Space>
@@ -656,7 +655,6 @@ function ManualEntryTab() {
           <Button
             type="primary"
             loading={upsertMutation.isPending}
-            disabled={upsertMutation.isPending}
             onClick={handleSubmit}
             icon={<CheckOutlined />}
           >

@@ -126,7 +126,6 @@ export default function DemoModePage() {
           icon={<ReloadOutlined />}
           size="large"
           loading={resetMutation.isPending}
-          disabled={resetMutation.isPending}
           onClick={handleReset}
         >
           Reset Demo Data

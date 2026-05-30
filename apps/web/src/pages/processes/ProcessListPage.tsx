@@ -226,7 +226,7 @@ export default function ProcessListPage() {
         footer={
           <Space style={{ justifyContent: 'flex-end', display: 'flex' }}>
             <Button onClick={() => { setEditTarget(null); editForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={updateMutation.isPending} disabled={updateMutation.isPending} onClick={() => editForm.submit()}>Lưu</Button>
+            <Button type="primary" loading={updateMutation.isPending} onClick={() => editForm.submit()}>Lưu</Button>
           </Space>
         }
       >

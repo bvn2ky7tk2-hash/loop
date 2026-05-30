@@ -109,6 +109,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/my-tasks',          label: 'Việc của tôi',         visible: true },
           { key: '/my-bugs',           label: 'Lỗi của tôi',          visible: true },
           { key: '/processes/inbox',   label: 'Việc quy trình',        visible: true },
+          { key: '/approvals/inbox',   label: 'Hộp thư duyệt',        visible: true },
           { key: '/timesheet',         label: 'Chấm công của tôi',    visible: true },
           { key: '/timesheet/project', label: 'Nhật ký dự án',        visible: true },
         ],
@@ -142,6 +143,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/reports',             label: 'Báo cáo tổng hợp', visible: true },
           { key: '/reports/utilization', label: 'Utilization Rate',  visible: true },
+          { key: '/reports/builder',     label: 'Report Builder',    visible: true },
         ],
       },
       {
@@ -261,6 +263,8 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/accounting/accounts',          label: 'Hệ thống tài khoản', visible: true },
           { key: '/accounting/journal',           label: 'Nhật ký kế toán',    visible: true },
           { key: '/accounting/financial-reports', label: 'Báo cáo tài chính',  visible: true },
+          { key: '/finance/analytics',           label: 'Finance Analytics',   visible: true },
+          { key: '/projects/analytics',          label: 'Project Analytics',   visible: true },
         ],
       },
     ],
@@ -298,6 +302,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/crm/customers', label: 'Tất cả khách hàng', visible: true },
           { key: '/crm/portal',    label: 'Cổng khách hàng',   visible: true },
+          { key: '/crm/analytics',  label: 'CRM Analytics',      visible: true },
         ],
       },
       {
@@ -371,7 +376,8 @@ export const MODULES: ModuleDefinition[] = [
     color: '#475569',
     gatePermission: moduleGate('admin'),
     topItems: [
-      { key: '/dashboard/admin', label: 'Tổng quan', visible: true },
+      { key: '/dashboard/admin',     label: 'Tổng quan',              visible: true },
+      { key: '/dashboard/executive', label: 'Executive Command Center', visible: true },
     ],
     groups: [
       {
@@ -486,6 +492,8 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/reports/utilization':           <TeamOutlined />,
   '/knowledge-base':                <BookOutlined />,
   '/accounting/financial-reports':  <FundOutlined />,
+  '/finance/analytics':             <BarChartOutlined />,
+  '/projects/analytics':            <ProjectOutlined />,
   '/import':                        <UploadOutlined />,
   '/audit-log':                     <AuditOutlined />,
   '/automation':                    <ThunderboltOutlined />,
@@ -500,6 +508,11 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/assets/rooms':                  <HomeOutlined />,
   '/assets/vehicles':               <CarOutlined />,
   '/calendar':                      <RoomCalendarIcon />,
+  '/dashboard/executive':           <FundOutlined />,
+  '/reports/builder':               <BuildOutlined />,
+  '/crm/analytics':                 <BarChartOutlined />,
+  '/approvals/inbox':               <InboxOutlined />,
+  '/payroll/analytics':             <CreditCardOutlined />,
 
   '/hr/overtime':                   <FieldTimeOutlined />,
   '/my-overtime':                   <FieldTimeOutlined />,

@@ -27,7 +27,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/dashboard/crm',     module: 'crm',     label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'crm_leads:read',        sortOrder: 0 },
   { route: '/dashboard/asset',   module: 'asset',   label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'asset:read',            sortOrder: 0 },
   { route: '/dashboard/ops',     module: 'ops',     label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'bpm_processes:manage',  sortOrder: 0 },
-  { route: '/dashboard/admin',   module: 'admin',   label: 'Tổng quan',  icon: 'DashboardOutlined', permCode: 'system_health:read',    sortOrder: 0 },
+  { route: '/dashboard/admin',     module: 'admin',   label: 'Tổng quan',               icon: 'DashboardOutlined', permCode: 'system_health:read',    sortOrder: 0 },
+  { route: '/dashboard/executive', module: 'admin',   label: 'Executive Command Center', icon: 'FundOutlined',      permCode: 'admin:read',            sortOrder: 0 },
 
   // ─── Work — Công việc ──────────────────────────────────────────────────────
   { route: '/my-tasks',              module: 'work', label: 'Việc của tôi',        icon: 'AppstoreOutlined',    permCode: 'kanban:read',             sortOrder: 1 },
@@ -51,6 +52,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/leaves',                module: 'work', label: 'Đơn nghỉ phép',        icon: 'CalendarOutlined',    permCode: 'leaves:read',             sortOrder: 19 },
   { route: '/my-overtime',           module: 'work', label: 'Đăng ký làm thêm giờ',icon: 'FieldTimeOutlined',   permCode: 'employees:read',          sortOrder: 20 },
   { route: '/payroll/my-payslips',   module: 'work', label: 'Phiếu lương',          icon: 'FileTextOutlined',    permCode: 'my_payslips:read',        sortOrder: 21 },
+  { route: '/approvals/inbox',      module: 'work', label: 'Hộp thư duyệt',         icon: 'InboxOutlined',      permCode: 'process_tasks:read', sortOrder: 22 },
+  { route: '/reports/builder',       module: 'work', label: 'Report Builder',       icon: 'BuildOutlined',       permCode: 'reports:read',            sortOrder: 18 },
 
   // ─── Ops — Vận hành (BPM Design + Monitor) ────────────────────────────────
   { route: '/processes',           module: 'ops', label: 'Định nghĩa quy trình', icon: 'UnorderedListOutlined', permCode: 'bpm_processes:manage', sortOrder: 1 },
@@ -74,6 +77,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/skill-matrix',       module: 'people', label: 'Ma trận kỹ năng',          icon: 'ApartmentOutlined',    permCode: 'skills:read',                sortOrder: 15 },
   { route: '/hr/okr',                module: 'people', label: 'OKR & KPI',                icon: 'AimOutlined',          permCode: 'okr:read',                   sortOrder: 16 },
   { route: '/hr/analytics',          module: 'people', label: 'HR Analytics',             icon: 'BarChartOutlined',     permCode: 'employees:read',             sortOrder: 17 },
+  { route: '/payroll/analytics',     module: 'people', label: 'Payroll Analytics',         icon: 'CreditCardOutlined',   permCode: 'payroll:read',               sortOrder: 22 },
   { route: '/recruit/pipeline',      module: 'people', label: 'Phễu tuyển dụng',          icon: 'AppstoreAddOutlined',  permCode: 'recruit_pipeline:read',      sortOrder: 18 },
   { route: '/recruit/candidates',    module: 'people', label: 'Ứng viên',                 icon: 'UsergroupAddOutlined', permCode: 'recruit_candidates:read',    sortOrder: 19 },
   { route: '/recruit/interviews',    module: 'people', label: 'Lịch phỏng vấn',           icon: 'ScheduleFilled',       permCode: 'recruit_interviews:read',    sortOrder: 20 },
@@ -89,6 +93,8 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/accounting/accounts',           module: 'finance', label: 'Hệ thống tài khoản',     icon: 'BankOutlined',       permCode: 'accounts:read',           sortOrder: 7 },
   { route: '/accounting/journal',            module: 'finance', label: 'Nhật ký kế toán',         icon: 'BookOutlined',       permCode: 'journal:read',            sortOrder: 8 },
   { route: '/accounting/financial-reports',  module: 'finance', label: 'Báo cáo tài chính',      icon: 'FundOutlined',       permCode: 'financial_reports:read',  sortOrder: 9 },
+  { route: '/finance/analytics',             module: 'finance', label: 'Finance Analytics',         icon: 'BarChartOutlined',   permCode: 'financial_reports:read',  sortOrder: 10 },
+  { route: '/projects/analytics',            module: 'finance', label: 'Project Analytics',         icon: 'ProjectOutlined',    permCode: 'projects:read',           sortOrder: 11 },
 
   // ─── CRM ───────────────────────────────────────────────────────────────────
   { route: '/crm/leads',            module: 'crm', label: 'Khách hàng tiềm năng', icon: 'FunnelPlotOutlined', permCode: 'crm_leads:read',     sortOrder: 1 },
@@ -99,6 +105,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/crm/activities',       module: 'crm', label: 'Nhật ký hoạt động',     icon: 'PhoneOutlined',      permCode: 'crm_activities:read',sortOrder: 6 },
   { route: '/crm/forecast',         module: 'crm', label: 'Dự báo doanh số',       icon: 'RiseOutlined',       permCode: 'crm_forecast:read',  sortOrder: 7 },
   { route: '/crm/portal',           module: 'crm', label: 'Cổng khách hàng',       icon: 'GlobalOutlined',     permCode: 'crm_portal:read',    sortOrder: 8 },
+  { route: '/crm/analytics',        module: 'crm', label: 'CRM Analytics',          icon: 'BarChartOutlined',   permCode: 'crm_deals:read',     sortOrder: 9 },
 
   // ─── Asset — Tài sản + Mua hàng ───────────────────────────────────────────
   { route: '/assets',                module: 'asset', label: 'Tất cả tài sản',   icon: 'LaptopOutlined',   permCode: 'asset:read',             sortOrder: 1 },

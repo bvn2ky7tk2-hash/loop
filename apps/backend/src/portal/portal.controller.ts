@@ -6,7 +6,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
 import { PortalService } from './portal.service';
-import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto } from './dto/portal.dto';
+import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto, LinkTicketToIssueDto } from './dto/portal.dto';
 
 // ─── Admin endpoints (require JWT) ───────────────────────────────────────────
 @ApiTags('Customer Portal — Admin')
@@ -48,6 +48,12 @@ export class PortalAdminController {
   @ApiOperation({ summary: 'Respond / đổi status ticket' })
   respondTicket(@Param('id') id: string, @Body() dto: RespondTicketDto) {
     return this.svc.respondTicket(id, dto);
+  }
+
+  @Post('tickets/:id/link-to-issue')
+  @ApiOperation({ summary: 'Chuyển ticket thành Internal Issue (Bug type=ISSUE)' })
+  linkToIssue(@Param('id') id: string, @Body() dto: LinkTicketToIssueDto) {
+    return this.svc.linkToIssue(id, dto);
   }
 }
 

@@ -164,7 +164,7 @@ function MilestoneSection({ contract }: { contract: ClientContract }) {
             </Form.Item>
             <Form.Item>
               <Space>
-                <Button type="primary" htmlType="submit" loading={addMutation.isPending} disabled={addMutation.isPending} size="small">Lưu</Button>
+                <Button type="primary" htmlType="submit" loading={addMutation.isPending} size="small">Lưu</Button>
                 <Button size="small" onClick={() => { setAddOpen(false); form.resetFields(); }}>Hủy</Button>
               </Space>
             </Form.Item>
@@ -438,7 +438,7 @@ export default function ClientContractsPage() {
         onClose={() => { setFormOpen(false); form.resetFields(); setEditing(null); }}
         width={560}
         extra={
-          <Button type="primary" loading={createMutation.isPending || updateMutation.isPending} disabled={createMutation.isPending || updateMutation.isPending} onClick={() => form.submit()}>
+          <Button type="primary" loading={createMutation.isPending || updateMutation.isPending} onClick={() => form.submit()}>
             {editing ? 'Lưu thay đổi' : 'Tạo hợp đồng'}
           </Button>
         }

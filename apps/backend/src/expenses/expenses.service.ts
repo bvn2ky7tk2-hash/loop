@@ -2,10 +2,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
   Optional,
   Inject,
-  Logger,
   Scope,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -19,7 +17,6 @@ import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
-import { BudgetService } from '../budget/budget.service';
 
 const EXPENSE_INCLUDE = {
   submittedBy: { select: { id: true, name: true } },
@@ -29,15 +26,12 @@ const EXPENSE_INCLUDE = {
 
 @Injectable({ scope: Scope.REQUEST })
 export class ExpensesService extends TenantAwareService {
-  private readonly logger = new Logger(ExpensesService.name);
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
     private readonly auditLog: AuditLogService,
     @Inject(REQUEST) req: any,
     @Optional() private readonly notificationsService?: NotificationsService,
-    @Optional() private readonly budgetService?: BudgetService,
   ) {
     super(req);
   }
@@ -86,29 +80,6 @@ export class ExpensesService extends TenantAwareService {
   async create(dto: CreateExpenseDto, submittedById: string) {
     if (!dto.items || dto.items.length === 0) {
       throw new BadRequestException('Phiếu chi phải có ít nhất một khoản chi tiết');
-    }
-
-    // Kiểm tra ngân sách trước khi tạo phiếu chi (nếu BudgetService khả dụng)
-    if (this.budgetService && (dto as any).orgUnitId && dto.category && dto.totalAmount) {
-      const currentYear = new Date().getFullYear();
-      const budgetCheck = await this.budgetService.checkBudget(
-        (dto as any).orgUnitId,
-        dto.category as string,
-        currentYear,
-        Number(dto.totalAmount),
-      );
-
-      if (!budgetCheck.allowed) {
-        throw new ForbiddenException(
-          `Ngân sách không đủ: còn lại ${budgetCheck.remaining.toLocaleString('vi-VN')} VND cho danh mục "${dto.category}"`,
-        );
-      }
-
-      if (budgetCheck.isWarning) {
-        this.logger.warn(
-          `Cảnh báo ngân sách: phiếu chi danh mục "${dto.category}" — đã dùng ${budgetCheck.usedPct.toFixed(1)}% ngân sách`,
-        );
-      }
     }
 
     const expense = await this.prisma.$transaction(async (tx) => {
@@ -202,31 +173,6 @@ export class ExpensesService extends TenantAwareService {
         amount: Number(updated.totalAmount),
         userId: approverId,
       });
-
-      // Ghi giao dịch ngân sách ACTUAL khi expense được phê duyệt
-      if (this.budgetService && (expense as any).orgUnitId && expense.category) {
-        const currentYear = new Date().getFullYear();
-        const budgetCheck = await this.budgetService.checkBudget(
-          (expense as any).orgUnitId,
-          expense.category as string,
-          currentYear,
-          0,
-        ).catch(() => null);
-
-        if (budgetCheck?.lineId) {
-          await this.budgetService
-            .recordTransaction(
-              budgetCheck.lineId,
-              'EXPENSE',
-              id,
-              Number(updated.totalAmount),
-              'ACTUAL',
-            )
-            .catch((err: Error) =>
-              this.logger.error(`Lỗi ghi giao dịch ngân sách cho expense ${id}: ${err.message}`),
-            );
-        }
-      }
     }
 
     // Notify requester về kết quả phê duyệt

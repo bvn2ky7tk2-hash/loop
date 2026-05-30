@@ -157,7 +157,6 @@ export default function HolidaysPage() {
             icon={<DeleteOutlined />}
             size="small"
             loading={deleteMutation.isPending}
-            disabled={deleteMutation.isPending}
           />
         </Popconfirm>
       ),
@@ -187,7 +186,6 @@ export default function HolidaysPage() {
               <Button
                 icon={<ThunderboltOutlined />}
                 loading={seedMutation.isPending}
-                disabled={seedMutation.isPending}
               >
                 Seed ngày lễ VN
               </Button>
@@ -236,7 +234,7 @@ export default function HolidaysPage() {
         footer={
           <Space>
             <Button onClick={() => setModalOpen(false)}>Hủy</Button>
-            <Button type="primary" loading={createMutation.isPending} disabled={createMutation.isPending} onClick={handleCreate}>
+            <Button type="primary" loading={createMutation.isPending} onClick={handleCreate}>
               Thêm
             </Button>
           </Space>

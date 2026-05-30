@@ -477,7 +477,6 @@ export default function TasksPage() {
             size="small"
             icon={<CheckCircleOutlined />}
             loading={approveMutation.isPending}
-            disabled={approveMutation.isPending}
             onClick={() => approveMutation.mutate(r.id)}
           >
             Duyệt
@@ -844,7 +843,6 @@ export default function TasksPage() {
                 type="primary"
                 icon={<CheckCircleOutlined />}
                 loading={approveMutation.isPending}
-                disabled={approveMutation.isPending}
                 onClick={() => { approveMutation.mutate(detailTask.id); setDetailTaskId(null); }}
               >
                 Duyệt công việc

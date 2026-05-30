@@ -106,7 +106,6 @@ function CommentItem({ comment, currentId, isAdmin, bugId }: CommentItemProps) {
               <Button
                 type="primary" size="small" icon={<CheckOutlined />}
                 loading={updateMut.isPending}
-                disabled={updateMut.isPending}
                 onClick={handleSave}
               >
                 Lưu
@@ -132,7 +131,6 @@ function CommentItem({ comment, currentId, isAdmin, bugId }: CommentItemProps) {
                   <Button
                     type="text" size="small" icon={<DeleteOutlined />}
                     loading={deleteMut.isPending}
-                    disabled={deleteMut.isPending}
                     danger
                     style={{ padding: '0 4px', fontSize: 12 }}
                   />
@@ -223,7 +221,7 @@ export function BugCommentSection({ bugId }: Props) {
             <Button
               type="primary" size="small" icon={<SendOutlined />}
               loading={addMut.isPending}
-              disabled={!newComment.trim() || addMut.isPending}
+              disabled={!newComment.trim()}
               onClick={handleSubmit}
             >
               Gửi

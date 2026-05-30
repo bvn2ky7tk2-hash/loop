@@ -231,7 +231,6 @@ export default function RoomManagePage() {
             <Button
               type="primary"
               loading={createMut.isPending || updateMut.isPending}
-              disabled={createMut.isPending || updateMut.isPending}
               onClick={() => form.submit()}
             >
               {editing ? 'Lưu thay đổi' : 'Thêm phòng'}

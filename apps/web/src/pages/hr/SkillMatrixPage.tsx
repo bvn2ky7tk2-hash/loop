@@ -203,7 +203,6 @@ function MatrixTab({ skills }: { skills: Skill[] }) {
             <Button
               type="primary"
               loading={mutateSave.isPending}
-              disabled={mutateSave.isPending}
               onClick={() => form.submit()}
             >
               Lưu
@@ -407,7 +406,7 @@ function SkillCatalogTab() {
         footer={
           <Space>
             <Button onClick={() => { setCreateOpen(false); form.resetFields(); }}>Hủy</Button>
-            <Button type="primary" loading={mutateCreate.isPending} disabled={mutateCreate.isPending} onClick={() => form.submit()}>Tạo</Button>
+            <Button type="primary" loading={mutateCreate.isPending} onClick={() => form.submit()}>Tạo</Button>
           </Space>
         }
       >

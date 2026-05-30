@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, Cell,
 } from 'recharts';
 import type { CSSProperties, ReactNode } from 'react';
-import { useThemePalette } from '../../hooks/useThemePalette';
+import { useThemeStore } from '../../store/theme.store';
 
 interface SparklinePoint {
   day: string;
@@ -56,7 +56,8 @@ export function SparklineCard({
   filled = false,
   style,
 }: SparklineCardProps) {
-  const { isDark, textPrimary, textMuted, bgContainer: bgContainerPalette } = useThemePalette();
+  const { mode } = useThemeStore();
+  const isDark = mode === 'dark';
 
   const resolvedColor = color ?? 'var(--color-primary, #4F46E5)';
   const isCssVar = resolvedColor.startsWith('var(');
@@ -64,7 +65,7 @@ export function SparklineCard({
   if (loading) {
     return (
       <Card style={{ borderRadius: 12, overflow: 'hidden', ...style }}>
-        <div style={{ height: 110, background: bgContainerPalette, borderRadius: 8 }} />
+        <div style={{ height: 110, background: isDark ? '#1E293B' : '#F8FAFC', borderRadius: 8 }} />
       </Card>
     );
   }
@@ -170,7 +171,7 @@ export function SparklineCard({
   };
 
   const tooltipStyle = {
-    background: '#0F172A',
+    background: isDark ? '#1E293B' : '#0F172A',
     border: 'none', borderRadius: 6, fontSize: 12,
     color: '#F1F5F9', padding: '4px 10px',
   };
@@ -190,7 +191,7 @@ export function SparklineCard({
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
         <span style={{
           fontSize: 11, fontWeight: 700,
-          color: textMuted,
+          color: isDark ? '#64748B' : '#94A3B8',
           letterSpacing: '0.07em', textTransform: 'uppercase',
         }}>
           {label}
@@ -212,12 +213,12 @@ export function SparklineCard({
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
         <span style={{
           fontSize: 30, fontWeight: 800,
-          color: textPrimary,
+          color: isDark ? '#F1F5F9' : '#0F172A',
           lineHeight: 1, letterSpacing: -1,
         }}>
           {value}
         </span>
-        {unit && <span style={{ fontSize: 13, color: textMuted, fontWeight: 500 }}>{unit}</span>}
+        {unit && <span style={{ fontSize: 13, color: isDark ? '#64748B' : '#94A3B8', fontWeight: 500 }}>{unit}</span>}
         {delta !== undefined && <DeltaBadge delta={delta} />}
       </div>
 
@@ -244,7 +245,7 @@ export function SparklineCard({
                   stroke={resolvedColor}
                   strokeWidth={2.5}
                   dot={false}
-                  activeDot={{ r: 4, fill: resolvedColor, stroke: bgContainerPalette, strokeWidth: 2 }}
+                  activeDot={{ r: 4, fill: resolvedColor, stroke: isDark ? '#1E293B' : '#fff', strokeWidth: 2 }}
                 />
               </LineChart>
             )}

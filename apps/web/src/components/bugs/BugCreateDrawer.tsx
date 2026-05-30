@@ -107,7 +107,7 @@ export function BugCreateDrawer({ open, onClose }: Props) {
       footer={
         <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
           <Button onClick={handleClose}>Huỷ</Button>
-          <Button type="primary" onClick={() => form.submit()} loading={createBug.isPending} disabled={createBug.isPending}>
+          <Button type="primary" onClick={() => form.submit()} loading={createBug.isPending}>
             Tạo {itemType === 'ISSUE' ? 'Issue' : 'Bug'}
           </Button>
         </Space>

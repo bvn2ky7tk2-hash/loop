@@ -8,6 +8,7 @@ import { PERMISSIONS } from '../permissions/permissions.constants';
 import type { User } from '../generated/prisma';
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ProjectsService } from './projects.service';
+import { ProjectCostService } from './project-cost.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
 
@@ -15,7 +16,10 @@ import { AddMemberDto } from './dto/add-member.dto';
 @ApiBearerAuth()
 @Controller('api/v1/projects')
 export class ProjectsController {
-  constructor(private readonly service: ProjectsService) {}
+  constructor(
+    private readonly service: ProjectsService,
+    private readonly costService: ProjectCostService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.PM)
@@ -103,5 +107,12 @@ export class ProjectsController {
   @ApiOperation({ summary: 'Xoá dự án' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
+  }
+
+  @Get(':id/cost-summary')
+  @RequirePermission(PERMISSIONS.PROJECTS_READ)
+  @ApiOperation({ summary: 'Chi phí dự án — snapshot mới nhất + trend 30 ngày' })
+  getCostSummary(@Param('id') id: string) {
+    return this.costService.getProjectCostSummary(id);
   }
 }

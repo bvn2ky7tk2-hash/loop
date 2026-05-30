@@ -99,8 +99,15 @@ const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPa
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
 const TenantsPage           = lazy(() => import('./pages/admin/TenantsPage'));
-const HrAnalyticsPage       = lazy(() => import('./pages/hr/HrAnalyticsPage'));
-const UtilizationPage       = lazy(() => import('./pages/reports/UtilizationPage'));
+const HrAnalyticsPage        = lazy(() => import('./pages/hr/HrAnalyticsPage'));
+const UtilizationPage        = lazy(() => import('./pages/reports/UtilizationPage'));
+const PayrollAnalyticsPage   = lazy(() => import('./pages/payroll/PayrollAnalyticsPage'));
+const CrmAnalyticsPage       = lazy(() => import('./pages/crm/CrmAnalyticsPage'));
+const ApprovalInboxPage      = lazy(() => import('./pages/approvals/ApprovalInboxPage'));
+const ExecutiveDashboardPage = lazy(() => import('./pages/dashboard/ExecutiveDashboardPage'));
+const ReportBuilderPage      = lazy(() => import('./pages/reports/ReportBuilderPage'));
+const ProjectAnalyticsPage   = lazy(() => import('./pages/projects/ProjectAnalyticsPage'));
+const FinanceAnalyticsPage   = lazy(() => import('./pages/finance/FinanceAnalyticsPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -223,8 +230,15 @@ export const router = createBrowserRouter([
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
       { path: 'admin/tenants',        element: wrap(TenantsPage) },
-      { path: 'hr/analytics',         element: wrap(HrAnalyticsPage) },
-      { path: 'reports/utilization',  element: wrap(UtilizationPage) },
+      { path: 'hr/analytics',          element: wrap(HrAnalyticsPage) },
+      { path: 'payroll/analytics',    element: wrap(PayrollAnalyticsPage) },
+      { path: 'crm/analytics',        element: wrap(CrmAnalyticsPage) },
+      { path: 'approvals/inbox',      element: wrap(ApprovalInboxPage) },
+      { path: 'dashboard/executive',  element: wrap(ExecutiveDashboardPage) },
+      { path: 'reports/builder',      element: wrap(ReportBuilderPage) },
+      { path: 'reports/utilization',   element: wrap(UtilizationPage) },
+      { path: 'projects/analytics',   element: wrap(ProjectAnalyticsPage) },
+      { path: 'finance/analytics',    element: wrap(FinanceAnalyticsPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

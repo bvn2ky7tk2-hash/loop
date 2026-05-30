@@ -361,7 +361,6 @@ export default function VehicleBookingPage() {
             style={{ color: '#10B981', borderColor: '#10B981' }}
             onClick={() => handleApprove(r.id)}
             loading={approveRequestMut.isPending}
-            disabled={approveRequestMut.isPending}
           >
             Duyệt
           </Button>
@@ -688,7 +687,7 @@ export default function VehicleBookingPage() {
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button onClick={() => setBookingOpen(false)}>Hủy</Button>
-            <Button type="primary" loading={createRequestMut.isPending} disabled={createRequestMut.isPending} onClick={() => bookingForm.submit()}>
+            <Button type="primary" loading={createRequestMut.isPending} onClick={() => bookingForm.submit()}>
               Gửi yêu cầu
             </Button>
           </div>
@@ -777,7 +776,6 @@ export default function VehicleBookingPage() {
             <Button
               type="primary"
               loading={createVehicleMut.isPending || updateVehicleMut.isPending}
-              disabled={createVehicleMut.isPending || updateVehicleMut.isPending}
               onClick={() => vehicleForm.submit()}
             >
               {editingVehicle ? 'Lưu thay đổi' : 'Thêm xe'}

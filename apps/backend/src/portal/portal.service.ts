@@ -1,10 +1,23 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto } from './dto/portal.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { BugSeverity, BugItemType, BugStatus, NotificationType, Role } from '../generated/prisma';
+import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto, LinkTicketToIssueDto } from './dto/portal.dto';
+
+// Priority mapping: TicketPriority → BugSeverity
+const PRIORITY_TO_SEVERITY: Record<string, BugSeverity> = {
+  LOW:    BugSeverity.LOW,
+  MEDIUM: BugSeverity.MEDIUM,
+  HIGH:   BugSeverity.HIGH,
+  URGENT: BugSeverity.CRITICAL,
+};
 
 @Injectable()
 export class PortalService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   // ─── Admin: manage portals ────────────────────────────────────────────────
 
@@ -170,5 +183,85 @@ export class PortalService {
         submittedBy: dto.submittedBy,
       },
     });
+  }
+
+  // ─── Admin: link ticket to internal Issue ────────────────────────────────────
+
+  async linkToIssue(ticketId: string, dto: LinkTicketToIssueDto) {
+    const ticket = await this.prisma.customerTicket.findUnique({
+      where: { id: ticketId },
+      include: {
+        portal: {
+          select: {
+            id: true,
+            customerId: true,
+            customer: { select: { name: true } },
+          },
+        },
+      },
+    });
+    if (!ticket) throw new NotFoundException('Ticket không tồn tại');
+    if (ticket.issueId) throw new BadRequestException('Ticket đã được liên kết với issue');
+
+    // Resolve projectId: ưu tiên dto.projectId, sau đó lấy project của customer
+    let projectId = dto.projectId;
+    if (!projectId) {
+      const project = await this.prisma.project.findFirst({
+        where: { customerId: ticket.portal.customerId, deletedAt: null },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      });
+      if (!project) throw new BadRequestException('Không tìm thấy project nào của khách hàng để gắn issue — vui lòng truyền projectId');
+      projectId = project.id;
+    }
+
+    const severity = PRIORITY_TO_SEVERITY[dto.priority ?? ticket.priority] ?? BugSeverity.MEDIUM;
+
+    const issue = await this.prisma.$transaction(async (tx) => {
+      const bug = await tx.bug.create({
+        data: {
+          projectId,
+          reporterId:     dto.reporterId,
+          title:          dto.issueTitle,
+          description:    dto.issueDescription,
+          severity,
+          itemType:       BugItemType.ISSUE,
+          status:         BugStatus.OPEN,
+          requesterName:  ticket.submittedBy ?? undefined,
+        },
+      });
+
+      await tx.customerTicket.update({
+        where: { id: ticketId },
+        data:  { issueId: bug.id },
+      });
+
+      return bug;
+    });
+
+    // Notify Customer Success team (ADMIN + PM roles)
+    const csTeam = await this.prisma.user.findMany({
+      where: {
+        role: { in: [Role.ADMIN, Role.PM] },
+        isActive: true,
+      },
+      select: { id: true },
+      take: 50,
+    });
+
+    await Promise.all(
+      csTeam.map((u) =>
+        this.notifications.createInApp(u.id, {
+          type:       NotificationType.ISSUE_ASSIGNED,
+          title:      'Issue mới từ khách hàng',
+          body:       `Ticket "${ticket.title}" (${ticket.portal.customer?.name}) đã được chuyển thành Issue #${issue.id.slice(0, 8)}`,
+          link:       `/bugs/${issue.id}`,
+          entityType: 'Bug',
+          entityId:   issue.id,
+        }),
+      ),
+    );
+
+    return { issue, ticketId, issueId: issue.id };
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { Queue, Worker } from 'bullmq';
 
-export type FinanceEventType = 'invoice.paid' | 'expense.approved' | 'payroll.approved';
+export type FinanceEventType = 'invoice.paid' | 'expense.approved' | 'payroll.approved' | 'po.received' | 'po.paid';
 
 export interface FinanceEvent {
   type:      FinanceEventType;
@@ -27,7 +27,7 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
   }
 
   onModuleInit() {
-    const types: FinanceEventType[] = ['invoice.paid', 'expense.approved', 'payroll.approved'];
+    const types: FinanceEventType[] = ['invoice.paid', 'expense.approved', 'payroll.approved', 'po.received', 'po.paid'];
     for (const type of types) {
       const queueName = `${QUEUE_PREFIX}.${type}`;
       this.queues.set(type, new Queue<FinanceEvent>(queueName, { connection: this.connection }));

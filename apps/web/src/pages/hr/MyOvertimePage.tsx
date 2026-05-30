@@ -228,7 +228,6 @@ export default function MyOvertimePage() {
                 })
               }
               loading={cancelMut.isPending}
-              disabled={cancelMut.isPending}
             />
           </Tooltip>
         ) : (
@@ -303,7 +302,7 @@ export default function MyOvertimePage() {
         footer={
           <Space>
             <Button onClick={() => { setAddOpen(false); addForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={handleSubmit}>
+            <Button type="primary" loading={createMut.isPending} onClick={handleSubmit}>
               Gửi đăng ký
             </Button>
           </Space>

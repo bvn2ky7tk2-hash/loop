@@ -43,6 +43,91 @@ async function seedDefaultBonusConfigs(tenantId?: string) {
   console.log('  Đã seed 4 PerformanceBonusConfig.');
 }
 
+/**
+ * Seed 5 PerformanceBonus DRAFT với scoreRange khác nhau để demo UI approval flow.
+ * Idempotent — bỏ qua nếu đã có ít nhất 5 bản ghi.
+ */
+async function seedDemoPerformanceBonuses() {
+  const existing = await prisma.performanceBonus.count({ where: { status: 'DRAFT' } });
+  if (existing >= 5) {
+    console.log('  PerformanceBonus đã có đủ demo data, bỏ qua.');
+    return;
+  }
+
+  // Lấy tối đa 5 nhân viên + review + contract ACTIVE
+  const emps = await prisma.employee.findMany({
+    where: { deletedAt: null },
+    orderBy: { createdAt: 'asc' },
+    take: 5,
+    select: { id: true, fullName: true, tenantId: true },
+  });
+
+  if (emps.length === 0) {
+    console.warn('  Không tìm thấy employee nào để seed PerformanceBonus.');
+    return;
+  }
+
+  // Đại diện 5 mức điểm — EXCELLENT→BELOW
+  const SCORE_SAMPLES = [9.5, 8.0, 6.5, 3.5, 7.2];
+  const BASE_SALARY   = 15_000_000;
+  // coefficient tương ứng theo config mặc định
+  const COEFF_MAP: Record<string, number> = {
+    high:   2.0,  // score >= 9.0
+    good:   1.5,  // 7.0–8.9
+    avg:    1.0,  // 5.0–6.9
+    below:  0.0,  // < 5.0
+  };
+
+  function coeff(score: number): number {
+    if (score >= 9.0) return COEFF_MAP.high;
+    if (score >= 7.0) return COEFF_MAP.good;
+    if (score >= 5.0) return COEFF_MAP.avg;
+    return COEFF_MAP.below;
+  }
+
+  for (let i = 0; i < Math.min(emps.length, SCORE_SAMPLES.length); i++) {
+    const emp   = emps[i];
+    const score = SCORE_SAMPLES[i];
+    const c     = coeff(score);
+    const bonus = BASE_SALARY * c;
+
+    // Cần reviewId — tìm review hiện có hoặc bỏ qua
+    const review = await prisma.performanceReview.findFirst({
+      where: { employeeId: emp.id },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true },
+    });
+
+    if (!review) {
+      console.log(`  [skip] ${emp.fullName} chưa có PerformanceReview.`);
+      continue;
+    }
+
+    // Kiểm tra đã có bonus cho review này chưa
+    const already = await prisma.performanceBonus.findUnique({
+      where: { reviewId_employeeId: { reviewId: review.id, employeeId: emp.id } },
+    });
+    if (already) {
+      console.log(`  [skip] ${emp.fullName} đã có PerformanceBonus.`);
+      continue;
+    }
+
+    await prisma.performanceBonus.create({
+      data: {
+        reviewId:    review.id,
+        employeeId:  emp.id,
+        score,
+        baseSalary:  BASE_SALARY,
+        coefficient: c,
+        bonusAmount: bonus,
+        status:      'DRAFT',
+        tenantId:    emp.tenantId ?? null,
+      },
+    });
+    console.log(`  Tạo PerformanceBonus DRAFT: ${emp.fullName} score=${score} bonus=${bonus.toLocaleString('vi-VN')} đ`);
+  }
+}
+
 async function main() {
   console.log('=== Seed Contract Lifecycle (E18.1 + E19.1) ===');
 
@@ -111,6 +196,10 @@ async function main() {
     console.log(`  Seed config cho tenant: ${firstTenant.name}`);
     await seedDefaultBonusConfigs(firstTenant.id);
   }
+
+  // Seed 5 PerformanceBonus records DRAFT với scoreRange khác nhau
+  console.log('\n--- Seed PerformanceBonus demo (5 bản ghi DRAFT) ---');
+  await seedDemoPerformanceBonuses();
 
   console.log('\n=== Seed hoàn tất ===');
 }

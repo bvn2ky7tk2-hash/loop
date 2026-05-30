@@ -82,7 +82,7 @@ export default function ProcessModelerPage() {
               icon={<SaveOutlined />}
               loading={updateMutation.isPending}
               onClick={handleSave}
-              disabled={!isDirty || updateMutation.isPending}
+              disabled={!isDirty}
             >
               Lưu
             </Button>

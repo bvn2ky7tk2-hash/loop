@@ -33,11 +33,49 @@ export class AutomationService {
   async runRule(key: string) {
     const rule = await this.prisma.automationRule.findUnique({ where: { key } });
     if (!rule) throw new NotFoundException('Rule không tồn tại');
-    await this.executeRule(key);
-    return this.prisma.automationRule.update({
-      where: { key },
-      data: { lastRunAt: new Date(), runCount: { increment: 1 } },
-    });
+    const start = Date.now();
+    try {
+      await this.executeRule(key);
+      await this.logRun(rule.id, 'SUCCESS', null, Date.now() - start);
+    } catch (err: any) {
+      await this.logRun(rule.id, 'FAILED', err?.message ?? 'Unknown error', Date.now() - start);
+      throw err;
+    }
+    return this.prisma.automationRule.findUnique({ where: { key } });
+  }
+
+  /**
+   * Ghi log mỗi lần rule chạy và cập nhật lastRunAt, runCount, lastError trên rule.
+   * Gọi sau mỗi lần executeRule() từ scheduler hoặc manual trigger.
+   */
+  async logRun(
+    ruleId: string,
+    status: 'SUCCESS' | 'FAILED' | 'SKIPPED',
+    message: string | null,
+    durationMs: number,
+    entityId?: string,
+    entityType?: string,
+  ) {
+    await this.prisma.$transaction([
+      this.prisma.automationRuleLog.create({
+        data: {
+          ruleId,
+          status,
+          message,
+          durationMs,
+          entityId,
+          entityType,
+        },
+      }),
+      this.prisma.automationRule.update({
+        where: { id: ruleId },
+        data: {
+          lastRunAt: new Date(),
+          runCount: { increment: 1 },
+          lastError: status === 'FAILED' ? (message ?? 'Unknown error') : null,
+        },
+      }),
+    ]);
   }
 
   async executeRule(key: string) {

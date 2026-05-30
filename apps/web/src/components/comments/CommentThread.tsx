@@ -121,7 +121,6 @@ function CommentItem({
                 size="small"
                 icon={<DeleteOutlined />}
                 loading={deleteMut.isPending}
-                disabled={deleteMut.isPending}
                 danger
                 style={{ padding: '0 4px', fontSize: 12 }}
               />
@@ -255,7 +254,7 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
                   size="small"
                   icon={<SendOutlined />}
                   loading={createMut.isPending}
-                  disabled={!replyText.trim() || createMut.isPending}
+                  disabled={!replyText.trim()}
                   onClick={() => handleReplySubmit(c.id)}
                 >
                   Gửi
@@ -304,7 +303,7 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
               size="small"
               icon={<SendOutlined />}
               loading={createMut.isPending}
-              disabled={!newComment.trim() || createMut.isPending}
+              disabled={!newComment.trim()}
               onClick={handleSubmit}
             >
               Gửi
