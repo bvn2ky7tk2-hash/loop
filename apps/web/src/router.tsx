@@ -99,6 +99,11 @@ const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPa
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
 const TenantsPage           = lazy(() => import('./pages/admin/TenantsPage'));
+// E26: Platform Utilities
+const AnnouncementsPage     = lazy(() => import('./pages/admin/AnnouncementsPage'));
+const PermissionAuditPage   = lazy(() => import('./pages/admin/PermissionAuditPage'));
+const EmailLogPage          = lazy(() => import('./pages/admin/EmailLogPage'));
+const QueueBrowserPage      = lazy(() => import('./pages/admin/QueueBrowserPage'));
 const HrAnalyticsPage        = lazy(() => import('./pages/hr/HrAnalyticsPage'));
 const UtilizationPage        = lazy(() => import('./pages/reports/UtilizationPage'));
 const PayrollAnalyticsPage   = lazy(() => import('./pages/payroll/PayrollAnalyticsPage'));
@@ -236,6 +241,11 @@ export const router = createBrowserRouter([
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
       { path: 'admin/tenants',        element: wrap(TenantsPage) },
+      // E26: Platform Utilities
+      { path: 'admin/announcements',   element: wrap(AnnouncementsPage) },
+      { path: 'admin/permission-audit', element: wrap(PermissionAuditPage) },
+      { path: 'admin/email-logs',      element: wrap(EmailLogPage) },
+      { path: 'admin/queues',          element: wrap(QueueBrowserPage) },
       { path: 'hr/analytics',          element: wrap(HrAnalyticsPage) },
       { path: 'payroll/analytics',    element: wrap(PayrollAnalyticsPage) },
       { path: 'crm/analytics',        element: wrap(CrmAnalyticsPage) },

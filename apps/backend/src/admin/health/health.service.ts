@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
+import { validateEnv } from '../../common/env-validation';
 
 @Injectable()
 export class HealthService {
@@ -29,6 +30,9 @@ export class HealthService {
     // Memory
     const mem = process.memoryUsage();
 
+    // Env validation
+    const { issues: envIssues } = validateEnv();
+
     return {
       timestamp,
       database: dbResult,
@@ -41,6 +45,7 @@ export class HealthService {
         heapTotal: mem.heapTotal,
         rss: mem.rss,
       },
+      envIssues,
     };
   }
 

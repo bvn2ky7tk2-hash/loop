@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
   Typography, Input, Button, Space, Avatar, Divider,
-  Popconfirm, App, Spin, Empty, Tooltip,
+  Popconfirm, App, Spin, Empty, Tooltip, List,
 } from 'antd';
 import {
   SendOutlined, DeleteOutlined, MessageOutlined,
@@ -9,12 +9,14 @@ import {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/vi';
+import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import {
   useGetComments, useCreateComment, useDeleteComment,
   type Comment,
 } from '../../api/comments';
 import { useAuthStore } from '../../store/auth.store';
+import { usersApi } from '../../api/users';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -29,6 +31,149 @@ function getAvatarColor(name: string) {
   const colors = ['#4F46E5', '#0EA5E9', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
   const idx = name.charCodeAt(0) % colors.length;
   return colors[idx];
+}
+
+// ─── MentionInput ─────────────────────────────────────────────────────────────
+
+interface MentionInputProps {
+  value: string;
+  onChange: (val: string) => void;
+  placeholder?: string;
+  autoSize?: { minRows: number; maxRows: number };
+  onSubmit?: () => void;
+  disabled?: boolean;
+}
+
+function MentionInput({ value, onChange, placeholder, autoSize, onSubmit, disabled }: MentionInputProps) {
+  const { bgCard, borderColor, textPrimary, textMuted } = useThemePalette();
+  const [mentionSearch, setMentionSearch]   = useState('');
+  const [mentionVisible, setMentionVisible] = useState(false);
+  const [mentionIndex, setMentionIndex]     = useState(0);
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const { data: mentionResults = [] } = useQuery({
+    queryKey: ['users-mention', mentionSearch],
+    queryFn: () => usersApi.search(mentionSearch),
+    enabled: mentionVisible && mentionSearch.length >= 1,
+    staleTime: 10_000,
+  });
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    onChange(text);
+
+    // Phát hiện @mention tại vị trí con trỏ
+    const cursor = e.target.selectionStart ?? text.length;
+    const beforeCursor = text.slice(0, cursor);
+    const match = /@(\w[\w\s]*)$/.exec(beforeCursor);
+    if (match) {
+      setMentionSearch(match[1]);
+      setMentionVisible(true);
+      setMentionIndex(0);
+    } else {
+      setMentionVisible(false);
+      setMentionSearch('');
+    }
+  }, [onChange]);
+
+  const insertMention = useCallback((name: string) => {
+    if (!textAreaRef.current) return;
+    const cursor = textAreaRef.current.selectionStart ?? value.length;
+    const beforeCursor = value.slice(0, cursor);
+    const afterCursor  = value.slice(cursor);
+    // Thay thế @search đang gõ bằng @fullName + khoảng trắng
+    const replaced = beforeCursor.replace(/@(\w[\w\s]*)$/, `@${name} `);
+    onChange(replaced + afterCursor);
+    setMentionVisible(false);
+    setMentionSearch('');
+    // Focus lại textarea
+    setTimeout(() => textAreaRef.current?.focus(), 50);
+  }, [value, onChange]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (mentionVisible && mentionResults.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setMentionIndex((i) => (i + 1) % mentionResults.length);
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setMentionIndex((i) => (i - 1 + mentionResults.length) % mentionResults.length);
+        return;
+      }
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        insertMention(mentionResults[mentionIndex].name);
+        return;
+      }
+      if (e.key === 'Escape') {
+        setMentionVisible(false);
+        return;
+      }
+    }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && onSubmit) {
+      onSubmit();
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative', flex: 1 }}>
+      <Input.TextArea
+        ref={(el) => { textAreaRef.current = el?.resizableTextArea?.textArea ?? null; }}
+        placeholder={placeholder}
+        autoSize={autoSize}
+        value={value}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+      />
+      {mentionVisible && mentionResults.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: 0,
+            zIndex: 9999,
+            background: bgCard,
+            border: `1px solid ${borderColor}`,
+            borderRadius: 8,
+            boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+            minWidth: 200,
+            maxHeight: 200,
+            overflowY: 'auto',
+          }}
+        >
+          <List
+            size="small"
+            dataSource={mentionResults}
+            renderItem={(user, idx) => (
+              <List.Item
+                style={{
+                  padding: '6px 12px',
+                  cursor: 'pointer',
+                  background: idx === mentionIndex ? `rgba(99,102,241,0.15)` : 'transparent',
+                  color: textPrimary,
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault(); // Không mất focus textarea
+                  insertMention(user.name);
+                }}
+                onMouseEnter={() => setMentionIndex(idx)}
+              >
+                <Space>
+                  <Avatar size={22} style={{ background: getAvatarColor(user.name), fontSize: 10, fontWeight: 700 }}>
+                    {getInitials(user.name)}
+                  </Avatar>
+                  <Text style={{ color: textPrimary, fontSize: 13 }}>{user.name}</Text>
+                </Space>
+              </List.Item>
+            )}
+          />
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── CommentItem ─────────────────────────────────────────────────────────────
@@ -47,7 +192,7 @@ function CommentItem({
   comment, currentId, isAdmin, entityType, entityId, isReply, onReply,
 }: CommentItemProps) {
   const { message } = App.useApp();
-  const { textPrimary, textMuted, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, borderColor, linkColor } = useThemePalette();
   const deleteMut = useDeleteComment(entityType, entityId);
 
   const canDelete = comment.authorId === currentId || isAdmin;
@@ -58,6 +203,16 @@ function CommentItem({
     } catch {
       message.error('Xoá thất bại');
     }
+  };
+
+  // Highlight @mentions trong nội dung
+  const renderContent = (content: string) => {
+    const parts = content.split(/(@\S+(?:\s\S+)*?(?=\s@|\s|$))/g);
+    return parts.map((part, i) =>
+      part.startsWith('@')
+        ? <span key={i} style={{ color: linkColor, fontWeight: 500 }}>{part}</span>
+        : <span key={i}>{part}</span>,
+    );
   };
 
   return (
@@ -94,7 +249,7 @@ function CommentItem({
         </Space>
 
         <Text style={{ fontSize: 13, whiteSpace: 'pre-wrap', display: 'block', color: textPrimary }}>
-          {comment.content}
+          {renderContent(comment.content)}
         </Text>
 
         <Space size={4} style={{ marginTop: 4 }}>
@@ -237,17 +392,13 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
           {/* Inline reply input */}
           {replyTo === c.id && (
             <div style={{ display: 'flex', gap: 8, marginBottom: 16, paddingLeft: 44 }}>
-              <Input.TextArea
-                autoFocus
-                placeholder={`Trả lời ${c.author.name}...`}
+              <MentionInput
+                placeholder={`Trả lời ${c.author.name}... (gõ @ để nhắc ai đó)`}
                 autoSize={{ minRows: 1, maxRows: 4 }}
                 value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleReplySubmit(c.id);
-                  if (e.key === 'Escape') { setReplyTo(null); setReplyText(''); }
-                }}
-                style={{ flex: 1 }}
+                onChange={setReplyText}
+                onSubmit={() => handleReplySubmit(c.id)}
+                disabled={createMut.isPending}
               />
               <Space direction="vertical" size={4}>
                 <Button
@@ -286,14 +437,13 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
           {getInitials(user?.name ?? '?')}
         </Avatar>
         <div style={{ flex: 1 }}>
-          <Input.TextArea
-            placeholder="Viết comment..."
+          <MentionInput
+            placeholder="Viết comment... (gõ @ để nhắc ai đó)"
             autoSize={{ minRows: 2, maxRows: 6 }}
             value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSubmit();
-            }}
+            onChange={setNewComment}
+            onSubmit={handleSubmit}
+            disabled={createMut.isPending}
           />
           <div style={{ textAlign: 'right', marginTop: 6 }}>
             <Text style={{ fontSize: 11, marginRight: 8, color: '#94A3B8' }}>

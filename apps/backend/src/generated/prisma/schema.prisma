@@ -874,6 +874,7 @@ enum NotificationType {
   CONTRACT_EXPIRED
   BONUS_PENDING
   BONUS_APPROVED
+  SYSTEM_ALERT
 }
 
 enum DefinitionStatus {
@@ -1870,6 +1871,8 @@ model Asset {
   updatedAt         DateTime           @updatedAt @map("updated_at")
   tenantId          String?            @map("tenant_id")
   tenant            Tenant?            @relation("TenantAssets", fields: [tenantId], references: [id])
+  assetTransfers    AssetTransfer[]    @relation("AssetTransfers")
+  assetDisposals    AssetDisposal[]    @relation("AssetDisposals")
 
   @@index([orgUnitId, status], name: "idx_assets_org_status")
   @@index([tenantId])
@@ -3300,6 +3303,7 @@ model Tenant {
   announcements          SystemAnnouncement[]     @relation("TenantAnnouncements")
   apiKeys                ApiKey[]                 @relation("TenantApiKeys")
   notifTemplates         NotificationTemplate[]   @relation("TenantNotifTemplates")
+  smtpConfig             TenantSmtpConfig?        @relation("TenantSmtpConfig")
 
   @@map("tenants")
 }
@@ -3939,4 +3943,59 @@ model NotificationTemplate {
 
   @@unique([tenantId, key])
   @@map("notification_templates")
+}
+
+model TenantSmtpConfig {
+  id        String   @id @default(uuid())
+  tenantId  String   @unique @map("tenant_id")
+  tenant    Tenant   @relation("TenantSmtpConfig", fields: [tenantId], references: [id], onDelete: Cascade)
+  host      String   @db.VarChar(200)
+  port      Int      @default(587)
+  user      String   @db.VarChar(200)
+  password  String   @db.VarChar(500)
+  fromEmail String   @map("from_email") @db.VarChar(200)
+  fromName  String   @map("from_name") @db.VarChar(200)
+  isActive  Boolean  @default(true) @map("is_active")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tenant_smtp_configs")
+}
+
+enum AssetDisposalMethod {
+  SELL
+  SCRAP
+  DONATE
+
+  @@map("asset_disposal_method")
+}
+
+model AssetTransfer {
+  id            String   @id @default(uuid())
+  assetId       String   @map("asset_id")
+  fromOrgUnitId String?  @map("from_org_unit_id")
+  toOrgUnitId   String?  @map("to_org_unit_id")
+  transferDate  DateTime @map("transfer_date") @db.Date
+  reason        String?
+  approvedById  String?  @map("approved_by_id")
+  tenantId      String?  @map("tenant_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  asset         Asset    @relation("AssetTransfers", fields: [assetId], references: [id])
+
+  @@index([assetId])
+  @@map("asset_transfers")
+}
+
+model AssetDisposal {
+  id           String              @id @default(uuid())
+  assetId      String              @map("asset_id")
+  disposalDate DateTime            @map("disposal_date") @db.Date
+  method       AssetDisposalMethod @default(SCRAP)
+  amount       Decimal?            @db.Decimal(15, 2)
+  reason       String?
+  tenantId     String?             @map("tenant_id")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  asset        Asset               @relation("AssetDisposals", fields: [assetId], references: [id])
+
+  @@index([assetId])
+  @@map("asset_disposals")
 }

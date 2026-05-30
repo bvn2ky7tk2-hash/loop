@@ -1,19 +1,21 @@
 import { IsString, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type ImportTemplate = 'employees' | 'assets' | 'jobs';
+export type ImportTemplate = 'employees' | 'assets' | 'jobs' | 'leave_balances' | 'customers' | 'leads';
+
+const ALL_TEMPLATES: ImportTemplate[] = ['employees', 'assets', 'jobs', 'leave_balances', 'customers', 'leads'];
 
 export class ImportPreviewDto {
-  @ApiProperty({ enum: ['employees', 'assets', 'jobs'] })
+  @ApiProperty({ enum: ALL_TEMPLATES })
   @IsString()
-  @IsIn(['employees', 'assets', 'jobs'])
+  @IsIn(ALL_TEMPLATES)
   template: ImportTemplate;
 }
 
 export class ImportCommitDto {
-  @ApiProperty({ enum: ['employees', 'assets', 'jobs'] })
+  @ApiProperty({ enum: ALL_TEMPLATES })
   @IsString()
-  @IsIn(['employees', 'assets', 'jobs'])
+  @IsIn(ALL_TEMPLATES)
   template: ImportTemplate;
 }
 

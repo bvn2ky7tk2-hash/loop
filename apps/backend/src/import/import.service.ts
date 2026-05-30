@@ -23,9 +23,12 @@ export class ImportService {
     }
 
     switch (template) {
-      case 'employees': return { template, ...this.validateEmployees(rows) };
-      case 'assets':    return { template, ...this.validateAssets(rows) };
-      case 'jobs':      return { template, ...this.validateJobs(rows) };
+      case 'employees':     return { template, ...this.validateEmployees(rows) };
+      case 'assets':        return { template, ...this.validateAssets(rows) };
+      case 'jobs':          return { template, ...this.validateJobs(rows) };
+      case 'leave_balances': return { template, ...this.validateLeaveBalances(rows) };
+      case 'customers':     return { template, ...this.validateCustomers(rows) };
+      case 'leads':         return { template, ...this.validateLeads(rows) };
     }
   }
 
@@ -41,9 +44,12 @@ export class ImportService {
     let imported = 0;
 
     switch (template) {
-      case 'employees': imported = await this.commitEmployees(preview.valid); break;
-      case 'assets':    imported = await this.commitAssets(preview.valid);    break;
-      case 'jobs':      imported = await this.commitJobs(preview.valid);      break;
+      case 'employees':     imported = await this.commitEmployees(preview.valid);     break;
+      case 'assets':        imported = await this.commitAssets(preview.valid);        break;
+      case 'jobs':          imported = await this.commitJobs(preview.valid);          break;
+      case 'leave_balances': imported = await this.commitLeaveBalances(preview.valid); break;
+      case 'customers':     imported = await this.commitCustomers(preview.valid);     break;
+      case 'leads':         imported = await this.commitLeads(preview.valid);         break;
     }
 
     return { imported, skipped: preview.errors.length };
@@ -248,6 +254,174 @@ export class ImportService {
         if (orgUnitId) jobData.orgUnitId = orgUnitId;
 
         await this.prisma.jobOpening.create({ data: jobData as never });
+        count++;
+      } catch {
+        // Skip row on error
+      }
+    }
+    return count;
+  }
+
+  private validateLeaveBalances(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum     = idx + 2;
+      const email      = this.str(row['Email'] ?? row['email']);
+      const leaveType  = this.str(row['Loại nghỉ'] ?? row['leaveType']);
+      const year       = Number(row['Năm'] ?? row['year']);
+      const totalDays  = Number(row['Số ngày'] ?? row['totalDays'] ?? row['total_days']);
+
+      if (!email)      { errors.push({ row: rowNum, message: 'Thiếu email nhân viên' }); return; }
+      if (!leaveType)  { errors.push({ row: rowNum, message: 'Thiếu loại nghỉ' }); return; }
+      if (isNaN(year) || year < 2020) { errors.push({ row: rowNum, message: 'Năm không hợp lệ (>= 2020)' }); return; }
+      if (isNaN(totalDays) || totalDays < 0) { errors.push({ row: rowNum, message: 'Số ngày không hợp lệ (>= 0)' }); return; }
+
+      valid.push({ email, leaveType, year, totalDays });
+    });
+
+    return { valid, errors };
+  }
+
+  private validateCustomers(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum  = idx + 2;
+      const name    = this.str(row['Tên khách hàng'] ?? row['name']);
+      const code    = this.str(row['Mã'] ?? row['code']);
+
+      if (!name) { errors.push({ row: rowNum, message: 'Thiếu tên khách hàng' }); return; }
+      if (!code) { errors.push({ row: rowNum, message: 'Thiếu mã khách hàng' }); return; }
+
+      valid.push({
+        name,
+        code,
+        industry: this.str(row['Ngành'] ?? row['industry']),
+        website:  this.str(row['Website'] ?? row['website']),
+        taxCode:  this.str(row['Mã số thuế'] ?? row['taxCode']),
+      });
+    });
+
+    return { valid, errors };
+  }
+
+  private validateLeads(rows: ImportRow[]): { valid: ImportRow[]; errors: ImportError[] } {
+    const valid: ImportRow[] = [];
+    const errors: ImportError[] = [];
+
+    rows.forEach((row, idx) => {
+      const rowNum = idx + 2;
+      const title  = this.str(row['Tên lead'] ?? row['title']);
+      const source = this.str(row['Nguồn'] ?? row['source']);
+
+      if (!title)  { errors.push({ row: rowNum, message: 'Thiếu tên lead' }); return; }
+      if (!source) { errors.push({ row: rowNum, message: 'Thiếu nguồn (WEBSITE, REFERRAL, COLD_CALL, EVENT, OTHER)' }); return; }
+
+      const validSources = ['WEBSITE', 'REFERRAL', 'COLD_CALL', 'EVENT', 'OTHER'];
+      if (!validSources.includes(source.toUpperCase())) {
+        errors.push({ row: rowNum, message: `Nguồn không hợp lệ: ${source}. Chọn: ${validSources.join(', ')}` });
+        return;
+      }
+
+      valid.push({
+        title,
+        source: source.toUpperCase(),
+        estimatedValue: row['Giá trị ước tính'] ?? row['estimatedValue'] ?? 0,
+        notes: this.str(row['Ghi chú'] ?? row['notes']),
+      });
+    });
+
+    return { valid, errors };
+  }
+
+  // ── Commit helpers (extended) ────────────────────────────────────────────────
+
+  private async commitLeaveBalances(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    for (const row of rows) {
+      try {
+        const employee = await this.prisma.employee.findFirst({
+          where: { email: String(row.email) },
+        });
+        if (!employee) continue;
+
+        const leaveType = await this.prisma.leaveType.findFirst({
+          where: { name: String(row.leaveType) },
+        });
+        if (!leaveType) continue;
+
+        await this.prisma.leaveBalance.upsert({
+          where: {
+            employeeId_leaveTypeId_year: {
+              employeeId: employee.id,
+              leaveTypeId: leaveType.id,
+              year: Number(row.year),
+            },
+          },
+          update: { totalDays: Number(row.totalDays) as never },
+          create: {
+            employeeId: employee.id,
+            leaveTypeId: leaveType.id,
+            year: Number(row.year),
+            totalDays: Number(row.totalDays) as never,
+            usedDays: 0 as never,
+          },
+        });
+        count++;
+      } catch {
+        // Skip row on error
+      }
+    }
+    return count;
+  }
+
+  private async commitCustomers(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    for (const row of rows) {
+      try {
+        const existing = await this.prisma.customer.findFirst({
+          where: { code: String(row.code) },
+        });
+        if (existing) continue;
+
+        await this.prisma.customer.create({
+          data: {
+            name:     String(row.name),
+            code:     String(row.code),
+            industry: row.industry ? String(row.industry) : null,
+            website:  row.website  ? String(row.website)  : null,
+            taxCode:  row.taxCode  ? String(row.taxCode)  : null,
+          },
+        });
+        count++;
+      } catch {
+        // Skip row on error
+      }
+    }
+    return count;
+  }
+
+  private async commitLeads(rows: ImportRow[]): Promise<number> {
+    let count = 0;
+    // Lấy user đầu tiên làm assignee mặc định khi import
+    const defaultAssignee = await this.prisma.user.findFirst({ select: { id: true } });
+    if (!defaultAssignee) return 0;
+
+    for (const row of rows) {
+      try {
+        await this.prisma.lead.create({
+          data: {
+            title:          String(row.title),
+            source:         String(row.source) as never,
+            status:         'NEW' as never,
+            estimatedValue: row.estimatedValue ? Number(row.estimatedValue) as never : null,
+            notes:          row.notes ? String(row.notes) : null,
+            assigneeId:     defaultAssignee.id,
+          },
+        });
         count++;
       } catch {
         // Skip row on error

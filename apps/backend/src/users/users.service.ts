@@ -79,6 +79,22 @@ export class UsersService {
     return { message: 'Mật khẩu đã được cập nhật' };
   }
 
+  async searchUsers(query: string, limit = 10) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { email: { contains: query, mode: 'insensitive' } },
+        ],
+        isActive: true,
+      },
+      select: { id: true, name: true, email: true },
+      orderBy: { name: 'asc' },
+      take: Math.min(limit, 50),
+    });
+    return users;
+  }
+
   private async findOneOrThrow(id: string) {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('Không tìm thấy người dùng');

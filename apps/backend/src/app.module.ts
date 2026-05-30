@@ -72,6 +72,11 @@ import { WorkShiftsModule } from './work-shifts/work-shifts.module';
 import { EventsModule } from './common/events/events.module';
 import { BudgetModule } from './budget/budget.module';
 import { DelegationModule } from './delegation/delegation.module';
+// E26: Platform Utilities
+import { AnnouncementsModule } from './admin/announcements/announcements.module';
+import { PermissionAuditModule } from './admin/permission-audit/permission-audit.module';
+import { EmailLogModule } from './admin/email-log/email-log.module';
+import { QueuesModule } from './admin/queues/queues.module';
 
 @Module({
   providers: [
@@ -169,6 +174,11 @@ import { DelegationModule } from './delegation/delegation.module';
     BudgetModule,
     // Epic E23: Delegation & Automation upgrade
     DelegationModule,
+    // Epic E26: Platform Utilities
+    AnnouncementsModule,
+    PermissionAuditModule,
+    EmailLogModule,
+    QueuesModule,
   ],
 })
 export class AppModule {}

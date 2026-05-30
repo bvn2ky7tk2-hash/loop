@@ -1,10 +1,16 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, Max, Min, IsString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { JwtUser } from '../common/types/jwt-user.type';
 import { NotificationsService } from './notifications.service';
+
+class UpsertPreferenceDto {
+  @IsString()
+  @IsIn(['EMAIL', 'IN_APP', 'BOTH'])
+  channel: 'EMAIL' | 'IN_APP' | 'BOTH';
+}
 
 class NotifQueryDto {
   @IsOptional()
@@ -90,5 +96,23 @@ export class NotificationsController {
   @ApiOperation({ summary: 'Xoá push token' })
   removeToken(@Param('token') token: string) {
     return this.service.removePushToken(token);
+  }
+
+  // ─── E23.4 Notification Preferences ────────────────────────────────────────
+
+  @Get('preferences')
+  @ApiOperation({ summary: 'Lấy tùy chọn thông báo của user hiện tại' })
+  getPreferences(@CurrentUser() user: JwtUser) {
+    return this.service.getPreferences(user.id);
+  }
+
+  @Patch('preferences/:moduleType')
+  @ApiOperation({ summary: 'Cập nhật kênh thông báo cho một module' })
+  upsertPreference(
+    @CurrentUser() user: JwtUser,
+    @Param('moduleType') moduleType: string,
+    @Body() dto: UpsertPreferenceDto,
+  ) {
+    return this.service.upsertPreference(user.id, moduleType, dto.channel);
   }
 }

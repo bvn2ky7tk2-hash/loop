@@ -758,6 +758,21 @@ export type ApiKey = $Result.DefaultSelection<Prisma.$ApiKeyPayload>
  * 
  */
 export type NotificationTemplate = $Result.DefaultSelection<Prisma.$NotificationTemplatePayload>
+/**
+ * Model TenantSmtpConfig
+ * 
+ */
+export type TenantSmtpConfig = $Result.DefaultSelection<Prisma.$TenantSmtpConfigPayload>
+/**
+ * Model AssetTransfer
+ * 
+ */
+export type AssetTransfer = $Result.DefaultSelection<Prisma.$AssetTransferPayload>
+/**
+ * Model AssetDisposal
+ * 
+ */
+export type AssetDisposal = $Result.DefaultSelection<Prisma.$AssetDisposalPayload>
 
 /**
  * Enums
@@ -913,7 +928,8 @@ export const NotificationType: {
   CONTRACT_EXPIRING: 'CONTRACT_EXPIRING',
   CONTRACT_EXPIRED: 'CONTRACT_EXPIRED',
   BONUS_PENDING: 'BONUS_PENDING',
-  BONUS_APPROVED: 'BONUS_APPROVED'
+  BONUS_APPROVED: 'BONUS_APPROVED',
+  SYSTEM_ALERT: 'SYSTEM_ALERT'
 };
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
@@ -1717,6 +1733,15 @@ export const NotificationChannel: {
 
 export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
 
+
+export const AssetDisposalMethod: {
+  SELL: 'SELL',
+  SCRAP: 'SCRAP',
+  DONATE: 'DONATE'
+};
+
+export type AssetDisposalMethod = (typeof AssetDisposalMethod)[keyof typeof AssetDisposalMethod]
+
 }
 
 export type SkillCategory = $Enums.SkillCategory
@@ -2078,6 +2103,10 @@ export const ShiftType: typeof $Enums.ShiftType
 export type NotificationChannel = $Enums.NotificationChannel
 
 export const NotificationChannel: typeof $Enums.NotificationChannel
+
+export type AssetDisposalMethod = $Enums.AssetDisposalMethod
+
+export const AssetDisposalMethod: typeof $Enums.AssetDisposalMethod
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3689,6 +3718,36 @@ export class PrismaClient<
     * ```
     */
   get notificationTemplate(): Prisma.NotificationTemplateDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.tenantSmtpConfig`: Exposes CRUD operations for the **TenantSmtpConfig** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TenantSmtpConfigs
+    * const tenantSmtpConfigs = await prisma.tenantSmtpConfig.findMany()
+    * ```
+    */
+  get tenantSmtpConfig(): Prisma.TenantSmtpConfigDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.assetTransfer`: Exposes CRUD operations for the **AssetTransfer** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AssetTransfers
+    * const assetTransfers = await prisma.assetTransfer.findMany()
+    * ```
+    */
+  get assetTransfer(): Prisma.AssetTransferDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.assetDisposal`: Exposes CRUD operations for the **AssetDisposal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AssetDisposals
+    * const assetDisposals = await prisma.assetDisposal.findMany()
+    * ```
+    */
+  get assetDisposal(): Prisma.AssetDisposalDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -4271,7 +4330,10 @@ export namespace Prisma {
     SystemAnnouncement: 'SystemAnnouncement',
     EmailLog: 'EmailLog',
     ApiKey: 'ApiKey',
-    NotificationTemplate: 'NotificationTemplate'
+    NotificationTemplate: 'NotificationTemplate',
+    TenantSmtpConfig: 'TenantSmtpConfig',
+    AssetTransfer: 'AssetTransfer',
+    AssetDisposal: 'AssetDisposal'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -4287,7 +4349,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "contractAllowance" | "leaveType" | "leaveRequest" | "leaveBalance" | "overtimeRequest" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "leadFollowUpSchedule" | "customerSurveySchedule" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "automationRuleLog" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "budgetPlan" | "budgetLine" | "budgetTransaction" | "performanceBonusConfig" | "performanceBonus" | "calendarEvent" | "delegationRule" | "invoiceAccountMapping" | "projectCostSnapshot" | "projectCostByEmployee" | "projectJournal" | "salaryBand" | "salaryReviewSuggestion" | "tenant" | "jobTitle" | "position" | "positionHistory" | "hrDecision" | "workHistory" | "salaryRecord" | "leavePolicy" | "holidayCalendar" | "insuranceEnrollment" | "socialInsuranceBook" | "insuranceEvent" | "attendanceRecord" | "monthlyAttendance" | "attendanceExplanation" | "workShift" | "shiftAssignment" | "workSchedule" | "workSchedulePhase" | "workScheduleEnrollment" | "notificationPreference" | "savedFilterPreset" | "appChangelog" | "systemAnnouncement" | "emailLog" | "apiKey" | "notificationTemplate"
+      modelProps: "user" | "orgUnit" | "employee" | "skill" | "employeeSkill" | "employeeRate" | "project" | "allocation" | "task" | "timeLog" | "workStatus" | "timeEntry" | "timesheetRecord" | "alertConfig" | "notification" | "pushToken" | "telegramConfig" | "telegramMessage" | "processDefinition" | "processInstance" | "processUserTask" | "processActivityLog" | "bug" | "bugTask" | "bugAttachment" | "bugComment" | "bugTag" | "permission" | "screen" | "rolePermission" | "userPermission" | "moduleRole" | "moduleRolePermission" | "userModuleRole" | "auditLog" | "userGroup" | "groupPermission" | "groupMembership" | "groupOrgAccess" | "contract" | "contractAllowance" | "leaveType" | "leaveRequest" | "leaveBalance" | "overtimeRequest" | "payrollPeriod" | "payrollRecord" | "expense" | "expenseItem" | "customer" | "contact" | "lead" | "deal" | "crmActivity" | "leadFollowUpSchedule" | "customerSurveySchedule" | "clientContract" | "contractMilestone" | "invoice" | "invoiceItem" | "jobOpening" | "candidate" | "interview" | "asset" | "assetAssignment" | "assetMaintenance" | "chartOfAccount" | "journalEntry" | "journalLine" | "trainingProgram" | "trainingRecord" | "performanceReview" | "insuranceConfig" | "taxBracket" | "taxDeductionConfig" | "wageZoneConfig" | "employeeTaxProfile" | "dependent" | "allowanceType" | "bonusType" | "employeeBonus" | "employeeYearlyTaxSummary" | "employeeAllowance" | "salaryColumn" | "okrObjective" | "okrKeyResult" | "kpiMetric" | "kpiRecord" | "revenueTarget" | "kbCategory" | "kbArticle" | "customerPortal" | "customerTicket" | "vendor" | "purchaseOrder" | "purchaseOrderItem" | "comment" | "feedPost" | "feedReaction" | "automationRule" | "automationRuleLog" | "scheduledReport" | "webhookEndpoint" | "webhookLog" | "moduleConfig" | "meetingRoom" | "roomBooking" | "vehicle" | "vehicleRequest" | "budgetPlan" | "budgetLine" | "budgetTransaction" | "performanceBonusConfig" | "performanceBonus" | "calendarEvent" | "delegationRule" | "invoiceAccountMapping" | "projectCostSnapshot" | "projectCostByEmployee" | "projectJournal" | "salaryBand" | "salaryReviewSuggestion" | "tenant" | "jobTitle" | "position" | "positionHistory" | "hrDecision" | "workHistory" | "salaryRecord" | "leavePolicy" | "holidayCalendar" | "insuranceEnrollment" | "socialInsuranceBook" | "insuranceEvent" | "attendanceRecord" | "monthlyAttendance" | "attendanceExplanation" | "workShift" | "shiftAssignment" | "workSchedule" | "workSchedulePhase" | "workScheduleEnrollment" | "notificationPreference" | "savedFilterPreset" | "appChangelog" | "systemAnnouncement" | "emailLog" | "apiKey" | "notificationTemplate" | "tenantSmtpConfig" | "assetTransfer" | "assetDisposal"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -15317,6 +15379,228 @@ export namespace Prisma {
           }
         }
       }
+      TenantSmtpConfig: {
+        payload: Prisma.$TenantSmtpConfigPayload<ExtArgs>
+        fields: Prisma.TenantSmtpConfigFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TenantSmtpConfigFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TenantSmtpConfigFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          findFirst: {
+            args: Prisma.TenantSmtpConfigFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TenantSmtpConfigFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          findMany: {
+            args: Prisma.TenantSmtpConfigFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>[]
+          }
+          create: {
+            args: Prisma.TenantSmtpConfigCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          createMany: {
+            args: Prisma.TenantSmtpConfigCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TenantSmtpConfigCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>[]
+          }
+          delete: {
+            args: Prisma.TenantSmtpConfigDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          update: {
+            args: Prisma.TenantSmtpConfigUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          deleteMany: {
+            args: Prisma.TenantSmtpConfigDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TenantSmtpConfigUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TenantSmtpConfigUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>[]
+          }
+          upsert: {
+            args: Prisma.TenantSmtpConfigUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TenantSmtpConfigPayload>
+          }
+          aggregate: {
+            args: Prisma.TenantSmtpConfigAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTenantSmtpConfig>
+          }
+          groupBy: {
+            args: Prisma.TenantSmtpConfigGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TenantSmtpConfigGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TenantSmtpConfigCountArgs<ExtArgs>
+            result: $Utils.Optional<TenantSmtpConfigCountAggregateOutputType> | number
+          }
+        }
+      }
+      AssetTransfer: {
+        payload: Prisma.$AssetTransferPayload<ExtArgs>
+        fields: Prisma.AssetTransferFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AssetTransferFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AssetTransferFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          findFirst: {
+            args: Prisma.AssetTransferFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AssetTransferFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          findMany: {
+            args: Prisma.AssetTransferFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>[]
+          }
+          create: {
+            args: Prisma.AssetTransferCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          createMany: {
+            args: Prisma.AssetTransferCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AssetTransferCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>[]
+          }
+          delete: {
+            args: Prisma.AssetTransferDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          update: {
+            args: Prisma.AssetTransferUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          deleteMany: {
+            args: Prisma.AssetTransferDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AssetTransferUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AssetTransferUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>[]
+          }
+          upsert: {
+            args: Prisma.AssetTransferUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetTransferPayload>
+          }
+          aggregate: {
+            args: Prisma.AssetTransferAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAssetTransfer>
+          }
+          groupBy: {
+            args: Prisma.AssetTransferGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AssetTransferGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AssetTransferCountArgs<ExtArgs>
+            result: $Utils.Optional<AssetTransferCountAggregateOutputType> | number
+          }
+        }
+      }
+      AssetDisposal: {
+        payload: Prisma.$AssetDisposalPayload<ExtArgs>
+        fields: Prisma.AssetDisposalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AssetDisposalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AssetDisposalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          findFirst: {
+            args: Prisma.AssetDisposalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AssetDisposalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          findMany: {
+            args: Prisma.AssetDisposalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>[]
+          }
+          create: {
+            args: Prisma.AssetDisposalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          createMany: {
+            args: Prisma.AssetDisposalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AssetDisposalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>[]
+          }
+          delete: {
+            args: Prisma.AssetDisposalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          update: {
+            args: Prisma.AssetDisposalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          deleteMany: {
+            args: Prisma.AssetDisposalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AssetDisposalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AssetDisposalUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>[]
+          }
+          upsert: {
+            args: Prisma.AssetDisposalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AssetDisposalPayload>
+          }
+          aggregate: {
+            args: Prisma.AssetDisposalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAssetDisposal>
+          }
+          groupBy: {
+            args: Prisma.AssetDisposalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AssetDisposalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AssetDisposalCountArgs<ExtArgs>
+            result: $Utils.Optional<AssetDisposalCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -15574,6 +15858,9 @@ export namespace Prisma {
     emailLog?: EmailLogOmit
     apiKey?: ApiKeyOmit
     notificationTemplate?: NotificationTemplateOmit
+    tenantSmtpConfig?: TenantSmtpConfigOmit
+    assetTransfer?: AssetTransferOmit
+    assetDisposal?: AssetDisposalOmit
   }
 
   /* Types for Logging */
@@ -17529,11 +17816,15 @@ export namespace Prisma {
   export type AssetCountOutputType = {
     assignments: number
     maintenanceLogs: number
+    assetTransfers: number
+    assetDisposals: number
   }
 
   export type AssetCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     assignments?: boolean | AssetCountOutputTypeCountAssignmentsArgs
     maintenanceLogs?: boolean | AssetCountOutputTypeCountMaintenanceLogsArgs
+    assetTransfers?: boolean | AssetCountOutputTypeCountAssetTransfersArgs
+    assetDisposals?: boolean | AssetCountOutputTypeCountAssetDisposalsArgs
   }
 
   // Custom InputTypes
@@ -17559,6 +17850,20 @@ export namespace Prisma {
    */
   export type AssetCountOutputTypeCountMaintenanceLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AssetMaintenanceWhereInput
+  }
+
+  /**
+   * AssetCountOutputType without action
+   */
+  export type AssetCountOutputTypeCountAssetTransfersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AssetTransferWhereInput
+  }
+
+  /**
+   * AssetCountOutputType without action
+   */
+  export type AssetCountOutputTypeCountAssetDisposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AssetDisposalWhereInput
   }
 
 
@@ -98437,6 +98742,8 @@ export namespace Prisma {
     assignments?: boolean | Asset$assignmentsArgs<ExtArgs>
     maintenanceLogs?: boolean | Asset$maintenanceLogsArgs<ExtArgs>
     tenant?: boolean | Asset$tenantArgs<ExtArgs>
+    assetTransfers?: boolean | Asset$assetTransfersArgs<ExtArgs>
+    assetDisposals?: boolean | Asset$assetDisposalsArgs<ExtArgs>
     _count?: boolean | AssetCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["asset"]>
 
@@ -98507,6 +98814,8 @@ export namespace Prisma {
     assignments?: boolean | Asset$assignmentsArgs<ExtArgs>
     maintenanceLogs?: boolean | Asset$maintenanceLogsArgs<ExtArgs>
     tenant?: boolean | Asset$tenantArgs<ExtArgs>
+    assetTransfers?: boolean | Asset$assetTransfersArgs<ExtArgs>
+    assetDisposals?: boolean | Asset$assetDisposalsArgs<ExtArgs>
     _count?: boolean | AssetCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AssetIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -98525,6 +98834,8 @@ export namespace Prisma {
       assignments: Prisma.$AssetAssignmentPayload<ExtArgs>[]
       maintenanceLogs: Prisma.$AssetMaintenancePayload<ExtArgs>[]
       tenant: Prisma.$TenantPayload<ExtArgs> | null
+      assetTransfers: Prisma.$AssetTransferPayload<ExtArgs>[]
+      assetDisposals: Prisma.$AssetDisposalPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -98941,6 +99252,8 @@ export namespace Prisma {
     assignments<T extends Asset$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Asset$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     maintenanceLogs<T extends Asset$maintenanceLogsArgs<ExtArgs> = {}>(args?: Subset<T, Asset$maintenanceLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetMaintenancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tenant<T extends Asset$tenantArgs<ExtArgs> = {}>(args?: Subset<T, Asset$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    assetTransfers<T extends Asset$assetTransfersArgs<ExtArgs> = {}>(args?: Subset<T, Asset$assetTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assetDisposals<T extends Asset$assetDisposalsArgs<ExtArgs> = {}>(args?: Subset<T, Asset$assetDisposalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -99470,6 +99783,54 @@ export namespace Prisma {
      */
     include?: TenantInclude<ExtArgs> | null
     where?: TenantWhereInput
+  }
+
+  /**
+   * Asset.assetTransfers
+   */
+  export type Asset$assetTransfersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    where?: AssetTransferWhereInput
+    orderBy?: AssetTransferOrderByWithRelationInput | AssetTransferOrderByWithRelationInput[]
+    cursor?: AssetTransferWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AssetTransferScalarFieldEnum | AssetTransferScalarFieldEnum[]
+  }
+
+  /**
+   * Asset.assetDisposals
+   */
+  export type Asset$assetDisposalsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    where?: AssetDisposalWhereInput
+    orderBy?: AssetDisposalOrderByWithRelationInput | AssetDisposalOrderByWithRelationInput[]
+    cursor?: AssetDisposalWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AssetDisposalScalarFieldEnum | AssetDisposalScalarFieldEnum[]
   }
 
   /**
@@ -167304,6 +167665,7 @@ export namespace Prisma {
     announcements?: boolean | Tenant$announcementsArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
     notifTemplates?: boolean | Tenant$notifTemplatesArgs<ExtArgs>
+    smtpConfig?: boolean | Tenant$smtpConfigArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -167398,6 +167760,7 @@ export namespace Prisma {
     announcements?: boolean | Tenant$announcementsArgs<ExtArgs>
     apiKeys?: boolean | Tenant$apiKeysArgs<ExtArgs>
     notifTemplates?: boolean | Tenant$notifTemplatesArgs<ExtArgs>
+    smtpConfig?: boolean | Tenant$smtpConfigArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -167447,6 +167810,7 @@ export namespace Prisma {
       announcements: Prisma.$SystemAnnouncementPayload<ExtArgs>[]
       apiKeys: Prisma.$ApiKeyPayload<ExtArgs>[]
       notifTemplates: Prisma.$NotificationTemplatePayload<ExtArgs>[]
+      smtpConfig: Prisma.$TenantSmtpConfigPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -167897,6 +168261,7 @@ export namespace Prisma {
     announcements<T extends Tenant$announcementsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SystemAnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     apiKeys<T extends Tenant$apiKeysArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$apiKeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApiKeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifTemplates<T extends Tenant$notifTemplatesArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$notifTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    smtpConfig<T extends Tenant$smtpConfigArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$smtpConfigArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -169313,6 +169678,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificationTemplateScalarFieldEnum | NotificationTemplateScalarFieldEnum[]
+  }
+
+  /**
+   * Tenant.smtpConfig
+   */
+  export type Tenant$smtpConfigArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    where?: TenantSmtpConfigWhereInput
   }
 
   /**
@@ -199449,6 +199833,3419 @@ export namespace Prisma {
 
 
   /**
+   * Model TenantSmtpConfig
+   */
+
+  export type AggregateTenantSmtpConfig = {
+    _count: TenantSmtpConfigCountAggregateOutputType | null
+    _avg: TenantSmtpConfigAvgAggregateOutputType | null
+    _sum: TenantSmtpConfigSumAggregateOutputType | null
+    _min: TenantSmtpConfigMinAggregateOutputType | null
+    _max: TenantSmtpConfigMaxAggregateOutputType | null
+  }
+
+  export type TenantSmtpConfigAvgAggregateOutputType = {
+    port: number | null
+  }
+
+  export type TenantSmtpConfigSumAggregateOutputType = {
+    port: number | null
+  }
+
+  export type TenantSmtpConfigMinAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    host: string | null
+    port: number | null
+    user: string | null
+    password: string | null
+    fromEmail: string | null
+    fromName: string | null
+    isActive: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type TenantSmtpConfigMaxAggregateOutputType = {
+    id: string | null
+    tenantId: string | null
+    host: string | null
+    port: number | null
+    user: string | null
+    password: string | null
+    fromEmail: string | null
+    fromName: string | null
+    isActive: boolean | null
+    updatedAt: Date | null
+  }
+
+  export type TenantSmtpConfigCountAggregateOutputType = {
+    id: number
+    tenantId: number
+    host: number
+    port: number
+    user: number
+    password: number
+    fromEmail: number
+    fromName: number
+    isActive: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TenantSmtpConfigAvgAggregateInputType = {
+    port?: true
+  }
+
+  export type TenantSmtpConfigSumAggregateInputType = {
+    port?: true
+  }
+
+  export type TenantSmtpConfigMinAggregateInputType = {
+    id?: true
+    tenantId?: true
+    host?: true
+    port?: true
+    user?: true
+    password?: true
+    fromEmail?: true
+    fromName?: true
+    isActive?: true
+    updatedAt?: true
+  }
+
+  export type TenantSmtpConfigMaxAggregateInputType = {
+    id?: true
+    tenantId?: true
+    host?: true
+    port?: true
+    user?: true
+    password?: true
+    fromEmail?: true
+    fromName?: true
+    isActive?: true
+    updatedAt?: true
+  }
+
+  export type TenantSmtpConfigCountAggregateInputType = {
+    id?: true
+    tenantId?: true
+    host?: true
+    port?: true
+    user?: true
+    password?: true
+    fromEmail?: true
+    fromName?: true
+    isActive?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TenantSmtpConfigAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantSmtpConfig to aggregate.
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantSmtpConfigs to fetch.
+     */
+    orderBy?: TenantSmtpConfigOrderByWithRelationInput | TenantSmtpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TenantSmtpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantSmtpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantSmtpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TenantSmtpConfigs
+    **/
+    _count?: true | TenantSmtpConfigCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TenantSmtpConfigAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TenantSmtpConfigSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TenantSmtpConfigMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TenantSmtpConfigMaxAggregateInputType
+  }
+
+  export type GetTenantSmtpConfigAggregateType<T extends TenantSmtpConfigAggregateArgs> = {
+        [P in keyof T & keyof AggregateTenantSmtpConfig]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTenantSmtpConfig[P]>
+      : GetScalarType<T[P], AggregateTenantSmtpConfig[P]>
+  }
+
+
+
+
+  export type TenantSmtpConfigGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TenantSmtpConfigWhereInput
+    orderBy?: TenantSmtpConfigOrderByWithAggregationInput | TenantSmtpConfigOrderByWithAggregationInput[]
+    by: TenantSmtpConfigScalarFieldEnum[] | TenantSmtpConfigScalarFieldEnum
+    having?: TenantSmtpConfigScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TenantSmtpConfigCountAggregateInputType | true
+    _avg?: TenantSmtpConfigAvgAggregateInputType
+    _sum?: TenantSmtpConfigSumAggregateInputType
+    _min?: TenantSmtpConfigMinAggregateInputType
+    _max?: TenantSmtpConfigMaxAggregateInputType
+  }
+
+  export type TenantSmtpConfigGroupByOutputType = {
+    id: string
+    tenantId: string
+    host: string
+    port: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive: boolean
+    updatedAt: Date
+    _count: TenantSmtpConfigCountAggregateOutputType | null
+    _avg: TenantSmtpConfigAvgAggregateOutputType | null
+    _sum: TenantSmtpConfigSumAggregateOutputType | null
+    _min: TenantSmtpConfigMinAggregateOutputType | null
+    _max: TenantSmtpConfigMaxAggregateOutputType | null
+  }
+
+  type GetTenantSmtpConfigGroupByPayload<T extends TenantSmtpConfigGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TenantSmtpConfigGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TenantSmtpConfigGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TenantSmtpConfigGroupByOutputType[P]>
+            : GetScalarType<T[P], TenantSmtpConfigGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TenantSmtpConfigSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    host?: boolean
+    port?: boolean
+    user?: boolean
+    password?: boolean
+    fromEmail?: boolean
+    fromName?: boolean
+    isActive?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantSmtpConfig"]>
+
+  export type TenantSmtpConfigSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    host?: boolean
+    port?: boolean
+    user?: boolean
+    password?: boolean
+    fromEmail?: boolean
+    fromName?: boolean
+    isActive?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantSmtpConfig"]>
+
+  export type TenantSmtpConfigSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    tenantId?: boolean
+    host?: boolean
+    port?: boolean
+    user?: boolean
+    password?: boolean
+    fromEmail?: boolean
+    fromName?: boolean
+    isActive?: boolean
+    updatedAt?: boolean
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["tenantSmtpConfig"]>
+
+  export type TenantSmtpConfigSelectScalar = {
+    id?: boolean
+    tenantId?: boolean
+    host?: boolean
+    port?: boolean
+    user?: boolean
+    password?: boolean
+    fromEmail?: boolean
+    fromName?: boolean
+    isActive?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TenantSmtpConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "tenantId" | "host" | "port" | "user" | "password" | "fromEmail" | "fromName" | "isActive" | "updatedAt", ExtArgs["result"]["tenantSmtpConfig"]>
+  export type TenantSmtpConfigInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+  export type TenantSmtpConfigIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+  export type TenantSmtpConfigIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+
+  export type $TenantSmtpConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TenantSmtpConfig"
+    objects: {
+      tenant: Prisma.$TenantPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      tenantId: string
+      host: string
+      port: number
+      user: string
+      password: string
+      fromEmail: string
+      fromName: string
+      isActive: boolean
+      updatedAt: Date
+    }, ExtArgs["result"]["tenantSmtpConfig"]>
+    composites: {}
+  }
+
+  type TenantSmtpConfigGetPayload<S extends boolean | null | undefined | TenantSmtpConfigDefaultArgs> = $Result.GetResult<Prisma.$TenantSmtpConfigPayload, S>
+
+  type TenantSmtpConfigCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TenantSmtpConfigFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TenantSmtpConfigCountAggregateInputType | true
+    }
+
+  export interface TenantSmtpConfigDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TenantSmtpConfig'], meta: { name: 'TenantSmtpConfig' } }
+    /**
+     * Find zero or one TenantSmtpConfig that matches the filter.
+     * @param {TenantSmtpConfigFindUniqueArgs} args - Arguments to find a TenantSmtpConfig
+     * @example
+     * // Get one TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TenantSmtpConfigFindUniqueArgs>(args: SelectSubset<T, TenantSmtpConfigFindUniqueArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TenantSmtpConfig that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TenantSmtpConfigFindUniqueOrThrowArgs} args - Arguments to find a TenantSmtpConfig
+     * @example
+     * // Get one TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TenantSmtpConfigFindUniqueOrThrowArgs>(args: SelectSubset<T, TenantSmtpConfigFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TenantSmtpConfig that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigFindFirstArgs} args - Arguments to find a TenantSmtpConfig
+     * @example
+     * // Get one TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TenantSmtpConfigFindFirstArgs>(args?: SelectSubset<T, TenantSmtpConfigFindFirstArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TenantSmtpConfig that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigFindFirstOrThrowArgs} args - Arguments to find a TenantSmtpConfig
+     * @example
+     * // Get one TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TenantSmtpConfigFindFirstOrThrowArgs>(args?: SelectSubset<T, TenantSmtpConfigFindFirstOrThrowArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TenantSmtpConfigs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TenantSmtpConfigs
+     * const tenantSmtpConfigs = await prisma.tenantSmtpConfig.findMany()
+     * 
+     * // Get first 10 TenantSmtpConfigs
+     * const tenantSmtpConfigs = await prisma.tenantSmtpConfig.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const tenantSmtpConfigWithIdOnly = await prisma.tenantSmtpConfig.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TenantSmtpConfigFindManyArgs>(args?: SelectSubset<T, TenantSmtpConfigFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TenantSmtpConfig.
+     * @param {TenantSmtpConfigCreateArgs} args - Arguments to create a TenantSmtpConfig.
+     * @example
+     * // Create one TenantSmtpConfig
+     * const TenantSmtpConfig = await prisma.tenantSmtpConfig.create({
+     *   data: {
+     *     // ... data to create a TenantSmtpConfig
+     *   }
+     * })
+     * 
+     */
+    create<T extends TenantSmtpConfigCreateArgs>(args: SelectSubset<T, TenantSmtpConfigCreateArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TenantSmtpConfigs.
+     * @param {TenantSmtpConfigCreateManyArgs} args - Arguments to create many TenantSmtpConfigs.
+     * @example
+     * // Create many TenantSmtpConfigs
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TenantSmtpConfigCreateManyArgs>(args?: SelectSubset<T, TenantSmtpConfigCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TenantSmtpConfigs and returns the data saved in the database.
+     * @param {TenantSmtpConfigCreateManyAndReturnArgs} args - Arguments to create many TenantSmtpConfigs.
+     * @example
+     * // Create many TenantSmtpConfigs
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TenantSmtpConfigs and only return the `id`
+     * const tenantSmtpConfigWithIdOnly = await prisma.tenantSmtpConfig.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TenantSmtpConfigCreateManyAndReturnArgs>(args?: SelectSubset<T, TenantSmtpConfigCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TenantSmtpConfig.
+     * @param {TenantSmtpConfigDeleteArgs} args - Arguments to delete one TenantSmtpConfig.
+     * @example
+     * // Delete one TenantSmtpConfig
+     * const TenantSmtpConfig = await prisma.tenantSmtpConfig.delete({
+     *   where: {
+     *     // ... filter to delete one TenantSmtpConfig
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TenantSmtpConfigDeleteArgs>(args: SelectSubset<T, TenantSmtpConfigDeleteArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TenantSmtpConfig.
+     * @param {TenantSmtpConfigUpdateArgs} args - Arguments to update one TenantSmtpConfig.
+     * @example
+     * // Update one TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TenantSmtpConfigUpdateArgs>(args: SelectSubset<T, TenantSmtpConfigUpdateArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TenantSmtpConfigs.
+     * @param {TenantSmtpConfigDeleteManyArgs} args - Arguments to filter TenantSmtpConfigs to delete.
+     * @example
+     * // Delete a few TenantSmtpConfigs
+     * const { count } = await prisma.tenantSmtpConfig.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TenantSmtpConfigDeleteManyArgs>(args?: SelectSubset<T, TenantSmtpConfigDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TenantSmtpConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TenantSmtpConfigs
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TenantSmtpConfigUpdateManyArgs>(args: SelectSubset<T, TenantSmtpConfigUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TenantSmtpConfigs and returns the data updated in the database.
+     * @param {TenantSmtpConfigUpdateManyAndReturnArgs} args - Arguments to update many TenantSmtpConfigs.
+     * @example
+     * // Update many TenantSmtpConfigs
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TenantSmtpConfigs and only return the `id`
+     * const tenantSmtpConfigWithIdOnly = await prisma.tenantSmtpConfig.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TenantSmtpConfigUpdateManyAndReturnArgs>(args: SelectSubset<T, TenantSmtpConfigUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TenantSmtpConfig.
+     * @param {TenantSmtpConfigUpsertArgs} args - Arguments to update or create a TenantSmtpConfig.
+     * @example
+     * // Update or create a TenantSmtpConfig
+     * const tenantSmtpConfig = await prisma.tenantSmtpConfig.upsert({
+     *   create: {
+     *     // ... data to create a TenantSmtpConfig
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TenantSmtpConfig we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TenantSmtpConfigUpsertArgs>(args: SelectSubset<T, TenantSmtpConfigUpsertArgs<ExtArgs>>): Prisma__TenantSmtpConfigClient<$Result.GetResult<Prisma.$TenantSmtpConfigPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TenantSmtpConfigs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigCountArgs} args - Arguments to filter TenantSmtpConfigs to count.
+     * @example
+     * // Count the number of TenantSmtpConfigs
+     * const count = await prisma.tenantSmtpConfig.count({
+     *   where: {
+     *     // ... the filter for the TenantSmtpConfigs we want to count
+     *   }
+     * })
+    **/
+    count<T extends TenantSmtpConfigCountArgs>(
+      args?: Subset<T, TenantSmtpConfigCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TenantSmtpConfigCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TenantSmtpConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TenantSmtpConfigAggregateArgs>(args: Subset<T, TenantSmtpConfigAggregateArgs>): Prisma.PrismaPromise<GetTenantSmtpConfigAggregateType<T>>
+
+    /**
+     * Group by TenantSmtpConfig.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TenantSmtpConfigGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TenantSmtpConfigGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TenantSmtpConfigGroupByArgs['orderBy'] }
+        : { orderBy?: TenantSmtpConfigGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TenantSmtpConfigGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTenantSmtpConfigGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TenantSmtpConfig model
+   */
+  readonly fields: TenantSmtpConfigFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TenantSmtpConfig.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TenantSmtpConfigClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TenantSmtpConfig model
+   */
+  interface TenantSmtpConfigFieldRefs {
+    readonly id: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly tenantId: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly host: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly port: FieldRef<"TenantSmtpConfig", 'Int'>
+    readonly user: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly password: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly fromEmail: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly fromName: FieldRef<"TenantSmtpConfig", 'String'>
+    readonly isActive: FieldRef<"TenantSmtpConfig", 'Boolean'>
+    readonly updatedAt: FieldRef<"TenantSmtpConfig", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TenantSmtpConfig findUnique
+   */
+  export type TenantSmtpConfigFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantSmtpConfig to fetch.
+     */
+    where: TenantSmtpConfigWhereUniqueInput
+  }
+
+  /**
+   * TenantSmtpConfig findUniqueOrThrow
+   */
+  export type TenantSmtpConfigFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantSmtpConfig to fetch.
+     */
+    where: TenantSmtpConfigWhereUniqueInput
+  }
+
+  /**
+   * TenantSmtpConfig findFirst
+   */
+  export type TenantSmtpConfigFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantSmtpConfig to fetch.
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantSmtpConfigs to fetch.
+     */
+    orderBy?: TenantSmtpConfigOrderByWithRelationInput | TenantSmtpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantSmtpConfigs.
+     */
+    cursor?: TenantSmtpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantSmtpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantSmtpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantSmtpConfigs.
+     */
+    distinct?: TenantSmtpConfigScalarFieldEnum | TenantSmtpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TenantSmtpConfig findFirstOrThrow
+   */
+  export type TenantSmtpConfigFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantSmtpConfig to fetch.
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantSmtpConfigs to fetch.
+     */
+    orderBy?: TenantSmtpConfigOrderByWithRelationInput | TenantSmtpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TenantSmtpConfigs.
+     */
+    cursor?: TenantSmtpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantSmtpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantSmtpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantSmtpConfigs.
+     */
+    distinct?: TenantSmtpConfigScalarFieldEnum | TenantSmtpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TenantSmtpConfig findMany
+   */
+  export type TenantSmtpConfigFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter, which TenantSmtpConfigs to fetch.
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TenantSmtpConfigs to fetch.
+     */
+    orderBy?: TenantSmtpConfigOrderByWithRelationInput | TenantSmtpConfigOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TenantSmtpConfigs.
+     */
+    cursor?: TenantSmtpConfigWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TenantSmtpConfigs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TenantSmtpConfigs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TenantSmtpConfigs.
+     */
+    distinct?: TenantSmtpConfigScalarFieldEnum | TenantSmtpConfigScalarFieldEnum[]
+  }
+
+  /**
+   * TenantSmtpConfig create
+   */
+  export type TenantSmtpConfigCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TenantSmtpConfig.
+     */
+    data: XOR<TenantSmtpConfigCreateInput, TenantSmtpConfigUncheckedCreateInput>
+  }
+
+  /**
+   * TenantSmtpConfig createMany
+   */
+  export type TenantSmtpConfigCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TenantSmtpConfigs.
+     */
+    data: TenantSmtpConfigCreateManyInput | TenantSmtpConfigCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TenantSmtpConfig createManyAndReturn
+   */
+  export type TenantSmtpConfigCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * The data used to create many TenantSmtpConfigs.
+     */
+    data: TenantSmtpConfigCreateManyInput | TenantSmtpConfigCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TenantSmtpConfig update
+   */
+  export type TenantSmtpConfigUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TenantSmtpConfig.
+     */
+    data: XOR<TenantSmtpConfigUpdateInput, TenantSmtpConfigUncheckedUpdateInput>
+    /**
+     * Choose, which TenantSmtpConfig to update.
+     */
+    where: TenantSmtpConfigWhereUniqueInput
+  }
+
+  /**
+   * TenantSmtpConfig updateMany
+   */
+  export type TenantSmtpConfigUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TenantSmtpConfigs.
+     */
+    data: XOR<TenantSmtpConfigUpdateManyMutationInput, TenantSmtpConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which TenantSmtpConfigs to update
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * Limit how many TenantSmtpConfigs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TenantSmtpConfig updateManyAndReturn
+   */
+  export type TenantSmtpConfigUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * The data used to update TenantSmtpConfigs.
+     */
+    data: XOR<TenantSmtpConfigUpdateManyMutationInput, TenantSmtpConfigUncheckedUpdateManyInput>
+    /**
+     * Filter which TenantSmtpConfigs to update
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * Limit how many TenantSmtpConfigs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TenantSmtpConfig upsert
+   */
+  export type TenantSmtpConfigUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TenantSmtpConfig to update in case it exists.
+     */
+    where: TenantSmtpConfigWhereUniqueInput
+    /**
+     * In case the TenantSmtpConfig found by the `where` argument doesn't exist, create a new TenantSmtpConfig with this data.
+     */
+    create: XOR<TenantSmtpConfigCreateInput, TenantSmtpConfigUncheckedCreateInput>
+    /**
+     * In case the TenantSmtpConfig was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TenantSmtpConfigUpdateInput, TenantSmtpConfigUncheckedUpdateInput>
+  }
+
+  /**
+   * TenantSmtpConfig delete
+   */
+  export type TenantSmtpConfigDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+    /**
+     * Filter which TenantSmtpConfig to delete.
+     */
+    where: TenantSmtpConfigWhereUniqueInput
+  }
+
+  /**
+   * TenantSmtpConfig deleteMany
+   */
+  export type TenantSmtpConfigDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TenantSmtpConfigs to delete
+     */
+    where?: TenantSmtpConfigWhereInput
+    /**
+     * Limit how many TenantSmtpConfigs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TenantSmtpConfig without action
+   */
+  export type TenantSmtpConfigDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TenantSmtpConfig
+     */
+    select?: TenantSmtpConfigSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TenantSmtpConfig
+     */
+    omit?: TenantSmtpConfigOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantSmtpConfigInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AssetTransfer
+   */
+
+  export type AggregateAssetTransfer = {
+    _count: AssetTransferCountAggregateOutputType | null
+    _min: AssetTransferMinAggregateOutputType | null
+    _max: AssetTransferMaxAggregateOutputType | null
+  }
+
+  export type AssetTransferMinAggregateOutputType = {
+    id: string | null
+    assetId: string | null
+    fromOrgUnitId: string | null
+    toOrgUnitId: string | null
+    transferDate: Date | null
+    reason: string | null
+    approvedById: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type AssetTransferMaxAggregateOutputType = {
+    id: string | null
+    assetId: string | null
+    fromOrgUnitId: string | null
+    toOrgUnitId: string | null
+    transferDate: Date | null
+    reason: string | null
+    approvedById: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type AssetTransferCountAggregateOutputType = {
+    id: number
+    assetId: number
+    fromOrgUnitId: number
+    toOrgUnitId: number
+    transferDate: number
+    reason: number
+    approvedById: number
+    tenantId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AssetTransferMinAggregateInputType = {
+    id?: true
+    assetId?: true
+    fromOrgUnitId?: true
+    toOrgUnitId?: true
+    transferDate?: true
+    reason?: true
+    approvedById?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type AssetTransferMaxAggregateInputType = {
+    id?: true
+    assetId?: true
+    fromOrgUnitId?: true
+    toOrgUnitId?: true
+    transferDate?: true
+    reason?: true
+    approvedById?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type AssetTransferCountAggregateInputType = {
+    id?: true
+    assetId?: true
+    fromOrgUnitId?: true
+    toOrgUnitId?: true
+    transferDate?: true
+    reason?: true
+    approvedById?: true
+    tenantId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AssetTransferAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AssetTransfer to aggregate.
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetTransfers to fetch.
+     */
+    orderBy?: AssetTransferOrderByWithRelationInput | AssetTransferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AssetTransferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetTransfers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetTransfers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AssetTransfers
+    **/
+    _count?: true | AssetTransferCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AssetTransferMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AssetTransferMaxAggregateInputType
+  }
+
+  export type GetAssetTransferAggregateType<T extends AssetTransferAggregateArgs> = {
+        [P in keyof T & keyof AggregateAssetTransfer]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAssetTransfer[P]>
+      : GetScalarType<T[P], AggregateAssetTransfer[P]>
+  }
+
+
+
+
+  export type AssetTransferGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AssetTransferWhereInput
+    orderBy?: AssetTransferOrderByWithAggregationInput | AssetTransferOrderByWithAggregationInput[]
+    by: AssetTransferScalarFieldEnum[] | AssetTransferScalarFieldEnum
+    having?: AssetTransferScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AssetTransferCountAggregateInputType | true
+    _min?: AssetTransferMinAggregateInputType
+    _max?: AssetTransferMaxAggregateInputType
+  }
+
+  export type AssetTransferGroupByOutputType = {
+    id: string
+    assetId: string
+    fromOrgUnitId: string | null
+    toOrgUnitId: string | null
+    transferDate: Date
+    reason: string | null
+    approvedById: string | null
+    tenantId: string | null
+    createdAt: Date
+    _count: AssetTransferCountAggregateOutputType | null
+    _min: AssetTransferMinAggregateOutputType | null
+    _max: AssetTransferMaxAggregateOutputType | null
+  }
+
+  type GetAssetTransferGroupByPayload<T extends AssetTransferGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AssetTransferGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AssetTransferGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AssetTransferGroupByOutputType[P]>
+            : GetScalarType<T[P], AssetTransferGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AssetTransferSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    fromOrgUnitId?: boolean
+    toOrgUnitId?: boolean
+    transferDate?: boolean
+    reason?: boolean
+    approvedById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetTransfer"]>
+
+  export type AssetTransferSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    fromOrgUnitId?: boolean
+    toOrgUnitId?: boolean
+    transferDate?: boolean
+    reason?: boolean
+    approvedById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetTransfer"]>
+
+  export type AssetTransferSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    fromOrgUnitId?: boolean
+    toOrgUnitId?: boolean
+    transferDate?: boolean
+    reason?: boolean
+    approvedById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetTransfer"]>
+
+  export type AssetTransferSelectScalar = {
+    id?: boolean
+    assetId?: boolean
+    fromOrgUnitId?: boolean
+    toOrgUnitId?: boolean
+    transferDate?: boolean
+    reason?: boolean
+    approvedById?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }
+
+  export type AssetTransferOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assetId" | "fromOrgUnitId" | "toOrgUnitId" | "transferDate" | "reason" | "approvedById" | "tenantId" | "createdAt", ExtArgs["result"]["assetTransfer"]>
+  export type AssetTransferInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+  export type AssetTransferIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+  export type AssetTransferIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+
+  export type $AssetTransferPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AssetTransfer"
+    objects: {
+      asset: Prisma.$AssetPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      assetId: string
+      fromOrgUnitId: string | null
+      toOrgUnitId: string | null
+      transferDate: Date
+      reason: string | null
+      approvedById: string | null
+      tenantId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["assetTransfer"]>
+    composites: {}
+  }
+
+  type AssetTransferGetPayload<S extends boolean | null | undefined | AssetTransferDefaultArgs> = $Result.GetResult<Prisma.$AssetTransferPayload, S>
+
+  type AssetTransferCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AssetTransferFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AssetTransferCountAggregateInputType | true
+    }
+
+  export interface AssetTransferDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AssetTransfer'], meta: { name: 'AssetTransfer' } }
+    /**
+     * Find zero or one AssetTransfer that matches the filter.
+     * @param {AssetTransferFindUniqueArgs} args - Arguments to find a AssetTransfer
+     * @example
+     * // Get one AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AssetTransferFindUniqueArgs>(args: SelectSubset<T, AssetTransferFindUniqueArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AssetTransfer that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AssetTransferFindUniqueOrThrowArgs} args - Arguments to find a AssetTransfer
+     * @example
+     * // Get one AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AssetTransferFindUniqueOrThrowArgs>(args: SelectSubset<T, AssetTransferFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AssetTransfer that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferFindFirstArgs} args - Arguments to find a AssetTransfer
+     * @example
+     * // Get one AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AssetTransferFindFirstArgs>(args?: SelectSubset<T, AssetTransferFindFirstArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AssetTransfer that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferFindFirstOrThrowArgs} args - Arguments to find a AssetTransfer
+     * @example
+     * // Get one AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AssetTransferFindFirstOrThrowArgs>(args?: SelectSubset<T, AssetTransferFindFirstOrThrowArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AssetTransfers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AssetTransfers
+     * const assetTransfers = await prisma.assetTransfer.findMany()
+     * 
+     * // Get first 10 AssetTransfers
+     * const assetTransfers = await prisma.assetTransfer.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const assetTransferWithIdOnly = await prisma.assetTransfer.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AssetTransferFindManyArgs>(args?: SelectSubset<T, AssetTransferFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AssetTransfer.
+     * @param {AssetTransferCreateArgs} args - Arguments to create a AssetTransfer.
+     * @example
+     * // Create one AssetTransfer
+     * const AssetTransfer = await prisma.assetTransfer.create({
+     *   data: {
+     *     // ... data to create a AssetTransfer
+     *   }
+     * })
+     * 
+     */
+    create<T extends AssetTransferCreateArgs>(args: SelectSubset<T, AssetTransferCreateArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AssetTransfers.
+     * @param {AssetTransferCreateManyArgs} args - Arguments to create many AssetTransfers.
+     * @example
+     * // Create many AssetTransfers
+     * const assetTransfer = await prisma.assetTransfer.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AssetTransferCreateManyArgs>(args?: SelectSubset<T, AssetTransferCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AssetTransfers and returns the data saved in the database.
+     * @param {AssetTransferCreateManyAndReturnArgs} args - Arguments to create many AssetTransfers.
+     * @example
+     * // Create many AssetTransfers
+     * const assetTransfer = await prisma.assetTransfer.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AssetTransfers and only return the `id`
+     * const assetTransferWithIdOnly = await prisma.assetTransfer.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AssetTransferCreateManyAndReturnArgs>(args?: SelectSubset<T, AssetTransferCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AssetTransfer.
+     * @param {AssetTransferDeleteArgs} args - Arguments to delete one AssetTransfer.
+     * @example
+     * // Delete one AssetTransfer
+     * const AssetTransfer = await prisma.assetTransfer.delete({
+     *   where: {
+     *     // ... filter to delete one AssetTransfer
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AssetTransferDeleteArgs>(args: SelectSubset<T, AssetTransferDeleteArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AssetTransfer.
+     * @param {AssetTransferUpdateArgs} args - Arguments to update one AssetTransfer.
+     * @example
+     * // Update one AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AssetTransferUpdateArgs>(args: SelectSubset<T, AssetTransferUpdateArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AssetTransfers.
+     * @param {AssetTransferDeleteManyArgs} args - Arguments to filter AssetTransfers to delete.
+     * @example
+     * // Delete a few AssetTransfers
+     * const { count } = await prisma.assetTransfer.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AssetTransferDeleteManyArgs>(args?: SelectSubset<T, AssetTransferDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AssetTransfers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AssetTransfers
+     * const assetTransfer = await prisma.assetTransfer.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AssetTransferUpdateManyArgs>(args: SelectSubset<T, AssetTransferUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AssetTransfers and returns the data updated in the database.
+     * @param {AssetTransferUpdateManyAndReturnArgs} args - Arguments to update many AssetTransfers.
+     * @example
+     * // Update many AssetTransfers
+     * const assetTransfer = await prisma.assetTransfer.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AssetTransfers and only return the `id`
+     * const assetTransferWithIdOnly = await prisma.assetTransfer.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AssetTransferUpdateManyAndReturnArgs>(args: SelectSubset<T, AssetTransferUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AssetTransfer.
+     * @param {AssetTransferUpsertArgs} args - Arguments to update or create a AssetTransfer.
+     * @example
+     * // Update or create a AssetTransfer
+     * const assetTransfer = await prisma.assetTransfer.upsert({
+     *   create: {
+     *     // ... data to create a AssetTransfer
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AssetTransfer we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AssetTransferUpsertArgs>(args: SelectSubset<T, AssetTransferUpsertArgs<ExtArgs>>): Prisma__AssetTransferClient<$Result.GetResult<Prisma.$AssetTransferPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AssetTransfers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferCountArgs} args - Arguments to filter AssetTransfers to count.
+     * @example
+     * // Count the number of AssetTransfers
+     * const count = await prisma.assetTransfer.count({
+     *   where: {
+     *     // ... the filter for the AssetTransfers we want to count
+     *   }
+     * })
+    **/
+    count<T extends AssetTransferCountArgs>(
+      args?: Subset<T, AssetTransferCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AssetTransferCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AssetTransfer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AssetTransferAggregateArgs>(args: Subset<T, AssetTransferAggregateArgs>): Prisma.PrismaPromise<GetAssetTransferAggregateType<T>>
+
+    /**
+     * Group by AssetTransfer.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetTransferGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AssetTransferGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AssetTransferGroupByArgs['orderBy'] }
+        : { orderBy?: AssetTransferGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AssetTransferGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAssetTransferGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AssetTransfer model
+   */
+  readonly fields: AssetTransferFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AssetTransfer.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AssetTransferClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    asset<T extends AssetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AssetDefaultArgs<ExtArgs>>): Prisma__AssetClient<$Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AssetTransfer model
+   */
+  interface AssetTransferFieldRefs {
+    readonly id: FieldRef<"AssetTransfer", 'String'>
+    readonly assetId: FieldRef<"AssetTransfer", 'String'>
+    readonly fromOrgUnitId: FieldRef<"AssetTransfer", 'String'>
+    readonly toOrgUnitId: FieldRef<"AssetTransfer", 'String'>
+    readonly transferDate: FieldRef<"AssetTransfer", 'DateTime'>
+    readonly reason: FieldRef<"AssetTransfer", 'String'>
+    readonly approvedById: FieldRef<"AssetTransfer", 'String'>
+    readonly tenantId: FieldRef<"AssetTransfer", 'String'>
+    readonly createdAt: FieldRef<"AssetTransfer", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AssetTransfer findUnique
+   */
+  export type AssetTransferFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetTransfer to fetch.
+     */
+    where: AssetTransferWhereUniqueInput
+  }
+
+  /**
+   * AssetTransfer findUniqueOrThrow
+   */
+  export type AssetTransferFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetTransfer to fetch.
+     */
+    where: AssetTransferWhereUniqueInput
+  }
+
+  /**
+   * AssetTransfer findFirst
+   */
+  export type AssetTransferFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetTransfer to fetch.
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetTransfers to fetch.
+     */
+    orderBy?: AssetTransferOrderByWithRelationInput | AssetTransferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AssetTransfers.
+     */
+    cursor?: AssetTransferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetTransfers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetTransfers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetTransfers.
+     */
+    distinct?: AssetTransferScalarFieldEnum | AssetTransferScalarFieldEnum[]
+  }
+
+  /**
+   * AssetTransfer findFirstOrThrow
+   */
+  export type AssetTransferFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetTransfer to fetch.
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetTransfers to fetch.
+     */
+    orderBy?: AssetTransferOrderByWithRelationInput | AssetTransferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AssetTransfers.
+     */
+    cursor?: AssetTransferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetTransfers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetTransfers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetTransfers.
+     */
+    distinct?: AssetTransferScalarFieldEnum | AssetTransferScalarFieldEnum[]
+  }
+
+  /**
+   * AssetTransfer findMany
+   */
+  export type AssetTransferFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetTransfers to fetch.
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetTransfers to fetch.
+     */
+    orderBy?: AssetTransferOrderByWithRelationInput | AssetTransferOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AssetTransfers.
+     */
+    cursor?: AssetTransferWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetTransfers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetTransfers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetTransfers.
+     */
+    distinct?: AssetTransferScalarFieldEnum | AssetTransferScalarFieldEnum[]
+  }
+
+  /**
+   * AssetTransfer create
+   */
+  export type AssetTransferCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AssetTransfer.
+     */
+    data: XOR<AssetTransferCreateInput, AssetTransferUncheckedCreateInput>
+  }
+
+  /**
+   * AssetTransfer createMany
+   */
+  export type AssetTransferCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AssetTransfers.
+     */
+    data: AssetTransferCreateManyInput | AssetTransferCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AssetTransfer createManyAndReturn
+   */
+  export type AssetTransferCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * The data used to create many AssetTransfers.
+     */
+    data: AssetTransferCreateManyInput | AssetTransferCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AssetTransfer update
+   */
+  export type AssetTransferUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AssetTransfer.
+     */
+    data: XOR<AssetTransferUpdateInput, AssetTransferUncheckedUpdateInput>
+    /**
+     * Choose, which AssetTransfer to update.
+     */
+    where: AssetTransferWhereUniqueInput
+  }
+
+  /**
+   * AssetTransfer updateMany
+   */
+  export type AssetTransferUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AssetTransfers.
+     */
+    data: XOR<AssetTransferUpdateManyMutationInput, AssetTransferUncheckedUpdateManyInput>
+    /**
+     * Filter which AssetTransfers to update
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * Limit how many AssetTransfers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AssetTransfer updateManyAndReturn
+   */
+  export type AssetTransferUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * The data used to update AssetTransfers.
+     */
+    data: XOR<AssetTransferUpdateManyMutationInput, AssetTransferUncheckedUpdateManyInput>
+    /**
+     * Filter which AssetTransfers to update
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * Limit how many AssetTransfers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AssetTransfer upsert
+   */
+  export type AssetTransferUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AssetTransfer to update in case it exists.
+     */
+    where: AssetTransferWhereUniqueInput
+    /**
+     * In case the AssetTransfer found by the `where` argument doesn't exist, create a new AssetTransfer with this data.
+     */
+    create: XOR<AssetTransferCreateInput, AssetTransferUncheckedCreateInput>
+    /**
+     * In case the AssetTransfer was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AssetTransferUpdateInput, AssetTransferUncheckedUpdateInput>
+  }
+
+  /**
+   * AssetTransfer delete
+   */
+  export type AssetTransferDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+    /**
+     * Filter which AssetTransfer to delete.
+     */
+    where: AssetTransferWhereUniqueInput
+  }
+
+  /**
+   * AssetTransfer deleteMany
+   */
+  export type AssetTransferDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AssetTransfers to delete
+     */
+    where?: AssetTransferWhereInput
+    /**
+     * Limit how many AssetTransfers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AssetTransfer without action
+   */
+  export type AssetTransferDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetTransfer
+     */
+    select?: AssetTransferSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetTransfer
+     */
+    omit?: AssetTransferOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetTransferInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AssetDisposal
+   */
+
+  export type AggregateAssetDisposal = {
+    _count: AssetDisposalCountAggregateOutputType | null
+    _avg: AssetDisposalAvgAggregateOutputType | null
+    _sum: AssetDisposalSumAggregateOutputType | null
+    _min: AssetDisposalMinAggregateOutputType | null
+    _max: AssetDisposalMaxAggregateOutputType | null
+  }
+
+  export type AssetDisposalAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type AssetDisposalSumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type AssetDisposalMinAggregateOutputType = {
+    id: string | null
+    assetId: string | null
+    disposalDate: Date | null
+    method: $Enums.AssetDisposalMethod | null
+    amount: Decimal | null
+    reason: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type AssetDisposalMaxAggregateOutputType = {
+    id: string | null
+    assetId: string | null
+    disposalDate: Date | null
+    method: $Enums.AssetDisposalMethod | null
+    amount: Decimal | null
+    reason: string | null
+    tenantId: string | null
+    createdAt: Date | null
+  }
+
+  export type AssetDisposalCountAggregateOutputType = {
+    id: number
+    assetId: number
+    disposalDate: number
+    method: number
+    amount: number
+    reason: number
+    tenantId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type AssetDisposalAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type AssetDisposalSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type AssetDisposalMinAggregateInputType = {
+    id?: true
+    assetId?: true
+    disposalDate?: true
+    method?: true
+    amount?: true
+    reason?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type AssetDisposalMaxAggregateInputType = {
+    id?: true
+    assetId?: true
+    disposalDate?: true
+    method?: true
+    amount?: true
+    reason?: true
+    tenantId?: true
+    createdAt?: true
+  }
+
+  export type AssetDisposalCountAggregateInputType = {
+    id?: true
+    assetId?: true
+    disposalDate?: true
+    method?: true
+    amount?: true
+    reason?: true
+    tenantId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type AssetDisposalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AssetDisposal to aggregate.
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetDisposals to fetch.
+     */
+    orderBy?: AssetDisposalOrderByWithRelationInput | AssetDisposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AssetDisposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetDisposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetDisposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AssetDisposals
+    **/
+    _count?: true | AssetDisposalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AssetDisposalAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AssetDisposalSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AssetDisposalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AssetDisposalMaxAggregateInputType
+  }
+
+  export type GetAssetDisposalAggregateType<T extends AssetDisposalAggregateArgs> = {
+        [P in keyof T & keyof AggregateAssetDisposal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAssetDisposal[P]>
+      : GetScalarType<T[P], AggregateAssetDisposal[P]>
+  }
+
+
+
+
+  export type AssetDisposalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AssetDisposalWhereInput
+    orderBy?: AssetDisposalOrderByWithAggregationInput | AssetDisposalOrderByWithAggregationInput[]
+    by: AssetDisposalScalarFieldEnum[] | AssetDisposalScalarFieldEnum
+    having?: AssetDisposalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AssetDisposalCountAggregateInputType | true
+    _avg?: AssetDisposalAvgAggregateInputType
+    _sum?: AssetDisposalSumAggregateInputType
+    _min?: AssetDisposalMinAggregateInputType
+    _max?: AssetDisposalMaxAggregateInputType
+  }
+
+  export type AssetDisposalGroupByOutputType = {
+    id: string
+    assetId: string
+    disposalDate: Date
+    method: $Enums.AssetDisposalMethod
+    amount: Decimal | null
+    reason: string | null
+    tenantId: string | null
+    createdAt: Date
+    _count: AssetDisposalCountAggregateOutputType | null
+    _avg: AssetDisposalAvgAggregateOutputType | null
+    _sum: AssetDisposalSumAggregateOutputType | null
+    _min: AssetDisposalMinAggregateOutputType | null
+    _max: AssetDisposalMaxAggregateOutputType | null
+  }
+
+  type GetAssetDisposalGroupByPayload<T extends AssetDisposalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AssetDisposalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AssetDisposalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AssetDisposalGroupByOutputType[P]>
+            : GetScalarType<T[P], AssetDisposalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AssetDisposalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    disposalDate?: boolean
+    method?: boolean
+    amount?: boolean
+    reason?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetDisposal"]>
+
+  export type AssetDisposalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    disposalDate?: boolean
+    method?: boolean
+    amount?: boolean
+    reason?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetDisposal"]>
+
+  export type AssetDisposalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    assetId?: boolean
+    disposalDate?: boolean
+    method?: boolean
+    amount?: boolean
+    reason?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["assetDisposal"]>
+
+  export type AssetDisposalSelectScalar = {
+    id?: boolean
+    assetId?: boolean
+    disposalDate?: boolean
+    method?: boolean
+    amount?: boolean
+    reason?: boolean
+    tenantId?: boolean
+    createdAt?: boolean
+  }
+
+  export type AssetDisposalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "assetId" | "disposalDate" | "method" | "amount" | "reason" | "tenantId" | "createdAt", ExtArgs["result"]["assetDisposal"]>
+  export type AssetDisposalInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+  export type AssetDisposalIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+  export type AssetDisposalIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    asset?: boolean | AssetDefaultArgs<ExtArgs>
+  }
+
+  export type $AssetDisposalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AssetDisposal"
+    objects: {
+      asset: Prisma.$AssetPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      assetId: string
+      disposalDate: Date
+      method: $Enums.AssetDisposalMethod
+      amount: Prisma.Decimal | null
+      reason: string | null
+      tenantId: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["assetDisposal"]>
+    composites: {}
+  }
+
+  type AssetDisposalGetPayload<S extends boolean | null | undefined | AssetDisposalDefaultArgs> = $Result.GetResult<Prisma.$AssetDisposalPayload, S>
+
+  type AssetDisposalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AssetDisposalFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AssetDisposalCountAggregateInputType | true
+    }
+
+  export interface AssetDisposalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AssetDisposal'], meta: { name: 'AssetDisposal' } }
+    /**
+     * Find zero or one AssetDisposal that matches the filter.
+     * @param {AssetDisposalFindUniqueArgs} args - Arguments to find a AssetDisposal
+     * @example
+     * // Get one AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AssetDisposalFindUniqueArgs>(args: SelectSubset<T, AssetDisposalFindUniqueArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AssetDisposal that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AssetDisposalFindUniqueOrThrowArgs} args - Arguments to find a AssetDisposal
+     * @example
+     * // Get one AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AssetDisposalFindUniqueOrThrowArgs>(args: SelectSubset<T, AssetDisposalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AssetDisposal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalFindFirstArgs} args - Arguments to find a AssetDisposal
+     * @example
+     * // Get one AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AssetDisposalFindFirstArgs>(args?: SelectSubset<T, AssetDisposalFindFirstArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AssetDisposal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalFindFirstOrThrowArgs} args - Arguments to find a AssetDisposal
+     * @example
+     * // Get one AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AssetDisposalFindFirstOrThrowArgs>(args?: SelectSubset<T, AssetDisposalFindFirstOrThrowArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AssetDisposals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AssetDisposals
+     * const assetDisposals = await prisma.assetDisposal.findMany()
+     * 
+     * // Get first 10 AssetDisposals
+     * const assetDisposals = await prisma.assetDisposal.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const assetDisposalWithIdOnly = await prisma.assetDisposal.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AssetDisposalFindManyArgs>(args?: SelectSubset<T, AssetDisposalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AssetDisposal.
+     * @param {AssetDisposalCreateArgs} args - Arguments to create a AssetDisposal.
+     * @example
+     * // Create one AssetDisposal
+     * const AssetDisposal = await prisma.assetDisposal.create({
+     *   data: {
+     *     // ... data to create a AssetDisposal
+     *   }
+     * })
+     * 
+     */
+    create<T extends AssetDisposalCreateArgs>(args: SelectSubset<T, AssetDisposalCreateArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AssetDisposals.
+     * @param {AssetDisposalCreateManyArgs} args - Arguments to create many AssetDisposals.
+     * @example
+     * // Create many AssetDisposals
+     * const assetDisposal = await prisma.assetDisposal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AssetDisposalCreateManyArgs>(args?: SelectSubset<T, AssetDisposalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AssetDisposals and returns the data saved in the database.
+     * @param {AssetDisposalCreateManyAndReturnArgs} args - Arguments to create many AssetDisposals.
+     * @example
+     * // Create many AssetDisposals
+     * const assetDisposal = await prisma.assetDisposal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AssetDisposals and only return the `id`
+     * const assetDisposalWithIdOnly = await prisma.assetDisposal.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AssetDisposalCreateManyAndReturnArgs>(args?: SelectSubset<T, AssetDisposalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AssetDisposal.
+     * @param {AssetDisposalDeleteArgs} args - Arguments to delete one AssetDisposal.
+     * @example
+     * // Delete one AssetDisposal
+     * const AssetDisposal = await prisma.assetDisposal.delete({
+     *   where: {
+     *     // ... filter to delete one AssetDisposal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AssetDisposalDeleteArgs>(args: SelectSubset<T, AssetDisposalDeleteArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AssetDisposal.
+     * @param {AssetDisposalUpdateArgs} args - Arguments to update one AssetDisposal.
+     * @example
+     * // Update one AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AssetDisposalUpdateArgs>(args: SelectSubset<T, AssetDisposalUpdateArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AssetDisposals.
+     * @param {AssetDisposalDeleteManyArgs} args - Arguments to filter AssetDisposals to delete.
+     * @example
+     * // Delete a few AssetDisposals
+     * const { count } = await prisma.assetDisposal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AssetDisposalDeleteManyArgs>(args?: SelectSubset<T, AssetDisposalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AssetDisposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AssetDisposals
+     * const assetDisposal = await prisma.assetDisposal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AssetDisposalUpdateManyArgs>(args: SelectSubset<T, AssetDisposalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AssetDisposals and returns the data updated in the database.
+     * @param {AssetDisposalUpdateManyAndReturnArgs} args - Arguments to update many AssetDisposals.
+     * @example
+     * // Update many AssetDisposals
+     * const assetDisposal = await prisma.assetDisposal.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AssetDisposals and only return the `id`
+     * const assetDisposalWithIdOnly = await prisma.assetDisposal.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AssetDisposalUpdateManyAndReturnArgs>(args: SelectSubset<T, AssetDisposalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AssetDisposal.
+     * @param {AssetDisposalUpsertArgs} args - Arguments to update or create a AssetDisposal.
+     * @example
+     * // Update or create a AssetDisposal
+     * const assetDisposal = await prisma.assetDisposal.upsert({
+     *   create: {
+     *     // ... data to create a AssetDisposal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AssetDisposal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AssetDisposalUpsertArgs>(args: SelectSubset<T, AssetDisposalUpsertArgs<ExtArgs>>): Prisma__AssetDisposalClient<$Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AssetDisposals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalCountArgs} args - Arguments to filter AssetDisposals to count.
+     * @example
+     * // Count the number of AssetDisposals
+     * const count = await prisma.assetDisposal.count({
+     *   where: {
+     *     // ... the filter for the AssetDisposals we want to count
+     *   }
+     * })
+    **/
+    count<T extends AssetDisposalCountArgs>(
+      args?: Subset<T, AssetDisposalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AssetDisposalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AssetDisposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AssetDisposalAggregateArgs>(args: Subset<T, AssetDisposalAggregateArgs>): Prisma.PrismaPromise<GetAssetDisposalAggregateType<T>>
+
+    /**
+     * Group by AssetDisposal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AssetDisposalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AssetDisposalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AssetDisposalGroupByArgs['orderBy'] }
+        : { orderBy?: AssetDisposalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AssetDisposalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAssetDisposalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AssetDisposal model
+   */
+  readonly fields: AssetDisposalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AssetDisposal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AssetDisposalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    asset<T extends AssetDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AssetDefaultArgs<ExtArgs>>): Prisma__AssetClient<$Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AssetDisposal model
+   */
+  interface AssetDisposalFieldRefs {
+    readonly id: FieldRef<"AssetDisposal", 'String'>
+    readonly assetId: FieldRef<"AssetDisposal", 'String'>
+    readonly disposalDate: FieldRef<"AssetDisposal", 'DateTime'>
+    readonly method: FieldRef<"AssetDisposal", 'AssetDisposalMethod'>
+    readonly amount: FieldRef<"AssetDisposal", 'Decimal'>
+    readonly reason: FieldRef<"AssetDisposal", 'String'>
+    readonly tenantId: FieldRef<"AssetDisposal", 'String'>
+    readonly createdAt: FieldRef<"AssetDisposal", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AssetDisposal findUnique
+   */
+  export type AssetDisposalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetDisposal to fetch.
+     */
+    where: AssetDisposalWhereUniqueInput
+  }
+
+  /**
+   * AssetDisposal findUniqueOrThrow
+   */
+  export type AssetDisposalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetDisposal to fetch.
+     */
+    where: AssetDisposalWhereUniqueInput
+  }
+
+  /**
+   * AssetDisposal findFirst
+   */
+  export type AssetDisposalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetDisposal to fetch.
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetDisposals to fetch.
+     */
+    orderBy?: AssetDisposalOrderByWithRelationInput | AssetDisposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AssetDisposals.
+     */
+    cursor?: AssetDisposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetDisposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetDisposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetDisposals.
+     */
+    distinct?: AssetDisposalScalarFieldEnum | AssetDisposalScalarFieldEnum[]
+  }
+
+  /**
+   * AssetDisposal findFirstOrThrow
+   */
+  export type AssetDisposalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetDisposal to fetch.
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetDisposals to fetch.
+     */
+    orderBy?: AssetDisposalOrderByWithRelationInput | AssetDisposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AssetDisposals.
+     */
+    cursor?: AssetDisposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetDisposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetDisposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetDisposals.
+     */
+    distinct?: AssetDisposalScalarFieldEnum | AssetDisposalScalarFieldEnum[]
+  }
+
+  /**
+   * AssetDisposal findMany
+   */
+  export type AssetDisposalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter, which AssetDisposals to fetch.
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AssetDisposals to fetch.
+     */
+    orderBy?: AssetDisposalOrderByWithRelationInput | AssetDisposalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AssetDisposals.
+     */
+    cursor?: AssetDisposalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AssetDisposals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AssetDisposals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AssetDisposals.
+     */
+    distinct?: AssetDisposalScalarFieldEnum | AssetDisposalScalarFieldEnum[]
+  }
+
+  /**
+   * AssetDisposal create
+   */
+  export type AssetDisposalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AssetDisposal.
+     */
+    data: XOR<AssetDisposalCreateInput, AssetDisposalUncheckedCreateInput>
+  }
+
+  /**
+   * AssetDisposal createMany
+   */
+  export type AssetDisposalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AssetDisposals.
+     */
+    data: AssetDisposalCreateManyInput | AssetDisposalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AssetDisposal createManyAndReturn
+   */
+  export type AssetDisposalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * The data used to create many AssetDisposals.
+     */
+    data: AssetDisposalCreateManyInput | AssetDisposalCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AssetDisposal update
+   */
+  export type AssetDisposalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AssetDisposal.
+     */
+    data: XOR<AssetDisposalUpdateInput, AssetDisposalUncheckedUpdateInput>
+    /**
+     * Choose, which AssetDisposal to update.
+     */
+    where: AssetDisposalWhereUniqueInput
+  }
+
+  /**
+   * AssetDisposal updateMany
+   */
+  export type AssetDisposalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AssetDisposals.
+     */
+    data: XOR<AssetDisposalUpdateManyMutationInput, AssetDisposalUncheckedUpdateManyInput>
+    /**
+     * Filter which AssetDisposals to update
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * Limit how many AssetDisposals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AssetDisposal updateManyAndReturn
+   */
+  export type AssetDisposalUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * The data used to update AssetDisposals.
+     */
+    data: XOR<AssetDisposalUpdateManyMutationInput, AssetDisposalUncheckedUpdateManyInput>
+    /**
+     * Filter which AssetDisposals to update
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * Limit how many AssetDisposals to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AssetDisposal upsert
+   */
+  export type AssetDisposalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AssetDisposal to update in case it exists.
+     */
+    where: AssetDisposalWhereUniqueInput
+    /**
+     * In case the AssetDisposal found by the `where` argument doesn't exist, create a new AssetDisposal with this data.
+     */
+    create: XOR<AssetDisposalCreateInput, AssetDisposalUncheckedCreateInput>
+    /**
+     * In case the AssetDisposal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AssetDisposalUpdateInput, AssetDisposalUncheckedUpdateInput>
+  }
+
+  /**
+   * AssetDisposal delete
+   */
+  export type AssetDisposalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+    /**
+     * Filter which AssetDisposal to delete.
+     */
+    where: AssetDisposalWhereUniqueInput
+  }
+
+  /**
+   * AssetDisposal deleteMany
+   */
+  export type AssetDisposalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AssetDisposals to delete
+     */
+    where?: AssetDisposalWhereInput
+    /**
+     * Limit how many AssetDisposals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AssetDisposal without action
+   */
+  export type AssetDisposalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AssetDisposal
+     */
+    select?: AssetDisposalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AssetDisposal
+     */
+    omit?: AssetDisposalOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AssetDisposalInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -201882,6 +205679,51 @@ export namespace Prisma {
   export type NotificationTemplateScalarFieldEnum = (typeof NotificationTemplateScalarFieldEnum)[keyof typeof NotificationTemplateScalarFieldEnum]
 
 
+  export const TenantSmtpConfigScalarFieldEnum: {
+    id: 'id',
+    tenantId: 'tenantId',
+    host: 'host',
+    port: 'port',
+    user: 'user',
+    password: 'password',
+    fromEmail: 'fromEmail',
+    fromName: 'fromName',
+    isActive: 'isActive',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TenantSmtpConfigScalarFieldEnum = (typeof TenantSmtpConfigScalarFieldEnum)[keyof typeof TenantSmtpConfigScalarFieldEnum]
+
+
+  export const AssetTransferScalarFieldEnum: {
+    id: 'id',
+    assetId: 'assetId',
+    fromOrgUnitId: 'fromOrgUnitId',
+    toOrgUnitId: 'toOrgUnitId',
+    transferDate: 'transferDate',
+    reason: 'reason',
+    approvedById: 'approvedById',
+    tenantId: 'tenantId',
+    createdAt: 'createdAt'
+  };
+
+  export type AssetTransferScalarFieldEnum = (typeof AssetTransferScalarFieldEnum)[keyof typeof AssetTransferScalarFieldEnum]
+
+
+  export const AssetDisposalScalarFieldEnum: {
+    id: 'id',
+    assetId: 'assetId',
+    disposalDate: 'disposalDate',
+    method: 'method',
+    amount: 'amount',
+    reason: 'reason',
+    tenantId: 'tenantId',
+    createdAt: 'createdAt'
+  };
+
+  export type AssetDisposalScalarFieldEnum = (typeof AssetDisposalScalarFieldEnum)[keyof typeof AssetDisposalScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -203283,6 +207125,20 @@ export namespace Prisma {
    * Reference to a field of type 'NotificationChannel[]'
    */
   export type ListEnumNotificationChannelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationChannel[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AssetDisposalMethod'
+   */
+  export type EnumAssetDisposalMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetDisposalMethod'>
+    
+
+
+  /**
+   * Reference to a field of type 'AssetDisposalMethod[]'
+   */
+  export type ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetDisposalMethod[]'>
     
   /**
    * Deep Input Types
@@ -209374,6 +213230,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentListRelationFilter
     maintenanceLogs?: AssetMaintenanceListRelationFilter
     tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+    assetTransfers?: AssetTransferListRelationFilter
+    assetDisposals?: AssetDisposalListRelationFilter
   }
 
   export type AssetOrderByWithRelationInput = {
@@ -209397,6 +213255,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentOrderByRelationAggregateInput
     maintenanceLogs?: AssetMaintenanceOrderByRelationAggregateInput
     tenant?: TenantOrderByWithRelationInput
+    assetTransfers?: AssetTransferOrderByRelationAggregateInput
+    assetDisposals?: AssetDisposalOrderByRelationAggregateInput
   }
 
   export type AssetWhereUniqueInput = Prisma.AtLeast<{
@@ -209423,6 +213283,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentListRelationFilter
     maintenanceLogs?: AssetMaintenanceListRelationFilter
     tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+    assetTransfers?: AssetTransferListRelationFilter
+    assetDisposals?: AssetDisposalListRelationFilter
   }, "id" | "code">
 
   export type AssetOrderByWithAggregationInput = {
@@ -214318,6 +218180,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
     notifTemplates?: NotificationTemplateListRelationFilter
+    smtpConfig?: XOR<TenantSmtpConfigNullableScalarRelationFilter, TenantSmtpConfigWhereInput> | null
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -214375,6 +218238,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementOrderByRelationAggregateInput
     apiKeys?: ApiKeyOrderByRelationAggregateInput
     notifTemplates?: NotificationTemplateOrderByRelationAggregateInput
+    smtpConfig?: TenantSmtpConfigOrderByWithRelationInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -214435,6 +218299,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementListRelationFilter
     apiKeys?: ApiKeyListRelationFilter
     notifTemplates?: NotificationTemplateListRelationFilter
+    smtpConfig?: XOR<TenantSmtpConfigNullableScalarRelationFilter, TenantSmtpConfigWhereInput> | null
   }, "id" | "slug">
 
   export type TenantOrderByWithAggregationInput = {
@@ -216597,6 +220462,235 @@ export namespace Prisma {
     bodyHtml?: StringWithAggregatesFilter<"NotificationTemplate"> | string
     createdAt?: DateTimeWithAggregatesFilter<"NotificationTemplate"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"NotificationTemplate"> | Date | string
+  }
+
+  export type TenantSmtpConfigWhereInput = {
+    AND?: TenantSmtpConfigWhereInput | TenantSmtpConfigWhereInput[]
+    OR?: TenantSmtpConfigWhereInput[]
+    NOT?: TenantSmtpConfigWhereInput | TenantSmtpConfigWhereInput[]
+    id?: StringFilter<"TenantSmtpConfig"> | string
+    tenantId?: StringFilter<"TenantSmtpConfig"> | string
+    host?: StringFilter<"TenantSmtpConfig"> | string
+    port?: IntFilter<"TenantSmtpConfig"> | number
+    user?: StringFilter<"TenantSmtpConfig"> | string
+    password?: StringFilter<"TenantSmtpConfig"> | string
+    fromEmail?: StringFilter<"TenantSmtpConfig"> | string
+    fromName?: StringFilter<"TenantSmtpConfig"> | string
+    isActive?: BoolFilter<"TenantSmtpConfig"> | boolean
+    updatedAt?: DateTimeFilter<"TenantSmtpConfig"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+  }
+
+  export type TenantSmtpConfigOrderByWithRelationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    fromEmail?: SortOrder
+    fromName?: SortOrder
+    isActive?: SortOrder
+    updatedAt?: SortOrder
+    tenant?: TenantOrderByWithRelationInput
+  }
+
+  export type TenantSmtpConfigWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    tenantId?: string
+    AND?: TenantSmtpConfigWhereInput | TenantSmtpConfigWhereInput[]
+    OR?: TenantSmtpConfigWhereInput[]
+    NOT?: TenantSmtpConfigWhereInput | TenantSmtpConfigWhereInput[]
+    host?: StringFilter<"TenantSmtpConfig"> | string
+    port?: IntFilter<"TenantSmtpConfig"> | number
+    user?: StringFilter<"TenantSmtpConfig"> | string
+    password?: StringFilter<"TenantSmtpConfig"> | string
+    fromEmail?: StringFilter<"TenantSmtpConfig"> | string
+    fromName?: StringFilter<"TenantSmtpConfig"> | string
+    isActive?: BoolFilter<"TenantSmtpConfig"> | boolean
+    updatedAt?: DateTimeFilter<"TenantSmtpConfig"> | Date | string
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+  }, "id" | "tenantId">
+
+  export type TenantSmtpConfigOrderByWithAggregationInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    fromEmail?: SortOrder
+    fromName?: SortOrder
+    isActive?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TenantSmtpConfigCountOrderByAggregateInput
+    _avg?: TenantSmtpConfigAvgOrderByAggregateInput
+    _max?: TenantSmtpConfigMaxOrderByAggregateInput
+    _min?: TenantSmtpConfigMinOrderByAggregateInput
+    _sum?: TenantSmtpConfigSumOrderByAggregateInput
+  }
+
+  export type TenantSmtpConfigScalarWhereWithAggregatesInput = {
+    AND?: TenantSmtpConfigScalarWhereWithAggregatesInput | TenantSmtpConfigScalarWhereWithAggregatesInput[]
+    OR?: TenantSmtpConfigScalarWhereWithAggregatesInput[]
+    NOT?: TenantSmtpConfigScalarWhereWithAggregatesInput | TenantSmtpConfigScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    tenantId?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    host?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    port?: IntWithAggregatesFilter<"TenantSmtpConfig"> | number
+    user?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    password?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    fromEmail?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    fromName?: StringWithAggregatesFilter<"TenantSmtpConfig"> | string
+    isActive?: BoolWithAggregatesFilter<"TenantSmtpConfig"> | boolean
+    updatedAt?: DateTimeWithAggregatesFilter<"TenantSmtpConfig"> | Date | string
+  }
+
+  export type AssetTransferWhereInput = {
+    AND?: AssetTransferWhereInput | AssetTransferWhereInput[]
+    OR?: AssetTransferWhereInput[]
+    NOT?: AssetTransferWhereInput | AssetTransferWhereInput[]
+    id?: StringFilter<"AssetTransfer"> | string
+    assetId?: StringFilter<"AssetTransfer"> | string
+    fromOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    toOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    transferDate?: DateTimeFilter<"AssetTransfer"> | Date | string
+    reason?: StringNullableFilter<"AssetTransfer"> | string | null
+    approvedById?: StringNullableFilter<"AssetTransfer"> | string | null
+    tenantId?: StringNullableFilter<"AssetTransfer"> | string | null
+    createdAt?: DateTimeFilter<"AssetTransfer"> | Date | string
+    asset?: XOR<AssetScalarRelationFilter, AssetWhereInput>
+  }
+
+  export type AssetTransferOrderByWithRelationInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    fromOrgUnitId?: SortOrderInput | SortOrder
+    toOrgUnitId?: SortOrderInput | SortOrder
+    transferDate?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    approvedById?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    asset?: AssetOrderByWithRelationInput
+  }
+
+  export type AssetTransferWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AssetTransferWhereInput | AssetTransferWhereInput[]
+    OR?: AssetTransferWhereInput[]
+    NOT?: AssetTransferWhereInput | AssetTransferWhereInput[]
+    assetId?: StringFilter<"AssetTransfer"> | string
+    fromOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    toOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    transferDate?: DateTimeFilter<"AssetTransfer"> | Date | string
+    reason?: StringNullableFilter<"AssetTransfer"> | string | null
+    approvedById?: StringNullableFilter<"AssetTransfer"> | string | null
+    tenantId?: StringNullableFilter<"AssetTransfer"> | string | null
+    createdAt?: DateTimeFilter<"AssetTransfer"> | Date | string
+    asset?: XOR<AssetScalarRelationFilter, AssetWhereInput>
+  }, "id">
+
+  export type AssetTransferOrderByWithAggregationInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    fromOrgUnitId?: SortOrderInput | SortOrder
+    toOrgUnitId?: SortOrderInput | SortOrder
+    transferDate?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    approvedById?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AssetTransferCountOrderByAggregateInput
+    _max?: AssetTransferMaxOrderByAggregateInput
+    _min?: AssetTransferMinOrderByAggregateInput
+  }
+
+  export type AssetTransferScalarWhereWithAggregatesInput = {
+    AND?: AssetTransferScalarWhereWithAggregatesInput | AssetTransferScalarWhereWithAggregatesInput[]
+    OR?: AssetTransferScalarWhereWithAggregatesInput[]
+    NOT?: AssetTransferScalarWhereWithAggregatesInput | AssetTransferScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AssetTransfer"> | string
+    assetId?: StringWithAggregatesFilter<"AssetTransfer"> | string
+    fromOrgUnitId?: StringNullableWithAggregatesFilter<"AssetTransfer"> | string | null
+    toOrgUnitId?: StringNullableWithAggregatesFilter<"AssetTransfer"> | string | null
+    transferDate?: DateTimeWithAggregatesFilter<"AssetTransfer"> | Date | string
+    reason?: StringNullableWithAggregatesFilter<"AssetTransfer"> | string | null
+    approvedById?: StringNullableWithAggregatesFilter<"AssetTransfer"> | string | null
+    tenantId?: StringNullableWithAggregatesFilter<"AssetTransfer"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AssetTransfer"> | Date | string
+  }
+
+  export type AssetDisposalWhereInput = {
+    AND?: AssetDisposalWhereInput | AssetDisposalWhereInput[]
+    OR?: AssetDisposalWhereInput[]
+    NOT?: AssetDisposalWhereInput | AssetDisposalWhereInput[]
+    id?: StringFilter<"AssetDisposal"> | string
+    assetId?: StringFilter<"AssetDisposal"> | string
+    disposalDate?: DateTimeFilter<"AssetDisposal"> | Date | string
+    method?: EnumAssetDisposalMethodFilter<"AssetDisposal"> | $Enums.AssetDisposalMethod
+    amount?: DecimalNullableFilter<"AssetDisposal"> | Decimal | DecimalJsLike | number | string | null
+    reason?: StringNullableFilter<"AssetDisposal"> | string | null
+    tenantId?: StringNullableFilter<"AssetDisposal"> | string | null
+    createdAt?: DateTimeFilter<"AssetDisposal"> | Date | string
+    asset?: XOR<AssetScalarRelationFilter, AssetWhereInput>
+  }
+
+  export type AssetDisposalOrderByWithRelationInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    disposalDate?: SortOrder
+    method?: SortOrder
+    amount?: SortOrderInput | SortOrder
+    reason?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    asset?: AssetOrderByWithRelationInput
+  }
+
+  export type AssetDisposalWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: AssetDisposalWhereInput | AssetDisposalWhereInput[]
+    OR?: AssetDisposalWhereInput[]
+    NOT?: AssetDisposalWhereInput | AssetDisposalWhereInput[]
+    assetId?: StringFilter<"AssetDisposal"> | string
+    disposalDate?: DateTimeFilter<"AssetDisposal"> | Date | string
+    method?: EnumAssetDisposalMethodFilter<"AssetDisposal"> | $Enums.AssetDisposalMethod
+    amount?: DecimalNullableFilter<"AssetDisposal"> | Decimal | DecimalJsLike | number | string | null
+    reason?: StringNullableFilter<"AssetDisposal"> | string | null
+    tenantId?: StringNullableFilter<"AssetDisposal"> | string | null
+    createdAt?: DateTimeFilter<"AssetDisposal"> | Date | string
+    asset?: XOR<AssetScalarRelationFilter, AssetWhereInput>
+  }, "id">
+
+  export type AssetDisposalOrderByWithAggregationInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    disposalDate?: SortOrder
+    method?: SortOrder
+    amount?: SortOrderInput | SortOrder
+    reason?: SortOrderInput | SortOrder
+    tenantId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: AssetDisposalCountOrderByAggregateInput
+    _avg?: AssetDisposalAvgOrderByAggregateInput
+    _max?: AssetDisposalMaxOrderByAggregateInput
+    _min?: AssetDisposalMinOrderByAggregateInput
+    _sum?: AssetDisposalSumOrderByAggregateInput
+  }
+
+  export type AssetDisposalScalarWhereWithAggregatesInput = {
+    AND?: AssetDisposalScalarWhereWithAggregatesInput | AssetDisposalScalarWhereWithAggregatesInput[]
+    OR?: AssetDisposalScalarWhereWithAggregatesInput[]
+    NOT?: AssetDisposalScalarWhereWithAggregatesInput | AssetDisposalScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AssetDisposal"> | string
+    assetId?: StringWithAggregatesFilter<"AssetDisposal"> | string
+    disposalDate?: DateTimeWithAggregatesFilter<"AssetDisposal"> | Date | string
+    method?: EnumAssetDisposalMethodWithAggregatesFilter<"AssetDisposal"> | $Enums.AssetDisposalMethod
+    amount?: DecimalNullableWithAggregatesFilter<"AssetDisposal"> | Decimal | DecimalJsLike | number | string | null
+    reason?: StringNullableWithAggregatesFilter<"AssetDisposal"> | string | null
+    tenantId?: StringNullableWithAggregatesFilter<"AssetDisposal"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"AssetDisposal"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -223184,6 +227278,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
     tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUncheckedCreateInput = {
@@ -223205,6 +227301,8 @@ export namespace Prisma {
     tenantId?: string | null
     assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUpdateInput = {
@@ -223226,6 +227324,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
     tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateInput = {
@@ -223247,6 +227347,8 @@ export namespace Prisma {
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetCreateManyInput = {
@@ -228572,6 +232674,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -228629,6 +232732,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -228686,6 +232790,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -228743,6 +232848,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -231127,6 +235233,255 @@ export namespace Prisma {
     bodyHtml?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantSmtpConfigCreateInput = {
+    id?: string
+    host: string
+    port?: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive?: boolean
+    updatedAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutSmtpConfigInput
+  }
+
+  export type TenantSmtpConfigUncheckedCreateInput = {
+    id?: string
+    tenantId: string
+    host: string
+    port?: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type TenantSmtpConfigUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutSmtpConfigNestedInput
+  }
+
+  export type TenantSmtpConfigUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantSmtpConfigCreateManyInput = {
+    id?: string
+    tenantId: string
+    host: string
+    port?: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type TenantSmtpConfigUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantSmtpConfigUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferCreateInput = {
+    id?: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+    asset: AssetCreateNestedOneWithoutAssetTransfersInput
+  }
+
+  export type AssetTransferUncheckedCreateInput = {
+    id?: string
+    assetId: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetTransferUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    asset?: AssetUpdateOneRequiredWithoutAssetTransfersNestedInput
+  }
+
+  export type AssetTransferUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assetId?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferCreateManyInput = {
+    id?: string
+    assetId: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetTransferUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assetId?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalCreateInput = {
+    id?: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+    asset: AssetCreateNestedOneWithoutAssetDisposalsInput
+  }
+
+  export type AssetDisposalUncheckedCreateInput = {
+    id?: string
+    assetId: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetDisposalUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    asset?: AssetUpdateOneRequiredWithoutAssetDisposalsNestedInput
+  }
+
+  export type AssetDisposalUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assetId?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalCreateManyInput = {
+    id?: string
+    assetId: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetDisposalUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    assetId?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -236567,7 +240922,27 @@ export namespace Prisma {
     none?: AssetMaintenanceWhereInput
   }
 
+  export type AssetTransferListRelationFilter = {
+    every?: AssetTransferWhereInput
+    some?: AssetTransferWhereInput
+    none?: AssetTransferWhereInput
+  }
+
+  export type AssetDisposalListRelationFilter = {
+    every?: AssetDisposalWhereInput
+    some?: AssetDisposalWhereInput
+    none?: AssetDisposalWhereInput
+  }
+
   export type AssetMaintenanceOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AssetTransferOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type AssetDisposalOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -240147,6 +244522,11 @@ export namespace Prisma {
     none?: NotificationTemplateWhereInput
   }
 
+  export type TenantSmtpConfigNullableScalarRelationFilter = {
+    is?: TenantSmtpConfigWhereInput | null
+    isNot?: TenantSmtpConfigWhereInput | null
+  }
+
   export type CustomerOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -241634,6 +246014,152 @@ export namespace Prisma {
     bodyHtml?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type TenantScalarRelationFilter = {
+    is?: TenantWhereInput
+    isNot?: TenantWhereInput
+  }
+
+  export type TenantSmtpConfigCountOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    fromEmail?: SortOrder
+    fromName?: SortOrder
+    isActive?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantSmtpConfigAvgOrderByAggregateInput = {
+    port?: SortOrder
+  }
+
+  export type TenantSmtpConfigMaxOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    fromEmail?: SortOrder
+    fromName?: SortOrder
+    isActive?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantSmtpConfigMinOrderByAggregateInput = {
+    id?: SortOrder
+    tenantId?: SortOrder
+    host?: SortOrder
+    port?: SortOrder
+    user?: SortOrder
+    password?: SortOrder
+    fromEmail?: SortOrder
+    fromName?: SortOrder
+    isActive?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TenantSmtpConfigSumOrderByAggregateInput = {
+    port?: SortOrder
+  }
+
+  export type AssetTransferCountOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    fromOrgUnitId?: SortOrder
+    toOrgUnitId?: SortOrder
+    transferDate?: SortOrder
+    reason?: SortOrder
+    approvedById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AssetTransferMaxOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    fromOrgUnitId?: SortOrder
+    toOrgUnitId?: SortOrder
+    transferDate?: SortOrder
+    reason?: SortOrder
+    approvedById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AssetTransferMinOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    fromOrgUnitId?: SortOrder
+    toOrgUnitId?: SortOrder
+    transferDate?: SortOrder
+    reason?: SortOrder
+    approvedById?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumAssetDisposalMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.AssetDisposalMethod | EnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumAssetDisposalMethodFilter<$PrismaModel> | $Enums.AssetDisposalMethod
+  }
+
+  export type AssetDisposalCountOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    disposalDate?: SortOrder
+    method?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AssetDisposalAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type AssetDisposalMaxOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    disposalDate?: SortOrder
+    method?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AssetDisposalMinOrderByAggregateInput = {
+    id?: SortOrder
+    assetId?: SortOrder
+    disposalDate?: SortOrder
+    method?: SortOrder
+    amount?: SortOrder
+    reason?: SortOrder
+    tenantId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type AssetDisposalSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type EnumAssetDisposalMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AssetDisposalMethod | EnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumAssetDisposalMethodWithAggregatesFilter<$PrismaModel> | $Enums.AssetDisposalMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAssetDisposalMethodFilter<$PrismaModel>
+    _max?: NestedEnumAssetDisposalMethodFilter<$PrismaModel>
   }
 
   export type BugAttachmentCreateNestedManyWithoutUploaderInput = {
@@ -250275,6 +254801,20 @@ export namespace Prisma {
     connect?: TenantWhereUniqueInput
   }
 
+  export type AssetTransferCreateNestedManyWithoutAssetInput = {
+    create?: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput> | AssetTransferCreateWithoutAssetInput[] | AssetTransferUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetTransferCreateOrConnectWithoutAssetInput | AssetTransferCreateOrConnectWithoutAssetInput[]
+    createMany?: AssetTransferCreateManyAssetInputEnvelope
+    connect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+  }
+
+  export type AssetDisposalCreateNestedManyWithoutAssetInput = {
+    create?: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput> | AssetDisposalCreateWithoutAssetInput[] | AssetDisposalUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetDisposalCreateOrConnectWithoutAssetInput | AssetDisposalCreateOrConnectWithoutAssetInput[]
+    createMany?: AssetDisposalCreateManyAssetInputEnvelope
+    connect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+  }
+
   export type AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput = {
     create?: XOR<AssetAssignmentCreateWithoutAssetInput, AssetAssignmentUncheckedCreateWithoutAssetInput> | AssetAssignmentCreateWithoutAssetInput[] | AssetAssignmentUncheckedCreateWithoutAssetInput[]
     connectOrCreate?: AssetAssignmentCreateOrConnectWithoutAssetInput | AssetAssignmentCreateOrConnectWithoutAssetInput[]
@@ -250287,6 +254827,20 @@ export namespace Prisma {
     connectOrCreate?: AssetMaintenanceCreateOrConnectWithoutAssetInput | AssetMaintenanceCreateOrConnectWithoutAssetInput[]
     createMany?: AssetMaintenanceCreateManyAssetInputEnvelope
     connect?: AssetMaintenanceWhereUniqueInput | AssetMaintenanceWhereUniqueInput[]
+  }
+
+  export type AssetTransferUncheckedCreateNestedManyWithoutAssetInput = {
+    create?: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput> | AssetTransferCreateWithoutAssetInput[] | AssetTransferUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetTransferCreateOrConnectWithoutAssetInput | AssetTransferCreateOrConnectWithoutAssetInput[]
+    createMany?: AssetTransferCreateManyAssetInputEnvelope
+    connect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+  }
+
+  export type AssetDisposalUncheckedCreateNestedManyWithoutAssetInput = {
+    create?: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput> | AssetDisposalCreateWithoutAssetInput[] | AssetDisposalUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetDisposalCreateOrConnectWithoutAssetInput | AssetDisposalCreateOrConnectWithoutAssetInput[]
+    createMany?: AssetDisposalCreateManyAssetInputEnvelope
+    connect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
   }
 
   export type EnumAssetCategoryFieldUpdateOperationsInput = {
@@ -250345,6 +254899,34 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutAssetsInput, TenantUpdateWithoutAssetsInput>, TenantUncheckedUpdateWithoutAssetsInput>
   }
 
+  export type AssetTransferUpdateManyWithoutAssetNestedInput = {
+    create?: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput> | AssetTransferCreateWithoutAssetInput[] | AssetTransferUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetTransferCreateOrConnectWithoutAssetInput | AssetTransferCreateOrConnectWithoutAssetInput[]
+    upsert?: AssetTransferUpsertWithWhereUniqueWithoutAssetInput | AssetTransferUpsertWithWhereUniqueWithoutAssetInput[]
+    createMany?: AssetTransferCreateManyAssetInputEnvelope
+    set?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    disconnect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    delete?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    connect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    update?: AssetTransferUpdateWithWhereUniqueWithoutAssetInput | AssetTransferUpdateWithWhereUniqueWithoutAssetInput[]
+    updateMany?: AssetTransferUpdateManyWithWhereWithoutAssetInput | AssetTransferUpdateManyWithWhereWithoutAssetInput[]
+    deleteMany?: AssetTransferScalarWhereInput | AssetTransferScalarWhereInput[]
+  }
+
+  export type AssetDisposalUpdateManyWithoutAssetNestedInput = {
+    create?: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput> | AssetDisposalCreateWithoutAssetInput[] | AssetDisposalUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetDisposalCreateOrConnectWithoutAssetInput | AssetDisposalCreateOrConnectWithoutAssetInput[]
+    upsert?: AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
+    createMany?: AssetDisposalCreateManyAssetInputEnvelope
+    set?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    disconnect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    delete?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    connect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    update?: AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
+    updateMany?: AssetDisposalUpdateManyWithWhereWithoutAssetInput | AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
+    deleteMany?: AssetDisposalScalarWhereInput | AssetDisposalScalarWhereInput[]
+  }
+
   export type AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput = {
     create?: XOR<AssetAssignmentCreateWithoutAssetInput, AssetAssignmentUncheckedCreateWithoutAssetInput> | AssetAssignmentCreateWithoutAssetInput[] | AssetAssignmentUncheckedCreateWithoutAssetInput[]
     connectOrCreate?: AssetAssignmentCreateOrConnectWithoutAssetInput | AssetAssignmentCreateOrConnectWithoutAssetInput[]
@@ -250371,6 +254953,34 @@ export namespace Prisma {
     update?: AssetMaintenanceUpdateWithWhereUniqueWithoutAssetInput | AssetMaintenanceUpdateWithWhereUniqueWithoutAssetInput[]
     updateMany?: AssetMaintenanceUpdateManyWithWhereWithoutAssetInput | AssetMaintenanceUpdateManyWithWhereWithoutAssetInput[]
     deleteMany?: AssetMaintenanceScalarWhereInput | AssetMaintenanceScalarWhereInput[]
+  }
+
+  export type AssetTransferUncheckedUpdateManyWithoutAssetNestedInput = {
+    create?: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput> | AssetTransferCreateWithoutAssetInput[] | AssetTransferUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetTransferCreateOrConnectWithoutAssetInput | AssetTransferCreateOrConnectWithoutAssetInput[]
+    upsert?: AssetTransferUpsertWithWhereUniqueWithoutAssetInput | AssetTransferUpsertWithWhereUniqueWithoutAssetInput[]
+    createMany?: AssetTransferCreateManyAssetInputEnvelope
+    set?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    disconnect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    delete?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    connect?: AssetTransferWhereUniqueInput | AssetTransferWhereUniqueInput[]
+    update?: AssetTransferUpdateWithWhereUniqueWithoutAssetInput | AssetTransferUpdateWithWhereUniqueWithoutAssetInput[]
+    updateMany?: AssetTransferUpdateManyWithWhereWithoutAssetInput | AssetTransferUpdateManyWithWhereWithoutAssetInput[]
+    deleteMany?: AssetTransferScalarWhereInput | AssetTransferScalarWhereInput[]
+  }
+
+  export type AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput = {
+    create?: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput> | AssetDisposalCreateWithoutAssetInput[] | AssetDisposalUncheckedCreateWithoutAssetInput[]
+    connectOrCreate?: AssetDisposalCreateOrConnectWithoutAssetInput | AssetDisposalCreateOrConnectWithoutAssetInput[]
+    upsert?: AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
+    createMany?: AssetDisposalCreateManyAssetInputEnvelope
+    set?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    disconnect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    delete?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    connect?: AssetDisposalWhereUniqueInput | AssetDisposalWhereUniqueInput[]
+    update?: AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
+    updateMany?: AssetDisposalUpdateManyWithWhereWithoutAssetInput | AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
+    deleteMany?: AssetDisposalScalarWhereInput | AssetDisposalScalarWhereInput[]
   }
 
   export type AssetCreateNestedOneWithoutAssignmentsInput = {
@@ -253076,6 +257686,12 @@ export namespace Prisma {
     connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
   }
 
+  export type TenantSmtpConfigCreateNestedOneWithoutTenantInput = {
+    create?: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+    connectOrCreate?: TenantSmtpConfigCreateOrConnectWithoutTenantInput
+    connect?: TenantSmtpConfigWhereUniqueInput
+  }
+
   export type UserUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -253361,6 +257977,12 @@ export namespace Prisma {
     connectOrCreate?: NotificationTemplateCreateOrConnectWithoutTenantInput | NotificationTemplateCreateOrConnectWithoutTenantInput[]
     createMany?: NotificationTemplateCreateManyTenantInputEnvelope
     connect?: NotificationTemplateWhereUniqueInput | NotificationTemplateWhereUniqueInput[]
+  }
+
+  export type TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput = {
+    create?: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+    connectOrCreate?: TenantSmtpConfigCreateOrConnectWithoutTenantInput
+    connect?: TenantSmtpConfigWhereUniqueInput
   }
 
   export type UserUpdateManyWithoutTenantNestedInput = {
@@ -253937,6 +258559,16 @@ export namespace Prisma {
     deleteMany?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
   }
 
+  export type TenantSmtpConfigUpdateOneWithoutTenantNestedInput = {
+    create?: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+    connectOrCreate?: TenantSmtpConfigCreateOrConnectWithoutTenantInput
+    upsert?: TenantSmtpConfigUpsertWithoutTenantInput
+    disconnect?: TenantSmtpConfigWhereInput | boolean
+    delete?: TenantSmtpConfigWhereInput | boolean
+    connect?: TenantSmtpConfigWhereUniqueInput
+    update?: XOR<XOR<TenantSmtpConfigUpdateToOneWithWhereWithoutTenantInput, TenantSmtpConfigUpdateWithoutTenantInput>, TenantSmtpConfigUncheckedUpdateWithoutTenantInput>
+  }
+
   export type UserUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -254509,6 +259141,16 @@ export namespace Prisma {
     update?: NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput | NotificationTemplateUpdateWithWhereUniqueWithoutTenantInput[]
     updateMany?: NotificationTemplateUpdateManyWithWhereWithoutTenantInput | NotificationTemplateUpdateManyWithWhereWithoutTenantInput[]
     deleteMany?: NotificationTemplateScalarWhereInput | NotificationTemplateScalarWhereInput[]
+  }
+
+  export type TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput = {
+    create?: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+    connectOrCreate?: TenantSmtpConfigCreateOrConnectWithoutTenantInput
+    upsert?: TenantSmtpConfigUpsertWithoutTenantInput
+    disconnect?: TenantSmtpConfigWhereInput | boolean
+    delete?: TenantSmtpConfigWhereInput | boolean
+    connect?: TenantSmtpConfigWhereUniqueInput
+    update?: XOR<XOR<TenantSmtpConfigUpdateToOneWithWhereWithoutTenantInput, TenantSmtpConfigUpdateWithoutTenantInput>, TenantSmtpConfigUncheckedUpdateWithoutTenantInput>
   }
 
   export type PositionCreateNestedManyWithoutJobTitleInput = {
@@ -255692,6 +260334,52 @@ export namespace Prisma {
     delete?: TenantWhereInput | boolean
     connect?: TenantWhereUniqueInput
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutNotifTemplatesInput, TenantUpdateWithoutNotifTemplatesInput>, TenantUncheckedUpdateWithoutNotifTemplatesInput>
+  }
+
+  export type TenantCreateNestedOneWithoutSmtpConfigInput = {
+    create?: XOR<TenantCreateWithoutSmtpConfigInput, TenantUncheckedCreateWithoutSmtpConfigInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSmtpConfigInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type TenantUpdateOneRequiredWithoutSmtpConfigNestedInput = {
+    create?: XOR<TenantCreateWithoutSmtpConfigInput, TenantUncheckedCreateWithoutSmtpConfigInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSmtpConfigInput
+    upsert?: TenantUpsertWithoutSmtpConfigInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutSmtpConfigInput, TenantUpdateWithoutSmtpConfigInput>, TenantUncheckedUpdateWithoutSmtpConfigInput>
+  }
+
+  export type AssetCreateNestedOneWithoutAssetTransfersInput = {
+    create?: XOR<AssetCreateWithoutAssetTransfersInput, AssetUncheckedCreateWithoutAssetTransfersInput>
+    connectOrCreate?: AssetCreateOrConnectWithoutAssetTransfersInput
+    connect?: AssetWhereUniqueInput
+  }
+
+  export type AssetUpdateOneRequiredWithoutAssetTransfersNestedInput = {
+    create?: XOR<AssetCreateWithoutAssetTransfersInput, AssetUncheckedCreateWithoutAssetTransfersInput>
+    connectOrCreate?: AssetCreateOrConnectWithoutAssetTransfersInput
+    upsert?: AssetUpsertWithoutAssetTransfersInput
+    connect?: AssetWhereUniqueInput
+    update?: XOR<XOR<AssetUpdateToOneWithWhereWithoutAssetTransfersInput, AssetUpdateWithoutAssetTransfersInput>, AssetUncheckedUpdateWithoutAssetTransfersInput>
+  }
+
+  export type AssetCreateNestedOneWithoutAssetDisposalsInput = {
+    create?: XOR<AssetCreateWithoutAssetDisposalsInput, AssetUncheckedCreateWithoutAssetDisposalsInput>
+    connectOrCreate?: AssetCreateOrConnectWithoutAssetDisposalsInput
+    connect?: AssetWhereUniqueInput
+  }
+
+  export type EnumAssetDisposalMethodFieldUpdateOperationsInput = {
+    set?: $Enums.AssetDisposalMethod
+  }
+
+  export type AssetUpdateOneRequiredWithoutAssetDisposalsNestedInput = {
+    create?: XOR<AssetCreateWithoutAssetDisposalsInput, AssetUncheckedCreateWithoutAssetDisposalsInput>
+    connectOrCreate?: AssetCreateOrConnectWithoutAssetDisposalsInput
+    upsert?: AssetUpsertWithoutAssetDisposalsInput
+    connect?: AssetWhereUniqueInput
+    update?: XOR<XOR<AssetUpdateToOneWithWhereWithoutAssetDisposalsInput, AssetUpdateWithoutAssetDisposalsInput>, AssetUncheckedUpdateWithoutAssetDisposalsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -257558,6 +262246,23 @@ export namespace Prisma {
     _max?: NestedEnumNotificationChannelFilter<$PrismaModel>
   }
 
+  export type NestedEnumAssetDisposalMethodFilter<$PrismaModel = never> = {
+    equals?: $Enums.AssetDisposalMethod | EnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumAssetDisposalMethodFilter<$PrismaModel> | $Enums.AssetDisposalMethod
+  }
+
+  export type NestedEnumAssetDisposalMethodWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AssetDisposalMethod | EnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    in?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AssetDisposalMethod[] | ListEnumAssetDisposalMethodFieldRefInput<$PrismaModel>
+    not?: NestedEnumAssetDisposalMethodWithAggregatesFilter<$PrismaModel> | $Enums.AssetDisposalMethod
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAssetDisposalMethodFilter<$PrismaModel>
+    _max?: NestedEnumAssetDisposalMethodFilter<$PrismaModel>
+  }
+
   export type BugAttachmentCreateWithoutUploaderInput = {
     id?: string
     filename: string
@@ -259406,6 +264111,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutUsersInput = {
@@ -259462,6 +264168,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutUsersInput = {
@@ -261226,6 +265933,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutUsersInput = {
@@ -261282,6 +265990,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type DelegationRuleUpsertWithWhereUniqueWithoutDelegatorInput = {
@@ -262309,6 +267018,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
     tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUncheckedCreateWithoutOrgUnitInput = {
@@ -262329,6 +267040,8 @@ export namespace Prisma {
     tenantId?: string | null
     assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   }
 
   export type AssetCreateOrConnectWithoutOrgUnitInput = {
@@ -262395,6 +267108,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutOrgUnitsInput = {
@@ -262451,6 +267165,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutOrgUnitsInput = {
@@ -263076,6 +267791,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutOrgUnitsInput = {
@@ -263132,6 +267848,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type BudgetPlanUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -264591,6 +269308,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutEmployeesInput = {
@@ -264647,6 +269365,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutEmployeesInput = {
@@ -266255,6 +270974,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutEmployeesInput = {
@@ -266311,6 +271031,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type LeavePolicyUpsertWithoutEmployeesInput = {
@@ -267959,6 +272680,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProjectsInput = {
@@ -268015,6 +272737,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProjectsInput = {
@@ -268614,6 +273337,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProjectsInput = {
@@ -268670,6 +273394,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type BudgetPlanUpsertWithWhereUniqueWithoutProjectInput = {
@@ -269020,6 +273745,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAllocationsInput = {
@@ -269076,6 +273802,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAllocationsInput = {
@@ -269374,6 +274101,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAllocationsInput = {
@@ -269430,6 +274158,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type BugTaskCreateWithoutTaskInput = {
@@ -270010,6 +274739,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTasksInput = {
@@ -270066,6 +274796,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTasksInput = {
@@ -270640,6 +275371,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTasksInput = {
@@ -270696,6 +275428,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type TaskCreateWithoutTimeLogsInput = {
@@ -271511,6 +276244,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutTimeEntriesInput = {
@@ -271567,6 +276301,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutTimeEntriesInput = {
@@ -271772,6 +276507,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutTimeEntriesInput = {
@@ -271828,6 +276564,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutApprovedTimesheetsInput = {
@@ -273271,6 +278008,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProcessDefinitionsInput = {
@@ -273327,6 +278065,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProcessDefinitionsInput = {
@@ -273468,6 +278207,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProcessDefinitionsInput = {
@@ -273524,6 +278264,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ProcessActivityLogCreateWithoutInstanceInput = {
@@ -274017,6 +278758,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProcessInstancesInput = {
@@ -274073,6 +278815,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProcessInstancesInput = {
@@ -274492,6 +279235,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProcessInstancesInput = {
@@ -274548,6 +279292,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutAssignedProcessTasksInput = {
@@ -275574,6 +280319,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutBugsInput = {
@@ -275630,6 +280376,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutBugsInput = {
@@ -276248,6 +280995,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutBugsInput = {
@@ -276304,6 +281052,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type BugCreateWithoutTasksInput = {
@@ -279979,6 +284728,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutContractsInput = {
@@ -280035,6 +284785,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutContractsInput = {
@@ -280504,6 +285255,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutContractsInput = {
@@ -280560,6 +285312,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ContractAllowanceUpsertWithWhereUniqueWithoutContractInput = {
@@ -281269,6 +286022,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeaveRequestsInput = {
@@ -281325,6 +286079,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeaveRequestsInput = {
@@ -281765,6 +286520,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeaveRequestsInput = {
@@ -281821,6 +286577,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type EmployeeCreateWithoutLeaveBalancesInput = {
@@ -282055,6 +286812,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeaveBalancesInput = {
@@ -282111,6 +286869,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeaveBalancesInput = {
@@ -282373,6 +287132,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeaveBalancesInput = {
@@ -282429,6 +287189,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type EmployeeCreateWithoutOvertimeRequestsInput = {
@@ -283417,6 +288178,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPayrollPeriodsInput = {
@@ -283473,6 +288235,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPayrollPeriodsInput = {
@@ -283753,6 +288516,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPayrollPeriodsInput = {
@@ -283809,6 +288573,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type PayrollPeriodCreateWithoutRecordsInput = {
@@ -284095,6 +288860,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPayrollRecordsInput = {
@@ -284151,6 +288917,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPayrollRecordsInput = {
@@ -284471,6 +289238,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPayrollRecordsInput = {
@@ -284527,6 +289295,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ExpenseItemCreateWithoutExpenseInput = {
@@ -286171,6 +290940,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomersInput = {
@@ -286227,6 +290997,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomersInput = {
@@ -286536,6 +291307,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomersInput = {
@@ -286592,6 +291364,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutContactsInput = {
@@ -286737,6 +291510,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutContactsInput = {
@@ -286793,6 +291567,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutContactsInput = {
@@ -286952,6 +291727,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutContactsInput = {
@@ -287008,6 +291784,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ContactCreateWithoutLeadsInput = {
@@ -287093,6 +291870,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeadsInput = {
@@ -287149,6 +291927,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeadsInput = {
@@ -287290,6 +292069,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeadsInput = {
@@ -287346,6 +292126,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type LeadFollowUpScheduleUpsertWithWhereUniqueWithoutLeadInput = {
@@ -287463,6 +292244,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDealsInput = {
@@ -287519,6 +292301,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDealsInput = {
@@ -287740,6 +292523,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDealsInput = {
@@ -287796,6 +292580,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutDealInput = {
@@ -288125,6 +292910,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCrmActivitiesInput = {
@@ -288181,6 +292967,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCrmActivitiesInput = {
@@ -288512,6 +293299,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCrmActivitiesInput = {
@@ -288568,6 +293356,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type LeadCreateWithoutFollowUpSchedulesInput = {
@@ -288841,6 +293630,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutLeadFollowUpsInput = {
@@ -288897,6 +293687,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutLeadFollowUpsInput = {
@@ -289204,6 +293995,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutLeadFollowUpsInput = {
@@ -289260,6 +294052,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutSurveySchedulesInput = {
@@ -289488,6 +294281,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomerSurveysInput = {
@@ -289544,6 +294338,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomerSurveysInput = {
@@ -289800,6 +294595,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomerSurveysInput = {
@@ -289856,6 +294652,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutClientContractsInput = {
@@ -290055,6 +294852,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutClientContractsInput = {
@@ -290111,6 +294909,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutClientContractsInput = {
@@ -290282,6 +295081,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutClientContractsInput = {
@@ -290338,6 +295138,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type InvoiceCreateWithoutMilestoneInput = {
@@ -290818,6 +295619,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInvoicesInput = {
@@ -290874,6 +295676,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInvoicesInput = {
@@ -291171,6 +295974,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInvoicesInput = {
@@ -291227,6 +296031,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type InvoiceCreateWithoutItemsInput = {
@@ -291455,6 +296260,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutJobOpeningsInput = {
@@ -291511,6 +296317,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutJobOpeningsInput = {
@@ -291621,6 +296428,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutJobOpeningsInput = {
@@ -291677,6 +296485,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type JobOpeningCreateWithoutCandidatesInput = {
@@ -291812,6 +296621,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCandidatesInput = {
@@ -291868,6 +296678,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCandidatesInput = {
@@ -292020,6 +296831,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCandidatesInput = {
@@ -292076,6 +296888,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CandidateCreateWithoutInterviewsInput = {
@@ -292175,6 +296988,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInterviewsInput = {
@@ -292231,6 +297045,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInterviewsInput = {
@@ -292352,6 +297167,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInterviewsInput = {
@@ -292408,6 +297224,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type OrgUnitCreateWithoutAssetsInput = {
@@ -292569,6 +297386,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAssetsInput = {
@@ -292625,11 +297443,74 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAssetsInput = {
     where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutAssetsInput, TenantUncheckedCreateWithoutAssetsInput>
+  }
+
+  export type AssetTransferCreateWithoutAssetInput = {
+    id?: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetTransferUncheckedCreateWithoutAssetInput = {
+    id?: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetTransferCreateOrConnectWithoutAssetInput = {
+    where: AssetTransferWhereUniqueInput
+    create: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput>
+  }
+
+  export type AssetTransferCreateManyAssetInputEnvelope = {
+    data: AssetTransferCreateManyAssetInput | AssetTransferCreateManyAssetInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AssetDisposalCreateWithoutAssetInput = {
+    id?: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetDisposalUncheckedCreateWithoutAssetInput = {
+    id?: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetDisposalCreateOrConnectWithoutAssetInput = {
+    where: AssetDisposalWhereUniqueInput
+    create: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput>
+  }
+
+  export type AssetDisposalCreateManyAssetInputEnvelope = {
+    data: AssetDisposalCreateManyAssetInput | AssetDisposalCreateManyAssetInput[]
+    skipDuplicates?: boolean
   }
 
   export type OrgUnitUpsertWithoutAssetsInput = {
@@ -292796,6 +297677,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAssetsInput = {
@@ -292852,6 +297734,68 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
+  }
+
+  export type AssetTransferUpsertWithWhereUniqueWithoutAssetInput = {
+    where: AssetTransferWhereUniqueInput
+    update: XOR<AssetTransferUpdateWithoutAssetInput, AssetTransferUncheckedUpdateWithoutAssetInput>
+    create: XOR<AssetTransferCreateWithoutAssetInput, AssetTransferUncheckedCreateWithoutAssetInput>
+  }
+
+  export type AssetTransferUpdateWithWhereUniqueWithoutAssetInput = {
+    where: AssetTransferWhereUniqueInput
+    data: XOR<AssetTransferUpdateWithoutAssetInput, AssetTransferUncheckedUpdateWithoutAssetInput>
+  }
+
+  export type AssetTransferUpdateManyWithWhereWithoutAssetInput = {
+    where: AssetTransferScalarWhereInput
+    data: XOR<AssetTransferUpdateManyMutationInput, AssetTransferUncheckedUpdateManyWithoutAssetInput>
+  }
+
+  export type AssetTransferScalarWhereInput = {
+    AND?: AssetTransferScalarWhereInput | AssetTransferScalarWhereInput[]
+    OR?: AssetTransferScalarWhereInput[]
+    NOT?: AssetTransferScalarWhereInput | AssetTransferScalarWhereInput[]
+    id?: StringFilter<"AssetTransfer"> | string
+    assetId?: StringFilter<"AssetTransfer"> | string
+    fromOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    toOrgUnitId?: StringNullableFilter<"AssetTransfer"> | string | null
+    transferDate?: DateTimeFilter<"AssetTransfer"> | Date | string
+    reason?: StringNullableFilter<"AssetTransfer"> | string | null
+    approvedById?: StringNullableFilter<"AssetTransfer"> | string | null
+    tenantId?: StringNullableFilter<"AssetTransfer"> | string | null
+    createdAt?: DateTimeFilter<"AssetTransfer"> | Date | string
+  }
+
+  export type AssetDisposalUpsertWithWhereUniqueWithoutAssetInput = {
+    where: AssetDisposalWhereUniqueInput
+    update: XOR<AssetDisposalUpdateWithoutAssetInput, AssetDisposalUncheckedUpdateWithoutAssetInput>
+    create: XOR<AssetDisposalCreateWithoutAssetInput, AssetDisposalUncheckedCreateWithoutAssetInput>
+  }
+
+  export type AssetDisposalUpdateWithWhereUniqueWithoutAssetInput = {
+    where: AssetDisposalWhereUniqueInput
+    data: XOR<AssetDisposalUpdateWithoutAssetInput, AssetDisposalUncheckedUpdateWithoutAssetInput>
+  }
+
+  export type AssetDisposalUpdateManyWithWhereWithoutAssetInput = {
+    where: AssetDisposalScalarWhereInput
+    data: XOR<AssetDisposalUpdateManyMutationInput, AssetDisposalUncheckedUpdateManyWithoutAssetInput>
+  }
+
+  export type AssetDisposalScalarWhereInput = {
+    AND?: AssetDisposalScalarWhereInput | AssetDisposalScalarWhereInput[]
+    OR?: AssetDisposalScalarWhereInput[]
+    NOT?: AssetDisposalScalarWhereInput | AssetDisposalScalarWhereInput[]
+    id?: StringFilter<"AssetDisposal"> | string
+    assetId?: StringFilter<"AssetDisposal"> | string
+    disposalDate?: DateTimeFilter<"AssetDisposal"> | Date | string
+    method?: EnumAssetDisposalMethodFilter<"AssetDisposal"> | $Enums.AssetDisposalMethod
+    amount?: DecimalNullableFilter<"AssetDisposal"> | Decimal | DecimalJsLike | number | string | null
+    reason?: StringNullableFilter<"AssetDisposal"> | string | null
+    tenantId?: StringNullableFilter<"AssetDisposal"> | string | null
+    createdAt?: DateTimeFilter<"AssetDisposal"> | Date | string
   }
 
   export type AssetCreateWithoutAssignmentsInput = {
@@ -292872,6 +297816,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutAssetsInput
     maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
     tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUncheckedCreateWithoutAssignmentsInput = {
@@ -292892,6 +297838,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenantId?: string | null
     maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   }
 
   export type AssetCreateOrConnectWithoutAssignmentsInput = {
@@ -293073,6 +298021,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutAssetsNestedInput
     maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
     tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateWithoutAssignmentsInput = {
@@ -293093,6 +298043,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type EmployeeUpsertWithoutAssetAssignmentsInput = {
@@ -293264,6 +298216,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutAssetsInput
     assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
     tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUncheckedCreateWithoutMaintenanceLogsInput = {
@@ -293284,6 +298238,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     tenantId?: string | null
     assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   }
 
   export type AssetCreateOrConnectWithoutMaintenanceLogsInput = {
@@ -293320,6 +298276,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutAssetsNestedInput
     assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
     tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateWithoutMaintenanceLogsInput = {
@@ -293340,6 +298298,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type JournalLineCreateWithoutAccountInput = {
@@ -296389,6 +301349,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutOkrObjectivesInput = {
@@ -296445,6 +301406,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutOkrObjectivesInput = {
@@ -296681,6 +301643,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutOkrObjectivesInput = {
@@ -296737,6 +301700,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type OkrObjectiveCreateWithoutKeyResultsInput = {
@@ -297205,6 +302169,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutKbArticlesInput = {
@@ -297261,6 +302226,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutKbArticlesInput = {
@@ -297499,6 +302465,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutKbArticlesInput = {
@@ -297555,6 +302522,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CustomerCreateWithoutPortalsInput = {
@@ -297694,6 +302662,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCustomerPortalsInput = {
@@ -297750,6 +302719,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCustomerPortalsInput = {
@@ -297907,6 +302877,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCustomerPortalsInput = {
@@ -297963,6 +302934,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type CustomerPortalCreateWithoutTicketsInput = {
@@ -298143,6 +303115,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutVendorsInput = {
@@ -298199,6 +303172,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutVendorsInput = {
@@ -298287,6 +303261,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutVendorsInput = {
@@ -298343,6 +303318,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type VendorCreateWithoutPurchaseOrdersInput = {
@@ -298734,6 +303710,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutPurchaseOrdersInput = {
@@ -298790,6 +303767,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutPurchaseOrdersInput = {
@@ -299212,6 +304190,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutPurchaseOrdersInput = {
@@ -299268,6 +304247,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type PurchaseOrderCreateWithoutItemsInput = {
@@ -299614,6 +304594,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutCommentsInput = {
@@ -299670,6 +304651,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutCommentsInput = {
@@ -299926,6 +304908,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutCommentsInput = {
@@ -299982,6 +304965,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutFeedPostsInput = {
@@ -303945,6 +308929,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutDelegationRulesInput = {
@@ -304001,6 +308986,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutDelegationRulesInput = {
@@ -304339,6 +309325,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutDelegationRulesInput = {
@@ -304395,6 +309382,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ChartOfAccountCreateWithoutDebitMappingsInput = {
@@ -304544,6 +309532,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutInvoiceMappingsInput = {
@@ -304600,6 +309589,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutInvoiceMappingsInput = {
@@ -304783,6 +309773,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutInvoiceMappingsInput = {
@@ -304839,6 +309830,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ProjectCreateWithoutCostSnapshotsInput = {
@@ -305641,6 +310633,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutProjectJournalsInput = {
@@ -305697,6 +310690,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutProjectJournalsInput = {
@@ -305977,6 +310971,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutProjectJournalsInput = {
@@ -306033,6 +311028,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type PositionCreateWithoutSalaryBandsInput = {
@@ -307639,6 +312635,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitCreateNestedOneWithoutAssetsInput
     assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
   }
 
   export type AssetUncheckedCreateWithoutTenantInput = {
@@ -307659,6 +312657,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
     maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   }
 
   export type AssetCreateOrConnectWithoutTenantInput = {
@@ -308855,6 +313855,35 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TenantSmtpConfigCreateWithoutTenantInput = {
+    id?: string
+    host: string
+    port?: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type TenantSmtpConfigUncheckedCreateWithoutTenantInput = {
+    id?: string
+    host: string
+    port?: number
+    user: string
+    password: string
+    fromEmail: string
+    fromName: string
+    isActive?: boolean
+    updatedAt?: Date | string
+  }
+
+  export type TenantSmtpConfigCreateOrConnectWithoutTenantInput = {
+    where: TenantSmtpConfigWhereUniqueInput
+    create: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+  }
+
   export type UserUpsertWithWhereUniqueWithoutTenantInput = {
     where: UserWhereUniqueInput
     update: XOR<UserUpdateWithoutTenantInput, UserUncheckedUpdateWithoutTenantInput>
@@ -309596,6 +314625,41 @@ export namespace Prisma {
     bodyHtml?: StringFilter<"NotificationTemplate"> | string
     createdAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
     updatedAt?: DateTimeFilter<"NotificationTemplate"> | Date | string
+  }
+
+  export type TenantSmtpConfigUpsertWithoutTenantInput = {
+    update: XOR<TenantSmtpConfigUpdateWithoutTenantInput, TenantSmtpConfigUncheckedUpdateWithoutTenantInput>
+    create: XOR<TenantSmtpConfigCreateWithoutTenantInput, TenantSmtpConfigUncheckedCreateWithoutTenantInput>
+    where?: TenantSmtpConfigWhereInput
+  }
+
+  export type TenantSmtpConfigUpdateToOneWithWhereWithoutTenantInput = {
+    where?: TenantSmtpConfigWhereInput
+    data: XOR<TenantSmtpConfigUpdateWithoutTenantInput, TenantSmtpConfigUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type TenantSmtpConfigUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TenantSmtpConfigUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    host?: StringFieldUpdateOperationsInput | string
+    port?: IntFieldUpdateOperationsInput | number
+    user?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    fromEmail?: StringFieldUpdateOperationsInput | string
+    fromName?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PositionCreateWithoutJobTitleInput = {
@@ -313816,6 +318880,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAttendanceExplanationsInput = {
@@ -313872,6 +318937,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAttendanceExplanationsInput = {
@@ -314150,6 +319216,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAttendanceExplanationsInput = {
@@ -314206,6 +319273,7 @@ export namespace Prisma {
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type ShiftAssignmentCreateWithoutShiftInput = {
@@ -315827,6 +320895,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutAnnouncementsInput = {
@@ -315883,6 +320952,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutAnnouncementsInput = {
@@ -315955,6 +321025,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutAnnouncementsInput = {
@@ -316011,6 +321082,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutApiKeysInput = {
@@ -316194,6 +321266,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutApiKeysInput = {
@@ -316250,6 +321323,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutApiKeysInput = {
@@ -316455,6 +321529,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutApiKeysInput = {
@@ -316511,6 +321586,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantCreateWithoutNotifTemplatesInput = {
@@ -316567,6 +321643,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
     announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigCreateNestedOneWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutNotifTemplatesInput = {
@@ -316623,6 +321700,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
     announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
     apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    smtpConfig?: TenantSmtpConfigUncheckedCreateNestedOneWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutNotifTemplatesInput = {
@@ -316695,6 +321773,7 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
     announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUpdateOneWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutNotifTemplatesInput = {
@@ -316751,6 +321830,459 @@ export namespace Prisma {
     customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
     announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
     apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    smtpConfig?: TenantSmtpConfigUncheckedUpdateOneWithoutTenantNestedInput
+  }
+
+  export type TenantCreateWithoutSmtpConfigInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitCreateNestedManyWithoutTenantInput
+    employees?: EmployeeCreateNestedManyWithoutTenantInput
+    projects?: ProjectCreateNestedManyWithoutTenantInput
+    tasks?: TaskCreateNestedManyWithoutTenantInput
+    bugs?: BugCreateNestedManyWithoutTenantInput
+    deals?: DealCreateNestedManyWithoutTenantInput
+    customers?: CustomerCreateNestedManyWithoutTenantInput
+    contacts?: ContactCreateNestedManyWithoutTenantInput
+    leads?: LeadCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceCreateNestedManyWithoutTenantInput
+    contracts?: ContractCreateNestedManyWithoutTenantInput
+    assets?: AssetCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryCreateNestedManyWithoutTenantInput
+    allocations?: AllocationCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningCreateNestedManyWithoutTenantInput
+    candidates?: CandidateCreateNestedManyWithoutTenantInput
+    interviews?: InterviewCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalCreateNestedManyWithoutTenantInput
+    vendors?: VendorCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderCreateNestedManyWithoutTenantInput
+    comments?: CommentCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutSmtpConfigInput = {
+    id?: string
+    name: string
+    slug: string
+    logoUrl?: string | null
+    faviconUrl?: string | null
+    primaryColor?: string | null
+    customDomain?: string | null
+    address?: string | null
+    timezone?: string
+    isDefault?: boolean
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutTenantInput
+    employees?: EmployeeUncheckedCreateNestedManyWithoutTenantInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutTenantInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutTenantInput
+    bugs?: BugUncheckedCreateNestedManyWithoutTenantInput
+    deals?: DealUncheckedCreateNestedManyWithoutTenantInput
+    customers?: CustomerUncheckedCreateNestedManyWithoutTenantInput
+    contacts?: ContactUncheckedCreateNestedManyWithoutTenantInput
+    leads?: LeadUncheckedCreateNestedManyWithoutTenantInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutTenantInput
+    contracts?: ContractUncheckedCreateNestedManyWithoutTenantInput
+    assets?: AssetUncheckedCreateNestedManyWithoutTenantInput
+    kbArticles?: KbArticleUncheckedCreateNestedManyWithoutTenantInput
+    okrObjectives?: OkrObjectiveUncheckedCreateNestedManyWithoutTenantInput
+    leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutTenantInput
+    leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutTenantInput
+    timeEntries?: TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+    allocations?: AllocationUncheckedCreateNestedManyWithoutTenantInput
+    processInstances?: ProcessInstanceUncheckedCreateNestedManyWithoutTenantInput
+    processDefinitions?: ProcessDefinitionUncheckedCreateNestedManyWithoutTenantInput
+    payrollPeriods?: PayrollPeriodUncheckedCreateNestedManyWithoutTenantInput
+    payrollRecords?: PayrollRecordUncheckedCreateNestedManyWithoutTenantInput
+    crmActivities?: CrmActivityUncheckedCreateNestedManyWithoutTenantInput
+    clientContracts?: ClientContractUncheckedCreateNestedManyWithoutTenantInput
+    jobOpenings?: JobOpeningUncheckedCreateNestedManyWithoutTenantInput
+    candidates?: CandidateUncheckedCreateNestedManyWithoutTenantInput
+    interviews?: InterviewUncheckedCreateNestedManyWithoutTenantInput
+    customerPortals?: CustomerPortalUncheckedCreateNestedManyWithoutTenantInput
+    vendors?: VendorUncheckedCreateNestedManyWithoutTenantInput
+    purchaseOrders?: PurchaseOrderUncheckedCreateNestedManyWithoutTenantInput
+    comments?: CommentUncheckedCreateNestedManyWithoutTenantInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedCreateNestedManyWithoutTenantInput
+    delegationRules?: DelegationRuleUncheckedCreateNestedManyWithoutTenantInput
+    attendanceExplanations?: AttendanceExplanationUncheckedCreateNestedManyWithoutTenantInput
+    projectJournals?: ProjectJournalUncheckedCreateNestedManyWithoutTenantInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedCreateNestedManyWithoutTenantInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedCreateNestedManyWithoutTenantInput
+    announcements?: SystemAnnouncementUncheckedCreateNestedManyWithoutTenantInput
+    apiKeys?: ApiKeyUncheckedCreateNestedManyWithoutTenantInput
+    notifTemplates?: NotificationTemplateUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutSmtpConfigInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutSmtpConfigInput, TenantUncheckedCreateWithoutSmtpConfigInput>
+  }
+
+  export type TenantUpsertWithoutSmtpConfigInput = {
+    update: XOR<TenantUpdateWithoutSmtpConfigInput, TenantUncheckedUpdateWithoutSmtpConfigInput>
+    create: XOR<TenantCreateWithoutSmtpConfigInput, TenantUncheckedCreateWithoutSmtpConfigInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutSmtpConfigInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutSmtpConfigInput, TenantUncheckedUpdateWithoutSmtpConfigInput>
+  }
+
+  export type TenantUpdateWithoutSmtpConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUpdateManyWithoutTenantNestedInput
+    bugs?: BugUpdateManyWithoutTenantNestedInput
+    deals?: DealUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUpdateManyWithoutTenantNestedInput
+    leads?: LeadUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUpdateManyWithoutTenantNestedInput
+    assets?: AssetUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUpdateManyWithoutTenantNestedInput
+    comments?: CommentUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutSmtpConfigInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    customDomain?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    timezone?: StringFieldUpdateOperationsInput | string
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    orgUnits?: OrgUnitUncheckedUpdateManyWithoutTenantNestedInput
+    employees?: EmployeeUncheckedUpdateManyWithoutTenantNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutTenantNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutTenantNestedInput
+    bugs?: BugUncheckedUpdateManyWithoutTenantNestedInput
+    deals?: DealUncheckedUpdateManyWithoutTenantNestedInput
+    customers?: CustomerUncheckedUpdateManyWithoutTenantNestedInput
+    contacts?: ContactUncheckedUpdateManyWithoutTenantNestedInput
+    leads?: LeadUncheckedUpdateManyWithoutTenantNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutTenantNestedInput
+    contracts?: ContractUncheckedUpdateManyWithoutTenantNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutTenantNestedInput
+    kbArticles?: KbArticleUncheckedUpdateManyWithoutTenantNestedInput
+    okrObjectives?: OkrObjectiveUncheckedUpdateManyWithoutTenantNestedInput
+    leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutTenantNestedInput
+    leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutTenantNestedInput
+    timeEntries?: TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+    allocations?: AllocationUncheckedUpdateManyWithoutTenantNestedInput
+    processInstances?: ProcessInstanceUncheckedUpdateManyWithoutTenantNestedInput
+    processDefinitions?: ProcessDefinitionUncheckedUpdateManyWithoutTenantNestedInput
+    payrollPeriods?: PayrollPeriodUncheckedUpdateManyWithoutTenantNestedInput
+    payrollRecords?: PayrollRecordUncheckedUpdateManyWithoutTenantNestedInput
+    crmActivities?: CrmActivityUncheckedUpdateManyWithoutTenantNestedInput
+    clientContracts?: ClientContractUncheckedUpdateManyWithoutTenantNestedInput
+    jobOpenings?: JobOpeningUncheckedUpdateManyWithoutTenantNestedInput
+    candidates?: CandidateUncheckedUpdateManyWithoutTenantNestedInput
+    interviews?: InterviewUncheckedUpdateManyWithoutTenantNestedInput
+    customerPortals?: CustomerPortalUncheckedUpdateManyWithoutTenantNestedInput
+    vendors?: VendorUncheckedUpdateManyWithoutTenantNestedInput
+    purchaseOrders?: PurchaseOrderUncheckedUpdateManyWithoutTenantNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutTenantNestedInput
+    invoiceMappings?: InvoiceAccountMappingUncheckedUpdateManyWithoutTenantNestedInput
+    delegationRules?: DelegationRuleUncheckedUpdateManyWithoutTenantNestedInput
+    attendanceExplanations?: AttendanceExplanationUncheckedUpdateManyWithoutTenantNestedInput
+    projectJournals?: ProjectJournalUncheckedUpdateManyWithoutTenantNestedInput
+    leadFollowUps?: LeadFollowUpScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    customerSurveys?: CustomerSurveyScheduleUncheckedUpdateManyWithoutTenantNestedInput
+    announcements?: SystemAnnouncementUncheckedUpdateManyWithoutTenantNestedInput
+    apiKeys?: ApiKeyUncheckedUpdateManyWithoutTenantNestedInput
+    notifTemplates?: NotificationTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type AssetCreateWithoutAssetTransfersInput = {
+    id?: string
+    code: string
+    name: string
+    category: $Enums.AssetCategory
+    brand?: string | null
+    model?: string | null
+    serialNumber?: string | null
+    status?: $Enums.AssetStatus
+    purchaseDate?: Date | string | null
+    purchasePrice?: Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orgUnit?: OrgUnitCreateNestedOneWithoutAssetsInput
+    assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
+    maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
+    tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetDisposals?: AssetDisposalCreateNestedManyWithoutAssetInput
+  }
+
+  export type AssetUncheckedCreateWithoutAssetTransfersInput = {
+    id?: string
+    code: string
+    name: string
+    category: $Enums.AssetCategory
+    brand?: string | null
+    model?: string | null
+    serialNumber?: string | null
+    orgUnitId?: string | null
+    status?: $Enums.AssetStatus
+    purchaseDate?: Date | string | null
+    purchasePrice?: Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+    maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetDisposals?: AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  }
+
+  export type AssetCreateOrConnectWithoutAssetTransfersInput = {
+    where: AssetWhereUniqueInput
+    create: XOR<AssetCreateWithoutAssetTransfersInput, AssetUncheckedCreateWithoutAssetTransfersInput>
+  }
+
+  export type AssetUpsertWithoutAssetTransfersInput = {
+    update: XOR<AssetUpdateWithoutAssetTransfersInput, AssetUncheckedUpdateWithoutAssetTransfersInput>
+    create: XOR<AssetCreateWithoutAssetTransfersInput, AssetUncheckedCreateWithoutAssetTransfersInput>
+    where?: AssetWhereInput
+  }
+
+  export type AssetUpdateToOneWithWhereWithoutAssetTransfersInput = {
+    where?: AssetWhereInput
+    data: XOR<AssetUpdateWithoutAssetTransfersInput, AssetUncheckedUpdateWithoutAssetTransfersInput>
+  }
+
+  export type AssetUpdateWithoutAssetTransfersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumAssetCategoryFieldUpdateOperationsInput | $Enums.AssetCategory
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    serialNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purchasePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orgUnit?: OrgUnitUpdateOneWithoutAssetsNestedInput
+    assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
+    maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
+    tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
+  }
+
+  export type AssetUncheckedUpdateWithoutAssetTransfersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumAssetCategoryFieldUpdateOperationsInput | $Enums.AssetCategory
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    serialNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purchasePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+    maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  }
+
+  export type AssetCreateWithoutAssetDisposalsInput = {
+    id?: string
+    code: string
+    name: string
+    category: $Enums.AssetCategory
+    brand?: string | null
+    model?: string | null
+    serialNumber?: string | null
+    status?: $Enums.AssetStatus
+    purchaseDate?: Date | string | null
+    purchasePrice?: Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    orgUnit?: OrgUnitCreateNestedOneWithoutAssetsInput
+    assignments?: AssetAssignmentCreateNestedManyWithoutAssetInput
+    maintenanceLogs?: AssetMaintenanceCreateNestedManyWithoutAssetInput
+    tenant?: TenantCreateNestedOneWithoutAssetsInput
+    assetTransfers?: AssetTransferCreateNestedManyWithoutAssetInput
+  }
+
+  export type AssetUncheckedCreateWithoutAssetDisposalsInput = {
+    id?: string
+    code: string
+    name: string
+    category: $Enums.AssetCategory
+    brand?: string | null
+    model?: string | null
+    serialNumber?: string | null
+    orgUnitId?: string | null
+    status?: $Enums.AssetStatus
+    purchaseDate?: Date | string | null
+    purchasePrice?: Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tenantId?: string | null
+    assignments?: AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+    maintenanceLogs?: AssetMaintenanceUncheckedCreateNestedManyWithoutAssetInput
+    assetTransfers?: AssetTransferUncheckedCreateNestedManyWithoutAssetInput
+  }
+
+  export type AssetCreateOrConnectWithoutAssetDisposalsInput = {
+    where: AssetWhereUniqueInput
+    create: XOR<AssetCreateWithoutAssetDisposalsInput, AssetUncheckedCreateWithoutAssetDisposalsInput>
+  }
+
+  export type AssetUpsertWithoutAssetDisposalsInput = {
+    update: XOR<AssetUpdateWithoutAssetDisposalsInput, AssetUncheckedUpdateWithoutAssetDisposalsInput>
+    create: XOR<AssetCreateWithoutAssetDisposalsInput, AssetUncheckedCreateWithoutAssetDisposalsInput>
+    where?: AssetWhereInput
+  }
+
+  export type AssetUpdateToOneWithWhereWithoutAssetDisposalsInput = {
+    where?: AssetWhereInput
+    data: XOR<AssetUpdateWithoutAssetDisposalsInput, AssetUncheckedUpdateWithoutAssetDisposalsInput>
+  }
+
+  export type AssetUpdateWithoutAssetDisposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumAssetCategoryFieldUpdateOperationsInput | $Enums.AssetCategory
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    serialNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purchasePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orgUnit?: OrgUnitUpdateOneWithoutAssetsNestedInput
+    assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
+    maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
+    tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+  }
+
+  export type AssetUncheckedUpdateWithoutAssetDisposalsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: EnumAssetCategoryFieldUpdateOperationsInput | $Enums.AssetCategory
+    brand?: NullableStringFieldUpdateOperationsInput | string | null
+    model?: NullableStringFieldUpdateOperationsInput | string | null
+    serialNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    orgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    purchasePrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    depreciationYears?: NullableIntFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+    maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type BugAttachmentCreateManyUploaderInput = {
@@ -320282,6 +325814,8 @@ export namespace Prisma {
     assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
     tenant?: TenantUpdateOneWithoutAssetsNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateWithoutOrgUnitInput = {
@@ -320302,6 +325836,8 @@ export namespace Prisma {
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -325728,6 +331264,27 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type AssetTransferCreateManyAssetInput = {
+    id?: string
+    fromOrgUnitId?: string | null
+    toOrgUnitId?: string | null
+    transferDate: Date | string
+    reason?: string | null
+    approvedById?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
+  export type AssetDisposalCreateManyAssetInput = {
+    id?: string
+    disposalDate: Date | string
+    method?: $Enums.AssetDisposalMethod
+    amount?: Decimal | DecimalJsLike | number | string | null
+    reason?: string | null
+    tenantId?: string | null
+    createdAt?: Date | string
+  }
+
   export type AssetAssignmentUpdateWithoutAssetInput = {
     id?: StringFieldUpdateOperationsInput | string
     assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -325782,6 +331339,69 @@ export namespace Prisma {
     cost?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     performedBy?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferUpdateWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferUncheckedUpdateWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetTransferUncheckedUpdateManyWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    toOrgUnitId?: NullableStringFieldUpdateOperationsInput | string | null
+    transferDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalUpdateWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalUncheckedUpdateWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AssetDisposalUncheckedUpdateManyWithoutAssetInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    disposalDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    method?: EnumAssetDisposalMethodFieldUpdateOperationsInput | $Enums.AssetDisposalMethod
+    amount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -328694,6 +334314,8 @@ export namespace Prisma {
     orgUnit?: OrgUnitUpdateOneWithoutAssetsNestedInput
     assignments?: AssetAssignmentUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateWithoutTenantInput = {
@@ -328714,6 +334336,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     assignments?: AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
     maintenanceLogs?: AssetMaintenanceUncheckedUpdateManyWithoutAssetNestedInput
+    assetTransfers?: AssetTransferUncheckedUpdateManyWithoutAssetNestedInput
+    assetDisposals?: AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   }
 
   export type AssetUncheckedUpdateManyWithoutTenantInput = {

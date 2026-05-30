@@ -3,12 +3,14 @@ import {
   Inject,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BpmnEngineService } from '../engine/bpmn-engine.service';
-import { DefinitionStatus, InstanceStatus } from '../../generated/prisma';
+import { NotificationsService } from '../../notifications/notifications.service';
+import { DefinitionStatus, InstanceStatus, NotificationType } from '../../generated/prisma';
 import { StartInstanceDto } from './dto/start-instance.dto';
 import { TenantAwareService } from '../../common/services/tenant-aware.service';
 
@@ -17,6 +19,7 @@ export class ProcessInstancesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly engineService: BpmnEngineService,
+    private readonly notificationsService: NotificationsService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
@@ -126,6 +129,9 @@ export class ProcessInstancesService extends TenantAwareService {
         },
       });
 
+      // E23.5: Notify người khởi tạo khi quy trình bắt đầu
+      await this.engineService.notifyProcessStarted(instance.id, definition.name, userId);
+
       return { data: updated };
     } catch {
       // Engine đã set status ERROR bên trong
@@ -140,9 +146,18 @@ export class ProcessInstancesService extends TenantAwareService {
     }
   }
 
-  async cancel(id: string, userId: string) {
-    const instance = await this.prisma.processInstance.findUnique({ where: { id } });
+  async cancel(id: string, userId: string, userRole?: string) {
+    const instance = await this.prisma.processInstance.findUnique({
+      where: { id },
+      include: { definition: { select: { name: true } } },
+    });
     if (!instance) throw new NotFoundException('Không tìm thấy process instance');
+
+    // E23.7: Chỉ startedBy hoặc ADMIN được cancel
+    const isAdmin = userRole === 'ADMIN';
+    if (instance.startedBy !== userId && !isAdmin) {
+      throw new ForbiddenException('Chỉ người khởi tạo hoặc Admin mới có thể huỷ quy trình này');
+    }
 
     if (instance.status === InstanceStatus.COMPLETED) {
       throw new BadRequestException('Không thể huỷ instance đã hoàn thành');
@@ -150,6 +165,12 @@ export class ProcessInstancesService extends TenantAwareService {
     if (instance.status === InstanceStatus.CANCELLED) {
       throw new BadRequestException('Instance đã bị huỷ trước đó');
     }
+
+    // Lấy danh sách assignee của các task đang active để notify
+    const activeTasks = await this.prisma.processUserTask.findMany({
+      where: { instanceId: id, status: { in: ['PENDING', 'IN_PROGRESS'] } },
+      select: { id: true, assigneeId: true, name: true },
+    });
 
     // Huỷ các user tasks đang pending
     await this.prisma.processUserTask.updateMany({
@@ -172,6 +193,23 @@ export class ProcessInstancesService extends TenantAwareService {
         completedAt: new Date(),
       },
     });
+
+    // E23.7: Notify tất cả assignee của task đang active
+    const processName = instance.definition.name;
+    const assigneeIds = [...new Set(activeTasks.map((t) => t.assigneeId).filter(Boolean) as string[])];
+    for (const assigneeId of assigneeIds) {
+      try {
+        await this.notificationsService.createAndDeliver(
+          assigneeId,
+          NotificationType.SYSTEM_ALERT,
+          `Quy trình bị huỷ: ${processName}`,
+          `Quy trình "${processName}" đã bị huỷ. Các task của bạn trong quy trình này đã bị đóng.`,
+          { processInstanceId: id },
+        );
+      } catch {
+        // Không block cancel nếu notify thất bại
+      }
+    }
 
     return { data: updated };
   }

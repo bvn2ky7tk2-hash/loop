@@ -7,6 +7,7 @@ import type { UploadFile, UploadProps } from 'antd';
 import {
   UploadOutlined, TeamOutlined, LaptopOutlined, SolutionOutlined,
   CheckCircleOutlined, CloseCircleOutlined, ArrowRightOutlined,
+  CalendarOutlined, ShopOutlined, FunnelPlotOutlined,
 } from '@ant-design/icons';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -16,7 +17,7 @@ const { Text, Title } = Typography;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type TemplateKey = 'employees' | 'assets' | 'jobs';
+type TemplateKey = 'employees' | 'assets' | 'jobs' | 'leave_balances' | 'customers' | 'leads';
 
 interface ImportRow {
   [key: string]: string | number | undefined;
@@ -66,6 +67,30 @@ const TEMPLATES: {
     icon: <SolutionOutlined />,
     color: '#0EA5E9',
     fields: ['Vị trí (*)', 'Phòng ban (*)', 'Cấp độ (*)', 'Số lượng'],
+  },
+  {
+    key: 'leave_balances',
+    label: 'Số ngày phép',
+    description: 'Import số ngày phép theo email nhân viên',
+    icon: <CalendarOutlined />,
+    color: '#8B5CF6',
+    fields: ['Email (*)', 'Loại nghỉ (*)', 'Năm (*)', 'Số ngày (*)'],
+  },
+  {
+    key: 'customers',
+    label: 'Khách hàng',
+    description: 'Import danh sách khách hàng CRM',
+    icon: <ShopOutlined />,
+    color: '#10B981',
+    fields: ['Tên khách hàng (*)', 'Mã (*)', 'Ngành', 'Website', 'Mã số thuế'],
+  },
+  {
+    key: 'leads',
+    label: 'Leads CRM',
+    description: 'Import danh sách leads/tiềm năng',
+    icon: <FunnelPlotOutlined />,
+    color: '#F97316',
+    fields: ['Tên lead (*)', 'Nguồn (*)', 'Giá trị ước tính', 'Ghi chú'],
   },
 ];
 

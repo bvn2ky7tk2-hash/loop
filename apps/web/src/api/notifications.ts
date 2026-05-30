@@ -64,6 +64,29 @@ export const notificationsApi = {
     apiClient.post('/notifications/read-all').then((r) => r.data),
 };
 
+// ─── E23.4 Notification Preferences ─────────────────────────────────────────
+
+export type NotificationChannel = 'EMAIL' | 'IN_APP' | 'BOTH';
+
+export interface NotificationPreference {
+  id: string;
+  userId: string;
+  moduleType: string;
+  channel: NotificationChannel;
+}
+
+export const preferencesApi = {
+  list: () =>
+    apiClient
+      .get<{ data: NotificationPreference[] }>('/notifications/preferences')
+      .then((r) => r.data.data),
+
+  update: (moduleType: string, channel: NotificationChannel) =>
+    apiClient
+      .patch<{ data: NotificationPreference }>(`/notifications/preferences/${moduleType}`, { channel })
+      .then((r) => r.data.data),
+};
+
 /** API inline approve/reject dùng trong NotificationBell */
 export const inlineActionApi = {
   approveExpense: (id: string) =>

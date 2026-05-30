@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MailService {
@@ -8,7 +9,7 @@ export class MailService {
   private transporter: Transporter | null = null;
   private readonly from: string;
 
-  constructor() {
+  constructor(@Optional() private readonly prisma?: PrismaService) {
     const host = process.env.SMTP_HOST;
     const port = Number(process.env.SMTP_PORT ?? 587);
     const user = process.env.SMTP_USER ?? '';
@@ -28,22 +29,12 @@ export class MailService {
   }
 
   async sendNotificationEmail(to: string, name: string, subject: string, body: string): Promise<void> {
-    if (!this.transporter) return;
-    await this.transporter
-      .sendMail({
-        from: this.from,
-        to,
-        subject,
-        html: `<p>Xin chào <strong>${name}</strong>,</p><p>${body}</p><hr><p style="color:#888;font-size:12px">— Loop System</p>`,
-      })
-      .catch((e) => this.logger.error('Email send failed', e));
+    const html = `<p>Xin chào <strong>${name}</strong>,</p><p>${body}</p><hr><p style="color:#888;font-size:12px">— Loop System</p>`;
+    await this.sendHtmlWithLog(to, subject, html, 'notifications');
   }
 
-  async sendHtml(to: string, subject: string, html: string): Promise<void> {
-    if (!this.transporter) return;
-    await this.transporter
-      .sendMail({ from: this.from, to, subject, html })
-      .catch((e) => this.logger.error('HTML email send failed', e));
+  async sendHtml(to: string, subject: string, html: string, module?: string): Promise<void> {
+    await this.sendHtmlWithLog(to, subject, html, module ?? 'system');
   }
 
   async sendPayslipEmail(
@@ -53,15 +44,9 @@ export class MailService {
     _storagePath: string,
     netSalary: number,
   ): Promise<void> {
-    if (!this.transporter) return;
     const netFmt = netSalary.toLocaleString('vi-VN');
     const appUrl = process.env.APP_URL ?? 'http://localhost:5173';
-    await this.transporter
-      .sendMail({
-        from: this.from,
-        to,
-        subject: `[Loop 360] Phiếu lương ${periodName} đã sẵn sàng`,
-        html: `
+    const html = `
 <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
   <h2 style="color:#1D4ED8">Phiếu lương ${periodName}</h2>
   <p>Xin chào <strong>${name}</strong>,</p>
@@ -80,8 +65,49 @@ export class MailService {
   </p>
   <hr style="border:none;border-top:1px solid #E2E8F0;margin:24px 0">
   <p style="color:#94A3B8;font-size:12px">— Loop 360 HR System</p>
-</div>`,
-      })
-      .catch((e) => this.logger.error('Payslip email send failed', e));
+</div>`;
+    await this.sendHtmlWithLog(to, `[Loop 360] Phiếu lương ${periodName} đã sẵn sàng`, html, 'payroll');
+  }
+
+  // ── Internal helper: gửi và log vào EmailLog ─────────────────────────────────
+
+  private async sendHtmlWithLog(to: string, subject: string, html: string, module: string): Promise<void> {
+    if (!this.transporter) {
+      // Log FAILED khi SMTP không cấu hình (nếu có prisma)
+      await this.logEmail(to, subject, module, 'FAILED', 'SMTP not configured').catch(() => {});
+      return;
+    }
+
+    try {
+      await this.transporter.sendMail({ from: this.from, to, subject, html });
+      await this.logEmail(to, subject, module, 'SENT').catch(() => {});
+    } catch (e) {
+      this.logger.error('Email send failed', e);
+      await this.logEmail(to, subject, module, 'FAILED', e instanceof Error ? e.message : String(e)).catch(() => {});
+    }
+  }
+
+  private async logEmail(
+    toEmail: string,
+    subject: string,
+    module: string,
+    status: 'SENT' | 'FAILED',
+    error?: string,
+  ): Promise<void> {
+    if (!this.prisma) return;
+    try {
+      await this.prisma.emailLog.create({
+        data: {
+          toEmail,
+          subject,
+          module,
+          status,
+          error: error ?? null,
+          sentAt: status === 'SENT' ? new Date() : null,
+        },
+      });
+    } catch {
+      // Không throw — logging thất bại không được crash app
+    }
   }
 }

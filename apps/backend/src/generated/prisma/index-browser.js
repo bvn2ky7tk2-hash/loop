@@ -2093,6 +2093,42 @@ exports.Prisma.NotificationTemplateScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TenantSmtpConfigScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  host: 'host',
+  port: 'port',
+  user: 'user',
+  password: 'password',
+  fromEmail: 'fromEmail',
+  fromName: 'fromName',
+  isActive: 'isActive',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AssetTransferScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  fromOrgUnitId: 'fromOrgUnitId',
+  toOrgUnitId: 'toOrgUnitId',
+  transferDate: 'transferDate',
+  reason: 'reason',
+  approvedById: 'approvedById',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AssetDisposalScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  disposalDate: 'disposalDate',
+  method: 'method',
+  amount: 'amount',
+  reason: 'reason',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2253,7 +2289,8 @@ exports.NotificationType = exports.$Enums.NotificationType = {
   CONTRACT_EXPIRING: 'CONTRACT_EXPIRING',
   CONTRACT_EXPIRED: 'CONTRACT_EXPIRED',
   BONUS_PENDING: 'BONUS_PENDING',
-  BONUS_APPROVED: 'BONUS_APPROVED'
+  BONUS_APPROVED: 'BONUS_APPROVED',
+  SYSTEM_ALERT: 'SYSTEM_ALERT'
 };
 
 exports.DefinitionStatus = exports.$Enums.DefinitionStatus = {
@@ -2807,6 +2844,12 @@ exports.NotificationChannel = exports.$Enums.NotificationChannel = {
   BOTH: 'BOTH'
 };
 
+exports.AssetDisposalMethod = exports.$Enums.AssetDisposalMethod = {
+  SELL: 'SELL',
+  SCRAP: 'SCRAP',
+  DONATE: 'DONATE'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -2956,7 +2999,10 @@ exports.Prisma.ModelName = {
   SystemAnnouncement: 'SystemAnnouncement',
   EmailLog: 'EmailLog',
   ApiKey: 'ApiKey',
-  NotificationTemplate: 'NotificationTemplate'
+  NotificationTemplate: 'NotificationTemplate',
+  TenantSmtpConfig: 'TenantSmtpConfig',
+  AssetTransfer: 'AssetTransfer',
+  AssetDisposal: 'AssetDisposal'
 };
 
 /**

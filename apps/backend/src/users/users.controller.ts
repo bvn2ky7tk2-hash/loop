@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Req } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Req, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
@@ -24,9 +24,15 @@ export class UsersController {
   }
 
   @Get()
-  @RequirePermission(PERMISSIONS.ADMIN_USERS)
-  @ApiOperation({ summary: 'Danh sách người dùng (scoped by org)' })
-  findAll(@Req() req: { orgUnitIds: string[] | null }) {
+  @ApiOperation({ summary: 'Danh sách người dùng (scoped by org) hoặc tìm kiếm' })
+  findAll(
+    @Req() req: { orgUnitIds: string[] | null },
+    @Query('search') search?: string,
+    @Query('limit') limit?: string,
+  ) {
+    if (search) {
+      return this.service.searchUsers(search, limit ? parseInt(limit, 10) : 10);
+    }
     return this.service.findAll(req.orgUnitIds);
   }
 

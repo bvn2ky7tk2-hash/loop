@@ -8,10 +8,11 @@ import {
   HddOutlined,
   CheckCircleFilled,
   CloseCircleFilled,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { healthApi } from '../../api/health';
-import type { QueueHealth } from '../../api/health';
+import type { QueueHealth, EnvIssue } from '../../api/health';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
@@ -45,6 +46,18 @@ const QUEUE_LABELS: Record<string, string> = {
   automation: 'Automation',
   notifications: 'Notifications',
   payslip: 'Payslip',
+};
+
+const ENV_LEVEL_COLOR: Record<EnvIssue['level'], string> = {
+  CRITICAL: '#EF4444',
+  WARNING: '#F59E0B',
+  INFO: '#3B82F6',
+};
+
+const ENV_LEVEL_LABEL: Record<EnvIssue['level'], string> = {
+  CRITICAL: 'CRITICAL',
+  WARNING: 'WARNING',
+  INFO: 'INFO',
 };
 
 export default function HealthPage() {
@@ -210,6 +223,7 @@ export default function HealthPage() {
           border: `1px solid ${borderColor}`,
           borderRadius: 12,
           padding: 20,
+          marginBottom: 24,
         }}
       >
         <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 15, display: 'block', marginBottom: 16 }}>
@@ -236,6 +250,94 @@ export default function HealthPage() {
             ),
           }}
         />
+      </div>
+
+      {/* Env Configuration */}
+      <div
+        style={{
+          background: bgContainer,
+          border: `1px solid ${borderColor}`,
+          borderRadius: 12,
+          padding: 20,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <SettingOutlined style={{ color: '#8B5CF6', fontSize: 16 }} />
+          <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 15 }}>
+            Cấu hình môi trường
+          </Text>
+        </div>
+        <Row gutter={[12, 12]}>
+          {/* Show all 6 known env keys with their status */}
+          {[
+            { key: 'DATABASE_URL', level: 'CRITICAL' as const, description: 'PostgreSQL connection' },
+            { key: 'JWT_SECRET', level: 'CRITICAL' as const, description: 'JWT signing key' },
+            { key: 'REDIS_URL', level: 'WARNING' as const, description: 'Redis for caching/queues' },
+            { key: 'MINIO_ENDPOINT', level: 'WARNING' as const, description: 'MinIO object storage' },
+            { key: 'SMTP_HOST', level: 'INFO' as const, description: 'Email delivery' },
+            { key: 'TELEGRAM_BOT_TOKEN', level: 'INFO' as const, description: 'Telegram integration' },
+          ].map(({ key, level, description }) => {
+            const isMissing = (data?.envIssues ?? []).some((i) => i.key === key);
+            return (
+              <Col key={key} xs={24} sm={12} md={8}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    padding: '10px 14px',
+                    borderRadius: 8,
+                    border: `1px solid ${isMissing ? ENV_LEVEL_COLOR[level] + '55' : borderColor}`,
+                    background: isMissing ? ENV_LEVEL_COLOR[level] + '10' : 'transparent',
+                  }}
+                >
+                  {isMissing ? (
+                    <CloseCircleFilled style={{ color: ENV_LEVEL_COLOR[level], fontSize: 16, marginTop: 2 }} />
+                  ) : (
+                    <CheckCircleFilled style={{ color: '#10B981', fontSize: 16, marginTop: 2 }} />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      <Text
+                        style={{ color: textPrimary, fontWeight: 600, fontFamily: 'monospace', fontSize: 13 }}
+                      >
+                        {key}
+                      </Text>
+                      {isMissing ? (
+                        <Tag
+                          style={{
+                            margin: 0,
+                            fontSize: 10,
+                            lineHeight: '16px',
+                            background: ENV_LEVEL_COLOR[level] + '22',
+                            color: ENV_LEVEL_COLOR[level],
+                            borderColor: ENV_LEVEL_COLOR[level] + '55',
+                          }}
+                        >
+                          {ENV_LEVEL_LABEL[level]}
+                        </Tag>
+                      ) : (
+                        <Tag
+                          style={{
+                            margin: 0,
+                            fontSize: 10,
+                            lineHeight: '16px',
+                            background: '#10B98122',
+                            color: '#10B981',
+                            borderColor: '#10B98155',
+                          }}
+                        >
+                          OK
+                        </Tag>
+                      )}
+                    </div>
+                    <Text style={{ color: textMuted, fontSize: 12 }}>{description}</Text>
+                  </div>
+                </div>
+              </Col>
+            );
+          })}
+        </Row>
       </div>
     </div>
   );

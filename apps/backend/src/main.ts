@@ -7,12 +7,20 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { validateEnv } from './common/env-validation';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
   app.useLogger(app.get(Logger));
   app.enableShutdownHooks();
+
+  // Validate required env vars and warn on missing ones
+  const logger = app.get(Logger);
+  const { issues } = validateEnv();
+  issues.forEach((i) =>
+    logger.warn(`ENV ${i.level}: ${i.key} — ${i.description}`, 'EnvValidation'),
+  );
   app.use(compression());
   app.use(helmet({
     contentSecurityPolicy: process.env.NODE_ENV === 'production',

@@ -115,4 +115,47 @@ export class NotificationsService extends TenantAwareService {
 
     await this.queue.enqueue({ userId, type, title, body });
   }
+
+  // ─── E23.4 Notification Preferences ────────────────────────────────────────
+
+  /** Trả về danh sách tùy chọn thông báo của user, đảm bảo đủ 8 module mặc định */
+  async getPreferences(userId: string): Promise<{ data: unknown[] }> {
+    const MODULES = ['TASK', 'LEAVE', 'EXPENSE', 'TIMESHEET', 'CONTRACT', 'PAYROLL', 'BPM', 'ALERT'];
+
+    const existing = await this.prisma.notificationPreference.findMany({
+      where: { userId },
+    });
+
+    const existingMap = new Map(existing.map((p) => [p.moduleType, p]));
+
+    // Đảm bảo tất cả module có preference — tạo nếu thiếu
+    const missing = MODULES.filter((m) => !existingMap.has(m));
+    if (missing.length) {
+      await this.prisma.notificationPreference.createMany({
+        data: missing.map((moduleType) => ({ userId, moduleType, channel: 'BOTH' as never })),
+        skipDuplicates: true,
+      });
+    }
+
+    const all = await this.prisma.notificationPreference.findMany({
+      where: { userId },
+      orderBy: { moduleType: 'asc' },
+    });
+
+    return { data: all };
+  }
+
+  /** Upsert preference cho một module */
+  async upsertPreference(
+    userId: string,
+    moduleType: string,
+    channel: 'EMAIL' | 'IN_APP' | 'BOTH',
+  ): Promise<{ data: unknown }> {
+    const pref = await this.prisma.notificationPreference.upsert({
+      where: { userId_moduleType: { userId, moduleType } },
+      update: { channel: channel as never },
+      create: { userId, moduleType, channel: channel as never },
+    });
+    return { data: pref };
+  }
 }

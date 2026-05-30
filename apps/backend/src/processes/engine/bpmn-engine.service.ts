@@ -5,6 +5,7 @@ import type { BpmnEngineExecutionState } from 'bpmn-engine';
 import { PrismaService } from '../../prisma/prisma.service';
 import { InstanceStatus, UserTaskStatus } from '../../generated/prisma';
 import { NotificationsService } from '../../notifications/notifications.service';
+import { MailService } from '../../notifications/mail.service';
 import { NotificationType } from '../../generated/prisma';
 import { ProcessEventBus } from '../process-event-bus.service';
 import type { AssigneeConfigDto, StepConfigItemDto, NotificationTriggerDto } from '../definitions/dto/create-definition.dto';
@@ -49,6 +50,7 @@ export class BpmnEngineService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
+    private readonly mailService: MailService,
     private readonly eventBus: ProcessEventBus,
     private readonly delegationService: DelegationService,
   ) {}
@@ -443,6 +445,41 @@ export class BpmnEngineService {
         } catch (err) {
           this.logger.warn(`Không thể gửi notification cho user task ${task.id}`, err);
         }
+
+        // E23.4: Gửi email nếu NotificationPreference.channel = EMAIL hoặc BOTH
+        try {
+          const pref = await this.prisma.notificationPreference.findFirst({
+            where: { userId: assigneeId, moduleType: 'BPM' },
+          });
+          const shouldEmail = !pref || pref.channel === 'EMAIL' || pref.channel === 'BOTH';
+          if (shouldEmail) {
+            const assigneeUser = await this.prisma.user.findUnique({
+              where: { id: assigneeId },
+              select: { email: true, name: true },
+            });
+            if (assigneeUser?.email) {
+              const processName = instance?.definition?.name ?? 'Quy trình';
+              await this.mailService.sendHtml(
+                assigneeUser.email,
+                `Bạn có task mới: ${name}`,
+                `<div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+  <h2 style="color:#1D4ED8">Task quy trình mới</h2>
+  <p>Xin chào <strong>${assigneeUser.name}</strong>,</p>
+  <p>Bạn vừa được giao task trong quy trình <strong>${processName}</strong>:</p>
+  <div style="background:#F1F5F9;padding:12px;border-radius:8px;margin:16px 0">
+    <strong style="font-size:16px">${name}</strong>
+    ${dueDate ? `<br><span style="color:#64748B">Hạn xử lý: ${new Date(dueDate).toLocaleDateString('vi-VN')}</span>` : ''}
+  </div>
+  <p>Vui lòng đăng nhập hệ thống để xử lý task.</p>
+  <hr style="border:none;border-top:1px solid #E2E8F0;margin:24px 0">
+  <p style="color:#94A3B8;font-size:12px">— Loop 360 Workflow System</p>
+</div>`,
+              );
+            }
+          }
+        } catch (err) {
+          this.logger.warn(`Không thể gửi email cho task ${task.id}`, err);
+        }
       }
     }
   }
@@ -649,11 +686,29 @@ export class BpmnEngineService {
     }
   }
 
+  /**
+   * E23.5: Notify người khởi tạo khi process bắt đầu.
+   * Gọi từ ProcessInstancesService sau khi start thành công.
+   */
+  async notifyProcessStarted(instanceId: string, processName: string, startedBy: string): Promise<void> {
+    try {
+      await this.notificationsService.createAndDeliver(
+        startedBy,
+        NotificationType.SYSTEM_ALERT,
+        'Quy trình đã bắt đầu',
+        `Quy trình "${processName}" đã được khởi động thành công`,
+        { processInstanceId: instanceId },
+      );
+    } catch (err) {
+      this.logger.warn(`notifyProcessStarted failed instanceId=${instanceId}`, err);
+    }
+  }
+
   private async checkCompletion(instanceId: string, executionState: string): Promise<void> {
     if (executionState === 'idle') {
       const instance = await this.prisma.processInstance.findUnique({
         where: { id: instanceId },
-        select: { variables: true },
+        include: { definition: { select: { name: true } }, startedByUser: { select: { id: true } } },
       });
       await this.prisma.processInstance.update({
         where: { id: instanceId },
@@ -663,6 +718,24 @@ export class BpmnEngineService {
         instanceId,
         variables: (instance?.variables ?? {}) as Record<string, unknown>,
       });
+
+      // E23.5: Notify người khởi tạo khi process hoàn thành
+      if (instance?.startedByUser?.id) {
+        const vars = (instance.variables ?? {}) as Record<string, unknown>;
+        const decision = (vars['decision'] ?? vars['outcome'] ?? '') as string;
+        const decisionText = decision ? `: ${decision}` : '';
+        try {
+          await this.notificationsService.createAndDeliver(
+            instance.startedByUser.id,
+            NotificationType.SYSTEM_ALERT,
+            `Quy trình hoàn thành: ${instance.definition.name}`,
+            `Quy trình "${instance.definition.name}" đã hoàn tất${decisionText}`,
+            { processInstanceId: instanceId },
+          );
+        } catch (err) {
+          this.logger.warn(`notifyProcessCompleted failed instanceId=${instanceId}`, err);
+        }
+      }
     }
   }
 }

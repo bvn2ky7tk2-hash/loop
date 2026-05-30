@@ -9,6 +9,7 @@ import { CommandPalette } from '../ui/CommandPalette';
 import { useCommandPaletteStore } from '../../store/commandPalette.store';
 import { tenantApi } from '../../api/tenant';
 import { useTenantStore } from '../../store/tenant.store';
+import { AnnouncementBanner } from '../AnnouncementBanner';
 
 const { Content } = Layout;
 
@@ -97,6 +98,7 @@ export function AppLayout() {
           style={{ marginTop: 56, padding: 0, minHeight: 'calc(100vh - 56px)' }}
           tabIndex={-1}
         >
+          <AnnouncementBanner />
           <Outlet />
         </Content>
       </Layout>

@@ -1,12 +1,19 @@
 import { theme } from 'antd';
 import type { ReactNode } from 'react';
+import { SavedFiltersDropdown } from './SavedFiltersDropdown';
 
 interface FilterBarProps {
   children: ReactNode;
   right?: ReactNode;
+  /** Khi có pageKey, tự động hiện nút "Bộ lọc đã lưu" */
+  pageKey?: string;
+  /** Bộ lọc hiện tại để lưu (bắt buộc nếu có pageKey) */
+  currentFilters?: Record<string, unknown>;
+  /** Callback khi user chọn preset từ dropdown */
+  onApplyPreset?: (filters: Record<string, unknown>) => void;
 }
 
-export function FilterBar({ children, right }: FilterBarProps) {
+export function FilterBar({ children, right, pageKey, currentFilters, onApplyPreset }: FilterBarProps) {
   const { token } = theme.useToken();
 
   return (
@@ -25,6 +32,15 @@ export function FilterBar({ children, right }: FilterBarProps) {
     >
       {children}
       {right && <div style={{ marginLeft: 'auto' }}>{right}</div>}
+      {pageKey && currentFilters !== undefined && onApplyPreset && (
+        <div style={{ marginLeft: right ? 0 : 'auto' }}>
+          <SavedFiltersDropdown
+            pageKey={pageKey}
+            currentFilters={currentFilters}
+            onApply={onApplyPreset}
+          />
+        </div>
+      )}
     </div>
   );
 }

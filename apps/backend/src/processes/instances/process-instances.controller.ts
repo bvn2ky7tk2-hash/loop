@@ -50,9 +50,9 @@ export class ProcessInstancesController {
   }
 
   @Patch(':id/cancel')
-  @ApiOperation({ summary: 'Huỷ process instance' })
+  @ApiOperation({ summary: 'Huỷ process instance — chỉ startedBy hoặc ADMIN' })
   cancel(@Param('id') id: string, @CurrentUser() user: JwtUser) {
-    return this.service.cancel(id, user.id);
+    return this.service.cancel(id, user.id, user.role);
   }
 
   @Get(':id/activity-log')

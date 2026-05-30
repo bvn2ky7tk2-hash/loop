@@ -42,8 +42,8 @@ export class ImportController {
     @Query('template') template: string,
   ) {
     if (!file) throw new BadRequestException('Vui lòng upload file');
-    if (!['employees', 'assets', 'jobs'].includes(template)) {
-      throw new BadRequestException('Template không hợp lệ. Chọn: employees | assets | jobs');
+    if (!['employees', 'assets', 'jobs', 'leave_balances', 'customers', 'leads'].includes(template)) {
+      throw new BadRequestException('Template không hợp lệ. Chọn: employees | assets | jobs | leave_balances | customers | leads');
     }
     return this.service.preview(file.buffer, template as ImportTemplate);
   }
@@ -73,8 +73,8 @@ export class ImportController {
     @Query('template') template: string,
   ) {
     if (!file) throw new BadRequestException('Vui lòng upload file');
-    if (!['employees', 'assets', 'jobs'].includes(template)) {
-      throw new BadRequestException('Template không hợp lệ. Chọn: employees | assets | jobs');
+    if (!['employees', 'assets', 'jobs', 'leave_balances', 'customers', 'leads'].includes(template)) {
+      throw new BadRequestException('Template không hợp lệ. Chọn: employees | assets | jobs | leave_balances | customers | leads');
     }
     return this.service.commit(file.buffer, template as ImportTemplate);
   }
