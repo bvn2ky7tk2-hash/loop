@@ -15,13 +15,11 @@ export class AutomationScheduler {
   private async run(key: string) {
     const rule = await this.prisma.automationRule.findUnique({ where: { key } });
     if (!rule?.isActive) { this.logger.debug(`${key} inactive — skip`); return; }
-    const start = Date.now();
     try {
-      await this.svc.executeRule(key);
-      await this.svc.logRun(rule.id, 'SUCCESS', null, Date.now() - start);
+      // executeRule đã tự logRun bên trong — không cần gọi thêm ở đây
+      await this.svc.executeRule(rule.id);
     } catch (err: any) {
       this.logger.error(`${key} failed: ${err.message}`);
-      await this.svc.logRun(rule.id, 'FAILED', err?.message ?? 'Unknown error', Date.now() - start);
     }
   }
 

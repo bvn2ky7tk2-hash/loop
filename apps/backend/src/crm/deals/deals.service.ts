@@ -15,7 +15,9 @@ import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
 import { WonDealDto } from './dto/won-deal.dto';
 import { LostDealDto } from './dto/lost-deal.dto';
+import { KickoffWizardDto } from './dto/kickoff-wizard.dto';
 import { TenantAwareService } from '../../common/services/tenant-aware.service';
+import { ProcessInstancesService } from '../../processes/instances/process-instances.service';
 
 // Stage transitions được phép
 const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
@@ -30,6 +32,7 @@ const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
 export class DealsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processInstancesService: ProcessInstancesService,
     @Inject(REQUEST) req: any,
   ) {
     super(req);
@@ -242,5 +245,86 @@ export class DealsService extends TenantAwareService {
       ...d,
       ageDays: Math.floor((Date.now() - d.createdAt.getTime()) / 86400000),
     }));
+  }
+
+  // ── E20.3: Deal Won Kickoff Wizard ────────────────────────────────────────
+
+  async kickoffWizard(dealId: string, dto: KickoffWizardDto, requestUserId: string) {
+    const deal = await this.findOne(dealId);
+
+    // Lấy orgUnitId của PM được chỉ định
+    const pmUser = await this.prisma.user.findUnique({
+      where: { id: dto.pmUserId },
+      select: { id: true, orgUnitId: true },
+    });
+    if (!pmUser) {
+      throw new NotFoundException(`Không tìm thấy user PM #${dto.pmUserId}`);
+    }
+    if (!pmUser.orgUnitId) {
+      throw new UnprocessableEntityException(
+        'PM chưa thuộc đơn vị tổ chức nào, không thể tạo project',
+      );
+    }
+
+    const startDate = new Date(dto.startDate);
+
+    const project = await this.prisma.project.create({
+      data: {
+        code:       deal.code,
+        name:       deal.title,
+        type:       ProjectType.OSDC,
+        customerId: deal.customerId,
+        status:     ProjectStatus.PLANNING,
+        pmId:       dto.pmUserId,
+        orgUnitId:  pmUser.orgUnitId,
+        startDate,
+        endDate:    new Date(startDate.getTime() + 365 * 24 * 3600_000),
+        tenantId:   this.getTenantId() ?? null,
+      },
+    });
+
+    // Cập nhật deal: gán projectId + wonAt
+    await this.prisma.deal.update({
+      where: { id: dealId },
+      data: {
+        projectId: project.id,
+        wonAt:     new Date(),
+        stage:     DealStage.WON,
+      },
+    });
+
+    // Khởi động BPM 'deal-to-project-kickoff-v1' nếu definition tồn tại
+    let processInstanceId: string | null = null;
+    const bpmKey = dto.templateName ?? 'deal-to-project-kickoff-v1';
+    const definition = await this.prisma.processDefinition.findFirst({
+      where: { key: bpmKey, status: 'ACTIVE' },
+      select: { id: true },
+    });
+
+    if (definition) {
+      const result = await this.processInstancesService.start(
+        {
+          definitionId: definition.id,
+          projectId:    project.id,
+          variables: {
+            dealId,
+            projectId: project.id,
+            pmUserId:  dto.pmUserId,
+            startDate: dto.startDate,
+            ...(dto.portalEmail ? { portalEmail: dto.portalEmail } : {}),
+          },
+        },
+        requestUserId,
+      );
+      processInstanceId = result.data?.id ?? null;
+
+      // Ghi lại processInstanceId trên deal
+      await this.prisma.deal.update({
+        where: { id: dealId },
+        data: { processInstanceId },
+      });
+    }
+
+    return { projectId: project.id, processInstanceId };
   }
 }

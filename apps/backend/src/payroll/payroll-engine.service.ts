@@ -406,4 +406,82 @@ export class PayrollEngineService {
       orderBy: { effectiveFrom: 'desc' },
     });
   }
+
+  // ─── Year-end leave settlement ────────────────────────────────────────────────
+
+  /**
+   * Chạy cuối năm (25/12): reset số dư nghỉ phép về 0 hoặc chuyển sang năm mới
+   * theo chính sách carry-forward của từng loại nghỉ phép.
+   * - maxCarryOver > 0: số dư được cộng sang năm mới (không vượt maxCarryOver)
+   * - maxCarryOver = 0: xóa số dư (đặt totalDays về usedDays)
+   */
+  async yearEndLeaveSettlement(): Promise<{ processed: number }> {
+    const currentYear = new Date().getFullYear();
+    const nextYear = currentYear + 1;
+
+    const leaveBalances = await this.prisma.leaveBalance.findMany({
+      where: { year: currentYear },
+      include: { leaveType: true },
+      take: 5000,
+    });
+
+    let processed = 0;
+
+    for (const balance of leaveBalances) {
+      // remaining = totalDays - usedDays
+      const remaining = Number(balance.totalDays) - Number(balance.usedDays);
+      if (remaining <= 0) continue;
+
+      const maxCarryOver = balance.leaveType.maxCarryOver ?? 0;
+
+      if (maxCarryOver <= 0) {
+        // Không cho carry — reset totalDays về usedDays (số dư = 0)
+        await this.prisma.leaveBalance.update({
+          where: { id: balance.id },
+          data: { totalDays: balance.usedDays },
+        });
+      } else {
+        // Carry forward — cộng vào balance năm mới (tạo mới nếu chưa có)
+        const carryDays = Math.min(remaining, maxCarryOver);
+
+        const existing = await this.prisma.leaveBalance.findFirst({
+          where: {
+            employeeId: balance.employeeId,
+            leaveTypeId: balance.leaveTypeId,
+            year: nextYear,
+          },
+        });
+
+        if (existing) {
+          await this.prisma.leaveBalance.update({
+            where: { id: existing.id },
+            data: {
+              totalDays: Number(existing.totalDays) + carryDays,
+            },
+          });
+        } else {
+          await this.prisma.leaveBalance.create({
+            data: {
+              employeeId: balance.employeeId,
+              leaveTypeId: balance.leaveTypeId,
+              year: nextYear,
+              totalDays: carryDays,
+              usedDays: 0,
+              ...(balance.tenantId ? { tenantId: balance.tenantId } : {}),
+            },
+          });
+        }
+
+        // Reset năm hiện tại: totalDays về usedDays (số dư = 0)
+        await this.prisma.leaveBalance.update({
+          where: { id: balance.id },
+          data: { totalDays: balance.usedDays },
+        });
+      }
+
+      processed++;
+    }
+
+    return { processed };
+  }
 }

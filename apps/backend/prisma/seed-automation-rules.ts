@@ -1,61 +1,85 @@
+/**
+ * Seed default AutomationRule records với actions JSON.
+ * Dùng upsert theo key — an toàn khi chạy nhiều lần.
+ */
 import { PrismaClient } from '../src/generated/prisma';
 
 const prisma = new PrismaClient();
 
-interface RuleSeed {
-  key: string;
-  name: string;
-  description: string;
-  triggerType: string;
-  cronExpr: string | null;
-  entityType?: string;
-  actions: { type: string }[];
-  isActive: boolean;
-}
-
-const RULES: RuleSeed[] = [
+const RULES = [
   {
-    key: 'contract-expiry-notify',
-    name: 'Thông báo hợp đồng sắp hết hạn',
-    description: 'Gửi thông báo cho HR khi có hợp đồng sắp hết hạn trong 30 ngày tới, chạy mỗi ngày lúc 8h.',
+    key: 'timesheet-reminder',
+    name: 'Nhắc nộp Timesheet',
+    description: 'Gửi thông báo cho nhân viên chưa nộp timesheet tuần này vào mỗi thứ 6 lúc 17h.',
+    cronExpr: '0 17 * * 5',
     triggerType: 'SCHEDULE',
-    cronExpr: '0 8 * * *',
-    actions: [{ type: 'SEND_NOTIFICATION' }],
     isActive: true,
+    actions: [
+      {
+        type: 'SEND_NOTIFICATION',
+        // userId sẽ được resolve động trong timesheetReminder() — action này chỉ mô tả intent
+        title: 'Nhắc nộp timesheet',
+        body: 'Bạn chưa nộp timesheet tuần này. Vui lòng nộp trước cuối ngày hôm nay.',
+        notificationType: 'REMINDER',
+        link: '/timesheet',
+      },
+    ],
   },
   {
-    key: 'expense-approved-budget-update',
-    name: 'Cập nhật ngân sách khi chi phí được duyệt',
-    description: 'Tự động cập nhật số dư ngân sách khi một khoản chi phí được phê duyệt.',
-    triggerType: 'RECORD_STATUS_CHANGE',
-    entityType: 'EXPENSE',
-    cronExpr: null,
-    actions: [{ type: 'UPDATE_BUDGET' }],
-    isActive: true,
-  },
-  {
-    key: 'invoice-overdue-alert',
-    name: 'Cảnh báo hóa đơn quá hạn',
-    description: 'Gửi cảnh báo mỗi ngày lúc 9h cho các hóa đơn đã quá hạn thanh toán.',
-    triggerType: 'SCHEDULE',
+    key: 'contract-expiry',
+    name: 'Cảnh báo Hợp đồng hết hạn',
+    description: 'Thông báo cho HR khi có hợp đồng sắp hết hạn trong 30 ngày tới.',
     cronExpr: '0 9 * * *',
-    actions: [{ type: 'SEND_ALERT' }],
+    triggerType: 'SCHEDULE',
     isActive: true,
+    actions: [
+      {
+        type: 'SEND_NOTIFICATION',
+        title: 'Hợp đồng sắp hết hạn',
+        body: 'Có hợp đồng nhân viên sẽ hết hạn trong 30 ngày tới. Vui lòng kiểm tra và gia hạn.',
+        notificationType: 'ALERT',
+        link: '/contracts',
+      },
+    ],
   },
   {
-    key: 'ot-approved-payroll-flag',
-    name: 'Đánh dấu bảng lương khi OT được duyệt',
-    description: 'Tự động đánh dấu bản ghi bảng lương cần tính lại khi đơn OT được phê duyệt.',
-    triggerType: 'RECORD_STATUS_CHANGE',
-    entityType: 'OVERTIME_REQUEST',
-    cronExpr: null,
-    actions: [{ type: 'FLAG_PAYROLL' }],
+    key: 'leave-escalation',
+    name: 'Đơn nghỉ phép tồn đọng',
+    description: 'Nhắc manager xử lý các đơn nghỉ phép đã chờ quá 2 ngày.',
+    cronExpr: '0 10 * * *',
+    triggerType: 'SCHEDULE',
     isActive: true,
+    actions: [
+      {
+        type: 'SEND_NOTIFICATION',
+        title: 'Đơn nghỉ phép tồn đọng',
+        body: 'Có đơn nghỉ phép chờ xử lý quá 2 ngày. Vui lòng xử lý sớm.',
+        notificationType: 'ALERT',
+        link: '/leaves',
+      },
+    ],
+  },
+  {
+    key: 'okr-checkin-reminder',
+    name: 'Nhắc Check-in OKR',
+    description: 'Nhắc nhân viên cập nhật tiến độ OKR chưa được cập nhật trong 14 ngày.',
+    cronExpr: '0 9 * * 1',
+    triggerType: 'SCHEDULE',
+    isActive: true,
+    actions: [
+      {
+        type: 'SEND_NOTIFICATION',
+        title: 'Nhắc cập nhật OKR',
+        body: 'OKR của bạn chưa được cập nhật 14 ngày. Hãy check-in tiến độ ngay hôm nay.',
+        notificationType: 'REMINDER',
+        link: '/hr/okr',
+      },
+    ],
   },
 ];
 
 async function main() {
-  console.log('Seeding automation rules...');
+  console.log('Seeding AutomationRule records...');
 
   for (const rule of RULES) {
     await prisma.automationRule.upsert({
@@ -63,28 +87,25 @@ async function main() {
       update: {
         name: rule.name,
         description: rule.description,
+        cronExpr: rule.cronExpr,
         triggerType: rule.triggerType,
-        entityType: rule.entityType ?? null,
-        // cronExpr required trong schema → dùng '0 0 * * *' cho event-driven rules
-        cronExpr: rule.cronExpr ?? '0 0 * * *',
-        actions: rule.actions as any,
         isActive: rule.isActive,
+        actions: rule.actions,
       },
       create: {
         key: rule.key,
         name: rule.name,
         description: rule.description,
+        cronExpr: rule.cronExpr,
         triggerType: rule.triggerType,
-        entityType: rule.entityType ?? null,
-        cronExpr: rule.cronExpr ?? '0 0 * * *',
-        actions: rule.actions as any,
         isActive: rule.isActive,
+        actions: rule.actions,
       },
     });
-    console.log(`  ✓ ${rule.key}`);
+    console.log(`  upserted: ${rule.key}`);
   }
 
-  console.log('Seed automation rules hoàn tất!');
+  console.log('Seed automation-rules hoàn tất!');
 }
 
 main()
@@ -92,6 +113,4 @@ main()
     console.error(e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .finally(() => prisma.$disconnect());

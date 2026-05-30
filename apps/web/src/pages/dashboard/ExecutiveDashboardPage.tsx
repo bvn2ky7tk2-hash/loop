@@ -27,6 +27,8 @@ import {
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -122,6 +124,42 @@ export default function ExecutiveDashboardPage() {
     dayjs(),
   ]);
 
+  // Fetch tất cả summary endpoints
+  const { data: hrSummary } = useQuery<{ headcount?: number }>({
+    queryKey: ['hr-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/hr/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: payrollSummary } = useQuery<{ totalSalaryCost?: number }>({
+    queryKey: ['payroll-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/payroll/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: projectSummary } = useQuery<{ active?: number; completed?: number; onHold?: number; revenueYtd?: string }>({
+    queryKey: ['projects-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/projects/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: financeSummary } = useQuery<{ revenueYtd?: string; arOutstanding?: string }>({
+    queryKey: ['finance-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/finance/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: crmSummary } = useQuery<{ pipelineValue?: string; winRate?: number }>({
+    queryKey: ['crm-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/crm/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  // Dùng dữ liệu từ API khi có, fallback về mock sparklines
+  const revenueValue = financeSummary?.revenueYtd ?? '34.8B';
+  const pipelineValue = crmSummary?.pipelineValue ?? '124M';
+  void hrSummary; void payrollSummary; void projectSummary; // sẽ dùng ở các widget tương lai
+
   const axisColor = isDark ? '#888' : '#555';
   const gridColor = isDark ? '#334155' : '#f0f0f0';
   const tooltipBg = isDark ? '#1f2937' : '#ffffff';
@@ -155,7 +193,7 @@ export default function ExecutiveDashboardPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Revenue YTD vs Target"
-            value="34.8B"
+            value={revenueValue}
             unit="VNĐ"
             delta={12}
             data={REVENUE_SPARKLINE}
@@ -183,7 +221,7 @@ export default function ExecutiveDashboardPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Pipeline Value"
-            value="124M"
+            value={pipelineValue}
             unit="VNĐ"
             delta={8}
             data={PIPELINE_SPARKLINE}

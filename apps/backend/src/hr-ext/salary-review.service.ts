@@ -70,7 +70,7 @@ export class SalaryReviewService extends TenantAwareService {
     if (!employee?.positionId) throw new BadRequestException('Nhân viên chưa được gán vị trí');
 
     // Lấy SalaryBand theo positionId
-    const band = await this.prisma.salaryBand.findUnique({
+    const band = await this.prisma.salaryBand.findFirst({
       where: { positionId: employee.positionId },
     });
     if (!band) return null; // Không có band → không tạo suggestion
@@ -91,7 +91,7 @@ export class SalaryReviewService extends TenantAwareService {
         currentSalary,
         suggestedSalary,
         increasePercent,
-        score,
+        reason: `Điểm đánh giá hiệu suất: ${score} — tăng ${increasePercent}%`,
         status: 'PENDING',
       },
       include: {
@@ -112,8 +112,7 @@ export class SalaryReviewService extends TenantAwareService {
       where: { id },
       data: {
         status: 'APPROVED',
-        approverId,
-        approvedAt: new Date(),
+        approvedById: approverId,
       },
       include: {
         employee: { select: { id: true, fullName: true, code: true } },

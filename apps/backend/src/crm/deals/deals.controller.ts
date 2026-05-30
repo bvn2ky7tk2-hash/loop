@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -24,6 +25,7 @@ import { CreateDealDto } from './dto/create-deal.dto';
 import { UpdateDealDto } from './dto/update-deal.dto';
 import { WonDealDto } from './dto/won-deal.dto';
 import { LostDealDto } from './dto/lost-deal.dto';
+import { KickoffWizardDto } from './dto/kickoff-wizard.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../../permissions/permissions.constants';
@@ -161,5 +163,21 @@ export class DealsController {
   @ApiOperation({ summary: 'Xoá deal (chỉ QUALIFICATION hoặc LOST)' })
   remove(@Param('id') id: string) {
     return this.dealsService.remove(id);
+  }
+
+  // ── E20.3: Deal Won Kickoff Wizard ──────────────────────────────────────────
+
+  @Post(':id/kickoff-wizard')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @RequirePermission('crm_deals:manage', PERMISSIONS.CRM_MANAGE)
+  @Audited('KICKOFF', 'Deal')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Kickoff wizard: tạo project + start BPM sau khi deal won' })
+  kickoffWizard(
+    @Param('id') id: string,
+    @Body() dto: KickoffWizardDto,
+    @Request() req: any,
+  ) {
+    return this.dealsService.kickoffWizard(id, dto, req.user?.id ?? 'system');
   }
 }

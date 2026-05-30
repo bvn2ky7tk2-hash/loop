@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { FinanceEventBus } from '../accounting/finance-event-bus.service';
+import { BudgetService } from '../budget/budget.service';
 import { PaginationDto, paginate } from '../common/dto/pagination.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/vendor.dto';
 import { CreatePoDto, UpdatePoStatusDto, ReceiveItemDto } from './dto/purchase-order.dto';
@@ -9,7 +9,7 @@ import { CreatePoDto, UpdatePoStatusDto, ReceiveItemDto } from './dto/purchase-o
 export class ProcurementService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly financeEventBus: FinanceEventBus,
+    private readonly budgetService: BudgetService,
   ) {}
 
   // ─── Vendors ───────────────────────────────────────────────────────────────
@@ -126,6 +126,26 @@ export class ProcurementService {
     }));
     const totalAmount = items.reduce((sum, i) => sum + i.totalPrice, 0);
 
+    // Kiểm tra ngân sách dựa trên orgUnit của người tạo PO
+    const requester = await this.prisma.user.findUnique({
+      where: { id: requesterId },
+      select: { orgUnitId: true },
+    });
+    if (requester?.orgUnitId) {
+      const fiscalYear = new Date().getFullYear();
+      const budgetResult = await this.budgetService.checkBudget(
+        requester.orgUnitId,
+        'OPERATION',
+        fiscalYear,
+        totalAmount,
+      );
+      if (!budgetResult.allowed) {
+        throw new ForbiddenException(
+          `Ngân sách không đủ: còn lại ${budgetResult.remaining.toLocaleString('vi-VN')} ₫, cần ${totalAmount.toLocaleString('vi-VN')} ₫`,
+        );
+      }
+    }
+
     return this.prisma.purchaseOrder.create({
       data: {
         poNumber,
@@ -161,25 +181,110 @@ export class ProcurementService {
 
     const updated = await this.prisma.purchaseOrder.update({ where: { id }, data });
 
-    // E21.2: Phát sự kiện auto-journal qua FinanceEventBus
-    if (dto.status === 'RECEIVED') {
-      await this.financeEventBus.emit({
-        type:   'po.received',
-        refId:  id,
-        amount: Number(updated.totalAmount),
-        userId,
-      });
+    // Ghi budget transaction theo trạng thái PO
+    const poRequester = await this.prisma.user.findUnique({
+      where: { id: po.requesterId },
+      select: { orgUnitId: true },
+    });
+    if (poRequester?.orgUnitId) {
+      const fiscalYear = new Date(po.createdAt).getFullYear();
+      const amount = Number(po.totalAmount);
+      const budgetCheck = await this.budgetService.checkBudget(
+        poRequester.orgUnitId,
+        'OPERATION',
+        fiscalYear,
+        0, // chỉ lấy lineId, không check limit
+      );
+      const lineId = budgetCheck.lineId;
+
+      if (lineId) {
+        if (dto.status === 'SUBMITTED') {
+          // Cam kết ngân sách khi PO được nộp
+          await this.budgetService.recordTransaction(lineId, 'PO', id, amount, 'COMMITTED');
+        } else if (dto.status === 'RECEIVED') {
+          // Chuyển committed → actual khi nhận hàng
+          await this.budgetService.recordTransaction(lineId, 'PO', id, amount, 'ACTUAL');
+          await this.budgetService.recordTransaction(lineId, 'PO', `${id}_release`, -amount, 'COMMITTED');
+        } else if (dto.status === 'CANCELLED') {
+          // Giải phóng committed khi hủy
+          await this.budgetService.recordTransaction(lineId, 'PO', `${id}_cancel`, -amount, 'COMMITTED');
+        }
+      }
     }
-    if (dto.status === 'PAID') {
-      await this.financeEventBus.emit({
-        type:   'po.paid',
-        refId:  id,
-        amount: Number(updated.totalAmount),
-        userId,
-      });
+
+    // Auto-create journal entries on key status transitions
+    if (dto.status === 'RECEIVED' && !po.journalEntryId) {
+      await this._createReceivedJournal(po, userId);
+    } else if (dto.status === 'PAID') {
+      await this._createPaidJournal(po, userId);
     }
 
     return updated;
+  }
+
+  /** Debit 642 (Chi phí) / Credit 331 (Phải trả NCC) khi nhận hàng */
+  private async _createReceivedJournal(po: any, userId: string) {
+    const amount = Number(po.totalAmount);
+
+    // Ensure 331 and 642 accounts exist (upsert)
+    await this.prisma.$transaction([
+      this.prisma.chartOfAccount.upsert({
+        where: { code: '331' },
+        create: { code: '331', name: 'Phải trả cho người bán', type: 'LIABILITY' },
+        update: {},
+      }),
+      this.prisma.chartOfAccount.upsert({
+        where: { code: '642' },
+        create: { code: '642', name: 'Chi phí quản lý doanh nghiệp', type: 'EXPENSE' },
+        update: {},
+      }),
+    ]);
+
+    const entry = await this.prisma.journalEntry.create({
+      data: {
+        date:        new Date(),
+        description: `Nhận hàng từ PO #${po.poNumber}`,
+        reference:   po.poNumber,
+        createdById: userId,
+        lines: {
+          create: [
+            { accountCode: '642', debit: amount,  credit: 0,      description: `Chi phí mua hàng PO #${po.poNumber}` },
+            { accountCode: '331', debit: 0,        credit: amount, description: `Phải trả NCC PO #${po.poNumber}` },
+          ],
+        },
+      },
+    });
+
+    await this.prisma.purchaseOrder.update({
+      where: { id: po.id },
+      data:  { journalEntryId: entry.id },
+    });
+  }
+
+  /** Debit 331 (Phải trả NCC) / Credit 111 (Tiền mặt) khi thanh toán */
+  private async _createPaidJournal(po: any, userId: string) {
+    const amount = Number(po.totalAmount);
+
+    await this.prisma.chartOfAccount.upsert({
+      where:  { code: '111' },
+      create: { code: '111', name: 'Tiền mặt', type: 'ASSET' },
+      update: {},
+    });
+
+    await this.prisma.journalEntry.create({
+      data: {
+        date:        new Date(),
+        description: `Auto từ PO #${po.poNumber}`,
+        reference:   po.poNumber,
+        createdById: userId,
+        lines: {
+          create: [
+            { accountCode: '331', debit: amount, credit: 0,      description: `Thanh toán NCC PO #${po.poNumber}` },
+            { accountCode: '111', debit: 0,       credit: amount, description: `Chi tiền mặt PO #${po.poNumber}` },
+          ],
+        },
+      },
+    });
   }
 
   async receiveItems(poId: string, items: ReceiveItemDto[]) {

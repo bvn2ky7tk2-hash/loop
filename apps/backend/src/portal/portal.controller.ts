@@ -5,6 +5,8 @@ import {
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { Public } from '../common/decorators/public.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { PortalService } from './portal.service';
 import { CreatePortalDto, UpdatePortalDto, SubmitTicketDto, RespondTicketDto, LinkTicketToIssueDto } from './dto/portal.dto';
 
@@ -54,6 +56,26 @@ export class PortalAdminController {
   @ApiOperation({ summary: 'Chuyển ticket thành Internal Issue (Bug type=ISSUE)' })
   linkToIssue(@Param('id') id: string, @Body() dto: LinkTicketToIssueDto) {
     return this.svc.linkToIssue(id, dto);
+  }
+}
+
+// ─── E22.1: Ticket → Issue endpoint (alias route /crm/portal) ────────────────
+@ApiTags('Customer Portal — Tickets')
+@ApiBearerAuth()
+@Controller('api/v1/crm/portal')
+export class PortalTicketController {
+  constructor(private readonly svc: PortalService) {}
+
+  @Post('tickets/:id/link-issue')
+  @ApiOperation({ summary: 'Chuyển CustomerTicket thành Internal Issue (Bug type=ISSUE)' })
+  linkTicketToIssue(
+    @Param('id') id: string,
+    @Body() dto: LinkTicketToIssueDto,
+    @CurrentUser() user: JwtUser,
+  ) {
+    // Gán reporterId từ JWT nếu body không truyền (backward compat)
+    const enriched = { ...dto, reporterId: dto.reporterId ?? user?.id };
+    return this.svc.linkToIssue(id, enriched);
   }
 }
 

@@ -2,14 +2,18 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Select, Form, Input,
   InputNumber, DatePicker, Tag, Modal, message, Radio, Tooltip, Badge,
-  Drawer, Descriptions, Divider,
+  Drawer, Descriptions, Divider, Steps,
 } from 'antd';
+import axios from 'axios';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, TrophyOutlined,
   AppstoreOutlined, UnorderedListOutlined, CheckCircleFilled, CloseCircleFilled,
+  ProjectOutlined, TeamOutlined,
 } from '@ant-design/icons';
+
+const TaskListIcon = UnorderedListOutlined;
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
@@ -121,6 +125,7 @@ export default function DealsPage() {
   const [viewDeal, setViewDeal]       = useState<Deal | null>(null);
   const [actTarget, setActTarget]     = useState<Deal | null>(null);
   const [wonProjectMode, setWonProjectMode] = useState<'new' | 'existing'>('new');
+  const [wonStep, setWonStep] = useState(0);
   const [form] = Form.useForm();
   const [wonForm] = Form.useForm();
   const [lostForm] = Form.useForm();
@@ -176,11 +181,19 @@ export default function DealsPage() {
   };
 
   const handleWon = async () => {
-    const values = await wonForm.validateFields();
     if (!actTarget) return;
-    await wonMutation.mutateAsync({ id: actTarget.id, data: values });
-    message.success('Deal đã được đánh dấu Won!');
+    // Bước cuối — submit toàn bộ form
+    const values = await wonForm.validateFields();
+    try {
+      await axios.post(`/api/v1/crm/deals/${actTarget.id}/kickoff-wizard`, values);
+      message.success('Deal Won! Kickoff wizard hoàn tất.');
+    } catch {
+      // Fallback: vẫn mark won qua mutation cũ nếu endpoint chưa có
+      await wonMutation.mutateAsync({ id: actTarget.id, data: values });
+      message.success('Deal đã được đánh dấu Won!');
+    }
     setWonModal(false);
+    setWonStep(0);
   };
 
   const handleLost = async () => {
@@ -191,7 +204,7 @@ export default function DealsPage() {
     setLostModal(false);
   };
 
-  const openWon = (deal: Deal) => { setActTarget(deal); wonForm.resetFields(); setWonModal(true); };
+  const openWon = (deal: Deal) => { setActTarget(deal); wonForm.resetFields(); setWonStep(0); setWonModal(true); };
   const openLost = (deal: Deal) => { setActTarget(deal); lostForm.resetFields(); setLostModal(true); };
 
   const handleDelete = (deal: Deal) => {
@@ -446,51 +459,146 @@ export default function DealsPage() {
         )}
       </Drawer>
 
-      {/* Won Modal */}
+      {/* Won Wizard Modal — 3 bước */}
       <Modal
         title={<Space><TrophyOutlined style={{ color: '#10B981' }} />Deal Won: "{actTarget?.title}"</Space>}
         open={wonModalOpen}
-        onCancel={() => { setWonModal(false); setWonProjectMode('new'); }}
-        onOk={handleWon}
-        confirmLoading={wonMutation.isPending}
-        okText="Xác nhận Won"
-        okButtonProps={{ style: { background: '#10B981', borderColor: '#10B981' } }}
+        onCancel={() => { setWonModal(false); setWonStep(0); setWonProjectMode('new'); }}
+        width={560}
+        footer={
+          <Space style={{ justifyContent: 'flex-end', width: '100%', display: 'flex' }}>
+            {wonStep > 0 && (
+              <Button onClick={() => setWonStep(s => s - 1)}>Quay lại</Button>
+            )}
+            {wonStep < 2 ? (
+              <Button
+                type="primary"
+                style={{ background: '#10B981', borderColor: '#10B981' }}
+                onClick={async () => {
+                  // Validate các field của bước hiện tại trước khi chuyển
+                  try {
+                    if (wonStep === 0) await wonForm.validateFields(['projectName', 'projectId', 'projectType', 'pmId', 'startDate']);
+                    if (wonStep === 1) await wonForm.validateFields(['templateId']);
+                  } catch { return; }
+                  setWonStep(s => s + 1);
+                }}
+              >
+                Tiếp theo
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                loading={wonMutation.isPending}
+                style={{ background: '#10B981', borderColor: '#10B981' }}
+                onClick={handleWon}
+              >
+                Xác nhận Won
+              </Button>
+            )}
+          </Space>
+        }
       >
-        <Form form={wonForm} layout="vertical">
-          <Form.Item label="Project liên kết">
-            <Radio.Group
-              value={wonProjectMode}
-              onChange={(e) => {
-                setWonProjectMode(e.target.value);
-                wonForm.setFieldsValue({ projectName: undefined, projectId: undefined });
-              }}
-            >
-              <Radio value="new">Tạo project mới</Radio>
-              <Radio value="existing">Chọn project có sẵn</Radio>
-            </Radio.Group>
-          </Form.Item>
+        <Steps
+          current={wonStep}
+          size="small"
+          style={{ marginBottom: 24 }}
+          items={[
+            { title: 'Project Info', icon: <ProjectOutlined /> },
+            { title: 'Template Tasks', icon: <TaskListIcon /> },
+            { title: 'Portal Access', icon: <TeamOutlined /> },
+          ]}
+        />
 
-          {wonProjectMode === 'existing' ? (
-            <Form.Item name="projectId" label="Project có sẵn">
-              <ProjectSelect
-                allowClear
-                filterByCustomerId={actTarget?.customerId}
-                placeholder="Chọn project..."
-              />
-            </Form.Item>
-          ) : (
+        <Form form={wonForm} layout="vertical">
+          {/* Bước 1 — Project Info */}
+          {wonStep === 0 && (
             <>
-              <Form.Item name="projectName" label="Tên project mới (tuỳ chọn)">
-                <Input placeholder="Để trống nếu không tạo project" />
+              <Form.Item label="Project liên kết">
+                <Radio.Group
+                  value={wonProjectMode}
+                  onChange={(e) => {
+                    setWonProjectMode(e.target.value);
+                    wonForm.setFieldsValue({ projectName: undefined, projectId: undefined });
+                  }}
+                >
+                  <Radio value="new">Tạo project mới</Radio>
+                  <Radio value="existing">Chọn project có sẵn</Radio>
+                </Radio.Group>
               </Form.Item>
-              <Form.Item name="projectType" label="Loại project">
-                <Select allowClear options={[
-                  { value: 'WEB', label: 'Web' },
-                  { value: 'MOBILE', label: 'Mobile' },
-                  { value: 'AI', label: 'AI' },
-                  { value: 'OTHER', label: 'Khác' },
-                ]} />
+
+              {wonProjectMode === 'existing' ? (
+                <Form.Item name="projectId" label="Project có sẵn">
+                  <ProjectSelect
+                    allowClear
+                    filterByCustomerId={actTarget?.customerId}
+                    placeholder="Chọn project..."
+                  />
+                </Form.Item>
+              ) : (
+                <>
+                  <Form.Item name="projectName" label="Tên project mới (tuỳ chọn)">
+                    <Input placeholder="Để trống nếu không tạo project" />
+                  </Form.Item>
+                  <Form.Item name="projectType" label="Loại project">
+                    <Select allowClear options={[
+                      { value: 'WEB', label: 'Web' },
+                      { value: 'MOBILE', label: 'Mobile' },
+                      { value: 'AI', label: 'AI' },
+                      { value: 'OTHER', label: 'Khác' },
+                    ]} />
+                  </Form.Item>
+                </>
+              )}
+
+              <Form.Item name="pmId" label="Project Manager">
+                <Select
+                  showSearch
+                  optionFilterProp="label"
+                  placeholder="Chọn PM phụ trách..."
+                  options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
+                />
               </Form.Item>
+
+              <Form.Item name="startDate" label="Ngày bắt đầu">
+                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+              </Form.Item>
+            </>
+          )}
+
+          {/* Bước 2 — Template Tasks */}
+          {wonStep === 1 && (
+            <>
+              <Form.Item name="templateId" label="Template công việc">
+                <Select
+                  allowClear
+                  placeholder="Chọn template (tuỳ chọn)..."
+                  options={[
+                    { value: 'web-standard', label: 'Web Standard (15 tasks)' },
+                    { value: 'mobile-app',   label: 'Mobile App (12 tasks)' },
+                    { value: 'erp-impl',     label: 'ERP Implementation (20 tasks)' },
+                    { value: 'consulting',   label: 'Consulting (8 tasks)' },
+                  ]}
+                />
+              </Form.Item>
+              <div style={{ color: textMuted, fontSize: 13, marginTop: -8, marginBottom: 16 }}>
+                Template sẽ tự động tạo các task mẫu cho project mới. Để trống nếu muốn tạo task thủ công.
+              </div>
+            </>
+          )}
+
+          {/* Bước 3 — Portal Access */}
+          {wonStep === 2 && (
+            <>
+              <Form.Item
+                name="portalEmail"
+                label="Email truy cập Client Portal"
+                rules={[{ type: 'email', message: 'Email không hợp lệ' }]}
+              >
+                <Input placeholder="client@company.com" />
+              </Form.Item>
+              <div style={{ color: textMuted, fontSize: 13, marginTop: -8 }}>
+                Hệ thống sẽ gửi thư mời truy cập portal đến email này. Để trống nếu không cần cấp quyền ngay.
+              </div>
             </>
           )}
         </Form>

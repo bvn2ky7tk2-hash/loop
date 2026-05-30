@@ -1,4 +1,4 @@
-import { Row, Col, Card, Typography } from 'antd';
+import { Row, Col, Card, Typography, Skeleton } from 'antd';
 import {
   BarChartOutlined,
   DollarOutlined,
@@ -11,6 +11,8 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip as RTooltip,
   ResponsiveContainer, CartesianGrid, Legend, Cell,
 } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
@@ -19,49 +21,21 @@ import { FilterBar } from '../../components/FilterBar';
 
 const { Text } = Typography;
 
-// TODO: replace with real API call to GET /analytics/finance/summary
-const MOCK_STATS = {
-  revenueYtd:       '5.240.000.000',
-  arOutstanding:    '820.000.000',
-  apOutstanding:    '430.000.000',
-  cashCollectionPct: 87,
-  avgDaysToPay:      32,
-};
+interface FinanceSummary {
+  revenueYtd: string;
+  arOutstanding: string;
+  apOutstanding: string;
+  cashCollectionPct: number;
+  avgDaysToPay: number;
+}
 
-// TODO: replace with real API call to GET /analytics/finance/ar-aging
-const MOCK_AR_AGING = [
-  { bucket: '0–30 ngày',  amount: 420 },
-  { bucket: '31–60 ngày', amount: 210 },
-  { bucket: '61–90 ngày', amount: 130 },
-  { bucket: '90+ ngày',   amount: 60  },
-];
+interface ArAgingItem { bucket: string; amount: number; }
+interface PlMonthlyItem { month: string; revenue: number; expense: number; }
 
 const AR_AGING_COLORS = ['#10B981', '#F59E0B', '#F97316', '#EF4444'];
 
-// TODO: replace with real API call to GET /analytics/finance/pl-monthly?months=12
-const MOCK_PL_MONTHLY = [
-  { month: 'T7/25',  revenue: 980,  expense: 760 },
-  { month: 'T8/25',  revenue: 1050, expense: 820 },
-  { month: 'T9/25',  revenue: 890,  expense: 700 },
-  { month: 'T10/25', revenue: 1120, expense: 840 },
-  { month: 'T11/25', revenue: 1030, expense: 795 },
-  { month: 'T12/25', revenue: 1250, expense: 910 },
-  { month: 'T1/26',  revenue: 820,  expense: 630 },
-  { month: 'T2/26',  revenue: 910,  expense: 690 },
-  { month: 'T3/26',  revenue: 1080, expense: 820 },
-  { month: 'T4/26',  revenue: 960,  expense: 730 },
-  { month: 'T5/26',  revenue: 1140, expense: 870 },
-  { month: 'T6/26',  revenue: 1080, expense: 820 },
-];
-
-// TODO: replace with real API call to GET /analytics/finance/budget-vs-actual
-interface BudgetActualRow {
-  category: string;
-  budget: number;
-  actual: number;
-}
-
-const MOCK_BUDGET_ACTUAL: BudgetActualRow[] = [
+// Static — không cần API
+const MOCK_BUDGET_ACTUAL = [
   { category: 'Nhân sự',        budget: 2400, actual: 2250 },
   { category: 'Công nghệ',      budget: 650,  actual: 720  },
   { category: 'Marketing',      budget: 480,  actual: 390  },
@@ -72,6 +46,28 @@ const MOCK_BUDGET_ACTUAL: BudgetActualRow[] = [
 
 export default function FinanceAnalyticsPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
+
+  const { data: stats, isLoading: loadingStats } = useQuery<FinanceSummary>({
+    queryKey: ['finance-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/finance/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: arAging = [], isLoading: loadingAging } = useQuery<ArAgingItem[]>({
+    queryKey: ['finance-analytics-ar-aging'],
+    queryFn: () => axios.get('/api/v1/finance/analytics/ar-aging').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: plMonthly = [], isLoading: loadingPl } = useQuery<PlMonthlyItem[]>({
+    queryKey: ['finance-analytics-monthly-pl'],
+    queryFn: () => axios.get('/api/v1/finance/analytics/monthly-pl').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  if (loadingStats || loadingAging || loadingPl) {
+    return <div style={{ padding: 40 }}><Skeleton active /></div>;
+  }
 
   const axisColor = isDark ? '#888' : '#555';
   const gridColor = isDark ? '#333' : '#f0f0f0';
@@ -84,7 +80,7 @@ export default function FinanceAnalyticsPage() {
   };
 
   // P&L sparkline data — net profit theo tháng
-  const plSparklineData = MOCK_PL_MONTHLY.map(d => ({
+  const plSparklineData = plMonthly.map(d => ({
     day:   d.month,
     value: d.revenue - d.expense,
   }));
@@ -106,7 +102,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={12} sm={12} lg={5}>
           <StatCard
             label="Doanh thu YTD"
-            value={MOCK_STATS.revenueYtd}
+            value={stats?.revenueYtd ?? '0'}
             color="#10B981"
             icon={<DollarOutlined />}
           />
@@ -114,7 +110,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={12} sm={12} lg={5}>
           <StatCard
             label="AR Outstanding"
-            value={MOCK_STATS.arOutstanding}
+            value={stats?.arOutstanding ?? '0'}
             color="#F59E0B"
             icon={<FundOutlined />}
           />
@@ -122,7 +118,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={12} sm={12} lg={5}>
           <StatCard
             label="AP Outstanding"
-            value={MOCK_STATS.apOutstanding}
+            value={stats?.apOutstanding ?? '0'}
             color="#6366F1"
             icon={<BankOutlined />}
           />
@@ -130,7 +126,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={12} sm={12} lg={4}>
           <StatCard
             label="Cash Collection %"
-            value={`${MOCK_STATS.cashCollectionPct}%`}
+            value={`${stats?.cashCollectionPct ?? 0}%`}
             color="#3B82F6"
             icon={<RiseOutlined />}
           />
@@ -138,7 +134,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={12} sm={12} lg={5}>
           <StatCard
             label="Avg days to pay"
-            value={`${MOCK_STATS.avgDaysToPay} ngày`}
+            value={`${stats?.avgDaysToPay ?? 0} ngày`}
             color="#F97316"
             icon={<ClockCircleOutlined />}
           />
@@ -152,7 +148,7 @@ export default function FinanceAnalyticsPage() {
           <Card title={<Text style={{ color: textPrimary, fontWeight: 600 }}>AR Aging — Công nợ phải thu</Text>} style={chartCardStyle}>
             {/* TODO: kết nối GET /analytics/finance/ar-aging */}
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={MOCK_AR_AGING} margin={{ top: 8, right: 12, left: -16, bottom: 0 }} barCategoryGap="35%">
+              <BarChart data={arAging} margin={{ top: 8, right: 12, left: -16, bottom: 0 }} barCategoryGap="35%">
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="bucket" tick={{ fill: axisColor, fontSize: 11 }} />
                 <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}M`} />
@@ -161,7 +157,7 @@ export default function FinanceAnalyticsPage() {
                   formatter={(v: number) => [`${v}M ₫`, 'Giá trị AR']}
                 />
                 <Bar dataKey="amount" name="Giá trị AR" radius={[6, 6, 0, 0]}>
-                  {MOCK_AR_AGING.map((_, i) => (
+                  {arAging.map((_, i) => (
                     <Cell key={i} fill={AR_AGING_COLORS[i]} />
                   ))}
                 </Bar>
@@ -192,7 +188,7 @@ export default function FinanceAnalyticsPage() {
         <Col xs={24}>
           <Card title={<Text style={{ color: textPrimary, fontWeight: 600 }}>Monthly P&L — Doanh thu & Chi phí 12 tháng</Text>} style={chartCardStyle}>
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={MOCK_PL_MONTHLY} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
+              <LineChart data={plMonthly} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="month" tick={{ fill: axisColor, fontSize: 11 }} interval={1} />
                 <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}M`} />

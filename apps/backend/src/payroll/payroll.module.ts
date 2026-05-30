@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PayrollService } from './payroll.service';
 import { PayrollController } from './payroll.controller';
 import { PayrollConfigService } from './payroll-config.service';
@@ -12,13 +13,14 @@ import { TaxReportService } from './tax-report.service';
 import { TaxReportController } from './tax-report.controller';
 import { PayrollAnalyticsService } from './payroll-analytics.service';
 import { PayrollAnalyticsController } from './payroll-analytics.controller';
+import { PayrollYearendTask } from './payroll-yearend.task';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AccountingModule } from '../accounting/accounting.module';
 import { StorageModule } from '../storage/storage.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [PrismaModule, AccountingModule, StorageModule, NotificationsModule],
+  imports: [ScheduleModule.forRoot(), PrismaModule, AccountingModule, StorageModule, NotificationsModule],
   controllers: [
     PayrollController,
     PayrollConfigController,
@@ -35,6 +37,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     PayslipQueueService,
     TaxReportService,
     PayrollAnalyticsService,
+    PayrollYearendTask,
   ],
   exports: [
     PayrollService,

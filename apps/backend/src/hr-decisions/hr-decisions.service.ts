@@ -236,6 +236,54 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
     });
   }
 
+  /**
+   * Khởi động BPM process 'employee-offboarding-v1' khi quyết định nghỉ việc được duyệt.
+   * Query ProcessDefinition để lấy definitionId, tạo ProcessInstance với biến
+   * employeeId và terminationDate, đồng thời cập nhật terminationDate trên employee.
+   */
+  private async triggerOffboardingProcess(
+    decision: {
+      id: string;
+      employeeId: string;
+      effectiveDate: Date;
+      employee: { id: string; directManagerId: string | null };
+    },
+  ): Promise<void> {
+    const definition = await this.prisma.processDefinition.findFirst({
+      where: { key: 'employee-offboarding-v1' },
+      select: { id: true, status: true },
+    });
+
+    if (!definition || definition.status !== DefinitionStatus.ACTIVE) return;
+
+    // Lấy thông tin employee + manager để đưa vào biến process
+    const employee = await this.prisma.employee.findUnique({
+      where: { id: decision.employeeId },
+      select: { id: true, directManagerId: true },
+    });
+
+    await this.prisma.processInstance.create({
+      data: {
+        definitionId: definition.id,
+        startedBy: decision.employeeId,
+        status: 'RUNNING' as any,
+        variables: {
+          employeeId: decision.employeeId,
+          managerId: employee?.directManagerId ?? null,
+          terminationDate: (decision.effectiveDate as Date).toISOString(),
+          hrDecisionId: decision.id,
+        } as any,
+        tokenState: {} as any,
+      },
+    });
+
+    // Cập nhật endDate (terminationDate) trên employee
+    await this.prisma.employee.update({
+      where: { id: decision.employeeId },
+      data: { endDate: decision.effectiveDate },
+    });
+  }
+
   async submit(id: string, userId: string, userRole: Role) {
     const decision = await this.prisma.hrDecision.findUnique({ where: { id } });
     if (!decision) throw new NotFoundException('Không tìm thấy quyết định nhân sự');
@@ -298,9 +346,9 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       throw new BadRequestException('Chỉ có thể duyệt quyết định ở trạng thái PENDING');
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const approved = await this.prisma.$transaction(async (tx) => {
       // Duyệt quyết định
-      const approved = await tx.hrDecision.update({
+      const result = await tx.hrDecision.update({
         where: { id },
         data: { status: HrDecisionStatus.APPROVED },
       });
@@ -308,8 +356,15 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       // Áp dụng hiệu lực
       await this.applyDecisionEffect(tx, decision);
 
-      return approved;
+      return result;
     });
+
+    // E18.3 — Khi duyệt quyết định TERMINATION: tự động start BPM offboarding
+    if (decision.type === HrDecisionType.TERMINATION) {
+      await this.triggerOffboardingProcess(decision);
+    }
+
+    return approved;
   }
 
   async reject(id: string, reason: string) {

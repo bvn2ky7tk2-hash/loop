@@ -21,7 +21,7 @@ const BAND_TEMPLATES = [
 async function main() {
   // Lấy tối đa 3 position đầu tiên chưa có band
   const positions = await prisma.position.findMany({
-    where: { salaryBand: null },
+    where: { salaryBands: { none: {} } },
     take: 3,
     orderBy: { createdAt: 'asc' },
     select: { id: true, code: true },
@@ -37,18 +37,19 @@ async function main() {
     const pos = positions[i];
     const template = BAND_TEMPLATES[i] ?? BAND_TEMPLATES[BAND_TEMPLATES.length - 1];
 
-    await prisma.salaryBand.upsert({
-      where: { positionId: pos.id },
-      create: {
-        positionId:  pos.id,
-        minSalary:   template.min,
-        midSalary:   template.mid,
-        maxSalary:   template.max,
-        currency:    'VND',
-        note:        `Thang lương tham chiếu ${template.label} — seeded demo`,
-      },
-      update: {},
-    });
+    const existing = await prisma.salaryBand.findFirst({ where: { positionId: pos.id } });
+    if (!existing) {
+      await prisma.salaryBand.create({
+        data: {
+          positionId:    pos.id,
+          minSalary:     template.min,
+          midSalary:     template.mid,
+          maxSalary:     template.max,
+          currency:      'VND',
+          effectiveFrom: new Date(),
+        },
+      });
+    }
     console.log(`  SalaryBand ${template.label}: ${pos.code} → min=${template.min.toLocaleString('vi-VN')}đ, mid=${template.mid.toLocaleString('vi-VN')}đ, max=${template.max.toLocaleString('vi-VN')}đ`);
     created++;
   }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Row, Col, Table, Typography, Tag, Avatar, Space } from 'antd';
+import { Row, Col, Table, Typography, Tag, Avatar, Space, Skeleton } from 'antd';
 import {
   FunnelPlotOutlined,
   TrophyOutlined,
@@ -13,38 +13,24 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 
 const { Text } = Typography;
 
-// TODO: fetch /crm/analytics/summary
-const MOCK_TOTAL_DEALS = 142;
-const MOCK_WIN_RATE = 34;
-const MOCK_AVG_DEAL_SIZE = '85M';
-const MOCK_PIPELINE_VALUE = '12.1B';
-
-const MOCK_SPARKLINE_DEALS = [
-  { day: 'T2', value: 18 }, { day: 'T3', value: 22 }, { day: 'T4', value: 19 },
-  { day: 'T5', value: 26 }, { day: 'T6', value: 24 }, { day: 'T7', value: 28 },
-  { day: 'CN', value: 5 },
-];
-const MOCK_SPARKLINE_WINRATE = [
-  { day: 'T1', value: 28 }, { day: 'T2', value: 31 }, { day: 'T3', value: 30 },
-  { day: 'T4', value: 34 }, { day: 'T5', value: 33 }, { day: 'T6', value: 36 },
-  { day: 'T7', value: 34 },
-];
-const MOCK_SPARKLINE_AVG = [
-  { day: 'T1', value: 70 }, { day: 'T2', value: 80 }, { day: 'T3', value: 75 },
-  { day: 'T4', value: 90 }, { day: 'T5', value: 85 }, { day: 'T6', value: 92 },
-  { day: 'T7', value: 85 },
-];
-const MOCK_SPARKLINE_PIPELINE = [
-  { day: 'T1', value: 9 }, { day: 'T2', value: 10 }, { day: 'T3', value: 9 },
-  { day: 'T4', value: 11 }, { day: 'T5', value: 12 }, { day: 'T6', value: 12 },
-  { day: 'T7', value: 12 },
-];
+interface CrmSummary {
+  totalDeals: number;
+  winRate: number;
+  avgDealSize: string;
+  pipelineValue: string;
+  sparklineDeals?: { day: string; value: number }[];
+  sparklineWinRate?: { day: string; value: number }[];
+  sparklineAvg?: { day: string; value: number }[];
+  sparklinePipeline?: { day: string; value: number }[];
+}
 
 // TODO: fetch /crm/analytics/funnel
 const MOCK_FUNNEL = [
@@ -101,6 +87,25 @@ const ACTIVITY_LABEL: Record<string, string> = {
 export default function CrmAnalyticsPage() {
   const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
   const [_selectedStage, setSelectedStage] = useState<string | null>(null);
+
+  const { data: crmSummary, isLoading: loadingSummary } = useQuery<CrmSummary>({
+    queryKey: ['crm-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/crm/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  if (loadingSummary) {
+    return <div style={{ padding: 40 }}><Skeleton active /></div>;
+  }
+
+  const totalDeals = crmSummary?.totalDeals ?? 0;
+  const winRate = crmSummary?.winRate ?? 0;
+  const avgDealSize = crmSummary?.avgDealSize ?? '0';
+  const pipelineValue = crmSummary?.pipelineValue ?? '0';
+  const sparklineDeals = crmSummary?.sparklineDeals ?? [];
+  const sparklineWinRate = crmSummary?.sparklineWinRate ?? [];
+  const sparklineAvg = crmSummary?.sparklineAvg ?? [];
+  const sparklinePipeline = crmSummary?.sparklinePipeline ?? [];
 
   const cardStyle = {
     background: bgContainer,
@@ -223,9 +228,9 @@ export default function CrmAnalyticsPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Tổng Deals"
-            value={MOCK_TOTAL_DEALS}
+            value={totalDeals}
             delta={8}
-            data={MOCK_SPARKLINE_DEALS}
+            data={sparklineDeals}
             variant="bar"
             color="#6366F1"
             icon={<FunnelPlotOutlined />}
@@ -235,9 +240,9 @@ export default function CrmAnalyticsPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Win Rate"
-            value={`${MOCK_WIN_RATE}%`}
+            value={`${winRate}%`}
             delta={3}
-            data={MOCK_SPARKLINE_WINRATE}
+            data={sparklineWinRate}
             variant="line"
             color="#10B981"
             icon={<TrophyOutlined />}
@@ -247,10 +252,10 @@ export default function CrmAnalyticsPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Avg Deal Size"
-            value={MOCK_AVG_DEAL_SIZE}
+            value={avgDealSize}
             unit="VNĐ"
             delta={5}
-            data={MOCK_SPARKLINE_AVG}
+            data={sparklineAvg}
             variant="bar"
             color="#3B82F6"
             icon={<DollarOutlined />}
@@ -260,10 +265,10 @@ export default function CrmAnalyticsPage() {
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
             label="Pipeline Value"
-            value={MOCK_PIPELINE_VALUE}
+            value={pipelineValue}
             unit="VNĐ"
             delta={12}
-            data={MOCK_SPARKLINE_PIPELINE}
+            data={sparklinePipeline}
             variant="line"
             color="#F97316"
             icon={<RiseOutlined />}

@@ -134,11 +134,17 @@ export class ClientContractsService {
       },
     });
 
-    // E20.2: Khi milestone → PAID (invoiced+paid), tự động tạo Invoice DRAFT
-    // MilestoneStatus: PENDING → INVOICED → PAID (không có COMPLETED)
-    if (dto.status === 'INVOICED' && milestone.status !== 'INVOICED' && !milestone.invoiceId) {
+    // E20.2: Khi milestone → COMPLETED, tự động tạo Invoice DRAFT
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((dto.status as any) === 'COMPLETED' && (milestone.status as any) !== 'COMPLETED' && !milestone.invoiceId) {
       try {
-        await this.autoCreateMilestoneInvoice(contractId, milestoneId, milestone.name, Number(milestone.amount));
+        await this.autoCreateMilestoneInvoice(
+          contractId,
+          milestoneId,
+          milestone.name,
+          Number(milestone.amount),
+          milestone.dueDate,
+        );
       } catch (err) {
         // Ghi log nhưng không fail request chính
         this.logger.error(`Auto-draft invoice for milestone ${milestoneId} failed: ${err}`);
@@ -153,18 +159,20 @@ export class ClientContractsService {
     milestoneId: string,
     milestoneName: string,
     amount: number,
+    milestoneDate: Date,
   ) {
-    const contract = await this.prisma.clientContract.findUnique({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const contract = await (this.prisma.clientContract as any).findUnique({
       where: { id: contractId },
-      select: { customerId: true },
-    });
+      select: { customerId: true, paymentTermsDays: true },
+    }) as { customerId: string; paymentTermsDays: number | null } | null;
     if (!contract) return;
 
     const code = await generateInvoiceCode(this.prisma);
-    const today = new Date();
-    // Mặc định 30 ngày — ClientContract chưa có paymentTermsDays
-    const dueDate = new Date(today);
-    dueDate.setDate(dueDate.getDate() + 30);
+    const issueDate = new Date();
+    // dueDate = milestone.dueDate + paymentTermsDays (mặc định 30)
+    const paymentDays = contract.paymentTermsDays ?? 30;
+    const dueDate = new Date(milestoneDate.getTime() + paymentDays * 86_400_000);
 
     // Tìm admin để gán createdById
     const adminUser = await this.prisma.user.findFirst({
@@ -176,9 +184,9 @@ export class ClientContractsService {
     const invoice = await this.prisma.invoice.create({
       data: {
         code,
-        type:        'SALES', // InvoiceType: SALES | PURCHASE (không có MILESTONE)
+        type:        'SALES',
         customerId:  contract.customerId,
-        issueDate:   today,
+        issueDate,
         dueDate,
         currency:    'VND',
         notes:       `Tự động tạo từ milestone: ${milestoneName}`,

@@ -8,6 +8,7 @@ import { NotificationsService } from '../../notifications/notifications.service'
 import { NotificationType } from '../../generated/prisma';
 import { ProcessEventBus } from '../process-event-bus.service';
 import type { AssigneeConfigDto, StepConfigItemDto, NotificationTriggerDto } from '../definitions/dto/create-definition.dto';
+import { DelegationService } from '../../delegation/delegation.service';
 
 export interface WaitEventApi {
   id: string;
@@ -49,6 +50,7 @@ export class BpmnEngineService {
     private readonly prisma: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly eventBus: ProcessEventBus,
+    private readonly delegationService: DelegationService,
   ) {}
 
   /**
@@ -348,6 +350,51 @@ export class BpmnEngineService {
         status: UserTaskStatus.PENDING,
       },
     });
+
+    // Delegation middleware: nếu assignee đang ủy quyền, tạo task bản sao cho delegate
+    if (assigneeId && instance) {
+      try {
+        const moduleType = (instance.definition as any).moduleType ?? 'GENERAL';
+        const delegation = await this.delegationService.findActiveDelegation(assigneeId, moduleType);
+        if (delegation) {
+          const delegator = await this.prisma.user.findUnique({
+            where: { id: assigneeId },
+            select: { name: true },
+          });
+          const delegatorName = delegator?.name ?? assigneeId;
+          await this.prisma.processUserTask.create({
+            data: {
+              instanceId,
+              activityId: `${activityId}_delegated`,
+              name,
+              assigneeId: delegation.delegateId,
+              formData: formData as never,
+              dueDate,
+              status: UserTaskStatus.PENDING,
+              // Lưu ghi chú ủy quyền trong formData nếu không có field riêng
+            },
+          });
+          this.logger.log(
+            `Delegation: task "${name}" (${task.id}) sao chép cho delegate ${delegation.delegateId} từ ${assigneeId}`,
+          );
+          // Thông báo cho delegate
+          try {
+            await this.notificationsService.createAndDeliver(
+              delegation.delegateId,
+              NotificationType.PROCESS_TASK_ASSIGNED,
+              'Bạn có task được ủy quyền',
+              `Task "${name}" được ủy quyền từ ${delegatorName}`,
+              { processUserTaskId: task.id, instanceId, delegatedFrom: assigneeId },
+            );
+          } catch (err) {
+            this.logger.warn(`Không thể gửi notification delegation cho ${delegation.delegateId}`, err);
+          }
+        }
+      } catch (err) {
+        // Delegation không block task chính — chỉ log warning
+        this.logger.warn(`Delegation check thất bại cho task ${task.id}`, err);
+      }
+    }
 
     await this.prisma.processActivityLog.create({
       data: {

@@ -1,4 +1,4 @@
-import { Row, Col, Card, Table, Tag, Typography, Select } from 'antd';
+import { Row, Col, Card, Table, Tag, Typography, Select, Skeleton } from 'antd';
 import { TeamOutlined, UserAddOutlined, UserDeleteOutlined, FileExclamationOutlined, SearchOutlined, DollarOutlined } from '@ant-design/icons';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip,
@@ -7,43 +7,27 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from 'react';
 import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { FilterBar } from '../../components/FilterBar';
-import { formatCurrency } from '../../utils/format';
 
 const { Text } = Typography;
 
-// TODO: GET /reports/hr/analytics/summary
-const MOCK_SUMMARY = {
-  headcount: 248,
-  newHiresThisMonth: 7,
-  attritionYtd: 14,
-  contractsExpiring60d: 11,
-  openPositions: 5,
-  salaryPerHead: 22_500_000,
-};
+interface HrSummary {
+  headcount: number;
+  newHiresThisMonth: number;
+  attritionYtd: number;
+  contractsExpiring60d: number;
+  openPositions: number;
+  salaryPerHead: number;
+}
 
-// TODO: GET /reports/hr/headcount-trend?months=12
-const HEADCOUNT_TREND = Array.from({ length: 12 }, (_, i) => {
-  const month = dayjs().subtract(11 - i, 'month');
-  return {
-    day: month.format('T[M]M'),
-    value: 220 + Math.round(Math.sin(i / 2) * 8) + i * 2,
-  };
-});
-
-// TODO: GET /reports/hr/attrition-by-department
-const ATTRITION_BY_DEPT = [
-  { dept: 'Engineering', resigned: 4 },
-  { dept: 'Sales',       resigned: 3 },
-  { dept: 'HR',          resigned: 2 },
-  { dept: 'Finance',     resigned: 2 },
-  { dept: 'Marketing',   resigned: 1 },
-  { dept: 'Operations',  resigned: 2 },
-];
+interface HeadcountTrendItem { day: string; value: number; }
+interface AttritionDeptItem { dept: string; resigned: number; }
 
 // TODO: GET /reports/hr/contract-expiry?days=60
 interface ContractExpiry {
@@ -79,6 +63,28 @@ export default function HrAnalyticsPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const [deptFilter, setDeptFilter] = useState<string>('all');
 
+  const { data: summary, isLoading: loadingSummary } = useQuery<HrSummary>({
+    queryKey: ['hr-analytics-summary'],
+    queryFn: () => axios.get('/api/v1/hr/analytics/summary').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: headcountTrend = [], isLoading: loadingTrend } = useQuery<HeadcountTrendItem[]>({
+    queryKey: ['hr-headcount-trend'],
+    queryFn: () => axios.get('/api/v1/hr/analytics/headcount-trend').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  const { data: attritionByDept = [], isLoading: loadingAttrition } = useQuery<AttritionDeptItem[]>({
+    queryKey: ['hr-attrition-by-dept'],
+    queryFn: () => axios.get('/api/v1/hr/analytics/attrition-by-dept').then(r => r.data),
+    staleTime: 300000,
+  });
+
+  if (loadingSummary || loadingTrend || loadingAttrition) {
+    return <div style={{ padding: 40 }}><Skeleton active /></div>;
+  }
+
   const axisColor   = isDark ? '#888' : '#555';
   const gridColor   = isDark ? '#334155' : '#f0f0f0';
   const tooltipBg     = bgContainer;
@@ -91,8 +97,8 @@ export default function HrAnalyticsPage() {
   };
 
   const filteredAttrition = deptFilter === 'all'
-    ? ATTRITION_BY_DEPT
-    : ATTRITION_BY_DEPT.filter(d => d.dept === deptFilter);
+    ? attritionByDept
+    : attritionByDept.filter(d => d.dept === deptFilter);
 
   const contractColumns: ColumnsType<ContractExpiry> = [
     {
@@ -154,7 +160,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Headcount"
-            value={MOCK_SUMMARY.headcount}
+            value={summary?.headcount ?? 0}
             color="#6366F1"
             icon={<TeamOutlined />}
           />
@@ -162,7 +168,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Mới tháng này"
-            value={MOCK_SUMMARY.newHiresThisMonth}
+            value={summary?.newHiresThisMonth ?? 0}
             color="#10B981"
             icon={<UserAddOutlined />}
             subValue="nhân viên mới"
@@ -171,7 +177,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Nghỉ việc YTD"
-            value={MOCK_SUMMARY.attritionYtd}
+            value={summary?.attritionYtd ?? 0}
             color="#EF4444"
             icon={<UserDeleteOutlined />}
             subValue="từ đầu năm"
@@ -180,7 +186,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="HĐ hết hạn 60 ngày"
-            value={MOCK_SUMMARY.contractsExpiring60d}
+            value={summary?.contractsExpiring60d ?? 0}
             color="#F59E0B"
             icon={<FileExclamationOutlined />}
             subValue="cần gia hạn"
@@ -189,7 +195,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Đang tuyển"
-            value={MOCK_SUMMARY.openPositions}
+            value={summary?.openPositions ?? 0}
             color="#3B82F6"
             icon={<SearchOutlined />}
             subValue="vị trí mở"
@@ -198,7 +204,7 @@ export default function HrAnalyticsPage() {
         <Col xs={12} sm={8} lg={4}>
           <StatCard
             label="Chi phí lương/người"
-            value={`${Math.round(MOCK_SUMMARY.salaryPerHead / 1_000_000)}M`}
+            value={`${Math.round((summary?.salaryPerHead ?? 0) / 1_000_000)}M`}
             color="#F97316"
             icon={<DollarOutlined />}
             subValue="trung bình/tháng"
@@ -211,10 +217,10 @@ export default function HrAnalyticsPage() {
         <Col xs={24} lg={8}>
           <SparklineCard
             label="Headcount Trend"
-            value={MOCK_SUMMARY.headcount}
+            value={summary?.headcount ?? 0}
             unit="nhân sự"
             delta={3}
-            data={HEADCOUNT_TREND}
+            data={headcountTrend}
             variant="line"
             color="#8B5CF6"
             icon={<TeamOutlined />}

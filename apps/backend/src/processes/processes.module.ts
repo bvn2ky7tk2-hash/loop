@@ -6,6 +6,7 @@ import { BpmnEngineService } from './engine/bpmn-engine.service';
 import { TimerEventService } from './timers/timer-event.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { ProcessEventBus } from './process-event-bus.service';
+import { DelegationModule } from '../delegation/delegation.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ProcessEventBus } from './process-event-bus.service';
     ProcessDefinitionsModule,
     ProcessInstancesModule,
     ProcessUserTasksModule,
+    DelegationModule,
   ],
   providers: [BpmnEngineService, TimerEventService, ProcessEventBus],
   exports: [
