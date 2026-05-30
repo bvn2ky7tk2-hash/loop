@@ -134,7 +134,8 @@ export class ClientContractsService {
       },
     });
 
-    // E20.2: Khi milestone → INVOICED, tự động tạo Invoice DRAFT
+    // E20.2: Khi milestone → PAID (invoiced+paid), tự động tạo Invoice DRAFT
+    // MilestoneStatus: PENDING → INVOICED → PAID (không có COMPLETED)
     if (dto.status === 'INVOICED' && milestone.status !== 'INVOICED' && !milestone.invoiceId) {
       try {
         await this.autoCreateMilestoneInvoice(contractId, milestoneId, milestone.name, Number(milestone.amount));
@@ -175,7 +176,7 @@ export class ClientContractsService {
     const invoice = await this.prisma.invoice.create({
       data: {
         code,
-        type:        'SALES',
+        type:        'SALES', // InvoiceType: SALES | PURCHASE (không có MILESTONE)
         customerId:  contract.customerId,
         issueDate:   today,
         dueDate,

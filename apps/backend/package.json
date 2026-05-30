@@ -27,6 +27,7 @@
     "seed:client-contracts": "node prisma/seed-client-contracts.js",
     "seed:crm-activities": "node prisma/seed-crm-activities.js",
     "seed:skills": "node prisma/seed-skills.js",
+    "seed:salary-bands": "npx tsx prisma/seed-salary-bands.ts",
     "seed:payroll": "npx tsx prisma/seed-payroll.ts",
     "seed:payroll-demo": "npx tsx prisma/seed-payroll-demo.ts",
     "seed:okr": "node prisma/seed-okr.js",

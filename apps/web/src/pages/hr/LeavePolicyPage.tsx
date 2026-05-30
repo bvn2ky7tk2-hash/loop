@@ -240,6 +240,7 @@ export default function LeavePolicyPage() {
           <Button
             type="primary"
             loading={assignMutation.isPending}
+            disabled={assignMutation.isPending}
             onClick={handleAssign}
           >
             Gán chính sách

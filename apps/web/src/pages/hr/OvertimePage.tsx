@@ -324,6 +324,7 @@ export default function OvertimePage() {
                   icon={<CheckOutlined />}
                   onClick={() => approveMut.mutate(row.id)}
                   loading={approveMut.isPending}
+                  disabled={approveMut.isPending}
                 />
               </Tooltip>
               <Tooltip title="Từ chối">
@@ -346,6 +347,7 @@ export default function OvertimePage() {
                 icon={<StopOutlined />}
                 onClick={() => cancelMut.mutate(row.id)}
                 loading={cancelMut.isPending}
+                disabled={cancelMut.isPending}
               />
             </Tooltip>
           )}
@@ -472,7 +474,7 @@ export default function OvertimePage() {
         footer={
           <Space>
             <Button onClick={() => { setAddOpen(false); addForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" loading={createMut.isPending} onClick={() => addForm.submit()}>
+            <Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={() => addForm.submit()}>
               Tạo đăng ký
             </Button>
           </Space>
@@ -522,7 +524,7 @@ export default function OvertimePage() {
         footer={
           <Space>
             <Button onClick={() => { setRejectOpen(false); rejectForm.resetFields(); setSelectedId(null); }}>Hủy</Button>
-            <Button type="primary" danger loading={rejectMut.isPending} onClick={() => rejectForm.submit()}>
+            <Button type="primary" danger loading={rejectMut.isPending} disabled={rejectMut.isPending} onClick={() => rejectForm.submit()}>
               Xác nhận từ chối
             </Button>
           </Space>

@@ -390,6 +390,7 @@ export default function HrDecisionsPage() {
                 icon={<SendOutlined />}
                 onClick={() => submitMutation.mutate(record.id)}
                 loading={submitMutation.isPending}
+                disabled={submitMutation.isPending}
               />
             </Tooltip>
           )}
@@ -402,6 +403,7 @@ export default function HrDecisionsPage() {
                   icon={<CheckOutlined />}
                   onClick={() => approveMutation.mutate(record.id)}
                   loading={approveMutation.isPending}
+                  disabled={approveMutation.isPending}
                 />
               </Tooltip>
               <Tooltip title="Từ chối">
@@ -705,6 +707,7 @@ export default function HrDecisionsPage() {
             <Button
               danger
               loading={rejectMutation.isPending}
+              disabled={rejectMutation.isPending}
               onClick={handleRejectConfirm}
             >
               Xác nhận từ chối

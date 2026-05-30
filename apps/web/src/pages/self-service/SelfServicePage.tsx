@@ -325,6 +325,7 @@ export default function SelfServicePage() {
               danger
               icon={<StopOutlined />}
               loading={cancelOtMutation.isPending}
+              disabled={cancelOtMutation.isPending}
             >
               Hủy
             </Button>

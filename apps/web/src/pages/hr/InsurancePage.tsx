@@ -413,6 +413,7 @@ export default function InsurancePage() {
               })
             }
             loading={bookReceivedMutation.isPending}
+            disabled={bookReceivedMutation.isPending}
           >
             Xác nhận đã trả
           </Button>
@@ -675,7 +676,7 @@ export default function InsurancePage() {
         footer={
           <Space>
             <Button onClick={() => { setEnrollOpen(false); enrollForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleEnrollSubmit} loading={enrollMutation.isPending}>
+            <Button type="primary" onClick={handleEnrollSubmit} loading={enrollMutation.isPending} disabled={enrollMutation.isPending}>
               Đăng ký
             </Button>
           </Space>
@@ -748,7 +749,7 @@ export default function InsurancePage() {
             >
               Hủy
             </Button>
-            <Button type="primary" onClick={handleEventSubmit} loading={eventMutation.isPending}>
+            <Button type="primary" onClick={handleEventSubmit} loading={eventMutation.isPending} disabled={eventMutation.isPending}>
               Tạo sự kiện
             </Button>
           </Space>
@@ -815,6 +816,7 @@ export default function InsurancePage() {
             <Button
               type="primary"
               loading={editEnrollMutation.isPending}
+              disabled={editEnrollMutation.isPending}
               onClick={() => {
                 editEnrollForm.validateFields().then((vals) => {
                   if (!editEnrollRecord) return;
@@ -858,6 +860,7 @@ export default function InsurancePage() {
             <Button
               type="primary"
               loading={upsertBookMutation.isPending}
+              disabled={upsertBookMutation.isPending}
               onClick={() => {
                 bookForm.validateFields().then((vals) => {
                   if (!bookEnrollment) return;

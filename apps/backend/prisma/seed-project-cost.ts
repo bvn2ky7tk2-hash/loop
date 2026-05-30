@@ -110,20 +110,27 @@ async function main() {
           ? Number(emp.contracts[0].salaryMonthly)
           : 15_000_000;
         const ratePerHour = salary / (WORK_DAYS_PER_MONTH * HOURS_PER_DAY);
-        const hours = Math.round(60 * growthFactor); // 36–55 giờ
-        const cost = Math.round(hours * ratePerHour);
+        const totalHours = Math.round(60 * growthFactor); // 36–55 giờ
+        const laborCost = Math.round(totalHours * ratePerHour);
 
-        const existingBreakdown = await prisma.projectCostByEmployee.findFirst({
+        const existingCostByEmp = await prisma.projectCostByEmployee.findFirst({
           where: { snapshotId: snapshot.id, employeeId: emp.id },
+          select: { id: true },
         });
-        if (existingBreakdown) {
+        if (existingCostByEmp) {
           await prisma.projectCostByEmployee.update({
-            where: { id: existingBreakdown.id },
-            data: { hours, ratePerHour, cost },
+            where: { id: existingCostByEmp.id },
+            data: { hours: totalHours, ratePerHour, cost: laborCost },
           });
         } else {
           await prisma.projectCostByEmployee.create({
-            data: { snapshotId: snapshot.id, employeeId: emp.id, hours, ratePerHour, cost },
+            data: {
+              snapshotId: snapshot.id,
+              employeeId: emp.id,
+              hours: totalHours,
+              ratePerHour,
+              cost: laborCost,
+            },
           });
         }
       }

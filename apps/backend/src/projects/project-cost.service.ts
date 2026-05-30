@@ -84,7 +84,7 @@ export class ProjectCostService {
     // Tổng hợp giờ + cost theo employeeId
     const employeeMap = new Map<
       string,
-      { hours: number; ratePerHour: number; cost: number }
+      { totalHours: number; ratePerHour: number; laborCost: number }
     >();
 
     for (const log of timeLogs) {
@@ -103,19 +103,19 @@ export class ProjectCostService {
 
       const existing = employeeMap.get(empId);
       if (existing) {
-        existing.hours += hours;
-        existing.cost += cost;
+        existing.totalHours += hours;
+        existing.laborCost += cost;
       } else {
         employeeMap.set(empId, {
-          hours,
+          totalHours: hours,
           ratePerHour,
-          cost,
+          laborCost: cost,
         });
       }
     }
 
     const totalLaborCost = Array.from(employeeMap.values()).reduce(
-      (sum, e) => sum + e.cost,
+      (sum, e) => sum + e.laborCost,
       0,
     );
 
@@ -160,16 +160,18 @@ export class ProjectCostService {
 
     // ── 5. Upsert ProjectCostByEmployee ───────────────────────────────────────
     for (const [employeeId, data] of employeeMap.entries()) {
-      const existingBreakdown = await this.prisma.projectCostByEmployee.findFirst({
+      // Không có composite unique trong schema → dùng findFirst + update/create
+      const existing = await this.prisma.projectCostByEmployee.findFirst({
         where: { snapshotId: snapshot.id, employeeId },
+        select: { id: true },
       });
-      if (existingBreakdown) {
+      if (existing) {
         await this.prisma.projectCostByEmployee.update({
-          where: { id: existingBreakdown.id },
+          where: { id: existing.id },
           data: {
-            hours: data.hours,
+            hours: data.totalHours,
             ratePerHour: data.ratePerHour,
-            cost: data.cost,
+            cost: data.laborCost,
           },
         });
       } else {
@@ -177,9 +179,9 @@ export class ProjectCostService {
           data: {
             snapshotId: snapshot.id,
             employeeId,
-            hours: data.hours,
+            hours: data.totalHours,
             ratePerHour: data.ratePerHour,
-            cost: data.cost,
+            cost: data.laborCost,
           },
         });
       }

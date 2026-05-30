@@ -170,6 +170,7 @@ model Employee {
   performanceBonuses      PerformanceBonus[]
   approvedBonuses         PerformanceBonus[]       @relation("BonusApprover")
   costBreakdowns          ProjectCostByEmployee[]
+  salaryReviewSuggestions SalaryReviewSuggestion[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -3157,6 +3158,7 @@ model Position {
   orgUnit     OrgUnit           @relation(fields: [orgUnitId], references: [id])
   employees   Employee[]
   histories   PositionHistory[]
+  salaryBand  SalaryBand?
 
   @@map("positions")
 }
@@ -3574,4 +3576,53 @@ model WorkScheduleEnrollment {
 
   @@index([employeeId])
   @@map("work_schedule_enrollments")
+}
+
+// ─── Epic 19: Salary Band & Review Suggestions ───────────────────────────────
+
+model SalaryBand {
+  id         String         @id @default(uuid())
+  positionId String         @unique @map("position_id")
+  minSalary  Decimal        @map("min_salary") @db.Decimal(15, 2)
+  midSalary  Decimal        @map("mid_salary") @db.Decimal(15, 2)
+  maxSalary  Decimal        @map("max_salary") @db.Decimal(15, 2)
+  currency   BudgetCurrency @default(VND)
+  note       String?
+  createdAt  DateTime       @default(now()) @map("created_at")
+  updatedAt  DateTime       @updatedAt @map("updated_at")
+  position   Position       @relation(fields: [positionId], references: [id])
+
+  @@map("salary_bands")
+}
+
+enum SalaryReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  APPLIED
+
+  @@map("salary_review_status")
+}
+
+model SalaryReviewSuggestion {
+  id              String             @id @default(uuid())
+  reviewId        String             @map("review_id")
+  employeeId      String             @map("employee_id")
+  currentSalary   Decimal            @map("current_salary") @db.Decimal(15, 2)
+  suggestedSalary Decimal            @map("suggested_salary") @db.Decimal(15, 2)
+  increasePercent Decimal            @map("increase_percent") @db.Decimal(5, 2)
+  score           Decimal            @db.Decimal(3, 1)
+  status          SalaryReviewStatus @default(PENDING)
+  approverId      String?            @map("approver_id")
+  approvedAt      DateTime?          @map("approved_at")
+  appliedAt       DateTime?          @map("applied_at")
+  note            String?
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  employee        Employee           @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([employeeId])
+  @@index([status])
+  @@map("salary_review_suggestions")
 }

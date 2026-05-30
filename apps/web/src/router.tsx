@@ -108,6 +108,8 @@ const ExecutiveDashboardPage = lazy(() => import('./pages/dashboard/ExecutiveDas
 const ReportBuilderPage      = lazy(() => import('./pages/reports/ReportBuilderPage'));
 const ProjectAnalyticsPage   = lazy(() => import('./pages/projects/ProjectAnalyticsPage'));
 const FinanceAnalyticsPage   = lazy(() => import('./pages/finance/FinanceAnalyticsPage'));
+const SalaryBandPage         = lazy(() => import('./pages/hr/SalaryBandPage'));
+const DelegationPage         = lazy(() => import('./pages/settings/DelegationPage'));
 
 const Loader = () => (
   <div style={{ minHeight: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -239,6 +241,8 @@ export const router = createBrowserRouter([
       { path: 'reports/utilization',   element: wrap(UtilizationPage) },
       { path: 'projects/analytics',   element: wrap(ProjectAnalyticsPage) },
       { path: 'finance/analytics',    element: wrap(FinanceAnalyticsPage) },
+      { path: 'hr/salary-bands',      element: wrap(SalaryBandPage) },
+      { path: 'settings/delegation',  element: wrap(DelegationPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

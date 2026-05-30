@@ -295,7 +295,7 @@ function TaxProfileTab({ employeeId }: { employeeId: string }) {
             ]} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={upsertMutation.isPending}>
+            <Button type="primary" htmlType="submit" loading={upsertMutation.isPending} disabled={upsertMutation.isPending}>
               Lưu
             </Button>
           </Form.Item>

@@ -509,7 +509,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
                       extra="Người dùng mới sẽ tự động được gán vào nhóm này">
                       <Switch checkedChildren="Có" unCheckedChildren="Không" />
                     </Form.Item>
-                    <Button type="primary" loading={createMut.isPending || updateMut.isPending} onClick={handleSaveInfo}>
+                    <Button type="primary" loading={createMut.isPending || updateMut.isPending} disabled={createMut.isPending || updateMut.isPending} onClick={handleSaveInfo}>
                       {isNew ? 'Tạo nhóm' : 'Lưu thông tin'}
                     </Button>
                   </Form>
@@ -534,6 +534,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
                     <Button
                       type="primary" size="small"
                       loading={setPermsMut.isPending}
+                      disabled={setPermsMut.isPending}
                       onClick={() => setPermsMut.mutate(selPerms)}
                     >
                       Lưu quyền
@@ -633,6 +634,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
                       <Button
                         type="primary" size="small"
                         loading={setOrgMut.isPending}
+                        disabled={setOrgMut.isPending}
                         onClick={() => setOrgMut.mutate()}
                       >
                         Lưu phạm vi

@@ -78,6 +78,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/okr',                module: 'people', label: 'OKR & KPI',                icon: 'AimOutlined',          permCode: 'okr:read',                   sortOrder: 16 },
   { route: '/hr/analytics',          module: 'people', label: 'HR Analytics',             icon: 'BarChartOutlined',     permCode: 'employees:read',             sortOrder: 17 },
   { route: '/payroll/analytics',     module: 'people', label: 'Payroll Analytics',         icon: 'CreditCardOutlined',   permCode: 'payroll:read',               sortOrder: 22 },
+  { route: '/hr/salary-bands',       module: 'people', label: 'Band lương & Đề xuất',       icon: 'DollarOutlined',       permCode: 'employees:manage',           sortOrder: 23 },
   { route: '/recruit/pipeline',      module: 'people', label: 'Phễu tuyển dụng',          icon: 'AppstoreAddOutlined',  permCode: 'recruit_pipeline:read',      sortOrder: 18 },
   { route: '/recruit/candidates',    module: 'people', label: 'Ứng viên',                 icon: 'UsergroupAddOutlined', permCode: 'recruit_candidates:read',    sortOrder: 19 },
   { route: '/recruit/interviews',    module: 'people', label: 'Lịch phỏng vấn',           icon: 'ScheduleFilled',       permCode: 'recruit_interviews:read',    sortOrder: 20 },
@@ -135,6 +136,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/admin/demo',          module: 'admin', label: 'Chế độ trình diễn',  icon: 'ExperimentOutlined',        permCode: 'demo_mode:manage',       sortOrder: 17 },
   { route: '/onboarding',          module: 'admin', label: 'Hướng dẫn khởi động',icon: 'RocketOutlined',            permCode: 'onboarding:manage',      sortOrder: 18 },
   { route: '/settings/tenant',     module: 'admin', label: 'Cài đặt Công ty',    icon: 'BuildOutlined',             permCode: 'admin:users',            sortOrder: 19 },
+  { route: '/settings/delegation', module: 'admin', label: 'Ủy quyền duyệt',     icon: 'UsergroupAddOutlined',      permCode: 'admin:manage',           sortOrder: 20 },
 ];
 
 /**

@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { PaginationDto, paginate } from '../common/dto/pagination.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/vendor.dto';
 import { CreatePoDto, UpdatePoStatusDto, ReceiveItemDto } from './dto/purchase-order.dto';
 
 @Injectable()
 export class ProcurementService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly financeEventBus: FinanceEventBus,
+  ) {}
 
   // ─── Vendors ───────────────────────────────────────────────────────────────
 
@@ -151,7 +155,31 @@ export class ProcurementService {
     if (dto.status === 'RECEIVED') {
       data.receivedAt = new Date();
     }
-    return this.prisma.purchaseOrder.update({ where: { id }, data });
+    if (dto.status === 'PAID') {
+      data.paidAt = new Date();
+    }
+
+    const updated = await this.prisma.purchaseOrder.update({ where: { id }, data });
+
+    // E21.2: Phát sự kiện auto-journal qua FinanceEventBus
+    if (dto.status === 'RECEIVED') {
+      await this.financeEventBus.emit({
+        type:   'po.received',
+        refId:  id,
+        amount: Number(updated.totalAmount),
+        userId,
+      });
+    }
+    if (dto.status === 'PAID') {
+      await this.financeEventBus.emit({
+        type:   'po.paid',
+        refId:  id,
+        amount: Number(updated.totalAmount),
+        userId,
+      });
+    }
+
+    return updated;
   }
 
   async receiveItems(poId: string, items: ReceiveItemDto[]) {

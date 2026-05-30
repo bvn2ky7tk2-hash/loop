@@ -82,9 +82,9 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
       const mapping = await this.prisma.invoiceAccountMapping.findFirst({
         where: { invoiceType: inv.type },
         include: {
-          debitAccount:  { select: { code: true } },
+          debitAccount: { select: { code: true } },
           creditAccount: { select: { code: true } },
-          vatAccount:    { select: { code: true } },
+          vatAccount: { select: { code: true } },
         },
       });
 

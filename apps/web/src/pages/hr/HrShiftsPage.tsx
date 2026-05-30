@@ -740,7 +740,7 @@ export default function HrShiftsPage() {
         footer={
           <Space>
             <Button onClick={() => { setShiftModalOpen(false); setEditShift(null); shiftForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createShiftMutation.isPending || updateShiftMutation.isPending} onClick={handleShiftSave}>
+            <Button type="primary" loading={createShiftMutation.isPending || updateShiftMutation.isPending} disabled={createShiftMutation.isPending || updateShiftMutation.isPending} onClick={handleShiftSave}>
               {editShift ? 'Lưu thay đổi' : 'Tạo ca'}
             </Button>
           </Space>
@@ -797,7 +797,7 @@ export default function HrShiftsPage() {
         footer={
           <Space>
             <Button onClick={() => { setAssignModalOpen(false); assignForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createAssignmentMutation.isPending} onClick={handleAssignSave}>Phân công</Button>
+            <Button type="primary" loading={createAssignmentMutation.isPending} disabled={createAssignmentMutation.isPending} onClick={handleAssignSave}>Phân công</Button>
           </Space>
         }
       >
@@ -835,7 +835,7 @@ export default function HrShiftsPage() {
         footer={
           <Space>
             <Button onClick={() => { setScheduleModalOpen(false); scheduleForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createScheduleMutation.isPending} onClick={handleScheduleSave}>Tạo lịch</Button>
+            <Button type="primary" loading={createScheduleMutation.isPending} disabled={createScheduleMutation.isPending} onClick={handleScheduleSave}>Tạo lịch</Button>
           </Space>
         }
       >
@@ -937,7 +937,7 @@ export default function HrShiftsPage() {
         footer={
           <Space>
             <Button onClick={() => { setEnrollModalOpen(false); enrollForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={enrollMutation.isPending} onClick={handleEnrollSave}>Gán vào lịch</Button>
+            <Button type="primary" loading={enrollMutation.isPending} disabled={enrollMutation.isPending} onClick={handleEnrollSave}>Gán vào lịch</Button>
           </Space>
         }
       >

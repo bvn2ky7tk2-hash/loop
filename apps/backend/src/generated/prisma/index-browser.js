@@ -1918,6 +1918,35 @@ exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SalaryBandScalarFieldEnum = {
+  id: 'id',
+  positionId: 'positionId',
+  minSalary: 'minSalary',
+  midSalary: 'midSalary',
+  maxSalary: 'maxSalary',
+  currency: 'currency',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SalaryReviewSuggestionScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  employeeId: 'employeeId',
+  currentSalary: 'currentSalary',
+  suggestedSalary: 'suggestedSalary',
+  increasePercent: 'increasePercent',
+  score: 'score',
+  status: 'status',
+  approverId: 'approverId',
+  approvedAt: 'approvedAt',
+  appliedAt: 'appliedAt',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2577,6 +2606,13 @@ exports.ShiftType = exports.$Enums.ShiftType = {
   LINH_HOAT: 'LINH_HOAT'
 };
 
+exports.SalaryReviewStatus = exports.$Enums.SalaryReviewStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  APPLIED: 'APPLIED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   OrgUnit: 'OrgUnit',
@@ -2713,7 +2749,9 @@ exports.Prisma.ModelName = {
   ShiftAssignment: 'ShiftAssignment',
   WorkSchedule: 'WorkSchedule',
   WorkSchedulePhase: 'WorkSchedulePhase',
-  WorkScheduleEnrollment: 'WorkScheduleEnrollment'
+  WorkScheduleEnrollment: 'WorkScheduleEnrollment',
+  SalaryBand: 'SalaryBand',
+  SalaryReviewSuggestion: 'SalaryReviewSuggestion'
 };
 
 /**

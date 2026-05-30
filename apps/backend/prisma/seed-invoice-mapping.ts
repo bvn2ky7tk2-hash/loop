@@ -16,15 +16,21 @@ const prisma = new PrismaClient({ adapter } as any);
 const MAPPINGS = [
   {
     invoiceType:   'SALES',
-    debitAccount:  '1311', // Phải thu khách hàng
-    creditAccount: '5111', // Doanh thu dịch vụ
-    vatAccount:    '3331', // Thuế GTGT phải nộp
+    debitCode:  '1311', // Phải thu khách hàng
+    creditCode: '5111', // Doanh thu dịch vụ
+    vatCode:    '3331', // Thuế GTGT phải nộp
   },
   {
     invoiceType:   'PURCHASE',
-    debitAccount:  '6421', // Chi phí QLDN
-    creditAccount: '3311', // Phải trả nhà cung cấp
-    vatAccount:    null,
+    debitCode:  '6421', // Chi phí QLDN
+    creditCode: '3311', // Phải trả nhà cung cấp
+    vatCode:    null,
+  },
+  {
+    invoiceType:   'MILESTONE',
+    debitCode:  '1311', // Phải thu khách hàng
+    creditCode: '5111', // Doanh thu dịch vụ
+    vatCode:    '3331', // Thuế GTGT phải nộp
   },
 ];
 
@@ -39,23 +45,27 @@ async function main() {
       console.log(`  ${m.invoiceType}: đã tồn tại, bỏ qua.`);
       continue;
     }
-    const debitAcc  = await prisma.chartOfAccount.findFirst({ where: { code: m.debitAccount } });
-    const creditAcc = await prisma.chartOfAccount.findFirst({ where: { code: m.creditAccount } });
-    const vatAcc    = m.vatAccount ? await prisma.chartOfAccount.findFirst({ where: { code: m.vatAccount } }) : null;
+
+    // Tra cứu ChartOfAccount theo code
+    const debitAcc = await prisma.chartOfAccount.findFirst({ where: { code: m.debitCode } });
+    const creditAcc = await prisma.chartOfAccount.findFirst({ where: { code: m.creditCode } });
+    const vatAcc = m.vatCode ? await prisma.chartOfAccount.findFirst({ where: { code: m.vatCode } }) : null;
+
     if (!debitAcc || !creditAcc) {
-      console.log(`  ⚠️  ${m.invoiceType}: không tìm thấy tài khoản ${m.debitAccount}/${m.creditAccount}, bỏ qua.`);
+      console.log(`  ⚠️ Bỏ qua ${m.invoiceType}: không tìm thấy tài khoản ${m.debitCode} hoặc ${m.creditCode}`);
       continue;
     }
-    await (prisma.invoiceAccountMapping as any).create({
+
+    await prisma.invoiceAccountMapping.create({
       data: {
         id:              `map-${m.invoiceType.toLowerCase()}`,
         invoiceType:     m.invoiceType,
         debitAccountId:  debitAcc.id,
         creditAccountId: creditAcc.id,
-        vatAccountId:    vatAcc?.id ?? null,
+        vatAccountId:    vatAcc?.id ?? undefined,
       },
     });
-    console.log(`  ✅ Created mapping ${m.invoiceType} → debit:${m.debitAccount} / credit:${m.creditAccount}${m.vatAccount ? ` / vat:${m.vatAccount}` : ''}`);
+    console.log(`  ✅ Created mapping ${m.invoiceType} → debit:${m.debitCode} / credit:${m.creditCode}${m.vatCode ? ` / vat:${m.vatCode}` : ''}`);
   }
 
   console.log('✅ seed-invoice-mapping hoàn thành.');

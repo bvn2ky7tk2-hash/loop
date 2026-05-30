@@ -185,7 +185,7 @@ function EditRecordModal({
       title={`Điều chỉnh — ${record.employee?.user?.name ?? '—'}`}
       width={420}
       extra={
-        <Button type="primary" loading={updateMut.isPending}
+        <Button type="primary" loading={updateMut.isPending} disabled={updateMut.isPending}
           onClick={() => form.validateFields().then(v => updateMut.mutate(v))}>
           Lưu
         </Button>
@@ -415,7 +415,7 @@ function PeriodDetailModal({
                 onConfirm={() => generateMut.mutate()}
                 okText="Tính lương" cancelText="Huỷ"
               >
-                <Button type="primary" icon={<ThunderboltOutlined />} loading={generateMut.isPending}>
+                <Button type="primary" icon={<ThunderboltOutlined />} loading={generateMut.isPending} disabled={generateMut.isPending}>
                   Tính lương
                 </Button>
               </Popconfirm>
@@ -427,7 +427,7 @@ function PeriodDetailModal({
                 onConfirm={() => reviewMut.mutate()}
                 okText="Gửi duyệt" cancelText="Huỷ"
               >
-                <Button icon={<FileDoneOutlined />} loading={reviewMut.isPending}>
+                <Button icon={<FileDoneOutlined />} loading={reviewMut.isPending} disabled={reviewMut.isPending}>
                   Gửi duyệt
                 </Button>
               </Popconfirm>
@@ -439,7 +439,7 @@ function PeriodDetailModal({
                 onConfirm={() => rerunMut.mutate()}
                 okText="Tính lại" cancelText="Huỷ"
               >
-                <Button icon={<ReloadOutlined />} loading={rerunMut.isPending}>
+                <Button icon={<ReloadOutlined />} loading={rerunMut.isPending} disabled={rerunMut.isPending}>
                   Tính lại
                 </Button>
               </Popconfirm>
@@ -451,7 +451,7 @@ function PeriodDetailModal({
                 onConfirm={() => approveMut.mutate()}
                 okText="Phê duyệt" cancelText="Huỷ"
               >
-                <Button type="primary" icon={<CheckOutlined />} loading={approveMut.isPending}>
+                <Button type="primary" icon={<CheckOutlined />} loading={approveMut.isPending} disabled={approveMut.isPending}>
                   Phê duyệt
                 </Button>
               </Popconfirm>
@@ -462,7 +462,7 @@ function PeriodDetailModal({
                 onConfirm={() => markPaidMut.mutate()}
                 okText="Xác nhận" cancelText="Huỷ"
               >
-                <Button type="primary" icon={<DollarOutlined />} loading={markPaidMut.isPending}
+                <Button type="primary" icon={<DollarOutlined />} loading={markPaidMut.isPending} disabled={markPaidMut.isPending}
                   style={{ background: '#10B981', borderColor: '#10B981' }}>
                   Đã trả lương
                 </Button>

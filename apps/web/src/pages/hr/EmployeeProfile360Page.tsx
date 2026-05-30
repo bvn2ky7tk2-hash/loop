@@ -639,7 +639,7 @@ export default function EmployeeProfile360Page() {
         footer={
           <Space>
             <Button onClick={() => { setEditOpen(false); editForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleEditSubmit} loading={updateMutation.isPending}>
+            <Button type="primary" onClick={handleEditSubmit} loading={updateMutation.isPending} disabled={updateMutation.isPending}>
               Lưu thay đổi
             </Button>
           </Space>
