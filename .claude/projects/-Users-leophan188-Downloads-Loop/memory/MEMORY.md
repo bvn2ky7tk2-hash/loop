@@ -26,3 +26,7 @@
 - [Demo Data sau khi Dev](feedback_demo_data.md) — Sau khi dev xong tính năng mới, seed luôn demo data logic thực tế
 - [Loop v3.0 — Navigation Redesign](project_loop_v3_navigation.md) — Persona-driven; 10→8 module; Reports nhúng vào module; Global Executive Dashboard; chờ v2.x xong
 - [Loop Product Roadmap](project_loop_product_roadmap.md) — Master roadmap v2.x→v3.0→v3.x; v2.x=5 utility releases; v3.0=navigation+8dashboard+Cmd+K+deployment tools; v3.x=mobile/BI/AI
+- [Loop v4 Complete](project_v4_complete.md) — v4.3 xong: 93 services TenantAware, JWT tenantId, BullMQ, MinIO per-tenant; sẵn sàng cho v5
+- [Loop v5.x Roadmap](project_v5_roadmap.md) — v5.0✅ v5.1 BE✅ FE thiếu → v5.1b(FE) → v5.2a E16F(bảng công+phép) → v5.2b E16G(bảng lương) → E20-E24 → v5.7 UX
+- [Loop v6 Roadmap](project_v6_roadmap.md) — SaaS compliance: 93 model thiếu tenantId, 14 service chưa TenantAware, 4 PRD nghiệp vụ tồn đọng
+- [Checklist Tuân thủ Kiến trúc](feedback_architecture_compliance.md) — BẮT BUỘC khi thêm model/service/page mới: tenantId, TenantAwareService, useThemePalette, EventBus, BullMQ
