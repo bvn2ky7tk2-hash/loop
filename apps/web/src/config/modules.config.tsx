@@ -185,7 +185,7 @@ export const MODULES: ModuleDefinition[] = [
         key: 'g-people-attendance', label: 'Chấm công & Đơn từ', visible: true,
         items: [
           { key: '/timesheet/manager',   label: 'Bảng điểm danh',        visible: true },
-          { key: '/leaves',              label: 'Quản lý đơn nghỉ phép', visible: true },
+          { key: '/hr/leaves',           label: 'Quản lý đơn nghỉ phép', visible: true },
           { key: '/hr/overtime',         label: 'Quản lý OT',             visible: true },
         ],
       },

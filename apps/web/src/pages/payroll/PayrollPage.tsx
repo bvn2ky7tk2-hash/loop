@@ -243,10 +243,11 @@ function PeriodDetailModal({
   const [detailRecord, setDetailRecord] = useState<PayrollRecord | null>(null);
   const [page, setPage] = useState(1);
   const { textPrimary, textMuted, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const [searchName, setSearchName] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-records', period?.id, page],
-    queryFn: () => payrollApi.getPeriodRecords(period!.id, page, 50),
+    queryFn: () => payrollApi.getPeriodRecords(period!.id, page, 500),
     enabled: !!period,
   });
 
@@ -299,8 +300,17 @@ function PeriodDetailModal({
     onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
   });
 
-  const records = data?.data ?? [];
-  const totalGross = records.reduce((s, r) => s + Number(r.grossSalary), 0);
+  const allRecords = data?.data ?? [];
+  const records = useMemo(() => {
+    if (!searchName.trim()) return allRecords;
+    const q = searchName.trim().toLowerCase();
+    return allRecords.filter(r =>
+      (r.employee?.user?.name ?? '').toLowerCase().includes(q) ||
+      (r.employee?.user?.email ?? '').toLowerCase().includes(q)
+    );
+  }, [allRecords, searchName]);
+
+  const totalGross = allRecords.reduce((s, r) => s + Number(r.grossSalary), 0);
   const totalNet = records.reduce((s, r) => s + Number(r.netSalary), 0);
   const totalPIT = records.reduce((s, r) => s + Number(r.pitAmount), 0);
   const totalBHXH = records.reduce((s, r) => s + Number(r.bhxhEmployee) + Number(r.bhytEmployee) + Number(r.bhtnEmployee), 0);
@@ -501,6 +511,20 @@ function PeriodDetailModal({
             </Col>
           </Row>
         )}
+
+        <FilterBar style={{ marginBottom: 12 }}>
+          <Input
+            prefix={<SearchOutlined />}
+            placeholder="Tìm theo tên hoặc email nhân viên..."
+            style={{ width: 300 }}
+            allowClear
+            value={searchName}
+            onChange={e => setSearchName(e.target.value)}
+          />
+          <Text style={{ color: textMuted, fontSize: 13, alignSelf: 'center' }}>
+            Hiển thị {records.length}/{allRecords.length} nhân viên
+          </Text>
+        </FilterBar>
 
         <Table
           loading={isLoading}

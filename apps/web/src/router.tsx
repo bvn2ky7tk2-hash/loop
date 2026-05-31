@@ -171,6 +171,7 @@ export const router = createBrowserRouter([
       { path: 'org-chart',       element: wrap(OrgChartPage) },
       { path: 'contracts',       element: wrap(ContractsPage) },
       { path: 'leaves',          element: wrap(LeavePage) },
+      { path: 'hr/leaves',       element: wrap(LeavePage) },
       { path: 'my-overtime',     element: wrap(MyOvertimePage) },
       { path: 'expenses',        element: wrap(ExpensePage) },
       { path: 'budget',          element: wrap(BudgetPage) },

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
   DatePicker, InputNumber, Input, Modal, Tabs, Row, Col, Card,
@@ -311,7 +312,11 @@ export default function LeavePage() {
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
 
-  const [activeTab, setActiveTab] = useState<'my' | 'team'>('my');
+  const location = useLocation();
+  // /hr/leaves → mặc định xem toàn bộ (tab team), /leaves → xem cá nhân
+  const [activeTab, setActiveTab] = useState<'my' | 'team'>(
+    location.pathname === '/hr/leaves' ? 'team' : 'my'
+  );
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [viewLeave, setViewLeave] = useState<LeaveRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | undefined>();
