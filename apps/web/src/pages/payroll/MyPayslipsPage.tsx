@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
-  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message,
+  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message, Select,
 } from 'antd';
-import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
+import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined, FilterOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { payrollApi, type PayrollRecord } from '../../api/payroll';
+import { FilterBar } from '../../components/FilterBar';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
@@ -141,39 +142,28 @@ export default function MyPayslipsPage() {
 
   // Fetch all periods and then filter records for current user's employee
   // We use the my-tax-profile endpoint to get employeeId, then list records
-  const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
+  const thisYear = new Date().getFullYear();
+  const [filterYear, setFilterYear] = useState<number>(thisYear);
 
-  const { data: allPeriodsData, isLoading } = useQuery({
-    queryKey: ['payroll-periods-all'],
-    queryFn: () => payrollApi.listPeriods(1, 100),
+  // Dùng endpoint /payroll/my-records — trả về trực tiếp phiếu lương của user hiện tại
+  const { data: allRecords = [], isLoading } = useQuery({
+    queryKey: ['my-payslips-v2'],
+    queryFn: () => payrollApi.getMyRecords(),
   });
 
-  // For each approved/paid period, fetch the current user's record
-  const approvedPeriods = (allPeriodsData?.data ?? []).filter(
-    p => p.status === 'APPROVED' || p.status === 'PAID',
-  );
+  const records = useMemo(() => {
+    if (!filterYear) return allRecords;
+    return allRecords.filter(r => {
+      const start = r.periodStart ?? (r as any).period?.startDate ?? '';
+      return dayjs(start).year() === filterYear;
+    });
+  }, [allRecords, filterYear]);
 
-  // Fetch records for all approved periods and find ones matching current user
-  const { data: myRecords, isLoading: loadingRecords } = useQuery({
-    queryKey: ['my-payslips', approvedPeriods.map(p => p.id).join(',')],
-    queryFn: async () => {
-      const results: Array<PayrollRecord & { periodName: string; periodStart: string; periodEnd: string }> = [];
-      for (const period of approvedPeriods) {
-        // fetch đủ records để cover tất cả nhân viên (tối đa 600)
-        const records = await payrollApi.getPeriodRecords(period.id, 1, 600);
-        const mine = records.data.find(r => r.employee?.user?.id === user?.id);
-        if (mine) results.push({ ...mine, periodName: period.name, periodStart: period.startDate, periodEnd: period.endDate });
-      }
-      return results.reverse(); // newest first
-    },
-    enabled: approvedPeriods.length > 0,
-  });
-
-  const records = myRecords ?? [];
+  const loadingRecords = false;
 
   // YTD tính từ năm hiện tại
-  const thisYear = new Date().getFullYear();
-  const ytdRecords = records.filter(r => dayjs(r.periodStart).year() === thisYear);
+  // YTD theo năm đang filter
+  const ytdRecords = records;
   const ytdGross = ytdRecords.reduce((s, r) => s + Number(r.grossSalary), 0);
   const ytdNet   = ytdRecords.reduce((s, r) => s + Number(r.netSalary), 0);
   const ytdPIT   = ytdRecords.reduce((s, r) => s + Number(r.pitAmount), 0);
@@ -263,12 +253,23 @@ export default function MyPayslipsPage() {
         iconColor="#0D9488"
       />
 
+      {/* Filter năm */}
+      <FilterBar style={{ marginBottom: 16 }}>
+        <Select
+          value={filterYear}
+          onChange={setFilterYear}
+          style={{ width: 140 }}
+          prefix={<FilterOutlined />}
+          options={[2025, 2026, 2027].map(y => ({ value: y, label: `Năm ${y}` }))}
+        />
+      </FilterBar>
+
       {/* YTD Stats */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
-        <Col xs={12} sm={6}><StatCard label={`Tổng TN ${thisYear}`} value={`${(ytdGross / 1e6).toFixed(1)}M`} color="#6366F1" icon={<FileTextOutlined />} /></Col>
-        <Col xs={12} sm={6}><StatCard label={`Thực nhận ${thisYear}`} value={`${(ytdNet / 1e6).toFixed(1)}M`} color="#10B981" icon={<FileTextOutlined />} /></Col>
-        <Col xs={12} sm={6}><StatCard label={`Thuế TNCN ${thisYear}`} value={`${(ytdPIT / 1e6).toFixed(1)}M`} color="#EF4444" icon={<FileTextOutlined />} /></Col>
-        <Col xs={12} sm={6}><StatCard label={`BHXH/BHYT/BHTN ${thisYear}`} value={`${(ytdBHXH / 1e6).toFixed(1)}M`} color="#F59E0B" icon={<FileTextOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label={`Tổng TN ${filterYear}`} value={`${(ytdGross / 1e6).toFixed(1)}M`} color="#6366F1" icon={<FileTextOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label={`Thực nhận ${filterYear}`} value={`${(ytdNet / 1e6).toFixed(1)}M`} color="#10B981" icon={<FileTextOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label={`Thuế TNCN ${filterYear}`} value={`${(ytdPIT / 1e6).toFixed(1)}M`} color="#EF4444" icon={<FileTextOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label={`BHXH/BHYT/BHTN ${filterYear}`} value={`${(ytdBHXH / 1e6).toFixed(1)}M`} color="#F59E0B" icon={<FileTextOutlined />} /></Col>
       </Row>
 
       <Table

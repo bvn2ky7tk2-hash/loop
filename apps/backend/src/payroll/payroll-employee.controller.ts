@@ -125,4 +125,10 @@ export class PayrollEmployeeController {
   getMyTaxProfile(@Req() req: { user: { id: string } }) {
     return this.service.getMyTaxProfile(req.user.id);
   }
+
+  @Get('my-records')
+  @ApiOperation({ summary: 'Danh sách phiếu lương của bản thân' })
+  getMyRecords(@Req() req: { user: { id: string } }) {
+    return this.service.getMyPayrollRecords(req.user.id);
+  }
 }

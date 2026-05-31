@@ -49,6 +49,13 @@ export class PayrollConfigController {
     return this.service.createInsuranceConfig(dto, req.user.id);
   }
 
+  @Patch('insurance-configs/:id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Cập nhật cấu hình bảo hiểm (chỉ khi chưa được dùng trong kỳ lương)' })
+  updateInsuranceConfig(@Param('id') id: string, @Body() dto: any) {
+    return this.service.updateInsuranceConfig(id, dto);
+  }
+
   @Delete('insurance-configs/:id')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Xóa cấu hình bảo hiểm (chỉ khi chưa được dùng)' })
@@ -79,6 +86,13 @@ export class PayrollConfigController {
     @Req() req: { user: { id: string } },
   ) {
     return this.service.createTaxBracket(dto, req.user.id);
+  }
+
+  @Patch('tax-brackets/:id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Cập nhật biểu thuế (chỉ khi chưa được dùng trong kỳ lương)' })
+  updateTaxBracket(@Param('id') id: string, @Body() dto: any) {
+    return this.service.updateTaxBracket(id, dto);
   }
 
   @Delete('tax-brackets/:id')

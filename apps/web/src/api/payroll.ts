@@ -150,6 +150,10 @@ export interface EmployeeTaxProfile {
 }
 
 export const payrollApi = {
+  // ── My Payslips ────────────────────────────────────────────────────────────
+  getMyRecords: () =>
+    apiClient.get<any[]>(`${BASE}/my-records`).then(r => r.data),
+
   // ── Periods ────────────────────────────────────────────────────────────────
   listPeriods: (page = 1, limit = 20) =>
     apiClient.get<PaginatedResult<PayrollPeriod>>(`${BASE}/periods`, { params: { page, limit } }).then(r => r.data),
@@ -198,6 +202,9 @@ export const payrollApi = {
   deleteInsuranceConfig: (id: string) =>
     apiClient.delete(`${BASE}/insurance-configs/${id}`).then(r => r.data),
 
+  updateInsuranceConfig: (id: string, data: Partial<InsuranceConfig>) =>
+    apiClient.patch<InsuranceConfig>(`${BASE}/insurance-configs/${id}`, data).then(r => r.data),
+
   // ── Tax Bracket ────────────────────────────────────────────────────────────
   listTaxBrackets: (page = 1, limit = 20) =>
     apiClient.get<PaginatedResult<TaxBracket>>(`${BASE}/tax-brackets`, { params: { page, limit } }).then(r => r.data),
@@ -210,6 +217,9 @@ export const payrollApi = {
 
   deleteTaxBracket: (id: string) =>
     apiClient.delete(`${BASE}/tax-brackets/${id}`).then(r => r.data),
+
+  updateTaxBracket: (id: string, data: Partial<TaxBracket>) =>
+    apiClient.patch<TaxBracket>(`${BASE}/tax-brackets/${id}`, data).then(r => r.data),
 
   // ── Tax Deduction ──────────────────────────────────────────────────────────
   listTaxDeductions: (page = 1, limit = 20) =>

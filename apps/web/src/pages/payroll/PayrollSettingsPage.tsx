@@ -30,6 +30,7 @@ function InsuranceTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [editItem, setEditItem] = useState<InsuranceConfig | null>(null);
   const [form] = Form.useForm();
   const { textPrimary, textMuted, borderColor, linkColor } = useThemePalette();
 
@@ -38,23 +39,35 @@ function InsuranceTab() {
     queryFn: () => payrollApi.listInsuranceConfigs(1, 20),
   });
 
+  const toPayload = (values: any) => ({
+    effectiveFrom: values.effectiveFrom.format('YYYY-MM-DD'),
+    bhxhEmployeeRate: values.bhxhEmployeeRate / 100,
+    bhytEmployeeRate: values.bhytEmployeeRate / 100,
+    bhtnEmployeeRate: values.bhtnEmployeeRate / 100,
+    bhxhEmployerRate: values.bhxhEmployerRate / 100,
+    bhytEmployerRate: values.bhytEmployerRate / 100,
+    bhtnEmployerRate: values.bhtnEmployerRate / 100,
+    tnldRate: values.tnldRate / 100,
+    bhxhCeilingMultiple: values.bhxhCeilingMultiple,
+    wageBase: values.wageBase,
+  });
+
   const createMut = useMutation({
-    mutationFn: (values: any) => payrollApi.createInsuranceConfig({
-      effectiveFrom: values.effectiveFrom.format('YYYY-MM-DD'),
-      bhxhEmployeeRate: values.bhxhEmployeeRate / 100,
-      bhytEmployeeRate: values.bhytEmployeeRate / 100,
-      bhtnEmployeeRate: values.bhtnEmployeeRate / 100,
-      bhxhEmployerRate: values.bhxhEmployerRate / 100,
-      bhytEmployerRate: values.bhytEmployerRate / 100,
-      bhtnEmployerRate: values.bhtnEmployerRate / 100,
-      tnldRate: values.tnldRate / 100,
-      bhxhCeilingMultiple: values.bhxhCeilingMultiple,
-      wageBase: values.wageBase,
-    }),
+    mutationFn: (values: any) => payrollApi.createInsuranceConfig(toPayload(values)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['insurance-configs'] });
       message.success('Đã thêm cấu hình bảo hiểm');
       setOpen(false); form.resetFields();
+    },
+    onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
+  });
+
+  const updateMut = useMutation({
+    mutationFn: (values: any) => payrollApi.updateInsuranceConfig(editItem!.id, toPayload(values)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['insurance-configs'] });
+      message.success('Đã cập nhật cấu hình bảo hiểm');
+      setOpen(false); setEditItem(null); form.resetFields();
     },
     onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
   });
@@ -64,6 +77,31 @@ function InsuranceTab() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['insurance-configs'] }); message.success('Đã xoá'); },
     onError: (e: Error) => message.error(e.message ?? 'Lỗi — config đã dùng không thể xoá'),
   });
+
+  const openEdit = (r: InsuranceConfig) => {
+    setEditItem(r);
+    form.setFieldsValue({
+      effectiveFrom: dayjs(r.effectiveFrom),
+      bhxhEmployeeRate: Number(r.bhxhEmployeeRate) * 100,
+      bhytEmployeeRate: Number(r.bhytEmployeeRate) * 100,
+      bhtnEmployeeRate: Number(r.bhtnEmployeeRate) * 100,
+      bhxhEmployerRate: Number(r.bhxhEmployerRate) * 100,
+      bhytEmployerRate: Number(r.bhytEmployerRate) * 100,
+      bhtnEmployerRate: Number(r.bhtnEmployerRate) * 100,
+      tnldRate: Number(r.tnldRate) * 100,
+      bhxhCeilingMultiple: r.bhxhCeilingMultiple,
+      wageBase: Number(r.wageBase),
+    });
+    setOpen(true);
+  };
+
+  const openNew = () => {
+    setEditItem(null);
+    form.resetFields();
+    setOpen(true);
+  };
+
+  const isPending = editItem ? updateMut.isPending : createMut.isPending;
 
   const cols: ColumnsType<InsuranceConfig> = [
     {
@@ -107,11 +145,14 @@ function InsuranceTab() {
     },
     {
       title: '',
-      width: 50,
+      width: 90,
       render: (_, r) => (
-        <Popconfirm title="Xoá config này?" onConfirm={() => deleteMut.mutate(r.id)} okText="Xoá" cancelText="Huỷ">
-          <Button size="small" icon={<DeleteOutlined />} danger />
-        </Popconfirm>
+        <Space size={4}>
+          <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(r)}>Sửa</Button>
+          <Popconfirm title="Xoá config này?" onConfirm={() => deleteMut.mutate(r.id)} okText="Xoá" cancelText="Huỷ">
+            <Button size="small" icon={<DeleteOutlined />} danger />
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -124,13 +165,21 @@ function InsuranceTab() {
           message="Config mới chỉ áp dụng cho kỳ lương có endDate sau ngày hiệu lực. Config đã dùng trong payroll không thể xoá."
           style={{ flex: 1, marginRight: 12 }}
         />
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setOpen(true)}>Thêm config</Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={openNew}>Thêm config</Button>
       </div>
       <Table loading={isLoading} dataSource={data?.data ?? []} rowKey="id" columns={cols} size="small" pagination={false} />
 
-      <CenteredModal open={open} onClose={() => { setOpen(false); form.resetFields(); }}
-        title="Thêm cấu hình bảo hiểm" width={560}
-        extra={<Button type="primary" loading={createMut.isPending} disabled={createMut.isPending} onClick={() => form.validateFields().then(v => createMut.mutate(v))}>Lưu</Button>}>
+      <CenteredModal
+        open={open}
+        onClose={() => { setOpen(false); setEditItem(null); form.resetFields(); }}
+        title={editItem ? 'Sửa cấu hình bảo hiểm' : 'Thêm cấu hình bảo hiểm'}
+        width={560}
+        extra={
+          <Button type="primary" loading={isPending} disabled={isPending}
+            onClick={() => form.validateFields().then(v => editItem ? updateMut.mutate(v) : createMut.mutate(v))}>
+            Lưu
+          </Button>
+        }>
         <Form form={form} layout="vertical"
           initialValues={{ bhxhEmployeeRate: 8, bhytEmployeeRate: 1.5, bhtnEmployeeRate: 1, bhxhEmployerRate: 17.5, bhytEmployerRate: 3, bhtnEmployerRate: 1, tnldRate: 0.5, bhxhCeilingMultiple: 20, wageBase: 2340000 }}>
           <Form.Item name="effectiveFrom" label="Hiệu lực từ ngày" rules={[{ required: true }]}>
@@ -177,6 +226,7 @@ function TaxBracketTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [editBracket, setEditBracket] = useState<TaxBracket | null>(null);
   const [deductOpen, setDeductOpen] = useState(false);
   const [form] = Form.useForm();
   const [deductForm] = Form.useForm();
@@ -191,20 +241,32 @@ function TaxBracketTab() {
     queryFn: () => payrollApi.listTaxDeductions(1, 20),
   });
 
+  const toBracketPayload = (values: any) => ({
+    name: values.name,
+    effectiveFrom: values.effectiveFrom.format('YYYY-MM-DD'),
+    brackets: values.brackets.map((b: any, i: number, arr: any[]) => ({
+      from: b.from,
+      to: i < arr.length - 1 ? b.to : null,
+      rate: b.rate / 100,
+    })),
+  });
+
   const createBracketMut = useMutation({
-    mutationFn: (values: any) => payrollApi.createTaxBracket({
-      name: values.name,
-      effectiveFrom: values.effectiveFrom.format('YYYY-MM-DD'),
-      brackets: values.brackets.map((b: any, i: number, arr: any[]) => ({
-        from: b.from,
-        to: i < arr.length - 1 ? b.to : null,
-        rate: b.rate / 100,
-      })),
-    }),
+    mutationFn: (values: any) => payrollApi.createTaxBracket(toBracketPayload(values)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tax-brackets'] });
       message.success('Đã thêm biểu thuế');
       setOpen(false); form.resetFields();
+    },
+    onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
+  });
+
+  const updateBracketMut = useMutation({
+    mutationFn: (values: any) => payrollApi.updateTaxBracket(editBracket!.id, toBracketPayload(values)),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['tax-brackets'] });
+      message.success('Đã cập nhật biểu thuế');
+      setOpen(false); setEditBracket(null); form.resetFields();
     },
     onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
   });
@@ -228,6 +290,28 @@ function TaxBracketTab() {
     },
     onError: (e: Error) => message.error(e.message ?? 'Lỗi'),
   });
+
+  const openEditBracket = (r: TaxBracket) => {
+    setEditBracket(r);
+    form.setFieldsValue({
+      name: r.name,
+      effectiveFrom: dayjs(r.effectiveFrom),
+      brackets: (r.brackets as any[]).map(b => ({
+        from: b.from,
+        to: b.to,
+        rate: Number((b.rate * 100).toFixed(2)),
+      })),
+    });
+    setOpen(true);
+  };
+
+  const openNewBracket = () => {
+    setEditBracket(null);
+    form.resetFields();
+    setOpen(true);
+  };
+
+  const bracketIsPending = editBracket ? updateBracketMut.isPending : createBracketMut.isPending;
 
   const bracketCols: ColumnsType<TaxBracket> = [
     {
@@ -255,11 +339,14 @@ function TaxBracketTab() {
     },
     {
       title: '',
-      width: 50,
+      width: 90,
       render: (_, r) => (
-        <Popconfirm title="Xoá biểu thuế?" onConfirm={() => deleteBracketMut.mutate(r.id)} okText="Xoá" cancelText="Huỷ">
-          <Button size="small" icon={<DeleteOutlined />} danger />
-        </Popconfirm>
+        <Space size={4}>
+          <Button size="small" icon={<EditOutlined />} onClick={() => openEditBracket(r)}>Sửa</Button>
+          <Popconfirm title="Xoá biểu thuế?" onConfirm={() => deleteBracketMut.mutate(r.id)} okText="Xoá" cancelText="Huỷ">
+            <Button size="small" icon={<DeleteOutlined />} danger />
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -275,7 +362,7 @@ function TaxBracketTab() {
       {/* Biểu thuế */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 14 }}>Biểu thuế TNCN lũy tiến</Text>
-        <Button type="primary" icon={<PlusOutlined />} size="small" onClick={() => setOpen(true)}>Thêm biểu thuế</Button>
+        <Button type="primary" icon={<PlusOutlined />} size="small" onClick={openNewBracket}>Thêm biểu thuế</Button>
       </div>
       <Table loading={isLoading} dataSource={brackets?.data ?? []} rowKey="id" columns={bracketCols} size="small" pagination={false} style={{ marginBottom: 24 }} />
 
@@ -286,10 +373,18 @@ function TaxBracketTab() {
       </div>
       <Table dataSource={deductions?.data ?? []} rowKey="id" columns={deductCols} size="small" pagination={false} />
 
-      {/* Modal thêm biểu thuế */}
-      <CenteredModal open={open} onClose={() => { setOpen(false); form.resetFields(); }}
-        title="Thêm biểu thuế TNCN" width={580}
-        extra={<Button type="primary" loading={createBracketMut.isPending} disabled={createBracketMut.isPending} onClick={() => form.validateFields().then(v => createBracketMut.mutate(v))}>Lưu</Button>}>
+      {/* Modal thêm/sửa biểu thuế */}
+      <CenteredModal
+        open={open}
+        onClose={() => { setOpen(false); setEditBracket(null); form.resetFields(); }}
+        title={editBracket ? `Sửa biểu thuế: ${editBracket.name}` : 'Thêm biểu thuế TNCN'}
+        width={580}
+        extra={
+          <Button type="primary" loading={bracketIsPending} disabled={bracketIsPending}
+            onClick={() => form.validateFields().then(v => editBracket ? updateBracketMut.mutate(v) : createBracketMut.mutate(v))}>
+            Lưu
+          </Button>
+        }>
         <Form form={form} layout="vertical"
           initialValues={{
             name: 'Luật 109/2025/QH15 (5 bậc)',

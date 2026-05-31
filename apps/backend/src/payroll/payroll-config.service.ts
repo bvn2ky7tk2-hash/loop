@@ -90,6 +90,49 @@ export class PayrollConfigService {
     return { ...config, bhxhCeiling: Number(config.wageBase) * config.bhxhCeilingMultiple };
   }
 
+  async updateInsuranceConfig(id: string, dto: Partial<{
+    effectiveFrom: string;
+    bhxhEmployeeRate: number;
+    bhytEmployeeRate: number;
+    bhtnEmployeeRate: number;
+    bhxhEmployerRate: number;
+    bhytEmployerRate: number;
+    bhtnEmployerRate: number;
+    tnldRate: number;
+    bhxhCeilingMultiple: number;
+    wageBase: number;
+    bhxhExemptForProbation: boolean;
+  }>) {
+    const existing = await this.prisma.insuranceConfig.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Không tìm thấy cấu hình bảo hiểm');
+
+    const inUse = await this.prisma.payrollRecord.findFirst({
+      where: { configSnapshot: { path: ['insuranceConfigId'], equals: id } },
+    });
+    if (inUse) {
+      throw new ConflictException('Config đã được dùng trong kỳ lương, không thể cập nhật');
+    }
+
+    const updated = await this.prisma.insuranceConfig.update({
+      where: { id },
+      data: {
+        ...(dto.effectiveFrom !== undefined && { effectiveFrom: new Date(dto.effectiveFrom) }),
+        ...(dto.bhxhEmployeeRate !== undefined && { bhxhEmployeeRate: dto.bhxhEmployeeRate }),
+        ...(dto.bhytEmployeeRate !== undefined && { bhytEmployeeRate: dto.bhytEmployeeRate }),
+        ...(dto.bhtnEmployeeRate !== undefined && { bhtnEmployeeRate: dto.bhtnEmployeeRate }),
+        ...(dto.bhxhEmployerRate !== undefined && { bhxhEmployerRate: dto.bhxhEmployerRate }),
+        ...(dto.bhytEmployerRate !== undefined && { bhytEmployerRate: dto.bhytEmployerRate }),
+        ...(dto.bhtnEmployerRate !== undefined && { bhtnEmployerRate: dto.bhtnEmployerRate }),
+        ...(dto.tnldRate !== undefined && { tnldRate: dto.tnldRate }),
+        ...(dto.bhxhCeilingMultiple !== undefined && { bhxhCeilingMultiple: dto.bhxhCeilingMultiple }),
+        ...(dto.wageBase !== undefined && { wageBase: dto.wageBase }),
+        ...(dto.bhxhExemptForProbation !== undefined && { bhxhExemptForProbation: dto.bhxhExemptForProbation }),
+      },
+    });
+
+    return { ...updated, bhxhCeiling: Number(updated.wageBase) * updated.bhxhCeilingMultiple };
+  }
+
   async deleteInsuranceConfig(id: string) {
     const config = await this.prisma.insuranceConfig.findUnique({ where: { id } });
     if (!config) throw new NotFoundException('Không tìm thấy cấu hình bảo hiểm');
@@ -179,6 +222,41 @@ export class PayrollConfigService {
     });
 
     return bracket;
+  }
+
+  async updateTaxBracket(id: string, dto: Partial<{
+    name: string;
+    effectiveFrom: string;
+    brackets: any[];
+  }>) {
+    const existing = await this.prisma.taxBracket.findUnique({ where: { id } });
+    if (!existing) throw new NotFoundException('Không tìm thấy biểu thuế');
+
+    const inUseIds = await this.getInUseTaxBracketIds();
+    if (inUseIds.has(id)) {
+      throw new ConflictException('Biểu thuế đã được dùng trong kỳ lương, không thể cập nhật');
+    }
+
+    if (dto.brackets && dto.brackets.length > 1) {
+      for (let i = 1; i < dto.brackets.length; i++) {
+        if (dto.brackets[i].from !== dto.brackets[i - 1].to) {
+          throw new BadRequestException(
+            `Bậc ${i + 1}: ngưỡng "từ" (${dto.brackets[i].from}) phải bằng ngưỡng "đến" của bậc trước (${dto.brackets[i - 1].to})`,
+          );
+        }
+      }
+    }
+
+    const updated = await this.prisma.taxBracket.update({
+      where: { id },
+      data: {
+        ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.effectiveFrom !== undefined && { effectiveFrom: new Date(dto.effectiveFrom) }),
+        ...(dto.brackets !== undefined && { brackets: dto.brackets as any }),
+      },
+    });
+
+    return updated;
   }
 
   async deleteTaxBracket(id: string) {

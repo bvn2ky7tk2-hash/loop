@@ -313,10 +313,10 @@ export default function LeavePage() {
   const isPrivileged = canApprove(user?.role);
 
   const location = useLocation();
-  // /hr/leaves → mặc định xem toàn bộ (tab team), /leaves → xem cá nhân
-  const [activeTab, setActiveTab] = useState<'my' | 'team'>(
-    location.pathname === '/hr/leaves' ? 'team' : 'my'
-  );
+  // /hr/leaves → màn Quản lý toàn bộ (chỉ tab team)
+  // /leaves → màn cá nhân (chỉ tab my)
+  const isHrView = location.pathname === '/hr/leaves';
+  const [activeTab, setActiveTab] = useState<'my' | 'team'>(isHrView ? 'team' : 'my');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [viewLeave, setViewLeave] = useState<LeaveRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | undefined>();
@@ -466,10 +466,13 @@ export default function LeavePage() {
     },
   ];
 
-  const tabs = [
-    { key: 'my', label: 'Của tôi' },
-    ...(isPrivileged ? [{ key: 'team', label: 'Toàn bộ' }] : []),
-  ];
+  // isHrView: chỉ hiện tab "Toàn bộ"; /leaves: chỉ hiện tab "Của tôi"
+  const tabs = isHrView
+    ? [{ key: 'team', label: 'Toàn bộ đơn nghỉ phép' }]
+    : [
+        { key: 'my', label: 'Đơn của tôi' },
+        ...(isPrivileged ? [{ key: 'team', label: 'Toàn bộ' }] : []),
+      ];
 
   return (
     <div style={{ padding: 24 }}>

@@ -147,6 +147,32 @@ export class PayrollEmployeeService {
     return this.getTaxProfile(employee.id);
   }
 
+  async getMyPayrollRecords(userId: string) {
+    const employee = await this.prisma.employee.findFirst({ where: { userId } });
+    if (!employee) return [];
+
+    const records = await this.prisma.payrollRecord.findMany({
+      where: { employeeId: employee.id },
+      include: {
+        period: {
+          select: {
+            id: true, name: true, startDate: true, endDate: true, status: true, type: true,
+          },
+        },
+      },
+      orderBy: { period: { startDate: 'desc' } },
+    });
+
+    return records.map(r => ({
+      ...r,
+      periodName: r.period?.name,
+      periodStart: r.period?.startDate,
+      periodEnd: r.period?.endDate,
+      periodStatus: r.period?.status,
+      periodType: r.period?.type,
+    }));
+  }
+
   // ─── Helpers ─────────────────────────────────────────────────────────────────
 
   private async ensureTaxProfile(employeeId: string) {
