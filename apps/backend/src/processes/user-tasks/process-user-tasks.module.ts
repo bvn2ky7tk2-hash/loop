@@ -4,9 +4,10 @@ import { ProcessUserTasksController } from './process-user-tasks.controller';
 import { BpmnEngineService } from '../engine/bpmn-engine.service';
 import { ProcessEventBus } from '../process-event-bus.service';
 import { NotificationsModule } from '../../notifications/notifications.module';
+import { DelegationModule } from '../../delegation/delegation.module';
 
 @Module({
-  imports: [NotificationsModule],
+  imports: [NotificationsModule, DelegationModule],
   providers: [ProcessUserTasksService, BpmnEngineService, ProcessEventBus],
   controllers: [ProcessUserTasksController],
   exports: [ProcessUserTasksService],

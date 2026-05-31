@@ -12,10 +12,11 @@ const db = new Client({
   connectionString: process.env.DATABASE_URL || 'postgresql://loop:loop_password@localhost:5432/loop_db',
 });
 
-const ADMIN_USER = 'ce54ea7d-26b9-44f3-85d1-c1647548619b';
-const HOA_USER   = '60d6c58d-2582-4531-81ef-623fb269e435';
-const AN_USER    = 'e3c4b016-1a88-4c65-8b1d-72730d443160';
-const TAI_USER   = '094653ee-af94-421a-89eb-67e51961b66d';
+// IDs động — lấy từ DB
+const ADMIN_USER = '8552e1ca-0b85-4caf-bc50-71b2da41bd9e';
+const HOA_USER   = 'c4dfafb8-93b2-4296-aa51-95c08e5a4b53';
+const AN_USER    = 'db735873-25a2-4b24-adc6-efbffc4e9e6c';
+const TAI_USER   = '399c336f-3109-4476-9868-c27e1deb9597';
 
 function slugify(text) {
   return text.toLowerCase()

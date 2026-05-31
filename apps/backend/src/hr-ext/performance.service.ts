@@ -23,12 +23,13 @@ export class PerformanceService extends TenantAwareService {
 
   async list(dto: FilterPerformanceDto) {
     const { page = 1, limit = 50, employeeId, reviewerId, period, status } = dto;
-    const where = this.tenantWhere({
+    // PerformanceReview chưa có tenantId (v6 task)
+    const where = {
       ...(employeeId ? { employeeId } : {}),
       ...(reviewerId ? { reviewerId } : {}),
       ...(period     ? { period } : {}),
       ...(status     ? { status: status as ReviewStatus } : {}),
-    });
+    };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.performanceReview.findMany({
         where, skip: (page - 1) * limit, take: limit,

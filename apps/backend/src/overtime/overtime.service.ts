@@ -131,7 +131,8 @@ export class OvertimeService extends TenantAwareService implements OnModuleInit 
   async list(query: ListOtQueryDto): Promise<PaginatedResult<any>> {
     const { employeeId, status, month, year, page = 1, limit = 50 } = query;
 
-    const where: any = this.tenantWhere();
+    // OvertimeRequest chưa có tenantId (v6 task) — dùng {} thay tenantWhere()
+    const where: any = {};
     if (employeeId) where.employeeId = employeeId;
     if (status) where.status = status;
 

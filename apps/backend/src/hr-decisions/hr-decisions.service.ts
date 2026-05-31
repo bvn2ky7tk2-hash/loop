@@ -108,7 +108,8 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
     const limit = query.limit ?? 50;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = this.tenantWhere();
+    // HrDecision chưa có tenantId (v6 task) — dùng {} thay tenantWhere()
+    const where: Record<string, unknown> = {};
 
     if (query.employeeId) {
       where['employeeId'] = query.employeeId;

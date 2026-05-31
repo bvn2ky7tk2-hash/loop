@@ -76,7 +76,9 @@ export class ProcurementService {
   // ─── Purchase Orders ────────────────────────────────────────────────────────
 
   async listPos(query: PaginationDto & { status?: string; vendorId?: string; search?: string }) {
-    const { page = 1, limit = 50, status, vendorId, search } = query;
+    const page = Number(query.page ?? 1);
+    const limit = Number(query.limit ?? 50);
+    const { status, vendorId, search } = query;
     const where: any = {};
     if (status)   where.status = status;
     if (vendorId) where.vendorId = vendorId;

@@ -1,6 +1,3 @@
-import { Inject, Optional } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
-
 export interface TenantUser {
   id: string;
   tenantId?: string | null;
@@ -10,18 +7,12 @@ export interface TenantUser {
 
 /**
  * Base class cho tất cả service có data access theo tenant.
- * Extends class này → tự động có getTenantId() và tenantWhere().
- * Không cần @Inject(REQUEST) thủ công trong mỗi service.
+ * Child class truyền `req` vào super(req) từ constructor của mình.
+ * KHÔNG dùng @Inject(REQUEST) ở đây để tránh metadata conflict với child classes.
  */
 export abstract class TenantAwareService {
-  constructor(
-    @Optional() @Inject(REQUEST) protected readonly _req?: any,
-  ) {}
+  constructor(protected readonly _req?: any) {}
 
-  /**
-   * Lấy tenantId từ JWT (qua request context).
-   * Fallback về DEFAULT_TENANT_ID khi chạy on-prem.
-   */
   protected getTenantId(): string | undefined {
     return (
       this._req?.user?.tenantId ??
@@ -31,10 +22,6 @@ export abstract class TenantAwareService {
     );
   }
 
-  /**
-   * Trả về where clause có tenantId kèm điều kiện thêm.
-   * Nếu tenantId là undefined (on-prem / admin global), trả về chỉ extra.
-   */
   protected tenantWhere<T extends object>(extra?: T): T & { tenantId?: string } {
     const tid = this.getTenantId();
     return tid ? { tenantId: tid, ...(extra ?? {}) } as any : { ...(extra ?? {}) } as any;

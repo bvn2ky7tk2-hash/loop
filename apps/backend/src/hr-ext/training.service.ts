@@ -30,11 +30,12 @@ export class TrainingService extends TenantAwareService {
 
   async listRecords(dto: FilterTrainingDto) {
     const { page = 1, limit = 50, employeeId, programId, status } = dto;
-    const where = this.tenantWhere({
+    // TrainingRecord chưa có tenantId (v6 task)
+    const where = {
       ...(employeeId ? { employeeId } : {}),
       ...(programId  ? { programId  } : {}),
       ...(status     ? { status: status as TrainingStatus } : {}),
-    });
+    };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.trainingRecord.findMany({
         where, skip: (page - 1) * limit, take: limit,
