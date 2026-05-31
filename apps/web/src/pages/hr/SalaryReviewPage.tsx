@@ -83,10 +83,10 @@ export default function SalaryReviewPage() {
     queryKey: ['salary-reviews', { page, status: statusFilter }],
     queryFn: () =>
       apiClient
-        .get<SalaryReviewSuggestion[]>('/hr/salary-reviews', {
+        .get<{ data: SalaryReviewSuggestion[]; total: number }>('/hr/salary-reviews', {
           params: { page, limit: 50, status: statusFilter },
         })
-        .then((r) => r.data)
+        .then((r) => r.data.data ?? [])
         .catch(() => { throw new Error('API not available'); }),
     retry: false,
   });

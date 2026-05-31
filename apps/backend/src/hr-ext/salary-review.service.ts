@@ -18,10 +18,11 @@ export class SalaryReviewService extends TenantAwareService {
 
   async list(dto: FilterSalaryReviewDto) {
     const { page = 1, limit = 50, employeeId, status } = dto;
-    const where = this.tenantWhere({
+    // SalaryReviewSuggestion chưa có tenantId (v6 task)
+    const where = {
       ...(employeeId ? { employeeId } : {}),
       ...(status     ? { status: status as SalaryReviewStatus } : {}),
-    });
+    };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.salaryReviewSuggestion.findMany({
         where,

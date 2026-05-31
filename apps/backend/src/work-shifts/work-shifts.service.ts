@@ -55,6 +55,7 @@ export class WorkShiftsService {
       where: { id },
       data: {
         ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.code !== undefined && { code: dto.code.toUpperCase() }),
         ...(dto.type !== undefined && { type: dto.type as any }),
         ...(dto.startTime !== undefined && { startTime: dto.startTime }),
         ...(dto.endTime !== undefined && { endTime: dto.endTime }),

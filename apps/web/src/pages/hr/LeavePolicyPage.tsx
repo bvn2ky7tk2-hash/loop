@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form, Input,
-  InputNumber, Select, Switch, Divider, message, Popconfirm,
+  InputNumber, Select, Switch, Divider, message,
 } from 'antd';
 import { PlusOutlined, CalendarOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -88,6 +88,8 @@ export default function LeavePolicyPage() {
     const payload: Partial<LeavePolicy> = {
       ...values,
       seniorityBonus: seniorityRows,
+      // Gửi null thay vì chuỗi rỗng để backend lưu đúng
+      carryOverExpiry: values.carryOverExpiry?.trim() || undefined,
     };
     if (editing) {
       updateMutation.mutate({ id: editing.id, data: payload });
@@ -97,7 +99,7 @@ export default function LeavePolicyPage() {
   };
 
   const addSeniorityRow = () => {
-    setSeniorityRows(prev => [...prev, { yearsFrom: 0, bonus: 0 }]);
+    setSeniorityRows(prev => [...prev, { yearsFrom: 1, bonus: 1 }]);
   };
 
   const removeSeniorityRow = (idx: number) => {
@@ -318,9 +320,9 @@ export default function LeavePolicyPage() {
           {seniorityRows.map((row, idx) => (
             <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>
               <InputNumber
-                min={0}
+                min={1}
                 value={row.yearsFrom}
-                onChange={v => updateSeniorityRow(idx, 'yearsFrom', v ?? 0)}
+                onChange={v => updateSeniorityRow(idx, 'yearsFrom', v ?? 1)}
                 addonBefore="Từ"
                 addonAfter="năm"
                 style={{ flex: 1 }}

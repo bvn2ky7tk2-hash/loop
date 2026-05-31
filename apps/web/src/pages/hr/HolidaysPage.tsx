@@ -23,6 +23,11 @@ const HOLIDAY_TYPE_META: Record<HolidayType, { label: string; color: string; dar
     color: '#EF4444',
     darkStyle: { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' },
   },
+  COMPANY_HOLIDAY: {
+    label: 'Ngày lễ công ty',
+    color: '#8B5CF6',
+    darkStyle: { background: 'rgba(139,92,246,0.15)', color: '#C4B5FD', borderColor: 'rgba(139,92,246,0.3)' },
+  },
   COMPENSATORY_DAY: {
     label: 'Nghỉ bù',
     color: '#F97316',
@@ -132,7 +137,7 @@ export default function HolidaysPage() {
         return (
           <Tag
             style={isDark ? meta.darkStyle : {}}
-            color={isDark ? undefined : v === 'NATIONAL_HOLIDAY' ? 'red' : 'orange'}
+            color={isDark ? undefined : v === 'NATIONAL_HOLIDAY' ? 'red' : v === 'COMPANY_HOLIDAY' ? 'purple' : 'orange'}
           >
             {meta.label}
           </Tag>
@@ -272,6 +277,7 @@ export default function HolidaysPage() {
             <Select
               options={[
                 { value: 'NATIONAL_HOLIDAY', label: 'Ngày lễ quốc gia' },
+                { value: 'COMPANY_HOLIDAY',  label: 'Ngày lễ công ty' },
                 { value: 'COMPENSATORY_DAY', label: 'Nghỉ bù' },
               ]}
             />

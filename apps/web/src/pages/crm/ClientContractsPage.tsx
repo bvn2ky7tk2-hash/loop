@@ -193,7 +193,7 @@ export default function ClientContractsPage() {
   // Customers for select
   const { data: customersRes } = useQuery({
     queryKey: ['customers-all'],
-    queryFn: () => apiClient.get<{ data: { id: string; code: string; name: string }[] }>('/api/v1/crm/customers?limit=500').then(r => r.data.data),
+    queryFn: () => apiClient.get<{ data: { id: string; code: string; name: string }[] }>('/crm/customers?limit=500').then(r => r.data.data),
   });
 
   const { data: stats } = useQuery({

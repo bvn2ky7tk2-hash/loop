@@ -47,10 +47,10 @@ export default function OffboardingPage() {
 
   // Lấy nhân viên đã nghỉ việc từ API
   const { data: employees = [], isLoading } = useQuery({
-    queryKey: ['employees-terminated'],
+    queryKey: ['employees-offboarding'],
     queryFn: () =>
       apiClient
-        .get<OffboardingEmployee[]>('/employees', { params: { status: 'TERMINATED', limit: 100 } })
+        .get<OffboardingEmployee[]>('/employees/offboarding')
         .then((r) => r.data)
         .catch(() => [] as OffboardingEmployee[]),
   });

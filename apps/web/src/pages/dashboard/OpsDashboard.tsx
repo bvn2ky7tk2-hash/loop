@@ -49,7 +49,7 @@ export default function OpsDashboard() {
   // Xe yêu cầu hôm nay
   const { data: vehicleRequestsData } = useQuery({
     queryKey: ['vehicle-requests', 'today'],
-    queryFn:  () => apiClient.get('/vehicle-requests', {
+    queryFn:  () => apiClient.get('/vehicle-booking/requests', {
       params: { page: 1, limit: 10, date: dayjs().format('YYYY-MM-DD') },
     }).then((r) => r.data),
     refetchInterval: 60_000,

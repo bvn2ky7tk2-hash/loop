@@ -121,41 +121,41 @@ export interface TodayEvents {
 // ─── API ──────────────────────────────────────────────────────────────────
 export const dashboardV3Api = {
   getWork: (): Promise<WorkDashboardData> =>
-    api.get('/api/v1/dashboard/work').then((r) => r.data),
+    api.get('/dashboard/work').then((r) => r.data),
 
   getPeople: (): Promise<PeopleDashboardData> =>
-    api.get('/api/v1/dashboard/people').then((r) => r.data),
+    api.get('/dashboard/people').then((r) => r.data),
 
   getFinance: (): Promise<FinanceDashboardData> =>
-    api.get('/api/v1/dashboard/finance').then((r) => r.data),
+    api.get('/dashboard/finance').then((r) => r.data),
 
   getCrm: (): Promise<CrmDashboardData> =>
-    api.get('/api/v1/dashboard/crm').then((r) => r.data),
+    api.get('/dashboard/crm').then((r) => r.data),
 
   getAsset: (): Promise<AssetDashboardData> =>
-    api.get('/api/v1/dashboard/asset').then((r) => r.data),
+    api.get('/dashboard/asset').then((r) => r.data),
 
   getOps: (): Promise<OpsDashboardData> =>
-    api.get('/api/v1/dashboard/ops').then((r) => r.data),
+    api.get('/dashboard/ops').then((r) => r.data),
 
   getMe: (): Promise<MeDashboardData> =>
-    api.get('/api/v1/dashboard/me').then((r) => r.data),
+    api.get('/dashboard/me').then((r) => r.data),
 
   getAdmin: (): Promise<AdminDashboardData> =>
-    api.get('/api/v1/dashboard/admin').then((r) => r.data),
+    api.get('/dashboard/admin').then((r) => r.data),
 
   getFinanceSummary: (): Promise<FinanceSummaryItem[]> =>
-    api.get('/api/v1/dashboard/finance-summary').then((r) => r.data),
+    api.get('/dashboard/finance-summary').then((r) => r.data),
 
   getMyTasksSummary: (): Promise<MyTasksSummary> =>
-    api.get('/api/v1/dashboard/my-tasks-summary').then((r) => r.data),
+    api.get('/dashboard/my-tasks-summary').then((r) => r.data),
 
   getWorkTrend: (): Promise<WorkTrendItem[]> =>
-    api.get('/api/v1/dashboard/work-trend').then((r) => r.data),
+    api.get('/dashboard/work-trend').then((r) => r.data),
 
   getPeopleByDept: (): Promise<PeopleByDeptItem[]> =>
-    api.get('/api/v1/dashboard/people-by-dept').then((r) => r.data),
+    api.get('/dashboard/people-by-dept').then((r) => r.data),
 
   getTodayEvents: (): Promise<TodayEvents> =>
-    api.get('/api/v1/dashboard/today-events').then((r) => r.data),
+    api.get('/dashboard/today-events').then((r) => r.data),
 };

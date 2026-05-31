@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form,
   Select, DatePicker, TimePicker, Input, Tabs,
@@ -23,9 +23,23 @@ import {
   type AttendanceStatus,
 } from '../../api/hr-attendance';
 import { workShiftsApi } from '../../api/work-shifts';
+import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
+
+// Helper: flatten org-unit tree thành mảng phẳng để dùng trong Select
+function flattenOrgTree(nodes: OrgUnitTree[]): { id: string; name: string }[] {
+  const result: { id: string; name: string }[] = [];
+  const walk = (items: OrgUnitTree[], depth: number) => {
+    for (const n of items) {
+      result.push({ id: n.id, name: ' '.repeat(depth * 2) + n.name });
+      if (n.children?.length) walk(n.children, depth + 1);
+    }
+  };
+  walk(nodes, 0);
+  return result;
+}
 
 const ATTENDANCE_STATUS_MAP: Record<string, { label: string; color: string }> = {
   PRESENT: { label: 'Đi làm',    color: '#10B981' },
@@ -70,7 +84,17 @@ function MonthlyTab() {
   const year = selectedMonth.year();
   const month = selectedMonth.month() + 1;
 
-  const { data: monthly = [], isLoading, refetch } = useQuery({
+  const { data: orgTree = [] } = useQuery({
+    queryKey: ['org-units'],
+    queryFn: orgUnitsApi.list,
+  });
+
+  const orgUnitOptions = useMemo(
+    () => flattenOrgTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
+    [orgTree],
+  );
+
+  const { data: monthlyRows = [], isLoading, refetch } = useQuery({
     queryKey: ['attendance-monthly', year, month, orgUnitId],
     queryFn: () => hrAttendanceApi.monthlyReport({ year, month, orgUnitId }),
   });
@@ -86,8 +110,6 @@ function MonthlyTab() {
     onSuccess: () => { refetch(); message.success('Đã khóa bảng công'); },
     onError: () => message.error('Khóa thất bại'),
   });
-
-  const rows: MonthlyAttendance[] = Array.isArray(monthly?.data) ? monthly.data : Array.isArray(monthly) ? monthly : [];
 
   const columns: ColumnsType<MonthlyAttendance> = [
     {
@@ -200,11 +222,16 @@ function MonthlyTab() {
           style={{ width: 150 }}
         />
         <Select
+          showSearch
           placeholder="Phòng ban"
           allowClear
-          style={{ width: 200 }}
+          style={{ width: 220 }}
           value={orgUnitId}
           onChange={setOrgUnitId}
+          filterOption={(input, opt) =>
+            String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
+          options={orgUnitOptions}
         />
       </FilterBar>
 
@@ -212,7 +239,7 @@ function MonthlyTab() {
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={rows}
+          dataSource={monthlyRows}
           loading={isLoading}
           pagination={{ pageSize: 20 }}
           size="middle"
@@ -312,11 +339,7 @@ function DetailTab() {
     });
   }
 
-  const records: AttendanceRecord[] = Array.isArray(attendanceData?.data)
-    ? attendanceData.data
-    : Array.isArray(attendanceData)
-    ? attendanceData
-    : [];
+  const records: AttendanceRecord[] = attendanceData?.data ?? [];
 
   const columns: ColumnsType<AttendanceRecord> = [
     {

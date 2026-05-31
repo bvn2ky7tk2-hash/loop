@@ -1,18 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table, Button, Modal, Form, Input, DatePicker, Space, Tag, Typography,
   App, Popconfirm, Row, Col, Empty, Tooltip,
-  InputNumber, Tabs,
+  InputNumber, Tabs, Select,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { FilterBar } from '../../components/FilterBar';
 import type { ColumnsType } from 'antd/es/table';
 import {
   PlusOutlined, ThunderboltOutlined, CheckOutlined, DollarOutlined,
   EditOutlined, TeamOutlined, CalendarOutlined, EyeOutlined,
   ReloadOutlined, FileDoneOutlined, SettingOutlined, FilePdfOutlined,
-  FileExcelOutlined, GiftOutlined,
+  FileExcelOutlined, GiftOutlined, SearchOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -537,7 +538,7 @@ function Month13Tab() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-periods-month13'],
-    queryFn: () => payrollApi.listPeriods(1, 50),
+    queryFn: () => payrollApi.listPeriods(1, 200),
     select: (res) => ({ ...res, data: res.data.filter(p => p.type === 'MONTH_13') }),
   });
 
@@ -770,6 +771,8 @@ export default function PayrollPage() {
   const [form] = Form.useForm();
   const [page, setPage] = useState(1);
   const [exportingTax, setExportingTax] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('');
+  const [filterSearch, setFilterSearch] = useState<string>('');
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
 
   const handleExportTax = async () => {
@@ -786,7 +789,7 @@ export default function PayrollPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-periods', page],
-    queryFn: () => payrollApi.listPeriods(page, 20),
+    queryFn: () => payrollApi.listPeriods(page, 50),
   });
 
   const createMut = useMutation({
@@ -800,11 +803,27 @@ export default function PayrollPage() {
     onError: (e: Error) => message.error(e.message ?? 'Lỗi tạo kỳ lương'),
   });
 
-  const periods = data?.data ?? [];
-  const totalDraft      = periods.filter(p => p.status === 'DRAFT').length;
-  const totalProcessing = periods.filter(p => p.status === 'PROCESSING' || p.status === 'REVIEWED').length;
-  const totalApproved   = periods.filter(p => p.status === 'APPROVED').length;
-  const totalPaid       = periods.filter(p => p.status === 'PAID').length;
+  const allPeriods = data?.data ?? [];
+  // Lọc chỉ lấy kỳ REGULAR và ADJUSTMENT (không phải MONTH_13)
+  const regularPeriods = useMemo(() =>
+    allPeriods.filter(p => !p.type || p.type === 'REGULAR' || p.type === 'ADJUSTMENT'),
+  [allPeriods]);
+
+  const totalDraft      = regularPeriods.filter(p => p.status === 'DRAFT').length;
+  const totalProcessing = regularPeriods.filter(p => p.status === 'PROCESSING' || p.status === 'REVIEWED').length;
+  const totalApproved   = regularPeriods.filter(p => p.status === 'APPROVED').length;
+  const totalPaid       = regularPeriods.filter(p => p.status === 'PAID').length;
+
+  // Filter theo status + tìm kiếm
+  const periods = useMemo(() => {
+    let list = regularPeriods;
+    if (filterStatus) list = list.filter(p => p.status === filterStatus);
+    if (filterSearch) {
+      const q = filterSearch.toLowerCase();
+      list = list.filter(p => p.name.toLowerCase().includes(q));
+    }
+    return list;
+  }, [regularPeriods, filterStatus, filterSearch]);
 
   const cols: ColumnsType<PayrollPeriod> = [
     {
@@ -902,6 +921,31 @@ export default function PayrollPage() {
                   <Col xs={12} sm={6}><StatCard label="Đã trả lương" value={totalPaid} color="#10B981" icon={<DollarOutlined />} /></Col>
                 </Row>
 
+                <FilterBar>
+                  <Input
+                    prefix={<SearchOutlined />}
+                    placeholder="Tìm tên kỳ lương..."
+                    style={{ width: 240 }}
+                    allowClear
+                    value={filterSearch}
+                    onChange={e => { setFilterSearch(e.target.value); setPage(1); }}
+                  />
+                  <Select
+                    placeholder="Tất cả trạng thái"
+                    style={{ width: 180 }}
+                    allowClear
+                    value={filterStatus || undefined}
+                    onChange={v => { setFilterStatus(v ?? ''); setPage(1); }}
+                    options={[
+                      { value: 'DRAFT',      label: 'Bản nháp' },
+                      { value: 'PROCESSING', label: 'Đang xử lý' },
+                      { value: 'REVIEWED',   label: 'Chờ duyệt' },
+                      { value: 'APPROVED',   label: 'Đã duyệt' },
+                      { value: 'PAID',       label: 'Đã trả lương' },
+                    ]}
+                  />
+                </FilterBar>
+
                 <Table
                   loading={isLoading}
                   dataSource={periods}
@@ -911,10 +955,11 @@ export default function PayrollPage() {
                   style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
                   pagination={{
                     current: page,
-                    total: data?.total ?? 0,
+                    total: periods.length,
                     pageSize: 20,
                     onChange: setPage,
                     showTotal: t => `${t} kỳ lương`,
+                    showSizeChanger: false,
                   }}
                   onRow={r => ({ onClick: () => setSelectedPeriod(r), style: { cursor: 'pointer' } })}
                 />

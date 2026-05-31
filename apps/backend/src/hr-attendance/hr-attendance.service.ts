@@ -78,7 +78,8 @@ export class HrAttendanceService extends TenantAwareService {
     const page = query.page ?? 1;
     const limit = query.limit ?? 50;
 
-    const where: any = this.tenantWhere();
+    // AttendanceRecord chưa có tenantId (v6 task)
+    const where: any = {};
     if (query.employeeId) where.employeeId = query.employeeId;
     if (query.status) where.status = query.status;
     if (query.dateFrom || query.dateTo) {
@@ -441,7 +442,10 @@ export class HrAttendanceService extends TenantAwareService {
   }
 
   // ─── 6. Báo cáo bảng công tháng ─────────────────────────────────────────────
-  async getMonthlyReport(query: MonthlyAttendanceQueryDto): Promise<any[]> {
+  async getMonthlyReport(query: MonthlyAttendanceQueryDto): Promise<PaginatedResult<any>> {
+    const page = (query as any).page ?? 1;
+    const limit = (query as any).limit ?? 100;
+
     const where: any = {};
     if (query.year) where.year = query.year;
     if (query.month) where.month = query.month;
@@ -449,20 +453,27 @@ export class HrAttendanceService extends TenantAwareService {
       where.employee = { orgUnitId: query.orgUnitId };
     }
 
-    return this.prisma.monthlyAttendance.findMany({
-      where,
-      orderBy: [{ year: 'desc' }, { month: 'desc' }, { employeeId: 'asc' }],
-      include: {
-        employee: {
-          select: {
-            id: true,
-            fullName: true,
-            code: true,
-            orgUnitId: true,
-            orgUnit: { select: { id: true, name: true } },
+    const [records, total] = await this.prisma.$transaction([
+      this.prisma.monthlyAttendance.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: [{ year: 'desc' }, { month: 'desc' }, { employeeId: 'asc' }],
+        include: {
+          employee: {
+            select: {
+              id: true,
+              fullName: true,
+              code: true,
+              orgUnitId: true,
+              orgUnit: { select: { id: true, name: true } },
+            },
           },
         },
-      },
-    });
+      }),
+      this.prisma.monthlyAttendance.count({ where }),
+    ]);
+
+    return paginate(records, total, page, limit);
   }
 }

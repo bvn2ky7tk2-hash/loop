@@ -27,6 +27,13 @@ export class EmployeesController {
     return this.service.create(dto);
   }
 
+  @Get('offboarding')
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Danh sách nhân viên đã nghỉ việc (Offboarding)' })
+  findOffboarding(@Req() req: { orgUnitIds: string[] | null }) {
+    return this.service.findOffboarding(req.orgUnitIds);
+  }
+
   @Get('export')
   @Roles(Role.ADMIN)
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)

@@ -79,11 +79,10 @@ export default function AttendanceExplanationPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [page, setPage] = useState(1);
 
-  const { data: employeesData } = useQuery({
+  const { data: employees = [] } = useQuery({
     queryKey: ['employees-all'],
     queryFn: () => employeesApi.list({ limit: 500 }),
   });
-  const employees = employeesData?.data ?? [];
 
   const { data, isLoading } = useQuery({
     queryKey: ['attendance-explanations', filterStatus, filterEmployeeId, page],

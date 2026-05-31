@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 
-const BASE = '/api/v1/payroll';
+const BASE = '/payroll';
 
 export type PayrollStatus = 'DRAFT' | 'PROCESSING' | 'REVIEWED' | 'APPROVED' | 'PAID';
 export type PayrollPeriodType = 'REGULAR' | 'ADJUSTMENT' | 'MONTH_13';

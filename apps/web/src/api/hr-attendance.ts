@@ -2,7 +2,7 @@ import { apiClient } from './client';
 
 export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LEAVE' | 'HOLIDAY' | 'OT';
 export type MonthlyAttendanceStatus = 'OPEN' | 'LOCKED';
-export type HolidayType = 'NATIONAL_HOLIDAY' | 'COMPENSATORY_DAY';
+export type HolidayType = 'NATIONAL_HOLIDAY' | 'COMPANY_HOLIDAY' | 'COMPENSATORY_DAY';
 
 export interface AttendanceRecord {
   id: string;
@@ -76,7 +76,7 @@ export const hrAttendanceApi = {
     dateFrom?: string;
     dateTo?: string;
     status?: AttendanceStatus;
-  }) => apiClient.get('/hr-attendance', { params }).then(r => r.data),
+  }) => apiClient.get<PaginatedResult<AttendanceRecord>>('/hr-attendance', { params }).then(r => r.data),
 
   upsert: (data: Partial<AttendanceRecord> & { employeeId: string; date: string }) =>
     apiClient.post('/hr-attendance/upsert', data).then(r => r.data),
@@ -90,8 +90,16 @@ export const hrAttendanceApi = {
   lock: (data: { year: number; month: number; orgUnitId?: string }) =>
     apiClient.post('/hr-attendance/lock', data).then(r => r.data),
 
-  monthlyReport: (params?: { year?: number; month?: number; orgUnitId?: string }) =>
-    apiClient.get('/hr-attendance/monthly', { params }).then(r => r.data),
+  monthlyReport: (params?: { year?: number; month?: number; orgUnitId?: string; page?: number; limit?: number }) =>
+    apiClient.get<PaginatedResult<MonthlyAttendance> | MonthlyAttendance[]>(
+      '/hr-attendance/monthly',
+      { params: { limit: 200, ...params } },
+    ).then(r => {
+      const d = r.data;
+      // Normalize: backend có thể trả array thẳng hoặc PaginatedResult tùy version
+      if (Array.isArray(d)) return d;
+      return (d as PaginatedResult<MonthlyAttendance>).data ?? [];
+    }),
 };
 
 export const leavePoliciesApi = {

@@ -357,11 +357,17 @@ export default function HrShiftsPage() {
   function handleEnrollSave() {
     if (!enrollTargetSchedule) return;
     enrollForm.validateFields().then((values) => {
+      const hasEmployees = values.employeeIds?.length > 0;
+      const hasOrgUnit = !!values.orgUnitId;
+      if (!hasEmployees && !hasOrgUnit) {
+        message.warning('Vui lòng chọn ít nhất 1 nhân viên trước khi gán vào lịch');
+        return;
+      }
       enrollMutation.mutate({
         scheduleId: enrollTargetSchedule.id,
         dto: {
-          employeeIds: values.employeeIds?.length ? values.employeeIds : undefined,
-          orgUnitId: values.orgUnitId ?? undefined,
+          employeeIds: hasEmployees ? values.employeeIds : undefined,
+          orgUnitId: hasOrgUnit ? values.orgUnitId : undefined,
           effectiveFrom: values.effectiveFrom.format('YYYY-MM-DD'),
           effectiveTo: values.effectiveTo ? values.effectiveTo.format('YYYY-MM-DD') : undefined,
           note: values.note,
@@ -721,7 +727,7 @@ export default function HrShiftsPage() {
                     columns={assignColumns}
                     dataSource={assignments}
                     loading={assignmentsLoading}
-                    pagination={{ pageSize: 20, showTotal: (t) => <Text style={{ color: textMuted }}>Tổng {t} phân công</Text> }}
+                    pagination={{ pageSize: 50, showSizeChanger: false, showTotal: (t) => <Text style={{ color: textMuted }}>Tổng {t} phân công</Text> }}
                     scroll={{ x: 900 }}
                   />
                 </div>

@@ -30,16 +30,16 @@ export interface PaginatedDelegations {
 export const delegationApi = {
   list: (page = 1, limit = 50) =>
     apiClient
-      .get<PaginatedDelegations>('/api/v1/delegation/rules', { params: { page, limit } })
+      .get<PaginatedDelegations>('/delegation/rules', { params: { page, limit } })
       .then((r) => r.data),
 
   create: (payload: CreateDelegationPayload) =>
     apiClient
-      .post<DelegationRule>('/api/v1/delegation/rules', payload)
+      .post<DelegationRule>('/delegation/rules', payload)
       .then((r) => r.data),
 
   delete: (id: string) =>
     apiClient
-      .delete(`/api/v1/delegation/rules/${id}`)
+      .delete(`/delegation/rules/${id}`)
       .then((r) => r.data),
 };

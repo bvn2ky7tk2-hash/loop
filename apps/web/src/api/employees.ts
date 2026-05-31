@@ -30,9 +30,13 @@ export interface EmployeeRate {
   currency: string;
 }
 
+export interface PaginatedResult<T> { data: T[]; total: number; page: number; limit: number; }
+
 export const employeesApi = {
   me: () => apiClient.get<Employee>('/employees/me').then((r) => r.data),
-  list: () => apiClient.get<Employee[]>('/employees').then((r) => r.data),
+  list: (params?: { page?: number; limit?: number; orgUnitId?: string }) =>
+    apiClient.get<PaginatedResult<Employee>>('/employees', { params: { limit: 500, ...params } })
+      .then((r) => r.data.data),
   get: (id: string) => apiClient.get<Employee>(`/employees/${id}`).then((r) => r.data),
   create: (data: Partial<Employee> & { password?: string }) =>
     apiClient.post<Employee>('/employees', data).then((r) => r.data),

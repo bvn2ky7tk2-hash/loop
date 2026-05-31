@@ -91,13 +91,13 @@ export class CalendarService extends TenantAwareService {
     // Normalise bookings into a calendar-event-like shape for the frontend
     const normalisedBookings = bookings.map((b) => ({
       id: `booking-${b.id}`,
-      title: `[Phòng ${b.room.name}] ${b.title}`,
+      title: `[${b.room.name}] ${b.title}`,
       description: b.note ?? undefined,
       eventType: 'ROOM_BOOKING' as const,
       startTime: b.startTime,
       endTime: b.endTime,
       isAllDay: false,
-      location: b.room.floor ? `Tầng ${b.room.floor}` : b.room.name,
+      location: b.room.floor ?? b.room.name,
       color: '#F59E0B',
       attendees: b.attendees,
       createdBy: b.bookedBy,

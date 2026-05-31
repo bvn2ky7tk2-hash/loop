@@ -30,7 +30,8 @@ export class HrInsuranceService extends TenantAwareService {
   async listEnrollments(query: InsuranceQueryDto): Promise<PaginatedResult<any>> {
     const { page = 1, limit = 50, orgUnitId, status, search } = query;
 
-    const where: any = this.tenantWhere({
+    // InsuranceEnrollment chưa có tenantId (v6 task)
+    const where: any = {
       ...(status ? { status: status as InsuranceEnrollmentStatus } : {}),
       employee: {
         ...(orgUnitId ? { orgUnitId } : {}),
@@ -43,7 +44,7 @@ export class HrInsuranceService extends TenantAwareService {
             }
           : {}),
       },
-    });
+    };
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.insuranceEnrollment.findMany({
@@ -325,19 +326,39 @@ export class HrInsuranceService extends TenantAwareService {
       take: 500,
     });
 
-    return {
-      period: { year, month },
-      totalEvents: events.length,
-      events: events.map((e) => ({
-        id: e.id,
-        eventType: e.eventType,
-        effectiveDate: e.effectiveDate,
-        insuranceSalary: e.insuranceSalary ?? e.enrollment.insuranceSalary,
-        reason: e.reason,
-        employee: e.enrollment.employee,
-        bhxhBookNumber: e.enrollment.bhxhBookNumber,
-      })),
-    };
+    // Trả về shape khớp InsuranceD02Preview của frontend
+    const enrolled = events
+      .filter((e) => e.eventType === InsuranceEventType.ENROLL)
+      .map((e) => ({
+        employeeCode: e.enrollment.employee.code,
+        fullName: e.enrollment.employee.fullName,
+        insuranceSalary: Number(e.insuranceSalary ?? e.enrollment.insuranceSalary),
+        effectiveDate: e.effectiveDate.toISOString(),
+        reason: e.reason ?? undefined,
+      }));
+
+    const terminated = events
+      .filter((e) => e.eventType === InsuranceEventType.TERMINATE)
+      .map((e) => ({
+        employeeCode: e.enrollment.employee.code,
+        fullName: e.enrollment.employee.fullName,
+        insuranceSalary: Number(e.insuranceSalary ?? e.enrollment.insuranceSalary),
+        effectiveDate: e.effectiveDate.toISOString(),
+        reason: e.reason ?? undefined,
+      }));
+
+    // SALARY_CHANGE: mức cũ = enrollment.insuranceSalary (đã update), mức mới = event.insuranceSalary
+    const salaryChanged = events
+      .filter((e) => e.eventType === InsuranceEventType.SALARY_CHANGE)
+      .map((e) => ({
+        employeeCode: e.enrollment.employee.code,
+        fullName: e.enrollment.employee.fullName,
+        oldSalary: Number(e.enrollment.insuranceSalary),
+        newSalary: Number(e.insuranceSalary ?? e.enrollment.insuranceSalary),
+        effectiveDate: e.effectiveDate.toISOString(),
+      }));
+
+    return { enrolled, terminated, salaryChanged };
   }
 
   async updateEnrollment(id: string, dto: { insuranceSalary?: number; status?: string; endDate?: string }) {

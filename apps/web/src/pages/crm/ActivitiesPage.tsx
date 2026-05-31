@@ -54,7 +54,7 @@ export default function ActivitiesPage() {
   });
   const { data: customers } = useQuery({
     queryKey: ['customers-simple'],
-    queryFn: () => apiClient.get<{ data: Customer[]; total: number }>('/api/v1/crm/customers', { params: { limit: 200 } }).then(r => r.data),
+    queryFn: () => apiClient.get<{ data: Customer[]; total: number }>('/crm/customers', { params: { limit: 200 } }).then(r => r.data),
   });
 
   const createMutation = useMutation({

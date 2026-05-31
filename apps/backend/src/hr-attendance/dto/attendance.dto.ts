@@ -62,7 +62,7 @@ export class AttendanceQueryDto extends PaginationDto {
   status?: AttendanceStatus;
 }
 
-export class MonthlyAttendanceQueryDto {
+export class MonthlyAttendanceQueryDto extends PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()

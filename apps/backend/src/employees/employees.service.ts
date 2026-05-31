@@ -78,6 +78,35 @@ export class EmployeesService extends TenantAwareService {
     return { data, total, page, limit };
   }
 
+  /** Danh sách nhân viên đã nghỉ việc (employeeStatus = TERMINATED) dùng cho trang Offboarding */
+  async findOffboarding(orgUnitIds: string[] | null) {
+    const where: Prisma.EmployeeWhereInput = this.tenantWhere({
+      deletedAt: null,
+      employeeStatus: 'TERMINATED',
+      ...(orgUnitIds !== null ? { orgUnitId: { in: orgUnitIds } } : {}),
+    });
+
+    const employees = await this.prisma.employee.findMany({
+      where,
+      include: { orgUnit: { select: { name: true } } },
+      orderBy: { endDate: 'desc' },
+      take: 200,
+    });
+
+    return employees.map((e) => ({
+      id: e.id,
+      code: e.code,
+      fullName: e.fullName,
+      email: e.email,
+      orgUnit: e.orgUnit ? { name: e.orgUnit.name } : undefined,
+      terminationDate: e.endDate ? e.endDate.toISOString() : undefined,
+      // offboardingStatus và offboardingProgress chưa có trong schema — mặc định PENDING / 0
+      offboardingStatus: 'PENDING' as const,
+      offboardingProgress: 0,
+      processInstanceId: null,
+    }));
+  }
+
   async findOne(id: string, callerRole: Role) {
     const emp = await this.prisma.employee.findFirst({
       // Dùng findFirst thay findUnique để có thể lọc deletedAt

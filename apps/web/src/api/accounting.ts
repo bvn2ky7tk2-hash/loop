@@ -70,7 +70,7 @@ export interface PaginatedResult<T> {
 export function useGetAccounts(type?: AccountType) {
   return useQuery({
     queryKey: ['accounting', 'accounts', type],
-    queryFn: () => apiClient.get<ChartOfAccount[]>('/api/v1/accounting/accounts', { params: type ? { type } : {} }).then(r => r.data),
+    queryFn: () => apiClient.get<ChartOfAccount[]>('/accounting/accounts', { params: type ? { type } : {} }).then(r => r.data),
   });
 }
 
@@ -79,14 +79,14 @@ export function useGetAccounts(type?: AccountType) {
 export function useGetJournal(filter: JournalFilter = {}) {
   return useQuery({
     queryKey: ['accounting', 'journal', filter],
-    queryFn: () => apiClient.get<PaginatedResult<JournalEntry>>('/api/v1/accounting/journal', { params: filter }).then(r => r.data),
+    queryFn: () => apiClient.get<PaginatedResult<JournalEntry>>('/accounting/journal', { params: filter }).then(r => r.data),
   });
 }
 
 export function useCreateJournal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (dto: CreateJournalInput) => apiClient.post<JournalEntry>('/api/v1/accounting/journal', dto).then(r => r.data),
+    mutationFn: (dto: CreateJournalInput) => apiClient.post<JournalEntry>('/accounting/journal', dto).then(r => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['accounting', 'journal'] }),
   });
 }
@@ -124,7 +124,7 @@ export interface BalanceSheetReport {
 export function useGetProfitLoss(startDate: string, endDate: string) {
   return useQuery({
     queryKey: ['accounting', 'profit-loss', startDate, endDate],
-    queryFn: () => apiClient.get<ProfitLossReport>('/api/v1/accounting/reports/profit-loss', { params: { startDate, endDate } }).then(r => r.data),
+    queryFn: () => apiClient.get<ProfitLossReport>('/accounting/reports/profit-loss', { params: { startDate, endDate } }).then(r => r.data),
     enabled: !!startDate && !!endDate,
   });
 }
@@ -132,7 +132,7 @@ export function useGetProfitLoss(startDate: string, endDate: string) {
 export function useGetBalanceSheet(asOfDate: string) {
   return useQuery({
     queryKey: ['accounting', 'balance-sheet', asOfDate],
-    queryFn: () => apiClient.get<BalanceSheetReport>('/api/v1/accounting/reports/balance-sheet', { params: { asOfDate } }).then(r => r.data),
+    queryFn: () => apiClient.get<BalanceSheetReport>('/accounting/reports/balance-sheet', { params: { asOfDate } }).then(r => r.data),
     enabled: !!asOfDate,
   });
 }
@@ -162,7 +162,7 @@ export function useGetIncomeStatement(from: string, to: string) {
     queryKey: ['accounting', 'income-statement', from, to],
     queryFn: () =>
       apiClient
-        .get<IncomeStatementReport>('/api/v1/accounting/reports/income-statement', { params: { from, to } })
+        .get<IncomeStatementReport>('/accounting/reports/income-statement', { params: { from, to } })
         .then(r => r.data),
     enabled: !!from && !!to,
   });
@@ -198,7 +198,7 @@ export function useGetCashFlow(from: string, to: string) {
     queryKey: ['accounting', 'cash-flow', from, to],
     queryFn: () =>
       apiClient
-        .get<CashFlowReport>('/api/v1/accounting/reports/cash-flow', { params: { from, to } })
+        .get<CashFlowReport>('/accounting/reports/cash-flow', { params: { from, to } })
         .then(r => r.data),
     enabled: !!from && !!to,
   });

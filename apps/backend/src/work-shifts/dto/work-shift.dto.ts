@@ -60,6 +60,10 @@ export class UpdateWorkShiftDto {
   name?: string;
 
   @IsOptional()
+  @IsString()
+  code?: string;
+
+  @IsOptional()
   @IsEnum(ShiftTypeDto)
   type?: ShiftTypeDto;
 
