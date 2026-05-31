@@ -50,7 +50,9 @@ const PUBLIC_BASE = '/public/portal';
 
 export const portalAdminApi = {
   list: (customerId?: string) =>
-    apiClient.get<CustomerPortal[]>(ADMIN_BASE, { params: customerId ? { customerId } : {} }).then(r => r.data),
+    apiClient
+      .get<{ data: CustomerPortal[] }>(ADMIN_BASE, { params: customerId ? { customerId } : {} })
+      .then(r => r.data.data ?? []),
 
   get: (id: string) =>
     apiClient.get<CustomerPortal & { tickets: CustomerTicket[] }>(`${ADMIN_BASE}/${id}`).then(r => r.data),
@@ -65,7 +67,9 @@ export const portalAdminApi = {
     apiClient.delete(`${ADMIN_BASE}/${id}`).then(r => r.data),
 
   allTickets: (portalId?: string, status?: string) =>
-    apiClient.get<CustomerTicket[]>(`${ADMIN_BASE}/tickets`, { params: { portalId, status } }).then(r => r.data),
+    apiClient
+      .get<{ data: CustomerTicket[] }>(`${ADMIN_BASE}/tickets`, { params: { portalId, status } })
+      .then(r => r.data.data ?? []),
 
   respondTicket: (id: string, data: { status?: TicketStatus; response?: string }) =>
     apiClient.put<CustomerTicket>(`${ADMIN_BASE}/tickets/${id}/respond`, data).then(r => r.data),
