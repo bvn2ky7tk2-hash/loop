@@ -68,7 +68,6 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/hr/decisions',          module: 'people', label: 'Quyết định nhân sự',       icon: 'FileProtectOutlined',  permCode: 'hr_decisions:read',          sortOrder: 6 },
   { route: '/hr/attendance',                  module: 'people', label: 'Bảng công',               icon: 'ScheduleOutlined', permCode: 'attendance:read',  sortOrder: 7 },
   { route: '/hr/attendance/explanations',     module: 'people', label: 'Giải trình Chấm công',   icon: 'FormOutlined',     permCode: 'attendance:read',  sortOrder: 75 },
-  { route: '/timesheet/approvals',   module: 'people', label: 'Duyệt chấm công',          icon: 'AuditOutlined',        permCode: 'timesheet_approvals:approve',sortOrder: 8 },
   { route: '/leaves',                 module: 'people', label: 'Quản lý đơn nghỉ phép',    icon: 'CalendarOutlined',     permCode: 'leaves:approve',             sortOrder: 9 },
   { route: '/hr/overtime',           module: 'people', label: 'Quản lý OT',               icon: 'FieldTimeOutlined',    permCode: 'employees:read',             sortOrder: 10 },
   { route: '/payroll',               module: 'people', label: 'Bảng lương',               icon: 'CreditCardOutlined',   permCode: 'payroll:read',               sortOrder: 11 },
@@ -228,7 +227,6 @@ export const PERM_DOMAIN_COLOR: Record<string, string> = {
   recruit_candidates:  '#0EA5E9',
   recruit_interviews:  '#0EA5E9',
   recruit_jobs:        '#0EA5E9',
-  timesheet_approvals: '#D97706',
   timesheet_manager:   '#D97706',
   work_shifts:         '#F59E0B',
   // Finance
@@ -314,7 +312,6 @@ export const PERM_DOMAIN_LABEL: Record<string, string> = {
   recruit_candidates:  'Ứng viên',
   recruit_interviews:  'Lịch phỏng vấn',
   recruit_jobs:        'Vị trí tuyển dụng',
-  timesheet_approvals: 'Duyệt chấm công',
   timesheet_manager:   'Bảng điểm danh',
   work_shifts:         'Ca làm việc',
   // Finance
@@ -400,7 +397,6 @@ export const PERM_DOMAIN_MODULE: Record<string, string> = {
   recruit_candidates:  'people',
   recruit_interviews:  'people',
   recruit_jobs:        'people',
-  timesheet_approvals: 'people',
   timesheet_manager:   'people',
   work_shifts:         'people',
   leave_policy:        'people',

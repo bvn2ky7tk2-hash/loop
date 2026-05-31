@@ -14,7 +14,6 @@ const CostPage = lazy(() => import('./pages/cost/CostPage'));
 const AlertsPage = lazy(() => import('./pages/alerts/AlertsPage'));
 const ReportsPage = lazy(() => import('./pages/reports/ReportsPage'));
 const TimesheetPage = lazy(() => import('./pages/timesheet/TimesheetPage'));
-const TimesheetApprovalsPage = lazy(() => import('./pages/timesheet/TimesheetApprovalsPage'));
 const TimesheetManagerPage = lazy(() => import('./pages/timesheet/TimesheetManagerPage'));
 const ProjectTimesheetPage = lazy(() => import('./pages/timesheet/ProjectTimesheetPage'));
 const MyTasksPage = lazy(() => import('./pages/my-tasks/MyTasksPage'));
@@ -155,7 +154,6 @@ export const router = createBrowserRouter([
       { path: 'alerts', element: wrap(AlertsPage) },
       { path: 'reports', element: wrap(ReportsPage) },
       { path: 'timesheet', element: wrap(TimesheetPage) },
-      { path: 'timesheet/approvals', element: wrap(TimesheetApprovalsPage) },
       { path: 'timesheet/manager', element: wrap(TimesheetManagerPage) },
       { path: 'timesheet/project', element: wrap(ProjectTimesheetPage) },
       { path: 'settings',      element: wrap(SettingsPage) },

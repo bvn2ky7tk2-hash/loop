@@ -167,7 +167,7 @@ export const MODULES: ModuleDefinition[] = [
     color: '#059669',
     gatePermission: moduleGate('people'),
     topItems: [
-      { key: '/feed', label: 'Bảng tin', visible: true },
+      { key: '/personnel', label: 'Danh sách nhân viên', visible: true },
     ],
     groups: [
       {
@@ -466,7 +466,6 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/permissions':           <SafetyCertificateOutlined />,
   '/users':                 <UserOutlined />,
   '/timesheet':             <ClockCircleOutlined />,
-  '/timesheet/approvals':   <AuditOutlined />,
   '/leaves':                <CalendarOutlined />,
   '/expenses':              <WalletOutlined />,
   '/budget':                <PieChartOutlined />,
