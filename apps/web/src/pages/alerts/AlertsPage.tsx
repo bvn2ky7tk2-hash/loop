@@ -51,10 +51,11 @@ export default function AlertsPage() {
     enabled: !!projectId,
   });
 
-  const { data: notifications = [] } = useQuery({
+  const { data: notificationFeed } = useQuery({
     queryKey: ['notifications'],
     queryFn: () => notificationsApi.list(),
   });
+  const notifications = notificationFeed?.data ?? [];
 
   const createMutation = useMutation({
     mutationFn: (data: Partial<AlertConfig>) =>
@@ -147,7 +148,8 @@ export default function AlertsPage() {
                     style={{ width: 320 }}
                     placeholder="Chọn dự án"
                     onChange={setProjectId}
-                    showSearch={{ optionFilterProp: 'label' }}
+                    showSearch
+                    optionFilterProp="label"
                     options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))}
                   />
                   {projectId && (

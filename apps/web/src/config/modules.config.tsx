@@ -60,6 +60,7 @@ import {
   FieldTimeOutlined,
   DotChartOutlined,
   LogoutOutlined,
+  FormOutlined,
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import type { MenuTopItemCfg, MenuGroupCfg } from '../store/menu.store';
@@ -120,7 +121,6 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/tasks',                label: 'Việc dự án',     visible: true },
           { key: '/timeline',             label: 'Lịch trình',     visible: true },
-          { key: '/timesheet/manager',    label: 'Bảng điểm danh', visible: true },
           { key: '/bugs',                 label: 'Quản lý lỗi',   visible: true },
           { key: '/bugs/dashboard',       label: 'Thống kê lỗi',  visible: true },
         ],
@@ -192,9 +192,10 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-admin', label: 'Lịch & Hành chính', visible: true,
         items: [
-          { key: '/hr/attendance', label: 'Bảng công',   visible: true },
-          { key: '/hr/holidays',   label: 'Ngày lễ',     visible: true },
-          { key: '/hr/shifts',     label: 'Ca làm việc', visible: true },
+          { key: '/hr/attendance',              label: 'Bảng công',           visible: true },
+          { key: '/hr/attendance/explanations', label: 'Giải trình Chấm công', visible: true },
+          { key: '/hr/holidays',                label: 'Ngày lễ',             visible: true },
+          { key: '/hr/shifts',                  label: 'Ca làm việc',         visible: true },
         ],
       },
       {
@@ -529,6 +530,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/my-overtime':                   <FieldTimeOutlined />,
   '/hr/shifts':                     <ClockCircleOutlined />,
   '/hr/attendance':                 <AuditOutlined />,
+  '/hr/attendance/explanations':   <FormOutlined />,
   '/hr/holidays':                   <CalendarOutlined />,
   '/hr/leave-policies':             <FileTextOutlined />,
   '/hr/insurance':                  <SafetyCertificateOutlined />,

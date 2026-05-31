@@ -139,8 +139,13 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/admin/health',        module: 'admin', label: 'Giám sát hệ thống',  icon: 'MonitorOutlined',           permCode: 'system_health:read',     sortOrder: 16 },
   { route: '/admin/demo',          module: 'admin', label: 'Chế độ trình diễn',  icon: 'ExperimentOutlined',        permCode: 'demo_mode:manage',       sortOrder: 17 },
   { route: '/onboarding',          module: 'admin', label: 'Hướng dẫn khởi động',icon: 'RocketOutlined',            permCode: 'onboarding:manage',      sortOrder: 18 },
-  { route: '/settings/tenant',     module: 'admin', label: 'Cài đặt Công ty',    icon: 'BuildOutlined',             permCode: 'admin:users',            sortOrder: 19 },
-  { route: '/settings/delegation', module: 'admin', label: 'Ủy quyền duyệt',     icon: 'UsergroupAddOutlined',      permCode: 'admin:manage',           sortOrder: 20 },
+  { route: '/settings/tenant',        module: 'admin', label: 'Cài đặt Công ty',      icon: 'BuildOutlined',             permCode: 'admin:users',            sortOrder: 19 },
+  { route: '/settings/delegation',    module: 'admin', label: 'Ủy quyền duyệt',       icon: 'UsergroupAddOutlined',      permCode: 'admin:manage',           sortOrder: 20 },
+  // E26: Platform Utilities
+  { route: '/admin/announcements',    module: 'admin', label: 'System Announcements',  icon: 'BellOutlined',              permCode: 'admin:read',             sortOrder: 21 },
+  { route: '/admin/permission-audit', module: 'admin', label: 'Báo cáo Phân quyền',   icon: 'SafetyCertificateOutlined', permCode: 'admin:permissions',      sortOrder: 22 },
+  { route: '/admin/email-logs',       module: 'admin', label: 'Email Delivery Log',    icon: 'MailOutlined',              permCode: 'admin:read',             sortOrder: 23 },
+  { route: '/admin/queues',           module: 'admin', label: 'Queue Browser',          icon: 'ThunderboltOutlined',       permCode: 'system_health:read',     sortOrder: 24 },
 ];
 
 /**

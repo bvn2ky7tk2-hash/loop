@@ -126,7 +126,7 @@ export const useGetBugs = (filters: BugFilterDto) =>
 export const useGetMyBugs = () =>
   useQuery<Bug[]>({
     queryKey: bugKeys.mine(),
-    queryFn:  () => apiClient.get<Bug[]>('/bugs/my').then((r) => r.data),
+    queryFn:  () => apiClient.get<{ data: Bug[] }>('/bugs/my').then((r) => r.data.data ?? []),
   });
 
 export const useGetMyBugsCount = () =>

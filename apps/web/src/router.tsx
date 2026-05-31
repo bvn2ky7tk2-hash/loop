@@ -68,6 +68,7 @@ const HrInsurancePage       = lazy(() => import('./pages/hr/InsurancePage'));
 const HrProfile360Page      = lazy(() => import('./pages/hr/EmployeeProfile360Page'));
 const HrLeavePolicyPage     = lazy(() => import('./pages/hr/LeavePolicyPage'));
 const HrAttendancePage      = lazy(() => import('./pages/hr/AttendancePage'));
+const HrAttendanceExplanationPage = lazy(() => import('./pages/hr/AttendanceExplanationPage'));
 const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
 const OvertimePage          = lazy(() => import('./pages/hr/OvertimePage'));
 const MyOvertimePage        = lazy(() => import('./pages/hr/MyOvertimePage'));
@@ -210,6 +211,7 @@ export const router = createBrowserRouter([
       { path: 'hr/employees/:employeeId', element: wrap(HrProfile360Page) },
       { path: 'hr/leave-policies',   element: wrap(HrLeavePolicyPage) },
       { path: 'hr/attendance',       element: wrap(HrAttendancePage) },
+      { path: 'hr/attendance/explanations', element: wrap(HrAttendanceExplanationPage) },
       { path: 'hr/holidays',         element: wrap(HrHolidaysPage) },
 
       { path: 'hr/overtime',         element: wrap(OvertimePage) },

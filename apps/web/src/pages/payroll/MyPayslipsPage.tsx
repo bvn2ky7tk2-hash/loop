@@ -141,6 +141,8 @@ export default function MyPayslipsPage() {
 
   // Fetch all periods and then filter records for current user's employee
   // We use the my-tax-profile endpoint to get employeeId, then list records
+  const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
+
   const { data: allPeriodsData, isLoading } = useQuery({
     queryKey: ['payroll-periods-all'],
     queryFn: () => payrollApi.listPeriods(1, 100),
@@ -157,7 +159,8 @@ export default function MyPayslipsPage() {
     queryFn: async () => {
       const results: Array<PayrollRecord & { periodName: string; periodStart: string; periodEnd: string }> = [];
       for (const period of approvedPeriods) {
-        const records = await payrollApi.getPeriodRecords(period.id, 1, 100);
+        // fetch đủ records để cover tất cả nhân viên (tối đa 600)
+        const records = await payrollApi.getPeriodRecords(period.id, 1, 600);
         const mine = records.data.find(r => r.employee?.user?.id === user?.id);
         if (mine) results.push({ ...mine, periodName: period.name, periodStart: period.startDate, periodEnd: period.endDate });
       }
