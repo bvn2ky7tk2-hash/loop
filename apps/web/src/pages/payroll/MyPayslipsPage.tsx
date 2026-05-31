@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message, Select,
+  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message, Select, Space,
 } from 'antd';
 import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined, FilterOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -259,7 +259,6 @@ export default function MyPayslipsPage() {
           value={filterYear}
           onChange={setFilterYear}
           style={{ width: 140 }}
-          prefix={<FilterOutlined />}
           options={[2025, 2026, 2027].map(y => ({ value: y, label: `Năm ${y}` }))}
         />
       </FilterBar>

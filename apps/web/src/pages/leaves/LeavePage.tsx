@@ -466,13 +466,12 @@ export default function LeavePage() {
     },
   ];
 
-  // isHrView: chỉ hiện tab "Toàn bộ"; /leaves: chỉ hiện tab "Của tôi"
+  // Tách hoàn toàn 2 màn hình:
+  // - /hr/leaves → chỉ "Toàn bộ" (HR quản lý)
+  // - /leaves    → chỉ "Đơn của tôi" (cá nhân, kể cả admin)
   const tabs = isHrView
     ? [{ key: 'team', label: 'Toàn bộ đơn nghỉ phép' }]
-    : [
-        { key: 'my', label: 'Đơn của tôi' },
-        ...(isPrivileged ? [{ key: 'team', label: 'Toàn bộ' }] : []),
-      ];
+    : [{ key: 'my', label: 'Đơn của tôi' }];
 
   return (
     <div style={{ padding: 24 }}>
