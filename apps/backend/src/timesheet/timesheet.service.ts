@@ -75,7 +75,7 @@ export class TimesheetService extends TenantAwareService {
         checkInLat: dto.lat ?? null,
         checkInLng: dto.lng ?? null,
         checkInMethod: dto.method ?? CheckInMethod.MANUAL,
-        tenantId: this.getTenantId(),
+        // TimesheetRecord chưa có tenantId (v6 task)
       },
     });
 

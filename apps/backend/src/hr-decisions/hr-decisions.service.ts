@@ -201,7 +201,7 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
         fromSalary: dto.fromSalary,
         toSalary: dto.toSalary,
         createdById,
-        ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
+        // HrDecision chưa có tenantId (v6 task) — bỏ qua
       },
       include: {
         employee: { select: { id: true, fullName: true, code: true } },

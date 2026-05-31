@@ -78,7 +78,7 @@ export class OvertimeService extends TenantAwareService implements OnModuleInit 
         hours: dto.hours,
         reason: dto.reason,
         status: OtStatus.PENDING,
-        ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
+        // OvertimeRequest chưa có tenantId (v6 task)
       },
       include: OT_INCLUDE,
     });
