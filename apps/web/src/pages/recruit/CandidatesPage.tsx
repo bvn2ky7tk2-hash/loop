@@ -130,8 +130,8 @@ export default function CandidatesPage() {
     {
       title: 'Ứng viên', dataIndex: 'name',
       render: (n: string, row: Candidate) => (
-        <Button type="link" style={{ padding: 0, color: linkColor }}
-          onClick={() => { setSelected(row); setDetailOpen(true); }}>{n}</Button>
+        <Text style={{ color: textPrimary, cursor: 'pointer', fontWeight: 500 }}
+          onClick={() => { setSelected(row); setDetailOpen(true); }}>{n}</Text>
       ),
     },
     { title: 'Email', dataIndex: 'email', width: 200, render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
