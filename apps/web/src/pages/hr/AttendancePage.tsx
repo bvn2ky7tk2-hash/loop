@@ -257,6 +257,10 @@ function DetailTab() {
   const [employeeId, setEmployeeId] = useState<string | undefined>();
   const [statusFilter, setStatusFilter] = useState<AttendanceStatus | undefined>();
 
+  // ── Filters: Bảng tổng hợp tháng ──
+  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
+  const [monthOrgUnitId, setMonthOrgUnitId] = useState<string | undefined>();
+
   // ── Đổi ca nhanh ──
   const [swapOpen, setSwapOpen] = useState(false);
   const [swapForm] = Form.useForm();
@@ -289,6 +293,26 @@ function DetailTab() {
       status: statusFilter,
       limit: 100,
     }),
+  });
+
+  const year = selectedMonth.year();
+  const month = selectedMonth.month() + 1;
+
+  const { data: monthlyRows = [], isLoading: monthlyLoading, refetch: monthlyRefetch } = useQuery({
+    queryKey: ['attendance-monthly', year, month, monthOrgUnitId],
+    queryFn: () => hrAttendanceApi.monthlyReport({ year, month, orgUnitId: monthOrgUnitId }),
+  });
+
+  const summarizeMutation = useMutation({
+    mutationFn: () => hrAttendanceApi.summarize({ year, month, orgUnitId: monthOrgUnitId }),
+    onSuccess: () => { monthlyRefetch(); msg.success('Đã tổng hợp bảng công'); },
+    onError: () => msg.error('Tổng hợp thất bại'),
+  });
+
+  const lockMutation = useMutation({
+    mutationFn: () => hrAttendanceApi.lock({ year, month, orgUnitId: monthOrgUnitId }),
+    onSuccess: () => { monthlyRefetch(); msg.success('Đã khóa bảng công'); },
+    onError: () => msg.error('Khóa thất bại'),
   });
 
   const swapMutation = useMutation({
@@ -503,6 +527,26 @@ function DetailTab() {
                 Tính lại ngày công
               </Button>
             </Tooltip>
+            <Button
+              icon={<CheckOutlined />}
+              loading={summarizeMutation.isPending}
+              disabled={summarizeMutation.isPending}
+              onClick={() => summarizeMutation.mutate()}
+            >
+              Tổng hợp tháng
+            </Button>
+            <Popconfirm
+              title="Khóa bảng công"
+              description="Sau khi khóa không thể sửa. Xác nhận?"
+              onConfirm={() => lockMutation.mutate()}
+              okText="Khóa"
+              cancelText="Hủy"
+              okButtonProps={{ danger: true }}
+            >
+              <Button danger icon={<LockOutlined />} loading={lockMutation.isPending} disabled={lockMutation.isPending}>
+                Khóa bảng công
+              </Button>
+            </Popconfirm>
           </Space>
         }
       >
@@ -531,6 +575,27 @@ function DetailTab() {
           value={statusFilter}
           onChange={setStatusFilter}
           options={Object.entries(ATTENDANCE_STATUS_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
+        />
+        <DatePicker
+          picker="month"
+          value={selectedMonth}
+          onChange={v => v && setSelectedMonth(v)}
+          format="MM/YYYY"
+          allowClear={false}
+          style={{ width: 150 }}
+          placeholder="Tháng tổng hợp"
+        />
+        <Select
+          showSearch
+          placeholder="Phòng ban (tổng hợp)"
+          allowClear
+          style={{ width: 220 }}
+          value={monthOrgUnitId}
+          onChange={setMonthOrgUnitId}
+          filterOption={(input, opt) =>
+            String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
+          options={orgUnitOptions}
         />
       </FilterBar>
 
