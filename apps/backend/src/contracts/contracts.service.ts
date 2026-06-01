@@ -8,6 +8,7 @@ import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateContractDto, RenewContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { ContractType } from '../generated/prisma';
+import { ProcessStarterService } from '../processes/process-starter.service';
 
 const CONTRACT_INCLUDE = {
   employee: {
@@ -65,6 +66,7 @@ function addMonths(date: Date, months: number): Date {
 export class ContractsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
     @Inject(REQUEST) req: any,
   ) {
     super(req);
@@ -254,6 +256,16 @@ export class ContractsService extends TenantAwareService {
         tenantId:           this.getTenantId(),
       },
       include: CONTRACT_INCLUDE,
+    });
+
+    // Khởi tạo quy trình đánh giá & gia hạn hợp đồng (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'contract-renewal',
+      entityType: 'CONTRACT',
+      entityId: newContract.id,
+      startedByUserId: this._req?.user?.id ?? this._req?.user?.sub,
+      variables: { employeeId: current.employeeId, renewalCount: newContract.renewalCount, previousContractId: id },
+      taskName: 'Đánh giá & gia hạn hợp đồng',
     });
 
     if (allowancesToCopy.length > 0) {
