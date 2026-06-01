@@ -9,8 +9,23 @@ export interface LeaveType {
   isPaid: boolean;
   color: string;
   isActive: boolean;
+  annualDays?: number;
+  maxCarryOver?: number;
+  deductsAnnualLeave?: boolean;
   processDefinitionKey?: string | null;
 }
+
+export type LeaveTypePayload = Partial<{
+  name: string;
+  maxDaysPerYear: number;
+  isPaid: boolean;
+  color: string;
+  annualDays: number;
+  maxCarryOver: number;
+  deductsAnnualLeave: boolean;
+  processDefinitionKey: string | null;
+  isActive: boolean;
+}>;
 
 export interface ProcessDefinitionRef {
   id: string;
@@ -107,10 +122,14 @@ export const leavesApi = {
     apiClient
       .get<LeaveBalance[]>(`/leaves/balance/${employeeId}`, { params: { year } })
       .then((r) => r.data),
-  getTypes: (): Promise<LeaveType[]> =>
-    apiClient.get<LeaveType[]>('/leaves/types').then((r) => r.data),
-  updateType: (id: string, data: { processDefinitionKey?: string | null }): Promise<LeaveType> =>
+  getTypes: (includeInactive = false): Promise<LeaveType[]> =>
+    apiClient.get<LeaveType[]>('/leaves/types', { params: { includeInactive } }).then((r) => r.data),
+  updateType: (id: string, data: LeaveTypePayload): Promise<LeaveType> =>
     apiClient.patch<LeaveType>(`/leaves/types/${id}`, data).then((r) => r.data),
+  createType: (data: LeaveTypePayload & { name: string }): Promise<LeaveType> =>
+    apiClient.post<LeaveType>('/leaves/types', data).then((r) => r.data),
+  deleteType: (id: string): Promise<{ message: string }> =>
+    apiClient.delete<{ message: string }>(`/leaves/types/${id}`).then((r) => r.data),
   getFormSchema: (): Promise<{ fields: FormField[] }> =>
     apiClient.get<{ fields: FormField[] }>('/leaves/form-schema').then((r) => r.data),
 

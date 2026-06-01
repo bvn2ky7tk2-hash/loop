@@ -7,6 +7,7 @@ import { LeaveStatus, DefinitionStatus } from '../generated/prisma';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { ApproveLeaveDto } from './dto/approve-leave.dto';
+import { CreateLeaveTypeDto, UpdateLeaveTypeDto } from './dto/leave-type.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
@@ -544,11 +545,41 @@ export class LeavesService extends TenantAwareService {
     return { year, months };
   }
 
-  async listTypes() {
+  async listTypes(includeInactive = false) {
     return this.prisma.leaveType.findMany({
-      where: { isActive: true },
+      where: includeInactive ? {} : { isActive: true },
       orderBy: { name: 'asc' },
     });
+  }
+
+  async createType(dto: CreateLeaveTypeDto) {
+    return this.prisma.leaveType.create({
+      data: {
+        name: dto.name,
+        maxDaysPerYear: dto.maxDaysPerYear ?? 0,
+        isPaid: dto.isPaid ?? true,
+        color: dto.color ?? '#2563EB',
+        annualDays: dto.annualDays ?? 0,
+        maxCarryOver: dto.maxCarryOver ?? 0,
+        deductsAnnualLeave: dto.deductsAnnualLeave ?? false,
+        processDefinitionKey: dto.processDefinitionKey ?? null,
+        isActive: dto.isActive ?? true,
+      },
+    });
+  }
+
+  async updateType(id: string, dto: UpdateLeaveTypeDto) {
+    const exists = await this.prisma.leaveType.findUnique({ where: { id } });
+    if (!exists) throw new NotFoundException('Không tìm thấy loại nghỉ');
+    return this.prisma.leaveType.update({ where: { id }, data: { ...dto } });
+  }
+
+  async removeType(id: string) {
+    const exists = await this.prisma.leaveType.findUnique({ where: { id } });
+    if (!exists) throw new NotFoundException('Không tìm thấy loại nghỉ');
+    // Soft-delete giữ lịch sử đơn/balance đã tham chiếu
+    await this.prisma.leaveType.update({ where: { id }, data: { isActive: false } });
+    return { message: 'Đã vô hiệu hóa loại nghỉ' };
   }
 
   async exportExcel(): Promise<Buffer> {

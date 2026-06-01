@@ -70997,6 +70997,7 @@ export namespace Prisma {
     processDefinitionKey: string | null
     annualDays: number | null
     maxCarryOver: number | null
+    deductsAnnualLeave: boolean | null
     createdAt: Date | null
   }
 
@@ -71010,6 +71011,7 @@ export namespace Prisma {
     processDefinitionKey: string | null
     annualDays: number | null
     maxCarryOver: number | null
+    deductsAnnualLeave: boolean | null
     createdAt: Date | null
   }
 
@@ -71023,6 +71025,7 @@ export namespace Prisma {
     processDefinitionKey: number
     annualDays: number
     maxCarryOver: number
+    deductsAnnualLeave: number
     createdAt: number
     _all: number
   }
@@ -71050,6 +71053,7 @@ export namespace Prisma {
     processDefinitionKey?: true
     annualDays?: true
     maxCarryOver?: true
+    deductsAnnualLeave?: true
     createdAt?: true
   }
 
@@ -71063,6 +71067,7 @@ export namespace Prisma {
     processDefinitionKey?: true
     annualDays?: true
     maxCarryOver?: true
+    deductsAnnualLeave?: true
     createdAt?: true
   }
 
@@ -71076,6 +71081,7 @@ export namespace Prisma {
     processDefinitionKey?: true
     annualDays?: true
     maxCarryOver?: true
+    deductsAnnualLeave?: true
     createdAt?: true
     _all?: true
   }
@@ -71176,6 +71182,7 @@ export namespace Prisma {
     processDefinitionKey: string | null
     annualDays: number
     maxCarryOver: number
+    deductsAnnualLeave: boolean
     createdAt: Date
     _count: LeaveTypeCountAggregateOutputType | null
     _avg: LeaveTypeAvgAggregateOutputType | null
@@ -71208,6 +71215,7 @@ export namespace Prisma {
     processDefinitionKey?: boolean
     annualDays?: boolean
     maxCarryOver?: boolean
+    deductsAnnualLeave?: boolean
     createdAt?: boolean
     requests?: boolean | LeaveType$requestsArgs<ExtArgs>
     balances?: boolean | LeaveType$balancesArgs<ExtArgs>
@@ -71224,6 +71232,7 @@ export namespace Prisma {
     processDefinitionKey?: boolean
     annualDays?: boolean
     maxCarryOver?: boolean
+    deductsAnnualLeave?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["leaveType"]>
 
@@ -71237,6 +71246,7 @@ export namespace Prisma {
     processDefinitionKey?: boolean
     annualDays?: boolean
     maxCarryOver?: boolean
+    deductsAnnualLeave?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["leaveType"]>
 
@@ -71250,10 +71260,11 @@ export namespace Prisma {
     processDefinitionKey?: boolean
     annualDays?: boolean
     maxCarryOver?: boolean
+    deductsAnnualLeave?: boolean
     createdAt?: boolean
   }
 
-  export type LeaveTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "maxDaysPerYear" | "isPaid" | "color" | "isActive" | "processDefinitionKey" | "annualDays" | "maxCarryOver" | "createdAt", ExtArgs["result"]["leaveType"]>
+  export type LeaveTypeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "maxDaysPerYear" | "isPaid" | "color" | "isActive" | "processDefinitionKey" | "annualDays" | "maxCarryOver" | "deductsAnnualLeave" | "createdAt", ExtArgs["result"]["leaveType"]>
   export type LeaveTypeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     requests?: boolean | LeaveType$requestsArgs<ExtArgs>
     balances?: boolean | LeaveType$balancesArgs<ExtArgs>
@@ -71278,6 +71289,7 @@ export namespace Prisma {
       processDefinitionKey: string | null
       annualDays: number
       maxCarryOver: number
+      deductsAnnualLeave: boolean
       createdAt: Date
     }, ExtArgs["result"]["leaveType"]>
     composites: {}
@@ -71713,6 +71725,7 @@ export namespace Prisma {
     readonly processDefinitionKey: FieldRef<"LeaveType", 'String'>
     readonly annualDays: FieldRef<"LeaveType", 'Int'>
     readonly maxCarryOver: FieldRef<"LeaveType", 'Int'>
+    readonly deductsAnnualLeave: FieldRef<"LeaveType", 'Boolean'>
     readonly createdAt: FieldRef<"LeaveType", 'DateTime'>
   }
     
@@ -210654,6 +210667,7 @@ export namespace Prisma {
     processDefinitionKey: 'processDefinitionKey',
     annualDays: 'annualDays',
     maxCarryOver: 'maxCarryOver',
+    deductsAnnualLeave: 'deductsAnnualLeave',
     createdAt: 'createdAt'
   };
 
@@ -217773,6 +217787,7 @@ export namespace Prisma {
     processDefinitionKey?: StringNullableFilter<"LeaveType"> | string | null
     annualDays?: IntFilter<"LeaveType"> | number
     maxCarryOver?: IntFilter<"LeaveType"> | number
+    deductsAnnualLeave?: BoolFilter<"LeaveType"> | boolean
     createdAt?: DateTimeFilter<"LeaveType"> | Date | string
     requests?: LeaveRequestListRelationFilter
     balances?: LeaveBalanceListRelationFilter
@@ -217788,6 +217803,7 @@ export namespace Prisma {
     processDefinitionKey?: SortOrderInput | SortOrder
     annualDays?: SortOrder
     maxCarryOver?: SortOrder
+    deductsAnnualLeave?: SortOrder
     createdAt?: SortOrder
     requests?: LeaveRequestOrderByRelationAggregateInput
     balances?: LeaveBalanceOrderByRelationAggregateInput
@@ -217806,6 +217822,7 @@ export namespace Prisma {
     processDefinitionKey?: StringNullableFilter<"LeaveType"> | string | null
     annualDays?: IntFilter<"LeaveType"> | number
     maxCarryOver?: IntFilter<"LeaveType"> | number
+    deductsAnnualLeave?: BoolFilter<"LeaveType"> | boolean
     createdAt?: DateTimeFilter<"LeaveType"> | Date | string
     requests?: LeaveRequestListRelationFilter
     balances?: LeaveBalanceListRelationFilter
@@ -217821,6 +217838,7 @@ export namespace Prisma {
     processDefinitionKey?: SortOrderInput | SortOrder
     annualDays?: SortOrder
     maxCarryOver?: SortOrder
+    deductsAnnualLeave?: SortOrder
     createdAt?: SortOrder
     _count?: LeaveTypeCountOrderByAggregateInput
     _avg?: LeaveTypeAvgOrderByAggregateInput
@@ -217842,6 +217860,7 @@ export namespace Prisma {
     processDefinitionKey?: StringNullableWithAggregatesFilter<"LeaveType"> | string | null
     annualDays?: IntWithAggregatesFilter<"LeaveType"> | number
     maxCarryOver?: IntWithAggregatesFilter<"LeaveType"> | number
+    deductsAnnualLeave?: BoolWithAggregatesFilter<"LeaveType"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"LeaveType"> | Date | string
   }
 
@@ -232111,6 +232130,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     requests?: LeaveRequestCreateNestedManyWithoutLeaveTypeInput
     balances?: LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
@@ -232126,6 +232146,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     requests?: LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
     balances?: LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
@@ -232141,6 +232162,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     requests?: LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
     balances?: LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
@@ -232156,6 +232178,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     requests?: LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
     balances?: LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
@@ -232171,6 +232194,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
   }
 
@@ -232184,6 +232208,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -232197,6 +232222,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -247055,6 +247081,7 @@ export namespace Prisma {
     processDefinitionKey?: SortOrder
     annualDays?: SortOrder
     maxCarryOver?: SortOrder
+    deductsAnnualLeave?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -247074,6 +247101,7 @@ export namespace Prisma {
     processDefinitionKey?: SortOrder
     annualDays?: SortOrder
     maxCarryOver?: SortOrder
+    deductsAnnualLeave?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -247087,6 +247115,7 @@ export namespace Prisma {
     processDefinitionKey?: SortOrder
     annualDays?: SortOrder
     maxCarryOver?: SortOrder
+    deductsAnnualLeave?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -295430,6 +295459,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     balances?: LeaveBalanceCreateNestedManyWithoutLeaveTypeInput
   }
@@ -295444,6 +295474,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     balances?: LeaveBalanceUncheckedCreateNestedManyWithoutLeaveTypeInput
   }
@@ -295930,6 +295961,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     balances?: LeaveBalanceUpdateManyWithoutLeaveTypeNestedInput
   }
@@ -295944,6 +295976,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     balances?: LeaveBalanceUncheckedUpdateManyWithoutLeaveTypeNestedInput
   }
@@ -296426,6 +296459,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     requests?: LeaveRequestCreateNestedManyWithoutLeaveTypeInput
   }
@@ -296440,6 +296474,7 @@ export namespace Prisma {
     processDefinitionKey?: string | null
     annualDays?: number
     maxCarryOver?: number
+    deductsAnnualLeave?: boolean
     createdAt?: Date | string
     requests?: LeaveRequestUncheckedCreateNestedManyWithoutLeaveTypeInput
   }
@@ -296758,6 +296793,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     requests?: LeaveRequestUpdateManyWithoutLeaveTypeNestedInput
   }
@@ -296772,6 +296808,7 @@ export namespace Prisma {
     processDefinitionKey?: NullableStringFieldUpdateOperationsInput | string | null
     annualDays?: IntFieldUpdateOperationsInput | number
     maxCarryOver?: IntFieldUpdateOperationsInput | number
+    deductsAnnualLeave?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     requests?: LeaveRequestUncheckedUpdateManyWithoutLeaveTypeNestedInput
   }

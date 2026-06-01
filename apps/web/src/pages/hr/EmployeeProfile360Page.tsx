@@ -46,6 +46,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { ProvinceWardSelect } from '../../components/selects';
 import { hrProfileApi, type EducationRecord, type WorkExperience, type FamilyMember } from '../../api/hr-profile';
 import { formatCurrency } from '../../utils/format';
 
@@ -787,7 +788,7 @@ export default function EmployeeProfile360Page() {
             <Col span={12}><Form.Item name="nationality" label="Quốc tịch"><Input placeholder="VD: Việt Nam" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="hometown" label="Quê quán"><Input placeholder="VD: Hà Nội" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="hometown" label="Quê quán"><ProvinceWardSelect /></Form.Item></Col>
             <Col span={12}><Form.Item name="placeOfBirth" label="Nơi sinh"><Input placeholder="VD: Hà Nội" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
@@ -811,8 +812,8 @@ export default function EmployeeProfile360Page() {
           <Row gutter={16}>
             <Col span={24}><Form.Item name="idIssuePlace" label="Nơi cấp"><Input /></Form.Item></Col>
           </Row>
-          <Form.Item name="permanentAddress" label="Địa chỉ thường trú"><Input.TextArea rows={2} /></Form.Item>
-          <Form.Item name="currentAddress" label="Địa chỉ hiện tại (tạm trú)"><Input.TextArea rows={2} /></Form.Item>
+          <Form.Item name="permanentAddress" label="Địa chỉ thường trú (Tỉnh/Phường)"><ProvinceWardSelect /></Form.Item>
+          <Form.Item name="currentAddress" label="Địa chỉ tạm trú (Tỉnh/Phường)"><ProvinceWardSelect /></Form.Item>
           <Row gutter={16}>
             <Col span={12}><Form.Item name="bankName" label="Ngân hàng"><Input placeholder="VD: Vietcombank" /></Form.Item></Col>
             <Col span={12}><Form.Item name="bankAccount" label="Số tài khoản"><Input /></Form.Item></Col>

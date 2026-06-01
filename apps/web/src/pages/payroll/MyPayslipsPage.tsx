@@ -30,7 +30,9 @@ function PayslipDetailModal({
   const { textPrimary, textMuted, bgCard, borderColor, linkColor, isDark } = useThemePalette();
   if (!record) return null;
 
+  const r = record as PayrollRecord & { periodName?: string; periodStart?: string; periodEnd?: string };
   const totalBhxhEmployee = Number(record.bhxhEmployee) + Number(record.bhytEmployee) + Number(record.bhtnEmployee);
+  const totalEmployer = Number(record.bhxhEmployer) + Number(record.bhytEmployer) + Number(record.bhtnEmployer) + Number(record.tnldEmployer);
 
   const row = (label: string, value: React.ReactNode, bold = false) => (
     <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: `1px solid ${borderColor}30` }}>
@@ -51,10 +53,31 @@ function PayslipDetailModal({
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
           <EmployeeInfoCell employee={record.employee} variant="descriptions" />
         </div>
-        <Text style={{ color: textMuted, fontSize: 13 }}>
-          <CalendarOutlined style={{ marginRight: 4 }} />
-          Kỳ lương: chế độ tự phục vụ
+        <Text style={{ color: textPrimary, fontSize: 14, fontWeight: 600, display: 'block', marginTop: 4 }}>
+          {r.periodName ?? 'Kỳ lương'}
         </Text>
+        {r.periodStart && (
+          <Text style={{ color: textMuted, fontSize: 12 }}>
+            <CalendarOutlined style={{ marginRight: 4 }} />
+            {dayjs(r.periodStart).format('DD/MM/YYYY')} – {dayjs(r.periodEnd).format('DD/MM/YYYY')}
+          </Text>
+        )}
+      </div>
+
+      {/* Công & ngày làm việc */}
+      <div style={{ display: 'flex', gap: 8, margin: '16px 0 0' }}>
+        <div style={{ flex: 1, background: bgCard, borderRadius: 8, padding: '10px 12px', border: `1px solid ${borderColor}`, textAlign: 'center' }}>
+          <Text style={{ color: textMuted, fontSize: 11, display: 'block' }}>Ngày công</Text>
+          <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 16 }}>{Number(record.workDays)}</Text>
+        </div>
+        <div style={{ flex: 1, background: bgCard, borderRadius: 8, padding: '10px 12px', border: `1px solid ${borderColor}`, textAlign: 'center' }}>
+          <Text style={{ color: textMuted, fontSize: 11, display: 'block' }}>Ngày nghỉ</Text>
+          <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 16 }}>{Number(record.leaveDays)}</Text>
+        </div>
+        <div style={{ flex: 1, background: bgCard, borderRadius: 8, padding: '10px 12px', border: `1px solid ${borderColor}`, textAlign: 'center' }}>
+          <Text style={{ color: textMuted, fontSize: 11, display: 'block' }}>Giờ OT</Text>
+          <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 16 }}>{Number(record.overtimeHours)}</Text>
+        </div>
       </div>
 
       {/* Thu nhập */}
@@ -63,8 +86,8 @@ function PayslipDetailModal({
           THU NHẬP
         </Text>
         {row('Lương theo công', formatCurrency(Number(record.baseSalary)))}
+        {row('Phụ cấp', formatCurrency(Number(record.allowances)))}
         {Number(record.overtimePay) > 0 && row('Lương tăng ca', formatCurrency(Number(record.overtimePay)))}
-        {Number(record.allowances) > 0 && row('Phụ cấp', formatCurrency(Number(record.allowances)))}
         {Number(record.bonus) > 0 && row('Thưởng', formatCurrency(Number(record.bonus)))}
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0 0', marginTop: 4 }}>
           <Text style={{ color: textPrimary, fontWeight: 700 }}>Tổng thu nhập</Text>
@@ -98,6 +121,23 @@ function PayslipDetailModal({
           {row('Giảm trừ bản thân', formatCurrency(Number(record.selfDeduction)))}
           {row(`NPT (${record.dependentCount} người)`, formatCurrency(Number(record.dependentDeduction)))}
           {row('Thu nhập chịu thuế', formatCurrency(Number(record.taxableIncome)))}
+        </div>
+      )}
+
+      {/* Đóng góp của công ty (NSDLĐ) */}
+      {totalEmployer > 0 && (
+        <div style={{ background: bgCard, borderRadius: 8, padding: '14px 16px', border: `1px solid ${borderColor}`, marginBottom: 16 }}>
+          <Text style={{ color: textMuted, fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', display: 'block', marginBottom: 10 }}>
+            CÔNG TY ĐÓNG (NSDLĐ) — không trừ vào lương
+          </Text>
+          {row('BHXH (17.5%)', formatCurrency(Number(record.bhxhEmployer)))}
+          {row('BHYT (3%)', formatCurrency(Number(record.bhytEmployer)))}
+          {row('BHTN (1%)', formatCurrency(Number(record.bhtnEmployer)))}
+          {Number(record.tnldEmployer) > 0 && row('TNLĐ-BNN (0.5%)', formatCurrency(Number(record.tnldEmployer)))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0 0', marginTop: 4 }}>
+            <Text style={{ color: textPrimary, fontWeight: 700 }}>Tổng chi phí lao động</Text>
+            <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 15 }}>{formatCurrency(Number(record.totalLaborCost))}</Text>
+          </div>
         </div>
       )}
 

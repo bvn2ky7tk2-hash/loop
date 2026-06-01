@@ -1096,6 +1096,7 @@ model LeaveType {
   processDefinitionKey String?        @map("process_definition_key")
   annualDays           Int            @default(0) @map("annual_days")
   maxCarryOver         Int            @default(0) @map("max_carry_over")
+  deductsAnnualLeave   Boolean        @default(false) @map("deducts_annual_leave")
   createdAt            DateTime       @default(now()) @map("created_at")
   requests             LeaveRequest[]
   balances             LeaveBalance[]

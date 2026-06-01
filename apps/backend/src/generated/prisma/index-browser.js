@@ -635,6 +635,7 @@ exports.Prisma.LeaveTypeScalarFieldEnum = {
   processDefinitionKey: 'processDefinitionKey',
   annualDays: 'annualDays',
   maxCarryOver: 'maxCarryOver',
+  deductsAnnualLeave: 'deductsAnnualLeave',
   createdAt: 'createdAt'
 };
 

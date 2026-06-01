@@ -1,5 +1,5 @@
 import {
-  Controller, Get, Post, Patch,
+  Controller, Get, Post, Patch, Delete,
   Body, Param, Query, Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
@@ -16,6 +16,7 @@ import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { LeavesService } from './leaves.service';
 import { CreateLeaveRequestDto } from './dto/create-leave-request.dto';
 import { ApproveLeaveDto } from './dto/approve-leave.dto';
+import { CreateLeaveTypeDto, UpdateLeaveTypeDto } from './dto/leave-type.dto';
 
 @ApiTags('leaves')
 @ApiBearerAuth()
@@ -42,9 +43,30 @@ export class LeavesController {
   @Get('types')
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
-  @ApiOperation({ summary: 'Danh sách loại nghỉ phép đang hoạt động' })
-  listTypes() {
-    return this.service.listTypes();
+  @ApiOperation({ summary: 'Danh sách loại nghỉ phép' })
+  listTypes(@Query('includeInactive') includeInactive?: string) {
+    return this.service.listTypes(includeInactive === 'true');
+  }
+
+  @Post('types')
+  @RequirePermission(PERMISSIONS.ADMIN_ORG)
+  @ApiOperation({ summary: 'Tạo loại nghỉ phép' })
+  createType(@Body() dto: CreateLeaveTypeDto) {
+    return this.service.createType(dto);
+  }
+
+  @Patch('types/:id')
+  @RequirePermission(PERMISSIONS.ADMIN_ORG)
+  @ApiOperation({ summary: 'Cập nhật loại nghỉ phép' })
+  updateType(@Param('id') id: string, @Body() dto: UpdateLeaveTypeDto) {
+    return this.service.updateType(id, dto);
+  }
+
+  @Delete('types/:id')
+  @RequirePermission(PERMISSIONS.ADMIN_ORG)
+  @ApiOperation({ summary: 'Vô hiệu hóa loại nghỉ phép' })
+  removeType(@Param('id') id: string) {
+    return this.service.removeType(id);
   }
 
   @Get('balance/:employeeId')

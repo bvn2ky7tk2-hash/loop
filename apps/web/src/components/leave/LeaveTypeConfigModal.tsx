@@ -1,8 +1,6 @@
-import { Modal, Select, Space, Typography, Alert, Spin } from 'antd';
-import { BranchesOutlined, WarningOutlined } from '@ant-design/icons';
+import { Modal, Select, Form, Input, InputNumber, Switch, Spin, Typography, message } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { message } from 'antd';
-import { useState } from 'react';
 import {
   leavesApi,
   processDefsApi,
@@ -20,16 +18,9 @@ interface Props {
 }
 
 export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props) {
-  const { preset, textPrimary, textSecondary, bgContainer, bgCard, borderColor } = useThemePalette();
-
+  const { preset, textPrimary, bgContainer, borderColor } = useThemePalette();
   const qc = useQueryClient();
-
-  const [selectedKey, setSelectedKey] = useState<string | null | undefined>(
-    leaveType?.processDefinitionKey,
-  );
-
-  // Reset khi leaveType thay đổi
-  const currentKey = leaveType?.processDefinitionKey;
+  const [form] = Form.useForm();
 
   const { data: defs = [], isLoading: defsLoading } = useQuery<ProcessDefinitionRef[]>({
     queryKey: ['process-definitions', 'active'],
@@ -37,163 +28,108 @@ export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props
     enabled: open,
     staleTime: 30_000,
   });
+  const defsWithKey = defs.filter((d) => (d.status === 'ACTIVE' || d.status === 'DEPLOYED') && d.key);
 
   const { mutate: save, isPending } = useMutation({
-    mutationFn: (key: string | null) =>
-      leavesApi.updateType(leaveType!.id, { processDefinitionKey: key }),
+    mutationFn: (v: Record<string, unknown>) => leavesApi.updateType(leaveType!.id, v),
     onSuccess: () => {
-      message.success('Đã cập nhật workflow cho leave type');
+      message.success('Đã cập nhật loại nghỉ');
       qc.invalidateQueries({ queryKey: ['leave-types'] });
+      qc.invalidateQueries({ queryKey: ['leave-balance-me'] });
       onClose();
     },
     onError: () => message.error('Cập nhật thất bại'),
   });
 
-  function handleOk() {
-    if (!leaveType) return;
-    save(selectedKey ?? null);
-  }
-
-  function handleOpen(vis: boolean) {
-    if (vis) {
-      // Sync selected key khi modal mở
-      setSelectedKey(currentKey);
+  function syncForm(vis: boolean) {
+    if (vis && leaveType) {
+      form.setFieldsValue({
+        name: leaveType.name,
+        maxDaysPerYear: leaveType.maxDaysPerYear,
+        annualDays: leaveType.annualDays ?? 0,
+        maxCarryOver: leaveType.maxCarryOver ?? 0,
+        isPaid: leaveType.isPaid,
+        deductsAnnualLeave: leaveType.deductsAnnualLeave ?? false,
+        color: leaveType.color,
+        processDefinitionKey: leaveType.processDefinitionKey ?? null,
+        isActive: leaveType.isActive,
+      });
     }
   }
-
-  // Chỉ lấy definitions có key (có thể link được)
-  const activeDefs = defs.filter(
-    (d) => d.status === 'ACTIVE' || d.status === 'DEPLOYED',
-  );
-  const defsWithKey = activeDefs.filter((d) => d.key);
-  const defsNoKey   = activeDefs.filter((d) => !d.key);
-
-  const selectedDef = selectedKey
-    ? defs.find((d) => d.key === selectedKey)
-    : undefined;
-
-  const showNoKeyWarning =
-    selectedKey && selectedDef && !selectedDef.key;
 
   return (
     <Modal
       title={
-        <Space>
-          <BranchesOutlined style={{ color: preset.primary }} />
-          <span style={{ color: textPrimary }}>
-            Cấu hình Workflow — {leaveType?.name}
-          </span>
-        </Space>
+        <span style={{ color: textPrimary }}>
+          <SettingOutlined style={{ color: preset.primary, marginRight: 8 }} />
+          Cấu hình loại nghỉ — {leaveType?.name}
+        </span>
       }
       open={open}
       onCancel={onClose}
-      onOk={handleOk}
+      onOk={() => form.submit()}
       okText="Lưu"
       cancelText="Huỷ"
       confirmLoading={isPending}
-      afterOpenChange={handleOpen}
+      afterOpenChange={syncForm}
+      width={520}
       styles={{
-        content: { background: bgContainer, border: `1px solid ${borderColor}` },
         header: { background: bgContainer, borderBottom: `1px solid ${borderColor}` },
         body:   { background: bgContainer },
         footer: { background: bgContainer, borderTop: `1px solid ${borderColor}` },
-        mask:   { backdropFilter: 'blur(2px)' },
       }}
     >
-      <div style={{ marginBottom: 16 }}>
-        <Text style={{ color: textSecondary, fontSize: 13 }}>
-          Select the BPM process definition to run when a leave request of this type is submitted.
-          If no workflow is selected, requests will go through direct approval.
-        </Text>
-      </div>
-
       {defsLoading ? (
-        <div style={{ textAlign: 'center', padding: '24px 0' }}>
-          <Spin />
-        </div>
+        <div style={{ textAlign: 'center', padding: '24px 0' }}><Spin /></div>
       ) : (
-        <>
-          <div
-            style={{
-              background: bgCard,
-              border: `1px solid ${borderColor}`,
-              borderRadius: 8,
-              padding: '12px 16px',
-              marginBottom: 12,
-            }}
-          >
-            <div style={{ marginBottom: 8 }}>
-              <Text strong style={{ color: textPrimary, fontSize: 13 }}>
-                Process Definition
-              </Text>
-            </div>
-            <Select
-              style={{ width: '100%' }}
-              value={selectedKey ?? null}
-              onChange={(v) => setSelectedKey(v)}
-              placeholder="No workflow (direct approval)"
-              allowClear
-              onClear={() => setSelectedKey(null)}
-            >
-              <Select.Option value={null}>
-                <Space>
-                  <span>—</span>
-                  <span style={{ color: textSecondary }}>No workflow (direct approval)</span>
-                </Space>
-              </Select.Option>
-              {defsWithKey.map((d) => (
-                <Select.Option key={d.key!} value={d.key!}>
-                  <Space>
-                    <BranchesOutlined style={{ color: preset.primary }} />
-                    <span style={{ color: textPrimary }}>{d.name}</span>
-                    <Text type="secondary" style={{ fontSize: 11 }}>
-                      ({d.key})
-                    </Text>
-                  </Space>
-                </Select.Option>
-              ))}
-              {defsNoKey.length > 0 && (
-                <>
-                  {defsNoKey.map((d) => (
-                    <Select.Option key={d.id} value={d.id} disabled>
-                      <Space>
-                        <WarningOutlined style={{ color: '#FA8C16' }} />
-                        <span style={{ color: textSecondary }}>{d.name}</span>
-                        <Text type="secondary" style={{ fontSize: 11 }}>
-                          (no key — cannot link)
-                        </Text>
-                      </Space>
-                    </Select.Option>
-                  ))}
-                </>
-              )}
-            </Select>
+        <Form form={form} layout="vertical" onFinish={(v) => save(v)} style={{ marginTop: 8 }}>
+          <Form.Item name="name" label="Tên loại nghỉ" rules={[{ required: true, message: 'Nhập tên' }]}>
+            <Input placeholder="VD: Nghỉ phép năm" />
+          </Form.Item>
+
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Form.Item name="maxDaysPerYear" label="Số ngày tối đa/năm" style={{ flex: 1 }}>
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="annualDays" label="Số ngày cấp/năm" style={{ flex: 1 }}>
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="maxCarryOver" label="Chuyển tối đa sang năm sau" style={{ flex: 1 }}>
+              <InputNumber min={0} style={{ width: '100%' }} />
+            </Form.Item>
           </div>
 
-          {showNoKeyWarning && (
-            <Alert
-              type="warning"
-              showIcon
-              message="This process definition has no key set. It cannot be automatically linked to leave requests."
-            />
-          )}
+          <div style={{ display: 'flex', gap: 24, marginBottom: 12 }}>
+            <Form.Item name="isPaid" label="Hưởng lương" valuePropName="checked" style={{ marginBottom: 0 }}>
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              name="deductsAnnualLeave"
+              label={<span>Trừ vào phép năm <Text type="secondary" style={{ fontSize: 11 }}>(trừ số dư phép năm khi nghỉ)</Text></span>}
+              valuePropName="checked"
+              style={{ marginBottom: 0 }}
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item name="isActive" label="Hoạt động" valuePropName="checked" style={{ marginBottom: 0 }}>
+              <Switch />
+            </Form.Item>
+          </div>
 
-          {selectedKey && !showNoKeyWarning && (
-            <Alert
-              type="info"
-              showIcon
-              message={`When a new "${leaveType?.name}" request is submitted, it will automatically start the "${selectedDef?.name ?? selectedKey}" workflow.`}
-            />
-          )}
+          <Form.Item name="color" label="Màu hiển thị">
+            <Input type="color" style={{ width: 80, height: 36, padding: 2 }} />
+          </Form.Item>
 
-          {!selectedKey && (
-            <Alert
-              type="success"
-              showIcon
-              message={`"${leaveType?.name}" requests will be approved directly by managers without a BPM workflow.`}
+          <Form.Item
+            name="processDefinitionKey"
+            label="Quy trình duyệt (BPM)"
+            extra={<Text type="secondary" style={{ fontSize: 12 }}>Để trống = duyệt trực tiếp; chọn quy trình để chạy qua BPM khi nộp đơn.</Text>}
+          >
+            <Select allowClear placeholder="Duyệt trực tiếp (không qua BPM)" optionFilterProp="label" showSearch
+              options={defsWithKey.map((d) => ({ value: d.key!, label: `${d.name} (${d.key})` }))}
             />
-          )}
-        </>
+          </Form.Item>
+        </Form>
       )}
     </Modal>
   );

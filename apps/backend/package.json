@@ -80,7 +80,8 @@
     "seed:admin-employee": "npx tsx prisma/seed-admin-employee.ts",
     "seed:bpm-processes": "node prisma/seed-bpm-processes.js",
     "seed:payroll-detail": "npx tsx prisma/seed-payroll-detail.ts",
-    "seed:vn-locations": "npx tsx prisma/seed-vn-locations.ts"
+    "seed:vn-locations": "npx tsx prisma/seed-vn-locations.ts",
+    "seed:leave-types-vi": "npx tsx prisma/seed-leave-types-vi.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
