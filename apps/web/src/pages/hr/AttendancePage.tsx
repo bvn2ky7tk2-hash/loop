@@ -390,8 +390,9 @@ function DetailTab() {
       render: (v?: number, r?: AttendanceRecord) => {
         if (r?.status === 'ABSENT') return <Text style={{ color: '#EF4444', fontWeight: 600 }}>0</Text>;
         if (v == null) return <Text style={{ color: textMuted }}>—</Text>;
-        if (v >= 1) return <Text style={{ color: '#10B981', fontWeight: 700 }}>1</Text>;
-        if (v > 0) return <Text style={{ color: '#F59E0B', fontWeight: 600 }}>{v.toFixed(2)}</Text>;
+        const num = Number(v);
+        if (num >= 1) return <Text style={{ color: '#10B981', fontWeight: 700 }}>1</Text>;
+        if (num > 0) return <Text style={{ color: '#F59E0B', fontWeight: 600 }}>{num.toFixed(2)}</Text>;
         return <Text style={{ color: '#EF4444' }}>0</Text>;
       },
     },
@@ -416,7 +417,7 @@ function DetailTab() {
       dataIndex: 'overtimeMinutes',
       width: 75,
       render: (v?: number) => v && v > 0
-        ? <Text style={{ color: '#F97316', fontWeight: 500 }}>{(v / 60).toFixed(1)}h</Text>
+        ? <Text style={{ color: '#F97316', fontWeight: 500 }}>{(Number(v) / 60).toFixed(1)}h</Text>
         : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
@@ -728,17 +729,17 @@ export default function AttendancePage() {
       />
 
       <Tabs
-        defaultActiveKey="monthly"
+        defaultActiveKey="detail"
         items={[
-          {
-            key: 'monthly',
-            label: 'Bảng công tháng',
-            children: <MonthlyTab />,
-          },
           {
             key: 'detail',
             label: 'Chi tiết chấm công',
             children: <DetailTab />,
+          },
+          {
+            key: 'monthly',
+            label: 'Bảng công tháng',
+            children: <MonthlyTab />,
           },
           {
             key: 'manual',
