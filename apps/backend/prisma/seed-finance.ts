@@ -470,7 +470,7 @@ async function main() {
       await prisma.expense.create({
         data: {
           title: pick(EXPENSE_TITLES),
-          category: pick(expenseCategories),
+          category: pick([...expenseCategories]),
           totalAmount,
           currency: 'VND',
           status,

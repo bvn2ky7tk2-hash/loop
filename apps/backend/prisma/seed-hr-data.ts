@@ -86,7 +86,7 @@ async function main() {
       eventType: 'HR_DECISION',
       titleFn: (emp) => `Quyết định tuyển dụng nhân sự: ${emp.fullName}`,
       contentFn: (emp) =>
-        `Căn cứ nhu cầu nhân sự của đơn vị ${emp.orgUnit.name}, quyết định tuyển dụng ${emp.fullName} vào vị trí ${emp.position?.name ?? 'Nhân viên'} với thời gian thử việc 2 tháng.`,
+        `Căn cứ nhu cầu nhân sự của đơn vị ${emp.orgUnit.name}, quyết định tuyển dụng ${emp.fullName} vào vị trí Nhân viên với thời gian thử việc 2 tháng.`,
     },
     {
       type: 'TRANSFER',

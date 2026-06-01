@@ -584,7 +584,7 @@ async function main() {
       org_unit_id:      orgIdByCode['IT'],
       start_date:       fmtDate(startDate),
       end_date:         fmtDate(endDate),
-      customer:         def.customer,
+      customer_id:      null,
       budget_hours:     budgetHours,
       budget_cost:      budgetCost,
       budget_effort_mm: (budgetHours / 160).toFixed(2),
@@ -597,7 +597,7 @@ async function main() {
 
   await bulkInsert('projects', [
     'id','name','code','type','status','pm_id','org_unit_id',
-    'start_date','end_date','customer',
+    'start_date','end_date','customer_id',
     'budget_hours','budget_cost','budget_effort_mm','currency',
     'progress','created_at','updated_at',
   ], projects);
