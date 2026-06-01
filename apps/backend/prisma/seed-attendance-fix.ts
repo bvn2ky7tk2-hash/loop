@@ -9,6 +9,7 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 // Helper: tính metrics từ check-in/out
+// ✅ Ngày công = giờ nằm trong khung giờ ca, KHÔNG phải tổng giờ làm việc
 function calculateMetrics(
   checkIn: Date,
   checkOut: Date,
@@ -28,15 +29,10 @@ function calculateMetrics(
   const checkOutMin = checkOut.getMinutes();
   const checkOutMinutes = checkOutHour * 60 + checkOutMin;
 
-  const totalMinutes = (checkOutMinutes < checkInMinutes
-    ? checkOutMinutes + 24 * 60
-    : checkOutMinutes) - checkInMinutes;
-  const totalHours = Math.max(0, totalMinutes / 60);
-  const dayCredit = Math.min(1, totalHours / 8);
-
   let lateMinutes = 0;
   let earlyLeaveMinutes = 0;
   let overtimeMinutes = 0;
+  let dayCredit = 0;
 
   if (plannedStart && plannedEnd) {
     const plannedStartMinutes = toMinutes(plannedStart);
@@ -51,9 +47,24 @@ function calculateMetrics(
         ? checkOutMinutes + 24 * 60
         : checkOutMinutes;
 
+    // Tính đi muộn / về sớm
     lateMinutes = Math.max(0, checkInMinutes - plannedStartMinutes);
     earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
     overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
+
+    // ✅ Giờ công = giờ nằm trong khung [plannedStart, plannedEnd]
+    const actualStart = Math.max(checkInMinutes, plannedStartMinutes);
+    const actualEnd = Math.min(adjustedCheckOut, adjustedPlannedEnd);
+    const workMinutes = Math.max(0, actualEnd - actualStart);
+    const workHours = workMinutes / 60;
+    dayCredit = Math.min(1, workHours / 8);
+  } else {
+    // Không có planned time → tính theo tổng giờ làm việc
+    const totalMinutes = (checkOutMinutes < checkInMinutes
+      ? checkOutMinutes + 24 * 60
+      : checkOutMinutes) - checkInMinutes;
+    const totalHours = Math.max(0, totalMinutes / 60);
+    dayCredit = Math.min(1, totalHours / 8);
   }
 
   return { lateMinutes, earlyLeaveMinutes, overtimeMinutes, dayCredit };

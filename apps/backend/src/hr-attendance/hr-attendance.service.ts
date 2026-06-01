@@ -33,12 +33,13 @@ export class HrAttendanceService extends TenantAwareService {
   }
 
   // ─── Tính toán chỉ số ca làm việc từ giờ check-in/out thực tế ───────────────
+  // Ngày công = giờ nằm trong khung giờ ca / 8, không phải tổng giờ làm việc
   calculateShiftMetrics(
     checkIn: Date,
     checkOut: Date,
     plannedStart?: string,
     plannedEnd?: string,
-  ): { lateMinutes: number; earlyLeaveMinutes: number; overtimeMinutes: number; dayCredit: number } {
+  ): { lateMinutes: number; earlyLeaveMinutes: number; overtimeMinutes: number; dayCredit: number; workMinutes: number } {
     const toMinutes = (timeStr: string): number => {
       const [h, m] = timeStr.split(':').map(Number);
       return h * 60 + m;
@@ -52,22 +53,22 @@ export class HrAttendanceService extends TenantAwareService {
     const checkOutMin = checkOut.getMinutes();
     const checkOutMinutes = checkOutHour * 60 + checkOutMin;
 
-    // Tính tổng giờ làm việc
+    // Tính tổng giờ làm việc (cho INFO)
     const totalMinutes = (checkOutMinutes < checkInMinutes
       ? checkOutMinutes + 24 * 60
       : checkOutMinutes) - checkInMinutes;
-    const totalHours = Math.max(0, totalMinutes / 60);
-    const dayCredit = Math.min(1, totalHours / 8); // ngày công = tổng giờ / 8
 
     let lateMinutes = 0;
     let earlyLeaveMinutes = 0;
     let overtimeMinutes = 0;
+    let dayCredit = 0;
+    let workMinutes = 0; // giờ công = giờ nằm trong khung giờ ca
 
-    // Nếu có planned start/end time, tính muộn/về sớm
     if (plannedStart && plannedEnd) {
       const plannedStartMinutes = toMinutes(plannedStart);
       const plannedEndMinutes = toMinutes(plannedEnd);
 
+      // Xử lý ca đêm (vắt qua ngày)
       const adjustedPlannedEnd =
         plannedEndMinutes < plannedStartMinutes
           ? plannedEndMinutes + 24 * 60
@@ -77,12 +78,27 @@ export class HrAttendanceService extends TenantAwareService {
           ? checkOutMinutes + 24 * 60
           : checkOutMinutes;
 
+      // ✅ Tính đi muộn / về sớm
       lateMinutes = Math.max(0, checkInMinutes - plannedStartMinutes);
       earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
       overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
+
+      // ✅ QUAN TRỌNG: Giờ công = giờ nằm trong khung [plannedStart, plannedEnd]
+      // Không phải tổng giờ làm việc
+      const actualStart = Math.max(checkInMinutes, plannedStartMinutes);
+      const actualEnd = Math.min(adjustedCheckOut, adjustedPlannedEnd);
+      workMinutes = Math.max(0, actualEnd - actualStart);
+
+      const workHours = workMinutes / 60;
+      dayCredit = Math.min(1, workHours / 8); // đơn vị tính theo 8h/ngày
+    } else {
+      // Không có planned time → tính theo tổng giờ làm việc
+      const totalHours = Math.max(0, totalMinutes / 60);
+      dayCredit = Math.min(1, totalHours / 8);
+      workMinutes = totalMinutes;
     }
 
-    return { lateMinutes, earlyLeaveMinutes, overtimeMinutes, dayCredit };
+    return { lateMinutes, earlyLeaveMinutes, overtimeMinutes, dayCredit, workMinutes };
   }
 
   // ─── 1. List bản ghi chấm công (paginated) ──────────────────────────────────
