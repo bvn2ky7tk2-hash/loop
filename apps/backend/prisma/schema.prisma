@@ -3674,6 +3674,7 @@ model AttendanceRecord {
   plannedStart        String?           @map("planned_start")
   plannedEnd          String?           @map("planned_end")
   totalHours          Decimal?          @map("total_hours") @db.Decimal(5, 2)
+  dayCredit           Decimal           @default(0) @map("day_credit") @db.Decimal(3, 2)
   status              AttendanceStatus  @default(PRESENT)
   lateMinutes         Int               @default(0) @map("late_minutes")
   earlyLeaveMinutes   Int               @default(0) @map("early_leave_minutes")

@@ -36,18 +36,14 @@ export class HrAttendanceService extends TenantAwareService {
   calculateShiftMetrics(
     checkIn: Date,
     checkOut: Date,
-    plannedStart: string,
-    plannedEnd: string,
-  ): { lateMinutes: number; earlyLeaveMinutes: number; overtimeMinutes: number } {
+    plannedStart?: string,
+    plannedEnd?: string,
+  ): { lateMinutes: number; earlyLeaveMinutes: number; overtimeMinutes: number; dayCredit: number } {
     const toMinutes = (timeStr: string): number => {
       const [h, m] = timeStr.split(':').map(Number);
       return h * 60 + m;
     };
 
-    const plannedStartMinutes = toMinutes(plannedStart);
-    const plannedEndMinutes = toMinutes(plannedEnd);
-
-    // Tính phút từ nửa đêm của ngày làm việc
     const checkInHour = checkIn.getHours();
     const checkInMin = checkIn.getMinutes();
     const checkInMinutes = checkInHour * 60 + checkInMin;
@@ -56,21 +52,37 @@ export class HrAttendanceService extends TenantAwareService {
     const checkOutMin = checkOut.getMinutes();
     const checkOutMinutes = checkOutHour * 60 + checkOutMin;
 
-    // Xử lý ca đêm (plannedEnd < plannedStart — ca vắt qua ngày mới)
-    const adjustedPlannedEnd =
-      plannedEndMinutes < plannedStartMinutes
-        ? plannedEndMinutes + 24 * 60
-        : plannedEndMinutes;
-    const adjustedCheckOut =
-      checkOutMinutes < checkInMinutes
-        ? checkOutMinutes + 24 * 60
-        : checkOutMinutes;
+    // Tính tổng giờ làm việc
+    const totalMinutes = (checkOutMinutes < checkInMinutes
+      ? checkOutMinutes + 24 * 60
+      : checkOutMinutes) - checkInMinutes;
+    const totalHours = Math.max(0, totalMinutes / 60);
+    const dayCredit = Math.min(1, totalHours / 8); // ngày công = tổng giờ / 8
 
-    const lateMinutes = Math.max(0, checkInMinutes - plannedStartMinutes);
-    const earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
-    const overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
+    let lateMinutes = 0;
+    let earlyLeaveMinutes = 0;
+    let overtimeMinutes = 0;
 
-    return { lateMinutes, earlyLeaveMinutes, overtimeMinutes };
+    // Nếu có planned start/end time, tính muộn/về sớm
+    if (plannedStart && plannedEnd) {
+      const plannedStartMinutes = toMinutes(plannedStart);
+      const plannedEndMinutes = toMinutes(plannedEnd);
+
+      const adjustedPlannedEnd =
+        plannedEndMinutes < plannedStartMinutes
+          ? plannedEndMinutes + 24 * 60
+          : plannedEndMinutes;
+      const adjustedCheckOut =
+        checkOutMinutes < checkInMinutes
+          ? checkOutMinutes + 24 * 60
+          : checkOutMinutes;
+
+      lateMinutes = Math.max(0, checkInMinutes - plannedStartMinutes);
+      earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
+      overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
+    }
+
+    return { lateMinutes, earlyLeaveMinutes, overtimeMinutes, dayCredit };
   }
 
   // ─── 1. List bản ghi chấm công (paginated) ──────────────────────────────────
@@ -148,10 +160,10 @@ export class HrAttendanceService extends TenantAwareService {
       const enriched = records.map((r) => ({
         ...r,
         leaveInfo: leaveMap.get(`${r.employeeId}_${r.date.toISOString().slice(0, 10)}`) ?? null,
-        // Ngày công: 1 nếu đủ giờ, totalHours/8 nếu thiếu, 0 nếu vắng
-        dayCredit: r.checkIn && r.checkOut && r.totalHours
-          ? +Math.min(1, Number(r.totalHours) / 8).toFixed(2)
-          : r.checkIn ? 0.5 : 0,
+        // Sử dụng dayCredit từ DB (đã tính), fallback nếu không có
+        dayCredit: r.dayCredit ?? (r.checkIn && r.checkOut && r.totalHours
+          ? Math.min(1, Number(r.totalHours) / 8)
+          : r.checkIn ? 0.5 : 0),
       }));
 
       return paginate(enriched, total, page, limit);
@@ -178,6 +190,7 @@ export class HrAttendanceService extends TenantAwareService {
     let plannedEnd: string | null = null;
     let shiftId: string | null = null;
 
+    let dayCredit = 0;
     if (dto.checkIn && dto.checkOut) {
       const checkInTime = new Date(dto.checkIn);
       const checkOutTime = new Date(dto.checkOut);
@@ -195,33 +208,35 @@ export class HrAttendanceService extends TenantAwareService {
         shiftId = activeShift.id;
         plannedStart = activeShift.startTime;
         plannedEnd = activeShift.endTime;
+      }
 
-        const metrics = this.calculateShiftMetrics(
-          checkInTime,
-          checkOutTime,
-          activeShift.startTime,
-          activeShift.endTime,
-        );
-        lateMinutes = metrics.lateMinutes;
-        earlyLeaveMinutes = metrics.earlyLeaveMinutes;
-        overtimeMinutes = metrics.overtimeMinutes;
+      // Tính metrics (bao gồm dayCredit) — không phụ thuộc vào activeShift
+      const metrics = this.calculateShiftMetrics(
+        checkInTime,
+        checkOutTime,
+        plannedStart || undefined,
+        plannedEnd || undefined,
+      );
+      lateMinutes = metrics.lateMinutes;
+      earlyLeaveMinutes = metrics.earlyLeaveMinutes;
+      overtimeMinutes = metrics.overtimeMinutes;
+      dayCredit = Math.round(metrics.dayCredit * 100) / 100; // làm tròn 2 số thập phân
 
-        // Cập nhật OT hours vào MonthlyAttendance nếu có OT
-        if (overtimeMinutes > 0) {
-          const year = date.getFullYear();
-          const month = date.getMonth() + 1;
-          const otHoursDelta = overtimeMinutes / 60;
+      // Cập nhật OT hours vào MonthlyAttendance nếu có OT
+      if (overtimeMinutes > 0) {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const otHoursDelta = overtimeMinutes / 60;
 
-          const monthly = await this.prisma.monthlyAttendance.findUnique({
-            where: { employeeId_year_month: { employeeId: dto.employeeId, year, month } },
+        const monthly = await this.prisma.monthlyAttendance.findUnique({
+          where: { employeeId_year_month: { employeeId: dto.employeeId, year, month } },
+        });
+
+        if (monthly) {
+          await this.prisma.monthlyAttendance.update({
+            where: { id: monthly.id },
+            data: { otHours: { increment: otHoursDelta } },
           });
-
-          if (monthly) {
-            await this.prisma.monthlyAttendance.update({
-              where: { id: monthly.id },
-              data: { otHours: { increment: otHoursDelta } },
-            });
-          }
         }
       }
     }
@@ -232,6 +247,7 @@ export class HrAttendanceService extends TenantAwareService {
       checkIn: dto.checkIn ? new Date(dto.checkIn) : undefined,
       checkOut: dto.checkOut ? new Date(dto.checkOut) : undefined,
       totalHours,
+      dayCredit,
       status: dto.status ?? AttendanceStatus.PRESENT,
       leaveType: dto.leaveType ?? null,
       note: dto.note ?? null,
@@ -258,6 +274,7 @@ export class HrAttendanceService extends TenantAwareService {
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         totalHours,
+        dayCredit,
         status: data.status,
         leaveType: data.leaveType,
         note: data.note,
@@ -344,17 +361,30 @@ export class HrAttendanceService extends TenantAwareService {
     const upserts = employees.map((emp) => {
       const records = allRecords.filter((r) => r.employeeId === emp.id);
 
-      const workDays = records.filter((r) => r.status === AttendanceStatus.PRESENT).length;
+      // Tính ngày công dựa trên dayCredit (nếu tổng giờ < 8h thì tính tỷ lệ)
+      const workDays = records
+        .filter((r) => r.status === AttendanceStatus.PRESENT)
+        .reduce((sum, r) => sum + Number(r.dayCredit ?? 1), 0);
+
+      // Phép có tính công
       const paidLeaveDays = records.filter(
-        (r) => r.status === AttendanceStatus.LEAVE && r.leaveType !== 'UNPAID',
+        (r) => [AttendanceStatus.LEAVE, AttendanceStatus.ON_LEAVE].includes(r.status) && r.leaveType !== 'UNPAID',
       ).length;
+
+      // Phép không tính công
       const unpaidLeaveDays = records.filter(
-        (r) => r.status === AttendanceStatus.LEAVE && r.leaveType === 'UNPAID',
+        (r) => [AttendanceStatus.LEAVE, AttendanceStatus.ON_LEAVE].includes(r.status) && r.leaveType === 'UNPAID',
       ).length;
+
+      // OT giờ
       const otHours = records
-        .filter((r) => r.status === AttendanceStatus.OT)
-        .reduce((sum, r) => sum + Number(r.totalHours ?? 0), 0);
+        .filter((r) => r.status === AttendanceStatus.OT || r.overtimeMinutes > 0)
+        .reduce((sum, r) => sum + Number(r.totalHours ?? 0) + (r.overtimeMinutes ?? 0) / 60, 0);
+
+      // Vắng mặt
       const absentDays = records.filter((r) => r.status === AttendanceStatus.ABSENT).length;
+
+      // Lễ/Nghỉ
       const holidayDays = records.filter((r) => r.status === AttendanceStatus.HOLIDAY).length;
 
       return this.prisma.monthlyAttendance.upsert({

@@ -65,6 +65,7 @@
     "seed:hr-payroll": "npx tsx prisma/seed-hr-payroll.ts",
     "seed:feed-activity": "npx tsx prisma/seed-feed-activity.ts",
     "seed:attendance": "npx tsx prisma/seed-attendance.ts",
+    "seed:attendance-fix": "npx tsx prisma/seed-attendance-fix.ts",
     "seed:assets": "npx tsx prisma/seed-assets.ts"
   },
   "prisma": {

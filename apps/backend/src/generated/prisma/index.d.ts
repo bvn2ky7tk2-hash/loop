@@ -184386,6 +184386,7 @@ export namespace Prisma {
 
   export type AttendanceRecordAvgAggregateOutputType = {
     totalHours: Decimal | null
+    dayCredit: Decimal | null
     lateMinutes: number | null
     earlyLeaveMinutes: number | null
     overtimeMinutes: number | null
@@ -184393,6 +184394,7 @@ export namespace Prisma {
 
   export type AttendanceRecordSumAggregateOutputType = {
     totalHours: Decimal | null
+    dayCredit: Decimal | null
     lateMinutes: number | null
     earlyLeaveMinutes: number | null
     overtimeMinutes: number | null
@@ -184409,6 +184411,7 @@ export namespace Prisma {
     plannedStart: string | null
     plannedEnd: string | null
     totalHours: Decimal | null
+    dayCredit: Decimal | null
     status: $Enums.AttendanceStatus | null
     lateMinutes: number | null
     earlyLeaveMinutes: number | null
@@ -184431,6 +184434,7 @@ export namespace Prisma {
     plannedStart: string | null
     plannedEnd: string | null
     totalHours: Decimal | null
+    dayCredit: Decimal | null
     status: $Enums.AttendanceStatus | null
     lateMinutes: number | null
     earlyLeaveMinutes: number | null
@@ -184453,6 +184457,7 @@ export namespace Prisma {
     plannedStart: number
     plannedEnd: number
     totalHours: number
+    dayCredit: number
     status: number
     lateMinutes: number
     earlyLeaveMinutes: number
@@ -184468,6 +184473,7 @@ export namespace Prisma {
 
   export type AttendanceRecordAvgAggregateInputType = {
     totalHours?: true
+    dayCredit?: true
     lateMinutes?: true
     earlyLeaveMinutes?: true
     overtimeMinutes?: true
@@ -184475,6 +184481,7 @@ export namespace Prisma {
 
   export type AttendanceRecordSumAggregateInputType = {
     totalHours?: true
+    dayCredit?: true
     lateMinutes?: true
     earlyLeaveMinutes?: true
     overtimeMinutes?: true
@@ -184491,6 +184498,7 @@ export namespace Prisma {
     plannedStart?: true
     plannedEnd?: true
     totalHours?: true
+    dayCredit?: true
     status?: true
     lateMinutes?: true
     earlyLeaveMinutes?: true
@@ -184513,6 +184521,7 @@ export namespace Prisma {
     plannedStart?: true
     plannedEnd?: true
     totalHours?: true
+    dayCredit?: true
     status?: true
     lateMinutes?: true
     earlyLeaveMinutes?: true
@@ -184535,6 +184544,7 @@ export namespace Prisma {
     plannedStart?: true
     plannedEnd?: true
     totalHours?: true
+    dayCredit?: true
     status?: true
     lateMinutes?: true
     earlyLeaveMinutes?: true
@@ -184644,6 +184654,7 @@ export namespace Prisma {
     plannedStart: string | null
     plannedEnd: string | null
     totalHours: Decimal | null
+    dayCredit: Decimal
     status: $Enums.AttendanceStatus
     lateMinutes: number
     earlyLeaveMinutes: number
@@ -184685,6 +184696,7 @@ export namespace Prisma {
     plannedStart?: boolean
     plannedEnd?: boolean
     totalHours?: boolean
+    dayCredit?: boolean
     status?: boolean
     lateMinutes?: boolean
     earlyLeaveMinutes?: boolean
@@ -184711,6 +184723,7 @@ export namespace Prisma {
     plannedStart?: boolean
     plannedEnd?: boolean
     totalHours?: boolean
+    dayCredit?: boolean
     status?: boolean
     lateMinutes?: boolean
     earlyLeaveMinutes?: boolean
@@ -184735,6 +184748,7 @@ export namespace Prisma {
     plannedStart?: boolean
     plannedEnd?: boolean
     totalHours?: boolean
+    dayCredit?: boolean
     status?: boolean
     lateMinutes?: boolean
     earlyLeaveMinutes?: boolean
@@ -184759,6 +184773,7 @@ export namespace Prisma {
     plannedStart?: boolean
     plannedEnd?: boolean
     totalHours?: boolean
+    dayCredit?: boolean
     status?: boolean
     lateMinutes?: boolean
     earlyLeaveMinutes?: boolean
@@ -184770,7 +184785,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type AttendanceRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "monthlyAttendanceId" | "shiftId" | "date" | "checkIn" | "checkOut" | "plannedStart" | "plannedEnd" | "totalHours" | "status" | "lateMinutes" | "earlyLeaveMinutes" | "overtimeMinutes" | "leaveType" | "note" | "isManual" | "createdAt" | "updatedAt", ExtArgs["result"]["attendanceRecord"]>
+  export type AttendanceRecordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "employeeId" | "monthlyAttendanceId" | "shiftId" | "date" | "checkIn" | "checkOut" | "plannedStart" | "plannedEnd" | "totalHours" | "dayCredit" | "status" | "lateMinutes" | "earlyLeaveMinutes" | "overtimeMinutes" | "leaveType" | "note" | "isManual" | "createdAt" | "updatedAt", ExtArgs["result"]["attendanceRecord"]>
   export type AttendanceRecordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employee?: boolean | EmployeeDefaultArgs<ExtArgs>
     monthlyAttendance?: boolean | AttendanceRecord$monthlyAttendanceArgs<ExtArgs>
@@ -184804,6 +184819,7 @@ export namespace Prisma {
       plannedStart: string | null
       plannedEnd: string | null
       totalHours: Prisma.Decimal | null
+      dayCredit: Prisma.Decimal
       status: $Enums.AttendanceStatus
       lateMinutes: number
       earlyLeaveMinutes: number
@@ -185249,6 +185265,7 @@ export namespace Prisma {
     readonly plannedStart: FieldRef<"AttendanceRecord", 'String'>
     readonly plannedEnd: FieldRef<"AttendanceRecord", 'String'>
     readonly totalHours: FieldRef<"AttendanceRecord", 'Decimal'>
+    readonly dayCredit: FieldRef<"AttendanceRecord", 'Decimal'>
     readonly status: FieldRef<"AttendanceRecord", 'AttendanceStatus'>
     readonly lateMinutes: FieldRef<"AttendanceRecord", 'Int'>
     readonly earlyLeaveMinutes: FieldRef<"AttendanceRecord", 'Int'>
@@ -210812,6 +210829,7 @@ export namespace Prisma {
     plannedStart: 'plannedStart',
     plannedEnd: 'plannedEnd',
     totalHours: 'totalHours',
+    dayCredit: 'dayCredit',
     status: 'status',
     lateMinutes: 'lateMinutes',
     earlyLeaveMinutes: 'earlyLeaveMinutes',
@@ -224863,6 +224881,7 @@ export namespace Prisma {
     plannedStart?: StringNullableFilter<"AttendanceRecord"> | string | null
     plannedEnd?: StringNullableFilter<"AttendanceRecord"> | string | null
     totalHours?: DecimalNullableFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFilter<"AttendanceRecord"> | $Enums.AttendanceStatus
     lateMinutes?: IntFilter<"AttendanceRecord"> | number
     earlyLeaveMinutes?: IntFilter<"AttendanceRecord"> | number
@@ -224888,6 +224907,7 @@ export namespace Prisma {
     plannedStart?: SortOrderInput | SortOrder
     plannedEnd?: SortOrderInput | SortOrder
     totalHours?: SortOrderInput | SortOrder
+    dayCredit?: SortOrder
     status?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
@@ -224917,6 +224937,7 @@ export namespace Prisma {
     plannedStart?: StringNullableFilter<"AttendanceRecord"> | string | null
     plannedEnd?: StringNullableFilter<"AttendanceRecord"> | string | null
     totalHours?: DecimalNullableFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFilter<"AttendanceRecord"> | $Enums.AttendanceStatus
     lateMinutes?: IntFilter<"AttendanceRecord"> | number
     earlyLeaveMinutes?: IntFilter<"AttendanceRecord"> | number
@@ -224942,6 +224963,7 @@ export namespace Prisma {
     plannedStart?: SortOrderInput | SortOrder
     plannedEnd?: SortOrderInput | SortOrder
     totalHours?: SortOrderInput | SortOrder
+    dayCredit?: SortOrder
     status?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
@@ -224972,6 +224994,7 @@ export namespace Prisma {
     plannedStart?: StringNullableWithAggregatesFilter<"AttendanceRecord"> | string | null
     plannedEnd?: StringNullableWithAggregatesFilter<"AttendanceRecord"> | string | null
     totalHours?: DecimalNullableWithAggregatesFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalWithAggregatesFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusWithAggregatesFilter<"AttendanceRecord"> | $Enums.AttendanceStatus
     lateMinutes?: IntWithAggregatesFilter<"AttendanceRecord"> | number
     earlyLeaveMinutes?: IntWithAggregatesFilter<"AttendanceRecord"> | number
@@ -239951,6 +239974,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -239976,6 +240000,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -239997,6 +240022,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -240022,6 +240048,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -240045,6 +240072,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -240065,6 +240093,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -240087,6 +240116,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -251767,6 +251797,7 @@ export namespace Prisma {
     plannedStart?: SortOrder
     plannedEnd?: SortOrder
     totalHours?: SortOrder
+    dayCredit?: SortOrder
     status?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
@@ -251780,6 +251811,7 @@ export namespace Prisma {
 
   export type AttendanceRecordAvgOrderByAggregateInput = {
     totalHours?: SortOrder
+    dayCredit?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
     overtimeMinutes?: SortOrder
@@ -251796,6 +251828,7 @@ export namespace Prisma {
     plannedStart?: SortOrder
     plannedEnd?: SortOrder
     totalHours?: SortOrder
+    dayCredit?: SortOrder
     status?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
@@ -251818,6 +251851,7 @@ export namespace Prisma {
     plannedStart?: SortOrder
     plannedEnd?: SortOrder
     totalHours?: SortOrder
+    dayCredit?: SortOrder
     status?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
@@ -251831,6 +251865,7 @@ export namespace Prisma {
 
   export type AttendanceRecordSumOrderByAggregateInput = {
     totalHours?: SortOrder
+    dayCredit?: SortOrder
     lateMinutes?: SortOrder
     earlyLeaveMinutes?: SortOrder
     overtimeMinutes?: SortOrder
@@ -276651,6 +276686,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -276674,6 +276710,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -278476,6 +278513,7 @@ export namespace Prisma {
     plannedStart?: StringNullableFilter<"AttendanceRecord"> | string | null
     plannedEnd?: StringNullableFilter<"AttendanceRecord"> | string | null
     totalHours?: DecimalNullableFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFilter<"AttendanceRecord"> | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFilter<"AttendanceRecord"> | $Enums.AttendanceStatus
     lateMinutes?: IntFilter<"AttendanceRecord"> | number
     earlyLeaveMinutes?: IntFilter<"AttendanceRecord"> | number
@@ -327048,6 +327086,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -327071,6 +327110,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -327446,6 +327486,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -327470,6 +327511,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -327792,6 +327834,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -327816,6 +327859,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -336081,6 +336125,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -337400,6 +337445,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -337423,6 +337469,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -337445,6 +337492,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -346711,6 +346759,7 @@ export namespace Prisma {
     plannedStart?: string | null
     plannedEnd?: string | null
     totalHours?: Decimal | DecimalJsLike | number | string | null
+    dayCredit?: Decimal | DecimalJsLike | number | string
     status?: $Enums.AttendanceStatus
     lateMinutes?: number
     earlyLeaveMinutes?: number
@@ -346731,6 +346780,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -346754,6 +346804,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number
@@ -346776,6 +346827,7 @@ export namespace Prisma {
     plannedStart?: NullableStringFieldUpdateOperationsInput | string | null
     plannedEnd?: NullableStringFieldUpdateOperationsInput | string | null
     totalHours?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    dayCredit?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     status?: EnumAttendanceStatusFieldUpdateOperationsInput | $Enums.AttendanceStatus
     lateMinutes?: IntFieldUpdateOperationsInput | number
     earlyLeaveMinutes?: IntFieldUpdateOperationsInput | number

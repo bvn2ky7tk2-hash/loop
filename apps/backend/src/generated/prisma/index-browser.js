@@ -1934,6 +1934,7 @@ exports.Prisma.AttendanceRecordScalarFieldEnum = {
   plannedStart: 'plannedStart',
   plannedEnd: 'plannedEnd',
   totalHours: 'totalHours',
+  dayCredit: 'dayCredit',
   status: 'status',
   lateMinutes: 'lateMinutes',
   earlyLeaveMinutes: 'earlyLeaveMinutes',
