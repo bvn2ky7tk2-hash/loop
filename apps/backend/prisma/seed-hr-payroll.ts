@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient, Decimal } from '../src/generated/prisma';
 import dayjs from 'dayjs';
 
 const pool = new Pool({ connectionString: process.env['DATABASE_URL'] });
@@ -27,18 +27,17 @@ async function main() {
       await prisma.contract.create({
         data: {
           employeeId: emp.id,
-          contractType: ['PERMANENT', 'FIXED_TERM', 'PROBATION'][Math.floor(Math.random() * 3)] as any,
+          type: ['PROBATION', 'FIXED_12', 'FIXED_24'][Math.floor(Math.random() * 3)] as any,
           startDate,
           endDate: Math.random() > 0.7 ? dayjs(startDate).add(3, 'years').toDate() : null,
-          baseSalary: Math.floor(Math.random() * 15000000) + 5000000,
-          signingDate: dayjs(startDate).subtract(7, 'days').toDate(),
+          salaryMonthly: new Decimal(Math.floor(Math.random() * 15000000) + 5000000),
+          signedAt: dayjs(startDate).subtract(7, 'days').toDate(),
           status: 'ACTIVE' as any,
-          workSchedule: 'FULL_TIME' as any,
         },
       });
       contractCount++;
     } catch (e) {
-      // Skip duplicates
+      console.error('❌ Contract error:', e.message);
     }
   }
   console.log(`   ✓ ${contractCount} contracts created\n`);
@@ -49,33 +48,28 @@ async function main() {
   console.log('📋 Creating HR Decisions...');
   let decisionCount = 0;
 
-  const decisionTypes = ['PROMOTION', 'SALARY_INCREASE', 'TRANSFER', 'DEMOTION', 'SALARY_DECREASE'];
-  const statuses = ['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'EXECUTED'];
+  const decisionTypes = ['HIRE', 'TRANSFER', 'POSITION_CHANGE', 'SALARY_CHANGE', 'PROBATION_END'];
+  const statuses = ['DRAFT', 'PENDING', 'APPROVED', 'REJECTED'];
 
   for (let i = 0; i < 50; i++) {
     const emp = employees[Math.floor(Math.random() * employees.length)];
-    const approver = users[Math.floor(Math.random() * users.length)];
     const decisionType = decisionTypes[Math.floor(Math.random() * decisionTypes.length)];
 
     try {
       await prisma.hrDecision.create({
         data: {
           employeeId: emp.id,
-          decisionType: decisionType as any,
-          title: `${decisionType} - ${emp.fullName}`,
-          description: `Decision: ${decisionType} effective from next month`,
+          type: decisionType as any,
+          content: `Decision: ${decisionType} effective from next month`,
           effectiveDate: dayjs().add(Math.random() * 30, 'days').toDate(),
           status: statuses[Math.floor(Math.random() * statuses.length)] as any,
-          createdByUserId: approver.id,
-          details: {
-            reason: 'Performance improvement',
-            impact: decisionType.includes('SALARY') ? 'Salary adjustment' : 'Role change',
-          },
+          signedDate: dayjs().toDate(),
+          notes: `Applied for: ${emp.fullName}`,
         },
       });
       decisionCount++;
     } catch (e) {
-      // Skip if error
+      console.error('❌ HrDecision error:', e.message);
     }
   }
   console.log(`   ✓ ${decisionCount} HR decisions created\n`);
@@ -92,6 +86,7 @@ async function main() {
     const emp = employees[i % employees.length];
     const leaveType = leaveTypes[i % leaveTypes.length] || leaveTypes[0];
     const startDate = dayjs().add(Math.random() * 60, 'days').toDate();
+    const dayCount = Math.floor(Math.random() * 5) + 1;
 
     try {
       await prisma.leaveRequest.create({
@@ -99,16 +94,15 @@ async function main() {
           employeeId: emp.id,
           leaveTypeId: leaveType.id,
           startDate,
-          endDate: dayjs(startDate).add(Math.floor(Math.random() * 5) + 1, 'days').toDate(),
-          dayCount: Math.floor(Math.random() * 5) + 1,
+          endDate: dayjs(startDate).add(dayCount, 'days').toDate(),
+          days: new Decimal(dayCount),
           reason: ['Personal reason', 'Medical', 'Family', 'Vacation'][Math.floor(Math.random() * 4)],
-          status: ['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED'][Math.floor(Math.random() * 4)] as any,
-          requestDate: dayjs().toDate(),
+          status: ['PENDING', 'APPROVED', 'REJECTED'][Math.floor(Math.random() * 3)] as any,
         },
       });
       leaveCount++;
     } catch (e) {
-      // Skip duplicates
+      console.error('❌ LeaveRequest error:', e.message);
     }
   }
   console.log(`   ✓ ${leaveCount} leave requests created\n`);
@@ -122,151 +116,44 @@ async function main() {
   for (let i = 0; i < 50; i++) {
     const emp = employees[Math.floor(Math.random() * employees.length)];
     const workDate = dayjs().subtract(Math.random() * 30, 'days').toDate();
+    const hours = Math.floor(Math.random() * 4) + 1;
 
     try {
       await prisma.overtimeRequest.create({
         data: {
           employeeId: emp.id,
-          workDate,
-          hours: Math.floor(Math.random() * 4) + 1,
+          date: workDate,
+          hours: new Decimal(hours),
           reason: ['Project deadline', 'Production issue', 'Client request'][Math.floor(Math.random() * 3)],
-          status: ['DRAFT', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED'][Math.floor(Math.random() * 4)] as any,
-          requestDate: dayjs().toDate(),
+          status: ['PENDING', 'APPROVED', 'REJECTED'][Math.floor(Math.random() * 3)] as any,
+          dayType: 'WEEKDAY' as any,
         },
       });
       otCount++;
     } catch (e) {
-      // Skip duplicates
+      console.error('❌ OvertimeRequest error:', e.message);
     }
   }
   console.log(`   ✓ ${otCount} overtime requests created\n`);
 
   // ─────────────────────────────────────────────────────────────────
-  // 5. SALARY BANDS & COLUMNS
+  // 5. SALARY BANDS & COLUMNS (Skipped - complex schema)
   // ─────────────────────────────────────────────────────────────────
-  console.log('💳 Creating Salary Bands & Columns...');
-
+  console.log('💳 Salary Bands & Columns (skipped - require position mapping)\n');
   const salaryBands = [];
-  for (let i = 0; i < 10; i++) {
-    try {
-      const band = await prisma.salaryBand.create({
-        data: {
-          code: `BAND-${String.fromCharCode(65 + i)}`,
-          name: `Salary Band ${String.fromCharCode(65 + i)}`,
-          minSalary: Math.floor(5000000 + i * 2000000),
-          maxSalary: Math.floor(15000000 + i * 3000000),
-        },
-      });
-      salaryBands.push(band);
-    } catch (e) {
-      // Skip duplicates
-    }
-  }
-
-  const columnDefs = [
-    { code: 'BASIC', name: 'Basic Salary', type: 'BASIC' },
-    { code: 'ALLOWANCE', name: 'Allowances', type: 'ALLOWANCE' },
-    { code: 'OT_PAY', name: 'Overtime Pay', type: 'OT' },
-    { code: 'BONUS', name: 'Bonus', type: 'BONUS' },
-    { code: 'BHXH', name: 'Social Insurance', type: 'DEDUCTION' },
-    { code: 'TAX', name: 'Income Tax', type: 'DEDUCTION' },
-  ];
-
   const columns = [];
-  for (const col of columnDefs) {
-    try {
-      const column = await prisma.salaryColumn.create({
-        data: {
-          code: col.code,
-          name: col.name,
-          columnType: col.type as any,
-          formula: '',
-        },
-      });
-      columns.push(column);
-    } catch (e) {
-      // Skip duplicates
-    }
-  }
-  console.log(`   ✓ ${salaryBands.length} salary bands + ${columns.length} columns\n`);
 
   // ─────────────────────────────────────────────────────────────────
-  // 6. EMPLOYEE ALLOWANCES (500 phụ cấp)
+  // 6. EMPLOYEE ALLOWANCES (Skipped - require payrollRecordId)
   // ─────────────────────────────────────────────────────────────────
-  console.log('💰 Creating Employee Allowances...');
-  let allowanceCount = 0;
-
-  const allowanceTypes = await prisma.allowanceType.findMany({ take: 5 });
-
-  if (allowanceTypes.length > 0) {
-    for (let i = 0; i < 200; i++) {
-      const emp = employees[i % employees.length];
-      const allowanceType = allowanceTypes[i % allowanceTypes.length];
-
-      try {
-        await prisma.employeeAllowance.create({
-          data: {
-            employeeId: emp.id,
-            allowanceTypeId: allowanceType.id,
-            amount: Math.floor(Math.random() * 5000000) + 500000,
-            effectiveDate: dayjs().subtract(Math.random() * 100, 'days').toDate(),
-            status: 'ACTIVE' as any,
-          },
-        });
-        allowanceCount++;
-      } catch (e) {
-        // Skip duplicates
-      }
-    }
-  }
-  console.log(`   ✓ ${allowanceCount} employee allowances created\n`);
+  console.log('💰 Employee Allowances (skipped - linked to payroll records)\n');
+  const allowanceCount = 0;
 
   // ─────────────────────────────────────────────────────────────────
-  // 7. SALARY RECORDS (Chi tiết lương - 300+)
+  // 7. SALARY RECORDS (Skipped - covered by seed-comprehensive.ts)
   // ─────────────────────────────────────────────────────────────────
-  console.log('📊 Creating Salary Records (detailed)...');
-  let salaryRecordCount = 0;
-
-  const periods = await prisma.payrollPeriod.findMany({ take: 3 });
-
-  if (columns.length > 0 && periods.length > 0) {
-    for (const period of periods) {
-      for (const emp of employees.slice(0, 50)) {
-        const baseSalary = Math.floor(Math.random() * 15000000) + 5000000;
-        const allowance = Math.floor(Math.random() * 3000000);
-        const otPay = Math.floor(Math.random() * 5000000);
-        const bonus = Math.random() > 0.6 ? Math.floor(Math.random() * 3000000) : 0;
-        const bhxh = Math.floor(baseSalary * 0.08);
-        const tax = Math.floor((baseSalary + allowance + otPay + bonus - bhxh) * 0.05);
-
-        const salaryData = {};
-        salaryData[columns[0].id] = baseSalary;
-        salaryData[columns[1].id] = allowance;
-        salaryData[columns[2].id] = otPay;
-        salaryData[columns[3].id] = bonus;
-        salaryData[columns[4].id] = bhxh;
-        salaryData[columns[5].id] = tax;
-
-        try {
-          await prisma.salaryRecord.create({
-            data: {
-              employeeId: emp.id,
-              periodId: period.id,
-              columnData: salaryData,
-              totalEarnings: baseSalary + allowance + otPay + bonus,
-              totalDeductions: bhxh + tax,
-              netSalary: baseSalary + allowance + otPay + bonus - bhxh - tax,
-              status: 'FINALIZED' as any,
-            },
-          });
-          salaryRecordCount++;
-        } catch (e) {
-          // Skip duplicates
-        }
-      }
-    }
-  }
-  console.log(`   ✓ ${salaryRecordCount} salary records created\n`);
+  console.log('📊 Salary Records (already seeded via seed-comprehensive.ts)\n');
+  const salaryRecordCount = 0;
 
   // ─────────────────────────────────────────────────────────────────
   // Summary
