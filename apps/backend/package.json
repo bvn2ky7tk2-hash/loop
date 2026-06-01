@@ -68,7 +68,8 @@
     "seed:attendance-fix": "npx tsx prisma/seed-attendance-fix.ts",
     "seed:assets": "npx tsx prisma/seed-assets.ts",
     "seed:recruitment": "npx tsx prisma/seed-recruitment.ts",
-    "seed:finance": "npx tsx prisma/seed-finance.ts"
+    "seed:finance": "npx tsx prisma/seed-finance.ts",
+    "seed:customer": "npx tsx prisma/seed-customer.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
