@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, Decimal, InvoiceStatus, ExpenseStatus, PoStatus } from '../src/generated/prisma';
+import { PrismaClient, Prisma, InvoiceStatus, ExpenseStatus, PoStatus } from '../src/generated/prisma';
+const Decimal = Prisma.Decimal;
 import dayjs from 'dayjs';
 
 const pool = new Pool({ connectionString: process.env['DATABASE_URL'] });
@@ -16,7 +17,7 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-const INVOICE_STATUSES: InvoiceStatus[] = ['DRAFT', 'SENT', 'VIEWED', 'ACCEPTED', 'PAID', 'OVERDUE', 'CANCELLED'];
+const INVOICE_STATUSES: InvoiceStatus[] = ['DRAFT', 'SENT', 'PAID', 'OVERDUE', 'CANCELLED'];
 const EXPENSE_STATUSES: ExpenseStatus[] = ['PENDING', 'APPROVED', 'REJECTED'];
 const EXPENSE_CATEGORIES = ['TRAVEL', 'MEALS', 'EQUIPMENT', 'SOFTWARE', 'TRAINING', 'OTHER'];
 const PO_STATUSES: PoStatus[] = ['DRAFT', 'SUBMITTED', 'APPROVED', 'REJECTED'];
@@ -101,7 +102,7 @@ async function main() {
           totalAmount: new Decimal(totalAmount),
           currency: 'VND',
           createdById: users[i % users.length].id,
-          invoiceItems: {
+          items: {
             createMany: {
               data: items.map(it => ({
                 description: it.description,
@@ -150,7 +151,7 @@ async function main() {
           approvedById: rand(0, 1) ? users[(i + 1) % users.length].id : undefined,
           approvedAt: rand(0, 1) ? dayjs(submittedDate).add(rand(1, 10), 'days').toDate() : undefined,
           note: `Chi phí chi tiết cho dự án`,
-          expenseItems: {
+          items: {
             createMany: { data: items },
           },
           createdAt: submittedDate,
@@ -207,7 +208,7 @@ async function main() {
             deliveryDate: dayjs(createdDate).add(rand(7, 30), 'days').toDate(),
             approvedAt: rand(0, 1) ? dayjs(createdDate).add(rand(1, 5), 'days').toDate() : undefined,
             notes: `Đơn mua hàng #${i + 1}`,
-            poItems: {
+            items: {
               createMany: {
                 data: items.map(it => ({
                   description: it.description,

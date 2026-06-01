@@ -164,6 +164,7 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   isActive: 'isActive',
   employeeStatus: 'employeeStatus',
   positionId: 'positionId',
+  jobTitleId: 'jobTitleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   email: 'email',
@@ -2197,6 +2198,19 @@ exports.Prisma.FamilyMemberScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  code: 'code',
+  name: 'name',
+  parentId: 'parentId',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3109,7 +3123,8 @@ exports.Prisma.ModelName = {
   AssetDisposal: 'AssetDisposal',
   EducationRecord: 'EducationRecord',
   PreviousWorkExperience: 'PreviousWorkExperience',
-  FamilyMember: 'FamilyMember'
+  FamilyMember: 'FamilyMember',
+  Category: 'Category'
 };
 
 /**

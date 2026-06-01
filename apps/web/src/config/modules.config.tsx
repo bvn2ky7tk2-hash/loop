@@ -40,6 +40,7 @@ import {
   LaptopOutlined,
   HomeOutlined,
   ToolOutlined,
+  FallOutlined,
   SwapOutlined,
   BookOutlined,
   ReadOutlined,
@@ -108,7 +109,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/my-tasks',        label: 'Việc của tôi',          visible: true },
           { key: '/my-bugs',         label: 'Lỗi của tôi',           visible: true },
-          { key: '/processes/inbox', label: 'Hộp thư quy trình',     visible: true },
+          { key: '/processes/inbox', label: 'Hộp thư quy trình',     visible: false },
           { key: '/approvals/inbox', label: 'Hộp thư phê duyệt',     visible: true },
         ],
       },
@@ -361,6 +362,7 @@ export const MODULES: ModuleDefinition[] = [
           { key: '/assets',             label: 'Tất cả tài sản',    visible: true },
           { key: '/assets/assignments', label: 'Cấp phát tài sản',  visible: true },
           { key: '/assets/maintenance', label: 'Bảo trì',           visible: true },
+          { key: '/assets/depreciation', label: 'Khấu hao tài sản', visible: true },
           { key: '/assets/rooms',       label: 'Quản lý phòng họp', visible: true },
         ],
       },
@@ -397,6 +399,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/users',         label: 'Người dùng',       visible: true },
           { key: '/permissions',   label: 'Phân quyền',       visible: true },
+          { key: '/admin/categories', label: 'Quản lý danh mục', visible: true },
           { key: '/admin/tenants', label: 'Quản lý Tenant',   visible: true },
           { key: '/module-config', label: 'Cấu hình phân hệ', visible: true },
         ],
@@ -573,6 +576,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
 
   '/users':                 <UserOutlined />,
   '/permissions':           <SafetyCertificateOutlined />,
+  '/admin/categories':      <AppstoreOutlined />,
   '/admin/tenants':         <GlobalOutlined />,
   '/module-config':         <ModuleConfigIcon />,
   '/processes':             <UnorderedListOutlined />,
@@ -580,6 +584,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/assets':                <LaptopOutlined />,
   '/assets/assignments':    <SwapOutlined />,
   '/assets/maintenance':    <ToolOutlined />,
+  '/assets/depreciation':   <FallOutlined />,
   '/assets/rooms':               <HomeOutlined />,
   '/assets/vehicles/manage':     <ToolOutlined />,
   '/assets/vehicles/approvals':  <CarOutlined />,

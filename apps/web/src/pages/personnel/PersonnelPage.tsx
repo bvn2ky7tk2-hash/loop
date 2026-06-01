@@ -25,7 +25,7 @@ import { employeesApi, type Employee } from '../../api/employees';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 import { payrollApi, type EmployeeTaxProfile, type Dependent } from '../../api/payroll';
 import { jobTitlesApi, positionsApi } from '../../api/hr-core';
-import { OrgUnitSelect } from '../../components/selects';
+import { OrgUnitSelect, ProvinceWardSelect } from '../../components/selects';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
 import { formatNumber } from '../../utils/format';
@@ -50,6 +50,8 @@ const PERSONNEL_COL_DEFS = [
   { key: 'code',      label: 'Mã' },
   { key: 'fullName',  label: 'Họ tên' },
   { key: 'orgUnit',   label: 'Phòng ban' },
+  { key: 'jobTitle',  label: 'Chức danh' },
+  { key: 'position',  label: 'Vị trí' },
   { key: 'level',     label: 'Cấp độ' },
   { key: 'techStack', label: 'Tech Stack' },
   { key: 'startDate', label: 'Ngày vào làm' },
@@ -836,6 +838,26 @@ export default function PersonnelPage() {
       },
     },
     {
+      key: 'jobTitle', title: 'Chức danh', width: 150,
+      render: (_: unknown, r: Employee) => {
+        const name = r.jobTitle?.name ?? r.position?.jobTitle?.name;
+        return name
+          ? <span style={{ fontSize: 12, color: token.colorTextSecondary }}>{name}</span>
+          : <span style={{ fontSize: 12, color: token.colorTextTertiary }}>—</span>;
+      },
+    },
+    {
+      key: 'position', title: 'Vị trí', width: 120,
+      render: (_: unknown, r: Employee) => r.position?.code
+        ? (
+          <span style={{
+            fontSize: 11, fontWeight: 600, borderRadius: 4, padding: '1px 6px',
+            background: token.colorFillSecondary, color: token.colorTextSecondary,
+          }}>{r.position.code}</span>
+        )
+        : <span style={{ fontSize: 12, color: token.colorTextTertiary }}>—</span>,
+    },
+    {
       key: 'level', title: 'Cấp độ', dataIndex: 'level', width: 90,
       render: (v: string) => {
         const hue = LEVEL_HUE[v] ?? token.colorTextSecondary;
@@ -889,10 +911,11 @@ export default function PersonnelPage() {
               onClick={() => {
                 setEditEmployee(r);
                 editForm.setFieldsValue({
+                  code:          r.code,
                   fullName:      r.fullName,
                   level:         r.level,
                   orgUnitId:     r.orgUnitId,
-                  jobTitleId:    r.position?.jobTitle ? undefined : undefined, // resolved via positionId
+                  jobTitleId:    r.jobTitleId ?? undefined,
                   positionId:    r.positionId ?? null,
                   startDate:     r.startDate     ? dayjs(r.startDate)     : null,
                   birthdate:     r.birthdate     ? dayjs(r.birthdate)     : null,
@@ -1136,7 +1159,7 @@ export default function PersonnelPage() {
             size="small"
             pagination={{ pageSize: 50, showSizeChanger: true, showTotal: (t) => `${t} nhân sự` }}
             locale={{ emptyText: 'Không có nhân sự phù hợp' }}
-            scroll={{ x: 700 }}
+            scroll={{ x: 980 }}
           />
         </div>
       </div>
@@ -1178,6 +1201,9 @@ export default function PersonnelPage() {
                 <Descriptions column={1} size="small" bordered>
                   <Descriptions.Item label="Nhân sự">
                     <EmployeeInfoCell employee={detail} variant="descriptions" />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Chức danh">
+                    {detail.jobTitle?.name ?? detail.position?.jobTitle?.name ?? '—'}
                   </Descriptions.Item>
                   <Descriptions.Item label="Vị trí biên chế">
                     {detail.position?.code ?? '—'}
@@ -1352,7 +1378,7 @@ export default function PersonnelPage() {
           </Space>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="phoneNumber" label="Số điện thoại" style={{ flex: 1 }}><Input placeholder="0912345678" /></Form.Item>
-            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><Input placeholder="VD: Hà Nội" /></Form.Item>
+            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><ProvinceWardSelect /></Form.Item>
           </Space>
           <Divider style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input placeholder="012345678901" /></Form.Item>
@@ -1380,7 +1406,14 @@ export default function PersonnelPage() {
             },
           })}
         >
-          <Form.Item name="fullName" label="Họ và tên" rules={[{ required: true }]}><Input /></Form.Item>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="code" label="Mã nhân sự" style={{ flex: 1 }}>
+              <Input disabled />
+            </Form.Item>
+            <Form.Item name="fullName" label="Họ và tên" style={{ flex: 1 }} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+          </Space>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="level" label="Cấp độ" style={{ flex: 1 }} rules={[{ required: true }]}>
               <Select options={LEVELS.map((l) => ({ value: l, label: l }))} />
@@ -1443,7 +1476,7 @@ export default function PersonnelPage() {
           </Space>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="phoneNumber" label="Số điện thoại" style={{ flex: 1 }}><Input /></Form.Item>
-            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><Input /></Form.Item>
+            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><ProvinceWardSelect /></Form.Item>
           </Space>
           <Divider style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input /></Form.Item>

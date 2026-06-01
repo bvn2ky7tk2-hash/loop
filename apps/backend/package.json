@@ -69,7 +69,18 @@
     "seed:assets": "npx tsx prisma/seed-assets.ts",
     "seed:recruitment": "npx tsx prisma/seed-recruitment.ts",
     "seed:finance": "npx tsx prisma/seed-finance.ts",
-    "seed:customer": "npx tsx prisma/seed-customer.ts"
+    "seed:customer": "npx tsx prisma/seed-customer.ts",
+    "seed:employee-assignment": "npx tsx prisma/seed-employee-assignment.ts",
+    "seed:hr-development": "npx tsx prisma/seed-hr-development.ts",
+    "seed:hr-profile": "npx tsx prisma/seed-hr-profile.ts",
+    "seed:bpm-runtime": "npx tsx prisma/seed-bpm-runtime.ts",
+    "seed:crm-extra": "npx tsx prisma/seed-crm-extra.ts",
+    "seed:finance-workspace": "npx tsx prisma/seed-finance-workspace.ts",
+    "seed:bug-assignment": "npx tsx prisma/seed-bug-assignment.ts",
+    "seed:admin-employee": "npx tsx prisma/seed-admin-employee.ts",
+    "seed:bpm-processes": "node prisma/seed-bpm-processes.js",
+    "seed:payroll-detail": "npx tsx prisma/seed-payroll-detail.ts",
+    "seed:vn-locations": "npx tsx prisma/seed-vn-locations.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

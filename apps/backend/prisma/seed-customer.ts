@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, Decimal, DealStage } from '../src/generated/prisma';
+import { PrismaClient, Prisma, DealStage } from '../src/generated/prisma';
+const Decimal = Prisma.Decimal;
 import dayjs from 'dayjs';
 
 const pool = new Pool({ connectionString: process.env['DATABASE_URL'] });
@@ -44,8 +45,8 @@ const DEAL_STAGES: DealStage[] = [
   'QUALIFICATION',
   'PROPOSAL',
   'NEGOTIATION',
-  'CLOSED_WON',
-  'CLOSED_LOST',
+  'WON',
+  'LOST',
 ];
 
 const FIRST_NAMES = ['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Vũ', 'Đặng', 'Bùi'];
@@ -132,9 +133,9 @@ async function main() {
             probability: stage === 'QUALIFICATION' ? rand(10, 30) : stage === 'PROPOSAL' ? rand(40, 60) : stage === 'NEGOTIATION' ? rand(70, 90) : 0,
             expectedCloseDate: dayjs(createdDate).add(rand(15, 60), 'days').toDate(),
             assigneeId: users[dealCount % users.length].id,
-            wonAt: stage === 'CLOSED_WON' ? dayjs(createdDate).add(rand(15, 60), 'days').toDate() : undefined,
-            lostAt: stage === 'CLOSED_LOST' ? dayjs(createdDate).add(rand(15, 60), 'days').toDate() : undefined,
-            lostReason: stage === 'CLOSED_LOST' ? pick(['Giá quá cao', 'Chọn đối thủ cạnh tranh', 'Không đủ ngân sách']) : undefined,
+            wonAt: stage === 'WON' ? dayjs(createdDate).add(rand(15, 60), 'days').toDate() : undefined,
+            lostAt: stage === 'LOST' ? dayjs(createdDate).add(rand(15, 60), 'days').toDate() : undefined,
+            lostReason: stage === 'LOST' ? pick(['Giá quá cao', 'Chọn đối thủ cạnh tranh', 'Không đủ ngân sách']) : undefined,
             createdAt: createdDate,
           },
         });

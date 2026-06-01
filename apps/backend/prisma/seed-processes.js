@@ -39,8 +39,8 @@ async function upsertProcess(client, key, name, bpmnXml, orgUnitId, formFields, 
     console.log('  ✓ Updated:', key);
   } else {
     await client.query(
-      `INSERT INTO process_definitions (id, key, name, bpmn_xml, status, org_unit_id, form_fields, task_form_fields, step_config)
-       VALUES ($1, $2, $3, $4, 'ACTIVE', $5, $6, $7, $8)`,
+      `INSERT INTO process_definitions (id, key, name, bpmn_xml, status, org_unit_id, form_fields, task_form_fields, step_config, updated_at)
+       VALUES ($1, $2, $3, $4, 'ACTIVE', $5, $6, $7, $8, NOW())`,
       [randomUUID(), key, name, bpmnXml, orgUnitId, JSON.stringify(formFields), JSON.stringify(taskFormFields), JSON.stringify(stepConfig)]
     );
     console.log('  ✓ Created:', key);

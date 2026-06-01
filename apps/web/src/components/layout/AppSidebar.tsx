@@ -214,10 +214,12 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
     : undefined;
 
   const getBadgeCount = useCallback((key: string): number | undefined => ({
+    '/my-tasks':        incompleteTasks,
     '/tasks':           incompleteTasks,
     '/my-bugs':         openBugs,
     '/bugs':            openBugsTotal,
     '/processes/inbox': pendingProcessTasks,
+    '/approvals/inbox': pendingProcessTasks,
   } as Record<string, number | undefined>)[key], [incompleteTasks, openBugs, openBugsTotal, pendingProcessTasks]);
 
   const canAccess = useCallback((key: string): boolean => {

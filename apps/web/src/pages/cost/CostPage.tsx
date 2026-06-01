@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Select, Table, Card, Row, Col, DatePicker, Typography, Progress, Tooltip,
 } from 'antd';
@@ -96,6 +96,11 @@ export default function CostPage() {
     queryKey: ['projects'],
     queryFn: projectsApi.list,
   });
+
+  // Tự chọn dự án đầu tiên để trang không trống khi mới vào
+  useEffect(() => {
+    if (!projectId && projects.length > 0) setProjectId(projects[0].id);
+  }, [projects, projectId]);
 
   const { data: cost } = useQuery({
     queryKey: ['cost', projectId],

@@ -120,6 +120,7 @@ model Employee {
   isActive       Boolean        @default(true) @map("is_active")
   employeeStatus EmployeeStatus @default(ACTIVE) @map("employee_status")
   positionId     String?        @map("position_id")
+  jobTitleId     String?        @map("job_title_id")
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")
   email          String?        @unique
@@ -141,6 +142,7 @@ model Employee {
 
   skills               EmployeeSkill[]
   position             Position?           @relation(fields: [positionId], references: [id])
+  jobTitle             JobTitle?           @relation(fields: [jobTitleId], references: [id])
   hrDecisions          HrDecision[]
   workHistories        WorkHistory[]
   salaryRecords        SalaryRecord[]
@@ -3353,6 +3355,7 @@ model JobTitle {
   updatedAt   DateTime   @updatedAt @map("updated_at")
   positions   Position[]
   orgUnits    OrgUnit[]
+  employees   Employee[]
 
   @@map("job_titles")
 }
@@ -4148,4 +4151,25 @@ model FamilyMember {
   @@index([employeeId])
   @@index([tenantId])
   @@map("family_members")
+}
+
+// ─── Danh mục dùng chung (Category / Master Data) ──────────────────────────────
+// type: 'province' | 'ward' | tùy ý. parent dùng cho phân cấp (Tỉnh → Xã/Phường).
+model Category {
+  id        String     @id @default(uuid())
+  type      String
+  code      String
+  name      String
+  parentId  String?    @map("parent_id")
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Category[] @relation("CategoryTree")
+  sortOrder Int        @default(0) @map("sort_order")
+  isActive  Boolean    @default(true) @map("is_active")
+  metadata  Json?
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@unique([type, code])
+  @@index([type, parentId])
+  @@map("categories")
 }

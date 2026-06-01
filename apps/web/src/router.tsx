@@ -4,7 +4,6 @@ import { Spin } from 'antd';
 import { AppLayout } from './components/layout/AppLayout';
 
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-const OrgPage = lazy(() => import('./pages/org/OrgPage'));
 const UsersPage = lazy(() => import('./pages/users/UsersPage'));
 const PersonnelPage = lazy(() => import('./pages/personnel/PersonnelPage'));
 const ProjectsPage = lazy(() => import('./pages/projects/ProjectsPage'));
@@ -54,6 +53,7 @@ const SelfServicePage        = lazy(() => import('./pages/self-service/SelfServi
 const AssetsPage            = lazy(() => import('./pages/assets/AssetsPage'));
 const AssetAssignmentsPage  = lazy(() => import('./pages/assets/AssignmentsPage'));
 const AssetMaintenancePage  = lazy(() => import('./pages/assets/MaintenancePage'));
+const AssetDepreciationPage = lazy(() => import('./pages/assets/AssetDepreciationPage'));
 const ChartOfAccountsPage   = lazy(() => import('./pages/accounting/ChartOfAccountsPage'));
 const JournalPage           = lazy(() => import('./pages/accounting/JournalPage'));
 const FinancialReportsPage  = lazy(() => import('./pages/accounting/FinancialReportsPage'));
@@ -87,6 +87,7 @@ const ScheduledReportsPage  = lazy(() => import('./pages/admin/ScheduledReportsP
 const HealthPage            = lazy(() => import('./pages/admin/HealthPage'));
 const DemoModePage          = lazy(() => import('./pages/admin/DemoModePage'));
 const ModuleConfigPage      = lazy(() => import('./pages/admin/ModuleConfigPage'));
+const CategoriesManagePage  = lazy(() => import('./pages/admin/CategoriesManagePage'));
 const OnboardingWizardPage  = lazy(() => import('./pages/admin/OnboardingWizardPage'));
 const FeedPage              = lazy(() => import('./pages/feed/FeedPage'));
 const DashboardPage         = lazy(() => import('./pages/dashboard/DashboardPage'));
@@ -209,6 +210,7 @@ export const router = createBrowserRouter([
       { path: 'assets',             element: wrap(AssetsPage) },
       { path: 'assets/assignments', element: wrap(AssetAssignmentsPage) },
       { path: 'assets/maintenance', element: wrap(AssetMaintenancePage) },
+      { path: 'assets/depreciation', element: wrap(AssetDepreciationPage) },
       { path: 'accounting/accounts', element: wrap(ChartOfAccountsPage) },
       { path: 'accounting/journal',        element: wrap(JournalPage) },
       { path: 'accounting/financial-reports', element: wrap(FinancialReportsPage) },
@@ -260,6 +262,7 @@ export const router = createBrowserRouter([
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
       { path: 'admin/tenants',        element: wrap(TenantsPage) },
+      { path: 'admin/categories',     element: wrap(CategoriesManagePage) },
       // E26: Platform Utilities
       { path: 'admin/announcements',   element: wrap(AnnouncementsPage) },
       { path: 'admin/permission-audit', element: wrap(PermissionAuditPage) },

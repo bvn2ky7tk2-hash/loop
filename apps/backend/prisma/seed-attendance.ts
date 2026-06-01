@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, Decimal } from '../src/generated/prisma';
+import { PrismaClient, Prisma } from '../src/generated/prisma';
+const Decimal = Prisma.Decimal;
 import dayjs from 'dayjs';
 
 const pool = new Pool({ connectionString: process.env['DATABASE_URL'] });

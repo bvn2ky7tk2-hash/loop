@@ -59,6 +59,10 @@ export class CreateEmployeeDto {
 
   @IsOptional()
   @IsUUID()
+  jobTitleId?: string;
+
+  @IsOptional()
+  @IsUUID()
   leavePolicyId?: string;
 
   // Thông tin cá nhân mở rộng

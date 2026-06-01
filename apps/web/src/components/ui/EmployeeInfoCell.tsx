@@ -5,6 +5,7 @@ export interface EmployeeInfoCellEmployee {
   code?: string;
   fullName: string;
   orgUnit?: { name: string } | null;
+  jobTitle?: { name: string } | null;
   position?: { jobTitle?: { name: string } | null } | null;
 }
 
@@ -52,9 +53,9 @@ export function EmployeeInfoCell({
   const textMuted   = textMutedProp   ?? palette.textMuted;
   const linkColor   = linkColorProp   ?? palette.linkColor;
 
-  const { code, fullName, orgUnit, position } = employee;
+  const { code, fullName, orgUnit, jobTitle: jobTitleObj, position } = employee;
   const dept      = orgUnit?.name ?? null;
-  const jobTitle  = position?.jobTitle?.name ?? null;
+  const jobTitle  = jobTitleObj?.name ?? position?.jobTitle?.name ?? null;
 
   // Dòng phụ: phòng ban + chức danh
   const subParts: string[] = [];

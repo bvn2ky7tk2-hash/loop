@@ -139,11 +139,6 @@ export default function TimesheetPage() {
     return map;
   }, [existingExplanations]);
 
-  const { mutate: generate, isPending: isGenerating } = useMutation({
-    mutationFn: () => timesheetApi.generatePeriod(periodStart, periodEnd),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['timesheet-period', periodStart] }),
-  });
-
   const { mutate: submit, isPending: isSubmitting } = useMutation({
     mutationFn: () => timesheetApi.submit(data!.record!.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['timesheet-period', periodStart] }),
@@ -462,9 +457,6 @@ export default function TimesheetPage() {
               { value: 'leave',   label: 'Nghỉ phép' },
             ]}
           />
-          <Button icon={<SyncOutlined />} onClick={() => generate()} loading={isGenerating}>
-            Tính lại
-          </Button>
           <ColumnToggle columns={TIMESHEET_COL_DEFS} isVisible={isVisible} toggle={toggle} reset={resetCols} />
         </Space>
       </div>
@@ -537,7 +529,7 @@ export default function TimesheetPage() {
         </>
       ) : (
         !isLoading && !isFetching && (
-          <Alert type="info" message="Chưa có bảng công kỳ này" description='Nhấn "Tính lại" để tạo bảng công từ dữ liệu chấm công của bạn.' style={{ marginBottom: 16 }} showIcon />
+          <Alert type="info" message="Chưa có bảng công kỳ này" description="Bảng công do bộ phận HR tổng hợp. Vui lòng liên hệ HR nếu kỳ này chưa có dữ liệu." style={{ marginBottom: 16 }} showIcon />
         )
       )}
 
@@ -579,7 +571,7 @@ export default function TimesheetPage() {
             if (row.workHours != null && row.workHours > 0 && row.workHours < 8) return 'ts-row-short';
             return '';
           }}
-          locale={{ emptyText: 'Chọn "Tính lại" để tải dữ liệu chấm công' }}
+          locale={{ emptyText: 'Chưa có dữ liệu chấm công cho kỳ này' }}
         />
       </Card>
 

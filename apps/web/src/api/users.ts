@@ -1,12 +1,21 @@
 import { apiClient } from './client';
 import type { UserProfile } from '@loop/shared';
 
+export interface UserEmployeeInfo {
+  code?: string;
+  fullName: string;
+  orgUnit?: { name: string } | null;
+  jobTitle?: { name: string } | null;
+  position?: { code: string; jobTitle?: { name: string } | null } | null;
+}
+
 export interface UserRecord extends UserProfile {
   name: string;
   isActive: boolean;
   createdAt: string;
   orgUnitName: string | null;
   orgUnitId?: string;
+  employee?: UserEmployeeInfo | null;
 }
 
 export const usersApi = {

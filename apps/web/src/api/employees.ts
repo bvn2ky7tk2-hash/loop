@@ -10,6 +10,8 @@ export interface Employee {
   orgUnit?: { id: string; name: string };
   positionId?: string | null;
   position?: { id: string; code: string; jobTitle?: { name: string } } | null;
+  jobTitleId?: string | null;
+  jobTitle?: { id: string; name: string } | null;
   leavePolicyId?: string | null;
   directManagerId?: string | null;
   startDate?: string;

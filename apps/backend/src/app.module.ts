@@ -78,6 +78,7 @@ import { PermissionAuditModule } from './admin/permission-audit/permission-audit
 import { EmailLogModule } from './admin/email-log/email-log.module';
 import { QueuesModule } from './admin/queues/queues.module';
 import { ApiKeysModule } from './api-keys/api-keys.module';
+import { CategoriesModule } from './categories/categories.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
@@ -182,6 +183,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     EmailLogModule,
     QueuesModule,
     ApiKeysModule,
+    CategoriesModule,
     AnalyticsModule,
   ],
 })

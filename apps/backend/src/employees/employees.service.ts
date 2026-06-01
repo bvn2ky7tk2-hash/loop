@@ -41,9 +41,14 @@ export class EmployeesService extends TenantAwareService {
         cccdIssuePlace: dto.cccdIssuePlace,
         userId: dto.userId,
         positionId: dto.positionId,
+        jobTitleId: dto.jobTitleId,
         tenantId: this.getTenantId(),
       },
-      include: { orgUnit: { select: { name: true } } },
+      include: {
+        orgUnit: { select: { name: true } },
+        jobTitle: { select: { id: true, name: true } },
+        position: { select: { id: true, code: true, jobTitle: { select: { name: true } } } },
+      },
     });
   }
 
@@ -60,6 +65,8 @@ export class EmployeesService extends TenantAwareService {
         where,
         include: {
           orgUnit: { select: { name: true } },
+          jobTitle: { select: { id: true, name: true } },
+          position: { select: { id: true, code: true, jobTitle: { select: { name: true } } } },
           rates: { orderBy: { effectiveDate: 'desc' }, take: 1 },
           allocations: {
             where: { startDate: { lte: now }, endDate: { gte: now } },
@@ -120,6 +127,7 @@ export class EmployeesService extends TenantAwareService {
       where: { id, deletedAt: null },
       include: {
         orgUnit: { select: { id: true, name: true } },
+        jobTitle: { select: { id: true, name: true } },
         position: { include: { jobTitle: { select: { name: true } } } },
         rates: { orderBy: { effectiveDate: 'desc' } },
       },
@@ -134,6 +142,7 @@ export class EmployeesService extends TenantAwareService {
       where: { userId, deletedAt: null },
       include: {
         orgUnit: { select: { name: true } },
+        jobTitle: { select: { id: true, name: true } },
         position: { include: { jobTitle: { select: { name: true } } } },
         rates: { orderBy: { effectiveDate: 'desc' }, take: 1 },
       },
@@ -152,7 +161,11 @@ export class EmployeesService extends TenantAwareService {
         birthdate: dto.birthdate ? new Date(dto.birthdate) : undefined,
         cccdIssueDate: dto.cccdIssueDate ? new Date(dto.cccdIssueDate) : undefined,
       },
-      include: { orgUnit: { select: { name: true } } },
+      include: {
+        orgUnit: { select: { name: true } },
+        jobTitle: { select: { id: true, name: true } },
+        position: { select: { id: true, code: true, jobTitle: { select: { name: true } } } },
+      },
     });
   }
 

@@ -4,6 +4,7 @@ import {
   App, Space, Tooltip, Switch, Divider, Typography,
 } from 'antd';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { PlusOutlined, EditOutlined, KeyOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi, type UserRecord } from '../../api/users';
@@ -27,7 +28,7 @@ const { Text } = Typography;
 
 export default function UsersPage() {
   const { message } = App.useApp();
-  const { isDark, textMuted } = useThemePalette();
+  const { isDark, textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
@@ -115,7 +116,18 @@ export default function UsersPage() {
   }
 
   const columns = [
-    { title: 'Tên', dataIndex: 'name' },
+    {
+      title: 'Tên',
+      render: (_: unknown, r: UserRecord) => r.employee
+        ? <EmployeeInfoCell employee={r.employee} />
+        : <Text style={{ color: textPrimary, fontWeight: 600 }}>{r.name}</Text>,
+    },
+    {
+      title: 'Vị trí', width: 130,
+      render: (_: unknown, r: UserRecord) => r.employee?.position?.code
+        ? <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 4, padding: '1px 6px', background: isDark ? 'rgba(255,255,255,0.08)' : '#F1F5F9', color: textMuted }}>{r.employee.position.code}</span>
+        : <Text style={{ color: textMuted }}>—</Text>,
+    },
     { title: 'Email', dataIndex: 'email' },
     {
       title: 'Vai trò', dataIndex: 'role', width: 130,

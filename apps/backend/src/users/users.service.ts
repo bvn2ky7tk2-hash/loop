@@ -49,7 +49,17 @@ export class UsersService {
 
     const users = await this.prisma.user.findMany({
       where,
-      include: { orgUnit: { select: { name: true } } },
+      include: {
+        orgUnit: { select: { name: true } },
+        employee: {
+          select: {
+            code: true, fullName: true,
+            orgUnit: { select: { name: true } },
+            jobTitle: { select: { name: true } },
+            position: { select: { code: true, jobTitle: { select: { name: true } } } },
+          },
+        },
+      },
       orderBy: { name: 'asc' },
     });
 
@@ -101,11 +111,12 @@ export class UsersService {
     return user;
   }
 
-  private toPublic(user: User & { orgUnit?: { name: string } | null }) {
+  private toPublic(user: User & { orgUnit?: { name: string } | null; employee?: unknown }) {
     const { passwordHash: _ph, refreshToken: _rt, ...rest } = user;
     return {
       ...rest,
       orgUnitName: user.orgUnit?.name ?? null,
+      employee: (user as { employee?: unknown }).employee ?? null,
     };
   }
 }

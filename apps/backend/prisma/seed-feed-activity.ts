@@ -59,12 +59,10 @@ async function main() {
     try {
       await prisma.systemAnnouncement.create({
         data: {
-          title: ann.title,
-          content: ann.content,
-          priority: ann.priority,
-          publishedAt: dayjs().subtract(Math.random() * 30, 'days').toDate(),
-          expiresAt: dayjs().add(Math.random() * 60 + 10, 'days').toDate(),
-          isActive: true,
+          message: `${ann.title}: ${ann.content}`,
+          type: String(ann.priority) === 'CRITICAL' ? 'WARNING' : 'INFO',
+          startAt: dayjs().subtract(Math.random() * 30, 'days').toDate(),
+          endAt: dayjs().add(Math.random() * 60 + 10, 'days').toDate(),
         },
       });
       announcementCount++;
@@ -119,9 +117,8 @@ async function main() {
         data: {
           version: log.version,
           title: log.title,
-          description: log.description,
-          type: log.type,
-          releasedAt: dayjs().subtract(Math.random() * 30, 'days').toDate(),
+          items: [{ type: String(log.type), description: log.description }],
+          publishedAt: dayjs().subtract(Math.random() * 30, 'days').toDate(),
         },
       });
       changelogCount++;
@@ -177,10 +174,10 @@ async function main() {
     try {
       await prisma.feedPost.create({
         data: {
-          userId: user.id,
+          authorId: user.id,
           title: post.title,
           content: post.content,
-          type: post.type,
+          type: String(post.type) === 'ACHIEVEMENT' ? 'KUDOS' : 'ANNOUNCEMENT',
           createdAt: dayjs().subtract(Math.random() * 60, 'days').toDate(),
         },
       });
@@ -205,14 +202,14 @@ async function main() {
 
     for (let i = 0; i < reactionCount_per_post; i++) {
       const user = users[Math.floor(Math.random() * users.length)];
-      const reactionType = ['LIKE', 'LOVE', 'HELPFUL'][Math.floor(Math.random() * 3)];
+      const emoji = ['👍', '❤️', '💡'][Math.floor(Math.random() * 3)];
 
       try {
         await prisma.feedReaction.create({
           data: {
             postId: post.id,
             userId: user.id,
-            reactionType: reactionType as any,
+            emoji,
           },
         });
         reactionCount++;
@@ -229,33 +226,38 @@ async function main() {
   console.log('🔄 Creating Process Activity Logs...');
   let activityCount = 0;
 
+  const instances = await prisma.processInstance.findMany({ take: 100 });
   const processTypes = ['LEAVE_REQUEST', 'OVERTIME_REQUEST', 'EXPENSE_REQUEST', 'APPROVAL_FLOW'];
   const actions = ['CREATED', 'SUBMITTED', 'APPROVED', 'REJECTED', 'COMMENTED', 'REASSIGNED'];
 
-  for (let i = 0; i < 200; i++) {
-    const user = users[Math.floor(Math.random() * users.length)];
-    const actor = users[Math.floor(Math.random() * users.length)];
-    const processType = processTypes[Math.floor(Math.random() * processTypes.length)];
-    const action = actions[Math.floor(Math.random() * actions.length)];
+  if (instances.length === 0) {
+    console.log('   ⚠ Chưa có process instance — bỏ qua activity logs.');
+  } else {
+    for (let i = 0; i < 200; i++) {
+      const instance = instances[i % instances.length];
+      const actor = users[Math.floor(Math.random() * users.length)];
+      const processType = processTypes[Math.floor(Math.random() * processTypes.length)];
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      const startedAt = dayjs().subtract(Math.random() * 60, 'days').toDate();
 
-    try {
-      await prisma.processActivityLog.create({
-        data: {
-          userId: user.id,
-          actorId: actor.id,
-          processType: processType as any,
-          action: action as any,
-          description: `${actor.name} ${action.toLowerCase()} ${processType.toLowerCase()}`,
-          metadata: {
-            processId: `PROC-${String(i).padStart(5, '0')}`,
-            timestamp: new Date().toISOString(),
+      try {
+        await prisma.processActivityLog.create({
+          data: {
+            instanceId: instance.id,
+            activityId: `act-${String(i).padStart(5, '0')}`,
+            activityName: `${action} ${processType}`,
+            activityType: action,
+            performedBy: actor.id,
+            startedAt,
+            completedAt: ['APPROVED', 'REJECTED'].includes(action)
+              ? dayjs(startedAt).add(Math.random() * 2, 'days').toDate()
+              : null,
           },
-          createdAt: dayjs().subtract(Math.random() * 60, 'days').toDate(),
-        },
-      });
-      activityCount++;
-    } catch (e) {
-      // Skip errors
+        });
+        activityCount++;
+      } catch (e) {
+        // Skip errors
+      }
     }
   }
   console.log(`   ✓ ${activityCount} process activity logs created\n`);

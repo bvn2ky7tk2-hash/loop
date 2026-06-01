@@ -129,6 +129,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   { route: '/assets',                    module: 'asset', label: 'Tất cả tài sản',    icon: 'LaptopOutlined',   permCode: 'asset:read',             sortOrder: 1 },
   { route: '/assets/assignments',        module: 'asset', label: 'Cấp phát tài sản',  icon: 'SwapOutlined',     permCode: 'asset_assignments:read', sortOrder: 2 },
   { route: '/assets/maintenance',        module: 'asset', label: 'Bảo trì tài sản',   icon: 'ToolOutlined',     permCode: 'asset_maintenance:read', sortOrder: 3 },
+  { route: '/assets/depreciation',       module: 'asset', label: 'Khấu hao tài sản',  icon: 'FallOutlined',     permCode: 'asset:read',             sortOrder: 7 },
   { route: '/assets/rooms',              module: 'asset', label: 'Quản lý phòng họp', icon: 'HomeOutlined',     permCode: 'asset:read',             sortOrder: 4 },
   { route: '/assets/vehicles/approvals', module: 'asset', label: 'Duyệt yêu cầu xe',  icon: 'CarOutlined',      permCode: 'vehicles:approve',       sortOrder: 5 },
   { route: '/assets/vehicles/manage',    module: 'asset', label: 'Quản lý đội xe',     icon: 'CarOutlined',      permCode: 'vehicles:manage',        sortOrder: 6 },
@@ -138,6 +139,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   // ─── Admin — Quản trị ──────────────────────────────────────────────────────
   { route: '/users',               module: 'admin', label: 'Người dùng',        icon: 'UserOutlined',              permCode: 'admin:users',            sortOrder: 1 },
   { route: '/permissions',         module: 'admin', label: 'Phân quyền',         icon: 'SafetyCertificateOutlined', permCode: 'admin:permissions',      sortOrder: 2 },
+  { route: '/admin/categories',    module: 'admin', label: 'Quản lý danh mục',   icon: 'AppstoreOutlined',          permCode: 'admin:org',              sortOrder: 3 },
   { route: '/alerts',              module: 'admin', label: 'Cảnh báo hệ thống',  icon: 'BellOutlined',              permCode: 'alerts:read',            sortOrder: 3 },
   { route: '/settings',            module: 'admin', label: 'Cấu hình menu',      icon: 'SettingOutlined',           permCode: 'menu_config:manage',     sortOrder: 4 },
   { route: '/integrations',        module: 'admin', label: 'Tích hợp',           icon: 'ApiOutlined',               permCode: 'integrations:read',      sortOrder: 5 },
