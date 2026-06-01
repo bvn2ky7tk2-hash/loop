@@ -90,7 +90,7 @@ export class HrAttendanceService extends TenantAwareService {
       workMinutes = Math.max(0, actualEnd - actualStart);
 
       const workHours = workMinutes / 60;
-      dayCredit = Math.min(1, workHours / 8); // đơn vị tính theo 8h/ngày
+      dayCredit = workHours / 8; // ngày công chuẩn = giờ thực tế / 8 (KHÔNG cap)
     } else {
       // Không có planned time → tính theo tổng giờ làm việc
       const totalHours = Math.max(0, totalMinutes / 60);
@@ -178,7 +178,7 @@ export class HrAttendanceService extends TenantAwareService {
         leaveInfo: leaveMap.get(`${r.employeeId}_${r.date.toISOString().slice(0, 10)}`) ?? null,
         // Sử dụng dayCredit từ DB (đã tính), fallback nếu không có
         dayCredit: r.dayCredit ?? (r.checkIn && r.checkOut && r.totalHours
-          ? Math.min(1, Number(r.totalHours) / 8)
+          ? Number(r.totalHours) / 8 // không cap, tính luôn nếu có OT
           : r.checkIn ? 0.5 : 0),
       }));
 

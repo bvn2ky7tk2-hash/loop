@@ -57,7 +57,7 @@ function calculateMetrics(
     const actualEnd = Math.min(adjustedCheckOut, adjustedPlannedEnd);
     const workMinutes = Math.max(0, actualEnd - actualStart);
     const workHours = workMinutes / 60;
-    dayCredit = Math.min(1, workHours / 8);
+    dayCredit = workHours / 8; // ngày công chuẩn = giờ thực tế / 8 (KHÔNG cap)
   } else {
     // Không có planned time → tính theo tổng giờ làm việc
     const totalMinutes = (checkOutMinutes < checkInMinutes
