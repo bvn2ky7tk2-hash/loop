@@ -30,19 +30,25 @@ export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props
   });
   const defsWithKey = defs.filter((d) => (d.status === 'ACTIVE' || d.status === 'DEPLOYED') && d.key);
 
+  const isCreate = !leaveType;
+
   const { mutate: save, isPending } = useMutation({
-    mutationFn: (v: Record<string, unknown>) => leavesApi.updateType(leaveType!.id, v),
+    mutationFn: (v: Record<string, unknown>) =>
+      isCreate
+        ? leavesApi.createType(v as { name: string })
+        : leavesApi.updateType(leaveType!.id, v),
     onSuccess: () => {
-      message.success('Đã cập nhật loại nghỉ');
+      message.success(isCreate ? 'Đã thêm loại nghỉ' : 'Đã cập nhật loại nghỉ');
       qc.invalidateQueries({ queryKey: ['leave-types'] });
       qc.invalidateQueries({ queryKey: ['leave-balance-me'] });
       onClose();
     },
-    onError: () => message.error('Cập nhật thất bại'),
+    onError: () => message.error('Lưu thất bại'),
   });
 
   function syncForm(vis: boolean) {
-    if (vis && leaveType) {
+    if (!vis) return;
+    if (leaveType) {
       form.setFieldsValue({
         name: leaveType.name,
         maxDaysPerYear: leaveType.maxDaysPerYear,
@@ -54,6 +60,9 @@ export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props
         processDefinitionKey: leaveType.processDefinitionKey ?? null,
         isActive: leaveType.isActive,
       });
+    } else {
+      form.resetFields();
+      form.setFieldsValue({ maxDaysPerYear: 12, annualDays: 12, maxCarryOver: 0, isPaid: true, deductsAnnualLeave: false, color: '#2563EB', processDefinitionKey: null, isActive: true });
     }
   }
 
@@ -62,7 +71,7 @@ export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props
       title={
         <span style={{ color: textPrimary }}>
           <SettingOutlined style={{ color: preset.primary, marginRight: 8 }} />
-          Cấu hình loại nghỉ — {leaveType?.name}
+          {isCreate ? 'Thêm loại nghỉ' : `Cấu hình loại nghỉ — ${leaveType?.name}`}
         </span>
       }
       open={open}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form, Input,
-  InputNumber, Select, Switch, Divider, message,
+  InputNumber, Select, Switch, Divider, message, Tabs,
 } from 'antd';
 import { PlusOutlined, CalendarOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -12,6 +12,7 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { employeesApi } from '../../api/employees';
 import { leavePoliciesApi, type LeavePolicy } from '../../api/hr-attendance';
+import LeaveTypesManager from '../../components/leave/LeaveTypesManager';
 
 const { Text } = Typography;
 
@@ -195,60 +196,78 @@ export default function LeavePolicyPage() {
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
-        title="Chính sách phép năm"
+        title="Chính sách phép"
         icon={<CalendarOutlined />}
         iconColor="#10B981"
-        actions={
-          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-            Thêm chính sách
-          </Button>
-        }
       />
 
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={policies}
-          loading={isLoading}
-          pagination={{ pageSize: 20 }}
-          size="middle"
-        />
-      </div>
+      <Tabs
+        defaultActiveKey="policies"
+        items={[
+          {
+            key: 'policies',
+            label: 'Chính sách phép năm',
+            children: (
+              <>
+                <div style={{ textAlign: 'right', marginBottom: 12 }}>
+                  <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
+                    Thêm chính sách
+                  </Button>
+                </div>
+                <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
+                  <Table
+                    rowKey="id"
+                    columns={columns}
+                    dataSource={policies}
+                    loading={isLoading}
+                    pagination={{ pageSize: 20 }}
+                    size="middle"
+                  />
+                </div>
 
-      {/* Phân công chính sách */}
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20 }}>
-        <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15 }}>Phân công chính sách cho nhân viên</Text>
-        <Divider style={{ margin: '12px 0' }} />
-        <FilterBar>
-          <Select
-            showSearch
-            placeholder="Chọn nhân viên"
-            style={{ width: 260 }}
-            value={assignEmpId}
-            onChange={setAssignEmpId}
-            filterOption={(input, opt) =>
-              String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
-            options={employees.map(e => ({ value: e.id, label: `${e.code} — ${e.fullName}` }))}
-          />
-          <Select
-            placeholder="Chọn chính sách"
-            style={{ width: 240 }}
-            value={assignPolicyId}
-            onChange={setAssignPolicyId}
-            options={policies.map(p => ({ value: p.id, label: p.name }))}
-          />
-          <Button
-            type="primary"
-            loading={assignMutation.isPending}
-            disabled={assignMutation.isPending}
-            onClick={handleAssign}
-          >
-            Gán chính sách
-          </Button>
-        </FilterBar>
-      </div>
+                {/* Phân công chính sách */}
+                <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20 }}>
+                  <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15 }}>Phân công chính sách cho nhân viên</Text>
+                  <Divider style={{ margin: '12px 0' }} />
+                  <FilterBar>
+                    <Select
+                      showSearch
+                      placeholder="Chọn nhân viên"
+                      style={{ width: 260 }}
+                      value={assignEmpId}
+                      onChange={setAssignEmpId}
+                      filterOption={(input, opt) =>
+                        String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={employees.map(e => ({ value: e.id, label: `${e.code} — ${e.fullName}` }))}
+                    />
+                    <Select
+                      placeholder="Chọn chính sách"
+                      style={{ width: 240 }}
+                      value={assignPolicyId}
+                      onChange={setAssignPolicyId}
+                      options={policies.map(p => ({ value: p.id, label: p.name }))}
+                    />
+                    <Button
+                      type="primary"
+                      loading={assignMutation.isPending}
+                      disabled={assignMutation.isPending}
+                      onClick={handleAssign}
+                    >
+                      Gán chính sách
+                    </Button>
+                  </FilterBar>
+                </div>
+              </>
+            ),
+          },
+          {
+            key: 'types',
+            label: 'Loại nghỉ',
+            children: <LeaveTypesManager />,
+          },
+        ]}
+      />
 
       {/* Modal tạo/sửa */}
       <CenteredModal
