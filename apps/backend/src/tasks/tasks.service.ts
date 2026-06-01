@@ -282,6 +282,24 @@ export class TasksService extends TenantAwareService {
     else await this.syncProjectProgress(task.projectId);
   }
 
+  async list(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
+    const where = this.tenantWhere({});
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.task.findMany({
+        where,
+        include: {
+          assignee: { select: { id: true, fullName: true } },
+          project: { select: { id: true, code: true, name: true } },
+        },
+        orderBy: [{ createdAt: 'desc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.task.count({ where }),
+    ]);
+    return paginate(data, total, page, limit);
+  }
+
   async getPendingApprovalTasks(page = 1, limit = 50): Promise<PaginatedResult<unknown>> {
     const where: any = this.tenantWhere({ status: 'PENDING_APPROVAL' as TaskStatus });
     const [data, total] = await this.prisma.$transaction([

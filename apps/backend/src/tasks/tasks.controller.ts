@@ -58,6 +58,13 @@ export class TasksController {
     return this.service.getPendingApprovalTasks(page, limit);
   }
 
+  @Get('tasks')
+  @RequirePermission(PERMISSIONS.TASKS_READ)
+  @ApiOperation({ summary: 'Danh sách tất cả task' })
+  list(@Query() { page, limit }: PaginationDto) {
+    return this.service.list(page, limit);
+  }
+
   @Get('tasks/mine/count')
   @RequirePermission(PERMISSIONS.TASKS_READ)
   @ApiOperation({ summary: 'Đếm task chưa hoàn thành của tôi' })
