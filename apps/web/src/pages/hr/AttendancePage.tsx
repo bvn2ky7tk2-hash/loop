@@ -532,27 +532,6 @@ function DetailTab() {
           onChange={setStatusFilter}
           options={Object.entries(ATTENDANCE_STATUS_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
         />
-        <DatePicker
-          picker="month"
-          value={selectedMonth}
-          onChange={v => v && setSelectedMonth(v)}
-          format="MM/YYYY"
-          allowClear={false}
-          style={{ width: 150 }}
-          placeholder="Tháng tổng hợp"
-        />
-        <Select
-          showSearch
-          placeholder="Phòng ban (tổng hợp)"
-          allowClear
-          style={{ width: 220 }}
-          value={monthOrgUnitId}
-          onChange={setMonthOrgUnitId}
-          filterOption={(input, opt) =>
-            String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
-          }
-          options={orgUnitOptions}
-        />
       </FilterBar>
 
       {/* ── Bảng Chi tiết chấm công ──────────────────────────────────────────── */}
