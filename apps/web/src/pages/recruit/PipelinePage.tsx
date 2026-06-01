@@ -10,7 +10,7 @@ import {
   type Candidate, type CandidateStage,
 } from '../../api/recruit';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const STAGE_META: Record<CandidateStage, { label: string; color: string; lightBg: string; lightBorder: string; darkBg: string; darkBorder: string }> = {
   APPLIED:   { label: 'Đã nộp',    color: '#3B82F6', lightBg: '#EFF6FF', lightBorder: '#BFDBFE', darkBg: '#1E3A5F', darkBorder: '#3B82F6' },
@@ -28,7 +28,7 @@ const NEXT_STAGE: Partial<Record<CandidateStage, CandidateStage>> = {
 const COLUMNS: CandidateStage[] = ['APPLIED', 'SCREENING', 'INTERVIEW', 'OFFER', 'HIRED', 'REJECTED'];
 
 export default function PipelinePage() {
-  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
+  const { isDark, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
 
   const [jobId, setJobId] = useState<string | undefined>();
   const stageMutation = useTransitionCandidateStage();
@@ -71,8 +71,6 @@ export default function PipelinePage() {
   const screeningCount = byStage.SCREENING?.length ?? 0;
   const interviewCount = byStage.INTERVIEW?.length ?? 0;
   const offerCount = byStage.OFFER?.length ?? 0;
-  const hiredCount = byStage.HIRED?.length ?? 0;
-  const rejectedCount = byStage.REJECTED?.length ?? 0;
 
   if (isLoading) return <div style={{ padding: 24, textAlign: 'center' }}><Spin size="large" /></div>;
 

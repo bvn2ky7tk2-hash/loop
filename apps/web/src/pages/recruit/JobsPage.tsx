@@ -18,7 +18,7 @@ import {
   type JobOpening, type JobFilterParams, type JobStatus, type EmployeeLevel,
 } from '../../api/recruit';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const STATUS_META: Record<JobStatus, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
@@ -45,7 +45,7 @@ function fmtSalary(from?: string, to?: string): string {
 }
 
 export default function JobsPage() {
-  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
+  const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [filters, setFilters] = useState<JobFilterParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);

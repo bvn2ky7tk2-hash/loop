@@ -18,10 +18,10 @@ import { usersApi } from '../../api/users';
 import {
   useGetJobs, useGetCandidates, useCreateCandidate, useUpdateCandidate,
   useTransitionCandidateStage, useDeleteCandidate,
-  type Candidate, type CandidateFilterParams, type CandidateStage, type LeadSource,
+  type Candidate, type CandidateFilterParams, type CandidateStage,
 } from '../../api/recruit';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const STAGE_META: Record<CandidateStage, { label: string; color: string; darkBg: string; darkBorder: string; step: number }> = {
@@ -299,7 +299,7 @@ export default function CandidatesPage() {
             </Descriptions>
             {selected.notes && (
               <>
-                <Divider orientation="left" style={{ fontSize: 13 }}>Ghi chú</Divider>
+                <Divider style={{ fontSize: 13 }}>Ghi chú</Divider>
                 <Text style={{ color: textMuted, whiteSpace: 'pre-wrap' }}>{selected.notes}</Text>
               </>
             )}

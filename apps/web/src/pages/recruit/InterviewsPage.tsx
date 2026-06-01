@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
-  Input, InputNumber, DatePicker, Modal, message,
+  Input, InputNumber, DatePicker, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { FilterBar } from '../../components/FilterBar';
 import { PlusOutlined, CheckCircleOutlined, ScheduleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -16,7 +15,7 @@ import {
 } from '../../api/recruit';
 import { useThemePalette } from '../../hooks/useThemePalette';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const TYPE_META: Record<InterviewType, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
@@ -36,7 +35,7 @@ const TYPE_OPTIONS    = Object.entries(TYPE_META).map(([k, v])   => ({ value: k 
 const RESULT_OPTIONS  = Object.entries(RESULT_META).map(([k, v]) => ({ value: k as InterviewResult, label: v.label }));
 
 export default function InterviewsPage() {
-  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
+  const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [filters, setFilters]          = useState({ page: 1, limit: 20 });
   const [scheduleOpen, setScheduleOpen] = useState(false);
