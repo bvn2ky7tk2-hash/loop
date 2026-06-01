@@ -6,6 +6,7 @@ import { paginate } from '../common/dto/pagination.dto';
 import { CreatePerformanceReviewDto, UpdatePerformanceReviewDto, FilterPerformanceDto } from './dto/performance.dto';
 import { ReviewStatus } from '../generated/prisma';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { ProcessStarterService } from '../processes/process-starter.service';
 import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 const INCLUDE = {
@@ -23,6 +24,7 @@ const INCLUDE = {
 export class PerformanceService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
@@ -116,7 +118,7 @@ export class PerformanceService extends TenantAwareService {
     });
     if (exists) throw new ConflictException(`Đã có đánh giá kỳ ${dto.period} cho nhân viên này`);
 
-    return this.prisma.performanceReview.create({
+    const review = await this.prisma.performanceReview.create({
       data: {
         employeeId:  dto.employeeId,
         reviewerId:  dto.reviewerId,
@@ -128,6 +130,18 @@ export class PerformanceService extends TenantAwareService {
       },
       include: INCLUDE,
     });
+
+    // Khởi tạo quy trình đánh giá nhân sự (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'performance-review',
+      entityType: 'PERFORMANCE_REVIEW',
+      entityId: review.id,
+      startedByUserId: this._req?.user?.id ?? this._req?.user?.sub,
+      variables: { period: dto.period, employeeId: dto.employeeId },
+      taskName: `Đánh giá nhân sự kỳ ${dto.period}`,
+    });
+
+    return review;
   }
 
   async update(id: string, dto: UpdatePerformanceReviewDto) {

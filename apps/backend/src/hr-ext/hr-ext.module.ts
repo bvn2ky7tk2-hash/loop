@@ -8,9 +8,10 @@ import { PerformanceBonusController } from './performance-bonus.controller';
 import { SalaryReviewService } from './salary-review.service';
 import { SalaryReviewController } from './salary-review.controller';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ProcessStarterModule } from '../processes/process-starter.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ProcessStarterModule],
   controllers: [
     TrainingController,
     PerformanceController,

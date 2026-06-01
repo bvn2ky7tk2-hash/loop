@@ -23,6 +23,7 @@ export class ProcessStarterService {
   constructor(private readonly prisma: PrismaService) {}
 
   async startForEntity(opts: StartProcessOpts): Promise<{ instanceId: string } | null> {
+    if (!opts.startedByUserId) return null; // không có người khởi tạo hợp lệ → bỏ qua an toàn
     const def = await this.prisma.processDefinition.findFirst({
       where: { key: opts.definitionKey, status: DefinitionStatus.ACTIVE },
       select: { id: true, name: true, stepConfig: true, bpmnXml: true },
