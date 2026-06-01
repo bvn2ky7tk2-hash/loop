@@ -1035,12 +1035,32 @@ export default function PayrollPage() {
         : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
-      title: '',
-      width: 100,
+      title: 'Hành động',
+      width: 150,
+      align: 'center' as const,
       render: (_, r) => (
-        <Button size="small" icon={<EyeOutlined />} onClick={() => setSelectedPeriod(r)}>
-          Chi tiết
-        </Button>
+        <Space size={4}>
+          {r.status === 'DRAFT' && (
+            <Popconfirm
+              title="Tính lương cho toàn bộ nhân viên?"
+              description="Sẽ đọc HĐLĐ, chấm công và áp dụng cấu hình BH/thuế hiệu lực."
+              onConfirm={() => {
+                payrollApi.generatePayroll(r.id).then((res) => {
+                  qc.invalidateQueries({ queryKey: ['payroll-periods'] });
+                  message.success(`Đã tính lương cho ${res.generated} nhân viên`);
+                }).catch((e: Error) => message.error(e.message ?? 'Lỗi tính lương'));
+              }}
+              okText="Tính lương" cancelText="Huỷ"
+            >
+              <Button size="small" type="primary" icon={<ThunderboltOutlined />}>
+                Tính
+              </Button>
+            </Popconfirm>
+          )}
+          <Button size="small" icon={<EyeOutlined />} onClick={() => setSelectedPeriod(r)}>
+            Chi tiết
+          </Button>
+        </Space>
       ),
     },
   ];
