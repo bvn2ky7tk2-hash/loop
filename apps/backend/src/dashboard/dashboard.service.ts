@@ -163,14 +163,14 @@ export class DashboardService {
     ] = await Promise.all([
       this.prisma.employee.count({ where: { isActive: true } }),
       this.prisma.jobOpening.count({ where: { status: 'OPEN' } }),
-      this.prisma.leaveRequest.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
+      this.prisma.leaveRequest.count({ where: { status: 'PENDING' } }),
       this.prisma.contract.count({
         where: { status: 'ACTIVE', endDate: { gte: now, lte: in30Days } },
       }),
       this.prisma.timesheetRecord.count({ where: { status: { in: ['SUBMITTED'] } } }),
-      this.prisma.overtimeRequest.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
+      this.prisma.overtimeRequest.count({ where: { status: 'PENDING' } }),
       this.prisma.contract.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.hrDecision.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
+      this.prisma.hrDecision.count({ where: { status: { in: ['DRAFT', 'PENDING'] } } }),
     ]);
 
     return {

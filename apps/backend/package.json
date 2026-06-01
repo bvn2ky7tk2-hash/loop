@@ -62,7 +62,8 @@
     "seed:invoice-mapping": "npx tsx prisma/seed-invoice-mapping.ts",
     "seed:automation-rules": "npx tsx prisma/seed-automation-rules.ts",
     "seed:comprehensive": "npx tsx prisma/seed-comprehensive.ts",
-    "seed:hr-payroll": "npx tsx prisma/seed-hr-payroll.ts"
+    "seed:hr-payroll": "npx tsx prisma/seed-hr-payroll.ts",
+    "seed:feed-activity": "npx tsx prisma/seed-feed-activity.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
