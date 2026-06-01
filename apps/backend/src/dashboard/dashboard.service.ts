@@ -157,17 +157,32 @@ export class DashboardService {
       pendingLeaves,
       expiringContracts,
       pendingTimesheetApprovals,
+      pendingOvertimeRequests,
+      activeContracts,
+      pendingHrDecisions,
     ] = await Promise.all([
       this.prisma.employee.count({ where: { isActive: true } }),
       this.prisma.jobOpening.count({ where: { status: 'OPEN' } }),
-      this.prisma.leaveRequest.count({ where: { status: 'PENDING' } }),
+      this.prisma.leaveRequest.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
       this.prisma.contract.count({
         where: { status: 'ACTIVE', endDate: { gte: now, lte: in30Days } },
       }),
       this.prisma.timesheetRecord.count({ where: { status: { in: ['SUBMITTED'] } } }),
+      this.prisma.overtimeRequest.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
+      this.prisma.contract.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.hrDecision.count({ where: { status: { in: ['DRAFT', 'PENDING_APPROVAL'] } } }),
     ]);
 
-    return { headcount, openPositions, pendingLeaves, expiringContracts, pendingTimesheetApprovals };
+    return {
+      headcount,
+      openPositions,
+      pendingLeaves,
+      pendingOvertimeRequests,
+      expiringContracts,
+      activeContracts,
+      pendingHrDecisions,
+      pendingTimesheetApprovals,
+    };
   }
 
   // ─── Finance Dashboard ───────────────────────────────────────────────────────
