@@ -73,188 +73,38 @@ function StatusTag({ status, isDark }: { status: string; isDark: boolean }) {
   );
 }
 
-// ─── Tab 1: Bảng công tháng ───────────────────────────────────────────────────
+// ─── Tab 1: Bảng công tháng (DEPRECATED - seeded to Chi tiết) ─────────────────
 
 function MonthlyTab() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
-  const qc = useQueryClient();
-
-  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
-  const [orgUnitId, setOrgUnitId] = useState<string | undefined>();
-
-  const year = selectedMonth.year();
-  const month = selectedMonth.month() + 1;
-
-  const { data: orgTree = [] } = useQuery({
-    queryKey: ['org-units'],
-    queryFn: orgUnitsApi.list,
-  });
-
-  const orgUnitOptions = useMemo(
-    () => flattenOrgTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
-    [orgTree],
-  );
-
-  const { data: monthlyRows = [], isLoading, refetch } = useQuery({
-    queryKey: ['attendance-monthly', year, month, orgUnitId],
-    queryFn: () => hrAttendanceApi.monthlyReport({ year, month, orgUnitId }),
-  });
-
-  const summarizeMutation = useMutation({
-    mutationFn: () => hrAttendanceApi.summarize({ year, month, orgUnitId }),
-    onSuccess: () => { refetch(); message.success('Đã tổng hợp bảng công'); },
-    onError: () => message.error('Tổng hợp thất bại'),
-  });
-
-  const lockMutation = useMutation({
-    mutationFn: () => hrAttendanceApi.lock({ year, month, orgUnitId }),
-    onSuccess: () => { refetch(); message.success('Đã khóa bảng công'); },
-    onError: () => message.error('Khóa thất bại'),
-  });
-
-  const columns: ColumnsType<MonthlyAttendance> = [
-    {
-      title: 'Nhân viên',
-      key: 'employee',
-      render: (_: unknown, r: MonthlyAttendance) =>
-        r.employee ? <EmployeeInfoCell employee={r.employee} /> : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Phòng ban',
-      key: 'orgUnit',
-      render: (_: unknown, r: MonthlyAttendance) => (
-        <Text style={{ color: textMuted }}>{r.employee?.orgUnit?.name ?? '—'}</Text>
-      ),
-    },
-    {
-      title: 'Ngày công',
-      dataIndex: 'workDays',
-      width: 100,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Nghỉ phép',
-      dataIndex: 'paidLeaveDays',
-      width: 100,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Nghỉ không lương',
-      dataIndex: 'unpaidLeaveDays',
-      width: 130,
-      render: (v: number) => <Text style={{ color: v > 0 ? '#EF4444' : textMuted }}>{v}</Text>,
-    },
-    {
-      title: 'OT (giờ)',
-      dataIndex: 'otHours',
-      width: 100,
-      render: (v: number) => <Text style={{ color: v > 0 ? '#F97316' : textPrimary }}>{v}h</Text>,
-    },
-    {
-      title: 'Vắng mặt',
-      dataIndex: 'absentDays',
-      width: 100,
-      render: (v: number) => <Text style={{ color: v > 0 ? '#EF4444' : textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Ngày lễ',
-      dataIndex: 'holidayDays',
-      width: 90,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      width: 110,
-      render: (v: string) => (
-        <Tag
-          style={isDark
-            ? v === 'LOCKED'
-              ? { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' }
-              : { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' }
-            : {}}
-          color={isDark ? undefined : v === 'LOCKED' ? 'red' : 'blue'}
-        >
-          {v === 'LOCKED' ? 'Đã khóa' : 'Mở'}
-        </Tag>
-      ),
-    },
-  ];
+  const { textMuted, bgContainer, borderColor } = useThemePalette();
 
   return (
-    <div>
-      <FilterBar
-        right={
-          <Space>
-            <Button
-              icon={<CheckOutlined />}
-              loading={summarizeMutation.isPending}
-              disabled={summarizeMutation.isPending}
-              onClick={() => summarizeMutation.mutate()}
-            >
-              Tổng hợp tháng
-            </Button>
-            <Popconfirm
-              title="Khóa bảng công"
-              description="Sau khi khóa không thể sửa. Xác nhận?"
-              onConfirm={() => lockMutation.mutate()}
-              okText="Khóa"
-              cancelText="Hủy"
-              okButtonProps={{ danger: true }}
-            >
-              <Button danger icon={<LockOutlined />} loading={lockMutation.isPending} disabled={lockMutation.isPending}>
-                Khóa bảng công
-              </Button>
-            </Popconfirm>
-          </Space>
-        }
-      >
-        <DatePicker
-          picker="month"
-          value={selectedMonth}
-          onChange={v => v && setSelectedMonth(v)}
-          format="MM/YYYY"
-          allowClear={false}
-          style={{ width: 150 }}
-        />
-        <Select
-          showSearch
-          placeholder="Phòng ban"
-          allowClear
-          style={{ width: 220 }}
-          value={orgUnitId}
-          onChange={setOrgUnitId}
-          filterOption={(input, opt) =>
-            String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
-          }
-          options={orgUnitOptions}
-        />
-      </FilterBar>
-
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={monthlyRows}
-          loading={isLoading}
-          pagination={{ pageSize: 20 }}
-          size="middle"
-        />
-      </div>
+    <div style={{ padding: 24, background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, textAlign: 'center' }}>
+      <Text style={{ color: textMuted, fontSize: 14 }}>
+        Tónyesis bảng công tháng đã được chuyển sang tab <strong>Chi tiết chấm công</strong>.
+        {' '}
+        <br />
+        Vui lòng sử dụng các bộ lọc tháng và phòng ban ở tab đó để xem tónyesis chi tiết.
+      </Text>
     </div>
   );
 }
 
-// ─── Tab 2: Chi tiết chấm công ────────────────────────────────────────────────
+// ─── Tab 2: Chi tiết chấm công + Bảng công tháng ──────────────────────────────
 
 function DetailTab() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
   const { message: msg } = App.useApp();
   const qc = useQueryClient();
 
+  // ── Filters: Bảng chi tiết ──
   const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
   const [employeeId, setEmployeeId] = useState<string | undefined>();
   const [statusFilter, setStatusFilter] = useState<AttendanceStatus | undefined>();
+
+  // ── Filters: Bảng tónyesis tháng ──
+  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
+  const [monthOrgUnitId, setMonthOrgUnitId] = useState<string | undefined>();
 
   // ── Đổi ca nhanh ──
   const [swapOpen, setSwapOpen] = useState(false);
@@ -263,6 +113,9 @@ function DetailTab() {
   // ── Tính lại ngày công ──
   const [recalcOpen, setRecalcOpen] = useState(false);
   const [recalcForm] = Form.useForm();
+
+  const year = selectedMonth.year();
+  const month = selectedMonth.month() + 1;
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
@@ -274,7 +127,12 @@ function DetailTab() {
     queryFn: workShiftsApi.listShifts,
   });
 
-  const { data: attendanceData, isLoading, refetch } = useQuery({
+  const { data: orgTree = [] } = useQuery({
+    queryKey: ['org-units'],
+    queryFn: orgUnitsApi.list,
+  });
+
+  const { data: attendanceData, isLoading: detailLoading, refetch: detailRefetch } = useQuery({
     queryKey: ['attendance-detail', dateRange, employeeId, statusFilter],
     queryFn: () => hrAttendanceApi.list({
       employeeId,
@@ -283,6 +141,11 @@ function DetailTab() {
       status: statusFilter,
       limit: 100,
     }),
+  });
+
+  const { data: monthlyRows = [], isLoading: monthlyLoading, refetch: monthlyRefetch } = useQuery({
+    queryKey: ['attendance-monthly', year, month, monthOrgUnitId],
+    queryFn: () => hrAttendanceApi.monthlyReport({ year, month, orgUnitId: monthOrgUnitId }),
   });
 
   const swapMutation = useMutation({
@@ -302,9 +165,21 @@ function DetailTab() {
       msg.success(`Đã tính lại ${res.updated}/${res.total} bản ghi`);
       setRecalcOpen(false);
       recalcForm.resetFields();
-      refetch();
+      detailRefetch();
     },
     onError: () => msg.error('Tính lại thất bại'),
+  });
+
+  const summarizeMutation = useMutation({
+    mutationFn: () => hrAttendanceApi.summarize({ year, month, orgUnitId: monthOrgUnitId }),
+    onSuccess: () => { monthlyRefetch(); msg.success('Đã tónyesis bảng công'); },
+    onError: () => msg.error('Tónyesis thất bại'),
+  });
+
+  const lockMutation = useMutation({
+    mutationFn: () => hrAttendanceApi.lock({ year, month, orgUnitId: monthOrgUnitId }),
+    onSuccess: () => { monthlyRefetch(); msg.success('Đã khóa bảng công'); },
+    onError: () => msg.error('Khóa thất bại'),
   });
 
   function handleSwapSave() {
@@ -335,9 +210,14 @@ function DetailTab() {
     });
   }
 
+  const orgUnitOptions = useMemo(
+    () => flattenOrgTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
+    [orgTree],
+  );
+
   const records: AttendanceRecord[] = attendanceData?.data ?? [];
 
-  const columns: ColumnsType<AttendanceRecord> = [
+  const detailColumns: ColumnsType<AttendanceRecord> = [
     {
       title: 'Nhân viên',
       key: 'employee',
@@ -471,6 +351,75 @@ function DetailTab() {
     label: `${s.name} (${s.startTime}–${s.endTime})`,
   }));
 
+  const monthlyColumns: ColumnsType<MonthlyAttendance> = [
+    {
+      title: 'Nhân viên',
+      key: 'employee',
+      render: (_: unknown, r: MonthlyAttendance) =>
+        r.employee ? <EmployeeInfoCell employee={r.employee} /> : <Text style={{ color: textMuted }}>—</Text>,
+    },
+    {
+      title: 'Phòng ban',
+      key: 'orgUnit',
+      render: (_: unknown, r: MonthlyAttendance) => (
+        <Text style={{ color: textMuted }}>{r.employee?.orgUnit?.name ?? '—'}</Text>
+      ),
+    },
+    {
+      title: 'Ngày công',
+      dataIndex: 'workDays',
+      width: 100,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
+    },
+    {
+      title: 'Nghỉ phép',
+      dataIndex: 'paidLeaveDays',
+      width: 100,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
+    },
+    {
+      title: 'Nghỉ không lương',
+      dataIndex: 'unpaidLeaveDays',
+      width: 130,
+      render: (v: number) => <Text style={{ color: v > 0 ? '#EF4444' : textMuted }}>{v}</Text>,
+    },
+    {
+      title: 'OT (giờ)',
+      dataIndex: 'otHours',
+      width: 100,
+      render: (v: number) => <Text style={{ color: v > 0 ? '#F97316' : textPrimary }}>{v}h</Text>,
+    },
+    {
+      title: 'Vắng mặt',
+      dataIndex: 'absentDays',
+      width: 100,
+      render: (v: number) => <Text style={{ color: v > 0 ? '#EF4444' : textPrimary }}>{v}</Text>,
+    },
+    {
+      title: 'Ngày lễ',
+      dataIndex: 'holidayDays',
+      width: 90,
+      render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text>,
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      width: 110,
+      render: (v: string) => (
+        <Tag
+          style={isDark
+            ? v === 'LOCKED'
+              ? { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' }
+              : { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' }
+            : {}}
+          color={isDark ? undefined : v === 'LOCKED' ? 'red' : 'blue'}
+        >
+          {v === 'LOCKED' ? 'Đã khóa' : 'Mở'}
+        </Tag>
+      ),
+    },
+  ];
+
   return (
     <div>
       <FilterBar
@@ -492,6 +441,26 @@ function DetailTab() {
                 Tính lại ngày công
               </Button>
             </Tooltip>
+            <Button
+              icon={<CheckOutlined />}
+              loading={summarizeMutation.isPending}
+              disabled={summarizeMutation.isPending}
+              onClick={() => summarizeMutation.mutate()}
+            >
+              Tónyesis tháng
+            </Button>
+            <Popconfirm
+              title="Khóa bảng công"
+              description="Sau khi khóa không thể sửa. Xác nhận?"
+              onConfirm={() => lockMutation.mutate()}
+              okText="Khóa"
+              cancelText="Hủy"
+              okButtonProps={{ danger: true }}
+            >
+              <Button danger icon={<LockOutlined />} loading={lockMutation.isPending} disabled={lockMutation.isPending}>
+                Khóa bảng công
+              </Button>
+            </Popconfirm>
           </Space>
         }
       >
@@ -499,6 +468,7 @@ function DetailTab() {
           style={{ width: 260 }}
           onChange={v => setDateRange(v ? [v[0]!, v[1]!] : null)}
           format="DD/MM/YYYY"
+          placeholder={['Từ ngày', 'Đến ngày']}
         />
         <Select
           showSearch
@@ -520,17 +490,55 @@ function DetailTab() {
           onChange={setStatusFilter}
           options={Object.entries(ATTENDANCE_STATUS_MAP).map(([k, v]) => ({ value: k, label: v.label }))}
         />
+        <DatePicker
+          picker="month"
+          value={selectedMonth}
+          onChange={v => v && setSelectedMonth(v)}
+          format="MM/YYYY"
+          allowClear={false}
+          style={{ width: 150 }}
+          placeholder="Tháng tónyesis"
+        />
+        <Select
+          showSearch
+          placeholder="Phòng ban (tónyesis)"
+          allowClear
+          style={{ width: 220 }}
+          value={monthOrgUnitId}
+          onChange={setMonthOrgUnitId}
+          filterOption={(input, opt) =>
+            String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
+          options={orgUnitOptions}
+        />
       </FilterBar>
 
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
+      {/* ── Bảng Chi tiết chấm công ──────────────────────────────────────────── */}
+      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
         <Table
           rowKey="id"
-          columns={columns}
+          columns={detailColumns}
           dataSource={records}
-          loading={isLoading}
+          loading={detailLoading}
           pagination={{ pageSize: 20 }}
           size="small"
           scroll={{ x: 1000 }}
+        />
+      </div>
+
+      {/* ── Bảng Tónyesis Tháng ──────────────────────────────────────────────── */}
+      <div style={{ marginBottom: 16 }}>
+        <Text strong style={{ fontSize: 14, color: textPrimary }}>Tónyesis Bảng Công Tháng</Text>
+      </div>
+
+      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
+        <Table
+          rowKey="id"
+          columns={monthlyColumns}
+          dataSource={monthlyRows}
+          loading={monthlyLoading}
+          pagination={{ pageSize: 20 }}
+          size="middle"
         />
       </div>
 
