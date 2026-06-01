@@ -375,31 +375,49 @@ export class HrAttendanceService extends TenantAwareService {
     const upserts = employees.map((emp) => {
       const records = allRecords.filter((r) => r.employeeId === emp.id);
 
-      // Tính ngày công dựa trên dayCredit (nếu tổng giờ < 8h thì tính tỷ lệ)
+      // ✅ Helper: Tính dayCredit nếu NULL (cho records cũ)
+      const getDayCredit = (r: any): number => {
+        if (r.dayCredit !== null && r.dayCredit !== undefined) {
+          return Number(r.dayCredit);
+        }
+        // Nếu NULL, tính theo công thức: (480 - late - early) / 480
+        const standardWorkMinutes = 480;
+        const actualWorkMinutes = Math.max(
+          0,
+          standardWorkMinutes - (r.lateMinutes ?? 0) - (r.earlyLeaveMinutes ?? 0),
+        );
+        return actualWorkMinutes / standardWorkMinutes;
+      };
+
+      // Tính ngày công dựa trên dayCredit: (480 - late - early) / 480
       const workDays = records
         .filter((r) => r.status === AttendanceStatus.PRESENT)
-        .reduce((sum, r) => sum + Number(r.dayCredit ?? 1), 0);
+        .reduce((sum, r) => sum + getDayCredit(r), 0);
 
       // Phép có tính công
       const paidLeaveDays = records.filter(
-        (r) => [AttendanceStatus.LEAVE, AttendanceStatus.ON_LEAVE].includes(r.status) && r.leaveType !== 'UNPAID',
+        (r) => (['LEAVE', 'ON_LEAVE'].includes(r.status as string)) && r.leaveType !== 'UNPAID',
       ).length;
 
       // Phép không tính công
       const unpaidLeaveDays = records.filter(
-        (r) => [AttendanceStatus.LEAVE, AttendanceStatus.ON_LEAVE].includes(r.status) && r.leaveType === 'UNPAID',
+        (r) => (['LEAVE', 'ON_LEAVE'].includes(r.status as string)) && r.leaveType === 'UNPAID',
       ).length;
 
-      // OT giờ
+      // OT giờ (tính từ overtimeMinutes)
       const otHours = records
-        .filter((r) => r.status === AttendanceStatus.OT || r.overtimeMinutes > 0)
-        .reduce((sum, r) => sum + Number(r.totalHours ?? 0) + (r.overtimeMinutes ?? 0) / 60, 0);
+        .filter((r) => r.overtimeMinutes > 0)
+        .reduce((sum, r) => sum + (r.overtimeMinutes ?? 0) / 60, 0);
 
       // Vắng mặt
       const absentDays = records.filter((r) => r.status === AttendanceStatus.ABSENT).length;
 
       // Lễ/Nghỉ
       const holidayDays = records.filter((r) => r.status === AttendanceStatus.HOLIDAY).length;
+
+      // Làm tròn 2 số thập phân
+      const roundedWorkDays = Math.round(workDays * 100) / 100;
+      const roundedOtHours = Math.round(otHours * 100) / 100;
 
       return this.prisma.monthlyAttendance.upsert({
         where: {
@@ -413,19 +431,19 @@ export class HrAttendanceService extends TenantAwareService {
           employeeId: emp.id,
           year,
           month,
-          workDays,
+          workDays: roundedWorkDays,
           paidLeaveDays,
           unpaidLeaveDays,
-          otHours,
+          otHours: roundedOtHours,
           absentDays,
           holidayDays,
           status: MonthlyAttendanceStatus.OPEN,
         },
         update: {
-          workDays,
+          workDays: roundedWorkDays,
           paidLeaveDays,
           unpaidLeaveDays,
-          otHours,
+          otHours: roundedOtHours,
           absentDays,
           holidayDays,
         },
