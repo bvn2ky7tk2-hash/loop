@@ -60,7 +60,7 @@ function NavItem({
         margin: '1px 6px',
         borderRadius: 8,
         cursor: 'pointer',
-        transition: 'background 0.12s',
+        transition: 'background 0.12s, box-shadow 0.12s',
         background: active ? activeBg : hovered ? hoverBg : 'transparent',
         borderLeft: active && !collapsed ? `3px solid ${primaryColor}` : '3px solid transparent',
         color: active ? activeText : defaultText,
@@ -68,6 +68,13 @@ function NavItem({
         fontWeight: active ? 600 : 400,
         userSelect: 'none',
         outline: 'none',
+        boxShadow: 'inset 0 0 0 2px transparent',
+      }}
+      onFocus={(e) => {
+        e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${primaryColor}`;
+      }}
+      onBlur={(e) => {
+        e.currentTarget.style.boxShadow = 'inset 0 0 0 2px transparent';
       }}
     >
       <span style={{
@@ -170,9 +177,9 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
 
   const isNavLight  = !isDark && preset.navTheme === 'light';
   const sidebarBg   = isDark ? '#0F172A' : preset.navBg;
-  const dividerColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : 'rgba(255,255,255,0.12)';
+  const dividerColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : '#334155';
   const navTextColor = isNavLight ? preset.navText : '#F1F5F9';
-  const navTextMuted = isDark ? 'rgba(255,255,255,0.28)' : isNavLight ? 'rgba(23,43,77,0.35)' : 'rgba(255,255,255,0.28)';
+  const navTextMuted = isDark ? '#94A3B8' : isNavLight ? '#64748B' : '#94A3B8';
   const navHoverBg   = isDark ? 'rgba(255,255,255,0.06)' : isNavLight ? 'rgba(23,43,77,0.05)' : 'rgba(255,255,255,0.08)';
   const moduleColor  = activeModule?.color ?? '#2563EB';
   const primaryColor = preset.primary;
