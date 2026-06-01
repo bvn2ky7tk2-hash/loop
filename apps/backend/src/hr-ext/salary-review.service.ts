@@ -7,11 +7,13 @@ import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 import { paginate } from '../common/dto/pagination.dto';
 import { SalaryReviewStatus } from '../generated/prisma';
 import { FilterSalaryReviewDto } from './dto/salary-review.dto';
+import { ProcessStarterService } from '../processes/process-starter.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class SalaryReviewService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
@@ -125,7 +127,7 @@ export class SalaryReviewService extends TenantAwareService {
     const increasePercent = score >= 9 ? 12.5 : 7.5;
     const suggestedSalary = Math.round(currentSalary * (1 + increasePercent / 100));
 
-    return this.prisma.salaryReviewSuggestion.create({
+    const suggestion = await this.prisma.salaryReviewSuggestion.create({
       data: {
         reviewId,
         employeeId,
@@ -145,6 +147,18 @@ export class SalaryReviewService extends TenantAwareService {
         },
       },
     });
+
+    // Khởi tạo quy trình điều chỉnh lương (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'salary-review',
+      entityType: 'SALARY_REVIEW',
+      entityId: suggestion.id,
+      startedByUserId: this._req?.user?.id ?? this._req?.user?.sub ?? suggestion.employee.userId,
+      variables: { employeeId, currentSalary, suggestedSalary, increasePercent },
+      taskName: `Đề xuất điều chỉnh lương: ${suggestion.employee.fullName}`,
+    });
+
+    return suggestion;
   }
 
   /**

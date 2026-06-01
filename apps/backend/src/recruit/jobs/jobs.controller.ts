@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -31,8 +32,8 @@ export class JobsController {
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
   @RequirePermission('recruit_jobs:manage', PERMISSIONS.RECRUIT_MANAGE)
   @ApiOperation({ summary: 'Tạo vị trí tuyển dụng mới' })
-  create(@Body() dto: CreateJobDto) {
-    return this.jobsService.create(dto);
+  create(@Body() dto: CreateJobDto, @Request() req: any) {
+    return this.jobsService.create(dto, req.user?.id ?? req.user?.sub);
   }
 
   @Get()

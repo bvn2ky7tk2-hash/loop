@@ -6,7 +6,7 @@ export interface StartProcessOpts {
   definitionKey: string;
   entityType: string;           // 'PURCHASE_ORDER' | 'BUDGET_PLAN' | ...
   entityId: string;
-  startedByUserId: string;
+  startedByUserId?: string;
   approverUserId?: string | null;
   variables?: Record<string, unknown>;
   taskName?: string;

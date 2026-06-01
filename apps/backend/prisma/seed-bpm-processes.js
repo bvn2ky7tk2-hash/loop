@@ -157,7 +157,7 @@ const PROCESSES = [
     approvers: { HrPrepare: 'hrUserId', ItSetup: 'itUserId', ManagerWelcome: 'managerUserId' },
   },
   {
-    key: 'employee-offboarding', name: 'Quy trình offboarding nghỉ việc',
+    key: 'employee-offboarding-v1', name: 'Quy trình offboarding nghỉ việc',
     tasks: [{ id: 'ManagerApprove', name: 'Quản lý duyệt nghỉ việc' }, { id: 'HandoverConfirm', name: 'Xác nhận bàn giao' }, { id: 'HrFinalize', name: 'HR chốt thủ tục & lương' }],
     form: [
       { name: 'employeeName', label: 'Nhân viên', type: 'text', required: true },

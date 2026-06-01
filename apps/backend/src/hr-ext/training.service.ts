@@ -7,11 +7,13 @@ import { CreateTrainingProgramDto, CreateTrainingRecordDto, FilterTrainingDto } 
 import { TrainingStatus } from '../generated/prisma';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
+import { ProcessStarterService } from '../processes/process-starter.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TrainingService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
@@ -67,7 +69,7 @@ export class TrainingService extends TenantAwareService {
     const emp = await this.prisma.employee.findUnique({ where: { id: dto.employeeId } });
     if (!emp) throw new NotFoundException('Nhân viên không tìm thấy');
 
-    return this.prisma.trainingRecord.create({
+    const record = await this.prisma.trainingRecord.create({
       data: {
         programId: dto.programId,
         employeeId: dto.employeeId,
@@ -82,6 +84,18 @@ export class TrainingService extends TenantAwareService {
         employee: { select: { id: true, fullName: true } },
       },
     });
+
+    // Khởi tạo quy trình duyệt đào tạo (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'training-request',
+      entityType: 'TRAINING_RECORD',
+      entityId: record.id,
+      startedByUserId: this._req?.user?.id ?? this._req?.user?.sub,
+      variables: { courseName: program.title, employeeId: dto.employeeId },
+      taskName: `Duyệt đào tạo: ${program.title}`,
+    });
+
+    return record;
   }
 
   async updateRecord(id: string, data: Partial<CreateTrainingRecordDto>) {

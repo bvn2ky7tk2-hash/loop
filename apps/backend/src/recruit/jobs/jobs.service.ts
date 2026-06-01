@@ -9,12 +9,16 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { FilterJobDto } from './dto/filter-job.dto';
 import { JobOpening, JobStatus } from '../../generated/prisma';
+import { ProcessStarterService } from '../../processes/process-starter.service';
 
 @Injectable()
 export class JobsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
+  ) {}
 
-  async create(dto: CreateJobDto): Promise<JobOpening> {
+  async create(dto: CreateJobDto, startedByUserId?: string): Promise<JobOpening> {
     const existing = await this.prisma.jobOpening.findFirst({
       where: { code: dto.code },
     });
@@ -22,7 +26,7 @@ export class JobsService {
       throw new ConflictException(`Mã vị trí "${dto.code}" đã tồn tại`);
     }
 
-    return this.prisma.jobOpening.create({
+    const job = await this.prisma.jobOpening.create({
       data: {
         code: dto.code,
         title: dto.title,
@@ -36,6 +40,18 @@ export class JobsService {
         closedAt: dto.closedAt ? new Date(dto.closedAt) : undefined,
       },
     });
+
+    // Khởi tạo quy trình duyệt yêu cầu tuyển dụng (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'recruitment-request',
+      entityType: 'JOB_OPENING',
+      entityId: job.id,
+      startedByUserId,
+      variables: { jobTitle: job.title, quantity: job.headcount },
+      taskName: `Duyệt tuyển dụng: ${job.title}`,
+    });
+
+    return job;
   }
 
   async findAll(filter: FilterJobDto): Promise<PaginatedResult<JobOpening>> {
