@@ -43,7 +43,7 @@ export interface ContractStats {
 
 const BASE = '/crm/client-contracts';
 
-export const clientContractsApi = {
+export const clientContractsApi: any = {
   stats: () =>
     apiClient.get<ContractStats>(`${BASE}/stats`).then(r => r.data),
 

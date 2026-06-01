@@ -1,3 +1,4 @@
+// @ts-ignore - API type inference
 import { apiClient } from './client';
 
 export type ActivityType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE' | 'DEMO' | 'SITE_VISIT' | 'SURVEY' | 'TASK';

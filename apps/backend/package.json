@@ -60,7 +60,8 @@
     "seed:contract-lifecycle": "npx tsx prisma/seed-contract-lifecycle.ts",
     "seed:project-cost": "npx tsx prisma/seed-project-cost.ts",
     "seed:invoice-mapping": "npx tsx prisma/seed-invoice-mapping.ts",
-    "seed:automation-rules": "npx tsx prisma/seed-automation-rules.ts"
+    "seed:automation-rules": "npx tsx prisma/seed-automation-rules.ts",
+    "seed:comprehensive": "npx tsx prisma/seed-comprehensive.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"

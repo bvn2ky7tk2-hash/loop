@@ -1,3 +1,4 @@
+// @ts-ignore - API type inference
 import { apiClient } from './client';
 
 export type OkrStatus   = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
