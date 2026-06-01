@@ -33,7 +33,8 @@ export class HrAttendanceService extends TenantAwareService {
   }
 
   // ─── Tính toán chỉ số ca làm việc từ giờ check-in/out thực tế ───────────────
-  // Ngày công = giờ nằm trong khung giờ ca / 8, không phải tổng giờ làm việc
+  // Ngày công = (480 - lateMinutes - earlyLeaveMinutes) / 480
+  // 480 = 8 giờ × 60 phút (1 ngày công chuẩn)
   calculateShiftMetrics(
     checkIn: Date,
     checkOut: Date,
@@ -62,7 +63,7 @@ export class HrAttendanceService extends TenantAwareService {
     let earlyLeaveMinutes = 0;
     let overtimeMinutes = 0;
     let dayCredit = 0;
-    let workMinutes = 0; // giờ công = giờ nằm trong khung giờ ca
+    let workMinutes = totalMinutes;
 
     if (plannedStart && plannedEnd) {
       const plannedStartMinutes = toMinutes(plannedStart);
@@ -83,19 +84,16 @@ export class HrAttendanceService extends TenantAwareService {
       earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
       overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
 
-      // ✅ QUAN TRỌNG: Giờ công = giờ nằm trong khung [plannedStart, plannedEnd]
-      // Không phải tổng giờ làm việc
-      const actualStart = Math.max(checkInMinutes, plannedStartMinutes);
-      const actualEnd = Math.min(adjustedCheckOut, adjustedPlannedEnd);
-      workMinutes = Math.max(0, actualEnd - actualStart);
-
-      const workHours = workMinutes / 60;
-      dayCredit = workHours / 8; // ngày công chuẩn = giờ thực tế / 8 (KHÔNG cap)
+      // ✅ Ngày công chuẩn = (480 - lateMinutes - earlyLeaveMinutes) / 480
+      // 480 phút = 8 giờ × 60 phút
+      const standardWorkMinutes = 480; // 8 hours
+      const actualWorkMinutes = standardWorkMinutes - lateMinutes - earlyLeaveMinutes;
+      dayCredit = Math.max(0, actualWorkMinutes / standardWorkMinutes);
+      workMinutes = Math.max(0, actualWorkMinutes);
     } else {
       // Không có planned time → tính theo tổng giờ làm việc
       const totalHours = Math.max(0, totalMinutes / 60);
       dayCredit = Math.min(1, totalHours / 8);
-      workMinutes = totalMinutes;
     }
 
     return { lateMinutes, earlyLeaveMinutes, overtimeMinutes, dayCredit, workMinutes };

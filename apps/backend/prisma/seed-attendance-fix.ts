@@ -52,12 +52,11 @@ function calculateMetrics(
     earlyLeaveMinutes = Math.max(0, adjustedPlannedEnd - adjustedCheckOut);
     overtimeMinutes = Math.max(0, adjustedCheckOut - adjustedPlannedEnd);
 
-    // ✅ Giờ công = giờ nằm trong khung [plannedStart, plannedEnd]
-    const actualStart = Math.max(checkInMinutes, plannedStartMinutes);
-    const actualEnd = Math.min(adjustedCheckOut, adjustedPlannedEnd);
-    const workMinutes = Math.max(0, actualEnd - actualStart);
-    const workHours = workMinutes / 60;
-    dayCredit = workHours / 8; // ngày công chuẩn = giờ thực tế / 8 (KHÔNG cap)
+    // ✅ Ngày công chuẩn = (480 - lateMinutes - earlyLeaveMinutes) / 480
+    // 480 phút = 8 giờ × 60 phút
+    const standardWorkMinutes = 480;
+    const actualWorkMinutes = standardWorkMinutes - lateMinutes - earlyLeaveMinutes;
+    dayCredit = Math.max(0, actualWorkMinutes / standardWorkMinutes);
   } else {
     // Không có planned time → tính theo tổng giờ làm việc
     const totalMinutes = (checkOutMinutes < checkInMinutes
