@@ -4,9 +4,10 @@ import { BudgetService } from './budget.service';
 import { BudgetController } from './budget.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { BudgetAlertTask } from './budget-alert.task';
+import { ProcessStarterModule } from '../processes/process-starter.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), PrismaModule],
+  imports: [ScheduleModule.forRoot(), PrismaModule, ProcessStarterModule],
   controllers: [BudgetController],
   providers: [BudgetService, BudgetAlertTask],
   exports: [BudgetService],

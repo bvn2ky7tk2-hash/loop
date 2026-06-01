@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BudgetService } from '../budget/budget.service';
+import { ProcessStarterService } from '../processes/process-starter.service';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { PaginationDto, paginate } from '../common/dto/pagination.dto';
 import { CreateVendorDto, UpdateVendorDto } from './dto/vendor.dto';
@@ -11,6 +12,7 @@ export class ProcurementService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly budgetService: BudgetService,
+    private readonly processStarter: ProcessStarterService,
     private readonly financeEventBus: FinanceEventBus,
   ) {}
 
@@ -150,7 +152,7 @@ export class ProcurementService {
       }
     }
 
-    return this.prisma.purchaseOrder.create({
+    const po = await this.prisma.purchaseOrder.create({
       data: {
         poNumber,
         vendorId:    dto.vendorId,
@@ -167,6 +169,18 @@ export class ProcurementService {
         items: true,
       },
     });
+
+    // Tự khởi tạo quy trình duyệt mua hàng (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'purchase-approval',
+      entityType: 'PURCHASE_ORDER',
+      entityId: po.id,
+      startedByUserId: requesterId,
+      variables: { poNumber: po.poNumber, vendor: vendor.name, totalAmount },
+      taskName: `Duyệt mua hàng: ${po.poNumber}`,
+    });
+
+    return po;
   }
 
   async updatePoStatus(id: string, dto: UpdatePoStatusDto, userId: string) {

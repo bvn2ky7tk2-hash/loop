@@ -13,6 +13,7 @@ import { TenantAwareService } from '../common/services/tenant-aware.service';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { CreateBudgetPlanDto } from './dto/create-budget-plan.dto';
 import { Decimal } from '../generated/prisma/runtime/client';
+import { ProcessStarterService } from '../processes/process-starter.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class BudgetService extends TenantAwareService {
@@ -20,6 +21,7 @@ export class BudgetService extends TenantAwareService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly processStarter: ProcessStarterService,
     @Inject(REQUEST) req: any,
   ) {
     super(req);
@@ -131,11 +133,23 @@ export class BudgetService extends TenantAwareService {
     }
 
     const db = this.prisma as any;
-    return db.budgetPlan.update({
+    const updated = await db.budgetPlan.update({
       where: { id },
       data: { status: 'PENDING_APPROVAL' },
       include: { lines: true },
     });
+
+    // Khởi tạo quy trình duyệt ngân sách (BPM) nếu đã cấu hình
+    await this.processStarter.startForEntity({
+      definitionKey: 'budget-approval',
+      entityType: 'BUDGET_PLAN',
+      entityId: plan.id,
+      startedByUserId: plan.createdById ?? '',
+      variables: { planName: plan.name, fiscalYear: plan.fiscalYear, totalAmount: Number(plan.totalAmount) },
+      taskName: `Duyệt ngân sách: ${plan.name}`,
+    });
+
+    return updated;
   }
 
   // ── Phê duyệt kế hoạch ngân sách ─────────────────────────────────────────
