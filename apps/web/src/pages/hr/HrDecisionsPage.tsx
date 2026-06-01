@@ -10,7 +10,6 @@ import {
   InputNumber,
   Select,
   DatePicker,
-  Drawer,
   Descriptions,
   Row,
   Col,
@@ -43,7 +42,8 @@ import { hrDecisionsApi, type HrDecision, type HrDecisionType, type HrDecisionSt
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { orgUnitsApi } from '../../api/org-units';
-import { EmployeeSelect } from '../../components/selects';
+import { EmployeeSelect, OrgUnitSelect } from '../../components/selects';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -58,7 +58,7 @@ const DECISION_TYPE_MAP: Record<HrDecisionType, { label: string; color: string }
   SALARY_CHANGE:   { label: 'Điều chỉnh lương',   color: '#F59E0B' },
   COMMENDATION:    { label: 'Khen thưởng',         color: '#F97316' },
   DISCIPLINE:      { label: 'Kỷ luật',             color: '#EF4444' },
-  TERMINATION:     { label: 'Chấm dứt HĐ',         color: '#64748B' },
+  TERMINATION:     { label: 'Chấm dứt HĐ',         color: '#94A3B8' },
   PROMOTION:       { label: 'Thăng chức',          color: '#EC4899' },
   SECONDMENT:      { label: 'Biệt phái',           color: '#0EA5E9' },
 };
@@ -102,6 +102,7 @@ export default function HrDecisionsPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<HrDecisionType | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<HrDecisionStatus | undefined>(undefined);
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const [page, setPage] = useState(1);
 
@@ -125,9 +126,10 @@ export default function HrDecisionsPage() {
     search: search || undefined,
     type: typeFilter,
     status: statusFilter,
+    orgUnitId: orgUnitFilter,
     effectiveDateFrom: dateRange?.[0]?.format('YYYY-MM-DD'),
     effectiveDateTo: dateRange?.[1]?.format('YYYY-MM-DD'),
-  }), [page, search, typeFilter, statusFilter, dateRange]);
+  }), [page, search, typeFilter, statusFilter, orgUnitFilter, dateRange]);
 
   const { data: decisionsData, isLoading } = useQuery({
     queryKey: ['hr-decisions', queryParams],
@@ -330,11 +332,12 @@ export default function HrDecisionsPage() {
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_, record) => (
-        <Text style={{ color: textPrimary, fontWeight: 500 }}>
-          {record.employee?.fullName ?? record.employeeId}
-        </Text>
-      ),
+      render: (_, record) =>
+        record.employee ? (
+          <EmployeeInfoCell employee={record.employee} />
+        ) : (
+          <Text style={{ color: textMuted }}>{record.employeeId}</Text>
+        ),
     },
     {
       title: 'Loại quyết định',
@@ -527,6 +530,13 @@ export default function HrDecisionsPage() {
             label: v.label,
           }))}
         />
+        <OrgUnitSelect
+          placeholder="Phòng ban"
+          style={{ minWidth: 180 }}
+          value={orgUnitFilter}
+          onChange={(v) => { setOrgUnitFilter(v); setPage(1); }}
+          allowClear
+        />
         <DatePicker.RangePicker
           placeholder={['Từ ngày HLực', 'Đến ngày']}
           format="DD/MM/YYYY"
@@ -566,87 +576,16 @@ export default function HrDecisionsPage() {
         />
       </div>
 
-      {/* ─── Drawer: Chi tiết quyết định ───────────────────────────────── */}
-      <Drawer
+      {/* ─── Modal: Chi tiết quyết định ────────────────────────────────── */}
+      <CenteredModal
         open={!!detailRecord}
         onClose={() => setDetailRecord(null)}
-        title={
-          <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 16 }}>
-            Chi tiết quyết định
-          </Text>
-        }
-        width={520}
-        styles={{ body: { background: bgContainer } }}
-      >
-        {detailRecord && (
-          <>
-            <Descriptions
-              bordered
-              size="small"
-              column={1}
-              labelStyle={{ color: textMuted, width: 160 }}
-              contentStyle={{ color: textPrimary }}
-            >
-              <Descriptions.Item label="Số quyết định">
-                <Text style={{ color: linkColor, fontWeight: 600 }}>
-                  {detailRecord.decisionNumber ?? '—'}
-                </Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Nhân viên">
-                {detailRecord.employee
-                  ? `${detailRecord.employee.code} — ${detailRecord.employee.fullName}`
-                  : detailRecord.employeeId}
-              </Descriptions.Item>
-              <Descriptions.Item label="Loại QĐ">
-                <TypeTag type={detailRecord.type} isDark={isDark} />
-              </Descriptions.Item>
-              <Descriptions.Item label="Trạng thái">
-                <Tag color={STATUS_MAP[detailRecord.status]?.antColor}>
-                  {STATUS_MAP[detailRecord.status]?.label ?? detailRecord.status}
-                </Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="Ngày ký">
-                <Text style={{ color: textMuted }}>
-                  {detailRecord.signedDate
-                    ? dayjs(detailRecord.signedDate).format('DD/MM/YYYY')
-                    : '—'}
-                </Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Ngày hiệu lực">
-                <Text style={{ color: textMuted }}>
-                  {dayjs(detailRecord.effectiveDate).format('DD/MM/YYYY')}
-                </Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Người ký">
-                <Text style={{ color: textMuted }}>{detailRecord.signedBy ?? '—'}</Text>
-              </Descriptions.Item>
-              {detailRecord.toSalary !== undefined && (
-                <Descriptions.Item label="Lương mới">
-                  <Text style={{ color: linkColor, fontWeight: 600 }}>
-                    {detailRecord.toSalary.toLocaleString('vi-VN')} ₫
-                  </Text>
-                </Descriptions.Item>
-              )}
-              {detailRecord.fromSalary !== undefined && (
-                <Descriptions.Item label="Lương cũ">
-                  <Text style={{ color: textMuted }}>
-                    {detailRecord.fromSalary.toLocaleString('vi-VN')} ₫
-                  </Text>
-                </Descriptions.Item>
-              )}
-              <Descriptions.Item label="Nội dung">
-                <Text style={{ color: textPrimary }}>{detailRecord.content ?? '—'}</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label="Ghi chú">
-                <Text style={{ color: textMuted }}>{detailRecord.notes ?? '—'}</Text>
-              </Descriptions.Item>
-            </Descriptions>
-
-            <Divider />
-
+        title="Chi tiết quyết định"
+        width={560}
+        footer={
+          detailRecord && (
             <Space wrap>
               {detailRecord.status === 'DRAFT' && (
-                // disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy
                 <Button
                   type="primary"
                   icon={<SendOutlined />}
@@ -659,7 +598,6 @@ export default function HrDecisionsPage() {
               )}
               {detailRecord.status === 'PENDING' && (
                 <>
-                  {/* disabled đồng bộ với loading để ngăn double-submit khi mutation đang chạy */}
                   <Button
                     type="primary"
                     icon={<CheckOutlined />}
@@ -679,18 +617,79 @@ export default function HrDecisionsPage() {
                 </>
               )}
               {detailRecord.status === 'APPROVED' && detailRecord.pdfPath && (
-                <Button
-                  icon={<FilePdfOutlined />}
-                  href={detailRecord.pdfPath}
-                  target="_blank"
-                >
+                <Button icon={<FilePdfOutlined />} href={detailRecord.pdfPath} target="_blank">
                   Tải PDF
                 </Button>
               )}
+              <Button onClick={() => setDetailRecord(null)}>Đóng</Button>
             </Space>
-          </>
+          )
+        }
+      >
+        {detailRecord && (
+          <Descriptions
+            bordered
+            size="small"
+            column={1}
+            labelStyle={{ color: textMuted, width: 160 }}
+            contentStyle={{ color: textPrimary }}
+          >
+            <Descriptions.Item label="Số quyết định">
+              <Text style={{ color: linkColor, fontWeight: 600 }}>
+                {detailRecord.decisionNumber ?? '—'}
+              </Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Nhân viên">
+              {detailRecord.employee ? (
+                <EmployeeInfoCell employee={detailRecord.employee} variant="descriptions" />
+              ) : (
+                <Text style={{ color: textMuted }}>{detailRecord.employeeId}</Text>
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item label="Loại QĐ">
+              <TypeTag type={detailRecord.type} isDark={isDark} />
+            </Descriptions.Item>
+            <Descriptions.Item label="Trạng thái">
+              <Tag color={STATUS_MAP[detailRecord.status]?.antColor}>
+                {STATUS_MAP[detailRecord.status]?.label ?? detailRecord.status}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="Ngày ký">
+              <Text style={{ color: textMuted }}>
+                {detailRecord.signedDate ? dayjs(detailRecord.signedDate).format('DD/MM/YYYY') : '—'}
+              </Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Ngày hiệu lực">
+              <Text style={{ color: textMuted }}>
+                {dayjs(detailRecord.effectiveDate).format('DD/MM/YYYY')}
+              </Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Người ký">
+              <Text style={{ color: textMuted }}>{detailRecord.signedBy ?? '—'}</Text>
+            </Descriptions.Item>
+            {detailRecord.toSalary !== undefined && (
+              <Descriptions.Item label="Lương mới">
+                <Text style={{ color: linkColor, fontWeight: 600 }}>
+                  {detailRecord.toSalary.toLocaleString('vi-VN')} ₫
+                </Text>
+              </Descriptions.Item>
+            )}
+            {detailRecord.fromSalary !== undefined && (
+              <Descriptions.Item label="Lương cũ">
+                <Text style={{ color: textMuted }}>
+                  {detailRecord.fromSalary.toLocaleString('vi-VN')} ₫
+                </Text>
+              </Descriptions.Item>
+            )}
+            <Descriptions.Item label="Nội dung">
+              <Text style={{ color: textPrimary }}>{detailRecord.content ?? '—'}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Ghi chú">
+              <Text style={{ color: textMuted }}>{detailRecord.notes ?? '—'}</Text>
+            </Descriptions.Item>
+          </Descriptions>
         )}
-      </Drawer>
+      </CenteredModal>
 
       {/* ─── Modal: Từ chối ─────────────────────────────────────────────── */}
       <CenteredModal

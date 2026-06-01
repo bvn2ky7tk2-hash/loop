@@ -75,6 +75,11 @@ export class ListOtQueryDto extends PaginationDto {
   @Min(2000)
   @Max(2100)
   year?: number;
+
+  @ApiPropertyOptional({ description: 'Lọc theo phòng ban (UUID)' })
+  @IsOptional()
+  @IsUUID()
+  orgUnitId?: string;
 }
 
 export class RejectOtDto {

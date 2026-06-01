@@ -12,7 +12,9 @@ import {
   useGetPerformanceReviews, useCreatePerformanceReview, useUpdatePerformanceReview,
   type PerformanceReview, type ReviewStatus,
 } from '../../api/hr-ext';
+import { OrgUnitSelect } from '../../components/selects';
 import { employeesApi } from '../../api/employees';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -30,11 +32,12 @@ export default function PerformancePage() {
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [periodFilter, setPeriodFilter] = useState<string | undefined>(undefined);
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [createOpen, setCreateOpen] = useState(false);
   const [detailReview, setDetailReview] = useState<PerformanceReview | null>(null);
   const [form] = Form.useForm();
 
-  const { data: reviewsData, isLoading } = useGetPerformanceReviews({ limit: 50, status: statusFilter, period: periodFilter });
+  const { data: reviewsData, isLoading } = useGetPerformanceReviews({ limit: 50, status: statusFilter, period: periodFilter, orgUnitId: orgUnitFilter });
   const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: employeesApi.list });
   const createReview = useCreatePerformanceReview();
   const updateReview = useUpdatePerformanceReview();
@@ -67,7 +70,9 @@ export default function PerformancePage() {
   const columns: ColumnsType<PerformanceReview> = [
     {
       title: 'Nhân viên',
-      render: (_, r) => <span style={{ color: textPrimary, fontWeight: 500 }}>{r.employee?.fullName ?? r.employeeId}</span>,
+      render: (_, r) => r.employee
+        ? <EmployeeInfoCell employee={r.employee} />
+        : <span style={{ color: textPrimary }}>{r.employeeId}</span>,
     },
     {
       title: 'Người đánh giá',
@@ -99,7 +104,7 @@ export default function PerformancePage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Space>
-          <TrophyOutlined style={{ fontSize: 22, color: preset.primary }} />
+          <TrophyOutlined style={{ fontSize: 22, color: linkColor }} />
           <Title level={4} style={{ margin: 0, color: textPrimary }}>Đánh giá hiệu suất</Title>
         </Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
@@ -119,6 +124,13 @@ export default function PerformancePage() {
             placeholder="Trạng thái" style={{ width: 150 }} allowClear
             options={Object.entries(STATUS_META).map(([k, v]) => ({ value: k, label: v.label }))}
             onChange={setStatusFilter}
+          />
+          <OrgUnitSelect
+            placeholder="Phòng ban"
+            style={{ minWidth: 180 }}
+            value={orgUnitFilter}
+            onChange={(v) => { setOrgUnitFilter(v); }}
+            allowClear
           />
         </Space>
       </div>
@@ -200,7 +212,11 @@ export default function PerformancePage() {
       >
         {detailReview && (
           <Descriptions column={1} bordered size="small" labelStyle={{ color: textSecondary }} contentStyle={{ color: textPrimary }}>
-            <Descriptions.Item label="Nhân viên">{detailReview.employee?.fullName}</Descriptions.Item>
+            <Descriptions.Item label="Nhân viên">
+              {detailReview.employee
+                ? <EmployeeInfoCell employee={detailReview.employee} variant="descriptions" />
+                : <span style={{ color: textPrimary }}>{detailReview.employeeId}</span>}
+            </Descriptions.Item>
             <Descriptions.Item label="Người đánh giá">{detailReview.reviewer?.fullName}</Descriptions.Item>
             <Descriptions.Item label="Kỳ đánh giá"><Tag color="blue">{detailReview.period}</Tag></Descriptions.Item>
             <Descriptions.Item label="Điểm">

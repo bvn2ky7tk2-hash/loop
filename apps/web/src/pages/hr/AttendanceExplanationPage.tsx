@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { OrgUnitSelect } from '../../components/selects';
 import {
   attendanceExplanationApi,
   type AttendanceExplanation,
@@ -23,6 +24,7 @@ import {
   type ExplanationStatus,
 } from '../../api/hr-attendance';
 import { employeesApi } from '../../api/employees';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -73,6 +75,7 @@ export default function AttendanceExplanationPage() {
 
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
   const [filterEmployeeId, setFilterEmployeeId] = useState<string | undefined>();
+  const [filterOrgUnitId, setFilterOrgUnitId] = useState<string | undefined>();
   const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [rejectModal, setRejectModal] = useState<{ open: boolean; id: string }>({ open: false, id: '' });
@@ -85,11 +88,12 @@ export default function AttendanceExplanationPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ['attendance-explanations', filterStatus, filterEmployeeId, page],
+    queryKey: ['attendance-explanations', filterStatus, filterEmployeeId, filterOrgUnitId, page],
     queryFn: () =>
       attendanceExplanationApi.list({
         status: filterStatus as ExplanationStatus | undefined,
         employeeId: filterEmployeeId,
+        orgUnitId: filterOrgUnitId,
         page,
         limit: 20,
       }),
@@ -157,10 +161,10 @@ export default function AttendanceExplanationPage() {
     {
       title: 'Nhân viên',
       dataIndex: 'employee',
-      width: 180,
+      width: 220,
       render: (emp) =>
         emp ? (
-          <Text style={{ color: textPrimary, fontWeight: 500 }}>{emp.fullName}</Text>
+          <EmployeeInfoCell employee={emp} />
         ) : (
           <Text style={{ color: textMuted }}>—</Text>
         ),
@@ -309,6 +313,13 @@ export default function AttendanceExplanationPage() {
           <Option value="APPROVED">Đã duyệt</Option>
           <Option value="REJECTED">Từ chối</Option>
         </Select>
+        <OrgUnitSelect
+          placeholder="Phòng ban"
+          style={{ minWidth: 180 }}
+          value={filterOrgUnitId}
+          onChange={(v) => { setFilterOrgUnitId(v); setPage(1); }}
+          allowClear
+        />
       </FilterBar>
 
       {/* Table */}

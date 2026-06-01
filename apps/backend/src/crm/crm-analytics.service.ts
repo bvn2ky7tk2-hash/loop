@@ -196,4 +196,31 @@ export class CrmAnalyticsService extends TenantAwareService {
       wonDeals:   Number(r.won_deals),
     }));
   }
+
+  // ─── Deals aging (không có activity trong > N ngày) ─────────────────────
+
+  async getDealAging(minDays = 14): Promise<{ id: string; title: string; stage: string; ageDays: number; value: number }[]> {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - minDays);
+
+    const deals = await this.prisma.deal.findMany({
+      where: {
+        deletedAt: null,
+        stage: { notIn: ['WON', 'LOST'] as any[] },
+        updatedAt: { lte: cutoff },
+      },
+      select: { id: true, title: true, stage: true, value: true, updatedAt: true },
+      orderBy: { updatedAt: 'asc' },
+      take: 20,
+    });
+
+    const now = new Date();
+    return deals.map(d => ({
+      id:       d.id,
+      title:    d.title,
+      stage:    d.stage,
+      ageDays:  Math.floor((now.getTime() - d.updatedAt.getTime()) / 86400000),
+      value:    Number(d.value ?? 0),
+    }));
+  }
 }

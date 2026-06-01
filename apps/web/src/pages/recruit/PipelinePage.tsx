@@ -20,9 +20,9 @@ const STAGE_META: Record<CandidateStage, { label: string; color: string; bg: str
 };
 
 const STAGE_META_DARK: Record<CandidateStage, { bg: string; border: string }> = {
-  APPLIED:   { bg: '#1E3A5F', border: '#2563EB' },
+  APPLIED:   { bg: '#1E3A5F', border: '#3B82F6' },
   SCREENING: { bg: '#164E63', border: '#0891B2' },
-  INTERVIEW: { bg: '#2E1065', border: '#7C3AED' },
+  INTERVIEW: { bg: '#2E1065', border: '#8B5CF6' },
   OFFER:     { bg: '#431407', border: '#EA580C' },
   HIRED:     { bg: '#064E3B', border: '#059669' },
   REJECTED:  { bg: '#450A0A', border: '#DC2626' },

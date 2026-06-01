@@ -6,6 +6,7 @@ import { paginate } from '../common/dto/pagination.dto';
 import { CreateTrainingProgramDto, CreateTrainingRecordDto, FilterTrainingDto } from './dto/training.dto';
 import { TrainingStatus } from '../generated/prisma';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 @Injectable({ scope: Scope.REQUEST })
 export class TrainingService extends TenantAwareService {
@@ -29,19 +30,29 @@ export class TrainingService extends TenantAwareService {
   // ── Records ─────────────────────────────────────────────────────────────────
 
   async listRecords(dto: FilterTrainingDto) {
-    const { page = 1, limit = 50, employeeId, programId, status } = dto;
+    const { page = 1, limit = 50, employeeId, orgUnitId, programId, status } = dto;
     // TrainingRecord chưa có tenantId (v6 task)
-    const where = {
+    const where: any = {
       ...(employeeId ? { employeeId } : {}),
       ...(programId  ? { programId  } : {}),
       ...(status     ? { status: status as TrainingStatus } : {}),
     };
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      where.employeeId = { in: empIds };
+    }
     const [data, total] = await this.prisma.$transaction([
       this.prisma.trainingRecord.findMany({
         where, skip: (page - 1) * limit, take: limit,
         include: {
           program:  { select: { id: true, title: true, type: true } },
-          employee: { select: { id: true, fullName: true, code: true } },
+          employee: {
+            select: {
+              id: true, fullName: true, code: true, userId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
+          },
         },
         orderBy: { startDate: 'desc' },
       }),

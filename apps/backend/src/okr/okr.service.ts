@@ -11,9 +11,19 @@ import {
   CreateKpiMetricDto, UpdateKpiMetricDto, CreateKpiRecordDto,
 } from './dto/okr.dto';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getOrgSubtreeIds, getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 const OBJ_INCLUDE = {
-  owner: { select: { id: true, name: true, email: true } },
+  owner: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      code: true,
+      orgUnit: { select: { name: true } },
+      position: { select: { jobTitle: { select: { name: true } } } },
+    },
+  },
   keyResults: { orderBy: { createdAt: 'asc' as const } },
 } as const;
 
@@ -83,12 +93,14 @@ export class OkrService extends TenantAwareService implements OnModuleInit {
   }
 
   // ── Objectives ─────────────────────────────────────────────────────────────
-  async listObjectives(ownerId?: string, cycle?: string, year?: number, status?: string, page = 1, limit = 20) {
+  async listObjectives(ownerId?: string, cycle?: string, year?: number, status?: string, orgUnitId?: string, page = 1, limit = 20) {
+    const orgIds = orgUnitId ? await getOrgSubtreeIds(this.prisma, orgUnitId) : null;
     const where: any = this.tenantWhere({
       ...(ownerId ? { ownerId } : {}),
       ...(cycle   ? { cycle }   : {}),
       ...(year    ? { year }    : {}),
       ...(status  ? { status }  : {}),
+      ...(orgIds  ? { orgUnitId: { in: orgIds } } : {}),
     });
 
     const [data, total] = await this.prisma.$transaction([

@@ -312,6 +312,7 @@ export class PayrollEngineService {
     // ── BHXH / BHYT / BHTN (NĐ 115/2015: làm tròn lên 100đ) ────────────────
     let bhxhEmployee = 0, bhytEmployee = 0, bhtnEmployee = 0;
     let bhxhEmployer = 0, bhytEmployer = 0, bhtnEmployer = 0, tnldEmployer = 0;
+    let bhxhBase = 0;
 
     // E16G.4: Skip BHXH nếu PART_TIME, hoặc PROBATION với bhxhExemptForProbation=true, hoặc nghỉ không lương >= 14 ngày
     const bhxhExempt =
@@ -322,7 +323,7 @@ export class PayrollEngineService {
     if (!bhxhExempt && insuranceConfig) {
       const ceiling = Number(insuranceConfig.wageBase) * insuranceConfig.bhxhCeilingMultiple;
       // BHXH base = rawSalary (contract.salaryMonthly hiện tại, cuối kỳ), không phải weighted avg
-      const bhxhBase = Math.min(rawSalary, ceiling);
+      bhxhBase = Math.min(rawSalary, ceiling);
 
       bhxhEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployeeRate));
       bhytEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployeeRate));
@@ -412,7 +413,13 @@ export class PayrollEngineService {
       pitAmount,
       netSalary: Math.round(netSalary),
       totalLaborCost: Math.round(totalLaborCost),
-      configSnapshot: { ...configSnapshot, columnBreakdown },
+      configSnapshot: {
+        ...configSnapshot,
+        columnBreakdown,
+        contractSalary: Math.round(contractSalary),
+        standardDays,
+        bhxhBase: Math.round(bhxhBase),
+      },
     };
   }
 

@@ -16,6 +16,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 import { processesApi } from '../../api/processes.api';
 import { leavesApi } from '../../api/leaves';
+import { apiClient } from '../../api/client';
 import { expensesApi } from '../../api/expenses';
 import { tasksApi } from '../../api/tasks';
 import { timesheetApi } from '../../api/timesheet';
@@ -99,9 +100,11 @@ export default function MyWorkPage() {
     refetchInterval: 60_000,
   });
 
+  const myEmployeeId = (meData as any)?.employeeId as string | undefined;
   const { data: leavesData, isLoading: leavesLoading } = useQuery({
-    queryKey: ['my-work-leaves-pending'],
-    queryFn:  () => leavesApi.list({ status: 'PENDING', myOnly: true, page: 1, pageSize: 5 }),
+    queryKey: ['my-work-leaves-pending', myEmployeeId],
+    queryFn:  () => leavesApi.list({ employeeId: myEmployeeId!, status: 'PENDING', page: 1, pageSize: 5 }),
+    enabled:  !!myEmployeeId,
     refetchInterval: 60_000,
   });
 
@@ -130,6 +133,15 @@ export default function MyWorkPage() {
     refetchInterval: 30_000,
   });
 
+  // Giờ làm tuần này từ timesheet period
+  const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
+  const weekEnd   = dayjs().endOf('week').format('YYYY-MM-DD');
+  const { data: weekPeriod } = useQuery({
+    queryKey: ['timesheet-week', weekStart, weekEnd],
+    queryFn:  () => timesheetApi.periodDetail(weekStart, weekEnd),
+    staleTime: 5 * 60_000,
+  });
+
   // ── Mutations ──────────────────────────────────────────────────────────────
   const checkInMut = useMutation({
     mutationFn: () => timesheetApi.checkIn(),
@@ -154,7 +166,9 @@ export default function MyWorkPage() {
   const pendingLeavesCount  = leavesData?.total ?? 0;
   const pendingExpenseCount = expensesData?.total ?? 0;
   const leaveBalance        = meData?.leaveBalance ?? 0;
-  const weekHours           = 0; // placeholder — use timesheet period if available
+  const weekHours = (weekPeriod?.days ?? [])
+    .reduce((sum, d) => sum + (d.workHours ?? 0) + d.overtimeHours, 0)
+    .toFixed(1);
 
   const hasCheckedIn  = !!todaySummary?.checkIn;
   const hasCheckedOut = !!todaySummary?.checkOut;

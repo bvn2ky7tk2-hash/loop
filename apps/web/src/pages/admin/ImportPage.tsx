@@ -98,7 +98,7 @@ const TEMPLATES: {
 
 export default function ImportPage() {
   const { message } = App.useApp();
-  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset, linkColor } = useThemePalette();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey | null>(null);
@@ -293,7 +293,7 @@ export default function ImportPage() {
 
       <Upload.Dragger {...uploadProps} style={{ borderRadius: 12, borderColor }}>
         <p className="ant-upload-drag-icon">
-          <UploadOutlined style={{ fontSize: 32, color: preset.primary }} />
+          <UploadOutlined style={{ fontSize: 32, color: linkColor }} />
         </p>
         <p className="ant-upload-text" style={{ color: textPrimary }}>
           Click hoặc kéo file vào đây để upload

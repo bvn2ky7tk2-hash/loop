@@ -19,8 +19,10 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { OrgUnitSelect } from '../../components/selects';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { okrApi, type OkrObjective, type OkrKeyResult, type KpiMetric, type OkrCycle, type OkrStatus } from '../../api/okr';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { usersApi } from '../../api/users';
 import { useAuthStore } from '../../store/auth.store';
 import { formatCurrency } from '../../utils/format';
@@ -107,6 +109,7 @@ function OkrTab() {
   const [filterCycle, setFilterCycle] = useState<string>();
   const [filterYear, setFilterYear]   = useState<number>(dayjs().year());
   const [filterStatus, setFilterStatus] = useState<string>();
+  const [filterOrgUnit, setFilterOrgUnit] = useState<string | undefined>();
   const [modalOpen, setModalOpen]     = useState(false);
   const [editing, setEditing]         = useState<OkrObjective | null>(null);
   const [detail, setDetail]           = useState<OkrObjective | null>(null);
@@ -114,8 +117,8 @@ function OkrTab() {
   const [objForm] = Form.useForm();
 
   const { data: objectives, isLoading } = useQuery({
-    queryKey: ['okr-objectives', filterCycle, filterYear, filterStatus],
-    queryFn: () => okrApi.listObjectives({ cycle: filterCycle, year: filterYear || undefined, status: filterStatus }),
+    queryKey: ['okr-objectives', filterCycle, filterYear, filterStatus, filterOrgUnit],
+    queryFn: () => okrApi.listObjectives({ cycle: filterCycle, year: filterYear || undefined, status: filterStatus, orgUnitId: filterOrgUnit }),
   });
   const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
 
@@ -165,7 +168,15 @@ function OkrTab() {
             onClick={() => setDetail(obj)}>{obj.title}</Button>
           <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
             <Tag style={{ fontSize: 11 }}>{CYCLE_LABEL[obj.cycle]} {obj.year}</Tag>
-            <Text style={{ color: textMuted, fontSize: 11 }}>{obj.owner.name}</Text>
+            <EmployeeInfoCell
+              employee={{
+                fullName: obj.owner.name,
+                code: obj.owner.code ?? undefined,
+                orgUnit: obj.owner.orgUnit ?? undefined,
+                position: obj.owner.position ?? undefined,
+              }}
+              variant="inline"
+            />
           </div>
         </div>
       ),
@@ -223,6 +234,13 @@ function OkrTab() {
           options={[2024,2025,2026,2027].map(y => ({ value: y, label: String(y) }))} />
         <Select placeholder="Trạng thái" allowClear style={{ width: 150 }} value={filterStatus} onChange={setFilterStatus}
           options={Object.entries(STATUS_META).map(([v, m]) => ({ value: v, label: m.label }))} />
+        <OrgUnitSelect
+          placeholder="Phòng ban"
+          style={{ minWidth: 180 }}
+          value={filterOrgUnit}
+          onChange={setFilterOrgUnit}
+          allowClear
+        />
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>Thêm Objective</Button>
       </FilterBar>
 

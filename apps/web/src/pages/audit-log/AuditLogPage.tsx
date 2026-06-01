@@ -59,7 +59,7 @@ interface Filters {
 }
 
 export default function AuditLogPage() {
-  const { textPrimary, textMuted, bgCard, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgPage, borderColor, isDark } = useThemePalette();
 
   const [filters, setFilters] = useState<Filters>({ page: 1, limit: 50 });
   const [detailLog, setDetailLog] = useState<AuditLogRecord | null>(null);
@@ -316,7 +316,7 @@ export default function AuditLogPage() {
                   </Text>
                   <Paragraph
                     style={{
-                      background: isDark ? '#0F172A' : '#F8FAFC',
+                      background: isDark ? bgPage : '#F8FAFC',
                       border: `1px solid ${borderColor}`,
                       borderRadius: 6,
                       padding: '10px 12px',
@@ -341,7 +341,7 @@ export default function AuditLogPage() {
                   </Text>
                   <Paragraph
                     style={{
-                      background: isDark ? '#0F172A' : '#F8FAFC',
+                      background: isDark ? bgPage : '#F8FAFC',
                       border: `1px solid ${borderColor}`,
                       borderRadius: 6,
                       padding: '10px 12px',

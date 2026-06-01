@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useQuery } from '@tanstack/react-query';
 import { timesheetApi, type TeamMemberStatus, type WorkStatusType } from '../../api/timesheet';
 import { useAuthStore } from '../../store/auth.store';
@@ -34,17 +35,17 @@ const STATUS_BADGE: Record<WorkStatusType, { bg: string; color: string }> = {
   WORKING:       { bg: '#ECFDF5', color: '#065F46' },
   WFH:           { bg: '#EEF2FF', color: '#4338CA' },
   MEETING:       { bg: '#FFFBEB', color: '#92400E' },
-  BREAK:         { bg: '#F1F5F9', color: '#475569' },
+  BREAK:         { bg: '#F1F5F9', color: '#94A3B8' },
   OFF:           { bg: '#FEF2F2', color: '#DC2626' },
   BUSINESS_TRIP: { bg: '#F0F9FF', color: '#0369A1' },
 };
 
 export default function TimesheetManagerPage() {
   const { user } = useAuthStore();
-  const { isDark, preset, primary } = useThemePalette();
+  const { isDark, preset, primary, bgContainer } = useThemePalette();
   const chartCardStyle = {
     borderRadius: 12,
-    background: isDark ? '#1E293B' : `${primary}09`,
+    background: isDark ? bgContainer : `${primary}09`,
     border: `1px solid ${isDark ? '#334155' : `${primary}28`}`,
   };
 
@@ -70,16 +71,24 @@ export default function TimesheetManagerPage() {
   const columns = [
     {
       title: 'Nhân sự',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name: string) => <Text strong>{name}</Text>,
+      key: 'employee',
+      render: (_: unknown, r: TeamMemberStatus) => (
+        <EmployeeInfoCell
+          employee={{
+            fullName: r.name,
+            code: r.employeeCode ?? undefined,
+            orgUnit: r.orgUnit ?? undefined,
+            position: r.position ?? undefined,
+          }}
+        />
+      ),
     },
     {
       title: 'Trạng thái hiện tại',
       dataIndex: 'currentStatus',
       key: 'currentStatus',
       render: (status: WorkStatusType | null) => {
-        if (!status) return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: '#F1F5F9', color: '#475569' }}>Chưa cập nhật</span>;
+        if (!status) return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: isDark ? 'rgba(148,163,184,0.15)' : '#F1F5F9', color: '#94A3B8' }}>Chưa cập nhật</span>;
         const cfg = STATUS_BADGE[status];
         return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color }}>{STATUS_LABELS[status]}</span>;
       },

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Input, Form,
-  Select, Modal, message, Tag,
+  Select, message, Tag,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ContactsOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -50,10 +51,9 @@ export default function ContactsPage() {
   };
 
   const handleDelete = (id: string, name: string) => {
-    Modal.confirm({
-      title: `Xoá liên hệ "${name}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: name,
+      onConfirm: async () => { await deleteMutation.mutateAsync(id); message.success('Đã xoá'); },
     });
   };
 

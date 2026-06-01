@@ -78,6 +78,7 @@ import { PermissionAuditModule } from './admin/permission-audit/permission-audit
 import { EmailLogModule } from './admin/email-log/email-log.module';
 import { QueuesModule } from './admin/queues/queues.module';
 import { ApiKeysModule } from './api-keys/api-keys.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   providers: [
@@ -181,6 +182,7 @@ import { ApiKeysModule } from './api-keys/api-keys.module';
     EmailLogModule,
     QueuesModule,
     ApiKeysModule,
+    AnalyticsModule,
   ],
 })
 export class AppModule {}

@@ -11,12 +11,33 @@ export interface Employee {
   positionId?: string | null;
   position?: { id: string; code: string; jobTitle?: { name: string } } | null;
   leavePolicyId?: string | null;
+  directManagerId?: string | null;
   startDate?: string;
   birthdate?: string;
   email?: string;
-  cccd?: string;
-  cccdIssueDate?: string;
-  cccdIssuePlace?: string;
+  // Thông tin cá nhân mở rộng
+  gender?: string | null;
+  maritalStatus?: string | null;
+  phoneNumber?: string | null;
+  hometown?: string | null;
+  placeOfBirth?: string | null;
+  ethnicity?: string | null;
+  religion?: string | null;
+  nationality?: string | null;
+  // Giấy tờ tùy thân
+  idType?: string | null;
+  idNumber?: string | null;
+  idIssueDate?: string | null;
+  idIssuePlace?: string | null;
+  cccd?: string | null;
+  cccdIssueDate?: string | null;
+  cccdIssuePlace?: string | null;
+  // Địa chỉ
+  permanentAddress?: string | null;
+  currentAddress?: string | null;
+  // Ngân hàng
+  bankAccount?: string | null;
+  bankName?: string | null;
   userId?: string;
   user?: { name: string; email: string };
   currentRate?: number;
@@ -43,11 +64,11 @@ export const employeesApi = {
   update: (id: string, data: Partial<Employee>) =>
     apiClient.put<Employee>(`/employees/${id}`, data).then((r) => r.data),
   getRates: (id: string) =>
-    apiClient.get<EmployeeRate[]>(`/employees/${id}/rates`).then((r) => r.data),
+    apiClient.get<PaginatedResult<EmployeeRate>>(`/employees/${id}/rates`).then((r) => r.data.data),
   addRate: (id: string, data: { ratePerDay: number; effectiveDate: string; currency?: string }) =>
     apiClient.post<EmployeeRate>(`/employees/${id}/rates`, data).then((r) => r.data),
   getProjectHistory: (id: string) =>
-    apiClient.get<{ id: string; role: string; allocationPct: number; startDate: string; endDate: string; project: { id: string; name: string; code: string; type: string } }[]>(
+    apiClient.get<PaginatedResult<{ id: string; role: string; allocationPct: number; startDate: string; endDate: string; project: { id: string; name: string; code: string; type: string } }>>(
       `/employees/${id}/project-history`
-    ).then((r) => r.data),
+    ).then((r) => r.data.data),
 };

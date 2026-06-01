@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import {
   Table, Button, Form, Input, Select, DatePicker,
   InputNumber, Space, Popconfirm, Tooltip, App, theme,
-  Typography, Alert,
+  Typography, Alert, Descriptions,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import type { ColumnsType } from 'antd/es/table';
@@ -22,6 +22,8 @@ import { payrollApi } from '../../api/payroll';
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { OrgUnitSelect } from '../../components/selects';
 import { formatNumber } from '../../utils/format';
 
 const { Text } = Typography;
@@ -56,7 +58,7 @@ const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
 };
 
 const CONTRACT_STATUS_HUE: Record<ContractStatus, string> = {
-  DRAFT:      '#2563EB',
+  DRAFT:      '#3B82F6',
   ACTIVE:     '#16A34A',
   EXPIRED:    '#EA580C',
   TERMINATED: '#DC2626',
@@ -101,7 +103,7 @@ function suggestRenewalType(current: ContractType, renewalCount: number): Contra
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function TypeBadge({ type, isDark }: { type: ContractType; isDark: boolean }) {
-  const hue = CONTRACT_TYPE_HUE[type] ?? '#64748B';
+  const hue = CONTRACT_TYPE_HUE[type] ?? '#94A3B8';
   return (
     <span style={{
       fontSize: 11, fontWeight: 600, borderRadius: 5, padding: '2px 8px',
@@ -116,7 +118,7 @@ function TypeBadge({ type, isDark }: { type: ContractType; isDark: boolean }) {
 }
 
 function StatusBadge({ status, isDark }: { status: ContractStatus; isDark: boolean }) {
-  const hue = CONTRACT_STATUS_HUE[status] ?? '#64748B';
+  const hue = CONTRACT_STATUS_HUE[status] ?? '#94A3B8';
   return (
     <span style={{
       fontSize: 11, fontWeight: 600, borderRadius: 5, padding: '2px 8px',
@@ -860,14 +862,16 @@ export default function ContractsPage() {
   const [searchText, setSearchText]             = useState('');
   const [filterStatus, setFilterStatus]         = useState<ContractStatus | ''>('');
   const [filterType, setFilterType]             = useState<ContractType | ''>('');
+  const [filterOrgUnit, setFilterOrgUnit]       = useState<string | undefined>(undefined);
   const [drawerOpen, setDrawerOpen]             = useState(false);
   const [editingContract, setEditingContract]   = useState<Contract | null>(null);
   const [renewTarget, setRenewTarget]           = useState<Contract | null>(null);
   const [renewModalOpen, setRenewModalOpen]     = useState(false);
+  const [detailContract, setDetailContract]     = useState<Contract | null>(null);
 
   const { data: paginated, isLoading } = useQuery({
-    queryKey: ['contracts', page, pageSize],
-    queryFn: () => contractsApi.list({ page, limit: pageSize }),
+    queryKey: ['contracts', page, pageSize, filterOrgUnit],
+    queryFn: () => contractsApi.list({ page, limit: pageSize, orgUnitId: filterOrgUnit }),
     placeholderData: (prev) => prev,
   });
 
@@ -914,9 +918,10 @@ export default function ContractsPage() {
       title: 'Nhân viên',
       dataIndex: ['employee', 'fullName'],
       ellipsis: true,
-      render: (name: string, r: Contract) => (
+      width: 220,
+      render: (_: string, r: Contract) => (
         <div>
-          <div style={{ fontWeight: 600, fontSize: 13, color: textPrimary }}>{name}</div>
+          <EmployeeInfoCell employee={r.employee} />
           {r.renewalCount > 0 && (
             <div style={{ fontSize: 11, color: linkColor }}>
               <HistoryOutlined style={{ marginRight: 2 }} />
@@ -1065,6 +1070,13 @@ export default function ContractsPage() {
           allowClear
           options={CONTRACT_TYPES.map((t) => ({ value: t, label: CONTRACT_TYPE_LABELS[t] }))}
         />
+        <OrgUnitSelect
+          placeholder="Phòng ban"
+          style={{ minWidth: 180 }}
+          value={filterOrgUnit}
+          onChange={(v) => { setFilterOrgUnit(v); setPage(1); }}
+          allowClear
+        />
       </div>
 
       {/* Table */}
@@ -1082,6 +1094,14 @@ export default function ContractsPage() {
           size="small"
           scroll={{ x: 900 }}
           locale={{ emptyText: 'Không có hợp đồng phù hợp' }}
+          onRow={(record) => ({
+            onClick: (e) => {
+              const target = e.target as HTMLElement;
+              if (target.closest('button') || target.closest('.ant-popconfirm') || target.closest('.ant-tooltip')) return;
+              setDetailContract(record);
+            },
+            style: { cursor: 'pointer' },
+          })}
           pagination={{
             current: page,
             pageSize,
@@ -1093,6 +1113,92 @@ export default function ContractsPage() {
           }}
         />
       </div>
+
+      {/* ── Modal Chi tiết hợp đồng ────────────────────────────────────────── */}
+      <CenteredModal
+        open={!!detailContract}
+        onClose={() => setDetailContract(null)}
+        title="Chi tiết hợp đồng lao động"
+        width={560}
+        footer={
+          <Space>
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => { if (detailContract) { setDetailContract(null); handleOpenEdit(detailContract); } }}
+            >
+              Chỉnh sửa
+            </Button>
+            <Button
+              icon={<SyncOutlined />}
+              disabled={detailContract?.status === 'TERMINATED'}
+              onClick={() => { if (detailContract) { setDetailContract(null); handleOpenRenew(detailContract); } }}
+            >
+              Gia hạn
+            </Button>
+            <Button onClick={() => setDetailContract(null)}>Đóng</Button>
+          </Space>
+        }
+      >
+        {detailContract && (() => {
+          const totalAllowance = (detailContract.allowances ?? []).reduce((s, a) => s + Number(a.amount), 0);
+          return (
+            <Descriptions bordered size="small" column={1} labelStyle={{ width: 160 }}>
+              <Descriptions.Item label="Nhân viên">
+                <EmployeeInfoCell employee={detailContract.employee} variant="descriptions" />
+              </Descriptions.Item>
+              <Descriptions.Item label="Loại hợp đồng">
+                <TypeBadge type={detailContract.type} isDark={isDark} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                <StatusBadge status={detailContract.status} isDark={isDark} />
+              </Descriptions.Item>
+              <Descriptions.Item label="Ngày bắt đầu">
+                <Text style={{ color: textMuted }}>{dayjs(detailContract.startDate).format('DD/MM/YYYY')}</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Ngày kết thúc">
+                {detailContract.endDate
+                  ? <Text style={{ color: textMuted }}>{dayjs(detailContract.endDate).format('DD/MM/YYYY')}</Text>
+                  : <Text style={{ color: '#10B981', fontWeight: 600 }}>Vô thời hạn</Text>}
+              </Descriptions.Item>
+              <Descriptions.Item label="Lương cơ bản">
+                <Text style={{ color: textPrimary, fontWeight: 600 }}>{formatNumber(detailContract.salaryMonthly)} {detailContract.currency}</Text>
+              </Descriptions.Item>
+              {totalAllowance > 0 && (
+                <Descriptions.Item label="Phụ cấp">
+                  <div>
+                    {(detailContract.allowances ?? []).map((a) => (
+                      <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+                        <Text style={{ color: textMuted }}>{a.allowanceType?.name ?? '—'}</Text>
+                        <Text style={{ color: '#10B981', fontVariantNumeric: 'tabular-nums' }}>+{formatNumber(Number(a.amount))}</Text>
+                      </div>
+                    ))}
+                  </div>
+                </Descriptions.Item>
+              )}
+              <Descriptions.Item label="Tổng thu nhập">
+                <Text style={{ color: linkColor, fontWeight: 700, fontSize: 15 }}>
+                  {formatNumber(detailContract.salaryMonthly + totalAllowance)} {detailContract.currency}
+                </Text>
+              </Descriptions.Item>
+              {detailContract.signedAt && (
+                <Descriptions.Item label="Ngày ký">
+                  <Text style={{ color: textMuted }}>{dayjs(detailContract.signedAt).format('DD/MM/YYYY')}</Text>
+                </Descriptions.Item>
+              )}
+              {detailContract.renewalCount > 0 && (
+                <Descriptions.Item label="Lần gia hạn">
+                  <Text style={{ color: linkColor }}>Gia hạn lần {detailContract.renewalCount}</Text>
+                </Descriptions.Item>
+              )}
+              {detailContract.note && (
+                <Descriptions.Item label="Ghi chú">
+                  <Text style={{ color: textMuted }}>{detailContract.note}</Text>
+                </Descriptions.Item>
+              )}
+            </Descriptions>
+          );
+        })()}
+      </CenteredModal>
 
       {/* Modals */}
       <ContractDrawer

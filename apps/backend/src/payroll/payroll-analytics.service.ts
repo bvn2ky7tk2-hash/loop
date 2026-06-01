@@ -173,21 +173,31 @@ export class PayrollAnalyticsService extends TenantAwareService {
     if (!latestPeriod) return [];
 
     const records = await this.prisma.payrollRecord.findMany({
-      where: this.tenantWhere({ periodId: latestPeriod.id }),
+      where: { periodId: latestPeriod.id },  // records không có tenantId seeded
       orderBy: { grossSalary: 'desc' },
       take: Math.min(limit, 50),
       select: {
         grossSalary: true,
         netSalary:   true,
         employee: {
-          select: { fullName: true },
+          select: {
+            fullName: true,
+            code:     true,
+            orgUnit:  { select: { name: true } },
+            position: { select: { jobTitle: { select: { name: true } } } },
+          },
         },
       },
     });
 
     return records.map((r, idx) => ({
-      rank:  idx + 1,
-      name:  r.employee.fullName,
+      rank:     idx + 1,
+      employee: {
+        fullName: r.employee.fullName,
+        code:     r.employee.code     ?? undefined,
+        orgUnit:  r.employee.orgUnit  ?? undefined,
+        position: r.employee.position ?? undefined,
+      },
       gross: Number(r.grossSalary),
       net:   Number(r.netSalary),
     }));

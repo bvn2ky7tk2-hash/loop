@@ -48,7 +48,24 @@ export class ProcessUserTasksService {
               id: true,
               status: true,
               variables: true,
-              startedByUser: { select: { id: true, name: true } },
+              startedByUser: {
+                select: {
+                  id: true,
+                  name: true,
+                  employee: {
+                    select: {
+                      code: true,
+                      fullName: true,
+                      orgUnit: { select: { name: true } },
+                      position: {
+                        select: {
+                          jobTitle: { select: { name: true } },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
               definition: {
                 select: {
                   id: true,

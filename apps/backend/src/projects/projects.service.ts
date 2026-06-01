@@ -151,7 +151,15 @@ export class ProjectsService extends TenantAwareService {
   async getMembers(projectId: string) {
     return this.prisma.allocation.findMany({
       where: { projectId },
-      include: { employee: { select: { id: true, fullName: true, code: true, level: true } } },
+      include: {
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, level: true,
+            orgUnit:  { select: { id: true, name: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
+      },
       orderBy: { createdAt: 'asc' },
     });
   }

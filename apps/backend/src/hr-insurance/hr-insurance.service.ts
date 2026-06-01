@@ -15,6 +15,7 @@ import {
   UpdateSocialInsuranceBookDto,
 } from './dto/insurance.dto';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 @Injectable({ scope: Scope.REQUEST })
 export class HrInsuranceService extends TenantAwareService {
@@ -31,19 +32,20 @@ export class HrInsuranceService extends TenantAwareService {
     const { page = 1, limit = 50, orgUnitId, status, search } = query;
 
     // InsuranceEnrollment chưa có tenantId (v6 task)
+    const empIds = orgUnitId ? await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId) : null;
     const where: any = {
       ...(status ? { status: status as InsuranceEnrollmentStatus } : {}),
-      employee: {
-        ...(orgUnitId ? { orgUnitId } : {}),
-        ...(search
-          ? {
+      ...(empIds ? { employeeId: { in: empIds } } : {}),
+      ...(search
+        ? {
+            employee: {
               OR: [
                 { fullName: { contains: search, mode: 'insensitive' } },
                 { code: { contains: search, mode: 'insensitive' } },
               ],
-            }
-          : {}),
-      },
+            },
+          }
+        : {}),
     };
 
     const [data, total] = await this.prisma.$transaction([
@@ -52,7 +54,13 @@ export class HrInsuranceService extends TenantAwareService {
         skip: (page - 1) * limit,
         take: limit,
         include: {
-          employee: { select: { id: true, fullName: true, code: true, orgUnitId: true } },
+          employee: {
+            select: {
+              id: true, fullName: true, code: true, userId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
+          },
           socialInsuranceBook: true,
         },
         orderBy: { createdAt: 'desc' },

@@ -115,7 +115,7 @@ function AppMockup() {
 
         {/* Content area */}
         <div style={{ flex: 1, background: '#EEF2FF', padding: '10px', overflow: 'hidden' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#0F172A', marginBottom: 9 }}>Tổng quan</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#111827', marginBottom: 9 }}>Tổng quan</div>
 
           {/* Stat cards */}
           <div style={{ display: 'flex', gap: 7, marginBottom: 9 }}>
@@ -127,8 +127,8 @@ function AppMockup() {
                 flex: 1, background: '#fff', borderRadius: 7, padding: '7px 9px',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
               }}>
-                <div style={{ fontSize: 7, color: '#64748B' }}>{c.label}</div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>{c.val}</div>
+                <div style={{ fontSize: 7, color: '#94A3B8' }}>{c.label}</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>{c.val}</div>
                 <div style={{ fontSize: 7, color: '#10B981', marginTop: 2 }}>{c.delta}</div>
               </div>
             ))}
@@ -139,7 +139,7 @@ function AppMockup() {
             background: '#fff', borderRadius: 7, padding: '7px 9px',
             marginBottom: 9, boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           }}>
-            <div style={{ fontSize: 7, color: '#64748B', marginBottom: 4 }}>Biểu đồ công việc</div>
+            <div style={{ fontSize: 7, color: '#94A3B8', marginBottom: 4 }}>Biểu đồ công việc</div>
             <svg viewBox={`0 0 ${cW} ${cH}`} style={{ width: '100%', height: 40 }}>
               <defs>
                 <linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1">
@@ -165,7 +165,7 @@ function AppMockup() {
             background: '#fff', borderRadius: 7, padding: '7px 9px',
             boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
           }}>
-            <div style={{ fontSize: 8, fontWeight: 600, color: '#64748B', marginBottom: 5 }}>Bảng công việc</div>
+            <div style={{ fontSize: 8, fontWeight: 600, color: '#94A3B8', marginBottom: 5 }}>Bảng công việc</div>
             <div style={{ display: 'flex', borderBottom: '1px solid #F1F5F9', paddingBottom: 3, marginBottom: 3 }}>
               <span style={{ flex: 1, fontSize: 7, color: '#94A3B8' }}>Tên công việc</span>
               <span style={{ width: 52, fontSize: 7, color: '#94A3B8' }}>Người phụ trách</span>
@@ -176,7 +176,7 @@ function AppMockup() {
                 padding: '3px 0', borderBottom: '1px solid #F8FAFC',
               }}>
                 <span style={{
-                  flex: 1, fontSize: 7.5, color: '#0F172A',
+                  flex: 1, fontSize: 7.5, color: '#111827',
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 }}>{t.name}</span>
                 <span style={{
@@ -197,7 +197,7 @@ function AppMockup() {
         boxShadow: '0 8px 32px rgba(0,0,0,0.22)',
         width: 158,
       }}>
-        <div style={{ fontSize: 9, fontWeight: 700, color: '#0F172A', marginBottom: 8 }}>
+        <div style={{ fontSize: 9, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
           Tỷ lệ công việc
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -215,13 +215,13 @@ function AppMockup() {
               />
             ))}
             <text x={cx} y={cy + 1} textAnchor="middle" dominantBaseline="middle"
-              fontSize="11" fontWeight="700" fill="#0F172A">62%</text>
+              fontSize="11" fontWeight="700" fill="#111827">62%</text>
           </svg>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {arcs.map((a) => (
               <div key={a.label} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: a.color, flexShrink: 0 }}/>
-                <span style={{ fontSize: 7, color: '#475569' }}>{a.label}</span>
+                <span style={{ fontSize: 7, color: '#94A3B8' }}>{a.label}</span>
               </div>
             ))}
           </div>

@@ -3,6 +3,8 @@ import {
   Button, Tree, Card, Form, Input, Select, Modal,
   App, Spin, Space, Popconfirm, Tooltip, Row, Col, Tag,
 } from 'antd';
+import { useThemePalette } from '../../hooks/useThemePalette';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined,
@@ -18,8 +20,8 @@ function flattenTree(nodes: OrgUnitTree[]): OrgUnitTree[] {
 }
 
 const LEVEL_CONFIG = [
-  { bg: '#F5F3FF', border: '#7C3AED', iconBg: '#EDE9FE', iconColor: '#7C3AED', codeBg: '#EDE9FE', codeColor: '#5B21B6' },
-  { bg: '#EFF6FF', border: '#2563EB', iconBg: '#DBEAFE', iconColor: '#2563EB', codeBg: '#DBEAFE', codeColor: '#1D4ED8' },
+  { bg: '#F5F3FF', border: '#8B5CF6', iconBg: '#EDE9FE', iconColor: '#8B5CF6', codeBg: '#EDE9FE', codeColor: '#8B5CF6' },
+  { bg: '#EFF6FF', border: '#3B82F6', iconBg: '#DBEAFE', iconColor: '#3B82F6', codeBg: '#DBEAFE', codeColor: '#3B82F6' },
   { bg: '#F0FDF4', border: '#16A34A', iconBg: '#DCFCE7', iconColor: '#16A34A', codeBg: '#DCFCE7', codeColor: '#15803D' },
   { bg: '#FFF7ED', border: '#EA580C', iconBg: '#FFEDD5', iconColor: '#EA580C', codeBg: '#FFEDD5', codeColor: '#C2410C' },
 ];
@@ -34,6 +36,7 @@ function getLevelStyle(level: number) {
 export default function OrgPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
+  const { isDark, textMuted, bgCard, borderColor: bc } = useThemePalette();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<OrgUnitTree | null>(null);
   const [createForm] = Form.useForm();
@@ -173,7 +176,7 @@ export default function OrgPage() {
                 ) : n.headJobTitle ? (
                   <Tag
                     icon={<CrownOutlined />}
-                    style={{ fontSize: 11, margin: 0, background: '#F3F4F6', color: '#6B7280', borderColor: '#E5E7EB' }}
+                    style={{ fontSize: 11, margin: 0, background: isDark ? 'rgba(148,163,184,0.1)' : '#F3F4F6', color: textMuted, borderColor: bc }}
                   >
                     {n.headJobTitle.name} · Chưa có người
                   </Tag>
@@ -242,20 +245,12 @@ export default function OrgPage() {
       {!isLoading && flat.length > 0 && (
         <Row gutter={16} style={{ marginBottom: 16 }}>
           {[
-            { value: stats.totalUnits, label: 'Đơn vị tổ chức', bg: '#F5F3FF', iconBg: '#EDE9FE', color: '#7C3AED', Icon: ApartmentOutlined },
-            { value: stats.totalEmployees, label: 'Tổng nhân sự', bg: '#EFF6FF', iconBg: '#DBEAFE', color: '#2563EB', Icon: UserOutlined },
-            { value: stats.maxLevel, label: 'Cấp độ phân cấp', bg: '#F0FDF4', iconBg: '#DCFCE7', color: '#16A34A', Icon: BankOutlined },
-          ].map(({ value, label, bg, iconBg, color, Icon }) => (
+            { value: stats.totalUnits,     label: 'Đơn vị tổ chức',    color: '#8B5CF6', Icon: ApartmentOutlined },
+            { value: stats.totalEmployees, label: 'Tổng nhân sự',       color: '#3B82F6', Icon: UserOutlined },
+            { value: stats.maxLevel,       label: 'Cấp độ phân cấp',   color: '#10B981', Icon: BankOutlined },
+          ].map(({ value, label, color, Icon }) => (
             <Col span={8} key={label}>
-              <div style={{ background: bg, borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon style={{ color, fontSize: 20 }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 24, fontWeight: 700, color, lineHeight: 1 }}>{value}</div>
-                  <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>{label}</div>
-                </div>
-              </div>
+              <StatCard label={label} value={value} color={color} icon={<Icon />} />
             </Col>
           ))}
         </Row>

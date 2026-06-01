@@ -43,4 +43,13 @@ export class HrAnalyticsController {
   getSalaryDistribution() {
     return this.service.getSalaryDistribution();
   }
+
+  @Get('contract-expiry')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'E24.1 — Hợp đồng sắp hết hạn trong N ngày' })
+  @ApiQuery({ name: 'days', required: false, type: Number, example: 60 })
+  getContractExpiry(@Query('days') days?: string) {
+    return this.service.getContractExpiry(days ? parseInt(days, 10) : 60);
+  }
 }

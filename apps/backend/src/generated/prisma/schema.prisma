@@ -179,6 +179,16 @@ model Employee {
   costBreakdowns          ProjectCostByEmployee[]
   salaryReviews           SalaryReviewSuggestion[] @relation("EmployeeSalaryReviews")
   attendanceExplanations  AttendanceExplanation[]
+  educationRecords        EducationRecord[]
+  previousWorkExperiences PreviousWorkExperience[]
+  familyMembers           FamilyMember[]
+
+  // Thông tin cá nhân bổ sung
+  gender        Gender?
+  maritalStatus MaritalStatus? @map("marital_status")
+  phoneNumber   String?        @map("phone_number")
+  hometown      String? // Quê quán
+  placeOfBirth  String?        @map("place_of_birth") // Nơi sinh
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -539,6 +549,7 @@ model ProcessInstance {
   leaveRequests    LeaveRequest[]
   expenses         Expense[]
   overtimeRequests OvertimeRequest[]
+  vehicleRequests  VehicleRequest[]
 
   tenantId String? @map("tenant_id")
   tenant   Tenant? @relation("TenantProcessInstances", fields: [tenantId], references: [id])
@@ -831,6 +842,7 @@ enum TimesheetStatus {
   SUBMITTED
   APPROVED
   REJECTED
+  MISSING_SHIFT
 }
 
 enum NotificationType {
@@ -2149,6 +2161,7 @@ model Dependent {
   registeredTo   DateTime?          @map("registered_to") @db.Date
   createdAt      DateTime           @default(now()) @map("created_at")
   taxProfile     EmployeeTaxProfile @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  familyMember   FamilyMember?
 
   @@index([employeeId])
   @@map("dependents")
@@ -2765,6 +2778,25 @@ model ScheduledReport {
   @@map("scheduled_reports")
 }
 
+// ─── Analytics — Saved Reports ─────────────────────────────────────────────────
+
+model SavedReport {
+  id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
+  name        String   @db.VarChar(200)
+  description String?  @db.VarChar(500)
+  category    String   @db.VarChar(100) // hr | finance | project | crm | custom
+  definition  Json // { entity, columns, filters, groupBy, sortBy }
+  isPublic    Boolean  @default(false) @map("is_public")
+  createdBy   String   @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([tenantId])
+  @@index([createdBy])
+  @@map("saved_reports")
+}
+
 // ─── Webhook Integration ───────────────────────────────────────────────────────
 
 model WebhookEndpoint {
@@ -2904,27 +2936,30 @@ model Vehicle {
 }
 
 model VehicleRequest {
-  id              String               @id @default(uuid())
-  vehicleId       String               @map("vehicle_id")
-  requestedById   String               @map("requested_by_id")
-  approvedById    String?              @map("approved_by_id")
-  purpose         String               @db.VarChar(500)
-  destination     String               @db.VarChar(300)
-  startTime       DateTime             @map("start_time")
-  endTime         DateTime             @map("end_time")
-  passengerCount  Int                  @default(1) @map("passenger_count")
-  status          VehicleRequestStatus @default(PENDING)
-  rejectionReason String?              @map("rejection_reason") @db.Text
-  note            String?              @db.Text
-  createdAt       DateTime             @default(now()) @map("created_at")
-  updatedAt       DateTime             @updatedAt @map("updated_at")
-  vehicle         Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  requestedBy     User                 @relation("VehicleRequester", fields: [requestedById], references: [id])
-  approvedBy      User?                @relation("VehicleApprover", fields: [approvedById], references: [id])
+  id                String               @id @default(uuid())
+  vehicleId         String               @map("vehicle_id")
+  requestedById     String               @map("requested_by_id")
+  approvedById      String?              @map("approved_by_id")
+  purpose           String               @db.VarChar(500)
+  destination       String               @db.VarChar(300)
+  startTime         DateTime             @map("start_time")
+  endTime           DateTime             @map("end_time")
+  passengerCount    Int                  @default(1) @map("passenger_count")
+  status            VehicleRequestStatus @default(PENDING)
+  rejectionReason   String?              @map("rejection_reason") @db.Text
+  note              String?              @db.Text
+  processInstanceId String?              @map("process_instance_id")
+  createdAt         DateTime             @default(now()) @map("created_at")
+  updatedAt         DateTime             @updatedAt @map("updated_at")
+  vehicle           Vehicle              @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  requestedBy       User                 @relation("VehicleRequester", fields: [requestedById], references: [id])
+  approvedBy        User?                @relation("VehicleApprover", fields: [approvedById], references: [id])
+  processInstance   ProcessInstance?     @relation(fields: [processInstanceId], references: [id])
 
   @@index([vehicleId, startTime, endTime])
   @@index([requestedById])
   @@index([status])
+  @@index([processInstanceId])
   @@map("vehicle_requests")
 }
 
@@ -3741,6 +3776,7 @@ enum ShiftType {
   CA_CHIEU
   CA_DEM
   LINH_HOAT
+  CA_OFF // Ca nghỉ — ngày không cần tính công, không bị lỗi chấm công
 
   @@map("shift_type")
 }
@@ -3998,4 +4034,118 @@ model AssetDisposal {
 
   @@index([assetId])
   @@map("asset_disposals")
+}
+
+// ─── HR Profile Enhancements ──────────────────────────────────────────────────
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+
+  @@map("gender")
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+
+  @@map("marital_status")
+}
+
+enum DegreeLevel {
+  PRIMARY
+  SECONDARY
+  VOCATIONAL
+  COLLEGE
+  BACHELOR
+  MASTER
+  DOCTORATE
+  OTHER
+
+  @@map("degree_level")
+}
+
+enum FamilyRelationship {
+  SPOUSE
+  PARENT
+  CHILD
+  SIBLING
+  GRANDPARENT
+  OTHER
+
+  @@map("family_relationship")
+}
+
+// Quá trình học tập / bằng cấp
+model EducationRecord {
+  id                String      @id @default(uuid())
+  employeeId        String      @map("employee_id")
+  tenantId          String?     @map("tenant_id")
+  degreeLevel       DegreeLevel @map("degree_level")
+  schoolName        String      @map("school_name") // Trường
+  major             String? // Chuyên ngành
+  startYear         Int?        @map("start_year") // Năm bắt đầu
+  endYear           Int?        @map("end_year") // Năm kết thúc
+  graduationYear    Int?        @map("graduation_year") // Năm tốt nghiệp
+  result            String? // Kết quả / xếp loại
+  certificateNumber String?     @map("certificate_number") // Số bằng
+  isMainDegree      Boolean     @default(false) @map("is_main_degree") // Bằng chính
+  description       String?
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([tenantId])
+  @@map("education_records")
+}
+
+// Kinh nghiệm làm việc trước
+model PreviousWorkExperience {
+  id          String    @id @default(uuid())
+  employeeId  String    @map("employee_id")
+  tenantId    String?   @map("tenant_id")
+  companyName String    @map("company_name") // Tên công ty
+  position    String? // Chức danh
+  startDate   DateTime? @map("start_date") @db.Date
+  endDate     DateTime? @map("end_date") @db.Date
+  description String? // Mô tả công việc
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([tenantId])
+  @@map("previous_work_experiences")
+}
+
+// Thành viên gia đình / thân nhân
+model FamilyMember {
+  id           String             @id @default(uuid())
+  employeeId   String             @map("employee_id")
+  tenantId     String?            @map("tenant_id")
+  relationship FamilyRelationship // Quan hệ
+  fullName     String             @map("full_name") // Họ tên
+  birthdate    DateTime?          @db.Date // Ngày sinh
+  idNumber     String?            @map("id_number") // Số CCCD
+  occupation   String? // Nghề nghiệp
+  phoneNumber  String?            @map("phone_number") // Số điện thoại
+  address      String? // Địa chỉ
+  note         String?
+  // Link sang Dependent (khi đăng ký làm người phụ thuộc giảm trừ TNCN)
+  dependentId  String?            @unique @map("dependent_id")
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  employee  Employee   @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  dependent Dependent? @relation(fields: [dependentId], references: [id], onDelete: SetNull)
+
+  @@index([employeeId])
+  @@index([tenantId])
+  @@map("family_members")
 }

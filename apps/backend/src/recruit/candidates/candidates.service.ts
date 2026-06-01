@@ -14,6 +14,7 @@ import { UpdateCandidateDto } from './dto/update-candidate.dto';
 import { FilterCandidateDto } from './dto/filter-candidate.dto';
 import { HireCandidateDto } from './dto/hire-candidate.dto';
 import { Candidate, CandidateStage } from '../../generated/prisma';
+import { HrEventBus } from '../../common/events/hr-event-bus.service';
 
 const ALLOWED_TRANSITIONS: Record<CandidateStage, CandidateStage[]> = {
   [CandidateStage.APPLIED]:    [CandidateStage.SCREENING, CandidateStage.REJECTED],
@@ -38,6 +39,7 @@ export class CandidatesService {
     private readonly prisma: PrismaService,
     private readonly employeesService: EmployeesService,
     private readonly storageService: StorageService,
+    private readonly hrEventBus: HrEventBus,
   ) {}
 
   async create(dto: CreateCandidateDto): Promise<Candidate> {
@@ -120,7 +122,7 @@ export class CandidatesService {
     });
   }
 
-  async hire(id: string, dto: HireCandidateDto): Promise<Candidate> {
+  async hire(id: string, dto: HireCandidateDto, requestUserId?: string): Promise<Candidate> {
     const candidate = await this.findOne(id);
 
     if (candidate.stage !== CandidateStage.OFFER) {
@@ -148,13 +150,30 @@ export class CandidatesService {
         ratePerDay: dto.ratePerDay,
       });
 
-      return await this.prisma.candidate.update({
+      const hired = await this.prisma.candidate.update({
         where: { id },
         data: {
           stage: CandidateStage.HIRED,
           employeeId: employee.id,
         },
       });
+
+      // Auto-trigger onboarding BPM sau khi hire thành công
+      await this.hrEventBus.emit({
+        type: 'employee.onboarded',
+        refId: employee.id,
+        employeeId: employee.id,
+        userId: requestUserId,
+        metadata: {
+          candidateId: id,
+          startDate: dto.startDate,
+          orgUnitId: dto.orgUnitId,
+          candidateName: candidate.name,
+          requestUserId: requestUserId ?? null,
+        },
+      }).catch(() => null); // Không để lỗi event bus ảnh hưởng hire flow
+
+      return hired;
     } catch (err) {
       await this.prisma.employee.delete({ where: { id: employee.id } }).catch(() => null);
       throw err;

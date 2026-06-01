@@ -23,6 +23,7 @@ import {
 import { projectsApi } from '../../api/projects';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { formatCurrency } from '../../utils/format';
 
 const { Text, Title } = Typography;
@@ -371,7 +372,7 @@ export default function ExpensePage() {
     {
       title: 'Tổng tiền', dataIndex: 'totalAmount', width: 160,
       render: (v: number) => (
-        <Text strong style={{ color: preset.primary }}>
+        <Text strong style={{ color: linkColor }}>
           {formatCurrency(v)}
         </Text>
       ),
@@ -452,11 +453,8 @@ export default function ExpensePage() {
                 icon={<DeleteOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
-                  Modal.confirm({
-                    title: 'Xoá expense?',
-                    content: 'Thao tác này không thể hoàn tác.',
-                    okButtonProps: { danger: true },
-                    onOk: () => remove(record.id),
+                  confirmDelete({
+                    onConfirm: () => remove(record.id),
                   });
                 }}
               />
@@ -480,7 +478,7 @@ export default function ExpensePage() {
         alignItems: 'center', marginBottom: 20,
       }}>
         <Title level={3} style={{ margin: 0, color: textPrimary }}>
-          <WalletOutlined style={{ marginRight: 8, color: preset.primary }} />
+          <WalletOutlined style={{ marginRight: 8, color: linkColor }} />
           Chi phí
         </Title>
         <Space>

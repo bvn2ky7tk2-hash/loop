@@ -21,6 +21,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
 
@@ -33,7 +34,7 @@ const CATEGORY_META: Record<SkillCategory, { label: string; color: string }> = {
 };
 
 const LEVEL_META: Record<SkillLevel, { label: string; color: string; stars: number; progressColor: string }> = {
-  BEGINNER:     { label: 'Mới học',     color: '#64748B', stars: 1, progressColor: '#94A3B8' },
+  BEGINNER:     { label: 'Mới học',     color: '#94A3B8', stars: 1, progressColor: '#94A3B8' },
   INTERMEDIATE: { label: 'Trung cấp',   color: '#3B82F6', stars: 2, progressColor: '#60A5FA' },
   ADVANCED:     { label: 'Thành thạo',  color: '#10B981', stars: 3, progressColor: '#34D399' },
   EXPERT:       { label: 'Chuyên gia',  color: '#F59E0B', stars: 4, progressColor: '#FBBF24' },
@@ -51,7 +52,7 @@ function LevelBadge({ level }: { level: SkillLevel }) {
 // ─── Tab 1: Ma trận kỹ năng ───────────────────────────────────────────────────
 
 function MatrixTab({ skills }: { skills: Skill[] }) {
-  const { textPrimary, textMuted, borderColor, bgCard, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, borderColor, linkColor, isDark } = useThemePalette();
   const [page, setPage] = useState(1);
   const [filterOrgUnit, setFilterOrgUnit] = useState<string>();
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
@@ -98,10 +99,7 @@ function MatrixTab({ skills }: { skills: Skill[] }) {
       fixed: 'left',
       width: 180,
       render: (_: any, r: EmployeeWithSkills) => (
-        <div>
-          <div style={{ fontWeight: 600, color: textPrimary, fontSize: 13 }}>{r.user?.name ?? r.fullName}</div>
-          <div style={{ color: textMuted, fontSize: 11 }}>{r.orgUnit?.name}</div>
-        </div>
+        <EmployeeInfoCell employee={{ code: r.code, fullName: r.user?.name ?? r.fullName, orgUnit: r.orgUnit }} />
       ),
     },
     ...displaySkills.map(skill => ({
@@ -430,7 +428,7 @@ function SkillCatalogTab() {
 // ─── Tab 3: Resource Availability ────────────────────────────────────────────
 
 function ResourceTab({ skills }: { skills: Skill[] }) {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
   const [filterSkillId, setFilterSkillId] = useState<string>();
   const [filterLevel, setFilterLevel]     = useState<string>();
   const [filterDate, setFilterDate]       = useState<any>(null);
@@ -452,18 +450,7 @@ function ResourceTab({ skills }: { skills: Skill[] }) {
     {
       title: <Text style={{ color: textMuted }}>Nhân sự</Text>,
       render: (_: any, r) => (
-        <Space>
-          <div style={{
-            width: 32, height: 32, borderRadius: '50%', background: `${linkColor}22`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <UserOutlined style={{ color: linkColor, fontSize: 14 }} />
-          </div>
-          <div>
-            <Text style={{ color: textPrimary, fontWeight: 600, display: 'block' }}>{r.user?.name ?? r.fullName}</Text>
-            <Text style={{ color: textMuted, fontSize: 11 }}>{r.code} · {r.level}</Text>
-          </div>
-        </Space>
+        <EmployeeInfoCell employee={{ code: r.code, fullName: r.user?.name ?? r.fullName, orgUnit: r.orgUnit ?? undefined }} />
       ),
     },
     {

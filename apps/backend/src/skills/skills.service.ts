@@ -99,7 +99,11 @@ export class SkillsService {
           isActive: true,
           ...(orgUnitId ? { orgUnitId } : {}),
         },
-        include: {
+        select: {
+          id: true,
+          code: true,
+          fullName: true,
+          level: true,
           user: { select: { name: true } },
           orgUnit: { select: { name: true } },
           skills: {

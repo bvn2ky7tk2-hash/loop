@@ -140,7 +140,7 @@ export default function CrmAnalyticsPage() {
       render: (v: number) => <Text style={{ color: '#10B981', fontWeight: 700, fontSize: 13 }}>{formatValue(v)}</Text>,
     },
     {
-      title: <Text style={{ color: textMuted }}>Won Deals</Text>,
+      title: <Text style={{ color: textMuted }}>Deals Thắng</Text>,
       dataIndex: 'wonDeals',
       width: 100,
       render: (v: number) => <Text style={{ color: textPrimary, fontSize: 13 }}>{v}</Text>,
@@ -150,7 +150,7 @@ export default function CrmAnalyticsPage() {
   return (
     <div style={{ padding: 24 }}>
       <PageHeader
-        title="CRM Analytics"
+        title="Phân tích CRM"
         icon={<FunnelPlotOutlined />}
         iconColor="#DC2626"
       />
@@ -171,7 +171,7 @@ export default function CrmAnalyticsPage() {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
-            label="Win Rate"
+            label="Tỷ lệ thắng"
             value={`${winRate}%`}
             delta={0}
             data={[]}
@@ -183,7 +183,7 @@ export default function CrmAnalyticsPage() {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
-            label="Avg Deal Size"
+            label="Giá trị deal TB"
             value={formatValue(avgDealSize)}
             unit="VNĐ"
             delta={0}
@@ -196,7 +196,7 @@ export default function CrmAnalyticsPage() {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <SparklineCard
-            label="Pipeline Value"
+            label="Giá trị Pipeline"
             value={formatValue(pipelineValue)}
             unit="VNĐ"
             delta={0}

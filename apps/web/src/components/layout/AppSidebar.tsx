@@ -161,7 +161,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
     }
   }, [location.pathname]);
 
-  const activeModule = MODULE_MAP[activeModuleId] ?? MODULE_MAP['work'];
+  const activeModule = MODULE_MAP[activeModuleId] ?? MODULE_MAP['workspace'];
   const config   = useMemo(() => getModuleConfig(activeModuleId), [activeModuleId]);
   const topItems = config.topItems;
   const groups   = config.groups;

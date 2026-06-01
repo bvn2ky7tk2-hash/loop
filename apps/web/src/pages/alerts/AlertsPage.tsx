@@ -6,6 +6,7 @@ import {
 import { PlusOutlined, DeleteOutlined, BellOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectsApi } from '../../api/projects';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { notificationsApi, type Notification } from '../../api/notifications';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
@@ -35,6 +36,7 @@ interface AlertConfig {
 
 export default function AlertsPage() {
   const { message } = App.useApp();
+  const { textMuted } = useThemePalette();
   const qc = useQueryClient();
   const [projectId, setProjectId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -112,7 +114,7 @@ export default function AlertsPage() {
         <span style={{
           fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '3px 10px',
           background: v ? '#ECFDF5' : '#F1F5F9',
-          color: v ? '#065F46' : '#475569',
+          color: v ? '#065F46' : textMuted,
         }}>
           {v ? 'Bật' : 'Tắt'}
         </span>

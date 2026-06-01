@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Table, Button, Modal, Form, Input, Select, Space,
   Typography, Descriptions, Timeline, InputNumber,
@@ -8,12 +9,13 @@ import {
 import { DownloadOutlined } from '@ant-design/icons';
 import { downloadExport } from '../../utils/exportApi';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import type { TreeDataNode } from 'antd';
 import {
   PlusOutlined, EditOutlined, SearchOutlined,
   DeleteOutlined, ApartmentOutlined, TeamOutlined,
   BankOutlined, UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined,
-  PlayCircleOutlined,
+  PlayCircleOutlined, IdcardOutlined, InfoCircleOutlined, CrownOutlined,
 } from '@ant-design/icons';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
 import { ColumnToggle } from '../../components/ColumnToggle';
@@ -23,23 +25,25 @@ import { employeesApi, type Employee } from '../../api/employees';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 import { payrollApi, type EmployeeTaxProfile, type Dependent } from '../../api/payroll';
 import { jobTitlesApi, positionsApi } from '../../api/hr-core';
+import { OrgUnitSelect } from '../../components/selects';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
 import { formatNumber } from '../../utils/format';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const LEVELS = ['JUNIOR', 'MID', 'SENIOR', 'EXPERT'];
 
 // Semantic hue only — bg is derived as 12% alpha so it adapts to dark mode
 const LEVEL_HUE: Record<string, string> = {
   JUNIOR: '#52C41A',
-  MID:    '#4F46E5',
+  MID:    '#6366F1',
   SENIOR: '#FA8C16',
-  EXPERT: '#7C3AED',
+  EXPERT: '#8B5CF6',
 };
 
-const ORG_LEVEL_HUE   = ['#7C3AED', '#2563EB', '#16A34A', '#EA580C'];
+const ORG_LEVEL_HUE   = ['#8B5CF6', '#3B82F6', '#16A34A', '#EA580C'];
 const ORG_LEVEL_ICONS = [BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined];
 
 const PERSONNEL_COL_DEFS = [
@@ -223,13 +227,15 @@ function TaxProfileTab({ employeeId }: { employeeId: string }) {
       title: 'Từ ngày',
       dataIndex: 'registeredFrom',
       key: 'registeredFrom',
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Đến ngày',
       dataIndex: 'registeredTo',
       key: 'registeredTo',
-      render: (v?: string) => v ? dayjs(v).format('DD/MM/YYYY') : <Tag color="green">Đang tính</Tag>,
+      render: (v?: string) => v
+        ? <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>
+        : <Tag color="green">Đang tính</Tag>,
     },
     {
       title: '',
@@ -397,6 +403,8 @@ export default function PersonnelPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
+  const { textPrimary, textMuted } = useThemePalette();
+  const navigate = useNavigate();
 
   // Org state
   const [selectedOrgId, setSelectedOrgId]   = useState<string | null>(null);
@@ -408,6 +416,9 @@ export default function PersonnelPage() {
   const [panelWidth, setPanelWidth]          = useState(264);
   const [createOrgForm] = Form.useForm();
   const [editOrgForm]   = Form.useForm();
+
+  // Watch headJobTitleId trong edit org form để auto-load lãnh đạo
+  const watchEditOrgHeadJobTitle = Form.useWatch('headJobTitleId', editOrgForm);
 
   const isDragging    = useRef(false);
   const dragStartX    = useRef(0);
@@ -470,11 +481,40 @@ export default function PersonnelPage() {
   });
   const jobTitleOptions = (jobTitlesData?.data ?? []).map((jt) => ({ value: jt.id, label: jt.name }));
 
+  // Positions của đơn vị đang sửa — để tìm lãnh đạo tự động
+  const { data: editOrgPositions } = useQuery({
+    queryKey: ['positions-by-org-unit', editOrgTarget?.id],
+    queryFn: () => positionsApi.list({ orgUnitId: editOrgTarget!.id, isActive: true, limit: 200 }),
+    enabled: !!editOrgTarget?.id,
+    staleTime: 5 * 60_000,
+  });
+
+  // Auto-tính lãnh đạo đơn vị: employee thuộc unit + position.jobTitleId khớp
+  const autoOrgLeader = useMemo(() => {
+    if (!editOrgTarget || !watchEditOrgHeadJobTitle) return null;
+    const matchIds = new Set(
+      (editOrgPositions?.data ?? [])
+        .filter((p) => p.jobTitleId === watchEditOrgHeadJobTitle)
+        .map((p) => p.id),
+    );
+    if (matchIds.size === 0) return null;
+    return (
+      employees.find(
+        (e) => e.orgUnitId === editOrgTarget.id && e.positionId && matchIds.has(e.positionId),
+      ) ?? null
+    );
+  }, [editOrgTarget, watchEditOrgHeadJobTitle, editOrgPositions?.data, employees]);
+
   const editOrgUnitId = editEmployee?.orgUnitId;
   const { data: positionsData } = useQuery({
     queryKey: ['positions-by-unit', editOrgUnitId],
     queryFn: () => positionsApi.list({ orgUnitId: editOrgUnitId, isActive: true, limit: 200 }),
     enabled: !!editOrgUnitId,
+    staleTime: 5 * 60_000,
+  });
+  const { data: allPositionsData } = useQuery({
+    queryKey: ['positions-all'],
+    queryFn: () => positionsApi.list({ isActive: true, limit: 500 }),
     staleTime: 5 * 60_000,
   });
   const positionOptions = (positionsData?.data ?? []).map((p) => ({
@@ -772,21 +812,18 @@ export default function PersonnelPage() {
         </span>
       ),
     },
-    { title: 'Từ',  dataIndex: 'startDate', width: 90, render: (v: string) => dayjs(v).format('DD/MM/YY') },
-    { title: 'Đến', dataIndex: 'endDate',   width: 90, render: (v: string) => dayjs(v).format('DD/MM/YY') },
+    { title: 'Từ',  dataIndex: 'startDate', width: 90, render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YY')}</Text> },
+    { title: 'Đến', dataIndex: 'endDate',   width: 90, render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YY')}</Text> },
   ];
 
   const allColumns = [
     { key: 'code', title: 'Mã', dataIndex: 'code', width: 90 },
     {
       key: 'fullName', title: 'Họ tên', dataIndex: 'fullName',
-      render: (v: string, r: Employee) => (
-        <span
-          onClick={() => setDetailId(r.id)}
-          style={{ fontWeight: 600, color: token.colorText, cursor: 'pointer' }}
-        >
-          {v}
-        </span>
+      render: (_: string, r: Employee) => (
+        <div onClick={() => setDetailId(r.id)} style={{ cursor: 'pointer' }}>
+          <EmployeeInfoCell employee={r} />
+        </div>
       ),
     },
     {
@@ -836,22 +873,37 @@ export default function PersonnelPage() {
       render: (_: unknown, r: Employee) => <ProjectsCell employee={r} />,
     },
     {
-      key: 'actions', title: '', width: 80,
+      key: 'actions', title: '', width: 110,
       render: (_: unknown, r: Employee) => (
         <Space size={2}>
+          <Tooltip title="Xem hồ sơ đầy đủ">
+            <Button
+              type="text" size="small" icon={<IdcardOutlined />}
+              style={{ color: '#6366F1' }}
+              onClick={() => navigate(`/hr/employees/${r.id}`)}
+            />
+          </Tooltip>
           <Tooltip title="Sửa">
             <Button
               type="text" size="small" icon={<EditOutlined />}
               onClick={() => {
                 setEditEmployee(r);
                 editForm.setFieldsValue({
-                  fullName: r.fullName, level: r.level, techStack: r.techStack,
-                  orgUnitId: r.orgUnitId,
-                  positionId: r.positionId ?? null,
-                  startDate: r.startDate ? dayjs(r.startDate) : null,
-                  birthdate:  r.birthdate  ? dayjs(r.birthdate)  : null,
-                  email: r.email, cccd: r.cccd,
-                  cccdIssueDate:  r.cccdIssueDate  ? dayjs(r.cccdIssueDate)  : null,
+                  fullName:      r.fullName,
+                  level:         r.level,
+                  orgUnitId:     r.orgUnitId,
+                  jobTitleId:    r.position?.jobTitle ? undefined : undefined, // resolved via positionId
+                  positionId:    r.positionId ?? null,
+                  startDate:     r.startDate     ? dayjs(r.startDate)     : null,
+                  birthdate:     r.birthdate     ? dayjs(r.birthdate)     : null,
+                  techStack:     r.techStack,
+                  email:         r.email,
+                  gender:        r.gender,
+                  maritalStatus: r.maritalStatus,
+                  phoneNumber:   r.phoneNumber,
+                  hometown:      r.hometown,
+                  cccd:          r.cccd,
+                  cccdIssueDate: r.cccdIssueDate ? dayjs(r.cccdIssueDate) : null,
                   cccdIssuePlace: r.cccdIssuePlace,
                 });
               }}
@@ -1097,6 +1149,13 @@ export default function PersonnelPage() {
         width={800}
         extra={
           <Space>
+            <Button
+              type="primary"
+              icon={<IdcardOutlined />}
+              onClick={() => { if (detailId) { setDetailId(null); navigate(`/hr/employees/${detailId}`); } }}
+            >
+              Hồ sơ đầy đủ
+            </Button>
             <Tooltip title={detail ? getOnboardingTooltip(detail) : 'No onboarding process configured'}>
               <Button
                 icon={<PlayCircleOutlined />}
@@ -1117,8 +1176,12 @@ export default function PersonnelPage() {
               key: 'info', label: 'Thông tin',
               children: (
                 <Descriptions column={1} size="small" bordered>
-                  <Descriptions.Item label="Mã">{detail.code}</Descriptions.Item>
-                  <Descriptions.Item label="Họ tên">{detail.fullName}</Descriptions.Item>
+                  <Descriptions.Item label="Nhân sự">
+                    <EmployeeInfoCell employee={detail} variant="descriptions" />
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Vị trí biên chế">
+                    {detail.position?.code ?? '—'}
+                  </Descriptions.Item>
                   <Descriptions.Item label="Cấp độ">
                     {(() => {
                       const hue = LEVEL_HUE[detail.level] ?? token.colorTextSecondary;
@@ -1128,6 +1191,12 @@ export default function PersonnelPage() {
                         </span>
                       );
                     })()}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ngày vào làm">
+                    {(detail as Employee).startDate ? dayjs((detail as Employee).startDate).format('DD/MM/YYYY') : '—'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Ngày sinh">
+                    {(detail as Employee).birthdate ? dayjs((detail as Employee).birthdate).format('DD/MM/YYYY') : '—'}
                   </Descriptions.Item>
                   <Descriptions.Item label="Tech Stack">
                     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
@@ -1141,13 +1210,21 @@ export default function PersonnelPage() {
                       ))}
                     </div>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Email công việc">{(detail as Employee).email ?? '—'}</Descriptions.Item>
-                  <Descriptions.Item label="Tài khoản hệ thống">{detail.user?.email ?? '—'}</Descriptions.Item>
-                  <Descriptions.Item label="Số CCCD">{(detail as Employee).cccd ?? '—'}</Descriptions.Item>
-                  <Descriptions.Item label="Ngày cấp">
-                    {(detail as Employee).cccdIssueDate ? dayjs((detail as Employee).cccdIssueDate).format('DD/MM/YYYY') : '—'}
+                  <Descriptions.Item label="Email công việc">{detail.email ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Số điện thoại">{detail.phoneNumber ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Giới tính">
+                    {detail.gender === 'MALE' ? 'Nam' : detail.gender === 'FEMALE' ? 'Nữ' : detail.gender === 'OTHER' ? 'Khác' : '—'}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Nơi cấp">{(detail as Employee).cccdIssuePlace ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Tình trạng hôn nhân">
+                    {detail.maritalStatus === 'SINGLE' ? 'Độc thân' : detail.maritalStatus === 'MARRIED' ? 'Đã kết hôn' : detail.maritalStatus === 'DIVORCED' ? 'Đã ly hôn' : detail.maritalStatus === 'WIDOWED' ? 'Góa' : '—'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Quê quán">{detail.hometown ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Tài khoản hệ thống">{detail.user?.email ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Số CCCD">{detail.cccd ?? '—'}</Descriptions.Item>
+                  <Descriptions.Item label="Ngày cấp CCCD">
+                    {detail.cccdIssueDate ? dayjs(detail.cccdIssueDate).format('DD/MM/YYYY') : '—'}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Nơi cấp">{detail.cccdIssuePlace ?? '—'}</Descriptions.Item>
                 </Descriptions>
               ),
             },
@@ -1229,6 +1306,20 @@ export default function PersonnelPage() {
             />
           </Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="jobTitleId" label="Chức danh" style={{ flex: 1 }}>
+              <Select showSearch placeholder="Chọn chức danh..." allowClear
+                filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+                options={jobTitleOptions}
+              />
+            </Form.Item>
+            <Form.Item name="positionId" label="Vị trí biên chế" style={{ flex: 1 }}>
+              <Select showSearch placeholder="Chọn vị trí..." allowClear
+                filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+                options={(allPositionsData?.data ?? []).map((pos) => ({ value: pos.id, label: pos.jobTitle ? `${pos.jobTitle.name} — ${pos.code}` : pos.code }))}
+              />
+            </Form.Item>
+          </Space>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="startDate" label="Ngày vào làm" style={{ flex: 1 }} rules={[{ required: true, message: 'Chọn ngày' }]}>
               <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
             </Form.Item>
@@ -1242,7 +1333,28 @@ export default function PersonnelPage() {
           <Form.Item name="email" label="Email" rules={[{ type: 'email', message: 'Email không hợp lệ' }]}>
             <Input placeholder="nguyen.van.a@company.vn" />
           </Form.Item>
-          <Divider  style={{ fontSize: 13 }}>Căn cước công dân</Divider>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="gender" label="Giới tính" style={{ flex: 1 }}>
+              <Select allowClear placeholder="Chọn giới tính">
+                <Select.Option value="MALE">Nam</Select.Option>
+                <Select.Option value="FEMALE">Nữ</Select.Option>
+                <Select.Option value="OTHER">Khác</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="maritalStatus" label="Tình trạng hôn nhân" style={{ flex: 1 }}>
+              <Select allowClear placeholder="Chọn tình trạng">
+                <Select.Option value="SINGLE">Độc thân</Select.Option>
+                <Select.Option value="MARRIED">Đã kết hôn</Select.Option>
+                <Select.Option value="DIVORCED">Đã ly hôn</Select.Option>
+                <Select.Option value="WIDOWED">Góa</Select.Option>
+              </Select>
+            </Form.Item>
+          </Space>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="phoneNumber" label="Số điện thoại" style={{ flex: 1 }}><Input placeholder="0912345678" /></Form.Item>
+            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><Input placeholder="VD: Hà Nội" /></Form.Item>
+          </Space>
+          <Divider style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input placeholder="012345678901" /></Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="cccdIssueDate" label="Ngày cấp" style={{ flex: 1 }}><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item>
@@ -1281,16 +1393,23 @@ export default function PersonnelPage() {
               />
             </Form.Item>
           </Space>
-          <Form.Item name="positionId" label="Vị trí biên chế">
-            <Select
-              allowClear
-              showSearch
-              placeholder={editOrgUnitId ? 'Chọn vị trí...' : 'Chọn phòng ban trước'}
-              disabled={!editOrgUnitId}
-              filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-              options={positionOptions}
-            />
-          </Form.Item>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="jobTitleId" label="Chức danh" style={{ flex: 1 }}>
+              <Select showSearch placeholder="Chọn chức danh..." allowClear
+                filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+                options={jobTitleOptions}
+              />
+            </Form.Item>
+            <Form.Item name="positionId" label="Vị trí biên chế" style={{ flex: 1 }}>
+              <Select
+                allowClear showSearch
+                placeholder={editOrgUnitId ? 'Chọn vị trí...' : 'Chọn phòng ban trước'}
+                disabled={!editOrgUnitId}
+                filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
+                options={positionOptions}
+              />
+            </Form.Item>
+          </Space>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="startDate" label="Ngày vào làm" style={{ flex: 1 }} rules={[{ required: true, message: 'Chọn ngày' }]}>
               <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
@@ -1305,7 +1424,28 @@ export default function PersonnelPage() {
           <Form.Item name="email" label="Email" rules={[{ type: 'email', message: 'Email không hợp lệ' }]}>
             <Input placeholder="nguyen.van.a@company.vn" />
           </Form.Item>
-          <Divider  style={{ fontSize: 13 }}>Căn cước công dân</Divider>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="gender" label="Giới tính" style={{ flex: 1 }}>
+              <Select allowClear placeholder="Chọn giới tính">
+                <Select.Option value="MALE">Nam</Select.Option>
+                <Select.Option value="FEMALE">Nữ</Select.Option>
+                <Select.Option value="OTHER">Khác</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item name="maritalStatus" label="Tình trạng hôn nhân" style={{ flex: 1 }}>
+              <Select allowClear placeholder="Chọn tình trạng">
+                <Select.Option value="SINGLE">Độc thân</Select.Option>
+                <Select.Option value="MARRIED">Đã kết hôn</Select.Option>
+                <Select.Option value="DIVORCED">Đã ly hôn</Select.Option>
+                <Select.Option value="WIDOWED">Góa</Select.Option>
+              </Select>
+            </Form.Item>
+          </Space>
+          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+            <Form.Item name="phoneNumber" label="Số điện thoại" style={{ flex: 1 }}><Input /></Form.Item>
+            <Form.Item name="hometown" label="Quê quán" style={{ flex: 1 }}><Input /></Form.Item>
+          </Space>
+          <Divider style={{ fontSize: 13 }}>Căn cước công dân</Divider>
           <Form.Item name="cccd" label="Số CCCD"><Input /></Form.Item>
           <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
             <Form.Item name="cccdIssueDate" label="Ngày cấp" style={{ flex: 1 }}><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item>
@@ -1331,8 +1471,24 @@ export default function PersonnelPage() {
             <Input placeholder="VD: KT001" onChange={(e) => createOrgForm.setFieldValue('code', e.target.value.toUpperCase())} />
           </Form.Item>
           <Form.Item name="parentId" label="Đơn vị cha (để trống nếu là gốc)">
-            <Select allowClear placeholder="Chọn đơn vị cha" options={orgOptions} />
+            <OrgUnitSelect allowClear placeholder="Chọn đơn vị cha..." style={{ width: '100%' }} />
           </Form.Item>
+          <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
+            <Select allowClear showSearch optionFilterProp="label"
+              placeholder="VD: Trưởng phòng, Giám đốc..."
+              options={jobTitleOptions}
+            />
+          </Form.Item>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8,
+            padding: '8px 12px', borderRadius: 6, marginTop: 4,
+            background: token.colorInfoBg,
+            border: `1px dashed ${token.colorInfoBorder}`,
+            fontSize: 12, color: token.colorInfoText,
+          }}>
+            <InfoCircleOutlined style={{ marginTop: 2, flexShrink: 0 }} />
+            <span>Lãnh đạo sẽ được tự động xác định dựa trên nhân viên có chức danh trưởng đơn vị đã chọn.</span>
+          </div>
         </Form>
       </Modal>
 
@@ -1345,9 +1501,11 @@ export default function PersonnelPage() {
           if (visible && editOrgTarget) {
             editOrgForm.resetFields();
             editOrgForm.setFieldsValue({
-              name:     editOrgTarget.name,
-              code:     editOrgTarget.code,
-              parentId: editOrgTarget.parentId ?? undefined,
+              name:           editOrgTarget.name,
+              code:           editOrgTarget.code,
+              parentId:       editOrgTarget.parentId ?? undefined,
+              headJobTitleId: editOrgTarget.headJobTitleId ?? undefined,
+              leaderId:       editOrgTarget.leaderInfo?.id ?? undefined,
             });
           }
         }}
@@ -1355,7 +1513,12 @@ export default function PersonnelPage() {
         <Form form={editOrgForm} layout="vertical"
           onFinish={(v) => updateOrgMutation.mutate({
             id: editOrgTarget!.id,
-            data: { name: v.name, code: v.code, parentId: v.parentId ?? null },
+            data: {
+              name: v.name, code: v.code,
+              parentId: v.parentId ?? null,
+              headJobTitleId: v.headJobTitleId ?? null,
+              leaderId: v.leaderId ?? null,
+            },
           })}
         >
           <Form.Item name="name" label="Tên đơn vị" rules={[{ required: true }]}><Input /></Form.Item>
@@ -1365,9 +1528,43 @@ export default function PersonnelPage() {
             <Input onChange={(e) => editOrgForm.setFieldValue('code', e.target.value.toUpperCase())} />
           </Form.Item>
           <Form.Item name="parentId" label="Đơn vị cha (để trống nếu là gốc)">
-            <Select allowClear placeholder="Chọn đơn vị cha"
-              options={orgOptions.filter((o) => o.value !== editOrgTarget?.id)}
+            <OrgUnitSelect allowClear placeholder="Chọn đơn vị cha..." style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
+            <Select allowClear showSearch optionFilterProp="label"
+              placeholder="VD: Trưởng phòng, Giám đốc..."
+              options={jobTitleOptions}
             />
+          </Form.Item>
+          <Form.Item label={
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CrownOutlined style={{ color: token.colorPrimary, fontSize: 12 }} />
+              Lãnh đạo đơn vị (tự động theo chức danh)
+            </span>
+          }>
+            <div style={{
+              padding: '5px 11px', borderRadius: 6, minHeight: 32,
+              display: 'flex', alignItems: 'center',
+              border: `1px solid ${token.colorBorder}`,
+              background: token.colorFillAlter,
+              fontSize: 13,
+            }}>
+              {autoOrgLeader ? (
+                <>
+                  <UserOutlined style={{ marginRight: 8, color: token.colorPrimary }} />
+                  <span style={{ color: token.colorPrimary, fontWeight: 600 }}>{autoOrgLeader.code}</span>
+                  <span style={{ color: token.colorText, marginLeft: 6 }}>— {autoOrgLeader.fullName}</span>
+                </>
+              ) : watchEditOrgHeadJobTitle ? (
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: token.colorTextTertiary }}>
+                  Chưa có nhân viên phù hợp trong đơn vị này
+                </span>
+              ) : (
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: token.colorTextTertiary }}>
+                  Chọn chức danh để xem lãnh đạo
+                </span>
+              )}
+            </div>
           </Form.Item>
         </Form>
       </Modal>

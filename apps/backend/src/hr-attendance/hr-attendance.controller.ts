@@ -88,8 +88,9 @@ export class HrAttendanceController {
   @RequirePermission('attendance:write')
   createExplanation(
     @Body() dto: CreateExplanationDto,
+    @CurrentUser() user: any,
   ) {
-    return this.explanationSvc.create(dto);
+    return this.explanationSvc.create(dto, user?.sub);
   }
 
   // GET /api/v1/hr-attendance/explanations

@@ -8,6 +8,8 @@ import { CrmActivitiesModule } from './activities/crm-activities.module';
 import { ForecastModule } from './forecast/forecast.module';
 import { CrmAnalyticsService } from './crm-analytics.service';
 import { CrmAnalyticsController } from './crm-analytics.controller';
+import { CrmKpiController, CrmKpiExtController } from './crm-kpi.controller';
+import { CrmKpiService } from './crm-kpi.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { CrmReminderTask } from './crm-reminder.task';
 
@@ -22,7 +24,7 @@ import { CrmReminderTask } from './crm-reminder.task';
     CrmActivitiesModule,
     ForecastModule,
   ],
-  providers: [CrmAnalyticsService, CrmReminderTask],
-  controllers: [CrmAnalyticsController],
+  providers: [CrmAnalyticsService, CrmKpiService, CrmReminderTask],
+  controllers: [CrmAnalyticsController, CrmKpiController, CrmKpiExtController],
 })
 export class CrmModule {}

@@ -65,7 +65,7 @@ const DEMO_EMPLOYEES: EmployeeRow[] = [
 // ─── Component chính ─────────────────────────────────────────────────────────
 
 export default function OnboardingWizardPage() {
-  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset, linkColor } = useThemePalette();
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -156,7 +156,7 @@ export default function OnboardingWizardPage() {
             style={{ background: isDark ? 'rgba(255,255,255,0.04)' : undefined }}
           >
             <p className="ant-upload-drag-icon">
-              <UploadOutlined style={{ color: preset.primary }} />
+              <UploadOutlined style={{ color: linkColor }} />
             </p>
             <p style={{ color: textMuted }}>Kéo thả file ảnh hoặc nhấn để chọn</p>
             <p style={{ color: textMuted, fontSize: 12 }}>PNG, JPG, SVG — tối đa 2MB</p>
@@ -268,7 +268,7 @@ export default function OnboardingWizardPage() {
         style={{ background: isDark ? 'rgba(255,255,255,0.04)' : undefined, marginBottom: 20 }}
       >
         <p className="ant-upload-drag-icon">
-          <UploadOutlined style={{ color: preset.primary, fontSize: 32 }} />
+          <UploadOutlined style={{ color: linkColor, fontSize: 32 }} />
         </p>
         <p style={{ color: textPrimary, fontWeight: 500 }}>Kéo thả file CSV/Excel hoặc nhấn để chọn</p>
         <p style={{ color: textMuted, fontSize: 13 }}>Hỗ trợ: .csv, .xlsx, .xls — tối đa 5MB</p>

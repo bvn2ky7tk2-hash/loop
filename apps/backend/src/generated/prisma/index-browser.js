@@ -181,7 +181,12 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   religion: 'religion',
   nationality: 'nationality',
   bankAccount: 'bankAccount',
-  bankName: 'bankName'
+  bankName: 'bankName',
+  gender: 'gender',
+  maritalStatus: 'maritalStatus',
+  phoneNumber: 'phoneNumber',
+  hometown: 'hometown',
+  placeOfBirth: 'placeOfBirth'
 };
 
 exports.Prisma.SkillScalarFieldEnum = {
@@ -1482,6 +1487,19 @@ exports.Prisma.ScheduledReportScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SavedReportScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  definition: 'definition',
+  isPublic: 'isPublic',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.WebhookEndpointScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1567,6 +1585,7 @@ exports.Prisma.VehicleRequestScalarFieldEnum = {
   status: 'status',
   rejectionReason: 'rejectionReason',
   note: 'note',
+  processInstanceId: 'processInstanceId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -2129,6 +2148,54 @@ exports.Prisma.AssetDisposalScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.EducationRecordScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  tenantId: 'tenantId',
+  degreeLevel: 'degreeLevel',
+  schoolName: 'schoolName',
+  major: 'major',
+  startYear: 'startYear',
+  endYear: 'endYear',
+  graduationYear: 'graduationYear',
+  result: 'result',
+  certificateNumber: 'certificateNumber',
+  isMainDegree: 'isMainDegree',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PreviousWorkExperienceScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  tenantId: 'tenantId',
+  companyName: 'companyName',
+  position: 'position',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.FamilyMemberScalarFieldEnum = {
+  id: 'id',
+  employeeId: 'employeeId',
+  tenantId: 'tenantId',
+  relationship: 'relationship',
+  fullName: 'fullName',
+  birthdate: 'birthdate',
+  idNumber: 'idNumber',
+  occupation: 'occupation',
+  phoneNumber: 'phoneNumber',
+  address: 'address',
+  note: 'note',
+  dependentId: 'dependentId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2184,6 +2251,19 @@ exports.IdType = exports.$Enums.IdType = {
   CMND: 'CMND',
   PASSPORT: 'PASSPORT',
   OTHER: 'OTHER'
+};
+
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+};
+
+exports.MaritalStatus = exports.$Enums.MaritalStatus = {
+  SINGLE: 'SINGLE',
+  MARRIED: 'MARRIED',
+  DIVORCED: 'DIVORCED',
+  WIDOWED: 'WIDOWED'
 };
 
 exports.SkillCategory = exports.$Enums.SkillCategory = {
@@ -2246,7 +2326,8 @@ exports.TimesheetStatus = exports.$Enums.TimesheetStatus = {
   DRAFT: 'DRAFT',
   SUBMITTED: 'SUBMITTED',
   APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  MISSING_SHIFT: 'MISSING_SHIFT'
 };
 
 exports.NotificationType = exports.$Enums.NotificationType = {
@@ -2835,7 +2916,8 @@ exports.ShiftType = exports.$Enums.ShiftType = {
   CA_SANG: 'CA_SANG',
   CA_CHIEU: 'CA_CHIEU',
   CA_DEM: 'CA_DEM',
-  LINH_HOAT: 'LINH_HOAT'
+  LINH_HOAT: 'LINH_HOAT',
+  CA_OFF: 'CA_OFF'
 };
 
 exports.NotificationChannel = exports.$Enums.NotificationChannel = {
@@ -2848,6 +2930,26 @@ exports.AssetDisposalMethod = exports.$Enums.AssetDisposalMethod = {
   SELL: 'SELL',
   SCRAP: 'SCRAP',
   DONATE: 'DONATE'
+};
+
+exports.DegreeLevel = exports.$Enums.DegreeLevel = {
+  PRIMARY: 'PRIMARY',
+  SECONDARY: 'SECONDARY',
+  VOCATIONAL: 'VOCATIONAL',
+  COLLEGE: 'COLLEGE',
+  BACHELOR: 'BACHELOR',
+  MASTER: 'MASTER',
+  DOCTORATE: 'DOCTORATE',
+  OTHER: 'OTHER'
+};
+
+exports.FamilyRelationship = exports.$Enums.FamilyRelationship = {
+  SPOUSE: 'SPOUSE',
+  PARENT: 'PARENT',
+  CHILD: 'CHILD',
+  SIBLING: 'SIBLING',
+  GRANDPARENT: 'GRANDPARENT',
+  OTHER: 'OTHER'
 };
 
 exports.Prisma.ModelName = {
@@ -2953,6 +3055,7 @@ exports.Prisma.ModelName = {
   AutomationRule: 'AutomationRule',
   AutomationRuleLog: 'AutomationRuleLog',
   ScheduledReport: 'ScheduledReport',
+  SavedReport: 'SavedReport',
   WebhookEndpoint: 'WebhookEndpoint',
   WebhookLog: 'WebhookLog',
   ModuleConfig: 'ModuleConfig',
@@ -3002,7 +3105,10 @@ exports.Prisma.ModelName = {
   NotificationTemplate: 'NotificationTemplate',
   TenantSmtpConfig: 'TenantSmtpConfig',
   AssetTransfer: 'AssetTransfer',
-  AssetDisposal: 'AssetDisposal'
+  AssetDisposal: 'AssetDisposal',
+  EducationRecord: 'EducationRecord',
+  PreviousWorkExperience: 'PreviousWorkExperience',
+  FamilyMember: 'FamilyMember'
 };
 
 /**

@@ -7,6 +7,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { CreateRateDto } from './dto/create-rate.dto';
+import { CreateEducationRecordDto, UpdateEducationRecordDto } from './dto/education.dto';
+import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from './dto/work-experience.dto';
+import { CreateFamilyMemberDto, UpdateFamilyMemberDto, RegisterDependentDto } from './dto/family-member.dto';
 import * as ExcelJS from 'exceljs';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 
@@ -88,7 +91,10 @@ export class EmployeesService extends TenantAwareService {
 
     const employees = await this.prisma.employee.findMany({
       where,
-      include: { orgUnit: { select: { name: true } } },
+      include: {
+        orgUnit: { select: { id: true, name: true } },
+        position: { include: { jobTitle: { select: { name: true } } } },
+      },
       orderBy: { endDate: 'desc' },
       take: 200,
     });
@@ -98,7 +104,8 @@ export class EmployeesService extends TenantAwareService {
       code: e.code,
       fullName: e.fullName,
       email: e.email,
-      orgUnit: e.orgUnit ? { name: e.orgUnit.name } : undefined,
+      orgUnit: e.orgUnit ? { id: e.orgUnit.id, name: e.orgUnit.name } : undefined,
+      position: e.position ? { jobTitle: e.position.jobTitle ? { name: e.position.jobTitle.name } : null } : undefined,
       terminationDate: e.endDate ? e.endDate.toISOString() : undefined,
       // offboardingStatus và offboardingProgress chưa có trong schema — mặc định PENDING / 0
       offboardingStatus: 'PENDING' as const,
@@ -125,7 +132,11 @@ export class EmployeesService extends TenantAwareService {
     const emp = await this.prisma.employee.findFirst({
       // Chỉ trả về nhân sự chưa bị xóa mềm
       where: { userId, deletedAt: null },
-      include: { orgUnit: { select: { name: true } }, rates: { orderBy: { effectiveDate: 'desc' }, take: 1 } },
+      include: {
+        orgUnit: { select: { name: true } },
+        position: { include: { jobTitle: { select: { name: true } } } },
+        rates: { orderBy: { effectiveDate: 'desc' }, take: 1 },
+      },
     });
     if (!emp) throw new NotFoundException('Chưa có hồ sơ nhân sự cho tài khoản này');
     return emp;
@@ -303,6 +314,195 @@ export class EmployeesService extends TenantAwareService {
       where: { employeeId },
       include: { leaveType: { select: { id: true, name: true, color: true } } },
       orderBy: { year: 'desc' },
+    });
+  }
+
+  // ── Education Records ──────────────────────────────────────────────────────
+
+  async getEducationRecords(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.educationRecord.findMany({
+      where: { employeeId },
+      orderBy: [{ isMainDegree: 'desc' }, { graduationYear: 'desc' }],
+    });
+  }
+
+  async createEducationRecord(employeeId: string, dto: CreateEducationRecordDto) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.educationRecord.create({
+      data: { ...dto, employeeId, tenantId: this.getTenantId() },
+    });
+  }
+
+  async updateEducationRecord(employeeId: string, recordId: string, dto: UpdateEducationRecordDto) {
+    await this.findOrThrow(employeeId);
+    const record = await this.prisma.educationRecord.findFirst({ where: { id: recordId, employeeId } });
+    if (!record) throw new NotFoundException('Không tìm thấy bản ghi học vấn');
+    return this.prisma.educationRecord.update({ where: { id: recordId }, data: dto });
+  }
+
+  async deleteEducationRecord(employeeId: string, recordId: string) {
+    await this.findOrThrow(employeeId);
+    const record = await this.prisma.educationRecord.findFirst({ where: { id: recordId, employeeId } });
+    if (!record) throw new NotFoundException('Không tìm thấy bản ghi học vấn');
+    return this.prisma.educationRecord.delete({ where: { id: recordId } });
+  }
+
+  // ── Previous Work Experience ───────────────────────────────────────────────
+
+  async getWorkExperiences(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.previousWorkExperience.findMany({
+      where: { employeeId },
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
+  async createWorkExperience(employeeId: string, dto: CreateWorkExperienceDto) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.previousWorkExperience.create({
+      data: {
+        ...dto,
+        employeeId,
+        tenantId: this.getTenantId(),
+        startDate: dto.startDate ? new Date(dto.startDate) : null,
+        endDate: dto.endDate ? new Date(dto.endDate) : null,
+      },
+    });
+  }
+
+  async updateWorkExperience(employeeId: string, expId: string, dto: UpdateWorkExperienceDto) {
+    await this.findOrThrow(employeeId);
+    const exp = await this.prisma.previousWorkExperience.findFirst({ where: { id: expId, employeeId } });
+    if (!exp) throw new NotFoundException('Không tìm thấy kinh nghiệm làm việc');
+    return this.prisma.previousWorkExperience.update({
+      where: { id: expId },
+      data: {
+        ...dto,
+        startDate: dto.startDate ? new Date(dto.startDate) : null,
+        endDate: dto.endDate ? new Date(dto.endDate) : null,
+      },
+    });
+  }
+
+  async deleteWorkExperience(employeeId: string, expId: string) {
+    await this.findOrThrow(employeeId);
+    const exp = await this.prisma.previousWorkExperience.findFirst({ where: { id: expId, employeeId } });
+    if (!exp) throw new NotFoundException('Không tìm thấy kinh nghiệm làm việc');
+    return this.prisma.previousWorkExperience.delete({ where: { id: expId } });
+  }
+
+  // ── Family Members ─────────────────────────────────────────────────────────
+
+  async getFamilyMembers(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.familyMember.findMany({
+      where: { employeeId },
+      orderBy: { relationship: 'asc' },
+    });
+  }
+
+  async createFamilyMember(employeeId: string, dto: CreateFamilyMemberDto) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.familyMember.create({
+      data: {
+        ...dto,
+        employeeId,
+        tenantId: this.getTenantId(),
+        birthdate: dto.birthdate ? new Date(dto.birthdate) : null,
+      },
+    });
+  }
+
+  async updateFamilyMember(employeeId: string, memberId: string, dto: UpdateFamilyMemberDto) {
+    await this.findOrThrow(employeeId);
+    const member = await this.prisma.familyMember.findFirst({ where: { id: memberId, employeeId } });
+    if (!member) throw new NotFoundException('Không tìm thấy thành viên gia đình');
+    return this.prisma.familyMember.update({
+      where: { id: memberId },
+      data: { ...dto, birthdate: dto.birthdate ? new Date(dto.birthdate) : null },
+    });
+  }
+
+  async deleteFamilyMember(employeeId: string, memberId: string) {
+    await this.findOrThrow(employeeId);
+    const member = await this.prisma.familyMember.findFirst({ where: { id: memberId, employeeId } });
+    if (!member) throw new NotFoundException('Không tìm thấy thành viên gia đình');
+    // Xóa Dependent liên kết trước (nếu có)
+    if (member.dependentId) {
+      await this.prisma.dependent.delete({ where: { id: member.dependentId } });
+    }
+    return this.prisma.familyMember.delete({ where: { id: memberId } });
+  }
+
+  // ── Register / Unregister Dependent ───────────────────────────────────────
+
+  async registerDependent(employeeId: string, memberId: string, dto: RegisterDependentDto) {
+    await this.findOrThrow(employeeId);
+    const member = await this.prisma.familyMember.findFirst({ where: { id: memberId, employeeId } });
+    if (!member) throw new NotFoundException('Không tìm thấy thành viên gia đình');
+
+    if (!dto.isDependent) {
+      // Hủy đăng ký người phụ thuộc
+      if (member.dependentId) {
+        await this.prisma.dependent.delete({ where: { id: member.dependentId } });
+        await this.prisma.familyMember.update({ where: { id: memberId }, data: { dependentId: null } });
+      }
+      return { isDependent: false };
+    }
+
+    // Đảm bảo EmployeeTaxProfile tồn tại
+    await this.prisma.employeeTaxProfile.upsert({
+      where: { employeeId },
+      create: { employeeId },
+      update: {},
+    });
+
+    // Relationship mapping từ enum → string
+    const relMap: Record<string, string> = {
+      SPOUSE: 'Vợ/Chồng', PARENT: 'Cha/Mẹ', CHILD: 'Con',
+      SIBLING: 'Anh/Chị/Em', GRANDPARENT: 'Ông/Bà', OTHER: 'Khác',
+    };
+
+    if (member.dependentId) {
+      // Cập nhật Dependent hiện có
+      const dep = await this.prisma.dependent.update({
+        where: { id: member.dependentId },
+        data: {
+          taxId: dto.taxId,
+          registeredFrom: dto.registeredFrom ? new Date(dto.registeredFrom) : new Date(),
+          registeredTo: dto.registeredTo ? new Date(dto.registeredTo) : null,
+        },
+      });
+      return { isDependent: true, dependent: dep };
+    }
+
+    // Tạo mới Dependent và link vào FamilyMember
+    const dep = await this.prisma.dependent.create({
+      data: {
+        employeeId,
+        name: member.fullName,
+        relationship: relMap[member.relationship] ?? member.relationship,
+        taxId: dto.taxId ?? member.idNumber,
+        registeredFrom: dto.registeredFrom ? new Date(dto.registeredFrom) : new Date(),
+        registeredTo: dto.registeredTo ? new Date(dto.registeredTo) : null,
+      },
+    });
+
+    await this.prisma.familyMember.update({
+      where: { id: memberId },
+      data: { dependentId: dep.id },
+    });
+
+    return { isDependent: true, dependent: dep };
+  }
+
+  async getFamilyMembersWithDependent(employeeId: string) {
+    await this.findOrThrow(employeeId);
+    return this.prisma.familyMember.findMany({
+      where: { employeeId },
+      include: { dependent: true },
+      orderBy: { relationship: 'asc' },
     });
   }
 }

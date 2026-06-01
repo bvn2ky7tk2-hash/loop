@@ -11,6 +11,7 @@ import {
   BulbOutlined, QuestionCircleOutlined, ClockCircleOutlined,
   BookOutlined, PhoneOutlined, FilterOutlined, EnvironmentOutlined,
   UserAddOutlined, PauseCircleOutlined, FormOutlined,
+  CheckSquareOutlined, BugOutlined, InboxOutlined, FieldTimeOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -24,6 +25,9 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { useAuthStore } from '../../store/auth.store';
 import { usePermissions } from '../../hooks/usePermissions';
 import { dashboardV3Api, type TodayEvents } from '../../api/dashboard-v3';
+import { tasksApi } from '../../api/tasks';
+import { processesApi } from '../../api/processes.api';
+import { apiClient } from '../../api/client';
 import {
   useGetFeedPosts, useCreateFeedPost,
   useDeleteFeedPost, useReactFeedPost,
@@ -508,8 +512,13 @@ export default function FeedPage() {
   const { data: announcementFeed } = useGetFeedPosts(1, 10, 'ANNOUNCEMENT');
   const createMut                  = useCreateFeedPost();
 
-  const { data: peopleData }    = useQuery({ queryKey: ['dashboard-people'],     queryFn: dashboardV3Api.getPeople,      refetchInterval: 60_000 });
   const { data: todayEvents }   = useQuery({ queryKey: ['dashboard-today-events'], queryFn: dashboardV3Api.getTodayEvents, refetchInterval: 300_000 });
+
+  // Số liệu cá nhân
+  const { data: myTasksData }   = useQuery({ queryKey: ['my-tasks-count-feed'],    queryFn: tasksApi.myTasksCount,         staleTime: 60_000 });
+  const { data: myBugsData }    = useQuery({ queryKey: ['my-bugs-count-feed'],     queryFn: () => apiClient.get<{ total: number }>('/bugs/my/count').then(r => r.data), staleTime: 60_000 });
+  const { data: inboxData }     = useQuery({ queryKey: ['inbox-count-feed'],       queryFn: processesApi.countUserTasks,   staleTime: 60_000 });
+  const { data: meData } = useQuery({ queryKey: ['dashboard-me-feed'], queryFn: dashboardV3Api.getMe, staleTime: 60_000 });
 
   const { can } = usePermissions();
   const canPost = can('feed:create');
@@ -559,19 +568,19 @@ export default function FeedPage() {
     <div style={{ padding: '16px 24px', maxWidth: 1400, margin: '0 auto' }}>
       <PageHeader title="Bảng tin" icon={<TeamOutlined />} iconColor="#6366F1" />
 
-      {/* HR Stat Cards */}
+      {/* Stat Cards cá nhân */}
       <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
         <Col xs={12} sm={6}>
-          <StatCard label="Tổng nhân sự" value={peopleData?.headcount ?? 0} color="#8B5CF6" icon={<TeamOutlined />} onClick={() => navigate('/personnel')} />
+          <StatCard label="Việc của tôi" value={myTasksData?.total ?? 0} color="#6366F1" icon={<CheckSquareOutlined />} onClick={() => navigate('/my-tasks')} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard label="Vị trí đang tuyển" value={peopleData?.openPositions ?? 0} color="#3B82F6" icon={<UserAddOutlined />} onClick={() => navigate('/recruit/jobs')} />
+          <StatCard label="Lỗi của tôi" value={myBugsData?.total ?? 0} color="#EF4444" icon={<BugOutlined />} onClick={() => navigate('/my-bugs')} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard label="Nghỉ phép chờ duyệt" value={peopleData?.pendingLeaves ?? 0} color="#F59E0B" icon={<PauseCircleOutlined />} />
+          <StatCard label="Chờ duyệt quy trình" value={inboxData?.total ?? 0} color="#F59E0B" icon={<InboxOutlined />} onClick={() => navigate('/processes/inbox')} />
         </Col>
         <Col xs={12} sm={6}>
-          <StatCard label="HĐ sắp hết hạn" value={peopleData?.expiringContracts ?? 0} color="#EF4444" icon={<FileTextOutlined />} onClick={() => navigate('/contracts')} />
+          <StatCard label="Đơn nghỉ chờ duyệt" value={(meData as any)?.myPendingLeaves ?? 0} color="#10B981" icon={<FieldTimeOutlined />} onClick={() => navigate('/leaves')} />
         </Col>
       </Row>
 

@@ -23,11 +23,11 @@ import { forecastApi, type DealStage, type RevenueTarget } from '../../api/forec
 const { Text } = Typography;
 
 const STAGE_LABEL: Record<DealStage, string> = {
-  QUALIFICATION: 'Qualification',
-  PROPOSAL:      'Proposal',
-  NEGOTIATION:   'Negotiation',
-  WON:           'Won',
-  LOST:          'Lost',
+  QUALIFICATION: 'Xác định nhu cầu',
+  PROPOSAL:      'Đề xuất',
+  NEGOTIATION:   'Đàm phán',
+  WON:           'Thắng',
+  LOST:          'Mất',
 };
 
 const STAGE_COLOR: Record<DealStage, string> = {
@@ -59,7 +59,7 @@ function fmtFull(v: number): string {
 // ─── Overview Tab ────────────────────────────────────────────────────────────
 function OverviewTab() {
   const [year, setYear] = useState(2026);
-  const { isDark, textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor } = useThemePalette();
 
   const { data: monthly = [] } = useQuery({
     queryKey: ['forecast-monthly', year],
@@ -75,17 +75,17 @@ function OverviewTab() {
   });
 
   const chartData = monthly.map(m => ({
-    name:     m.month,
-    Target:   Math.round(m.target / 1e9 * 10) / 10,
-    Forecast: Math.round(m.forecast / 1e9 * 10) / 10,
-    Actual:   Math.round(m.actual / 1e9 * 10) / 10,
+    name:       m.month,
+    'Mục tiêu': Math.round(m.target / 1e9 * 10) / 10,
+    'Dự báo':   Math.round(m.forecast / 1e9 * 10) / 10,
+    'Thực tế':  Math.round(m.actual / 1e9 * 10) / 10,
   }));
 
   const qData = quarterly.map(q => ({
-    name:     q.quarter,
-    Target:   Math.round(q.target / 1e9),
-    Forecast: Math.round(q.forecast / 1e9),
-    Actual:   Math.round(q.actual / 1e9),
+    name:       q.quarter,
+    'Mục tiêu': Math.round(q.target / 1e9),
+    'Dự báo':   Math.round(q.forecast / 1e9),
+    'Thực tế':  Math.round(q.actual / 1e9),
   }));
 
   const activePipeline = pipeline.filter(p => !['WON', 'LOST'].includes(p.stage));
@@ -110,17 +110,17 @@ function OverviewTab() {
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={chartData} margin={{ left: 0, right: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
-            <XAxis dataKey="name" tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 12 }} />
-            <YAxis tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 12 }} />
+            <XAxis dataKey="name" tick={{ fill: textMuted as string, fontSize: 12 }} />
+            <YAxis tick={{ fill: textMuted as string, fontSize: 12 }} />
             <RTooltip
-              contentStyle={{ background: isDark ? '#1E293B' : '#fff', border: `1px solid ${borderColor}`, borderRadius: 8 }}
+              contentStyle={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8 }}
               labelStyle={{ color: textPrimary }}
               formatter={(v: number) => [`${v}B VNĐ`]}
             />
             <Legend />
-            <Bar dataKey="Target"   fill="#94A3B8" radius={[4,4,0,0]} />
-            <Bar dataKey="Forecast" fill="#6366F1" radius={[4,4,0,0]} />
-            <Bar dataKey="Actual"   fill="#10B981" radius={[4,4,0,0]} />
+            <Bar dataKey="Mục tiêu" fill="#94A3B8" radius={[4,4,0,0]} />
+            <Bar dataKey="Dự báo"   fill="#6366F1" radius={[4,4,0,0]} />
+            <Bar dataKey="Thực tế"  fill="#10B981" radius={[4,4,0,0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -135,16 +135,16 @@ function OverviewTab() {
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={qData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
-                <XAxis dataKey="name" tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 12 }} />
-                <YAxis tick={{ fill: isDark ? '#94A3B8' : '#64748B', fontSize: 12 }} />
+                <XAxis dataKey="name" tick={{ fill: textMuted as string, fontSize: 12 }} />
+                <YAxis tick={{ fill: textMuted as string, fontSize: 12 }} />
                 <RTooltip
-                  contentStyle={{ background: isDark ? '#1E293B' : '#fff', border: `1px solid ${borderColor}`, borderRadius: 8 }}
+                  contentStyle={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8 }}
                   formatter={(v: number) => [`${v}B VNĐ`]}
                 />
                 <Legend />
-                <Bar dataKey="Target"   fill="#94A3B8" radius={[4,4,0,0]} />
-                <Bar dataKey="Forecast" fill="#3B82F6" radius={[4,4,0,0]} />
-                <Bar dataKey="Actual"   fill="#10B981" radius={[4,4,0,0]} />
+                <Bar dataKey="Mục tiêu" fill="#94A3B8" radius={[4,4,0,0]} />
+                <Bar dataKey="Dự báo"   fill="#3B82F6" radius={[4,4,0,0]} />
+                <Bar dataKey="Thực tế"  fill="#10B981" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -154,13 +154,13 @@ function OverviewTab() {
         <Col xs={24} lg={10}>
           <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20, height: '100%' }}>
             <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 16 }}>
-              Pipeline Funnel (active)
+              Pipeline theo giai đoạn (đang hoạt động)
             </Text>
             {activePipeline.map(p => (
               <div key={p.stage} style={{ marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                   <Text style={{ color: textPrimary, fontSize: 13 }}>{STAGE_LABEL[p.stage as DealStage]}</Text>
-                  <Text style={{ color: textMuted, fontSize: 12 }}>{p.count} deals · {fmt(p.total)}</Text>
+                  <Text style={{ color: textMuted, fontSize: 12 }}>{p.count} giao dịch · {fmt(p.total)}</Text>
                 </div>
                 <Progress
                   percent={Math.round((p.total / maxTotal) * 100)}
@@ -192,7 +192,7 @@ function PipelineTab() {
 
   const columns = [
     {
-      title: 'Deal',
+      title: 'Giao dịch',
       dataIndex: 'title',
       render: (v: string, r: any) => (
         <div>
@@ -203,7 +203,7 @@ function PipelineTab() {
       ),
     },
     {
-      title: 'Stage',
+      title: 'Giai đoạn',
       dataIndex: 'stage',
       width: 130,
       render: (v: DealStage) => (
@@ -227,7 +227,7 @@ function PipelineTab() {
       render: (v: number) => <Text style={{ color: textMuted }}>{v}%</Text>,
     },
     {
-      title: 'Forecast',
+      title: 'Dự báo',
       dataIndex: 'weightedValue',
       width: 140,
       align: 'right' as const,
@@ -260,7 +260,7 @@ function PipelineTab() {
     <>
       <FilterBar>
         <Select
-          placeholder="Tất cả stages"
+          placeholder="Tất cả giai đoạn"
           allowClear
           value={stage}
           onChange={v => { setStage(v); setPage(1); }}
@@ -417,7 +417,7 @@ function TargetsTab() {
       />
 
       <CenteredModal
-        title={editing ? 'Cập nhật Revenue Target' : 'Thêm Revenue Target'}
+        title={editing ? 'Cập nhật Mục tiêu Doanh thu' : 'Thêm Mục tiêu Doanh thu'}
         open={modalOpen}
         onCancel={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}
         onOk={form.submit}
@@ -468,7 +468,7 @@ export default function ForecastPage() {
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={6}>
           <StatCard
-            label="Pipeline (active)"
+            label="Pipeline (đang hoạt động)"
             value={fmt(stats?.pipelineTotal ?? 0)}
             color="#6366F1"
             icon={<FundOutlined />}
@@ -476,7 +476,7 @@ export default function ForecastPage() {
         </Col>
         <Col xs={12} sm={6}>
           <StatCard
-            label="Weighted Forecast"
+            label="Dự báo có trọng số"
             value={fmt(stats?.weightedForecast ?? 0)}
             color="#3B82F6"
             icon={<AimOutlined />}
@@ -484,7 +484,7 @@ export default function ForecastPage() {
         </Col>
         <Col xs={12} sm={6}>
           <StatCard
-            label="Won YTD"
+            label="Thắng trong năm"
             value={fmt(stats?.wonYtd ?? 0)}
             color="#10B981"
             icon={<TrophyOutlined />}
@@ -505,8 +505,8 @@ export default function ForecastPage() {
         defaultActiveKey="overview"
         items={[
           { key: 'overview',  label: 'Tổng quan',       children: <OverviewTab /> },
-          { key: 'pipeline',  label: 'Pipeline Deals',  children: <PipelineTab /> },
-          { key: 'targets',   label: 'Revenue Targets', children: <TargetsTab /> },
+          { key: 'pipeline',  label: 'Giao dịch Pipeline',   children: <PipelineTab /> },
+          { key: 'targets',   label: 'Mục tiêu Doanh thu',   children: <TargetsTab /> },
         ]}
       />
     </div>

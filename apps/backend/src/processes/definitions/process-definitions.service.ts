@@ -12,8 +12,11 @@ import { UpdateDefinitionDto } from './dto/update-definition.dto';
 export class ProcessDefinitionsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(orgUnitIds: string[], page = 1, pageSize = 20) {
-    const where = orgUnitIds.length ? { orgUnitId: { in: orgUnitIds } } : {};
+  async findAll(orgUnitIds: string[], page = 1, pageSize = 20, key?: string) {
+    const where = {
+      ...(orgUnitIds.length ? { orgUnitId: { in: orgUnitIds } } : {}),
+      ...(key ? { key } : {}),
+    };
     const [items, total] = await Promise.all([
       this.prisma.processDefinition.findMany({
         where,

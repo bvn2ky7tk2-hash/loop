@@ -150,7 +150,7 @@ function EventBar({
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function CalendarPage() {
-  const { isDark, textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, bgCard, bgPage, borderColor, linkColor } = useThemePalette();
 
   const [currentDate, setCurrentDate] = useState<Dayjs>(dayjs());
   const [viewMode, setViewMode] = useState<ViewMode>('month');
@@ -344,10 +344,10 @@ export default function CalendarPage() {
 
     const today = dayjs();
 
-    const cellBg   = isDark ? '#1E293B' : '#ffffff';
+    const cellBg   = bgContainer;
     const emptyBg  = isDark ? '#162032' : '#F8FAFC';
     const todayBg  = isDark ? '#1e3a5f' : '#EFF6FF';
-    const headerBg = isDark ? '#0F172A' : '#F1F5F9';
+    const headerBg = bgPage;
 
     return (
       <div style={{ border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
@@ -447,8 +447,8 @@ export default function CalendarPage() {
     const today     = dayjs();
     const hourPx    = 60;
 
-    const cellBg   = isDark ? '#1E293B' : '#ffffff';
-    const headerBg = isDark ? '#0F172A' : '#F1F5F9';
+    const cellBg   = bgContainer;
+    const headerBg = bgPage;
     const todayBg  = isDark ? '#1e3a5f22' : '#EFF6FF';
 
     return (
@@ -622,7 +622,7 @@ export default function CalendarPage() {
                   gap: 8,
                   marginBottom: 8,
                   padding: '6px 12px',
-                  background: isDark ? '#0F172A' : '#F1F5F9',
+                  background: bgPage,
                   borderRadius: 6,
                   border: isToday ? `1px solid ${linkColor}` : `1px solid ${borderColor}`,
                 }}

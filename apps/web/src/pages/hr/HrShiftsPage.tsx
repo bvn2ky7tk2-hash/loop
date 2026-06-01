@@ -19,6 +19,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import {
   workShiftsApi,
   type WorkShift, type ShiftAssignment, type ShiftType,
@@ -457,7 +458,9 @@ export default function HrShiftsPage() {
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_, r) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{r.employee?.fullName ?? r.employeeId}</Text>,
+      render: (_, r) => r.employee
+        ? <EmployeeInfoCell employee={r.employee} />
+        : <Text style={{ color: textMuted }}>{r.employeeId}</Text>,
     },
     {
       title: 'Ca làm việc',

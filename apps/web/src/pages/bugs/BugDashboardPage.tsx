@@ -20,11 +20,11 @@ const SEVERITY_COLORS: Record<string, string> = {
 };
 
 export default function BugDashboardPage() {
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, bgContainer } = useThemePalette();
   const primary = preset.primary;
   const chartCardStyle = {
     borderRadius: 12,
-    background: isDark ? '#1E293B' : `${primary}09`,
+    background: isDark ? bgContainer : `${primary}09`,
     border: `1px solid ${isDark ? '#334155' : `${primary}28`}`,
   };
   const { token } = theme.useToken();
@@ -37,7 +37,7 @@ export default function BugDashboardPage() {
   const gridColor    = isDark ? 'rgba(255,255,255,0.1)' : '#eee';
   const labelColor   = isDark ? 'rgba(255,255,255,0.85)' : '#333';
   const tooltipStyle = isDark
-    ? { backgroundColor: '#1E293B', border: '1px solid #334155', color: '#F1F5F9' }
+    ? { backgroundColor: bgContainer, border: '1px solid #334155', color: '#F1F5F9' }
     : undefined;
 
   const statusData = stats

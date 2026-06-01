@@ -135,9 +135,52 @@ export class HrAnalyticsService extends TenantAwareService {
     return results;
   }
 
+  async getContractExpiry(days = 60) {
+    const now = new Date();
+    const deadline = new Date(now);
+    deadline.setDate(now.getDate() + days);
+
+    const contracts = await this.prisma.contract.findMany({
+      where: {
+        status: ContractStatus.ACTIVE,
+        endDate: { gte: now, lte: deadline },
+        deletedAt: null,
+      },
+      include: {
+        employee: {
+          select: {
+            id: true,
+            fullName: true,
+            code: true,
+            orgUnit: { select: { name: true } },
+            position: { select: { jobTitle: { select: { name: true } } } },
+          },
+        },
+      },
+      orderBy: { endDate: 'asc' },
+      take: 50,
+    });
+
+    return contracts.map(c => ({
+      id:          c.id,
+      employee:    c.employee
+        ? {
+            fullName: c.employee.fullName,
+            code:     c.employee.code ?? undefined,
+            orgUnit:  c.employee.orgUnit ?? undefined,
+            position: c.employee.position ?? undefined,
+          }
+        : { fullName: '—' },
+      contractType: c.type,
+      expiryDate:   c.endDate?.toISOString().split('T')[0] ?? '',
+      daysLeft:     c.endDate ? Math.ceil((c.endDate.getTime() - now.getTime()) / 86400000) : 0,
+    }));
+  }
+
   async getAttritionByDept() {
+    const tenantId = this.getTenantId();
     const orgUnits = await this.prisma.orgUnit.findMany({
-      where: this.tenantWhere({ deletedAt: null }),
+      where: tenantId ? { tenantId } : {},
       select: { id: true, name: true },
       take: 200,
     });

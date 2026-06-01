@@ -19,7 +19,11 @@ export interface WorkShift {
 export interface ShiftAssignment {
   id: string;
   employeeId: string;
-  employee: { id: string; fullName: string; code?: string };
+  employee: {
+    id: string; fullName: string; code?: string;
+    orgUnit?: { id: string; name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   shiftId: string;
   shift: { id: string; name: string; code: string };
   effectiveFrom: string;

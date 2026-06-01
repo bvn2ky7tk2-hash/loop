@@ -8,7 +8,7 @@ export type OvertimeStatus = OtStatus;
 export interface OvertimeRequest {
   id: string;
   employeeId: string;
-  employee: { id: string; fullName: string; code: string; orgUnit?: { name: string } };
+  employee: { id: string; fullName: string; code: string; orgUnit?: { name: string } | null; position?: { jobTitle?: { name: string } | null } | null };
   date: string;
   fromTime?: string | null;
   toTime?: string | null;
@@ -48,6 +48,7 @@ export interface RejectOtDto {
 
 export interface OtListParams {
   employeeId?: string;
+  orgUnitId?: string;
   status?: OtStatus;
   month?: number;
   year?: number;

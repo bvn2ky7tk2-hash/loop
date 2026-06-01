@@ -101,12 +101,61 @@ export class HrAttendanceService extends TenantAwareService {
         orderBy: [{ date: 'desc' }, { employeeId: 'asc' }],
         include: {
           employee: {
-            select: { id: true, fullName: true, code: true, orgUnitId: true },
+            select: {
+              id: true, fullName: true, code: true, orgUnitId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
           },
         },
       }),
       this.prisma.attendanceRecord.count({ where }),
     ]);
+
+    // Enrich với thông tin phép từ LeaveRequest
+    if (records.length > 0) {
+      const employeeIds = [...new Set(records.map((r) => r.employeeId))];
+      const dates = records.map((r) => r.date);
+      const minDate = dates.reduce((a, b) => (a < b ? a : b));
+      const maxDate = dates.reduce((a, b) => (a > b ? a : b));
+
+      const leaveRequests = await this.prisma.leaveRequest.findMany({
+        where: {
+          employeeId: { in: employeeIds },
+          status: 'APPROVED',
+          startDate: { lte: maxDate },
+          endDate: { gte: minDate },
+        },
+        include: { leaveType: { select: { id: true, name: true, color: true, isPaid: true } } },
+      });
+
+      // Map: `${employeeId}_${date}` → leaveInfo
+      const leaveMap = new Map<string, { name: string; color: string; isPaid: boolean }>();
+      for (const lr of leaveRequests) {
+        const s = new Date(lr.startDate as Date); s.setHours(0, 0, 0, 0);
+        const e = new Date(lr.endDate as Date); e.setHours(0, 0, 0, 0);
+        const c = new Date(s);
+        while (c <= e) {
+          leaveMap.set(`${lr.employeeId}_${c.toISOString().slice(0, 10)}`, {
+            name: lr.leaveType?.name ?? 'Nghỉ phép',
+            color: lr.leaveType?.color ?? '#6366F1',
+            isPaid: lr.leaveType?.isPaid ?? true,
+          });
+          c.setDate(c.getDate() + 1);
+        }
+      }
+
+      const enriched = records.map((r) => ({
+        ...r,
+        leaveInfo: leaveMap.get(`${r.employeeId}_${r.date.toISOString().slice(0, 10)}`) ?? null,
+        // Ngày công: 1 nếu đủ giờ, totalHours/8 nếu thiếu, 0 nếu vắng
+        dayCredit: r.checkIn && r.checkOut && r.totalHours
+          ? +Math.min(1, Number(r.totalHours) / 8).toFixed(2)
+          : r.checkIn ? 0.5 : 0,
+      }));
+
+      return paginate(enriched, total, page, limit);
+    }
 
     return paginate(records, total, page, limit);
   }

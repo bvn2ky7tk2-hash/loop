@@ -45,8 +45,8 @@ const COLUMNS: {
   icon: React.ReactNode;
   emptyDesc: string;
 }[] = [
-  { status: 'TODO',             label: 'Chưa bắt đầu',   accent: '#64748B', icon: <HourglassOutlined />,    emptyDesc: 'Kéo thả công việc vào đây để bắt đầu' },
-  { status: 'IN_PROGRESS',      label: 'Đang thực hiện', accent: '#4F46E5', icon: <PlayCircleOutlined />,    emptyDesc: 'Chưa có công việc đang thực hiện' },
+  { status: 'TODO',             label: 'Chưa bắt đầu',   accent: '#94A3B8', icon: <HourglassOutlined />,    emptyDesc: 'Kéo thả công việc vào đây để bắt đầu' },
+  { status: 'IN_PROGRESS',      label: 'Đang thực hiện', accent: '#6366F1', icon: <PlayCircleOutlined />,    emptyDesc: 'Chưa có công việc đang thực hiện' },
   { status: 'PENDING_APPROVAL', label: 'Chờ duyệt',      accent: '#D97706', icon: <ClockCircleOutlined />,   emptyDesc: 'Kéo thả công việc vào đây để cập nhật' },
   { status: 'RETURNED',         label: 'Trả lại',         accent: '#DC2626', icon: <RollbackOutlined />,      emptyDesc: 'Kéo thả công việc vào đây để cập nhật' },
   { status: 'DONE',             label: 'Hoàn thành',      accent: '#059669', icon: <CheckCircleOutlined />,   emptyDesc: 'Công việc hoàn thành sẽ xuất hiện ở đây' },
@@ -62,7 +62,7 @@ function initials(name: string) {
 }
 
 function avatarColor(name: string) {
-  const colors = ['#4F46E5', '#059669', '#D97706', '#DC2626', '#0891B2', '#7C3AED', '#0D9488'];
+  const colors = ['#6366F1', '#059669', '#D97706', '#DC2626', '#0891B2', '#8B5CF6', '#0D9488'];
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % colors.length;
   return colors[h];
@@ -85,7 +85,7 @@ function TaskCard({
 
   // Màu progress bar theo trạng thái
   const col = COLUMNS.find((c) => c.status === task.status);
-  const barColor = col?.accent ?? (progress >= 100 ? '#059669' : progress >= 50 ? '#4F46E5' : '#D97706');
+  const barColor = col?.accent ?? (progress >= 100 ? '#059669' : progress >= 50 ? '#6366F1' : '#D97706');
 
   const cardStyle: CSSProperties = {
     background: bgContainer,
@@ -515,8 +515,8 @@ export default function MyTasksPage() {
   const pillActive: CSSProperties = {
     ...pillBase,
     borderColor: preset.primary,
-    background: `${preset.primary}18`,
-    color: preset.primary,
+    background: isDark ? `${preset.primary}30` : `${preset.primary}18`,
+    color: isDark ? textPrimary : preset.primary,
   };
 
   return (

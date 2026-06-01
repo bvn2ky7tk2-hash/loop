@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, Optional, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, ForbiddenException, Optional, Inject } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import * as ExcelJS from 'exceljs';
@@ -10,13 +10,20 @@ import { ApproveLeaveDto } from './dto/approve-leave.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 import { HrEventBus } from '../common/events/hr-event-bus.service';
 
 const LEAVE_REQUEST_INCLUDE = {
-  employee: { select: { id: true, fullName: true, userId: true } },
+  employee: {
+    select: {
+      id: true, fullName: true, code: true, userId: true,
+      orgUnit:  { select: { id: true, name: true, code: true } },
+      position: { include: { jobTitle: { select: { id: true, name: true } } } },
+    },
+  },
   leaveType: { select: { id: true, name: true, isPaid: true, color: true } },
   approvedBy: { select: { id: true, name: true } },
-} as const;
+};
 
 @Injectable({ scope: Scope.REQUEST })
 export class LeavesService extends TenantAwareService {
@@ -30,15 +37,48 @@ export class LeavesService extends TenantAwareService {
     super(req);
   }
 
+  async listMyRequests(
+    userId: string,
+    status?: LeaveStatus,
+    page = 1,
+    limit = 20,
+  ): Promise<PaginatedResult<any>> {
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId, deletedAt: null },
+      select: { id: true },
+    });
+    if (!employee) return paginate([], 0, page, limit);
+
+    const where: any = { employeeId: employee.id };
+    if (status) where.status = status;
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.leaveRequest.findMany({
+        where,
+        include: LEAVE_REQUEST_INCLUDE,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.leaveRequest.count({ where }),
+    ]);
+    return paginate(data, total, page, limit);
+  }
+
   async listRequests(
     employeeId?: string,
     status?: LeaveStatus,
+    orgUnitId?: string,
     page = 1,
     limit = 20,
   ): Promise<PaginatedResult<any>> {
     const where: any = this.tenantWhere();
     if (employeeId) where.employeeId = employeeId;
     if (status) where.status = status;
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      where.employeeId = { in: empIds };
+    }
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.leaveRequest.findMany({
@@ -186,16 +226,27 @@ export class LeavesService extends TenantAwareService {
         include: LEAVE_REQUEST_INCLUDE,
       });
 
-      // Cập nhật used_days khi được duyệt
+      // Cập nhật used_days khi được duyệt — upsert để đảm bảo balance luôn tồn tại
       if (dto.status === 'APPROVED') {
-        const currentYear = new Date(request.startDate).getFullYear();
-        await tx.leaveBalance.updateMany({
+        const currentYear = new Date(request.startDate as Date).getFullYear();
+        const leaveTypeForBalance = request.leaveType as any;
+        const maxDays = leaveTypeForBalance?.maxDaysPerYear ?? 12;
+        await tx.leaveBalance.upsert({
           where: {
+            employeeId_leaveTypeId_year: {
+              employeeId:  request.employeeId,
+              leaveTypeId: request.leaveTypeId,
+              year:        currentYear,
+            },
+          },
+          create: {
             employeeId:  request.employeeId,
             leaveTypeId: request.leaveTypeId,
             year:        currentYear,
+            totalDays:   maxDays,
+            usedDays:    Number(request.days),
           },
-          data: {
+          update: {
             usedDays: { increment: Number(request.days) },
           },
         });
@@ -250,6 +301,65 @@ export class LeavesService extends TenantAwareService {
     return updated;
   }
 
+  async cancelLeave(id: string, requesterId: string) {
+    const request = await this.findOne(id);
+
+    // Chỉ nhân viên tạo đơn hoặc ADMIN mới được hủy
+    const employee = await this.prisma.employee.findFirst({
+      where: { id: request.employeeId },
+      select: { userId: true },
+    });
+    const requesterIsOwner = employee?.userId === requesterId;
+    const requester = await this.prisma.user.findUnique({
+      where: { id: requesterId },
+      select: { role: true },
+    });
+    const isAdmin = requester?.role === 'ADMIN' || requester?.role === 'LEADERSHIP';
+
+    if (!requesterIsOwner && !isAdmin) {
+      throw new ForbiddenException('Không có quyền hủy đơn này');
+    }
+
+    if (request.status === 'CANCELLED') {
+      throw new UnprocessableEntityException('Đơn đã bị hủy trước đó');
+    }
+
+    const wasApproved = request.status === 'APPROVED';
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.leaveRequest.update({
+        where: { id },
+        data: { status: LeaveStatus.CANCELLED },
+      });
+
+      // Hoàn lại usedDays nếu đơn đã được duyệt
+      if (wasApproved) {
+        const year = new Date(request.startDate as Date).getFullYear();
+        await tx.leaveBalance.updateMany({
+          where: {
+            employeeId:  request.employeeId,
+            leaveTypeId: request.leaveTypeId,
+            year,
+          },
+          data: {
+            usedDays: { decrement: Number(request.days) },
+          },
+        });
+      }
+    });
+
+    this.auditLog.log({
+      userId: requesterId,
+      action: 'CANCEL',
+      module: 'hr',
+      entity: 'Leave',
+      entityId: id,
+      newValues: { status: 'CANCELLED', wasApproved },
+    }).catch(() => {});
+
+    return { message: 'Đã hủy đơn nghỉ phép', wasApproved };
+  }
+
   async getBalance(employeeId: string, year?: number) {
     const targetYear = year ?? new Date().getFullYear();
 
@@ -260,6 +370,178 @@ export class LeavesService extends TenantAwareService {
       },
       orderBy: { leaveType: { name: 'asc' } },
     });
+  }
+
+  async getAllBalance(year?: number, orgUnitId?: string, page = 1, limit = 50) {
+    const targetYear = year ?? new Date().getFullYear();
+
+    // Lấy tất cả employees thuộc orgUnit (nếu có filter)
+    const employeeWhere: any = { deletedAt: null, isActive: true };
+    if (orgUnitId) employeeWhere.orgUnitId = orgUnitId;
+
+    const [employees, totalEmployees] = await this.prisma.$transaction([
+      this.prisma.employee.findMany({
+        where: employeeWhere,
+        select: {
+          id: true, code: true, fullName: true,
+          orgUnit: { select: { id: true, name: true } },
+          position: { include: { jobTitle: { select: { id: true, name: true } } } },
+        },
+        orderBy: { fullName: 'asc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.employee.count({ where: employeeWhere }),
+    ]);
+
+    const employeeIds = employees.map((e) => e.id);
+
+    // Lấy LeaveBalance cho tất cả employees trong 1 query
+    const balances = await this.prisma.leaveBalance.findMany({
+      where: { employeeId: { in: employeeIds }, year: targetYear },
+      include: {
+        leaveType: { select: { id: true, name: true, isPaid: true, color: true, maxDaysPerYear: true } },
+      },
+    });
+
+    // Lấy lịch sử trừ phép (LeaveRequest APPROVED)
+    const leaveHistory = await this.prisma.leaveRequest.findMany({
+      where: {
+        employeeId: { in: employeeIds },
+        status: 'APPROVED',
+        startDate: { gte: new Date(targetYear, 0, 1) },
+        endDate: { lte: new Date(targetYear, 11, 31) },
+      },
+      include: {
+        leaveType: { select: { id: true, name: true, color: true, isPaid: true } },
+      },
+      orderBy: { startDate: 'desc' },
+    });
+
+    // Group by employeeId
+    const balanceMap = new Map<string, typeof balances>();
+    for (const b of balances) {
+      if (!balanceMap.has(b.employeeId)) balanceMap.set(b.employeeId, []);
+      balanceMap.get(b.employeeId)!.push(b);
+    }
+
+    const historyMap = new Map<string, typeof leaveHistory>();
+    for (const h of leaveHistory) {
+      if (!historyMap.has(h.employeeId)) historyMap.set(h.employeeId, []);
+      historyMap.get(h.employeeId)!.push(h);
+    }
+
+    const data = employees.map((emp) => ({
+      employee: emp,
+      balances: (balanceMap.get(emp.id) ?? []).map((b) => ({
+        leaveTypeId: b.leaveTypeId,
+        leaveType: b.leaveType,
+        totalDays: Number(b.totalDays),
+        usedDays: Number(b.usedDays),
+        remainingDays: Number(b.totalDays) - Number(b.usedDays),
+        year: b.year,
+      })),
+      recentHistory: (historyMap.get(emp.id) ?? []).slice(0, 5).map((h) => ({
+        id: h.id,
+        leaveType: h.leaveType,
+        startDate: h.startDate,
+        endDate: h.endDate,
+        days: Number(h.days),
+        reason: h.reason,
+        createdAt: h.createdAt,
+      })),
+    }));
+
+    return { data, total: totalEmployees, page, limit, year: targetYear };
+  }
+
+  // Khởi tạo LeaveBalance cho toàn nhân sự × toàn loại phép trong năm
+  // Chỉ tạo bản ghi chưa tồn tại — không ghi đè dữ liệu đã có
+  async initBalances(year: number, orgUnitId?: string) {
+    const employeeWhere: any = { isActive: true, deletedAt: null };
+    if (orgUnitId) employeeWhere.orgUnitId = orgUnitId;
+
+    const [employees, leaveTypes] = await Promise.all([
+      this.prisma.employee.findMany({ where: employeeWhere, select: { id: true } }),
+      this.prisma.leaveType.findMany({ where: { isActive: true }, select: { id: true, maxDaysPerYear: true } }),
+    ]);
+
+    if (employees.length === 0) return { message: 'Không có nhân viên nào', created: 0, employees: 0 };
+    if (leaveTypes.length === 0) return { message: 'Không có loại phép nào', created: 0, employees: 0 };
+
+    // Batch upsert — upsert với update {} nghĩa là bỏ qua bản ghi đã tồn tại
+    const upserts = employees.flatMap((emp) =>
+      leaveTypes.map((lt) =>
+        this.prisma.leaveBalance.upsert({
+          where: { employeeId_leaveTypeId_year: { employeeId: emp.id, leaveTypeId: lt.id, year } },
+          create: { employeeId: emp.id, leaveTypeId: lt.id, year, totalDays: lt.maxDaysPerYear, usedDays: 0 },
+          update: {}, // giữ nguyên bản ghi đã có, chỉ tạo mới khi chưa có
+        }),
+      ),
+    );
+
+    // Chạy song song theo batch 200 để tránh quá tải transaction
+    const BATCH = 200;
+    let created = 0;
+    for (let i = 0; i < upserts.length; i += BATCH) {
+      await this.prisma.$transaction(upserts.slice(i, i + BATCH));
+      created += Math.min(BATCH, upserts.length - i);
+    }
+
+    return {
+      message: `Đã khởi tạo phép năm ${year} cho ${employees.length} nhân viên × ${leaveTypes.length} loại phép`,
+      year,
+      employees: employees.length,
+      leaveTypes: leaveTypes.length,
+      total: employees.length * leaveTypes.length,
+    };
+  }
+
+  async getMonthlyStats(year: number, orgUnitId?: string) {
+    const where: any = {
+      status: 'APPROVED',
+      startDate: { gte: new Date(year, 0, 1) },
+      endDate:   { lte: new Date(year, 11, 31) },
+    };
+    if (orgUnitId) where.employee = { orgUnitId };
+
+    const requests = await this.prisma.leaveRequest.findMany({
+      where,
+      include: { leaveType: { select: { id: true, name: true, color: true } } },
+    });
+
+    // Tổng hợp theo tháng (theo startDate)
+    type TypeEntry = { leaveTypeId: string; name: string; color: string; days: number };
+    type MonthEntry = { totalRequests: number; totalDays: number; byType: Map<string, TypeEntry> };
+    const monthMap = new Map<number, MonthEntry>();
+    for (let m = 1; m <= 12; m++) {
+      monthMap.set(m, { totalRequests: 0, totalDays: 0, byType: new Map() });
+    }
+    for (const req of requests) {
+      const m = new Date(req.startDate as Date).getMonth() + 1;
+      const entry = monthMap.get(m)!;
+      entry.totalRequests++;
+      entry.totalDays += Number(req.days);
+      const tid = req.leaveTypeId;
+      if (!entry.byType.has(tid)) {
+        entry.byType.set(tid, {
+          leaveTypeId: tid,
+          name: (req as any).leaveType?.name ?? 'Nghỉ phép',
+          color: (req as any).leaveType?.color ?? '#6366F1',
+          days: 0,
+        });
+      }
+      entry.byType.get(tid)!.days += Number(req.days);
+    }
+
+    const months = Array.from(monthMap.entries()).map(([month, d]) => ({
+      month,
+      totalRequests: d.totalRequests,
+      totalDays:     d.totalDays,
+      byType:        Array.from(d.byType.values()),
+    }));
+
+    return { year, months };
   }
 
   async listTypes() {

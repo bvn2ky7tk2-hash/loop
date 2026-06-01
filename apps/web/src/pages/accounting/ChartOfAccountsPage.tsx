@@ -67,7 +67,7 @@ export default function ChartOfAccountsPage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <Space>
-          <BankOutlined style={{ fontSize: 22, color: preset.primary }} />
+          <BankOutlined style={{ fontSize: 22, color: linkColor }} />
           <Title level={4} style={{ margin: 0, color: textPrimary }}>Chart of Accounts</Title>
         </Space>
         <Select

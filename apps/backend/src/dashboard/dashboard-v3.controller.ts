@@ -112,6 +112,31 @@ export class DashboardV3Controller {
     return this.service.getTodayEvents(tenantId);
   }
 
+  // ─── Attendance & Payroll Dashboard ───────────────────────────────────────
+
+  @Get('attendance')
+  @ApiOperation({ summary: 'Dashboard Chấm công & Lương (Attendance module)' })
+  getAttendance(@Request() req: any) {
+    const tenantId: string | undefined = req.user?.tenantId ?? undefined;
+    return this.service.getAttendance(tenantId);
+  }
+
+  @Get('attendance-trend')
+  @ApiOperation({ summary: 'Xu hướng chấm công 7 ngày gần nhất' })
+  getAttendanceTrend(@Request() req: any) {
+    const tenantId: string | undefined = req.user?.tenantId ?? undefined;
+    return this.service.getAttendanceTrend(tenantId);
+  }
+
+  // ─── Recruit Dashboard ─────────────────────────────────────────────────────
+
+  @Get('recruit')
+  @ApiOperation({ summary: 'Dashboard Tuyển dụng (Recruit module)' })
+  getRecruit(@Request() req: any) {
+    const tenantId: string | undefined = req.user?.tenantId ?? undefined;
+    return this.service.getRecruit(tenantId);
+  }
+
   // ── E24.6: Executive Dashboard ─────────────────────────────────────────────
 
   @Get('executive')

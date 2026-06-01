@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import { payrollApi, type PayrollPeriod, type PayrollRecord } from '../../api/payroll';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { formatCurrency } from '../../utils/format';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
 
@@ -67,7 +68,7 @@ function RecordDetailModal({
     <CenteredModal
       open={!!record}
       onClose={onClose}
-      title={`Chi tiết phiếu lương — ${record.employee?.user?.name ?? '—'}`}
+      title={`Chi tiết phiếu lương — ${record.employee?.user?.name ?? record.employee?.fullName ?? '—'}`}
       width={560}
     >
       {/* Thông tin chấm công */}
@@ -183,7 +184,7 @@ function EditRecordModal({
     <CenteredModal
       open={!!record}
       onClose={onClose}
-      title={`Điều chỉnh — ${record.employee?.user?.name ?? '—'}`}
+      title={`Điều chỉnh — ${record.employee?.user?.name ?? record.employee?.fullName ?? '—'}`}
       width={420}
       extra={
         <Button type="primary" loading={updateMut.isPending} disabled={updateMut.isPending}
@@ -322,67 +323,204 @@ function PeriodDetailModal({
   const canPay      = period?.status === 'APPROVED';
   const canEdit     = period?.status !== 'APPROVED' && period?.status !== 'PAID';
 
+  const numCell = (v: number, color = textPrimary, prefix = '') =>
+    Number(v) !== 0
+      ? <Text style={{ color, fontSize: 12 }}>{prefix}{formatCurrency(Number(v))}</Text>
+      : <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>;
+
   const cols: ColumnsType<PayrollRecord> = [
+    // ── Nhân viên (fixed left) ──────────────────────────────────────────────
     {
       title: 'Nhân viên',
+      fixed: 'left' as const,
+      width: 200,
       render: (_, r) => (
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, color: textPrimary }}>{r.employee?.user?.name ?? '—'}</div>
-          <div style={{ fontSize: 11, color: textMuted }}>{r.employee?.user?.email}</div>
-        </div>
+        <EmployeeInfoCell
+          employee={{
+            fullName: r.employee?.user?.name ?? '—',
+            code: r.employee?.code,
+            orgUnit: r.employee?.orgUnit,
+            position: r.employee?.position,
+          }}
+        />
       ),
     },
+
+    // ── Chấm công ───────────────────────────────────────────────────────────
     {
-      title: 'Công / OT',
-      width: 90,
-      align: 'center',
-      render: (_, r) => (
-        <div style={{ fontSize: 12, lineHeight: 1.8 }}>
-          <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{r.workDays}c</Tag>
-          {Number(r.overtimeHours) > 0 && <Tag style={isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)' } : {}} color={isDark ? undefined : 'orange'}>{r.overtimeHours}h</Tag>}
-        </div>
-      ),
+      title: 'Chấm công',
+      children: [
+        {
+          title: 'C.chuẩn',
+          width: 70,
+          align: 'center' as const,
+          render: (_, r) => (
+            <Text style={{ color: textMuted, fontSize: 12 }}>
+              {(r.configSnapshot as any)?.standardDays ?? 26}
+            </Text>
+          ),
+        },
+        {
+          title: 'T.công',
+          width: 68,
+          align: 'center' as const,
+          render: (_, r) => (
+            <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)', fontSize: 11 } : { fontSize: 11 }}
+              color={isDark ? undefined : 'blue'}>
+              {r.workDays}
+            </Tag>
+          ),
+        },
+        {
+          title: 'OT (h)',
+          width: 65,
+          align: 'center' as const,
+          render: (_, r) => Number(r.overtimeHours) > 0
+            ? <Tag style={isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)', fontSize: 11 } : { fontSize: 11 }}
+                color={isDark ? undefined : 'orange'}>{r.overtimeHours}h</Tag>
+            : <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>,
+        },
+        {
+          title: 'NP phép',
+          width: 72,
+          align: 'center' as const,
+          render: (_, r) => Number(r.paidLeaveDays) > 0
+            ? <Text style={{ color: '#10B981', fontSize: 12 }}>{r.paidLeaveDays}c</Text>
+            : <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>,
+        },
+        {
+          title: 'NP ko phép',
+          width: 80,
+          align: 'center' as const,
+          render: (_, r) => Number(r.unpaidLeaveDays) > 0
+            ? <Text style={{ color: '#EF4444', fontSize: 12 }}>{r.unpaidLeaveDays}c</Text>
+            : <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>,
+        },
+      ],
     },
+
+    // ── Thu nhập ────────────────────────────────────────────────────────────
     {
-      title: 'Tổng TN',
-      dataIndex: 'grossSalary',
-      width: 130,
-      align: 'right',
-      render: (v: number) => <Text style={{ color: textPrimary, fontSize: 13 }}>{formatCurrency(Number(v))}</Text>,
+      title: 'Thu nhập',
+      children: [
+        {
+          title: 'Lương HĐ',
+          width: 120,
+          align: 'right' as const,
+          render: (_, r) => {
+            const v = (r.configSnapshot as any)?.contractSalary;
+            return v ? numCell(v) : <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>;
+          },
+        },
+        {
+          title: 'Lương theo công',
+          width: 130,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.baseSalary)),
+        },
+        {
+          title: 'Lương OT',
+          width: 110,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.overtimePay)),
+        },
+        {
+          title: 'Phụ cấp',
+          width: 110,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.allowances)),
+        },
+        {
+          title: 'Thưởng',
+          width: 100,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.bonus), '#10B981'),
+        },
+        {
+          title: 'Tổng TN',
+          width: 130,
+          align: 'right' as const,
+          render: (_, r) => <Text style={{ color: textPrimary, fontSize: 12, fontWeight: 600 }}>{formatCurrency(Number(r.grossSalary))}</Text>,
+        },
+      ],
     },
+
+    // ── Lương đóng BH & BH NLĐ ─────────────────────────────────────────────
     {
-      title: 'BH NLĐ',
-      width: 110,
-      align: 'right',
-      render: (_, r) => {
-        const total = Number(r.bhxhEmployee) + Number(r.bhytEmployee) + Number(r.bhtnEmployee);
-        return total > 0
-          ? <Text style={{ color: '#EF4444', fontSize: 13 }}>-{formatCurrency(total)}</Text>
-          : <Text style={{ color: textMuted }}>—</Text>;
-      },
+      title: 'Bảo hiểm NLĐ',
+      children: [
+        {
+          title: 'Lương đóng BH',
+          width: 120,
+          align: 'right' as const,
+          render: (_, r) => {
+            const v = (r.configSnapshot as any)?.bhxhBase;
+            return v ? numCell(v, textMuted) : <Text style={{ color: textMuted, fontSize: 12 }}>Miễn</Text>;
+          },
+        },
+        {
+          title: 'BHXH 8%',
+          width: 105,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.bhxhEmployee), '#EF4444', '-'),
+        },
+        {
+          title: 'BHYT 1.5%',
+          width: 105,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.bhytEmployee), '#EF4444', '-'),
+        },
+        {
+          title: 'BHTN 1%',
+          width: 100,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.bhtnEmployee), '#EF4444', '-'),
+        },
+      ],
     },
+
+    // ── Thuế TNCN ───────────────────────────────────────────────────────────
     {
       title: 'Thuế TNCN',
-      dataIndex: 'pitAmount',
-      width: 110,
-      align: 'right',
-      render: (v: number) => Number(v) > 0
-        ? <Text style={{ color: '#EF4444', fontSize: 13 }}>-{formatCurrency(Number(v))}</Text>
-        : <Text style={{ color: textMuted }}>—</Text>,
+      children: [
+        {
+          title: 'TN chịu thuế',
+          width: 120,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.taxableIncome), textMuted),
+        },
+        {
+          title: 'Thuế TNCN',
+          width: 105,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.pitAmount), '#EF4444', '-'),
+        },
+        {
+          title: 'KT thêm',
+          width: 95,
+          align: 'right' as const,
+          render: (_, r) => numCell(Number(r.deductions), '#EF4444', '-'),
+        },
+      ],
     },
+
+    // ── Thực nhận (fixed right) ─────────────────────────────────────────────
     {
       title: 'Thực nhận',
-      dataIndex: 'netSalary',
+      fixed: 'right' as const,
       width: 130,
-      align: 'right',
-      render: (v: number) => (
-        <Text strong style={{ color: linkColor, fontSize: 14 }}>{formatCurrency(Number(v))}</Text>
+      align: 'right' as const,
+      render: (_, r) => (
+        <Text strong style={{ color: linkColor, fontSize: 13 }}>{formatCurrency(Number(r.netSalary))}</Text>
       ),
     },
+
+    // ── Actions (fixed right) ───────────────────────────────────────────────
     {
       title: '',
-      width: 100,
-      align: 'center',
+      fixed: 'right' as const,
+      width: 90,
+      align: 'center' as const,
       render: (_, r) => (
         <Space size={4}>
           <Tooltip title="Chi tiết">
@@ -416,7 +554,7 @@ function PeriodDetailModal({
             {period && <Tag color={STATUS_COLOR[period.status]}>{STATUS_LABEL[period.status]}</Tag>}
           </div>
         }
-        width={960}
+        width="92vw"
         extra={
           <Space>
             {canGenerate && (
@@ -532,7 +670,8 @@ function PeriodDetailModal({
           rowKey="id"
           columns={cols}
           size="small"
-          scroll={{ x: 780 }}
+          bordered
+          scroll={{ x: 1800 }}
           pagination={{
             current: page,
             total: data?.total ?? 0,
@@ -601,12 +740,14 @@ function Month13Tab() {
     {
       title: 'Nhân viên',
       render: (_, r) => (
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 13, color: textPrimary }}>
-            {r.employee?.user?.name ?? '—'}
-          </div>
-          <div style={{ fontSize: 11, color: textMuted }}>{r.employee?.user?.email}</div>
-        </div>
+        <EmployeeInfoCell
+          employee={{
+            fullName: r.employee?.user?.name ?? '—',
+            code: r.employee?.code,
+            orgUnit: r.employee?.orgUnit,
+            position: r.employee?.position,
+          }}
+        />
       ),
     },
     {

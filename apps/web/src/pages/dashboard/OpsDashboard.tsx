@@ -125,6 +125,7 @@ export default function OpsDashboard() {
         title="Dashboard Vận hành"
         icon={<NodeIndexOutlined />}
         iconColor="#6366F1"
+        greeting
       />
 
       {/* Hàng 1: BPM/Ops stats */}

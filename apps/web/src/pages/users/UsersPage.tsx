@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {
   Button, Table, Modal, Form, Input, Select,
-  App, Space, Tooltip, Switch, Divider,
+  App, Space, Tooltip, Switch, Divider, Typography,
 } from 'antd';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { PlusOutlined, EditOutlined, KeyOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi, type UserRecord } from '../../api/users';
@@ -18,12 +19,15 @@ const ROLE_LABELS: Record<string, string> = {
 const ROLE_BADGE: Record<string, { bg: string; color: string }> = {
   ADMIN:      { bg: '#FEF2F2', color: '#991B1B' },
   PM:         { bg: '#EEF2FF', color: '#4338CA' },
-  MEMBER:     { bg: '#F1F5F9', color: '#475569' },
+  MEMBER:     { bg: '#F1F5F9', color: '#94A3B8' },
   LEADERSHIP: { bg: '#F5F3FF', color: '#6D28D9' },
 };
 
+const { Text } = Typography;
+
 export default function UsersPage() {
   const { message } = App.useApp();
+  const { isDark, textMuted } = useThemePalette();
   const qc = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
@@ -116,11 +120,12 @@ export default function UsersPage() {
     {
       title: 'Vai trò', dataIndex: 'role', width: 130,
       render: (role: string) => {
-        const cfg = ROLE_BADGE[role] ?? { bg: '#F1F5F9', color: '#475569' };
-        return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '3px 10px', background: cfg.bg, color: cfg.color }}>{ROLE_LABELS[role] ?? role}</span>;
+        const cfg = ROLE_BADGE[role] ?? { bg: '#F1F5F9', color: '#94A3B8' };
+        const bg = isDark ? `${cfg.color}20` : cfg.bg;
+        return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '3px 10px', background: bg, color: cfg.color }}>{ROLE_LABELS[role] ?? role}</span>;
       },
     },
-    { title: 'Đơn vị', dataIndex: 'orgUnitName', render: (v: string | null) => v ?? '—' },
+    { title: 'Đơn vị', dataIndex: 'orgUnitName', render: (v: string | null) => v ? <Text style={{ color: textMuted }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Trạng thái', dataIndex: 'isActive', width: 110,
       render: (v: boolean, r: UserRecord) => (

@@ -35,6 +35,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { hrInsuranceApi } from '../../api/hr-insurance';
+import { OrgUnitSelect } from '../../components/selects';
 import type {
   InsuranceEnrollment,
   InsuranceEnrollmentStatus,
@@ -44,6 +45,7 @@ import type {
 import { employeesApi } from '../../api/employees';
 import { formatCurrency } from '../../utils/format';
 import { downloadExport } from '../../utils/exportApi';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
 
@@ -77,6 +79,7 @@ export default function InsurancePage() {
   // Filter state
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>();
 
   // Modal state
   const [enrollOpen, setEnrollOpen] = useState(false);
@@ -105,9 +108,9 @@ export default function InsurancePage() {
   });
 
   const { data: enrollmentsResp, isLoading } = useQuery({
-    queryKey: ['hr-insurance-enrollments', search, statusFilter],
+    queryKey: ['hr-insurance-enrollments', search, statusFilter, orgUnitFilter],
     queryFn: () =>
-      hrInsuranceApi.listEnrollments({ search: search || undefined, status: statusFilter }),
+      hrInsuranceApi.listEnrollments({ search: search || undefined, status: statusFilter, orgUnitId: orgUnitFilter }),
   });
 
   const { data: employees = [] } = useQuery({
@@ -244,22 +247,11 @@ export default function InsurancePage() {
 
   const enrollColumns: ColumnsType<InsuranceEnrollment> = [
     {
-      title: 'Mã NV',
-      dataIndex: ['employee', 'code'],
-      width: 100,
-      render: (v?: string) =>
-        v ? (
-          <Text style={{ color: textPrimary, fontWeight: 600 }}>{v}</Text>
-        ) : (
-          <Text style={{ color: textMuted }}>—</Text>
-        ),
-    },
-    {
-      title: 'Họ và tên',
-      dataIndex: ['employee', 'fullName'],
-      render: (v?: string) =>
-        v ? (
-          <Text style={{ color: textPrimary }}>{v}</Text>
+      title: 'Nhân viên',
+      key: 'employee',
+      render: (_: unknown, r: InsuranceEnrollment) =>
+        r.employee ? (
+          <EmployeeInfoCell employee={r.employee} />
         ) : (
           <Text style={{ color: textMuted }}>—</Text>
         ),
@@ -559,6 +551,13 @@ export default function InsurancePage() {
                       { value: 'TERMINATED', label: 'Đã nghỉ' },
                       { value: 'SUSPENDED', label: 'Tạm dừng' },
                     ]}
+                  />
+                  <OrgUnitSelect
+                    placeholder="Phòng ban"
+                    style={{ minWidth: 180 }}
+                    value={orgUnitFilter}
+                    onChange={setOrgUnitFilter}
+                    allowClear
                   />
                 </FilterBar>
                 <Table

@@ -29,7 +29,14 @@ export interface ContractAllowanceInputItem {
 export interface Contract {
   id: string;
   employeeId: string;
-  employee: { id: string; fullName: string; position?: string | null };
+  employee: {
+    id: string;
+    fullName: string;
+    code: string;
+    level?: string | null;
+    orgUnit?: { id: string; name: string; code: string } | null;
+    position?: { id: string; code: string; jobTitle?: { id: string; name: string } | null } | null;
+  };
   type: ContractType;
   status: ContractStatus;
   startDate: string;
@@ -78,7 +85,7 @@ export interface PaginatedContracts {
 }
 
 export const contractsApi = {
-  list: (params: { employeeId?: string; page?: number; limit?: number }) =>
+  list: (params: { employeeId?: string; orgUnitId?: string; page?: number; limit?: number }) =>
     apiClient.get<PaginatedContracts>('/contracts', { params }).then((r) => r.data),
 
   getOne: (id: string) =>

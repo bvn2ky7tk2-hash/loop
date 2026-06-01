@@ -25,17 +25,18 @@ import {
   type Deal, type DealFilterDto, type DealStage,
 } from '../../api/crm';
 import { useAuthStore } from '../../store/auth.store';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { ProjectSelect } from '../../components/selects';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const STAGES: { key: DealStage; label: string; color: string; bg: string }[] = [
-  { key: 'QUALIFICATION', label: 'Qualification', color: '#0EA5E9', bg: 'rgba(14,165,233,0.08)' },
-  { key: 'PROPOSAL',      label: 'Proposal',      color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
-  { key: 'NEGOTIATION',   label: 'Negotiation',   color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)' },
-  { key: 'WON',           label: 'Won',           color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
-  { key: 'LOST',          label: 'Lost',          color: '#EF4444', bg: 'rgba(239,68,68,0.08)'  },
+  { key: 'QUALIFICATION', label: 'Xác định nhu cầu', color: '#0EA5E9', bg: 'rgba(14,165,233,0.08)' },
+  { key: 'PROPOSAL',      label: 'Đề xuất',          color: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+  { key: 'NEGOTIATION',   label: 'Đàm phán',         color: '#8B5CF6', bg: 'rgba(139,92,246,0.08)' },
+  { key: 'WON',           label: 'Thắng',            color: '#10B981', bg: 'rgba(16,185,129,0.08)' },
+  { key: 'LOST',          label: 'Mất',              color: '#EF4444', bg: 'rgba(239,68,68,0.08)'  },
 ];
 
 const STAGE_MAP = Object.fromEntries(STAGES.map(s => [s.key, s]));
@@ -93,11 +94,11 @@ function DealCard({
       <div style={{ display: 'flex', gap: 4, marginTop: 8, justifyContent: 'flex-end' }}>
         {deal.stage !== 'WON' && deal.stage !== 'LOST' && (
           <>
-            <Tooltip title="Mark Won">
+            <Tooltip title="Đánh dấu Thắng">
               <Button size="small" type="text" icon={<CheckCircleFilled style={{ color: '#10B981' }} />}
                 onClick={() => onWon(deal)} />
             </Tooltip>
-            <Tooltip title="Mark Lost">
+            <Tooltip title="Đánh dấu Mất">
               <Button size="small" type="text" icon={<CloseCircleFilled style={{ color: '#EF4444' }} />}
                 onClick={() => onLost(deal)} />
             </Tooltip>
@@ -208,10 +209,9 @@ export default function DealsPage() {
   const openLost = (deal: Deal) => { setActTarget(deal); lostForm.resetFields(); setLostModal(true); };
 
   const handleDelete = (deal: Deal) => {
-    Modal.confirm({
-      title: `Xoá deal "${deal.title}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(deal.id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: deal.title,
+      onConfirm: async () => { await deleteMutation.mutateAsync(deal.id); message.success('Đã xoá'); },
     });
   };
 
@@ -308,8 +308,8 @@ export default function DealsPage() {
         <Space>
           {row.stage !== 'WON' && row.stage !== 'LOST' && (
             <>
-              <Tooltip title="Won"><Button size="small" icon={<CheckCircleFilled style={{ color: '#10B981' }} />} onClick={() => openWon(row)} /></Tooltip>
-              <Tooltip title="Lost"><Button size="small" icon={<CloseCircleFilled style={{ color: '#EF4444' }} />} onClick={() => openLost(row)} /></Tooltip>
+              <Tooltip title="Đánh dấu Thắng"><Button size="small" icon={<CheckCircleFilled style={{ color: '#10B981' }} />} onClick={() => openWon(row)} /></Tooltip>
+              <Tooltip title="Đánh dấu Mất"><Button size="small" icon={<CloseCircleFilled style={{ color: '#EF4444' }} />} onClick={() => openLost(row)} /></Tooltip>
             </>
           )}
           <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(row)} />
@@ -326,7 +326,7 @@ export default function DealsPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <TrophyOutlined style={{ color: '#DC2626', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Pipeline / Deals</Title>
+          <Title level={4} style={{ margin: 0, color: textPrimary }}>Pipeline / Cơ hội bán hàng</Title>
         </div>
         <Space>
           <Radio.Group
@@ -503,9 +503,9 @@ export default function DealsPage() {
           size="small"
           style={{ marginBottom: 24 }}
           items={[
-            { title: 'Project Info', icon: <ProjectOutlined /> },
-            { title: 'Template Tasks', icon: <TaskListIcon /> },
-            { title: 'Portal Access', icon: <TeamOutlined /> },
+            { title: 'Thông tin dự án', icon: <ProjectOutlined /> },
+            { title: 'Công việc mẫu', icon: <TaskListIcon /> },
+            { title: 'Cổng khách hàng', icon: <TeamOutlined /> },
           ]}
         />
 

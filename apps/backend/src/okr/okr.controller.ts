@@ -28,10 +28,11 @@ export class OkrController {
     @Query('cycle') cycle?: string,
     @Query('year', new DefaultValuePipe(0), ParseIntPipe) year = 0,
     @Query('status') status?: string,
+    @Query('orgUnitId') orgUnitId?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit = 20,
   ) {
-    return this.svc.listObjectives(ownerId, cycle, year || undefined, status, page, limit);
+    return this.svc.listObjectives(ownerId, cycle, year || undefined, status, orgUnitId, page, limit);
   }
 
   @Get('objectives/:id')

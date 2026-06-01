@@ -35,9 +35,9 @@ export class ProcessDefinitionsController {
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(20), ParseIntPipe) pageSize: number,
+    @Query('key') key?: string,
   ) {
-    // Gọi findAll không lọc orgUnit (admin xem tất cả)
-    return this.service.findAll([], page, pageSize);
+    return this.service.findAll([], page, pageSize, key);
   }
 
   @Get(':id')

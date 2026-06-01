@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Table, Select, Button, Space, Popconfirm, App, Tag } from 'antd';
+import { Table, Select, Button, Space, Popconfirm, App, Tag, Typography } from 'antd';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { EyeOutlined, StopOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -20,9 +21,12 @@ const STATUS_OPTIONS = [
   { value: 'ERROR', label: 'Lỗi' },
 ];
 
+const { Text } = Typography;
+
 export default function ProcessInstancesPage() {
   const { message } = App.useApp();
   const navigate = useNavigate();
+  const { textPrimary, textMuted } = useThemePalette();
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [definitionFilter, setDefinitionFilter] = useState<string>('');
 
@@ -64,18 +68,22 @@ export default function ProcessInstancesPage() {
     {
       title: 'Người khởi động',
       dataIndex: ['startedByUser', 'name'],
-      render: (_: string, record: ProcessInstance) => record.startedByUser?.name ?? '—',
+      render: (_: string, record: ProcessInstance) => record.startedByUser?.name
+        ? <Text style={{ color: textPrimary }}>{record.startedByUser.name}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Bắt đầu',
       dataIndex: 'startedAt',
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY HH:mm'),
+      render: (d: string) => <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY HH:mm')}</Text>,
       width: 140,
     },
     {
       title: 'Kết thúc',
       dataIndex: 'completedAt',
-      render: (d: string | undefined) => d ? dayjs(d).format('DD/MM/YYYY HH:mm') : '—',
+      render: (d: string | undefined) => d
+        ? <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY HH:mm')}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
       width: 140,
     },
     {

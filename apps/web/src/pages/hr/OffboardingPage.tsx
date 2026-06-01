@@ -14,6 +14,8 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { OrgUnitSelect } from '../../components/selects';
 import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
@@ -25,7 +27,8 @@ interface OffboardingEmployee {
   code: string;
   fullName: string;
   email?: string;
-  orgUnit?: { name: string };
+  orgUnit?: { id: string; name: string };
+  position?: { jobTitle?: { name: string } | null } | null;
   terminationDate?: string;
   offboardingStatus?: OffboardStatus;
   offboardingProgress?: number;
@@ -39,11 +42,12 @@ const STATUS_META: Record<OffboardStatus, { label: string; color: string; darkBg
 };
 
 export default function OffboardingPage() {
-  const { isDark, textPrimary, textMuted, textSecondary, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textMuted, textSecondary, bgContainer, borderColor, linkColor } = useThemePalette();
   const { message } = App.useApp();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
 
   // Lấy nhân viên đã nghỉ việc từ API
   const { data: employees = [], isLoading } = useQuery({
@@ -58,7 +62,8 @@ export default function OffboardingPage() {
   const filtered = employees.filter((e) => {
     const matchSearch = !search || e.fullName.toLowerCase().includes(search.toLowerCase()) || e.code.toLowerCase().includes(search.toLowerCase());
     const matchStatus = !statusFilter || (e.offboardingStatus ?? 'PENDING') === statusFilter;
-    return matchSearch && matchStatus;
+    const matchOrg = !orgUnitFilter || e.orgUnit?.id === orgUnitFilter;
+    return matchSearch && matchStatus && matchOrg;
   });
 
   const inProgress = employees.filter((e) => (e.offboardingStatus ?? 'PENDING') === 'IN_PROGRESS').length;
@@ -80,12 +85,7 @@ export default function OffboardingPage() {
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_, r) => (
-        <Space direction="vertical" size={0}>
-          <Text style={{ color: textPrimary, fontWeight: 600 }}>{r.fullName}</Text>
-          <Text style={{ color: textMuted, fontSize: 12 }}>{r.code}</Text>
-        </Space>
-      ),
+      render: (_, r) => <EmployeeInfoCell employee={r} />,
     },
     {
       title: 'Phòng ban',
@@ -205,6 +205,13 @@ export default function OffboardingPage() {
             value: k,
             label: v.label,
           }))}
+        />
+        <OrgUnitSelect
+          placeholder="Phòng ban"
+          style={{ minWidth: 180 }}
+          value={orgUnitFilter}
+          onChange={setOrgUnitFilter}
+          allowClear
         />
       </FilterBar>
 

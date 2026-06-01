@@ -78,23 +78,25 @@ const ENTITY_LABELS: Record<string, string> = {
 
 const STATUS_COLOR: Record<string, { bg: string; color: string }> = {
   ACTIVE:    { bg: '#ECFDF5', color: '#065F46' },
-  INACTIVE:  { bg: '#F1F5F9', color: '#475569' },
+  INACTIVE:  { bg: '#F1F5F9', color: '#94A3B8' },
   APPROVED:  { bg: '#ECFDF5', color: '#065F46' },
   PENDING:   { bg: '#FFFBEB', color: '#92400E' },
   REJECTED:  { bg: '#FEF2F2', color: '#991B1B' },
   PAID:      { bg: '#EEF2FF', color: '#3730A3' },
   OVERDUE:   { bg: '#FEF2F2', color: '#991B1B' },
   SENT:      { bg: '#EFF6FF', color: '#1D4ED8' },
-  DRAFT:     { bg: '#F8FAFC', color: '#475569' },
+  DRAFT:     { bg: '#F8FAFC', color: '#94A3B8' },
   COMPLETED: { bg: '#ECFDF5', color: '#065F46' },
   ON_HOLD:   { bg: '#FFFBEB', color: '#92400E' },
   PLANNING:  { bg: '#EEF2FF', color: '#3730A3' },
 };
 
 function StatusPill({ value }: { value: string }) {
-  const cfg = STATUS_COLOR[value] ?? { bg: '#F1F5F9', color: '#475569' };
+  const { isDark } = useThemePalette();
+  const cfg = STATUS_COLOR[value] ?? { bg: '#F1F5F9', color: '#94A3B8' };
+  const bg = isDark ? `${cfg.color}20` : cfg.bg;
   return (
-    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color }}>
+    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: bg, color: cfg.color }}>
       {value}
     </span>
   );

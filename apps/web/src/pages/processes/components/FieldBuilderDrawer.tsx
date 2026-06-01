@@ -119,7 +119,7 @@ interface Props {
 export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, bgSubPanel, borderColor } = useThemePalette();
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('__start__');
 
@@ -203,8 +203,8 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   };
 
   const cardStyle = {
-    background: isDark ? '#1A2744' : '#F8FAFC',
-    border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`,
+    background: bgSubPanel,
+    border: `1px solid ${borderColor}`,
     borderRadius: 8,
     marginBottom: 16,
   };
@@ -371,7 +371,7 @@ interface AssigneeConfigSectionProps {
 function AssigneeConfigSection({
   config, onChange, allUsers, flatOrgUnits, isDark, cardStyle,
 }: AssigneeConfigSectionProps) {
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const { textSecondary } = useThemePalette();
   const mode = config?.mode ?? 'fixed';
 
   const userOptions = allUsers
@@ -486,7 +486,7 @@ interface NotificationConfigSectionProps {
 }
 
 function NotificationConfigSection({ config, onChange, allUsers, isDark, cardStyle }: NotificationConfigSectionProps) {
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const { textSecondary } = useThemePalette();
 
   const fixedUserOptions = allUsers
     .filter((u) => u.isActive)

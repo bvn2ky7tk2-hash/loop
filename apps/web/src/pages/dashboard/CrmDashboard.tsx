@@ -48,17 +48,18 @@ export default function CrmDashboard() {
 
   const { data: byStage } = useQuery<DealAnalyticsStage[]>({
     queryKey: ['crm-by-stage'],
-    queryFn: () => apiClient.get('/crm/deals/analytics/by-stage').then(r => r.data),
+    queryFn: () => apiClient.get<DealAnalyticsStage[]>('/crm/analytics/pipeline-by-stage').then(r => r.data),
   });
 
-  const { data: winRate } = useQuery<WinRateData>({
-    queryKey: ['crm-win-rate'],
-    queryFn: () => apiClient.get('/crm/deals/analytics/win-rate').then(r => r.data),
-  });
+  // winRate derive từ crm summary — không cần query riêng
+  const winRate: WinRateData = {
+    winRate: data?.winRate ?? 0,
+    avgCycleTimeDays: 0,
+  };
 
   const { data: aging } = useQuery<AgingDeal[]>({
     queryKey: ['crm-aging'],
-    queryFn: () => apiClient.get('/crm/deals/analytics/aging').then(r => r.data),
+    queryFn: () => apiClient.get<AgingDeal[]>('/crm/analytics/aging').then(r => r.data),
   });
 
   const stageChartData = (byStage ?? []).map(s => ({
@@ -99,6 +100,7 @@ export default function CrmDashboard() {
         title="Dashboard CRM"
         icon={<FunnelPlotOutlined />}
         iconColor="#3B82F6"
+        greeting
       />
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>

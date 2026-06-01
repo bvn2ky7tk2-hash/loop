@@ -6,7 +6,14 @@ export type InsuranceEventType = 'ENROLL' | 'TERMINATE' | 'SALARY_CHANGE' | 'SUS
 export interface InsuranceEnrollment {
   id: string;
   employeeId: string;
-  employee?: { id: string; fullName: string; code: string; orgUnitId: string };
+  employee?: {
+    id: string;
+    fullName: string;
+    code: string;
+    orgUnitId: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   bhxhBookNumber?: string;
   insuranceSalary: number;
   startDate: string;

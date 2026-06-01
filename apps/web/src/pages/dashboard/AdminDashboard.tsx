@@ -17,19 +17,12 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 import { auditLogsApi, type AuditLogRecord } from '../../api/audit-logs';
 import { useAuthStore } from '../../store/auth.store';
+import { MODULES } from '../../config/modules.config';
 
 const { Text } = Typography;
 
-const MODULE_LIST = [
-  { name: 'Work',    color: '#6366F1' },
-  { name: 'People',  color: '#8B5CF6' },
-  { name: 'Finance', color: '#10B981' },
-  { name: 'CRM',     color: '#3B82F6' },
-  { name: 'Asset',   color: '#F97316' },
-  { name: 'Ops',     color: '#F59E0B' },
-  { name: 'Me',      color: '#6366F1' },
-  { name: 'Admin',   color: '#EF4444' },
-];
+// Derive từ MODULES config — luôn đồng bộ với cấu trúc thực
+const MODULE_LIST = MODULES.map(m => ({ name: m.label, color: m.color }));
 
 /** Màu badge cho action */
 function actionColor(action: string) {
@@ -110,6 +103,7 @@ export default function AdminDashboard() {
         title="Dashboard Quản trị"
         icon={<SafetyOutlined />}
         iconColor="#EF4444"
+        greeting
       />
 
       {/* Hàng 1: StatCards tổng quan */}
@@ -134,7 +128,7 @@ export default function AdminDashboard() {
         <Col xs={12} sm={12} lg={6}>
           <StatCard
             label="Modules bật"
-            value={adminData?.totalModules ?? 8}
+            value={MODULES.length}
             color="#3B82F6"
             icon={<AppstoreOutlined />}
           />
@@ -217,13 +211,13 @@ export default function AdminDashboard() {
               }}>
                 <Badge color={mod.color} />
                 <Text style={{ color: textPrimary, fontWeight: 500, fontSize: 13 }}>{mod.name}</Text>
-                <span style={{ marginLeft: 'auto', fontSize: 11, color: '#10B981', fontWeight: 600 }}>ON</span>
+                <span style={{ marginLeft: 'auto', fontSize: 11, color: '#10B981', fontWeight: 600 }}>✓</span>
               </div>
             </Col>
           ))}
         </Row>
         <div style={{ marginTop: 12, fontSize: 11, color: textMuted }}>
-          Loop 360 — v3.0 Persona Dashboards
+          Loop 360 — {MODULES.length} modules đang hoạt động
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { apiClient } from './client';
 
 export type WorkStatusType = 'WORKING' | 'WFH' | 'MEETING' | 'BREAK' | 'OFF' | 'BUSINESS_TRIP';
-export type TimesheetStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED';
+export type TimesheetStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'MISSING_SHIFT';
 export type CheckInMethod = 'MANUAL' | 'GPS' | 'WIFI';
 
 export interface TodaySummary {
@@ -18,8 +18,15 @@ export interface TimeEntryDay {
   checkOut: string | null;
   workHours: number | null;
   overtimeHours: number;
-  status: 'present' | 'absent';
+  status: 'present' | 'absent' | 'off' | 'leave';
   isManualCorrection: boolean;
+  dayCredit: number;
+  leaveInfo: { name: string; color: string; isPaid: boolean } | null;
+  // Từ AttendanceRecord (HR-verified)
+  plannedStart: string | null;
+  plannedEnd: string | null;
+  lateMinutes: number;
+  earlyLeaveMinutes: number;
 }
 
 export interface TimesheetRecord {
@@ -46,6 +53,9 @@ export interface PeriodDetail {
 export interface TeamMemberStatus {
   userId: string;
   name: string;
+  employeeCode?: string | null;
+  orgUnit?: { id: string; name: string } | null;
+  position?: { jobTitle?: { id: string; name: string } | null } | null;
   currentStatus: WorkStatusType | null;
   since: string | null;
   todayCheckIn: string | null;

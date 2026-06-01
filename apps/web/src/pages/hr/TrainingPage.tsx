@@ -12,6 +12,8 @@ import {
   useCreateTrainingRecord, useUpdateTrainingRecord,
   type TrainingRecord, type TrainingProgram, type TrainingStatus,
 } from '../../api/hr-ext';
+import { OrgUnitSelect } from '../../components/selects';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useQuery } from '@tanstack/react-query';
 import { employeesApi } from '../../api/employees';
 
@@ -31,11 +33,12 @@ export default function TrainingPage() {
   const [progModalOpen, setProgModalOpen] = useState(false);
   const [recModalOpen, setRecModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [progForm] = Form.useForm();
   const [recForm] = Form.useForm();
 
   const { data: programs = [], isLoading: progLoading } = useGetTrainingPrograms();
-  const { data: recordsData, isLoading: recLoading } = useGetTrainingRecords({ limit: 50, status: statusFilter });
+  const { data: recordsData, isLoading: recLoading } = useGetTrainingRecords({ limit: 50, status: statusFilter, orgUnitId: orgUnitFilter });
   const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: employeesApi.list });
   const createProgram = useCreateTrainingProgram();
   const createRecord  = useCreateTrainingRecord();
@@ -79,7 +82,7 @@ export default function TrainingPage() {
   ];
 
   const recordColumns: ColumnsType<TrainingRecord> = [
-    { title: 'Nhân viên', render: (_, r) => <span style={{ color: textPrimary }}>{r.employee?.fullName ?? r.employeeId}</span> },
+    { title: 'Nhân viên', render: (_, r) => r.employee ? <EmployeeInfoCell employee={r.employee} /> : <span style={{ color: textPrimary }}>{r.employeeId}</span> },
     { title: 'Chương trình', render: (_, r) => <span style={{ color: textPrimary }}>{r.program?.title ?? r.programId}</span> },
     { title: 'Loại', render: (_, r) => r.program?.type ? <Tag color={r.program.type === 'internal' ? 'blue' : 'purple'}>{r.program.type === 'internal' ? 'Nội bộ' : 'Bên ngoài'}</Tag> : <Text style={{ color: textMuted }}>—</Text> },
     { title: 'Bắt đầu', dataIndex: 'startDate', width: 110, render: v => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> },
@@ -108,7 +111,7 @@ export default function TrainingPage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <Space>
-          <ReadOutlined style={{ fontSize: 22, color: preset.primary }} />
+          <ReadOutlined style={{ fontSize: 22, color: linkColor }} />
           <Title level={4} style={{ margin: 0, color: textPrimary }}>Đào tạo & Phát triển</Title>
         </Space>
       </div>
@@ -121,14 +124,23 @@ export default function TrainingPage() {
             label: 'Bản ghi đào tạo',
             children: (
               <>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <Select
-                    placeholder="Lọc trạng thái"
-                    style={{ width: 180 }}
-                    allowClear
-                    options={Object.entries(STATUS_META).map(([k, v]) => ({ value: k, label: v.label }))}
-                    onChange={setStatusFilter}
-                  />
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, gap: 8, flexWrap: 'wrap' }}>
+                  <Space wrap>
+                    <Select
+                      placeholder="Lọc trạng thái"
+                      style={{ width: 180 }}
+                      allowClear
+                      options={Object.entries(STATUS_META).map(([k, v]) => ({ value: k, label: v.label }))}
+                      onChange={setStatusFilter}
+                    />
+                    <OrgUnitSelect
+                      placeholder="Phòng ban"
+                      style={{ minWidth: 180 }}
+                      value={orgUnitFilter}
+                      onChange={setOrgUnitFilter}
+                      allowClear
+                    />
+                  </Space>
                   <Button type="primary" icon={<PlusOutlined />} onClick={() => setRecModalOpen(true)}>Thêm bản ghi</Button>
                 </div>
                 <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, overflow: 'hidden' }}>

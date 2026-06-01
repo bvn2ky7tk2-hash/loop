@@ -108,7 +108,7 @@ export default function JournalPage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Space>
-          <BookOutlined style={{ fontSize: 22, color: preset.primary }} />
+          <BookOutlined style={{ fontSize: 22, color: linkColor }} />
           <Title level={4} style={{ margin: 0, color: textPrimary }}>Sổ nhật ký kế toán</Title>
         </Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>

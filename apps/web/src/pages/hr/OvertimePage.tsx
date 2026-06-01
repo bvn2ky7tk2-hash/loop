@@ -30,9 +30,11 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { OrgUnitSelect } from '../../components/selects';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { usePermissions } from '../../hooks/usePermissions';
 import { otApi, type OvertimeRequest, type FormField } from '../../api/overtime';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { employeesApi } from '../../api/employees';
 import { DynamicFormFields } from '../processes/components/DynamicFormFields';
 
@@ -133,6 +135,7 @@ export default function OvertimePage() {
   const [month, setMonth] = useState<number>(NOW.month() + 1);
   const [year, setYear] = useState<number>(NOW.year());
   const [status, setStatus] = useState<string>('');
+  const [orgUnitId, setOrgUnitId] = useState<string | undefined>(undefined);
 
   // Modal state
   const [addOpen, setAddOpen] = useState(false);
@@ -144,12 +147,13 @@ export default function OvertimePage() {
   // ── Queries ────────────────────────────────────────────────────────────────
 
   const { data: listData, isFetching } = useQuery({
-    queryKey: ['ot-list', month, year, status],
+    queryKey: ['ot-list', month, year, status, orgUnitId],
     queryFn: () =>
       otApi.list({
         month,
         year,
         status: (status as OvertimeRequest['status']) || undefined,
+        orgUnitId,
         limit: 100,
         page: 1,
       }),
@@ -219,16 +223,7 @@ export default function OvertimePage() {
       key: 'employee',
       render: (_, row) =>
         row.employee ? (
-          <Space direction="vertical" size={0}>
-            <Text style={{ color: textPrimary, fontWeight: 500 }}>
-              {row.employee.fullName}
-            </Text>
-            {row.employee.orgUnit && (
-              <Text style={{ color: textMuted, fontSize: 12 }}>
-                {row.employee.orgUnit.name}
-              </Text>
-            )}
-          </Space>
+          <EmployeeInfoCell employee={row.employee} />
         ) : (
           <Text style={{ color: textMuted }}>—</Text>
         ),
@@ -445,6 +440,15 @@ export default function OvertimePage() {
           <Option value="REJECTED">Từ chối</Option>
           <Option value="CANCELLED">Đã hủy</Option>
         </Select>
+        {canManage && (
+          <OrgUnitSelect
+            placeholder="Phòng ban"
+            style={{ minWidth: 180 }}
+            value={orgUnitId}
+            onChange={setOrgUnitId}
+            allowClear
+          />
+        )}
       </FilterBar>
 
       {/* Table */}

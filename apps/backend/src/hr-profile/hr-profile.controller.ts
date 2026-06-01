@@ -5,7 +5,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { Role } from '../generated/prisma';
 
-@Controller('hr-profile')
+@Controller('api/v1/hr-profile')
 export class HrProfileController {
   constructor(private readonly svc: HrProfileService) {}
 

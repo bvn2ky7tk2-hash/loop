@@ -1,15 +1,18 @@
-import { Row, Col, Card, Table, Typography, Popover, Button } from 'antd';
+import { Row, Col, Card, Table, Typography, Popover, Button, Divider } from 'antd';
 import {
   ProjectOutlined, TeamOutlined, CheckSquareOutlined, WarningOutlined,
-  ClockCircleOutlined, SettingOutlined,
+  ClockCircleOutlined, SettingOutlined, BugOutlined, SyncOutlined, CheckCircleOutlined,
 } from '@ant-design/icons';
 import { ThemePanel } from '../../components/ui/ThemePanel';
 import { useAuthStore } from '../../store/auth.store';
 import {
   PieChart, Pie, Cell, Tooltip as RTooltip, ResponsiveContainer, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
 } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi } from '../../api/dashboard';
+import { dashboardV3Api } from '../../api/dashboard-v3';
+import { useGetBugStats } from '../../api/bugs.api';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { ProgressRing } from '../../components/ui/ProgressRing';
@@ -50,6 +53,14 @@ export default function DashboardPage() {
     queryFn: dashboardApi.getSummary,
     refetchInterval: 60_000,
   });
+
+  const { data: workTrend = [] } = useQuery({
+    queryKey: ['dashboard-work-trend'],
+    queryFn: dashboardV3Api.getWorkTrend,
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: bugStats, isLoading: bugLoading } = useGetBugStats();
 
   if (isLoading || !data) {
     return (
@@ -93,17 +104,20 @@ export default function DashboardPage() {
     status,
   }));
 
-  const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-  const seedSparkline = (base: number, variance = 3) =>
-    WEEK_DAYS.map((day, i) => ({
-      day,
-      value: Math.max(0, base + ((i * 7 + base * 3) % (variance * 2 + 1)) - variance),
-    }));
+  // Sparkline từ work trend thực — 7 ngày gần nhất
+  const toDayLabel = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()];
+  };
 
-  const taskSparkData    = seedSparkline(doneTasks, 4);
-  const projectSparkData = seedSparkline(activeProjects, 2);
-  const memberSparkData  = seedSparkline(data.employees.total, 1);
-  const overdueSparkData = seedSparkline(overdueCount, 2);
+  const taskSparkData = workTrend.map((t: { date: string; completed: number }) => ({
+    day: toDayLabel(t.date), value: t.completed,
+  }));
+
+  // Project/member/overdue: dùng giá trị phẳng (không có trend API → không mock)
+  const projectSparkData = taskSparkData.map((d: { day: string }) => ({ day: d.day, value: activeProjects }));
+  const memberSparkData  = taskSparkData.map((d: { day: string }) => ({ day: d.day, value: data.employees.total }));
+  const overdueSparkData = taskSparkData.map((d: { day: string }) => ({ day: d.day, value: overdueCount }));
 
   const projectCodeTag = (v: string) => (
     <span style={{
@@ -220,7 +234,7 @@ export default function DashboardPage() {
             value={data.employees.total}
             data={memberSparkData}
             variant="line"
-            color="#7C3AED"
+            color="#8B5CF6"
             icon={<TeamOutlined />}
             filled
           />
@@ -380,6 +394,91 @@ export default function DashboardPage() {
               size="small"
               pagination={false}
               locale={{ emptyText: 'Chưa có giờ làm' }}
+            />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* ── Thống kê lỗi ── */}
+      <Divider style={{ borderColor: borderColor, margin: '24px 0 20px' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: textMuted, display: 'flex', alignItems: 'center', gap: 6 }}>
+          <BugOutlined /> Thống kê lỗi
+        </span>
+      </Divider>
+
+      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+        <Col xs={12} lg={6}>
+          <SparklineCard label="Đang mở" value={bugStats?.byStatus.open ?? 0} color="#1677FF" icon={<BugOutlined />} filled loading={bugLoading} />
+        </Col>
+        <Col xs={12} lg={6}>
+          <SparklineCard label="Đang xử lý" value={bugStats?.byStatus.inProgress ?? 0} color="#FA8C16" icon={<SyncOutlined />} filled loading={bugLoading} />
+        </Col>
+        <Col xs={12} lg={6}>
+          <SparklineCard label="Đã giải quyết" value={bugStats?.byStatus.resolved ?? 0} color="#10B981" icon={<CheckCircleOutlined />} filled loading={bugLoading} />
+        </Col>
+        <Col xs={12} lg={6}>
+          <SparklineCard label="Nghiêm trọng" value={bugStats?.bySeverity.critical ?? 0} color="#EF4444" icon={<WarningOutlined />} filled loading={bugLoading} />
+        </Col>
+      </Row>
+
+      <Row gutter={[16, 16]}>
+        {/* Severity bar */}
+        <Col xs={24} lg={10}>
+          <Card
+            title={<CardTitle icon={<BugOutlined />} label="Phân bố mức độ" color="#EF4444" />}
+            size="small"
+            style={{ borderRadius: 12, borderTop: '3px solid #EF4444' }}
+          >
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart
+                layout="vertical"
+                data={[
+                  { name: 'Nghiêm trọng', value: bugStats?.bySeverity.critical ?? 0, fill: '#EF4444' },
+                  { name: 'Cao',           value: bugStats?.bySeverity.high ?? 0,     fill: '#F97316' },
+                  { name: 'Trung bình',    value: bugStats?.bySeverity.medium ?? 0,   fill: '#F59E0B' },
+                  { name: 'Thấp',          value: bugStats?.bySeverity.low ?? 0,      fill: '#10B981' },
+                ]}
+                margin={{ left: 8, right: 24, top: 4, bottom: 4 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
+                <XAxis type="number" tick={{ fill: textMuted as string, fontSize: 11 }} />
+                <YAxis dataKey="name" type="category" tick={{ fill: textMuted as string, fontSize: 12 }} width={80} />
+                <RTooltip contentStyle={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8 }} />
+                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                  {[{ fill: '#EF4444' }, { fill: '#F97316' }, { fill: '#F59E0B' }, { fill: '#10B981' }].map((c, i) => (
+                    <Cell key={i} fill={c.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </Col>
+
+        {/* Top projects */}
+        <Col xs={24} lg={14}>
+          <Card
+            title={<CardTitle icon={<ProjectOutlined />} label="Dự án nhiều lỗi nhất" color="#F97316" />}
+            size="small"
+            style={{ borderRadius: 12, borderTop: '3px solid #F97316' }}
+          >
+            <Table
+              size="small"
+              pagination={false}
+              dataSource={(bugStats?.openByProject ?? []).slice(0, 5)}
+              rowKey="projectId"
+              locale={{ emptyText: 'Chưa có dữ liệu' }}
+              columns={[
+                { title: <Text style={{ color: textMuted }}>Dự án</Text>, dataIndex: 'projectName', ellipsis: true,
+                  render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text> },
+                { title: <Text style={{ color: textMuted }}>Đang mở</Text>, dataIndex: 'open', width: 80, align: 'right' as const,
+                  render: (v: number) => <Text style={{ color: v > 0 ? '#EF4444' : textMuted, fontWeight: 600 }}>{v}</Text> },
+                { title: <Text style={{ color: textMuted }}>Nghiêm trọng</Text>, dataIndex: 'critical', width: 100, align: 'right' as const,
+                  render: (v: number) => v > 0
+                    ? <Text style={{ color: '#EF4444', fontWeight: 700 }}>{v}</Text>
+                    : <Text style={{ color: textMuted }}>—</Text> },
+                { title: <Text style={{ color: textMuted }}>Tổng</Text>, dataIndex: 'total', width: 70, align: 'right' as const,
+                  render: (v: number) => <Text style={{ color: textMuted }}>{v}</Text> },
+              ]}
             />
           </Card>
         </Col>

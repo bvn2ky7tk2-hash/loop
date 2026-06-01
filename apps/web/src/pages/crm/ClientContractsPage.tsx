@@ -301,7 +301,7 @@ export default function ClientContractsPage() {
       ),
     },
     {
-      title: 'Milestone', key: 'milestone',
+      title: 'Mốc thanh toán', key: 'milestone',
       render: (_, c) => {
         const paid = c.milestones.filter(m => m.status === 'PAID').length;
         const total = c.milestones.length;

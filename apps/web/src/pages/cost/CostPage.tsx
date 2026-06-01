@@ -82,11 +82,11 @@ export default function CostPage() {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<[string, string] | null>(null);
 
-  const { isDark, preset, textPrimary, textMuted } = useThemePalette();
+  const { isDark, preset, textPrimary, textMuted, bgContainer } = useThemePalette();
   const primary = preset.primary;
   const chartCardStyle = {
     borderRadius: 12,
-    background: isDark ? '#1E293B' : `${primary}09`,
+    background: isDark ? bgContainer : `${primary}09`,
     border: `1px solid ${isDark ? '#334155' : `${primary}28`}`,
   };
 
@@ -375,7 +375,7 @@ export default function CostPage() {
                   />
                   <RTooltip
                     contentStyle={{
-                      background: isDark ? '#1E293B' : '#fff',
+                      background: bgContainer,
                       border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`,
                       borderRadius: 8,
                       fontSize: 12,

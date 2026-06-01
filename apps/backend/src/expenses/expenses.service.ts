@@ -5,18 +5,20 @@ import {
   Optional,
   Inject,
   Scope,
+  Logger,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { ExpenseStatus, DefinitionStatus } from '../generated/prisma';
+import { ExpenseStatus, DefinitionStatus, InstanceStatus } from '../generated/prisma';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ApproveExpenseDto } from './dto/approve-expense.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
 import { FinanceEventBus } from '../accounting/finance-event-bus.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { AuditLogService } from '../audit-log/audit-log.service';
+import { BpmnEngineService } from '../processes/engine/bpmn-engine.service';
 
 const EXPENSE_INCLUDE = {
   submittedBy: { select: { id: true, name: true } },
@@ -26,10 +28,13 @@ const EXPENSE_INCLUDE = {
 
 @Injectable({ scope: Scope.REQUEST })
 export class ExpensesService extends TenantAwareService {
+  private readonly logger = new Logger(ExpensesService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly financeEventBus: FinanceEventBus,
     private readonly auditLog: AuditLogService,
+    private readonly engineService: BpmnEngineService,
     @Inject(REQUEST) req: any,
     @Optional() private readonly notificationsService?: NotificationsService,
   ) {
@@ -110,34 +115,7 @@ export class ExpensesService extends TenantAwareService {
       return created;
     });
 
-    // Tự động start process expense-approval nếu đang ACTIVE
-    const definition = await this.prisma.processDefinition.findFirst({
-      where: { key: 'expense-approval' },
-      select: { id: true, status: true },
-    });
-
-    if (definition?.status === DefinitionStatus.ACTIVE) {
-      const instance = await this.prisma.processInstance.create({
-        data: {
-          definitionId: definition.id,
-          startedBy: submittedById,
-          status: 'RUNNING' as any,
-          variables: {
-            expenseId: expense.id,
-            submittedById,
-            title: expense.title,
-            category: expense.category,
-            totalAmount: Number(expense.totalAmount),
-            currency: expense.currency,
-          } as any,
-          tokenState: {} as any,
-        },
-      });
-      await this.prisma.expense.update({
-        where: { id: expense.id },
-        data: { processInstanceId: instance.id },
-      });
-    }
+    await this.startBpmProcess(expense, submittedById);
 
     return expense;
   }
@@ -249,5 +227,50 @@ export class ExpensesService extends TenantAwareService {
     }
 
     await this.prisma.expense.delete({ where: { id } });
+  }
+
+  private async startBpmProcess(expense: any, submittedById: string): Promise<void> {
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: 'expense-approval', status: DefinitionStatus.ACTIVE },
+        select: { id: true, bpmnXml: true },
+      });
+      if (!definition) return;
+
+      const variables = {
+        expenseId:    expense.id,
+        submittedById,
+        title:        expense.title,
+        category:     expense.category,
+        totalAmount:  Number(expense.totalAmount),
+        currency:     expense.currency,
+      };
+
+      const instance = await this.prisma.processInstance.create({
+        data: {
+          definitionId: definition.id,
+          startedBy:    submittedById,
+          status:       InstanceStatus.RUNNING,
+          variables:    variables as any,
+          tokenState:   {} as any,
+          tenantId:     this.getTenantId() ?? null,
+        },
+      });
+
+      const tokenState = await this.engineService.start(instance.id, definition.bpmnXml, variables);
+      await this.prisma.processInstance.update({
+        where: { id: instance.id },
+        data:  { tokenState: tokenState as any },
+      });
+
+      await this.prisma.expense.update({
+        where: { id: expense.id },
+        data:  { processInstanceId: instance.id },
+      });
+
+      this.logger.log(`BPM started for Expense ${expense.id}`);
+    } catch (e) {
+      this.logger.warn(`Failed to start BPM for Expense ${expense.id}: ${e}`);
+    }
   }
 }

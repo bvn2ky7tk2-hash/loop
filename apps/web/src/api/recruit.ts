@@ -195,6 +195,24 @@ export const useDeleteCandidate = () => {
   });
 };
 
+export interface HireCandidatePayload {
+  employeeCode: string;
+  startDate:    string;
+  ratePerDay:   number;
+  orgUnitId:    string;
+}
+
+export const useHireCandidate = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: HireCandidatePayload }) =>
+      apiClient.post<Candidate>(`/recruit/candidates/${id}/hire`, data).then(r => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: recruitKeys.candidates.all });
+    },
+  });
+};
+
 // ─── Interviews ───────────────────────────────────────────────────────────────
 
 export const useGetInterviewsByCandidate = (candidateId: string) =>

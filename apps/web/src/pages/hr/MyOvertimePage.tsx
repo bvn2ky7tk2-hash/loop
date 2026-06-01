@@ -195,7 +195,7 @@ export default function MyOvertimePage() {
       title: 'Lý do từ chối',
       dataIndex: 'rejectedReason',
       key: 'rejectedReason',
-      render: (v?: string | null, row) =>
+      render: (v: string | null | undefined, row) =>
         row.status === 'REJECTED' && v
           ? (
               <Tooltip title={v}>

@@ -3,13 +3,20 @@ import { REQUEST } from '@nestjs/core';
 import { Scope } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
 import { CreateContractDto, RenewContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { ContractType } from '../generated/prisma';
 
 const CONTRACT_INCLUDE = {
-  employee: { select: { id: true, fullName: true, code: true, level: true } },
+  employee: {
+    select: {
+      id: true, fullName: true, code: true, level: true,
+      orgUnit:  { select: { id: true, name: true, code: true } },
+      position: { include: { jobTitle: { select: { id: true, name: true } } } },
+    },
+  },
   signedBy: { select: { id: true, fullName: true } },
   allowances: {
     include: { allowanceType: { select: { id: true, name: true } } },
@@ -65,10 +72,15 @@ export class ContractsService extends TenantAwareService {
 
   async findAll(
     employeeId?: string,
+    orgUnitId?: string,
     page = 1,
     limit = 20,
   ): Promise<PaginatedResult<any>> {
     const where = this.tenantWhere({ deletedAt: null, ...(employeeId ? { employeeId } : {}) });
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      (where as any).employeeId = { in: empIds };
+    }
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.contract.findMany({

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form,
   Input, Select, Tabs, Row, Col, message, InputNumber,
@@ -10,6 +10,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
@@ -17,6 +18,7 @@ import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { formatCurrency } from '../../utils/format';
+import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
 
@@ -187,37 +189,75 @@ function ProposalStatusTag({ status, isDark }: { status: SalaryProposal['status'
 export default function SalaryBandPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
   const [msgApi, msgCtx] = message.useMessage();
+  const qc = useQueryClient();
 
   // ── Band state ──
-  const [bands, setBands] = useState<SalaryBand[]>(MOCK_BANDS);
   const [bandSearch, setBandSearch] = useState('');
   const [bandModalOpen, setBandModalOpen] = useState(false);
   const [editingBand, setEditingBand] = useState<SalaryBand | null>(null);
   const [bandForm] = Form.useForm();
 
   // ── Proposal state ──
-  const [proposals, setProposals] = useState<SalaryProposal[]>(MOCK_PROPOSALS);
   const [proposalSearch, setProposalSearch] = useState('');
   const [proposalStatusFilter, setProposalStatusFilter] = useState<string | null>(null);
   const [proposalModalOpen, setProposalModalOpen] = useState(false);
   const [editingProposal, setEditingProposal] = useState<SalaryProposal | null>(null);
   const [proposalForm] = Form.useForm();
 
+  // ── API queries ──
+  const { data: bandsData, isLoading: bandsLoading } = useQuery({
+    queryKey: ['salary-bands'],
+    queryFn: () => apiClient.get<{ data: any[] }>('/hr/salary-bands').then(r => r.data.data ?? []),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: reviewsData, isLoading: reviewsLoading } = useQuery({
+    queryKey: ['salary-reviews'],
+    queryFn: () => apiClient.get<{ data: any[] }>('/hr/salary-reviews').then(r => r.data.data ?? []),
+    staleTime: 5 * 60_000,
+  });
+
+  // Map API response → SalaryBand shape
+  const bands = useMemo<SalaryBand[]>(() => (bandsData ?? []).map((b: any) => ({
+    id: b.id,
+    position: b.position?.jobTitle?.name ?? b.position?.code ?? '—',
+    level: b.position?.code ?? '—',
+    minSalary: Number(b.minSalary),
+    midSalary: Number(b.midSalary),
+    maxSalary: Number(b.maxSalary),
+    effectiveFrom: b.effectiveFrom ? b.effectiveFrom.split('T')[0] : '',
+    currency: b.currency ?? 'VND',
+  })), [bandsData]);
+
+  // Map API response → SalaryProposal shape
+  const proposals = useMemo<SalaryProposal[]>(() => (reviewsData ?? []).map((r: any) => ({
+    id: r.id,
+    employeeName: r.employee?.fullName ?? '—',
+    position: r.employee?.code ?? '—',
+    currentSalary: Number(r.currentSalary),
+    proposedSalary: Number(r.suggestedSalary),
+    increasePercent: Number(r.increasePercent),
+    reason: r.reason ?? '',
+    status: r.status ?? 'PENDING',
+    proposedBy: r.approvedBy?.name ?? 'Hệ thống',
+    proposedAt: r.createdAt ? r.createdAt.split('T')[0] : '',
+  })), [reviewsData]);
+
   // ── Filtered data ──
-  const filteredBands = bands.filter((b) =>
+  const filteredBands = useMemo(() => bands.filter((b) =>
     !bandSearch ||
     b.position.toLowerCase().includes(bandSearch.toLowerCase()) ||
     b.level.toLowerCase().includes(bandSearch.toLowerCase()),
-  );
+  ), [bands, bandSearch]);
 
-  const filteredProposals = proposals.filter((p) => {
+  const filteredProposals = useMemo(() => proposals.filter((p) => {
     const matchSearch =
       !proposalSearch ||
       p.employeeName.toLowerCase().includes(proposalSearch.toLowerCase()) ||
       p.position.toLowerCase().includes(proposalSearch.toLowerCase());
     const matchStatus = !proposalStatusFilter || p.status === proposalStatusFilter;
     return matchSearch && matchStatus;
-  });
+  }), [proposals, proposalSearch, proposalStatusFilter]);
 
   // ── Band handlers ──
   const handleOpenCreateBand = () => {
@@ -242,26 +282,31 @@ export default function SalaryBandPage() {
   const handleDeleteBand = (item: SalaryBand) => {
     confirmDelete({
       itemName: `${item.position} — ${item.level}`,
-      onConfirm: () => {
-        setBands((prev) => prev.filter((b) => b.id !== item.id));
-        msgApi.success('Đã xóa band lương');
+      onConfirm: async () => {
+        try {
+          await apiClient.delete(`/hr/salary-bands/${item.id}`);
+          qc.invalidateQueries({ queryKey: ['salary-bands'] });
+          msgApi.success('Đã xóa band lương');
+        } catch {
+          msgApi.error('Lỗi xóa band lương');
+        }
       },
     });
   };
 
   const handleSubmitBand = async () => {
     const values = await bandForm.validateFields();
-    if (editingBand) {
-      setBands((prev) =>
-        prev.map((b) => (b.id === editingBand.id ? { ...b, ...values } : b)),
-      );
-      msgApi.success('Đã cập nhật band lương');
-    } else {
-      setBands((prev) => [
-        ...prev,
-        { id: String(Date.now()), currency: 'VND', ...values },
-      ]);
-      msgApi.success('Đã thêm band lương');
+    try {
+      if (editingBand) {
+        await apiClient.patch(`/hr/salary-bands/${editingBand.id}`, values);
+        msgApi.success('Đã cập nhật band lương');
+      } else {
+        await apiClient.post('/hr/salary-bands', { ...values, currency: 'VND' });
+        msgApi.success('Đã thêm band lương');
+      }
+      qc.invalidateQueries({ queryKey: ['salary-bands'] });
+    } catch {
+      msgApi.error('Lỗi lưu band lương');
     }
     setBandModalOpen(false);
     setEditingBand(null);
@@ -278,9 +323,14 @@ export default function SalaryBandPage() {
   const handleDeleteProposal = (item: SalaryProposal) => {
     confirmDelete({
       itemName: `đề xuất cho ${item.employeeName}`,
-      onConfirm: () => {
-        setProposals((prev) => prev.filter((p) => p.id !== item.id));
-        msgApi.success('Đã xóa đề xuất');
+      onConfirm: async () => {
+        try {
+          await apiClient.delete(`/hr/salary-reviews/${item.id}`);
+          qc.invalidateQueries({ queryKey: ['salary-reviews'] });
+          msgApi.success('Đã xóa đề xuất');
+        } catch {
+          msgApi.error('Lỗi xóa đề xuất');
+        }
       },
     });
   };
@@ -290,28 +340,16 @@ export default function SalaryBandPage() {
     const current = values.currentSalary ?? 0;
     const proposed = values.proposedSalary ?? 0;
     const increasePercent = current > 0 ? ((proposed - current) / current) * 100 : 0;
-    if (editingProposal) {
-      setProposals((prev) =>
-        prev.map((p) =>
-          p.id === editingProposal.id
-            ? { ...p, ...values, increasePercent }
-            : p,
-        ),
-      );
-      msgApi.success('Đã cập nhật đề xuất');
-    } else {
-      setProposals((prev) => [
-        ...prev,
-        {
-          id: String(Date.now()),
-          status: 'PENDING' as const,
-          proposedBy: 'Người dùng hiện tại',
-          proposedAt: dayjs().format('YYYY-MM-DD'),
-          increasePercent,
-          ...values,
-        },
-      ]);
+    try {
+      await apiClient.post('/hr/salary-reviews/manual', {
+        ...values,
+        increasePercent,
+        status: 'PENDING',
+      });
+      qc.invalidateQueries({ queryKey: ['salary-reviews'] });
       msgApi.success('Đã tạo đề xuất điều chỉnh');
+    } catch {
+      msgApi.error('Lỗi tạo đề xuất');
     }
     setProposalModalOpen(false);
     setEditingProposal(null);
@@ -538,7 +576,9 @@ export default function SalaryBandPage() {
                     rowKey="id"
                     columns={bandColumns}
                     dataSource={filteredBands}
+                    loading={bandsLoading}
                     pagination={{ pageSize: 10, showTotal: (t) => `Tổng ${t} band` }}
+                    locale={{ emptyText: 'Chưa có band lương nào' }}
                   />
                 </div>
               </>
@@ -591,7 +631,9 @@ export default function SalaryBandPage() {
                     rowKey="id"
                     columns={proposalColumns}
                     dataSource={filteredProposals}
+                    loading={reviewsLoading}
                     pagination={{ pageSize: 10, showTotal: (t) => `Tổng ${t} đề xuất` }}
+                    locale={{ emptyText: 'Chưa có đề xuất điều chỉnh lương' }}
                   />
                 </div>
               </>

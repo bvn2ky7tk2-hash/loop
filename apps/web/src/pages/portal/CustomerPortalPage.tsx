@@ -23,7 +23,7 @@ function ProgressRing({ percent, label }: { percent: number; label: string }) {
   return (
     <div style={{ textAlign: 'center' }}>
       <Progress type="circle" percent={Math.min(100, Math.round(percent))} strokeColor={color} size={80} />
-      <Text style={{ display: 'block', marginTop: 8, fontSize: 13, color: '#475569' }}>{label}</Text>
+      <Text style={{ display: 'block', marginTop: 8, fontSize: 13, color: '#94A3B8' }}>{label}</Text>
     </div>
   );
 }
@@ -81,7 +81,7 @@ export default function CustomerPortalPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#F1F5F9' }}>
       {/* Header */}
-      <div style={{ background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)', padding: '32px 40px' }}>
+      <div style={{ background: 'linear-gradient(135deg, #1d2b3a 0%, #0d1526 100%)', padding: '32px 40px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
@@ -124,7 +124,7 @@ export default function CustomerPortalPage() {
             <Card style={{ borderRadius: 12, height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ textAlign: 'center' }}>
                 <Title level={2} style={{ color: '#10B981', margin: 0 }}>{completedMs}/{allMilestones.length}</Title>
-                <Text style={{ color: '#64748B' }}>Milestones hoàn thành</Text>
+                <Text style={{ color: '#94A3B8' }}>Milestones hoàn thành</Text>
               </div>
             </Card>
           </Col>
@@ -134,7 +134,7 @@ export default function CustomerPortalPage() {
                 <Title level={2} style={{ color: openTickets.length > 0 ? '#EF4444' : '#10B981', margin: 0 }}>
                   {openTickets.length}
                 </Title>
-                <Text style={{ color: '#64748B' }}>Yêu cầu đang xử lý</Text>
+                <Text style={{ color: '#94A3B8' }}>Yêu cầu đang xử lý</Text>
               </div>
             </Card>
           </Col>
@@ -152,7 +152,7 @@ export default function CustomerPortalPage() {
                     <div>
                       <Text style={{ fontWeight: 600, fontSize: 15 }}>{c.title}</Text>
                       <br />
-                      <Text style={{ color: '#64748B', fontSize: 12 }}>{c.contractNo}</Text>
+                      <Text style={{ color: '#94A3B8', fontSize: 12 }}>{c.contractNo}</Text>
                     </div>
                     <Tag color={STATUS_COLOR[c.status] ?? 'default'}>{c.status}</Tag>
                   </div>
@@ -201,7 +201,7 @@ export default function CustomerPortalPage() {
                       {TICKET_STATUS_LABEL[t.status]}
                     </Tag>
                   </div>
-                  <Text style={{ color: '#64748B', fontSize: 12 }}>
+                  <Text style={{ color: '#94A3B8', fontSize: 12 }}>
                     {new Date(t.createdAt).toLocaleDateString('vi-VN')} · {t.submittedBy || 'Ẩn danh'}
                   </Text>
                   {t.response && (

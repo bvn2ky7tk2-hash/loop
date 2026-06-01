@@ -57,6 +57,10 @@ export class ExplanationQueryDto {
   employeeId?: string;
 
   @IsOptional()
+  @IsUUID()
+  orgUnitId?: string;
+
+  @IsOptional()
   @IsEnum(['PENDING', 'APPROVED', 'REJECTED'])
   status?: string;
 

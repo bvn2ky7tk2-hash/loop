@@ -8,6 +8,7 @@ import {
   Body,
   Param,
   Query,
+  Req,
   ParseUUIDPipe,
   HttpCode,
   HttpStatus,
@@ -93,8 +94,9 @@ export class CandidatesController {
   hire(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: HireCandidateDto,
+    @Req() req: { user?: { sub?: string } },
   ) {
-    return this.candidatesService.hire(id, dto);
+    return this.candidatesService.hire(id, dto, req.user?.sub);
   }
 
   @Post(':id/cv')

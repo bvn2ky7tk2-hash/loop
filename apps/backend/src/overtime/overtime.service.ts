@@ -1,64 +1,37 @@
-import { Injectable, NotFoundException, UnprocessableEntityException, OnModuleInit, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException, Inject, Logger } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
-import { OtStatus, DefinitionStatus } from '../generated/prisma';
+import { OtStatus, DefinitionStatus, InstanceStatus } from '../generated/prisma';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
-import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+import { BpmnEngineService } from '../processes/engine/bpmn-engine.service';
 import { CreateOvertimeRequestDto, ListOtQueryDto, RejectOtDto } from './dto/overtime-request.dto';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 // Key định danh ProcessDefinition cho quy trình duyệt tăng ca
-const OT_PROCESS_KEY = 'overtime-approval';
+const OT_PROCESS_KEY = 'overtime-approval-v1';
 
 const OT_INCLUDE = {
-  employee: { select: { id: true, fullName: true, userId: true } },
-} as const;
+  employee: {
+    select: {
+      id: true, fullName: true, code: true, userId: true,
+      orgUnit:  { select: { id: true, name: true, code: true } },
+      position: { include: { jobTitle: { select: { id: true, name: true } } } },
+    },
+  },
+};
 
 @Injectable({ scope: Scope.REQUEST })
-export class OvertimeService extends TenantAwareService implements OnModuleInit {
+export class OvertimeService extends TenantAwareService {
+  private readonly logger = new Logger(OvertimeService.name);
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eventBus: ProcessEventBus,
+    private readonly engineService: BpmnEngineService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
-  }
-
-  onModuleInit() {
-    this.eventBus.onCompleted(async (payload) => {
-      await this.handleProcessCompleted(payload);
-    });
-  }
-
-  // Xử lý kết quả process khi hoàn tất — cập nhật trạng thái đơn tăng ca
-  private async handleProcessCompleted({ instanceId, variables }: ProcessCompletedPayload): Promise<void> {
-    const ot = await this.prisma.overtimeRequest.findFirst({
-      where: { processInstanceId: instanceId },
-    });
-    if (!ot) return;
-
-    const decision = variables['decision'] as string | undefined;
-    if (!decision) return;
-
-    if (decision === 'APPROVED') {
-      await this.prisma.overtimeRequest.update({
-        where: { id: ot.id },
-        data: {
-          status: OtStatus.APPROVED,
-          approvedAt: new Date(),
-          approvedById: (variables['approvedById'] as string) ?? null,
-        },
-      });
-    } else if (decision === 'REJECTED') {
-      await this.prisma.overtimeRequest.update({
-        where: { id: ot.id },
-        data: {
-          status: OtStatus.REJECTED,
-          rejectedReason: (variables['rejectedReason'] as string) ?? 'Từ chối qua quy trình',
-        },
-      });
-    }
   }
 
   async create(dto: CreateOvertimeRequestDto, submittedByUserId: string) {
@@ -83,58 +56,23 @@ export class OvertimeService extends TenantAwareService implements OnModuleInit 
       include: OT_INCLUDE,
     });
 
-    // Tự động start BPM process nếu ProcessDefinition 'overtime-approval' tồn tại và ACTIVE
-    const definition = await this.prisma.processDefinition.findFirst({
-      where: { key: OT_PROCESS_KEY },
-      select: { id: true, status: true },
-    });
+    await this.startBpmProcess(ot, submittedByUserId, dto);
 
-    if (definition?.status === DefinitionStatus.ACTIVE) {
-      // Tìm manager = directManager hoặc lãnh đạo đơn vị — dùng làm assignee trong BPM
-      const employeeWithUnit = await this.prisma.employee.findUnique({
-        where: { id: dto.employeeId },
-        include: {
-          orgUnit: { include: { leader: { include: { user: true } } } },
-          directManager: { include: { user: true } },
-        },
-      });
-      const manager = (employeeWithUnit as any)?.directManager || (employeeWithUnit as any)?.orgUnit?.leader;
-      const managerUserId: string | undefined = (manager as any)?.userId ?? undefined;
-
-      const instance = await this.prisma.processInstance.create({
-        data: {
-          definitionId: definition.id,
-          startedBy: submittedByUserId,
-          status: 'RUNNING' as any,
-          variables: {
-            overtimeRequestId: ot.id,
-            employeeId: ot.employeeId,
-            date: new Date(dto.date).toISOString(),
-            hours: Number(ot.hours),
-            reason: ot.reason ?? '',
-            // Truyền userId của manager để BPM assign task
-            managerUserId: managerUserId ?? null,
-          } as any,
-          tokenState: {} as any,
-        },
-      });
-
-      await this.prisma.overtimeRequest.update({
-        where: { id: ot.id },
-        data: { processInstanceId: instance.id },
-      });
-    }
 
     return ot;
   }
 
   async list(query: ListOtQueryDto): Promise<PaginatedResult<any>> {
-    const { employeeId, status, month, year, page = 1, limit = 50 } = query;
+    const { employeeId, status, month, year, orgUnitId, page = 1, limit = 50 } = query;
 
     // OvertimeRequest chưa có tenantId (v6 task) — dùng {} thay tenantWhere()
     const where: any = {};
     if (employeeId) where.employeeId = employeeId;
     if (status) where.status = status;
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      where.employeeId = { in: empIds };
+    }
 
     // Lọc theo tháng/năm dựa trên trường date
     if (month || year) {
@@ -239,5 +177,59 @@ export class OvertimeService extends TenantAwareService implements OnModuleInit 
       },
       include: OT_INCLUDE,
     });
+  }
+
+  private async startBpmProcess(ot: any, submittedByUserId: string, dto: CreateOvertimeRequestDto): Promise<void> {
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: OT_PROCESS_KEY, status: DefinitionStatus.ACTIVE },
+        select: { id: true, bpmnXml: true },
+      });
+      if (!definition) return;
+
+      const employeeWithUnit = await this.prisma.employee.findUnique({
+        where: { id: dto.employeeId },
+        include: {
+          orgUnit:       { include: { leader: { include: { user: true } } } },
+          directManager: { include: { user: true } },
+        },
+      });
+      const manager = (employeeWithUnit as any)?.directManager ?? (employeeWithUnit as any)?.orgUnit?.leader;
+      const managerUserId: string | undefined = (manager as any)?.userId ?? undefined;
+
+      const variables = {
+        overtimeRequestId: ot.id,
+        employeeId:        ot.employeeId,
+        date:              new Date(dto.date).toISOString(),
+        hours:             Number(ot.hours),
+        reason:            ot.reason ?? '',
+        managerUserId:     managerUserId ?? null,
+      };
+
+      const instance = await this.prisma.processInstance.create({
+        data: {
+          definitionId: definition.id,
+          startedBy:    submittedByUserId,
+          status:       InstanceStatus.RUNNING,
+          variables:    variables as any,
+          tokenState:   {} as any,
+        },
+      });
+
+      const tokenState = await this.engineService.start(instance.id, definition.bpmnXml, variables);
+      await this.prisma.processInstance.update({
+        where: { id: instance.id },
+        data:  { tokenState: tokenState as any },
+      });
+
+      await this.prisma.overtimeRequest.update({
+        where: { id: ot.id },
+        data:  { processInstanceId: instance.id },
+      });
+
+      this.logger.log(`BPM started for OvertimeRequest ${ot.id}`);
+    } catch (e) {
+      this.logger.warn(`Failed to start BPM for OvertimeRequest ${ot.id}: ${e}`);
+    }
   }
 }

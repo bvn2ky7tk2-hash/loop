@@ -13,6 +13,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { orgUnitsApi } from '../../api/org-units';
 import { usersApi } from '../../api/users';
 import {
@@ -101,10 +102,9 @@ export default function AssetsPage() {
   };
 
   const handleDelete = (a: Asset) => {
-    Modal.confirm({
-      title: `Xóa tài sản "${a.name}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(a.id); message.success('Đã xóa'); },
+    confirmDelete({
+      itemName: a.name,
+      onConfirm: async () => { await deleteMutation.mutateAsync(a.id); message.success('Đã xóa'); },
     });
   };
 

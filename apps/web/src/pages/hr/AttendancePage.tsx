@@ -13,6 +13,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { employeesApi } from '../../api/employees';
@@ -115,13 +116,8 @@ function MonthlyTab() {
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_: unknown, r: MonthlyAttendance) => (
-        <div>
-          <Text style={{ color: textPrimary, fontWeight: 500 }}>{r.employee?.fullName ?? '—'}</Text>
-          <br />
-          <Text style={{ color: textMuted, fontSize: 12 }}>{r.employee?.code ?? ''}</Text>
-        </div>
-      ),
+      render: (_: unknown, r: MonthlyAttendance) =>
+        r.employee ? <EmployeeInfoCell employee={r.employee} /> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Phòng ban',
@@ -345,13 +341,8 @@ function DetailTab() {
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_: unknown, r: AttendanceRecord) => (
-        <div>
-          <Text style={{ color: textPrimary }}>{r.employee?.fullName ?? '—'}</Text>
-          <br />
-          <Text style={{ color: textMuted, fontSize: 12 }}>{r.employee?.code ?? ''}</Text>
-        </div>
-      ),
+      render: (_: unknown, r: AttendanceRecord) =>
+        r.employee ? <EmployeeInfoCell employee={r.employee} /> : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       title: 'Ngày',
@@ -392,6 +383,19 @@ function DetailTab() {
         : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
+      title: 'Ngày công',
+      dataIndex: 'dayCredit',
+      width: 95,
+      align: 'right' as const,
+      render: (v?: number, r?: AttendanceRecord) => {
+        if (r?.status === 'ABSENT') return <Text style={{ color: '#EF4444', fontWeight: 600 }}>0</Text>;
+        if (v == null) return <Text style={{ color: textMuted }}>—</Text>;
+        if (v >= 1) return <Text style={{ color: '#10B981', fontWeight: 700 }}>1</Text>;
+        if (v > 0) return <Text style={{ color: '#F59E0B', fontWeight: 600 }}>{v.toFixed(2)}</Text>;
+        return <Text style={{ color: '#EF4444' }}>0</Text>;
+      },
+    },
+    {
       title: 'Đi muộn',
       dataIndex: 'lateMinutes',
       width: 85,
@@ -422,12 +426,33 @@ function DetailTab() {
       render: (v: string) => <StatusTag status={v} isDark={isDark} />,
     },
     {
-      title: 'Phép',
-      dataIndex: 'leaveType',
-      width: 80,
-      render: (v?: string) => v
-        ? <Tag color="blue" style={{ fontSize: 11 }}>{v}</Tag>
-        : <Text style={{ color: textMuted }}>—</Text>,
+      title: 'Loại phép',
+      key: 'leaveInfo',
+      width: 130,
+      render: (_: unknown, r: AttendanceRecord) => {
+        const li = r.leaveInfo;
+        if (li) {
+          return (
+            <Tag
+              style={{
+                background: isDark ? `${li.color}22` : `${li.color}18`,
+                color: li.color,
+                borderColor: `${li.color}55`,
+                fontSize: 11,
+                maxWidth: 120,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {li.name}
+            </Tag>
+          );
+        }
+        // Fallback: leaveType string nếu không có leaveInfo
+        if (r.leaveType) return <Tag color="blue" style={{ fontSize: 11 }}>{r.leaveType}</Tag>;
+        return <Text style={{ color: textMuted }}>—</Text>;
+      },
     },
     {
       title: 'TC',

@@ -3,8 +3,8 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
-  OnModuleInit,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -17,6 +17,7 @@ import {
   EmployeeStatus,
   Role,
   DefinitionStatus,
+  InstanceStatus,
   ContractStatus,
   InsuranceEnrollmentStatus,
   InsuranceEventType,
@@ -26,8 +27,9 @@ import {
   UpdateHrDecisionDto,
   HrDecisionQueryDto,
 } from './dto/hr-decision.dto';
-import { ProcessEventBus, ProcessCompletedPayload } from '../processes/process-event-bus.service';
+import { BpmnEngineService } from '../processes/engine/bpmn-engine.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 // Map loại quyết định → ký hiệu viết tắt cho mã quyết định tự động
 const TYPE_ABBR: Record<HrDecisionType, string> = {
@@ -58,49 +60,15 @@ const TYPE_TO_EVENT: Record<HrDecisionType, WorkHistoryEventType> = {
 };
 
 @Injectable({ scope: Scope.REQUEST })
-export class HrDecisionsService extends TenantAwareService implements OnModuleInit {
+export class HrDecisionsService extends TenantAwareService {
+  private readonly logger = new Logger(HrDecisionsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eventBus: ProcessEventBus,
+    private readonly engineService: BpmnEngineService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
-  }
-
-  onModuleInit() {
-    this.eventBus.onCompleted(async (payload) => {
-      await this.handleProcessCompleted(payload);
-    });
-  }
-
-  // Xử lý kết quả process khi hoàn tất — cập nhật trạng thái quyết định nhân sự
-  private async handleProcessCompleted({ instanceId, variables }: ProcessCompletedPayload): Promise<void> {
-    const dec = await this.prisma.hrDecision.findFirst({
-      where: { processInstanceId: instanceId },
-      include: { employee: true },
-    });
-    if (!dec) return;
-
-    const decision = variables['decision'] as string | undefined;
-    if (!decision) return;
-
-    if (decision === 'APPROVED') {
-      await this.prisma.$transaction(async (tx) => {
-        await tx.hrDecision.update({
-          where: { id: dec.id },
-          data: { status: HrDecisionStatus.APPROVED },
-        });
-        await this.applyDecisionEffect(tx, dec);
-      });
-    } else if (decision === 'REJECTED') {
-      await this.prisma.hrDecision.update({
-        where: { id: dec.id },
-        data: {
-          status: HrDecisionStatus.REJECTED,
-          notes: (variables['rejectedReason'] as string) ?? 'Từ chối qua quy trình',
-        },
-      });
-    }
   }
 
   async list(query: HrDecisionQueryDto): Promise<PaginatedResult<unknown>> {
@@ -126,6 +94,10 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
         ...(query.effectiveDateTo ? { lte: new Date(query.effectiveDateTo) } : {}),
       };
     }
+    if (query.orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, query.orgUnitId);
+      where['employeeId'] = { in: empIds };
+    }
     if (query.search) {
       where['OR'] = [
         { decisionNumber: { contains: query.search, mode: 'insensitive' } },
@@ -144,7 +116,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
         take: limit,
         orderBy: { effectiveDate: 'desc' },
         include: {
-          employee: { select: { id: true, fullName: true, code: true } },
+          employee: {
+            select: {
+              id: true, fullName: true, code: true, userId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
+          },
         },
       }),
       this.prisma.hrDecision.count({ where }),
@@ -157,7 +135,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
     const decision = await this.prisma.hrDecision.findUnique({
       where: { id },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
         workHistories: { orderBy: { eventDate: 'desc' }, take: 10 },
       },
     });
@@ -204,7 +188,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
         // HrDecision chưa có tenantId (v6 task) — bỏ qua
       },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
     });
   }
@@ -235,7 +225,13 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
         ...(dto.toSalary !== undefined ? { toSalary: dto.toSalary } : {}),
       },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
     });
   }
@@ -310,32 +306,7 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       data: { status: HrDecisionStatus.PENDING },
     });
 
-    // Tự động start process nếu có definition ACTIVE cho hr-decision-approval
-    const definition = await this.prisma.processDefinition.findFirst({
-      where: { key: 'hr-decision-approval' },
-      select: { id: true, status: true },
-    });
-
-    if (definition?.status === DefinitionStatus.ACTIVE) {
-      const instance = await this.prisma.processInstance.create({
-        data: {
-          definitionId: definition.id,
-          startedBy: userId,
-          status: 'RUNNING' as any,
-          variables: {
-            hrDecisionId: decision.id,
-            type: decision.type,
-            employeeId: decision.employeeId,
-            effectiveDate: (decision.effectiveDate as Date).toISOString(),
-          } as any,
-          tokenState: {} as any,
-        },
-      });
-      await this.prisma.hrDecision.update({
-        where: { id },
-        data: { processInstanceId: instance.id },
-      });
-    }
+    await this.startBpmProcess(decision, userId);
 
     return updated;
   }
@@ -609,9 +580,57 @@ export class HrDecisionsService extends TenantAwareService implements OnModuleIn
       where: { employeeId },
       orderBy: { effectiveDate: 'desc' },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
       take: 200,
     });
+  }
+
+  private async startBpmProcess(decision: any, userId: string): Promise<void> {
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: 'hr-decision-approval', status: DefinitionStatus.ACTIVE },
+        select: { id: true, bpmnXml: true },
+      });
+      if (!definition) return;
+
+      const variables = {
+        hrDecisionId:  decision.id,
+        type:          decision.type,
+        employeeId:    decision.employeeId,
+        effectiveDate: (decision.effectiveDate as Date).toISOString(),
+      };
+
+      const instance = await this.prisma.processInstance.create({
+        data: {
+          definitionId: definition.id,
+          startedBy:    userId,
+          status:       InstanceStatus.RUNNING,
+          variables:    variables as any,
+          tokenState:   {} as any,
+        },
+      });
+
+      const tokenState = await this.engineService.start(instance.id, definition.bpmnXml, variables);
+      await this.prisma.processInstance.update({
+        where: { id: instance.id },
+        data:  { tokenState: tokenState as any },
+      });
+
+      await this.prisma.hrDecision.update({
+        where: { id: decision.id },
+        data:  { processInstanceId: instance.id },
+      });
+
+      this.logger.log(`BPM started for HrDecision ${decision.id}`);
+    } catch (e) {
+      this.logger.warn(`Failed to start BPM for HrDecision ${decision.id}: ${e}`);
+    }
   }
 }

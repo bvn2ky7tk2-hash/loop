@@ -78,6 +78,7 @@ export default function WorkDashboard() {
         title="Dashboard Công việc"
         icon={<CheckSquareOutlined />}
         iconColor="#6366F1"
+        greeting
       />
 
       {/* Hàng 1: StatCards từ /dashboard/work */}

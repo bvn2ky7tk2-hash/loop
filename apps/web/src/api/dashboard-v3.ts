@@ -118,6 +118,38 @@ export interface TodayEvents {
   newHires: TodayEventPerson[];
 }
 
+// ─── Attendance & Payroll ─────────────────────────────────────────────────
+export interface AttendanceDashboardData {
+  pendingLeaves: number;
+  pendingOT: number;
+  lateThisMonth: number;
+  otHoursThisMonth: number;
+  monthlyPayrollTotal: number;
+  latestPeriodName: string | null;
+  latestPeriodStatus: string | null;
+}
+
+export interface AttendanceTrendItem {
+  date: string;      // 'YYYY-MM-DD'
+  present: number;
+  late: number;
+}
+
+// ─── Recruit ──────────────────────────────────────────────────────────────
+export interface CandidateByStageItem {
+  stage: string;
+  count: number;
+}
+
+export interface RecruitDashboardData {
+  openJobs: number;
+  totalCandidates: number;
+  newCandidatesThisMonth: number;
+  interviewsThisWeek: number;
+  hiredThisMonth: number;
+  byStage: CandidateByStageItem[];
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────
 export const dashboardV3Api = {
   getWork: (): Promise<WorkDashboardData> =>
@@ -158,4 +190,13 @@ export const dashboardV3Api = {
 
   getTodayEvents: (): Promise<TodayEvents> =>
     api.get('/dashboard/today-events').then((r) => r.data),
+
+  getAttendance: (): Promise<AttendanceDashboardData> =>
+    api.get('/dashboard/attendance').then((r) => r.data),
+
+  getAttendanceTrend: (): Promise<AttendanceTrendItem[]> =>
+    api.get('/dashboard/attendance-trend').then((r) => r.data),
+
+  getRecruit: (): Promise<RecruitDashboardData> =>
+    api.get('/dashboard/recruit').then((r) => r.data),
 };

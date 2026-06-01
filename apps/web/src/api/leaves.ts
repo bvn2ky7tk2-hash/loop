@@ -34,7 +34,13 @@ export interface LeaveRequest {
   rejectedReason?: string;
   createdAt: string;
   updatedAt: string;
-  employee?: { id: string; fullName: string; code: string };
+  employee?: {
+    id: string;
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   leaveType?: LeaveType;
   approvedBy?: { id: string; name: string };
 }
@@ -73,6 +79,7 @@ export interface LeaveFilterParams {
   pageSize?: number;
   status?: LeaveStatus;
   employeeId?: string;
+  orgUnitId?: string;
   leaveTypeId?: string;
   startDate?: string;
   endDate?: string;
@@ -106,6 +113,47 @@ export const leavesApi = {
     apiClient.patch<LeaveType>(`/leaves/types/${id}`, data).then((r) => r.data),
   getFormSchema: (): Promise<{ fields: FormField[] }> =>
     apiClient.get<{ fields: FormField[] }>('/leaves/form-schema').then((r) => r.data),
+
+  getAllBalance: (params?: { year?: number; orgUnitId?: string; page?: number; limit?: number }) =>
+    apiClient.get<{
+      data: Array<{
+        employee: { id: string; code: string; fullName: string; orgUnit?: { name: string } | null; position?: { jobTitle?: { name: string } | null } | null };
+        balances: Array<{
+          leaveTypeId: string;
+          leaveType: { id: string; name: string; color: string; isPaid: boolean; maxDaysPerYear: number };
+          totalDays: number;
+          usedDays: number;
+          remainingDays: number;
+          year: number;
+        }>;
+        recentHistory: Array<{
+          id: string;
+          leaveType: { name: string; color: string; isPaid: boolean } | null;
+          startDate: string;
+          endDate: string;
+          days: number;
+          reason?: string;
+          createdAt: string;
+        }>;
+      }>;
+      total: number; page: number; limit: number; year: number;
+    }>('/leaves/balance-all', { params }).then((r) => r.data),
+
+  initBalances: (params?: { year?: number; orgUnitId?: string }) =>
+    apiClient.post<{ message: string; year: number; employees: number; leaveTypes: number; total: number }>(
+      '/leaves/init-balances', {}, { params }
+    ).then((r) => r.data),
+
+  getMonthlyStats: (params?: { year?: number; orgUnitId?: string }) =>
+    apiClient.get<{
+      year: number;
+      months: Array<{
+        month: number;
+        totalRequests: number;
+        totalDays: number;
+        byType: Array<{ leaveTypeId: string; name: string; color: string; days: number }>;
+      }>;
+    }>('/leaves/monthly-stats', { params }).then((r) => r.data),
 };
 
 export const processDefsApi = {

@@ -27,7 +27,7 @@ function cellStyle(hours: number, isDark: boolean): CSSProperties {
 }
 
 export default function ProjectTimesheetPage() {
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, bgContainer, borderColor, linkColor, textPrimary } = useThemePalette();
   const [projectId, setProjectId] = useState<string | undefined>();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf('month'));
 
@@ -101,7 +101,7 @@ export default function ProjectTimesheetPage() {
       fixed: 'left',
       render: (name: string, record: RowData) =>
         record.isTotal ? (
-          <Text strong style={{ color: preset.primary }}>{name}</Text>
+          <Text strong style={{ color: linkColor }}>{name}</Text>
         ) : (
           <Text>{name}</Text>
         ),
@@ -118,7 +118,7 @@ export default function ProjectTimesheetPage() {
         style: {
           fontWeight: 600,
           background: record.isTotal ? (isDark ? `${preset.primary}25` : `${preset.primary}12`) : (isDark ? '#1a1a1a' : '#fafafa'),
-          color: record.isTotal ? preset.primary : undefined,
+          color: record.isTotal ? (isDark ? textPrimary : preset.primary) : undefined,
         },
       }),
       render: (total: number) => <span>{total > 0 ? `${total}h` : '—'}</span>,
@@ -162,7 +162,7 @@ export default function ProjectTimesheetPage() {
           {'< 8h (cảnh báo)'}
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ width: 16, height: 10, background: isDark ? '#1E293B' : '#F1F5F9', border: `1px solid ${isDark ? '#334155' : '#E2E8F0'}`, display: 'inline-block', borderRadius: 2 }} />
+          <span style={{ width: 16, height: 10, background: bgContainer, border: `1px solid ${borderColor}`, display: 'inline-block', borderRadius: 2 }} />
           {'≥ 8h'}
         </span>
       </div>

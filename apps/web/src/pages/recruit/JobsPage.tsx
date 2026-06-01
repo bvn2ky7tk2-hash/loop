@@ -8,6 +8,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutli
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { orgUnitsApi } from '../../api/org-units';
 import {
   useGetJobs, useCreateJob, useUpdateJob, useCloseJob, useDeleteJob,
@@ -96,10 +97,9 @@ export default function JobsPage() {
   };
 
   const handleDelete = (job: JobOpening) => {
-    Modal.confirm({
-      title: `Xoá "${job.title}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(job.id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: job.title,
+      onConfirm: async () => { await deleteMutation.mutateAsync(job.id); message.success('Đã xoá'); },
     });
   };
 

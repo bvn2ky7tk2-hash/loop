@@ -22,8 +22,9 @@ const PROJECT_STATUS_OPTIONS = [
 import {
   Table, Button, Modal, Form, Input, Select, DatePicker,
   Progress, Space, Tabs, InputNumber, App, Alert, Popconfirm, Tooltip,
-  Descriptions, theme,
+  Descriptions, theme, Typography,
 } from 'antd';
+import { useThemePalette } from '../../hooks/useThemePalette';
 import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
 import type { ProjectStatus } from '../../components/ui/TaskStatusPill';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
@@ -38,6 +39,7 @@ import { orgUnitsApi } from '../../api/org-units';
 import dayjs from 'dayjs';
 import { formatNumber } from '../../utils/format';
 import AllocationConflictModal, { type ConflictDay } from '../../components/AllocationConflictModal';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 function flattenOrgUnits(nodes: { id: string; name: string; code: string; children?: { id: string; name: string; code: string; children?: unknown[] }[] }[], prefix = ''): { value: string; label: string }[] {
   return nodes.flatMap((n) => [
@@ -47,9 +49,12 @@ function flattenOrgUnits(nodes: { id: string; name: string; code: string; childr
 }
 
 
+const { Text } = Typography;
+
 export default function ProjectsPage() {
   const { message } = App.useApp();
   const { token } = theme.useToken();
+  const { textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [createError, setCreateError] = useState('');
@@ -224,7 +229,9 @@ export default function ProjectsPage() {
     { key: 'type',     title: 'Loại', dataIndex: 'type', width: 70 },
     {
       key: 'pm', title: 'PM', width: 150,
-      render: (_: unknown, r: Project) => r.pm?.name ?? '—',
+      render: (_: unknown, r: Project) => r.pm?.name
+        ? <Text style={{ color: textPrimary }}>{r.pm.name}</Text>
+        : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
       key: 'status',
@@ -267,7 +274,7 @@ export default function ProjectsPage() {
     {
       key: 'endDate',
       title: 'Kết thúc', dataIndex: 'endDate', width: 110,
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
     {
       key: 'actions',
@@ -295,7 +302,13 @@ export default function ProjectsPage() {
   const columns = allColumns.filter((c) => c.key === 'actions' || isVisible(c.key));
 
   const memberColumns = [
-    { title: 'Nhân sự', dataIndex: ['employee', 'fullName'] },
+    {
+      title: 'Nhân sự',
+      key: 'employee',
+      render: (_: unknown, r: Allocation) => r.employee
+        ? <EmployeeInfoCell employee={r.employee} />
+        : <span>—</span>,
+    },
     { title: 'Vai trò', dataIndex: 'role' },
     {
       title: 'Cấp độ', dataIndex: 'level', width: 80,
@@ -315,11 +328,11 @@ export default function ProjectsPage() {
     },
     {
       title: 'Từ', dataIndex: 'startDate', width: 100,
-      render: (v: string) => dayjs(v).format('DD/MM/YY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YY')}</Text>,
     },
     {
       title: 'Đến', dataIndex: 'endDate', width: 100,
-      render: (v: string) => dayjs(v).format('DD/MM/YY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YY')}</Text>,
     },
     {
       title: '', key: 'actions', width: 72,

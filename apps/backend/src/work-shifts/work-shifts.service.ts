@@ -111,7 +111,11 @@ export class WorkShiftsService {
         orderBy: { effectiveFrom: 'desc' },
         include: {
           employee: {
-            select: { id: true, fullName: true, code: true, orgUnitId: true },
+            select: {
+              id: true, fullName: true, code: true, orgUnitId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
           },
           shift: {
             select: {
@@ -358,6 +362,26 @@ export class WorkShiftsService {
     }
 
     return schedule.phases[phaseIndex].shift;
+  }
+
+  /**
+   * Kiểm tra ngày `date` có phải ca nghỉ (CA_OFF) của nhân viên không.
+   *
+   * Thứ tự ưu tiên:
+   * 1. Lấy ca từ lịch xoay / assignment → nếu type = CA_OFF → true
+   * 2. Không có cấu hình ca nào → mặc định T7/CN là nghỉ
+   */
+  async isOffDay(employeeId: string, date: Date): Promise<boolean> {
+    const shift = await this.resolveShiftForDate(employeeId, date);
+
+    // Có cấu hình ca rõ ràng → chỉ off khi type = CA_OFF
+    if (shift !== null) {
+      return (shift as { type: string } | null)?.type === 'CA_OFF';
+    }
+
+    // Không có ca nào được phân công → coi là ngày nghỉ
+    // (không fallback Mon-Fri: chưa có ca thì không được tính công)
+    return true;
   }
 
   async swapShift(dto: SwapShiftDto) {

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
-  Table, Select, Typography, Progress, Row, Col,
+  Table, Select, Typography, Progress, Row, Col, Spin,
 } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
@@ -12,62 +13,109 @@ import {
   CheckCircleOutlined, MinusCircleOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
+import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
 
-// ─── Mock data ──────────────────────────────────────────────────────────────
+// ─── Types từ backend ────────────────────────────────────────────────────────
 
 interface BudgetLine {
   key: string;
+  planId: string;
+  planName: string;
   category: string;
   department: string;
   year: number;
-  status: 'DRAFT' | 'ACTIVE' | 'CLOSED';
+  status: string;
   allocated: number;
   used: number;
   committed: number;
 }
 
-const MOCK_LINES: BudgetLine[] = [
-  { key: '1', category: 'Nhân sự',      department: 'Toàn công ty', year: 2026, status: 'ACTIVE',  allocated: 200000000, used: 160000000, committed: 20000000 },
-  { key: '2', category: 'Công cụ IT',   department: 'Kỹ thuật',     year: 2026, status: 'ACTIVE',  allocated: 100000000, used: 45000000,  committed: 15000000 },
-  { key: '3', category: 'Đào tạo',      department: 'Nhân sự',      year: 2026, status: 'ACTIVE',  allocated: 100000000, used: 10000000,  committed: 5000000  },
-  { key: '4', category: 'Marketing',    department: 'Kinh doanh',   year: 2026, status: 'DRAFT',   allocated: 80000000,  used: 0,         committed: 12000000 },
-  { key: '5', category: 'Vận hành',     department: 'Toàn công ty', year: 2025, status: 'CLOSED',  allocated: 150000000, used: 148000000, committed: 0        },
-  { key: '6', category: 'R&D',          department: 'Kỹ thuật',     year: 2025, status: 'CLOSED',  allocated: 120000000, used: 95000000,  committed: 0        },
-  { key: '7', category: 'Bán hàng',     department: 'Kinh doanh',   year: 2026, status: 'ACTIVE',  allocated: 90000000,  used: 72000000,  committed: 10000000 },
-  { key: '8', category: 'Hành chính',   department: 'Toàn công ty', year: 2026, status: 'ACTIVE',  allocated: 50000000,  used: 46000000,  committed: 3000000  },
-];
+interface BudgetPlanRaw {
+  id: string;
+  name: string;
+  fiscalYear: number;
+  status: string;
+  orgUnit?: { id: string; name: string };
+  lines?: {
+    id: string;
+    category: string;
+    allocatedAmount: number | string;
+    usedAmount: number | string;
+    committedAmount: number | string;
+  }[];
+}
 
 const STATUS_LABEL: Record<string, string> = {
-  DRAFT:  'Dự thảo',
-  ACTIVE: 'Đang hiệu lực',
-  CLOSED: 'Đã đóng',
+  DRAFT:    'Dự thảo',
+  PENDING:  'Chờ duyệt',
+  APPROVED: 'Đã duyệt',
+  ACTIVE:   'Đang hiệu lực',
+  CLOSED:   'Đã đóng',
+  REJECTED: 'Từ chối',
 };
-
-const STATUS_COLOR: Record<string, string> = {
-  DRAFT:  'default',
-  ACTIVE: 'green',
-  CLOSED: 'blue',
-};
-
-const DEPARTMENTS = ['Toàn công ty', 'Kỹ thuật', 'Nhân sự', 'Kinh doanh'];
 
 // ─── BudgetPage ──────────────────────────────────────────────────────────────
 
 export default function BudgetPage() {
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
 
-  const [filterYear, setFilterYear] = useState<number | undefined>(2026);
-  const [filterDept, setFilterDept] = useState<string | undefined>();
+  const [filterYear, setFilterYear] = useState<number | undefined>(new Date().getFullYear());
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
 
-  const filtered = MOCK_LINES.filter(line => {
-    if (filterYear && line.year !== filterYear) return false;
-    if (filterDept && line.department !== filterDept) return false;
-    if (filterStatus && line.status !== filterStatus) return false;
-    return true;
+  const { data: rawData, isLoading } = useQuery({
+    queryKey: ['budget-plans', filterYear, filterStatus],
+    queryFn: () => apiClient.get<{ data: BudgetPlanRaw[] }>('/budget-plans', {
+      params: {
+        fiscalYear: filterYear,
+        status: filterStatus,
+        limit: 200,
+      },
+    }).then(r => r.data.data ?? []),
+    staleTime: 60_000,
   });
+
+  // Flatten plans → lines
+  const flatLines = useMemo<BudgetLine[]>(() => {
+    const plans = rawData ?? [];
+    const rows: BudgetLine[] = [];
+    for (const plan of plans) {
+      if (plan.lines && plan.lines.length > 0) {
+        for (const line of plan.lines) {
+          rows.push({
+            key: line.id,
+            planId: plan.id,
+            planName: plan.name,
+            category: line.category,
+            department: plan.orgUnit?.name ?? 'Toàn công ty',
+            year: plan.fiscalYear,
+            status: plan.status,
+            allocated: Number(line.allocatedAmount),
+            used: Number(line.usedAmount),
+            committed: Number(line.committedAmount),
+          });
+        }
+      } else {
+        // Plan không có lines → hiển thị plan như 1 dòng tổng
+        rows.push({
+          key: plan.id,
+          planId: plan.id,
+          planName: plan.name,
+          category: plan.name,
+          department: plan.orgUnit?.name ?? 'Toàn công ty',
+          year: plan.fiscalYear,
+          status: plan.status,
+          allocated: 0,
+          used: 0,
+          committed: 0,
+        });
+      }
+    }
+    return rows;
+  }, [rawData]);
+
+  const filtered = flatLines;
 
   const totalAllocated = filtered.reduce((s, l) => s + l.allocated, 0);
   const totalUsed      = filtered.reduce((s, l) => s + l.used, 0);
@@ -75,6 +123,13 @@ export default function BudgetPage() {
   const totalRemaining = totalAllocated - totalUsed - totalCommitted;
 
   const columns: ColumnsType<BudgetLine> = [
+    {
+      title: 'Kế hoạch',
+      dataIndex: 'planName',
+      ellipsis: true,
+      render: (v: string) => <Text style={{ color: textMuted, fontSize: 12 }}>{v}</Text>,
+      width: 160,
+    },
     {
       title: 'Danh mục',
       dataIndex: 'category',
@@ -89,7 +144,7 @@ export default function BudgetPage() {
     {
       title: 'Năm',
       dataIndex: 'year',
-      width: 80,
+      width: 70,
       align: 'center',
       render: (v: number) => <Text style={{ color: textMuted }}>{v}</Text>,
     },
@@ -231,6 +286,8 @@ export default function BudgetPage() {
       </Row>
 
       {/* FilterBar */}
+      {isLoading && <div style={{ textAlign: 'center', padding: 32 }}><Spin /></div>}
+
       <FilterBar>
         <Select
           placeholder="Năm"
@@ -238,19 +295,7 @@ export default function BudgetPage() {
           value={filterYear}
           allowClear
           onChange={v => setFilterYear(v)}
-          options={[
-            { value: 2024, label: '2024' },
-            { value: 2025, label: '2025' },
-            { value: 2026, label: '2026' },
-          ]}
-        />
-        <Select
-          placeholder="Phòng ban"
-          style={{ width: 160 }}
-          allowClear
-          value={filterDept}
-          onChange={v => setFilterDept(v)}
-          options={DEPARTMENTS.map(d => ({ value: d, label: d }))}
+          options={[2023, 2024, 2025, 2026].map(y => ({ value: y, label: String(y) }))}
         />
         <Select
           placeholder="Trạng thái"
@@ -258,17 +303,14 @@ export default function BudgetPage() {
           allowClear
           value={filterStatus}
           onChange={v => setFilterStatus(v)}
-          options={[
-            { value: 'DRAFT',  label: 'Dự thảo' },
-            { value: 'ACTIVE', label: 'Đang hiệu lực' },
-            { value: 'CLOSED', label: 'Đã đóng' },
-          ]}
+          options={Object.entries(STATUS_LABEL).map(([v, l]) => ({ value: v, label: l }))}
         />
       </FilterBar>
 
       <Table
         rowKey="key"
         dataSource={filtered}
+        loading={isLoading}
         columns={columns}
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}

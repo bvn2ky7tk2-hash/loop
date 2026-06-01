@@ -28,7 +28,11 @@ export interface Allocation {
   ratePerDay?: number;
   startDate: string;
   endDate: string;
-  employee?: { id: string; fullName: string; code: string; level: string };
+  employee?: {
+    id: string; fullName: string; code: string; level: string;
+    orgUnit?: { id: string; name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
 }
 
 export const projectsApi = {

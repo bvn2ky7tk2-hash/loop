@@ -42,6 +42,7 @@ export default function AssetDashboard() {
         title="Dashboard Tài sản"
         icon={<LaptopOutlined />}
         iconColor="#F97316"
+        greeting
       />
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>

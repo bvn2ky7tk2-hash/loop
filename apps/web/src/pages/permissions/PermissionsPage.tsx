@@ -53,7 +53,7 @@ function buildScreens(perms: PermissionDef[]): { screens: PermScreen[]; moduleGr
     screens.push({
       key: domain,
       label: PERM_DOMAIN_LABEL[domain] ?? domain,
-      color: PERM_DOMAIN_COLOR[domain] ?? '#64748B',
+      color: PERM_DOMAIN_COLOR[domain] ?? '#94A3B8',
       appModule: PERM_DOMAIN_MODULE[domain] ?? 'general',
       funcs: list.map(p => ({
         perm: p.code,
@@ -162,10 +162,7 @@ function ScreenPermMatrix({
     onChange(Array.from(next));
   };
 
-  const border  = isDark ? '#334155' : '#E2E8F0';
-  const hdrBg   = isDark ? '#1A2744' : '#F8FAFC';
-  const cellBg  = isDark ? '#1E293B' : '#FFFFFF';
-  const hoverBg = isDark ? '#2D3F56' : '#F1F5F9';
+  const { borderColor: border, bgSubPanel: hdrBg, bgContainer: cellBg, bgCard: hoverBg, textSecondary } = useThemePalette();
 
   return (
     <div>
@@ -211,10 +208,10 @@ function ScreenPermMatrix({
               <th style={{ padding: '8px 14px', textAlign: 'left', borderBottom: `2px solid ${border}`, width: 160, fontWeight: 700 }}>
                 Màn hình
               </th>
-              <th style={{ padding: '8px 12px', textAlign: 'center', borderBottom: `2px solid ${border}`, width: 70, fontWeight: 700, color: isDark ? 'rgba(255,255,255,0.5)' : '#64748B' }}>
+              <th style={{ padding: '8px 12px', textAlign: 'center', borderBottom: `2px solid ${border}`, width: 70, fontWeight: 700, color: textSecondary }}>
                 Tất cả
               </th>
-              <th style={{ padding: '8px 14px', textAlign: 'left', borderBottom: `2px solid ${border}`, fontWeight: 700, color: isDark ? 'rgba(255,255,255,0.5)' : '#64748B' }}>
+              <th style={{ padding: '8px 14px', textAlign: 'left', borderBottom: `2px solid ${border}`, fontWeight: 700, color: textSecondary }}>
                 Chức năng
               </th>
             </tr>
@@ -263,7 +260,7 @@ function ScreenPermMatrix({
                           >
                             {sel.has(func.perm)
                               ? <CheckOutlined style={{ color: screen.color, fontSize: 11 }} />
-                              : <CloseOutlined style={{ color: isDark ? '#475569' : '#CBD5E1', fontSize: 10 }} />
+                              : <CloseOutlined style={{ color: textSecondary, fontSize: 10 }} />
                             }
                             <span style={{ color: sel.has(func.perm) ? (isDark ? '#F1F5F9' : screen.color) : undefined }}>
                               {func.label}
@@ -424,8 +421,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
     },
   });
 
-  const border  = isDark ? '#334155' : '#E2E8F0';
-  const cardBg  = isDark ? '#1E293B' : '#FAFAFA';
+  const { borderColor: border, bgContainer: cardBg, textMuted, bgSubPanel } = useThemePalette();
 
   const handleSaveInfo = () =>
     form.validateFields().then(values => {
@@ -711,7 +707,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
 function UserGroupsTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, textMuted } = useThemePalette();
   const [drawerGroupId, setDrawerGroupId] = useState<string | null | undefined>(undefined);
 
   const { data: groups = [], isLoading } = useQuery({
@@ -737,7 +733,7 @@ function UserGroupsTab() {
         <div>
           <div style={{ fontWeight: 600, fontSize: 14 }}>{name}</div>
           {row.description && (
-            <div style={{ fontSize: 12, color: isDark ? 'rgba(255,255,255,0.45)' : '#64748B' }}>{row.description}</div>
+            <div style={{ fontSize: 12, color: textMuted }}>{row.description}</div>
           )}
           {row.isDefault && <Tag color="green" style={{ marginTop: 2, fontSize: 11 }}>Mặc định</Tag>}
         </div>
@@ -835,7 +831,7 @@ function UserGroupsTab() {
 function UserOverridesTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, textMuted, bgSubPanel, bgContainer } = useThemePalette();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [form] = Form.useForm();
@@ -943,9 +939,9 @@ function UserOverridesTab() {
         />
         {selectedObj && (
           <div style={{ marginTop: 14, borderRadius: 8, border: `1px solid ${border}`, overflow: 'hidden' }}>
-            <div style={{ padding: '10px 14px', background: isDark ? '#1A2744' : '#EEF2FF' }}>
+            <div style={{ padding: '10px 14px', background: isDark ? bgSubPanel : '#EEF2FF' }}>
               <div style={{ fontWeight: 600 }}>{selectedObj.name}</div>
-              <div style={{ fontSize: 12, color: isDark ? 'rgba(255,255,255,0.4)' : '#64748B' }}>{selectedObj.email}</div>
+              <div style={{ fontSize: 12, color: textMuted }}>{selectedObj.email}</div>
               {userGroups.length > 0 && (
                 <div style={{ marginTop: 6 }}>
                   <Text style={{ fontSize: 11, color: isDark ? 'rgba(255,255,255,0.4)' : '#94A3B8' }}>Nhóm: </Text>
@@ -958,7 +954,7 @@ function UserOverridesTab() {
               )}
             </div>
             <div style={{ padding: '10px 14px' }}>
-              <Text style={{ fontSize: 11, fontWeight: 700, color: isDark ? 'rgba(255,255,255,0.4)' : '#64748B' }}>
+              <Text style={{ fontSize: 11, fontWeight: 700, color: textMuted }}>
                 QUYỀN HIỆU LỰC ({effective.length})
               </Text>
               <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 280, overflowY: 'auto' }}>
@@ -967,7 +963,7 @@ function UserOverridesTab() {
                     <div style={{ fontSize: 11, color: s.color, fontWeight: 700, marginBottom: 2 }}>{s.label}</div>
                     <Space wrap size={[4, 2]}>
                       {s.granted.map(f => (
-                        <Tag key={f.perm} style={{ fontSize: 10, margin: 0, background: isDark ? '#1E293B' : '#F1F5F9' }}>{f.label}</Tag>
+                        <Tag key={f.perm} style={{ fontSize: 10, margin: 0, background: bgContainer }}>{f.label}</Tag>
                       ))}
                     </Space>
                   </div>

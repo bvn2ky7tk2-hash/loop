@@ -10,6 +10,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { usersApi } from '../../api/users';
 import {
   useGetJobs, useGetCandidates, useCreateCandidate, useUpdateCandidate,
@@ -116,10 +117,9 @@ export default function CandidatesPage() {
   };
 
   const handleDelete = (c: Candidate) => {
-    Modal.confirm({
-      title: `Xoá ứng viên "${c.name}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(c.id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: c.name,
+      onConfirm: async () => { await deleteMutation.mutateAsync(c.id); message.success('Đã xoá'); },
     });
   };
 

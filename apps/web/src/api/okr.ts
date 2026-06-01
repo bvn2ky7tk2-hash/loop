@@ -26,7 +26,14 @@ export interface OkrObjective {
   status:            OkrStatus;
   processInstanceId?: string | null;
   keyResults:        OkrKeyResult[];
-  owner:             { id: string; name: string; email: string };
+  owner:             {
+    id: string;
+    name: string;
+    email: string;
+    code?: string | null;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   createdAt:         string;
 }
 
@@ -65,7 +72,7 @@ const BASE = '/okr';
 export const okrApi = {
   stats: () => apiClient.get<OkrStats>(`${BASE}/stats`).then(r => r.data),
 
-  listObjectives: (params?: { ownerId?: string; cycle?: string; year?: number; status?: string; page?: number; limit?: number }) =>
+  listObjectives: (params?: { ownerId?: string; orgUnitId?: string; cycle?: string; year?: number; status?: string; page?: number; limit?: number }) =>
     apiClient.get<{ data: OkrObjective[]; total: number; totalPages: number }>(`${BASE}/objectives`, { params }).then(r => r.data),
 
   getObjective: (id: string) => apiClient.get<OkrObjective>(`${BASE}/objectives/${id}`).then(r => r.data),

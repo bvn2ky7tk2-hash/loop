@@ -4,6 +4,7 @@ import {
   Input, InputNumber, Tag, Modal, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FunnelPlotOutlined, SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -31,9 +32,9 @@ const SOURCE_META: Record<LeadSource, { label: string; color: string }> = {
 const STATUS_META: Record<LeadStatus, { label: string; color: string }> = {
   NEW:       { label: 'Mới',         color: 'default' },
   CONTACTED: { label: 'Đã liên hệ', color: 'blue' },
-  QUALIFIED: { label: 'Qualified',   color: 'green' },
-  CONVERTED: { label: 'Converted',   color: 'purple' },
-  LOST:      { label: 'Lost',        color: 'red' },
+  QUALIFIED: { label: 'Đủ điều kiện',  color: 'green' },
+  CONVERTED: { label: 'Đã chuyển đổi', color: 'purple' },
+  LOST:      { label: 'Không tiếp tục', color: 'red' },
 };
 
 const STATUS_OPTIONS = Object.entries(STATUS_META).map(([k, v]) => ({ value: k as LeadStatus, label: v.label }));
@@ -111,10 +112,9 @@ export default function LeadsPage() {
   };
 
   const handleDelete = (id: string, title: string) => {
-    Modal.confirm({
-      title: `Xoá lead "${title}"?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: title,
+      onConfirm: async () => { await deleteMutation.mutateAsync(id); message.success('Đã xoá'); },
     });
   };
 
@@ -154,7 +154,7 @@ export default function LeadsPage() {
             <Button size="small" type="primary" icon={<SwapOutlined />}
               style={{ background: '#059669', borderColor: '#059669' }}
               onClick={() => openConvert(row)}>
-              Convert
+              Chuyển Deal
             </Button>
           )}
           <Button size="small" icon={<EditOutlined />} onClick={() => openEdit(row)} />
@@ -267,12 +267,12 @@ export default function LeadsPage() {
 
       {/* Convert to Deal modal */}
       <Modal
-        title={`Convert Lead → Deal: "${converting?.title}"`}
+        title={`Chuyển Lead → Deal: "${converting?.title}"`}
         open={convertOpen}
         onCancel={() => setConvertOpen(false)}
         onOk={handleConvert}
         confirmLoading={convertMutation.isPending}
-        okText="Convert"
+        okText="Chuyển Deal"
         okButtonProps={{ style: { background: '#059669', borderColor: '#059669' } }}
       >
         <Form form={convertForm} layout="vertical">

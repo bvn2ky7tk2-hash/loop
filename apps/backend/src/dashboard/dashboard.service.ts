@@ -312,7 +312,13 @@ export class DashboardService {
     const now = new Date();
     const currentYear = now.getFullYear();
 
-    const [myPendingTasks, myOpenBugs, leaveBalanceAgg] = await Promise.all([
+    const myEmployee = await this.prisma.employee.findFirst({
+      where: { userId, deletedAt: null },
+      select: { id: true },
+    });
+    const employeeId = myEmployee?.id ?? null;
+
+    const [myPendingTasks, myOpenBugs, leaveBalanceAgg, myPendingLeaves] = await Promise.all([
       this.prisma.task.count({
         where: { assigneeId: userId, status: { notIn: ['DONE', 'CANCELLED'] } },
       }),
@@ -323,6 +329,9 @@ export class DashboardService {
         where: { employee: { userId }, year: currentYear },
         _sum: { totalDays: true, usedDays: true },
       }),
+      employeeId
+        ? this.prisma.leaveRequest.count({ where: { employeeId, status: 'PENDING' } })
+        : Promise.resolve(0),
     ]);
 
     const latestPayslip = await this.prisma.payrollRecord.findFirst({
@@ -337,6 +346,8 @@ export class DashboardService {
     return {
       myPendingTasks,
       myOpenBugs,
+      employeeId,
+      myPendingLeaves,
       leaveBalance: Math.max(0, totalDays - usedDays),
       nextPayslipDate: latestPayslip?.period?.endDate ?? null,
     };
@@ -368,7 +379,7 @@ export class DashboardService {
       totalUsers,
       activeUsers,
       recentlyActiveUsers: recentlyActiveUsers.length,
-      totalModules: 8,
+      totalModules: 7,  // workspace, projects, people, finance, crm, asset, admin
       systemStatus: 'OK',
     };
   }
@@ -542,6 +553,145 @@ export class DashboardService {
     }
 
     return { birthdays, anniversaries, newHires };
+  }
+
+  // ─── Attendance & Payroll Dashboard ─────────────────────────────────────────
+
+  async getAttendance(tenantId?: string) {
+    const key = `dashboard:attendance:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcAttendance());
+  }
+
+  private async calcAttendance() {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+
+    const [
+      pendingLeaves,
+      pendingOT,
+      lateThisMonth,
+      otHoursAgg,
+      monthlyPayrollAgg,
+      latestPeriod,
+    ] = await Promise.all([
+      this.prisma.leaveRequest.count({ where: { status: 'PENDING' } }),
+      this.prisma.overtimeRequest.count({ where: { status: 'PENDING' } }),
+      this.prisma.attendanceRecord.count({
+        where: { date: { gte: monthStart, lte: monthEnd }, lateMinutes: { gt: 0 } },
+      }),
+      this.prisma.overtimeRequest.aggregate({
+        where: { status: 'APPROVED', date: { gte: monthStart, lte: monthEnd } },
+        _sum: { hours: true },
+      }),
+      this.prisma.payrollRecord.aggregate({
+        where: { period: { startDate: { gte: monthStart }, endDate: { lte: monthEnd } } },
+        _sum: { netSalary: true },
+      }),
+      this.prisma.payrollPeriod.findFirst({
+        orderBy: { startDate: 'desc' },
+        select: { name: true, status: true },
+      }),
+    ]);
+
+    return {
+      pendingLeaves,
+      pendingOT,
+      lateThisMonth,
+      otHoursThisMonth: Number(otHoursAgg._sum.hours ?? 0),
+      monthlyPayrollTotal: Number(monthlyPayrollAgg._sum.netSalary ?? 0),
+      latestPeriodName:   latestPeriod?.name   ?? null,
+      latestPeriodStatus: latestPeriod?.status ?? null,
+    };
+  }
+
+  async getAttendanceTrend(tenantId?: string) {
+    const key = `dashboard:attendance-trend:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcAttendanceTrend());
+  }
+
+  private async calcAttendanceTrend() {
+    const since = new Date();
+    since.setDate(since.getDate() - 6);
+    since.setHours(0, 0, 0, 0);
+
+    const records = await this.prisma.attendanceRecord.findMany({
+      where: { date: { gte: since } },
+      select: { date: true, lateMinutes: true },
+      take: 10000,
+    });
+
+    const dayMap: Record<string, { present: number; late: number }> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      dayMap[d.toISOString().slice(0, 10)] = { present: 0, late: 0 };
+    }
+    for (const r of records) {
+      const day = r.date.toISOString().slice(0, 10);
+      if (!(day in dayMap)) continue;
+      dayMap[day].present++;
+      if ((r.lateMinutes ?? 0) > 0) dayMap[day].late++;
+    }
+
+    return Object.entries(dayMap).map(([date, v]) => ({ date, ...v }));
+  }
+
+  // ─── Recruit Dashboard ───────────────────────────────────────────────────────
+
+  async getRecruit(tenantId?: string) {
+    const key = `dashboard:recruit:${tenantId ?? 'default'}`;
+    return this.cached(key, () => this.calcRecruit());
+  }
+
+  private async calcRecruit() {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const [
+      openJobs,
+      totalCandidates,
+      newCandidatesThisMonth,
+      interviewsThisWeek,
+      hiredThisMonth,
+      byStageRaw,
+    ] = await Promise.all([
+      this.prisma.jobOpening.count({ where: { status: 'OPEN' } }),
+      this.prisma.candidate.count(),
+      this.prisma.candidate.count({
+        where: { createdAt: { gte: monthStart, lte: monthEnd } },
+      }),
+      this.prisma.interview.count({
+        where: { scheduledAt: { gte: weekStart, lte: weekEnd } },
+      }),
+      this.prisma.candidate.count({
+        where: { stage: 'HIRED', updatedAt: { gte: monthStart, lte: monthEnd } },
+      }),
+      this.prisma.candidate.groupBy({
+        by: ['stage'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+      }),
+    ]);
+
+    return {
+      openJobs,
+      totalCandidates,
+      newCandidatesThisMonth,
+      interviewsThisWeek,
+      hiredThisMonth,
+      byStage: byStageRaw.map((s) => ({ stage: s.stage, count: s._count.id })),
+    };
   }
 
   // ─── Executive Dashboard ────────────────────────────────────────────────────

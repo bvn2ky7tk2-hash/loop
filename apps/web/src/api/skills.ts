@@ -35,6 +35,7 @@ export interface SkillStat {
 
 export interface EmployeeWithSkills {
   id: string;
+  code: string;
   fullName: string;
   level: string;
   user: { name: string };

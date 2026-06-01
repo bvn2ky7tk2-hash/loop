@@ -44,6 +44,9 @@ export class FilterTrainingDto extends PaginationDto {
   employeeId?: string;
 
   @IsOptional() @IsString()
+  orgUnitId?: string;
+
+  @IsOptional() @IsString()
   programId?: string;
 
   @IsOptional() @IsString()

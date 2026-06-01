@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Input, Form,
-  Descriptions, Tag, Modal, message,
+  Descriptions, Tag, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import {
   PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ShopOutlined,
 } from '@ant-design/icons';
@@ -48,10 +49,9 @@ export default function CustomersPage() {
   };
 
   const handleDelete = (id: string, name: string) => {
-    Modal.confirm({
-      title: `Xoá khách hàng "${name}"?`,
-      okType: 'danger',
-      onOk: async () => {
+    confirmDelete({
+      itemName: name,
+      onConfirm: async () => {
         await deleteMutation.mutateAsync(id);
         message.success('Đã xoá');
       },
@@ -67,7 +67,7 @@ export default function CustomersPage() {
   const columns: ColumnsType<Customer> = [
     {
       title: 'Mã KH', dataIndex: 'code', width: 100,
-      render: (code: string) => <Text code style={{ color: preset.primary }}>{code}</Text>,
+      render: (code: string) => <Text code style={{ color: linkColor }}>{code}</Text>,
     },
     {
       title: 'Tên khách hàng', dataIndex: 'name',

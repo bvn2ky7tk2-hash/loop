@@ -13,6 +13,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { formatCurrency } from '../../utils/format';
 import { useAuthStore } from '../../store/auth.store';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Text } = Typography;
@@ -47,9 +48,9 @@ function PayslipDetailModal({
     >
       {/* Header */}
       <div style={{ textAlign: 'center', padding: '12px 0 20px', borderBottom: `1px solid ${borderColor}` }}>
-        <Text style={{ display: 'block', fontSize: 18, fontWeight: 700, color: textPrimary }}>
-          {record.employee?.user?.name ?? '—'}
-        </Text>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+          <EmployeeInfoCell employee={record.employee} variant="descriptions" />
+        </div>
         <Text style={{ color: textMuted, fontSize: 13 }}>
           <CalendarOutlined style={{ marginRight: 4 }} />
           Kỳ lương: chế độ tự phục vụ

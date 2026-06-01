@@ -1,4 +1,6 @@
 import { Row, Col, Card, Table, Tag, Typography, Select, Spin, Empty, Button } from 'antd';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import type { EmployeeInfoCellEmployee } from '../../components/ui/EmployeeInfoCell';
 import {
   TeamOutlined, UserAddOutlined, UserDeleteOutlined,
   FileExclamationOutlined, SearchOutlined, DollarOutlined,
@@ -51,7 +53,7 @@ interface SalaryDistItem {
 
 interface ContractExpiry {
   id: string;
-  employeeName: string;
+  employee: EmployeeInfoCellEmployee;
   contractType: string;
   expiryDate: string;
   daysLeft: number;
@@ -138,8 +140,8 @@ export default function HrAnalyticsPage() {
   const contractColumns: ColumnsType<ContractExpiry> = [
     {
       title: 'Nhân viên',
-      dataIndex: 'employeeName',
-      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>,
+      dataIndex: 'employee',
+      render: (_: unknown, r: ContractExpiry) => <EmployeeInfoCell employee={r.employee} />,
     },
     {
       title: 'Loại HĐ',

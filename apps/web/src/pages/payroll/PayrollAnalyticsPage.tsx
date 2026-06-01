@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useAuthStore } from '../../store/auth.store';
 import { formatCurrency } from '../../utils/format';
 
@@ -41,8 +42,13 @@ interface OtByDeptItem {
 }
 
 interface TopEarner {
-  rank:  number;
-  name:  string;
+  rank:     number;
+  employee: {
+    fullName: string;
+    code?:    string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   gross: number;
   net:   number;
 }
@@ -122,8 +128,8 @@ export default function PayrollAnalyticsPage() {
     },
     {
       title: 'Nhân viên',
-      dataIndex: 'name',
-      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>,
+      dataIndex: 'employee',
+      render: (_: unknown, r: TopEarner) => <EmployeeInfoCell employee={r.employee} />,
     },
     {
       title: 'Gross Salary',

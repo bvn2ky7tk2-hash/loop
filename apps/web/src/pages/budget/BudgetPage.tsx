@@ -376,7 +376,7 @@ export default function BudgetPage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <Title level={3} style={{ margin: 0, color: textPrimary }}>
-          <DollarOutlined style={{ marginRight: 8, color: preset.primary }} />
+          <DollarOutlined style={{ marginRight: 8, color: linkColor }} />
           Budget Overview
         </Title>
       </div>

@@ -1,46 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c \"SELECT COUNT\\(*\\) as total, status FROM process_user_tasks GROUP BY status;\")",
-      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c ' *)",
-      "Bash(psql postgresql://loop:loop_password@localhost:5432/loop_db -c \"\\\\d process_user_tasks\")",
-      "Bash(grep -E \"\\\\.\\(ts|tsx|js\\)$\")",
-      "Bash(node -e ' *)",
-      "Bash(curl -s \"http://localhost:3000/api/v1/recruit/interviews\" -H \"Content-Type: application/json\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"\\\\dt\")",
-      "Bash(curl -s \"http://localhost:3000/api/v1/recruit/jobs\")",
-      "Bash(curl -s \"http://localhost:3000/api/v1/recruit/candidates\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c 'SELECT p.id, p.code, p.\"orgUnitId\", ou.name as ou_name FROM projects p LEFT JOIN org_units ou ON p.\"orgUnitId\" = ou.id LIMIT 10;')",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c '\\\\d projects')",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c 'SELECT p.id, p.code, p.org_unit_id, ou.name as ou_name FROM projects p LEFT JOIN org_units ou ON p.org_unit_id = ou.id ORDER BY p.code LIMIT 15;')",
-      "Bash(curl -s \"http://localhost:3000/api/docs-json\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); paths=[p for p in d.get\\('paths',{}\\) if 'recruit' in p]; print\\('\\\\n'.join\\(paths[:20]\\)\\)\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); paths=list\\(d.get\\('paths',{}\\).keys\\(\\)\\); print\\('\\\\n'.join\\([p for p in paths if 'recruit' in p or 'job' in p or 'candidate' in p or 'interview' in p]\\)\\)\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT u.email, u.role, u.org_unit_id, ou.name as ou_name FROM users u LEFT JOIN org_units ou ON u.org_unit_id = ou.id WHERE u.email IN \\('admin@loop.vn', 'pm@loop.vn', 'user.demo@loop.vn'\\);\")",
-      "Bash(kill 80547)",
-      "Bash(node --enable-source-maps /Users/leophan188/Downloads/Loop/apps/backend/dist/src/main)",
-      "Bash(curl -s \"http://localhost:3000/api/v1/recruit/interviews?page=1&limit=3\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT COUNT\\(b.id\\) as bug_count FROM bugs b JOIN projects p ON b.project_id = p.id WHERE p.org_unit_id = '80819b1c-efb6-4b15-a8da-2cf0d57462b4';\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT COUNT\\(b.id\\) as bug_count FROM bugs b;\")",
-      "Bash(curl -s -X POST \"http://localhost:3000/api/v1/auth/login\" -H \"Content-Type: application/json\" -d '{\"email\":\"admin@loop.vn\",\"password\":\"Admin@123\"}')",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT p.code, COUNT\\(b.id\\) as bug_count FROM projects p LEFT JOIN bugs b ON b.project_id = p.id WHERE p.org_unit_id = '6c3ef393-31af-4720-885f-7d56ebc043f8' GROUP BY p.code;\")",
-      "Bash(curl -s -X POST \"http://localhost:3000/api/v1/auth/login\" -H \"Content-Type: application/json\" -d '{\"email\":\"admin@loop.vn\",\"password\":\"Admin@123\"}' -v)",
-      "Bash(xargs -I{} sh -c 'ps -p {} -o pid,start,command')",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:3000/api/v1/health\")",
-      "Bash(curl -s \"http://localhost:3000/api/v1/bugs?page=1&pageSize=20\" -H \"Authorization: Bearer test\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, role FROM users WHERE email = 'admin@loop.vn';\")",
-      "Bash(grep -v \"^#\\\\|^$\" /Users/leophan188/Downloads/Loop/apps/backend/.env)",
-      "Bash(curl -s -X POST http://localhost:3000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@loop.vn\",\"password\":\"__TRACKED_VAR__\"}')",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c '\\\\d users')",
-      "Bash(curl -sv -X POST http://localhost:3000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@loop.vn\",\"password\":\"Admin@123\"}')",
-      "Bash(curl -s -X POST \"http://localhost:3000/api/v1/auth/login\" -H \"Content-Type: application/json\" -d '{\"email\":\"admin@loop.vn\",\"password\":\"admin\"}')",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, LEFT\\(password_hash, 30\\) as hash_prefix FROM users WHERE email = 'admin@loop.vn';\")",
-      "Bash(psql \"postgresql://loop:loop_password@localhost:5432/loop_db\" -c \"SELECT email, password_hash FROM users WHERE email = 'admin@loop.vn';\" -t)",
-      "Bash(node prisma/seed-skill-matrix.js)",
-      "Bash(PGPASSWORD=loop_password psql -h localhost -U loop -d loop_db -c \"SELECT tablename FROM pg_tables WHERE schemaname='public' ORDER BY tablename;\")",
-      "Bash(PGPASSWORD=loop_password psql -h localhost -U loop -d loop_db -f prisma/migrations/20290101000000_v4_foundation/migration.sql)",
-      "Bash(sed -n '1367,1380p' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
-      "Bash(sed -n '1310,1370p' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)"
-    ]
-  }
+    "defaultMode": "bypassPermissions"
+  },
+  "skipDangerousModePermissionPrompt": true
 }

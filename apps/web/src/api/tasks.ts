@@ -18,7 +18,7 @@ export interface Task {
   parentId?: string;
   projectId: string;
   children?: Task[];
-  assignee?: { fullName: string; user?: { name: string } };
+  assignee?: { fullName: string; code?: string; user?: { name: string } };
   project?: { id: string; code: string; name: string };
   bugLinks?: { bugId: string; bug: { id: string; title: string; status: string; estimatedHours?: number; itemType: string } }[];
 }

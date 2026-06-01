@@ -5,18 +5,25 @@ import {
   ForbiddenException,
   Inject,
   Scope,
+  Logger,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { BpmnEngineService } from '../processes/engine/bpmn-engine.service';
 import { CreateVehicleDto, UpdateVehicleDto } from './dto/create-vehicle.dto';
 import { CreateRequestDto } from './dto/create-request.dto';
-import { VehicleRequestStatus, VehicleStatus, Role } from '../generated/prisma';
+import { VehicleRequestStatus, VehicleStatus, Role, DefinitionStatus, InstanceStatus } from '../generated/prisma';
+
+const VEHICLE_PROCESS_KEY = 'vehicle-booking-approval';
 
 @Injectable({ scope: Scope.REQUEST })
 export class VehicleBookingService extends TenantAwareService {
+  private readonly logger = new Logger(VehicleBookingService.name);
+
   constructor(
     private readonly prisma: PrismaService,
+    private readonly engineService: BpmnEngineService,
     @Inject(REQUEST) req: any,
   ) {
     super(req);
@@ -128,7 +135,7 @@ export class VehicleBookingService extends TenantAwareService {
       throw new ConflictException('Xe đã có lịch trong khung giờ này');
     }
 
-    return this.prisma.vehicleRequest.create({
+    const vehicleRequest = await this.prisma.vehicleRequest.create({
       data: {
         vehicleId:      dto.vehicleId,
         requestedById:  userId,
@@ -144,6 +151,57 @@ export class VehicleBookingService extends TenantAwareService {
         requestedBy: { select: { id: true, name: true } },
       },
     });
+
+    // Auto-start BPM approval process nếu có process definition
+    await this.startApprovalProcess(vehicleRequest, userId);
+
+    return vehicleRequest;
+  }
+
+  private async startApprovalProcess(vehicleRequest: any, userId: string): Promise<void> {
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: VEHICLE_PROCESS_KEY, status: DefinitionStatus.ACTIVE },
+        select: { id: true, bpmnXml: true },
+      });
+      if (!definition) return;
+
+      const variables = {
+        vehicleRequestId: vehicleRequest.id,
+        vehicleName:  vehicleRequest.vehicle?.name ?? '',
+        plateNumber:  vehicleRequest.vehicle?.plateNumber ?? '',
+        purpose:      vehicleRequest.purpose,
+        destination:  vehicleRequest.destination,
+        startTime:    vehicleRequest.startTime,
+        endTime:      vehicleRequest.endTime,
+      };
+
+      const instance = await this.prisma.processInstance.create({
+        data: {
+          definitionId: definition.id,
+          startedBy:    userId,
+          status:       InstanceStatus.RUNNING,
+          variables:    variables as any,
+          tokenState:   {} as any,
+          tenantId:     this.getTenantId() ?? null,
+        },
+      });
+
+      const tokenState = await this.engineService.start(instance.id, definition.bpmnXml, variables);
+      await this.prisma.processInstance.update({
+        where: { id: instance.id },
+        data:  { tokenState: tokenState as any },
+      });
+
+      await this.prisma.vehicleRequest.update({
+        where: { id: vehicleRequest.id },
+        data:  { processInstanceId: instance.id },
+      });
+
+      this.logger.log(`BPM process started for VehicleRequest ${vehicleRequest.id}`);
+    } catch (e) {
+      this.logger.warn(`Failed to start BPM for VehicleRequest ${vehicleRequest.id}: ${e}`);
+    }
   }
 
   async approveRequest(id: string, approverId: string) {

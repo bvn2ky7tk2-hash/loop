@@ -6,11 +6,18 @@ import { paginate } from '../common/dto/pagination.dto';
 import { CreatePerformanceReviewDto, UpdatePerformanceReviewDto, FilterPerformanceDto } from './dto/performance.dto';
 import { ReviewStatus } from '../generated/prisma';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 
 const INCLUDE = {
-  employee: { select: { id: true, fullName: true, code: true } },
+  employee: {
+    select: {
+      id: true, fullName: true, code: true, userId: true,
+      orgUnit:  { select: { id: true, name: true, code: true } },
+      position: { include: { jobTitle: { select: { id: true, name: true } } } },
+    },
+  },
   reviewer: { select: { id: true, fullName: true, code: true } },
-} as const;
+};
 
 @Injectable({ scope: Scope.REQUEST })
 export class PerformanceService extends TenantAwareService {
@@ -22,14 +29,18 @@ export class PerformanceService extends TenantAwareService {
   }
 
   async list(dto: FilterPerformanceDto) {
-    const { page = 1, limit = 50, employeeId, reviewerId, period, status } = dto;
+    const { page = 1, limit = 50, employeeId, orgUnitId, reviewerId, period, status } = dto;
     // PerformanceReview chưa có tenantId (v6 task)
-    const where = {
+    const where: any = {
       ...(employeeId ? { employeeId } : {}),
       ...(reviewerId ? { reviewerId } : {}),
       ...(period     ? { period } : {}),
       ...(status     ? { status: status as ReviewStatus } : {}),
     };
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      where.employeeId = { in: empIds };
+    }
     const [data, total] = await this.prisma.$transaction([
       this.prisma.performanceReview.findMany({
         where, skip: (page - 1) * limit, take: limit,

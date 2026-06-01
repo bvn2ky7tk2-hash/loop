@@ -25,7 +25,7 @@ export interface TrainingRecord {
   score:      string | null;
   notes:      string | null;
   program?:   { id: string; title: string; type: string };
-  employee?:  { id: string; fullName: string; code: string };
+  employee?:  { id: string; fullName: string; code: string; orgUnit?: { name: string } | null; position?: { jobTitle?: { name: string } | null } | null };
 }
 
 export interface PerformanceReview {
@@ -41,8 +41,8 @@ export interface PerformanceReview {
   submittedAt:  string | null;
   approvedAt:   string | null;
   createdAt:    string;
-  employee?:    { id: string; fullName: string; code: string };
-  reviewer?:    { id: string; fullName: string; code: string };
+  employee?:    { id: string; fullName: string; code: string; orgUnit?: { name: string } | null; position?: { jobTitle?: { name: string } | null } | null };
+  reviewer?:    { id: string; fullName: string; code: string; orgUnit?: { name: string } | null; position?: { jobTitle?: { name: string } | null } | null };
 }
 
 export interface PaginatedResult<T> {
@@ -67,7 +67,7 @@ export function useCreateTrainingProgram() {
   });
 }
 
-export function useGetTrainingRecords(params: { page?: number; limit?: number; employeeId?: string; status?: string }) {
+export function useGetTrainingRecords(params: { page?: number; limit?: number; employeeId?: string; orgUnitId?: string; status?: string }) {
   return useQuery({
     queryKey: ['training', 'records', params],
     queryFn: () => apiClient.get<PaginatedResult<TrainingRecord>>('/hr/training/records', { params }).then(r => r.data),
@@ -101,7 +101,7 @@ export function useGetTrainingStats() {
 
 // ─── Performance Review ──────────────────────────────────────────────────────
 
-export function useGetPerformanceReviews(params: { page?: number; limit?: number; employeeId?: string; period?: string; status?: string }) {
+export function useGetPerformanceReviews(params: { page?: number; limit?: number; employeeId?: string; orgUnitId?: string; period?: string; status?: string }) {
   return useQuery({
     queryKey: ['performance', params],
     queryFn: () => apiClient.get<PaginatedResult<PerformanceReview>>('/hr/performance', { params }).then(r => r.data),

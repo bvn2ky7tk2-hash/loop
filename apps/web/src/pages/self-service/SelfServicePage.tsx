@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { employeesApi } from '../../api/employees';
 import { leavesApi, type LeaveBalance, type LeaveRequest } from '../../api/leaves';
 import { payrollApi, type PayrollRecord } from '../../api/payroll';
@@ -551,9 +552,7 @@ export default function SelfServicePage() {
           padding: '12px 20px', marginBottom: 20,
           display: 'flex', gap: 32, flexWrap: 'wrap',
         }}>
-          <div><Text style={{ color: textMuted, fontSize: 12, display: 'block' }}>Mã NV</Text><Text style={{ color: textPrimary, fontWeight: 600 }}>{myEmployee.code}</Text></div>
-          <div><Text style={{ color: textMuted, fontSize: 12, display: 'block' }}>Chức danh</Text><Text style={{ color: textPrimary }}>{myEmployee.level}</Text></div>
-          {myEmployee.orgUnit && <div><Text style={{ color: textMuted, fontSize: 12, display: 'block' }}>Phòng ban</Text><Text style={{ color: textPrimary }}>{(myEmployee as any).orgUnit?.name}</Text></div>}
+          <EmployeeInfoCell employee={myEmployee} variant="inline" />
           <div><Text style={{ color: textMuted, fontSize: 12, display: 'block' }}>Ngày vào</Text><Text style={{ color: textPrimary }}>{myEmployee.startDate ? dayjs(myEmployee.startDate).format('DD/MM/YYYY') : '—'}</Text></div>
         </div>
       )}

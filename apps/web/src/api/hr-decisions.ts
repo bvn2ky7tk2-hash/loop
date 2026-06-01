@@ -19,7 +19,13 @@ export interface HrDecision {
   decisionNumber?: string;
   type: HrDecisionType;
   employeeId: string;
-  employee?: { id: string; fullName: string; code: string };
+  employee?: {
+    id: string;
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   signedDate?: string;
   effectiveDate: string;
   content?: string;

@@ -91,7 +91,10 @@ export class PayrollService extends TenantAwareService {
           employee: {
             select: {
               id: true,
+              code: true,
               user: { select: { id: true, name: true, email: true } },
+              orgUnit:  { select: { name: true } },
+              position: { select: { jobTitle: { select: { name: true } } } },
             },
           },
         },

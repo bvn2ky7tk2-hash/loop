@@ -8,6 +8,7 @@ import {
 import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
 import type { TaskStatus as TaskStatusType } from '../../components/ui/TaskStatusPill';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { CommentThread } from '../../components/comments/CommentThread';
 import type { MenuProps } from 'antd';
 import {
@@ -75,7 +76,7 @@ const COL_DEFS = [
 export default function TasksPage() {
   const { message, modal } = App.useApp();
   const { token } = theme.useToken();
-  const { isDark, linkColor, preset } = useThemePalette();
+  const { isDark, linkColor, preset, textMuted } = useThemePalette();
   const qc = useQueryClient();
 
   // ── Tab 1: Task list state ────────────────────────────────────────────────
@@ -334,7 +335,7 @@ export default function TasksPage() {
       key: 'progress',
       title: 'Tiến độ', dataIndex: 'progress', width: 80,
       render: (v: number) => (
-        <span style={{ fontSize: 13, fontWeight: 600, color: Number(v) >= 100 ? '#10B981' : Number(v) >= 50 ? preset.primary : '#F59E0B' }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: Number(v) >= 100 ? '#10B981' : Number(v) >= 50 ? linkColor : '#F59E0B' }}>
           {Number(v)}%
         </span>
       ),
@@ -345,7 +346,7 @@ export default function TasksPage() {
       render: (v: string) => {
         if (!v) return <span style={{ color: '#94A3B8' }}>—</span>;
         const overdue = dayjs(v).isBefore(dayjs(), 'day');
-        return <span style={{ color: overdue ? '#EF4444' : isDark ? 'rgba(255,255,255,0.45)' : '#475569', fontSize: 12 }}>{dayjs(v).format('DD/MM/YY')}</span>;
+        return <span style={{ color: overdue ? '#EF4444' : textMuted, fontSize: 12 }}>{dayjs(v).format('DD/MM/YY')}</span>;
       },
     },
     {
@@ -417,8 +418,8 @@ export default function TasksPage() {
     {
       key: 'assignee',
       title: 'Người thực hiện', width: 140, ellipsis: true,
-      render: (_: unknown, r: Task) => r.assignee?.fullName
-        ? <span style={{ fontSize: 12, color: token.colorText }}>{r.assignee.fullName}</span>
+      render: (_: unknown, r: Task) => r.assignee
+        ? <EmployeeInfoCell employee={{ fullName: r.assignee.fullName, code: r.assignee.code }} />
         : <span style={{ fontSize: 12, color: token.colorTextDisabled }}>—</span>,
     },
     {

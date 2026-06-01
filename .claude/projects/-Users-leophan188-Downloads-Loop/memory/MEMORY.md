@@ -27,6 +27,8 @@
 - [Loop v3.0 — Navigation Redesign](project_loop_v3_navigation.md) — Persona-driven; 10→8 module; Reports nhúng vào module; Global Executive Dashboard; chờ v2.x xong
 - [Loop Product Roadmap](project_loop_product_roadmap.md) — Master roadmap v2.x→v3.0→v3.x; v2.x=5 utility releases; v3.0=navigation+8dashboard+Cmd+K+deployment tools; v3.x=mobile/BI/AI
 - [Loop v4 Complete](project_v4_complete.md) — v4.3 xong: 93 services TenantAware, JWT tenantId, BullMQ, MinIO per-tenant; sẵn sàng cho v5
-- [Loop v5.x Roadmap](project_v5_roadmap.md) — v5.0✅ v5.1 BE✅ FE thiếu → v5.1b(FE) → v5.2a E16F(bảng công+phép) → v5.2b E16G(bảng lương) → E20-E24 → v5.7 UX
-- [Loop v6 Roadmap](project_v6_roadmap.md) — SaaS compliance: 93 model thiếu tenantId, 14 service chưa TenantAware, 4 PRD nghiệp vụ tồn đọng
+- [**MASTER ROADMAP**](project_master_roadmap.md) — Nguồn sự thật duy nhất: v1→v6, trạng thái, Epic chi tiết, schema mới, BPM keys — ĐỌC FILE NÀY TRƯỚC
+- [Loop v5 Complete](project_v5_complete.md) — Trạng thái 2026-05-31: code ✅ DONE, seed ✅ DONE — tiếp theo QA màn hình → v5.9 UX → v6
+- [Demo Seed v5](project_demo_seed_v5.md) — Seed 500 NV/50 dự án/tập đoàn/BPM đầy đủ, thứ tự chạy, yêu cầu chi tiết từng module
+- [**QA + UI Checklist**] `Loop/.claude/qa-checklist.md` — D20 UI Audit ✅ DONE (76 files, 0 TS errors); QA chức năng 62 màn hình / 4 stream ⏳ chờ team
 - [Checklist Tuân thủ Kiến trúc](feedback_architecture_compliance.md) — BẮT BUỘC khi thêm model/service/page mới: tenantId, TenantAwareService, useThemePalette, EventBus, BullMQ

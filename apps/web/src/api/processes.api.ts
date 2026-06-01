@@ -118,7 +118,16 @@ export interface ProcessUserTask {
     id: string;
     status: InstanceStatus;
     variables?: Record<string, unknown>;
-    startedByUser?: { id: string; name: string };
+    startedByUser?: {
+      id: string;
+      name: string;
+      employee?: {
+        code: string;
+        fullName: string;
+        orgUnit?: { name: string } | null;
+        position?: { jobTitle?: { name: string } | null } | null;
+      } | null;
+    };
     definition?: {
       id: string;
       name: string;

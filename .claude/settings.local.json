@@ -323,8 +323,33 @@
       "Bash(grep -E \"^@prisma|^prisma$\")",
       "Bash(grep \"^pg$\")",
       "Bash(sed -i '' 's/\\\\.findUnique\\({ where: { code:/.findFirst\\({ where: { code:/g' prisma/seed.ts)",
-      "Bash(sed -i '' 's/\\\\.findUniqueOrThrow\\({ where: { code:/.findFirstOrThrow\\({ where: { code:/g' prisma/seed.ts)"
+      "Bash(sed -i '' 's/\\\\.findUniqueOrThrow\\({ where: { code:/.findFirstOrThrow\\({ where: { code:/g' prisma/seed.ts)",
+      "Bash(psql postgresql://postgres:postgres@localhost:5432/loop_db -c ' *)",
+      "Bash(kill 72725)",
+      "Bash(curl -s -X POST http://localhost:3000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@loop.vn\",\"password\":\"Loop@2024!\"}')",
+      "Bash(gh repo *)",
+      "Bash(npx dotenv *)",
+      "Bash(kill 93162)",
+      "Bash(kill 72531 72638 72514)",
+      "Bash(node -r dotenv/config dist/src/main)",
+      "Bash(curl -v -X POST http://localhost:3000/api/v1/auth/login -H 'Content-Type: application/json' -d '{\"email\":\"admin@loop.vn\",\"password\":\"Admin@123\"}')",
+      "Bash(mkdir -p /Users/leophan188/Downloads/Loop/_bmad-output/planning-artifacts/prds/prd-v5-2026-05-29)",
+      "Bash(pnpm --filter backend add compression)",
+      "Bash(pnpm --filter backend add -D @types/compression)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Write",
+      "Edit",
+      "Bash(git -C .claude/worktrees/agent-a8ccba70d4adf8b26 diff HEAD --name-only)",
+      "Bash(python3)",
+      "Bash(awk '/^model \\(FeedPost|AlertConfig|Notification|Lead|Deal|ClientContract|RoomBooking|VehicleBooking|CrmActivity|CrmForecast|PortalLink|WorkShift|Position|CostEntry|UserGroup|Webhook|HrHoliday|Procurement|Skill|Report|ScheduledReport|Recruit|Calendar\\) /,/^}/' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
+      "Bash(awk '/^model FeedPost/,/^}/' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
+      "Bash(awk '/tenantId.*tenant_id/,0' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
+      "Bash(awk *)",
+      "Bash",
+      "Bash(cat >> *)"
     ],
+    "defaultMode": "bypassPermissions",
     "additionalDirectories": [
       "/Users/leophan188/Downloads/Loop/_bmad-output/planning-artifacts/prds",
       "/Users/leophan188/Downloads/Loop/apps/mobile/app/issue",
@@ -332,7 +357,10 @@
       "/Users/Leopold/Downloads/Loop/apps/backend/prisma/migrations",
       "/Users/leophan188/Downloads/Loop",
       "/Users/Leopold/Downloads/Loop/apps/web/src/config",
-      "/Users/Leopold188/Downloads/Loop/apps/web/public"
+      "/Users/Leopold188/Downloads/Loop/apps/web/public",
+      "/Users/leophan188/.claude",
+      "/Users/leophan188/Downloads/Loop/.claude/projects/-Users-leophan188-Downloads-Loop/memory"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }

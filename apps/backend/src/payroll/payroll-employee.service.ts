@@ -159,6 +159,16 @@ export class PayrollEmployeeService {
             id: true, name: true, startDate: true, endDate: true, status: true, type: true,
           },
         },
+        employee: {
+          select: {
+            id: true,
+            code: true,
+            fullName: true,
+            user: { select: { id: true, name: true, email: true } },
+            orgUnit: { select: { id: true, name: true } },
+            position: { select: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
       orderBy: { period: { startDate: 'desc' } },
     });

@@ -54,7 +54,11 @@ export interface PayrollRecord {
   configSnapshot?: Record<string, any>;
   employee: {
     id: string;
+    code?: string;
+    fullName: string;
     user: { id: string; name: string; email: string };
+    orgUnit?: { id: string; name: string } | null;
+    position?: { jobTitle?: { id: string; name: string } | null } | null;
   };
 }
 

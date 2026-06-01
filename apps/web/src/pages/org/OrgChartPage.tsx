@@ -6,14 +6,15 @@ import {
 import {
   PlusOutlined, EditOutlined, DeleteOutlined,
   BankOutlined, ApartmentOutlined, TeamOutlined, UserOutlined,
-  PlusCircleOutlined, SettingOutlined, CrownOutlined,
+  PlusCircleOutlined, SettingOutlined, CrownOutlined, InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
 import { employeesApi, type Employee } from '../../api/employees';
-import { jobTitlesApi } from '../../api/hr-core';
+import { jobTitlesApi, positionsApi } from '../../api/hr-core';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePermissions } from '../../hooks/usePermissions';
+import { OrgUnitSelect } from '../../components/selects';
 
 const { Text } = Typography;
 
@@ -23,7 +24,7 @@ function flattenTree(nodes: OrgUnitTree[]): OrgUnitTree[] {
   return nodes.flatMap((n) => [n, ...flattenTree(n.children ?? [])]);
 }
 
-const LEVEL_HUE = ['#7C3AED', '#2563EB', '#16A34A', '#EA580C', '#0891B2', '#DC2626'];
+const LEVEL_HUE = ['#8B5CF6', '#3B82F6', '#16A34A', '#EA580C', '#0891B2', '#DC2626'];
 
 function getLevelHue(level: number): string {
   return LEVEL_HUE[Math.min(level ?? 0, LEVEL_HUE.length - 1)];
@@ -41,7 +42,7 @@ function getInitials(name: string): string {
 function stringToColor(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  const colors = ['#7C3AED', '#2563EB', '#16A34A', '#EA580C', '#0891B2', '#BE185D', '#B45309'];
+  const colors = ['#8B5CF6', '#3B82F6', '#16A34A', '#EA580C', '#0891B2', '#BE185D', '#B45309'];
   return colors[Math.abs(hash) % colors.length];
 }
 
@@ -92,8 +93,7 @@ function OrgNode({
 
   const nodeBg    = isDark ? `${hue}18` : `${hue}0A`;
   const borderTop = hue;
-  const textMain  = isDark ? '#F1F5F9' : '#0F172A';
-  const textSub   = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const { textPrimary: textMain, textSecondary: textSub } = useThemePalette();
   const connColor = isDark ? '#334155' : '#CBD5E1';
 
   return (
@@ -324,7 +324,7 @@ export default function OrgChartPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
   const { canAny } = usePermissions();
 
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const { textSecondary } = useThemePalette();
 
   // Permission guard: admin:org hoặc hr:manager
   const canManageOrg = canAny('admin:org', 'hr:manager');
@@ -336,6 +336,9 @@ export default function OrgChartPage() {
   const [leaderForm] = Form.useForm();
   const [createForm] = Form.useForm();
   const [editForm] = Form.useForm();
+
+  // Watch headJobTitleId trong edit form để auto-load lãnh đạo
+  const watchEditHeadJobTitle = Form.useWatch('headJobTitleId', editForm);
 
   // level → direction: true = horizontal, false = vertical
   const [horizontalLevels, setHorizontalLevels] = useState<Set<number>>(new Set([1, 2]));
@@ -356,6 +359,30 @@ export default function OrgChartPage() {
     staleTime: 5 * 60_000,
   });
   const jobTitleOptions = (jobTitlesData?.data ?? []).map((jt) => ({ value: jt.id, label: jt.name }));
+
+  // Positions của đơn vị đang edit — để tìm lãnh đạo tự động
+  const { data: editPositions } = useQuery({
+    queryKey: ['positions-by-unit', editTarget?.id],
+    queryFn: () => positionsApi.list({ orgUnitId: editTarget!.id, isActive: true, limit: 200 }),
+    enabled: !!editTarget?.id,
+    staleTime: 5 * 60_000,
+  });
+
+  // Auto-tính lãnh đạo: employee thuộc unit + có position.jobTitleId khớp
+  const autoLeader = useMemo(() => {
+    if (!editTarget || !watchEditHeadJobTitle) return null;
+    const matchIds = new Set(
+      (editPositions?.data ?? [])
+        .filter((p) => p.jobTitleId === watchEditHeadJobTitle)
+        .map((p) => p.id),
+    );
+    if (matchIds.size === 0) return null;
+    return (
+      allEmployees.find(
+        (e) => e.orgUnitId === editTarget.id && e.positionId && matchIds.has(e.positionId),
+      ) ?? null
+    );
+  }, [editTarget, watchEditHeadJobTitle, editPositions?.data, allEmployees]);
 
   const flat = flattenTree(tree);
   const maxLevel = flat.reduce((m, n) => Math.max(m, n.level ?? 0), 0);
@@ -424,6 +451,7 @@ export default function OrgChartPage() {
       code: node.code,
       parentId: node.parentId ?? null,
       headJobTitleId: node.headJobTitleId ?? null,
+      leaderId: node.leaderInfo?.id ?? null,
     });
   }
 
@@ -615,7 +643,7 @@ export default function OrgChartPage() {
           {maxLevel > 2 && (
             <div style={{
               padding: '8px 14px', borderRadius: 8,
-              background: isDark ? '#1A2744' : '#F1F5F9',
+              background: isDark ? bgContainer : '#F1F5F9',
               border: `1px dashed ${borderColor}`,
               fontSize: 12, color: textSecondary, fontStyle: 'italic',
             }}>
@@ -648,9 +676,7 @@ export default function OrgChartPage() {
             <Input placeholder="VD: KT001" onChange={(e) => createForm.setFieldValue('code', e.target.value.toUpperCase())} />
           </Form.Item>
           <Form.Item name="parentId" label="Đơn vị cha (để trống nếu là gốc)">
-            <Select allowClear placeholder="Chọn đơn vị cha" showSearch optionFilterProp="label"
-              options={flat.map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
-            />
+            <OrgUnitSelect allowClear placeholder="Chọn đơn vị cha..." style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
             <Select allowClear showSearch optionFilterProp="label"
@@ -658,6 +684,16 @@ export default function OrgChartPage() {
               options={jobTitleOptions}
             />
           </Form.Item>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8,
+            padding: '8px 12px', borderRadius: 6, marginTop: 4,
+            background: isDark ? 'rgba(147,197,253,0.08)' : 'rgba(99,102,241,0.06)',
+            border: `1px dashed ${isDark ? 'rgba(147,197,253,0.25)' : 'rgba(99,102,241,0.25)'}`,
+            fontSize: 12, color: linkColor,
+          }}>
+            <InfoCircleOutlined style={{ marginTop: 2, flexShrink: 0 }} />
+            <span>Lãnh đạo đơn vị sẽ được tự động xác định sau khi tạo, dựa trên nhân viên có chức danh trưởng đơn vị.</span>
+          </div>
         </Form>
       </Modal>
 
@@ -687,19 +723,41 @@ export default function OrgChartPage() {
             <Input onChange={(e) => editForm.setFieldValue('code', e.target.value.toUpperCase())} />
           </Form.Item>
           <Form.Item name="parentId" label="Đơn vị cha (để trống nếu là gốc)">
-            <Select allowClear placeholder="Chọn đơn vị cha" showSearch
-              filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-              options={flat.filter((u) => u.id !== editTarget?.id).map((u) => ({ value: u.id, label: `${u.name} — ${u.code}` }))}
-            />
+            <OrgUnitSelect allowClear placeholder="Chọn đơn vị cha..." style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="headJobTitleId" label="Chức danh trưởng đơn vị">
             <Select
-              allowClear
-              showSearch
-              optionFilterProp="label"
+              allowClear showSearch optionFilterProp="label"
               placeholder="VD: Trưởng phòng, Giám đốc..."
               options={jobTitleOptions}
             />
+          </Form.Item>
+          <Form.Item label={
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <CrownOutlined style={{ color: linkColor, fontSize: 12 }} />
+              Lãnh đạo đơn vị (tự động theo chức danh)
+            </span>
+          }>
+            <div style={{
+              padding: '5px 11px', borderRadius: 6, minHeight: 32,
+              display: 'flex', alignItems: 'center',
+              border: `1px solid ${borderColor}`,
+              background: isDark ? 'rgba(255,255,255,0.03)' : '#FAFAFA',
+              color: autoLeader ? textPrimary : textMuted,
+              fontSize: 13,
+            }}>
+              {autoLeader ? (
+                <>
+                  <UserOutlined style={{ marginRight: 8, color: linkColor }} />
+                  <Text style={{ color: linkColor, fontWeight: 600 }}>{autoLeader.code}</Text>
+                  <Text style={{ color: textPrimary, marginLeft: 6 }}>— {autoLeader.fullName}</Text>
+                </>
+              ) : watchEditHeadJobTitle ? (
+                <span style={{ fontStyle: 'italic', fontSize: 12 }}>Chưa có nhân viên phù hợp trong đơn vị này</span>
+              ) : (
+                <span style={{ fontStyle: 'italic', fontSize: 12 }}>Chọn chức danh để xem lãnh đạo</span>
+              )}
+            </div>
           </Form.Item>
         </Form>
       </Modal>

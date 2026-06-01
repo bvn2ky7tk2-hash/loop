@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
 import { PERMISSIONS } from '../permissions/permissions.constants';
-import { PaginationDto } from '../common/dto/pagination.dto';
+
 import { Audited } from '../common/interceptors/audit-log.interceptor';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto, RenewContractDto } from './dto/create-contract.dto';
@@ -24,9 +24,15 @@ export class ContractsController {
   @ApiOperation({ summary: 'Danh sách hợp đồng (phân trang, lọc theo nhân viên)' })
   findAll(
     @Query('employeeId') employeeId: string | undefined,
-    @Query() pagination: PaginationDto,
+    @Query('orgUnitId') orgUnitId: string | undefined,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.service.findAll(employeeId, pagination.page, pagination.limit);
+    return this.service.findAll(
+      employeeId, orgUnitId,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 20,
+    );
   }
 
   @Get(':id')

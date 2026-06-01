@@ -68,6 +68,7 @@ export default function FinanceDashboard() {
         title="Dashboard Tài chính"
         icon={<DollarOutlined />}
         iconColor="#10B981"
+        greeting
       />
 
       {/* Hàng 1: StatCard từ /dashboard/finance */}

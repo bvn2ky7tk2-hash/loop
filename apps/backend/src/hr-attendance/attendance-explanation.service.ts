@@ -3,12 +3,16 @@ import {
   NotFoundException,
   UnprocessableEntityException,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaginatedResult, paginate } from '../common/dto/pagination.dto';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { DefinitionStatus, InstanceStatus } from '../generated/prisma';
+import { BpmnEngineService } from '../processes/engine/bpmn-engine.service';
 import {
   CreateExplanationDto,
   ExplanationQueryDto,
@@ -16,7 +20,13 @@ import {
 } from './dto/attendance-explanation.dto';
 
 const EXPLANATION_INCLUDE = {
-  employee: { select: { id: true, fullName: true, userId: true } },
+  employee: {
+    select: {
+      id: true, fullName: true, code: true, userId: true,
+      orgUnit:  { select: { id: true, name: true, code: true } },
+      position: { include: { jobTitle: { select: { id: true, name: true } } } },
+    },
+  },
   attendanceRecord: {
     select: {
       id: true,
@@ -29,25 +39,34 @@ const EXPLANATION_INCLUDE = {
       totalHours: true,
     },
   },
-} as const;
+};
+
+const PROCESS_KEY = 'attendance-explanation-v1';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AttendanceExplanationService extends TenantAwareService {
+  private readonly logger = new Logger(AttendanceExplanationService.name);
+
   constructor(
     private readonly prisma: PrismaService,
+    private readonly engineService: BpmnEngineService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
   }
 
-  // ─── Tạo giải trình chấm công ───────────────────────────────────────────────
-  async create(dto: CreateExplanationDto): Promise<any> {
+  // ─── Tạo giải trình chấm công → auto start BPM ────────────────────────────
+  async create(dto: CreateExplanationDto, startedByUserId?: string): Promise<any> {
     const employee = await this.prisma.employee.findUnique({
       where: { id: dto.employeeId },
+      include: {
+        directManager: { include: { user: { select: { id: true } } } },
+        orgUnit: { include: { leader: { include: { user: { select: { id: true } } } } } },
+      },
     });
     if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
 
-    return this.prisma.attendanceExplanation.create({
+    const explanation = await this.prisma.attendanceExplanation.create({
       data: {
         employeeId: dto.employeeId,
         date: new Date(dto.date),
@@ -61,6 +80,61 @@ export class AttendanceExplanationService extends TenantAwareService {
       },
       include: EXPLANATION_INCLUDE,
     });
+
+    // Tự động start BPM process nếu process definition đang ACTIVE
+    try {
+      const definition = await this.prisma.processDefinition.findFirst({
+        where: { key: PROCESS_KEY, status: DefinitionStatus.ACTIVE },
+        select: { id: true, name: true, bpmnXml: true },
+      });
+
+      if (definition) {
+        const manager =
+          (employee as any).directManager ??
+          (employee as any).orgUnit?.leader;
+        const managerUserId: string | undefined = (manager as any)?.user?.id ?? undefined;
+
+        const userId = startedByUserId ?? employee.userId ?? undefined;
+
+        const variables = {
+          attendanceExplanationId: explanation.id,
+          employeeId:   dto.employeeId,
+          date:         dto.date,
+          type:         dto.type,
+          reason:       dto.reason,
+          managerUserId: managerUserId ?? null,
+        };
+
+        const instance = await this.prisma.processInstance.create({
+          data: {
+            definitionId: definition.id,
+            startedBy:    userId ?? 'system',
+            status:       InstanceStatus.RUNNING,
+            variables:    variables as any,
+            tokenState:   {} as any,
+            ...(this.getTenantId() ? { tenantId: this.getTenantId() } : {}),
+          },
+        });
+
+        const tokenState = await this.engineService.start(instance.id, definition.bpmnXml, variables);
+        await this.prisma.processInstance.update({
+          where: { id: instance.id },
+          data:  { tokenState: tokenState as any },
+        });
+
+        await this.prisma.attendanceExplanation.update({
+          where: { id: explanation.id },
+          data:  { processInstanceId: instance.id },
+        });
+
+        this.logger.log(`BPM started for explanation ${explanation.id}: instance ${instance.id}`);
+      }
+    } catch (err) {
+      // BPM thất bại không chặn việc tạo giải trình
+      this.logger.warn(`Failed to start BPM for explanation ${explanation.id}: ${err}`);
+    }
+
+    return explanation;
   }
 
   // ─── Danh sách giải trình ────────────────────────────────────────────────────
@@ -71,6 +145,10 @@ export class AttendanceExplanationService extends TenantAwareService {
     const where: any = this.tenantWhere();
     if (query.employeeId) where.employeeId = query.employeeId;
     if (query.status) where.status = query.status;
+    if (query.orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, query.orgUnitId);
+      where.employeeId = { in: empIds };
+    }
     if (query.dateFrom || query.dateTo) {
       where.date = {};
       if (query.dateFrom) where.date.gte = new Date(query.dateFrom);
@@ -143,7 +221,7 @@ export class AttendanceExplanationService extends TenantAwareService {
   }
 
   // ─── Áp dụng hiệu ứng giải trình lên AttendanceRecord ──────────────────────
-  private async applyExplanationEffect(explanation: any): Promise<void> {
+  async applyExplanationEffect(explanation: any): Promise<void> {
     const recordId = explanation.attendanceRecordId;
     if (!recordId) return;
 

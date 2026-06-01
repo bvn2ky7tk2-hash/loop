@@ -13,6 +13,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { useGetCustomers } from '../../api/crm';
 import {
   useGetInvoices, useGetInvoiceSummary, useCreateInvoice, useChangeInvoiceStatus, useDeleteInvoice,
@@ -170,10 +171,9 @@ export default function InvoicesPage() {
   };
 
   const handleDelete = (inv: Invoice) => {
-    Modal.confirm({
-      title: `Xoá hóa đơn ${inv.code}?`,
-      okType: 'danger',
-      onOk: async () => { await deleteMutation.mutateAsync(inv.id); message.success('Đã xoá'); },
+    confirmDelete({
+      itemName: inv.code,
+      onConfirm: async () => { await deleteMutation.mutateAsync(inv.id); message.success('Đã xoá'); },
     });
   };
 
@@ -204,7 +204,7 @@ export default function InvoicesPage() {
     },
     {
       title: 'Phát hành', dataIndex: 'issueDate', width: 120,
-      render: (v: string) => dayjs(v).format('DD/MM/YYYY'),
+      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Đến hạn', dataIndex: 'dueDate', width: 120,

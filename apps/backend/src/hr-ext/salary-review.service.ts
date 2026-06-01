@@ -3,6 +3,7 @@ import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { getEmployeeIdsInOrgSubtree } from '../common/utils/org-subtree';
 import { paginate } from '../common/dto/pagination.dto';
 import { SalaryReviewStatus } from '../generated/prisma';
 import { FilterSalaryReviewDto } from './dto/salary-review.dto';
@@ -16,20 +17,53 @@ export class SalaryReviewService extends TenantAwareService {
     super(req);
   }
 
+  async listBands(query: { page?: number; limit?: number }) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 100;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.salaryBand.findMany({
+        include: {
+          position: {
+            select: {
+              id: true,
+              code: true,
+              jobTitle: { select: { name: true } },
+            },
+          },
+        },
+        orderBy: { effectiveFrom: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.salaryBand.count(),
+    ]);
+    return paginate(data, total, page, limit);
+  }
+
   async list(dto: FilterSalaryReviewDto) {
-    const { page = 1, limit = 50, employeeId, status } = dto;
+    const { page = 1, limit = 50, employeeId, orgUnitId, status } = dto;
     // SalaryReviewSuggestion chưa có tenantId (v6 task)
-    const where = {
+    const where: any = {
       ...(employeeId ? { employeeId } : {}),
       ...(status     ? { status: status as SalaryReviewStatus } : {}),
     };
+    if (orgUnitId) {
+      const empIds = await getEmployeeIdsInOrgSubtree(this.prisma, orgUnitId);
+      where.employeeId = { in: empIds };
+    }
     const [data, total] = await this.prisma.$transaction([
       this.prisma.salaryReviewSuggestion.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
         include: {
-          employee: { select: { id: true, fullName: true, code: true } },
+          employee: {
+            select: {
+              id: true, fullName: true, code: true, userId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -42,7 +76,13 @@ export class SalaryReviewService extends TenantAwareService {
     const r = await this.prisma.salaryReviewSuggestion.findUnique({
       where: { id },
       include: {
-        employee: { select: { id: true, fullName: true, code: true, positionId: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
     });
     if (!r) throw new NotFoundException('Không tìm thấy đề xuất điều chỉnh lương');
@@ -96,7 +136,13 @@ export class SalaryReviewService extends TenantAwareService {
         status: 'PENDING',
       },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
     });
   }
@@ -116,7 +162,13 @@ export class SalaryReviewService extends TenantAwareService {
         approvedById: approverId,
       },
       include: {
-        employee: { select: { id: true, fullName: true, code: true } },
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
       },
     });
   }
@@ -142,7 +194,13 @@ export class SalaryReviewService extends TenantAwareService {
         where: { id },
         data: { status: 'APPLIED', appliedAt: new Date() },
         include: {
-          employee: { select: { id: true, fullName: true, code: true } },
+          employee: {
+            select: {
+              id: true, fullName: true, code: true, userId: true,
+              orgUnit:  { select: { id: true, name: true, code: true } },
+              position: { include: { jobTitle: { select: { id: true, name: true } } } },
+            },
+          },
         },
       }),
       this.prisma.contract.update({

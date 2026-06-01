@@ -22,7 +22,9 @@ import {
 import { employeesApi } from '../../api/employees';
 import { useAuthStore } from '../../store/auth.store';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { OrgUnitSelect } from '../../components/selects';
 import LeaveTypeConfigModal from '../../components/leave/LeaveTypeConfigModal';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text, Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -307,7 +309,7 @@ function LeaveDrawer({
 // ─── Main LeavePage ───────────────────────────────────────────────────────────
 
 export default function LeavePage() {
-  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, borderColor, preset } = useThemePalette();
+  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, borderColor, preset, linkColor } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -320,6 +322,7 @@ export default function LeavePage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [viewLeave, setViewLeave] = useState<LeaveRequest | null>(null);
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | undefined>();
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>();
   const [page, setPage] = useState(1);
   const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
@@ -352,6 +355,7 @@ export default function LeavePage() {
     pageSize: 20,
     status: statusFilter,
     ...(activeTab === 'my' && currentEmployee ? { employeeId: currentEmployee.id } : {}),
+    ...(activeTab === 'team' && orgUnitFilter ? { orgUnitId: orgUnitFilter } : {}),
   };
 
   const { data, isLoading } = useQuery({
@@ -386,8 +390,11 @@ export default function LeavePage() {
 
   const columns: ColumnsType<LeaveRequest> = [
     {
-      title: 'Nhân viên', dataIndex: ['employee', 'fullName'], width: 150, ellipsis: true,
-      render: (name?: string) => name ?? <Text type="secondary">—</Text>,
+      title: 'Nhân viên', dataIndex: 'employee', width: 180,
+      render: (_: unknown, r: LeaveRequest) =>
+        r.employee
+          ? <EmployeeInfoCell employee={r.employee} />
+          : <Text type="secondary">—</Text>,
     },
     {
       title: 'Loại nghỉ phép', dataIndex: 'leaveType', width: 160,
@@ -477,7 +484,7 @@ export default function LeavePage() {
     <div style={{ padding: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
         <Title level={3} style={{ margin: 0, color: textPrimary }}>
-          <CalendarOutlined style={{ marginRight: 8, color: preset.primary }} />
+          <CalendarOutlined style={{ marginRight: 8, color: linkColor }} />
           Nghỉ phép
         </Title>
         <Space>
@@ -535,6 +542,15 @@ export default function LeavePage() {
             onChange={() => setPage(1)}
             options={leaveTypes.map((t) => ({ value: t.id, label: t.name }))}
           />
+          {isHrView && (
+            <OrgUnitSelect
+              placeholder="Phòng ban"
+              style={{ minWidth: 180 }}
+              value={orgUnitFilter}
+              onChange={(v) => { setOrgUnitFilter(v); setPage(1); }}
+              allowClear
+            />
+          )}
         </Space>
       </div>
 
@@ -605,7 +621,11 @@ export default function LeavePage() {
         {viewLeave && (
           <>
             <Descriptions column={1} bordered size="small" labelStyle={{ color: textSecondary }} contentStyle={{ color: textPrimary }}>
-              <Descriptions.Item label="Nhân viên">{viewLeave.employee?.fullName ?? '—'}</Descriptions.Item>
+              <Descriptions.Item label="Nhân viên">
+                {viewLeave.employee
+                  ? <EmployeeInfoCell employee={viewLeave.employee} variant="descriptions" />
+                  : '—'}
+              </Descriptions.Item>
               <Descriptions.Item label="Loại nghỉ">{viewLeave.leaveType?.name ?? '—'}</Descriptions.Item>
               <Descriptions.Item label="Từ ngày">{dayjs(viewLeave.startDate).format('DD/MM/YYYY')}</Descriptions.Item>
               <Descriptions.Item label="Đến ngày">{dayjs(viewLeave.endDate).format('DD/MM/YYYY')}</Descriptions.Item>

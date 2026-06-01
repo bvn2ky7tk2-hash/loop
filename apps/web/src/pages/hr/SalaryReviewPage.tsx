@@ -14,7 +14,9 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { OrgUnitSelect } from '../../components/selects';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
@@ -26,7 +28,13 @@ type ReviewSuggestionStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 interface SalaryReviewSuggestion {
   id: string;
   employeeId: string;
-  employee?: { id: string; fullName: string; code: string; orgUnit?: { name: string } };
+  employee?: {
+    id: string;
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   currentSalary: number;
   proposedSalary: number;
   reason: string;
@@ -69,22 +77,22 @@ const STATUS_META: Record<ReviewSuggestionStatus, {
 };
 
 export default function SalaryReviewPage() {
-  const { isDark, textPrimary, textMuted, textSecondary, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
   const { message } = App.useApp();
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ReviewSuggestionStatus | undefined>(undefined);
-  const [deptFilter, setDeptFilter] = useState<string | undefined>(undefined);
+  const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
 
   // ── Queries ──
   const { data: suggestions = [], isLoading, isError } = useQuery({
-    queryKey: ['salary-reviews', { page, status: statusFilter }],
+    queryKey: ['salary-reviews', { page, status: statusFilter, orgUnitId: orgUnitFilter }],
     queryFn: () =>
       apiClient
         .get<{ data: SalaryReviewSuggestion[]; total: number }>('/hr/salary-reviews', {
-          params: { page, limit: 50, status: statusFilter },
+          params: { page, limit: 50, status: statusFilter, orgUnitId: orgUnitFilter || undefined },
         })
         .then((r) => r.data.data ?? [])
         .catch(() => { throw new Error('API not available'); }),
@@ -131,34 +139,20 @@ export default function SalaryReviewPage() {
       s.employee?.fullName.toLowerCase().includes(search.toLowerCase()) ||
       s.employee?.code.toLowerCase().includes(search.toLowerCase());
     const matchStatus = !statusFilter || s.status === statusFilter;
-    const matchDept = !deptFilter || s.employee?.orgUnit?.name === deptFilter;
-    return matchSearch && matchStatus && matchDept;
+    return matchSearch && matchStatus;
   });
-
-  // Danh sách phòng ban duy nhất
-  const deptOptions = [
-    ...new Set(suggestions.map((s) => s.employee?.orgUnit?.name).filter(Boolean)),
-  ].map((d) => ({ value: d!, label: d! }));
 
   // ── Table Columns ──
   const columns: ColumnsType<SalaryReviewSuggestion> = [
     {
       title: 'Nhân viên',
       key: 'employee',
-      render: (_, r) => (
-        <Space direction="vertical" size={0}>
-          <Text style={{ color: textPrimary, fontWeight: 600 }}>{r.employee?.fullName ?? r.employeeId}</Text>
-          <Text style={{ color: textMuted, fontSize: 12 }}>{r.employee?.code}</Text>
-        </Space>
-      ),
-    },
-    {
-      title: 'Phòng ban',
-      key: 'dept',
-      width: 150,
-      render: (_, r) => (
-        <Text style={{ color: textSecondary }}>{r.employee?.orgUnit?.name ?? '—'}</Text>
-      ),
+      render: (_, r) =>
+        r.employee ? (
+          <EmployeeInfoCell employee={r.employee} />
+        ) : (
+          <Text style={{ color: textMuted }}>{r.employeeId}</Text>
+        ),
     },
     {
       title: 'Lương hiện tại',
@@ -324,17 +318,12 @@ export default function SalaryReviewPage() {
             label: v.label,
           }))}
         />
-        <Select
+        <OrgUnitSelect
           placeholder="Phòng ban"
-          style={{ width: 180 }}
+          style={{ minWidth: 180 }}
+          value={orgUnitFilter}
+          onChange={(v) => { setOrgUnitFilter(v); setPage(1); }}
           allowClear
-          value={deptFilter}
-          onChange={setDeptFilter}
-          showSearch
-          options={deptOptions}
-          filterOption={(input, opt) =>
-            (opt?.label ?? '').toLowerCase().includes(input.toLowerCase())
-          }
         />
       </FilterBar>
 

@@ -58,6 +58,55 @@ export class LeavesController {
     return this.service.getBalance(employeeId, year ? parseInt(year, 10) : undefined);
   }
 
+  @Get('balance-all')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Phép tồn toàn bộ nhân viên (HR view)' })
+  getAllBalance(
+    @Query('year') year?: string,
+    @Query('orgUnitId') orgUnitId?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.service.getAllBalance(
+      year ? parseInt(year, 10) : undefined,
+      orgUnitId,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 50,
+    );
+  }
+
+  @Post('init-balances')
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Khởi tạo LeaveBalance cho toàn nhân sự × toàn loại phép (idempotent)' })
+  initBalances(
+    @Query('year') year?: string,
+    @Query('orgUnitId') orgUnitId?: string,
+  ) {
+    return this.service.initBalances(
+      year ? parseInt(year, 10) : new Date().getFullYear(),
+      orgUnitId,
+    );
+  }
+
+  @Get('monthly-stats')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Thống kê phép giảm hàng tháng (HR view)' })
+  getMonthlyStats(
+    @Query('year') year?: string,
+    @Query('orgUnitId') orgUnitId?: string,
+  ) {
+    return this.service.getMonthlyStats(
+      year ? parseInt(year, 10) : new Date().getFullYear(),
+      orgUnitId,
+    );
+  }
+
   @Get('export')
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
   @Roles(Role.ADMIN, Role.LEADERSHIP)
@@ -70,6 +119,18 @@ export class LeavesController {
     res.end(buf);
   }
 
+  @Get('my')
+  @Throttle({ default: { ttl: 60_000, limit: 100 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Đơn nghỉ phép của tôi (theo user hiện tại)' })
+  findMy(
+    @CurrentUser() user: JwtUser,
+    @Query('status') status: LeaveStatus | undefined,
+    @Query() pagination: PaginationDto,
+  ) {
+    return this.service.listMyRequests(user.id, status, pagination.page, pagination.limit);
+  }
+
   @Get()
   @Throttle({ default: { ttl: 60_000, limit: 100 } })
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
@@ -77,9 +138,14 @@ export class LeavesController {
   findAll(
     @Query('employeeId') employeeId: string | undefined,
     @Query('status') status: LeaveStatus | undefined,
-    @Query() pagination: PaginationDto,
+    @Query('orgUnitId') orgUnitId: string | undefined,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.service.listRequests(employeeId, status, pagination.page, pagination.limit);
+    const p = page ? parseInt(page, 10) : 1;
+    const l = limit ? parseInt(limit, 10) : (pageSize ? parseInt(pageSize, 10) : 20);
+    return this.service.listRequests(employeeId, status, orgUnitId, p, l);
   }
 
   @Get(':id')
@@ -109,5 +175,16 @@ export class LeavesController {
     @CurrentUser() user: JwtUser,
   ) {
     return this.service.approveReject(id, dto, user.id);
+  }
+
+  @Patch(':id/cancel')
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
+  @ApiOperation({ summary: 'Hủy đơn nghỉ phép — hoàn lại số ngày nếu đã duyệt' })
+  cancel(
+    @Param('id') id: string,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.service.cancelLeave(id, user.id);
   }
 }

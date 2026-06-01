@@ -7,13 +7,20 @@ export type HolidayType = 'NATIONAL_HOLIDAY' | 'COMPANY_HOLIDAY' | 'COMPENSATORY
 export interface AttendanceRecord {
   id: string;
   employeeId: string;
-  employee?: { fullName: string; code: string };
+  employee?: {
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   date: string;
   checkIn?: string;
   checkOut?: string;
   totalHours?: number;
   status: AttendanceStatus;
   leaveType?: string;
+  leaveInfo?: { name: string; color: string; isPaid: boolean } | null;
+  dayCredit?: number;
   isManual: boolean;
   note?: string;
   plannedStart?: string;
@@ -27,7 +34,12 @@ export interface AttendanceRecord {
 export interface MonthlyAttendance {
   id: string;
   employeeId: string;
-  employee?: { fullName: string; code: string; orgUnit?: { name: string } };
+  employee?: {
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   year: number;
   month: number;
   workDays: number;
@@ -136,7 +148,14 @@ export type ExplanationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface AttendanceExplanation {
   id: string;
   employeeId: string;
-  employee?: { id: string; fullName: string; userId?: string };
+  employee?: {
+    id: string;
+    fullName: string;
+    userId?: string;
+    code?: string;
+    orgUnit?: { name: string } | null;
+    position?: { jobTitle?: { name: string } | null } | null;
+  };
   date: string;
   attendanceRecordId?: string;
   attendanceRecord?: {
@@ -164,6 +183,7 @@ export interface AttendanceExplanation {
 export const attendanceExplanationApi = {
   list: (params?: {
     employeeId?: string;
+    orgUnitId?: string;
     status?: ExplanationStatus;
     dateFrom?: string;
     dateTo?: string;

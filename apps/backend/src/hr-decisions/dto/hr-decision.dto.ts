@@ -112,6 +112,9 @@ export class HrDecisionQueryDto extends PaginationDto {
 
   @IsOptional() @IsDateString()
   effectiveDateTo?: string;
+
+  @IsOptional() @IsUUID()
+  orgUnitId?: string;
 }
 
 export class RejectHrDecisionDto {

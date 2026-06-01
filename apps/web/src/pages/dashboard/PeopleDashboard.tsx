@@ -9,6 +9,7 @@ import {
   PauseCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
@@ -16,6 +17,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { dashboardV3Api } from '../../api/dashboard-v3';
+import { employeesApi } from '../../api/employees';
 
 export default function PeopleDashboard() {
   const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
@@ -32,11 +34,20 @@ export default function PeopleDashboard() {
     refetchInterval: 60_000,
   });
 
-  // Ước tính: nhân sự đang nghỉ phép = pendingLeaves (không có API riêng)
-  // Nhân sự mới tháng này chưa có API → hiển thị 0 hoặc placeholder
-  const headcount      = peopleData?.headcount ?? 0;
-  const onLeaveToday   = peopleData?.pendingLeaves ?? 0;  // xấp xỉ
-  const newThisMonth   = 0; // TODO: thêm API sau
+  // Nhân sự mới tháng này — filter client-side từ danh sách nhân viên
+  const { data: allEmployees = [] } = useQuery({
+    queryKey: ['employees-list-for-dashboard'],
+    queryFn:  () => employeesApi.list({ limit: 500 }),
+    staleTime: 5 * 60_000,
+    select: (employees) => {
+      const monthStart = dayjs().startOf('month');
+      return employees.filter(e => e.startDate && dayjs(e.startDate).isAfter(monthStart));
+    },
+  });
+
+  const headcount    = peopleData?.headcount ?? 0;
+  const onLeaveToday = peopleData?.pendingLeaves ?? 0;
+  const newThisMonth = allEmployees.length;
 
   return (
     <div style={{ padding: 24 }}>
@@ -44,6 +55,7 @@ export default function PeopleDashboard() {
         title="Dashboard Nhân sự"
         icon={<TeamOutlined />}
         iconColor="#8B5CF6"
+        greeting
       />
 
       {/* Hàng 1: StatCards chính */}

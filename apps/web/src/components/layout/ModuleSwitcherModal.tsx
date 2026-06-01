@@ -29,9 +29,12 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
 
   const handleSelect = (id: string) => {
     setActiveModule(id);
-    // Navigate về dashboard của module được chọn
     const mod = MODULES.find(m => m.id === id);
-    const dashboardRoute = mod?.topItems?.[0]?.key ?? '/';
+    // Ưu tiên topItems, fallback về item đầu tiên của group đầu tiên (cho module không có dashboard)
+    const dashboardRoute =
+      mod?.topItems?.[0]?.key ??
+      mod?.groups?.find(g => g.visible && g.items.length > 0)?.items?.[0]?.key ??
+      '/';
     navigate(dashboardRoute);
     onClose();
   };

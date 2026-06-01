@@ -46,4 +46,13 @@ export class CrmAnalyticsController {
   getTopCustomers(@Query('limit') limit?: string) {
     return this.service.getTopCustomers(limit ? parseInt(limit, 10) : 5);
   }
+
+  @Get('aging')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @RequirePermission(PERMISSIONS.CRM_READ)
+  @ApiOperation({ summary: 'E24.5 — Deals không có hoạt động trong N ngày (stale deals)' })
+  @ApiQuery({ name: 'minDays', required: false, description: 'Số ngày tối thiểu, mặc định 14' })
+  getDealAging(@Query('minDays') minDays?: string) {
+    return this.service.getDealAging(minDays ? parseInt(minDays, 10) : 14);
+  }
 }

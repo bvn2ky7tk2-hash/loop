@@ -11,7 +11,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { confirmDelete } from '../../components/ui/confirmDelete';
-import { tenantsApi, Tenant, CreateTenantPayload } from '../../api/tenants';
+import { tenantsApi, type Tenant, type CreateTenantPayload } from '../../api/tenants';
 
 const { Text } = Typography;
 

@@ -42,6 +42,7 @@ const RecruitJobsPage       = lazy(() => import('./pages/recruit/JobsPage'));
 const RecruitCandidatesPage = lazy(() => import('./pages/recruit/CandidatesPage'));
 const RecruitInterviewsPage = lazy(() => import('./pages/recruit/InterviewsPage'));
 const RecruitPipelinePage   = lazy(() => import('./pages/recruit/PipelinePage'));
+const RecruitOnboardingPage = lazy(() => import('./pages/recruit/OnboardingPage'));
 const CrmCustomersPage       = lazy(() => import('./pages/crm/CustomersPage'));
 const CrmContactsPage        = lazy(() => import('./pages/crm/ContactsPage'));
 const CrmLeadsPage           = lazy(() => import('./pages/crm/LeadsPage'));
@@ -67,6 +68,7 @@ const HrDecisionsPage       = lazy(() => import('./pages/hr/HrDecisionsPage'));
 const HrInsurancePage       = lazy(() => import('./pages/hr/InsurancePage'));
 const HrProfile360Page      = lazy(() => import('./pages/hr/EmployeeProfile360Page'));
 const HrLeavePolicyPage     = lazy(() => import('./pages/hr/LeavePolicyPage'));
+const HrLeaveSummaryPage    = lazy(() => import('./pages/hr/LeaveSummaryPage'));
 const HrAttendancePage      = lazy(() => import('./pages/hr/AttendancePage'));
 const HrAttendanceExplanationPage = lazy(() => import('./pages/hr/AttendanceExplanationPage'));
 const HrHolidaysPage        = lazy(() => import('./pages/hr/HolidaysPage'));
@@ -87,15 +89,21 @@ const DemoModePage          = lazy(() => import('./pages/admin/DemoModePage'));
 const ModuleConfigPage      = lazy(() => import('./pages/admin/ModuleConfigPage'));
 const OnboardingWizardPage  = lazy(() => import('./pages/admin/OnboardingWizardPage'));
 const FeedPage              = lazy(() => import('./pages/feed/FeedPage'));
+const DashboardPage         = lazy(() => import('./pages/dashboard/DashboardPage'));
+const PeopleDashboard       = lazy(() => import('./pages/dashboard/PeopleDashboard'));
 const FinanceDashboard      = lazy(() => import('./pages/dashboard/FinanceDashboard'));
 const CrmDashboard          = lazy(() => import('./pages/dashboard/CrmDashboard'));
 const AssetDashboard        = lazy(() => import('./pages/dashboard/AssetDashboard'));
 const OpsDashboard          = lazy(() => import('./pages/dashboard/OpsDashboard'));
 const MeDashboard           = lazy(() => import('./pages/dashboard/MeDashboard'));
 const AdminDashboard        = lazy(() => import('./pages/dashboard/AdminDashboard'));
+const AttendanceDashboard   = lazy(() => import('./pages/dashboard/AttendanceDashboard'));
+const RecruitDashboard      = lazy(() => import('./pages/dashboard/RecruitDashboard'));
 const RoomBookingPage       = lazy(() => import('./pages/assets/RoomBookingPage'));
 const RoomManagePage        = lazy(() => import('./pages/assets/RoomManagePage'));
 const VehicleBookingPage    = lazy(() => import('./pages/assets/VehicleBookingPage'));
+const VehicleApprovalsPage  = lazy(() => import('./pages/assets/VehicleApprovalsPage'));
+const VehicleManagePage     = lazy(() => import('./pages/assets/VehicleManagePage'));
 const CalendarPage          = lazy(() => import('./pages/calendar/CalendarPage'));
 const TenantSettingsPage    = lazy(() => import('./pages/settings/TenantSettingsPage'));
 const TenantsPage           = lazy(() => import('./pages/admin/TenantsPage'));
@@ -115,6 +123,10 @@ const ProjectAnalyticsPage   = lazy(() => import('./pages/projects/ProjectAnalyt
 const FinanceAnalyticsPage   = lazy(() => import('./pages/finance/FinanceAnalyticsPage'));
 const SalaryBandPage         = lazy(() => import('./pages/hr/SalaryBandPage'));
 const DelegationPage         = lazy(() => import('./pages/settings/DelegationPage'));
+// Analytics module
+const AnalyticsOverviewPage   = lazy(() => import('./pages/analytics/AnalyticsOverviewPage'));
+const AnalyticsReportsPage    = lazy(() => import('./pages/analytics/AnalyticsReportsPage'));
+const AnalyticsSavedPage      = lazy(() => import('./pages/analytics/AnalyticsSavedPage'));
 // HR v5.1
 const OffboardingPage              = lazy(() => import('./pages/hr/OffboardingPage'));
 const PerformanceBonusConfigPage   = lazy(() => import('./pages/hr/PerformanceBonusConfigPage'));
@@ -185,6 +197,7 @@ export const router = createBrowserRouter([
       { path: 'recruit/candidates',   element: wrap(RecruitCandidatesPage) },
       { path: 'recruit/interviews',   element: wrap(RecruitInterviewsPage) },
       { path: 'recruit/pipeline',     element: wrap(RecruitPipelinePage) },
+      { path: 'recruit/onboarding',   element: wrap(RecruitOnboardingPage) },
       { path: 'crm/customers',         element: wrap(CrmCustomersPage) },
       { path: 'crm/contacts',          element: wrap(CrmContactsPage) },
       { path: 'crm/leads',             element: wrap(CrmLeadsPage) },
@@ -210,6 +223,7 @@ export const router = createBrowserRouter([
       { path: 'hr/insurance',        element: wrap(HrInsurancePage) },
       { path: 'hr/employees/:employeeId', element: wrap(HrProfile360Page) },
       { path: 'hr/leave-policies',   element: wrap(HrLeavePolicyPage) },
+      { path: 'hr/leave-summary',    element: wrap(HrLeaveSummaryPage) },
       { path: 'hr/attendance',       element: wrap(HrAttendancePage) },
       { path: 'hr/attendance/explanations', element: wrap(HrAttendanceExplanationPage) },
       { path: 'hr/holidays',         element: wrap(HrHolidaysPage) },
@@ -228,17 +242,21 @@ export const router = createBrowserRouter([
       { path: 'module-config',        element: wrap(ModuleConfigPage) },
       { path: 'onboarding',           element: wrap(OnboardingWizardPage) },
       { path: 'feed',                 element: wrap(FeedPage) },
-      { path: 'dashboard/work',       element: <Navigate to="/feed" replace /> },
-      { path: 'dashboard/people',     element: <Navigate to="/feed" replace /> },
+      { path: 'dashboard/work',       element: wrap(DashboardPage) },
+      { path: 'dashboard/people',     element: wrap(PeopleDashboard) },
       { path: 'dashboard/finance',    element: wrap(FinanceDashboard) },
       { path: 'dashboard/crm',        element: wrap(CrmDashboard) },
       { path: 'dashboard/asset',      element: wrap(AssetDashboard) },
       { path: 'dashboard/ops',        element: wrap(OpsDashboard) },
       { path: 'dashboard/me',         element: wrap(MeDashboard) },
       { path: 'dashboard/admin',      element: wrap(AdminDashboard) },
+      { path: 'dashboard/attendance', element: wrap(AttendanceDashboard) },
+      { path: 'dashboard/recruit',    element: wrap(RecruitDashboard) },
       { path: 'assets/room-booking',  element: wrap(RoomBookingPage) },
       { path: 'assets/rooms',         element: wrap(RoomManagePage) },
-      { path: 'assets/vehicles',      element: wrap(VehicleBookingPage) },
+      { path: 'assets/vehicles',            element: wrap(VehicleBookingPage) },
+      { path: 'assets/vehicles/approvals', element: wrap(VehicleApprovalsPage) },
+      { path: 'assets/vehicles/manage',    element: wrap(VehicleManagePage) },
       { path: 'calendar',             element: wrap(CalendarPage) },
       { path: 'settings/tenant',      element: wrap(TenantSettingsPage) },
       { path: 'admin/tenants',        element: wrap(TenantsPage) },
@@ -263,6 +281,12 @@ export const router = createBrowserRouter([
       { path: 'hr/offboarding',                 element: wrap(OffboardingPage) },
       { path: 'hr/performance/bonus-config',    element: wrap(PerformanceBonusConfigPage) },
       { path: 'hr/performance/salary-review',   element: wrap(SalaryReviewPage) },
+      // Analytics module
+      { path: 'analytics',           element: <Navigate to="/analytics/overview" replace /> },
+      { path: 'analytics/overview',  element: wrap(AnalyticsOverviewPage) },
+      { path: 'analytics/reports',   element: wrap(AnalyticsReportsPage) },
+      { path: 'analytics/builder',   element: wrap(ReportBuilderPage) },
+      { path: 'analytics/saved',     element: wrap(AnalyticsSavedPage) },
     ],
   },
   { path: 'portal/:token', element: wrap(CustomerPortalPage) },

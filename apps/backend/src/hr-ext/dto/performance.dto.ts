@@ -47,6 +47,9 @@ export class FilterPerformanceDto extends PaginationDto {
   employeeId?: string;
 
   @IsOptional() @IsString()
+  orgUnitId?: string;
+
+  @IsOptional() @IsString()
   reviewerId?: string;
 
   @IsOptional() @IsString()

@@ -38,7 +38,7 @@ const CATEGORY_COLORS = ['#6366F1', '#10B981', '#3B82F6', '#F59E0B', '#EF4444', 
 function ArticleDrawer({
   article, open, onClose, onEdit,
 }: { article: KbArticle | null; open: boolean; onClose: () => void; onEdit: () => void }) {
-  const { isDark, textPrimary, textMuted, textSecondary, bgCard, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, textSecondary, bgCard, bgContainer, bgSubPanel, borderColor, linkColor } = useThemePalette();
   if (!article) return null;
 
   return (
@@ -55,7 +55,7 @@ function ArticleDrawer({
       extra={
         <Button icon={<EditOutlined />} onClick={onEdit}>Chỉnh sửa</Button>
       }
-      styles={{ body: { background: isDark ? '#0F172A' : '#F8FAFC' } }}
+      styles={{ body: { background: isDark ? bgSubPanel : '#F8FAFC' } }}
     >
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         <Tag color={STATUS_COLOR[article.status]}>{STATUS_LABEL[article.status]}</Tag>
@@ -76,14 +76,14 @@ function ArticleDrawer({
       </div>
 
       {article.summary && (
-        <div style={{ background: isDark ? '#1A2744' : '#EFF6FF', border: `1px solid ${borderColor}`, borderRadius: 8, padding: 12, marginBottom: 20 }}>
+        <div style={{ background: isDark ? bgSubPanel : '#EFF6FF', border: `1px solid ${borderColor}`, borderRadius: 8, padding: 12, marginBottom: 20 }}>
           <Text style={{ color: textSecondary, fontStyle: 'italic' }}>{article.summary}</Text>
         </div>
       )}
 
       {/* Content rendered as whitespace-pre-wrap (plain text / markdown raw) */}
       <div style={{
-        background: isDark ? '#1E293B' : '#fff',
+        background: bgContainer,
         border: `1px solid ${borderColor}`,
         borderRadius: 8,
         padding: 24,
