@@ -81,10 +81,10 @@ function MonthlyTab() {
   return (
     <div style={{ padding: 24, background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, textAlign: 'center' }}>
       <Text style={{ color: textMuted, fontSize: 14 }}>
-        Tónyesis bảng công tháng đã được chuyển sang tab <strong>Chi tiết chấm công</strong>.
+        Tổng hợp bảng công tháng đã được chuyển sang tab <strong>Chi tiết chấm công</strong>.
         {' '}
         <br />
-        Vui lòng sử dụng các bộ lọc tháng và phòng ban ở tab đó để xem tónyesis chi tiết.
+        Vui lòng sử dụng các bộ lọc tháng và phòng ban ở tab đó để xem tổng hợp chi tiết.
       </Text>
     </div>
   );
@@ -102,7 +102,7 @@ function DetailTab() {
   const [employeeId, setEmployeeId] = useState<string | undefined>();
   const [statusFilter, setStatusFilter] = useState<AttendanceStatus | undefined>();
 
-  // ── Filters: Bảng tónyesis tháng ──
+  // ── Filters: Bảng tổng hợp tháng ──
   const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
   const [monthOrgUnitId, setMonthOrgUnitId] = useState<string | undefined>();
 
@@ -172,8 +172,8 @@ function DetailTab() {
 
   const summarizeMutation = useMutation({
     mutationFn: () => hrAttendanceApi.summarize({ year, month, orgUnitId: monthOrgUnitId }),
-    onSuccess: () => { monthlyRefetch(); msg.success('Đã tónyesis bảng công'); },
-    onError: () => msg.error('Tónyesis thất bại'),
+    onSuccess: () => { monthlyRefetch(); msg.success('Đã tổng hợp bảng công'); },
+    onError: () => msg.error('Tổng hợp thất bại'),
   });
 
   const lockMutation = useMutation({
@@ -447,7 +447,7 @@ function DetailTab() {
               disabled={summarizeMutation.isPending}
               onClick={() => summarizeMutation.mutate()}
             >
-              Tónyesis tháng
+              Tổng hợp tháng
             </Button>
             <Popconfirm
               title="Khóa bảng công"
@@ -497,11 +497,11 @@ function DetailTab() {
           format="MM/YYYY"
           allowClear={false}
           style={{ width: 150 }}
-          placeholder="Tháng tónyesis"
+          placeholder="Tháng tổng hợp"
         />
         <Select
           showSearch
-          placeholder="Phòng ban (tónyesis)"
+          placeholder="Phòng ban (tổng hợp)"
           allowClear
           style={{ width: 220 }}
           value={monthOrgUnitId}
@@ -526,9 +526,9 @@ function DetailTab() {
         />
       </div>
 
-      {/* ── Bảng Tónyesis Tháng ──────────────────────────────────────────────── */}
+      {/* ── Bảng Tổng Hợp Tháng ──────────────────────────────────────────────── */}
       <div style={{ marginBottom: 16 }}>
-        <Text strong style={{ fontSize: 14, color: textPrimary }}>Tónyesis Bảng Công Tháng</Text>
+        <Text strong style={{ fontSize: 14, color: textPrimary }}>Tổng Hợp Bảng Công Tháng</Text>
       </div>
 
       <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
