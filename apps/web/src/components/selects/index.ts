@@ -5,3 +5,4 @@ export { UserSelect } from './UserSelect';
 export { OrgUnitSelect } from './OrgUnitSelect';
 export { JobTitleSelect } from './JobTitleSelect';
 export { ProvinceWardSelect } from './ProvinceWardSelect';
+export { CategorySelect } from './CategorySelect';

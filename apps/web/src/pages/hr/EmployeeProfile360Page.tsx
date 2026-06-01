@@ -46,7 +46,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { ProvinceWardSelect } from '../../components/selects';
+import { ProvinceWardSelect, CategorySelect } from '../../components/selects';
 import { hrProfileApi, type EducationRecord, type WorkExperience, type FamilyMember } from '../../api/hr-profile';
 import { formatCurrency } from '../../utils/format';
 
@@ -792,8 +792,8 @@ export default function EmployeeProfile360Page() {
             <Col span={12}><Form.Item name="placeOfBirth" label="Nơi sinh"><Input placeholder="VD: Hà Nội" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}><Form.Item name="ethnicity" label="Dân tộc"><Input placeholder="VD: Kinh" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="religion" label="Tôn giáo"><Input placeholder="VD: Không" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="ethnicity" label="Dân tộc"><CategorySelect type="ethnicity" placeholder="Chọn dân tộc" /></Form.Item></Col>
+            <Col span={12}><Form.Item name="religion" label="Tôn giáo"><CategorySelect type="religion" placeholder="Chọn tôn giáo" /></Form.Item></Col>
           </Row>
           <Row gutter={16}>
             <Col span={8}>

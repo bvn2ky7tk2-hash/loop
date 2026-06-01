@@ -3,26 +3,66 @@ const { randomUUID } = require('crypto');
 
 const DB_URL = process.env.DATABASE_URL || 'postgresql://loop:loop_password@localhost:5432/loop_db';
 
-// Sinh BPMN hợp lệ: start → các userTask tuần tự → end
+// Sinh BPMN hợp lệ KÈM sơ đồ (BPMNDI) để bpmn-js render: start → các userTask tuần tự → end
 function makeBpmn(processId, tasks) {
-  const nodes = [];
-  const flows = [];
-  nodes.push(`    <startEvent id="StartEvent_1" />`);
-  let prev = 'StartEvent_1';
-  tasks.forEach((t, i) => {
-    nodes.push(`    <userTask id="${t.id}" name="${t.name}" />`);
-    flows.push(`    <sequenceFlow id="Flow_${i}_in" sourceRef="${prev}" targetRef="${t.id}" />`);
-    prev = t.id;
+  const els = [];   // phần tử process
+  const flows = []; // sequenceFlow
+  const shapes = []; // BPMNShape
+  const edges = [];  // BPMNEdge
+
+  // Layout ngang: start (36x36) → task (100x80) → ... → end (36x36)
+  const GAP = 60, TASK_W = 110, TASK_H = 80, EV = 36, CY = 140;
+  const startX = 160;
+  const ids = ['StartEvent_1', ...tasks.map((t) => t.id), 'EndEvent_1'];
+  const xOf = {};
+  let x = startX;
+  ids.forEach((id, i) => {
+    xOf[id] = x;
+    x += (i === 0 || i === ids.length - 1 ? EV : TASK_W) + GAP;
   });
-  flows.push(`    <sequenceFlow id="Flow_end" sourceRef="${prev}" targetRef="EndEvent_1" />`);
-  nodes.push(`    <endEvent id="EndEvent_1" />`);
+
+  // Phần tử + incoming/outgoing
+  const flowId = (i) => `Flow_${i}`;
+  els.push(`    <bpmn:startEvent id="StartEvent_1"><bpmn:outgoing>${flowId(0)}</bpmn:outgoing></bpmn:startEvent>`);
+  tasks.forEach((t, i) => {
+    els.push(`    <bpmn:userTask id="${t.id}" name="${t.name}"><bpmn:incoming>${flowId(i)}</bpmn:incoming><bpmn:outgoing>${flowId(i + 1)}</bpmn:outgoing></bpmn:userTask>`);
+  });
+  els.push(`    <bpmn:endEvent id="EndEvent_1"><bpmn:incoming>${flowId(tasks.length)}</bpmn:incoming></bpmn:endEvent>`);
+
+  // Sequence flows
+  const seq = ['StartEvent_1', ...tasks.map((t) => t.id), 'EndEvent_1'];
+  for (let i = 0; i < seq.length - 1; i++) {
+    flows.push(`    <bpmn:sequenceFlow id="${flowId(i)}" sourceRef="${seq[i]}" targetRef="${seq[i + 1]}" />`);
+  }
+
+  // DI shapes
+  const isEv = (id) => id === 'StartEvent_1' || id === 'EndEvent_1';
+  ids.forEach((id) => {
+    const w = isEv(id) ? EV : TASK_W;
+    const h = isEv(id) ? EV : TASK_H;
+    const y = CY - h / 2;
+    shapes.push(`      <bpmndi:BPMNShape id="${id}_di" bpmnElement="${id}"><dc:Bounds x="${xOf[id]}" y="${y}" width="${w}" height="${h}" /></bpmndi:BPMNShape>`);
+  });
+  // DI edges (nối tâm phải nguồn → tâm trái đích)
+  const rightX = (id) => xOf[id] + (isEv(id) ? EV : TASK_W);
+  for (let i = 0; i < seq.length - 1; i++) {
+    const a = seq[i], b = seq[i + 1];
+    edges.push(`      <bpmndi:BPMNEdge id="${flowId(i)}_di" bpmnElement="${flowId(i)}"><di:waypoint x="${rightX(a)}" y="${CY}" /><di:waypoint x="${xOf[b]}" y="${CY}" /></bpmndi:BPMNEdge>`);
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://bpmn.io/schema/bpmn">
-  <process id="${processId}" isExecutable="true">
-${nodes.join('\n')}
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_${processId}" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="${processId}" isExecutable="true">
+${els.join('\n')}
 ${flows.join('\n')}
-  </process>
-</definitions>`;
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="${processId}">
+${shapes.join('\n')}
+${edges.join('\n')}
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
 }
 
 const DECISION = (label = 'Quyết định') => ({

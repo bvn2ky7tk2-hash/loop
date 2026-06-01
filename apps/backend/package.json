@@ -81,7 +81,10 @@
     "seed:bpm-processes": "node prisma/seed-bpm-processes.js",
     "seed:payroll-detail": "npx tsx prisma/seed-payroll-detail.ts",
     "seed:vn-locations": "npx tsx prisma/seed-vn-locations.ts",
-    "seed:leave-types-vi": "npx tsx prisma/seed-leave-types-vi.ts"
+    "seed:leave-types-vi": "npx tsx prisma/seed-leave-types-vi.ts",
+    "seed:bpm-instances": "npx tsx prisma/seed-bpm-instances.ts",
+    "seed:hr-categories": "npx tsx prisma/seed-hr-categories.ts",
+    "seed:vn-wards-extra": "npx tsx prisma/seed-vn-wards-extra.ts"
   },
   "prisma": {
     "seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
