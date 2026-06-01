@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Typography, Select, Tag, Card, Avatar, Spin, Button, Modal, message } from 'antd';
+import { Typography, Select, Tag, Card, Avatar, Spin, Button, Modal, message, Row, Col } from 'antd';
 import { UserOutlined, AppstoreAddOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { StatCard } from '../../components/ui/StatCard';
 import {
   useGetJobs, useGetCandidates, useTransitionCandidateStage,
   type Candidate, type CandidateStage,
@@ -10,22 +12,13 @@ import {
 
 const { Title, Text } = Typography;
 
-const STAGE_META: Record<CandidateStage, { label: string; color: string; bg: string; border: string }> = {
-  APPLIED:   { label: 'Đã nộp',    color: '#3B82F6', bg: '#EFF6FF', border: '#BFDBFE' },
-  SCREENING: { label: 'Sàng lọc',  color: '#06B6D4', bg: '#ECFEFF', border: '#A5F3FC' },
-  INTERVIEW: { label: 'Phỏng vấn', color: '#8B5CF6', bg: '#F5F3FF', border: '#DDD6FE' },
-  OFFER:     { label: 'Offer',      color: '#F97316', bg: '#FFF7ED', border: '#FED7AA' },
-  HIRED:     { label: 'Đã tuyển',  color: '#10B981', bg: '#ECFDF5', border: '#A7F3D0' },
-  REJECTED:  { label: 'Từ chối',   color: '#EF4444', bg: '#FEF2F2', border: '#FECACA' },
-};
-
-const STAGE_META_DARK: Record<CandidateStage, { bg: string; border: string }> = {
-  APPLIED:   { bg: '#1E3A5F', border: '#3B82F6' },
-  SCREENING: { bg: '#164E63', border: '#0891B2' },
-  INTERVIEW: { bg: '#2E1065', border: '#8B5CF6' },
-  OFFER:     { bg: '#431407', border: '#EA580C' },
-  HIRED:     { bg: '#064E3B', border: '#059669' },
-  REJECTED:  { bg: '#450A0A', border: '#DC2626' },
+const STAGE_META: Record<CandidateStage, { label: string; color: string; lightBg: string; lightBorder: string; darkBg: string; darkBorder: string }> = {
+  APPLIED:   { label: 'Đã nộp',    color: '#3B82F6', lightBg: '#EFF6FF', lightBorder: '#BFDBFE', darkBg: '#1E3A5F', darkBorder: '#3B82F6' },
+  SCREENING: { label: 'Sàng lọc',  color: '#06B6D4', lightBg: '#ECFEFF', lightBorder: '#A5F3FC', darkBg: '#164E63', darkBorder: '#0891B2' },
+  INTERVIEW: { label: 'Phỏng vấn', color: '#8B5CF6', lightBg: '#F5F3FF', lightBorder: '#DDD6FE', darkBg: '#2E1065', darkBorder: '#8B5CF6' },
+  OFFER:     { label: 'Offer',      color: '#F97316', lightBg: '#FFF7ED', lightBorder: '#FED7AA', darkBg: '#431407', darkBorder: '#EA580C' },
+  HIRED:     { label: 'Đã tuyển',  color: '#10B981', lightBg: '#ECFDF5', lightBorder: '#A7F3D0', darkBg: '#064E3B', darkBorder: '#059669' },
+  REJECTED:  { label: 'Từ chối',   color: '#EF4444', lightBg: '#FEF2F2', lightBorder: '#FECACA', darkBg: '#450A0A', darkBorder: '#DC2626' },
 };
 
 const NEXT_STAGE: Partial<Record<CandidateStage, CandidateStage>> = {
@@ -74,24 +67,39 @@ export default function PipelinePage() {
     });
   };
 
+  const appliedCount = byStage.APPLIED?.length ?? 0;
+  const screeningCount = byStage.SCREENING?.length ?? 0;
+  const interviewCount = byStage.INTERVIEW?.length ?? 0;
+  const offerCount = byStage.OFFER?.length ?? 0;
+  const hiredCount = byStage.HIRED?.length ?? 0;
+  const rejectedCount = byStage.REJECTED?.length ?? 0;
+
   if (isLoading) return <div style={{ padding: 24, textAlign: 'center' }}><Spin size="large" /></div>;
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AppstoreAddOutlined style={{ color: '#0EA5E9', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Pipeline</Title>
-        </div>
-        <Select placeholder="Tất cả vị trí" style={{ width: 260 }} allowClear showSearch optionFilterProp="label"
-          options={jobs.map(j => ({ value: j.id, label: j.title }))}
-          onChange={v => setJobId(v)} />
-      </div>
+      <PageHeader
+        title="Pipeline"
+        icon={<AppstoreAddOutlined />}
+        iconColor="#3B82F6"
+        actions={
+          <Select placeholder="Tất cả vị trí" style={{ width: 260 }} allowClear showSearch optionFilterProp="label"
+            options={jobs.map(j => ({ value: j.id, label: j.title }))}
+            onChange={v => setJobId(v)} />
+        }
+      />
+
+      {/* Stat Cards */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}><StatCard label="Đã nộp" value={appliedCount} color="#3B82F6" icon={<AppstoreAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Sàng lọc" value={screeningCount} color="#06B6D4" icon={<AppstoreAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Phỏng vấn" value={interviewCount} color="#8B5CF6" icon={<AppstoreAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Offer" value={offerCount} color="#F97316" icon={<AppstoreAddOutlined />} /></Col>
+      </Row>
 
       <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 12 }}>
         {COLUMNS.map(stage => {
           const meta = STAGE_META[stage];
-          const metaDark = STAGE_META_DARK[stage];
           const cards = byStage[stage];
 
           return (
@@ -102,12 +110,17 @@ export default function PipelinePage() {
               {/* Column header */}
               <div style={{
                 padding: '8px 12px', borderRadius: 8,
-                background: isDark ? metaDark.bg : meta.bg,
-                border: `1px solid ${isDark ? metaDark.border : meta.border}`,
+                background: isDark ? meta.darkBg : meta.lightBg,
+                border: `1px solid ${isDark ? meta.darkBorder : meta.lightBorder}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <Text style={{ fontWeight: 600, fontSize: 13, color: meta.color }}>{meta.label}</Text>
-                <Tag color={meta.color} style={{ margin: 0, fontSize: 11 }}>{cards.length}</Tag>
+                <Tag
+                  style={isDark ? { background: `${meta.color}33`, color: meta.color, borderColor: `${meta.color}66`, margin: 0, fontSize: 11 } : { margin: 0, fontSize: 11 }}
+                  color={isDark ? undefined : meta.color}
+                >
+                  {cards.length}
+                </Tag>
               </div>
 
               {/* Cards */}
@@ -120,7 +133,7 @@ export default function PipelinePage() {
                     styles={{ body: { padding: '10px 12px' } }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
                       <Avatar size={28} icon={<UserOutlined />}
-                        style={{ background: `${preset.primary}33`, color: preset.primary, flexShrink: 0, fontSize: 13 }} />
+                        style={{ background: `${meta.color}33`, color: meta.color, flexShrink: 0, fontSize: 13 }} />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <Text style={{ fontWeight: 600, fontSize: 13, color: textPrimary, display: 'block',
                           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -140,7 +153,7 @@ export default function PipelinePage() {
                       <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                         {NEXT_STAGE[stage] && (
                           <Button size="small" type="primary" icon={<ArrowRightOutlined />}
-                            style={{ background: '#0EA5E9', borderColor: '#0EA5E9', flex: 1, fontSize: 11 }}
+                            style={{ background: preset.primary, borderColor: preset.primary, flex: 1, fontSize: 11 }}
                             onClick={() => handleAdvance(c)}>
                             {STAGE_META[NEXT_STAGE[stage]!].label}
                           </Button>

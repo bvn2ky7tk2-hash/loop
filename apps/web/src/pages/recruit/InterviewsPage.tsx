@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import {
-  Table, Button, Space, Typography, Select, Tag, Form,
+  Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
   Input, InputNumber, DatePicker, Modal, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { StatCard } from '../../components/ui/StatCard';
+import { FilterBar } from '../../components/FilterBar';
 import { PlusOutlined, CheckCircleOutlined, ScheduleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -16,17 +19,17 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const TYPE_META: Record<InterviewType, { label: string; color: string }> = {
-  PHONE:     { label: 'Phone',     color: 'blue' },
-  TECHNICAL: { label: 'Technical', color: 'purple' },
-  HR:        { label: 'HR',        color: 'cyan' },
-  FINAL:     { label: 'Final',     color: 'orange' },
+const TYPE_META: Record<InterviewType, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
+  PHONE:     { label: 'Phone',     color: '#3B82F6', darkBg: 'rgba(59,130,246,0.15)', darkBorder: 'rgba(59,130,246,0.35)' },
+  TECHNICAL: { label: 'Technical', color: '#8B5CF6', darkBg: 'rgba(139,92,246,0.15)', darkBorder: 'rgba(139,92,246,0.35)' },
+  HR:        { label: 'HR',        color: '#06B6D4', darkBg: 'rgba(6,182,212,0.15)', darkBorder: 'rgba(6,182,212,0.35)' },
+  FINAL:     { label: 'Final',     color: '#F97316', darkBg: 'rgba(249,115,22,0.15)', darkBorder: 'rgba(249,115,22,0.35)' },
 };
 
-const RESULT_META: Record<InterviewResult, { label: string; color: string }> = {
-  PASS:    { label: 'Pass',    color: 'green' },
-  FAIL:    { label: 'Fail',    color: 'red' },
-  PENDING: { label: 'Chờ kết quả', color: 'default' },
+const RESULT_META: Record<InterviewResult, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
+  PASS:    { label: 'Pass',    color: '#10B981', darkBg: 'rgba(16,185,129,0.15)', darkBorder: 'rgba(16,185,129,0.35)' },
+  FAIL:    { label: 'Fail',    color: '#EF4444', darkBg: 'rgba(239,68,68,0.15)', darkBorder: 'rgba(239,68,68,0.35)' },
+  PENDING: { label: 'Chờ kết quả', color: '#64748B', darkBg: 'rgba(100,116,139,0.15)', darkBorder: 'rgba(100,116,139,0.35)' },
 };
 
 const TYPE_OPTIONS    = Object.entries(TYPE_META).map(([k, v])   => ({ value: k as InterviewType,   label: v.label }));
@@ -35,15 +38,14 @@ const RESULT_OPTIONS  = Object.entries(RESULT_META).map(([k, v]) => ({ value: k 
 export default function InterviewsPage() {
   const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [page, setPage]                 = useState(1);
-  const [limit, setLimit]               = useState(20);
+  const [filters, setFilters]          = useState({ page: 1, limit: 20 });
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [resultOpen, setResultOpen]     = useState(false);
   const [selected, setSelected]         = useState<Interview | null>(null);
   const [scheduleForm] = Form.useForm();
   const [resultForm]   = Form.useForm();
 
-  const { data, isLoading }       = useGetAllInterviews({ page, limit });
+  const { data, isLoading }       = useGetAllInterviews({ page: filters.page, limit: filters.limit });
   const { data: candidatesData }  = useGetCandidates({ limit: 200 });
   const candidates = candidatesData?.data ?? [];
 
@@ -91,7 +93,20 @@ export default function InterviewsPage() {
         </Space>
       ),
     },
-    { title: 'Loại',    dataIndex: 'type',   width: 110, render: (v: InterviewType)   => <Tag color={TYPE_META[v].color}>{TYPE_META[v].label}</Tag> },
+    {
+      title: 'Loại', dataIndex: 'type', width: 110,
+      render: (v: InterviewType) => {
+        const meta = TYPE_META[v];
+        return (
+          <Tag
+            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
+            color={isDark ? undefined : (v === 'PHONE' ? 'blue' : v === 'TECHNICAL' ? 'purple' : v === 'HR' ? 'cyan' : 'orange')}
+          >
+            {meta.label}
+          </Tag>
+        );
+      },
+    },
     {
       title: 'Lịch hẹn', dataIndex: 'scheduledAt', width: 160,
       render: (v: string) => (
@@ -106,7 +121,20 @@ export default function InterviewsPage() {
       title: 'Điểm', dataIndex: 'score', width: 70, align: 'center',
       render: (v?: number) => v != null ? <Text style={{ color: linkColor, fontWeight: 600 }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
-    { title: 'Kết quả', dataIndex: 'result', width: 130, render: (v: InterviewResult) => <Tag color={RESULT_META[v].color}>{RESULT_META[v].label}</Tag> },
+    {
+      title: 'Kết quả', dataIndex: 'result', width: 130,
+      render: (v: InterviewResult) => {
+        const meta = RESULT_META[v];
+        return (
+          <Tag
+            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
+            color={isDark ? undefined : (v === 'PASS' ? 'green' : v === 'FAIL' ? 'red' : 'default')}
+          >
+            {meta.label}
+          </Tag>
+        );
+      },
+    },
     {
       title: '', key: 'actions', width: 80, align: 'right',
       render: (_: unknown, row: Interview) => (
@@ -117,24 +145,39 @@ export default function InterviewsPage() {
     },
   ];
 
+  const totalInterviews = data?.total ?? 0;
+  const passedCount = data?.data?.filter(i => i.result === 'PASS').length ?? 0;
+  const failedCount = data?.data?.filter(i => i.result === 'FAIL').length ?? 0;
+  const pendingCount = data?.data?.filter(i => i.result === 'PENDING').length ?? 0;
+
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ScheduleOutlined style={{ color: '#0EA5E9', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Phỏng vấn</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openSchedule}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Lên lịch
-        </Button>
-      </div>
+      <PageHeader
+        title="Phỏng vấn"
+        icon={<ScheduleOutlined />}
+        iconColor="#3B82F6"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openSchedule}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Lên lịch
+          </Button>
+        }
+      />
 
+      {/* Stat Cards */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}><StatCard label="Tổng phỏng vấn" value={totalInterviews} color="#6366F1" icon={<ScheduleOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đã đậu" value={passedCount} color="#10B981" icon={<CheckCircleOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Chưa đậu" value={failedCount} color="#EF4444" icon={<CheckCircleOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Chờ kết quả" value={pendingCount} color="#F59E0B" icon={<ScheduleOutlined />} /></Col>
+      </Row>
+
+      {/* Table */}
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Interview>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
-          pagination={{ current: page, pageSize: limit, total: data?.total ?? 0, showSizeChanger: true,
-            onChange: (p, l) => { setPage(p); setLimit(l); } }}
+          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
+            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />
       </div>
 

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import {
-  Table, Button, Space, Typography, Select, Tag, Form,
+  Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
   Input, InputNumber, Modal, message, Descriptions, Steps, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { StatCard } from '../../components/ui/StatCard';
+import { FilterBar } from '../../components/FilterBar';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UsergroupAddOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -21,13 +24,13 @@ import {
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const STAGE_META: Record<CandidateStage, { label: string; color: string; step: number }> = {
-  APPLIED:   { label: 'Đã nộp',      color: 'blue',    step: 0 },
-  SCREENING: { label: 'Sàng lọc',    color: 'cyan',    step: 1 },
-  INTERVIEW: { label: 'Phỏng vấn',   color: 'purple',  step: 2 },
-  OFFER:     { label: 'Offer',        color: 'orange',  step: 3 },
-  HIRED:     { label: 'Đã tuyển',    color: 'green',   step: 4 },
-  REJECTED:  { label: 'Từ chối',     color: 'red',     step: 4 },
+const STAGE_META: Record<CandidateStage, { label: string; color: string; darkBg: string; darkBorder: string; step: number }> = {
+  APPLIED:   { label: 'Đã nộp',      color: '#3B82F6', darkBg: 'rgba(59,130,246,0.15)', darkBorder: 'rgba(59,130,246,0.35)', step: 0 },
+  SCREENING: { label: 'Sàng lọc',    color: '#06B6D4', darkBg: 'rgba(6,182,212,0.15)', darkBorder: 'rgba(6,182,212,0.35)', step: 1 },
+  INTERVIEW: { label: 'Phỏng vấn',   color: '#8B5CF6', darkBg: 'rgba(139,92,246,0.15)', darkBorder: 'rgba(139,92,246,0.35)', step: 2 },
+  OFFER:     { label: 'Offer',        color: '#F97316', darkBg: 'rgba(249,115,22,0.15)', darkBorder: 'rgba(249,115,22,0.35)', step: 3 },
+  HIRED:     { label: 'Đã tuyển',    color: '#10B981', darkBg: 'rgba(16,185,129,0.15)', darkBorder: 'rgba(16,185,129,0.35)', step: 4 },
+  REJECTED:  { label: 'Từ chối',     color: '#EF4444', darkBg: 'rgba(239,68,68,0.15)', darkBorder: 'rgba(239,68,68,0.35)', step: 4 },
 };
 
 const NEXT_STAGE: Partial<Record<CandidateStage, CandidateStage>> = {
@@ -138,11 +141,27 @@ export default function CandidatesPage() {
     },
     {
       title: 'Stage', dataIndex: 'stage', width: 130,
-      render: (s: CandidateStage) => <Tag color={STAGE_META[s].color}>{STAGE_META[s].label}</Tag>,
+      render: (s: CandidateStage) => {
+        const meta = STAGE_META[s];
+        return (
+          <Tag
+            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
+            color={isDark ? undefined : (
+              s === 'APPLIED' ? 'blue' :
+              s === 'SCREENING' ? 'cyan' :
+              s === 'INTERVIEW' ? 'purple' :
+              s === 'OFFER' ? 'orange' :
+              s === 'HIRED' ? 'green' : 'red'
+            )}
+          >
+            {meta.label}
+          </Tag>
+        );
+      },
     },
     {
       title: 'Lương kỳ vọng', dataIndex: 'expectedSalary', width: 150, align: 'right',
-      render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{(Number(v)/1_000_000).toFixed(0)}M ₫</Text> : <Text style={{ color: textMuted }}>—</Text>,
+      render: (v?: string) => v ? <Text style={{ color: linkColor, fontWeight: 500 }}>{(Number(v)/1_000_000).toFixed(0)}M ₫</Text> : <Text style={{ color: textMuted }}>—</Text>,
     },
     { title: 'Ngày nộp', dataIndex: 'createdAt', width: 110, render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text> },
     {
@@ -151,7 +170,7 @@ export default function CandidatesPage() {
         <Space>
           {NEXT_STAGE[row.stage] && row.stage !== 'HIRED' && row.stage !== 'REJECTED' && (
             <Button size="small" type="primary" icon={<ArrowRightOutlined />}
-              style={{ background: '#0EA5E9', borderColor: '#0EA5E9' }}
+              style={{ background: preset.primary, borderColor: preset.primary }}
               onClick={() => handleAdvance(row)} />
           )}
           {row.stage !== 'HIRED' && row.stage !== 'REJECTED' && (
@@ -168,27 +187,43 @@ export default function CandidatesPage() {
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
+  const totalCount = data?.total ?? 0;
+  const appliedCount = data?.data?.filter(c => c.stage === 'APPLIED').length ?? 0;
+  const screeningCount = data?.data?.filter(c => c.stage === 'SCREENING').length ?? 0;
+  const interviewCount = data?.data?.filter(c => c.stage === 'INTERVIEW').length ?? 0;
+
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <UsergroupAddOutlined style={{ color: '#0EA5E9', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Ứng viên</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Thêm ứng viên
-        </Button>
-      </div>
+      <PageHeader
+        title="Ứng viên"
+        icon={<UsergroupAddOutlined />}
+        iconColor="#3B82F6"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Thêm ứng viên
+          </Button>
+        }
+      />
 
-      <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      {/* Stat Cards */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}><StatCard label="Tổng ứng viên" value={totalCount} color="#6366F1" icon={<UsergroupAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đã nộp" value={appliedCount} color="#3B82F6" icon={<UsergroupAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Sàng lọc" value={screeningCount} color="#06B6D4" icon={<UsergroupAddOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Phỏng vấn" value={interviewCount} color="#8B5CF6" icon={<UsergroupAddOutlined />} /></Col>
+      </Row>
+
+      {/* Filter Bar */}
+      <FilterBar>
         <Select placeholder="Vị trí" style={{ width: 220 }} allowClear showSearch optionFilterProp="label"
           options={jobs.map(j => ({ value: j.id, label: j.title }))}
           onChange={v => setFilters(f => ({ ...f, jobOpeningId: v, page: 1 }))} />
         <Select placeholder="Stage" style={{ width: 150 }} allowClear options={STAGE_OPTIONS}
           onChange={v => setFilters(f => ({ ...f, stage: v, page: 1 }))} />
-      </div>
+      </FilterBar>
 
+      {/* Table */}
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Candidate>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
@@ -245,8 +280,21 @@ export default function CandidatesPage() {
               <Descriptions.Item label="Email">{selected.email ?? '—'}</Descriptions.Item>
               <Descriptions.Item label="Điện thoại">{selected.phone ?? '—'}</Descriptions.Item>
               <Descriptions.Item label="Vị trí">{selected.jobOpening?.title ?? '—'}</Descriptions.Item>
-              <Descriptions.Item label="Stage"><Tag color={STAGE_META[selected.stage].color}>{STAGE_META[selected.stage].label}</Tag></Descriptions.Item>
-              <Descriptions.Item label="Lương KV">{selected.expectedSalary ? `${(Number(selected.expectedSalary)/1_000_000).toFixed(0)}M ₫` : '—'}</Descriptions.Item>
+              <Descriptions.Item label="Stage">
+                <Tag
+                  style={isDark ? { background: STAGE_META[selected.stage].darkBg, color: STAGE_META[selected.stage].color, borderColor: STAGE_META[selected.stage].darkBorder } : {}}
+                  color={isDark ? undefined : (
+                    selected.stage === 'APPLIED' ? 'blue' :
+                    selected.stage === 'SCREENING' ? 'cyan' :
+                    selected.stage === 'INTERVIEW' ? 'purple' :
+                    selected.stage === 'OFFER' ? 'orange' :
+                    selected.stage === 'HIRED' ? 'green' : 'red'
+                  )}
+                >
+                  {STAGE_META[selected.stage].label}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Lương KV">{selected.expectedSalary ? <Text style={{ color: linkColor, fontWeight: 500 }}>{`${(Number(selected.expectedSalary)/1_000_000).toFixed(0)}M ₫`}</Text> : '—'}</Descriptions.Item>
               <Descriptions.Item label="Ngày nộp">{dayjs(selected.createdAt).format('DD/MM/YYYY')}</Descriptions.Item>
             </Descriptions>
             {selected.notes && (

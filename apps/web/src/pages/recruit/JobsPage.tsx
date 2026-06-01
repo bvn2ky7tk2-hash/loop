@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import {
-  Table, Button, Space, Typography, Select, Tag, Form,
+  Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
   Input, InputNumber, Modal, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutlined, TeamOutlined } from '@ant-design/icons';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { StatCard } from '../../components/ui/StatCard';
+import { FilterBar } from '../../components/FilterBar';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutlined, TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -18,17 +21,17 @@ import {
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
-const STATUS_META: Record<JobStatus, { label: string; color: string }> = {
-  OPEN:    { label: 'Đang mở',   color: 'green' },
-  ON_HOLD: { label: 'Tạm dừng', color: 'orange' },
-  CLOSED:  { label: 'Đã đóng',  color: 'default' },
+const STATUS_META: Record<JobStatus, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
+  OPEN:    { label: 'Đang mở',   color: '#10B981', darkBg: 'rgba(16,185,129,0.15)', darkBorder: 'rgba(16,185,129,0.35)' },
+  ON_HOLD: { label: 'Tạm dừng', color: '#F59E0B', darkBg: 'rgba(245,158,11,0.15)', darkBorder: 'rgba(245,158,11,0.35)' },
+  CLOSED:  { label: 'Đã đóng',  color: '#64748B', darkBg: 'rgba(100,116,139,0.15)', darkBorder: 'rgba(100,116,139,0.35)' },
 };
 
-const LEVEL_META: Record<EmployeeLevel, { label: string; color: string }> = {
-  JUNIOR: { label: 'Junior', color: 'blue' },
-  MID:    { label: 'Mid',    color: 'cyan' },
-  SENIOR: { label: 'Senior', color: 'purple' },
-  EXPERT: { label: 'Expert', color: 'red' },
+const LEVEL_META: Record<EmployeeLevel, { label: string; color: string; darkBg?: string; darkBorder?: string }> = {
+  JUNIOR: { label: 'Junior', color: '#3B82F6', darkBg: 'rgba(59,130,246,0.15)', darkBorder: 'rgba(59,130,246,0.35)' },
+  MID:    { label: 'Mid',    color: '#06B6D4', darkBg: 'rgba(6,182,212,0.15)', darkBorder: 'rgba(6,182,212,0.35)' },
+  SENIOR: { label: 'Senior', color: '#8B5CF6', darkBg: 'rgba(139,92,246,0.15)', darkBorder: 'rgba(139,92,246,0.35)' },
+  EXPERT: { label: 'Expert', color: '#EF4444', darkBg: 'rgba(239,68,68,0.15)', darkBorder: 'rgba(239,68,68,0.35)' },
 };
 
 const LEVEL_OPTIONS = Object.entries(LEVEL_META).map(([k, v]) => ({ value: k as EmployeeLevel, label: v.label }));
@@ -114,11 +117,50 @@ export default function JobsPage() {
         </Space>
       ),
     },
-    { title: 'Level', dataIndex: 'level', width: 90,  render: (v: EmployeeLevel) => <Tag color={LEVEL_META[v].color}>{LEVEL_META[v].label}</Tag> },
+    {
+      title: 'Level', dataIndex: 'level', width: 90,
+      render: (v: EmployeeLevel) => {
+        const meta = LEVEL_META[v];
+        return (
+          <Tag
+            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
+            color={isDark ? undefined : (v === 'JUNIOR' ? 'blue' : v === 'MID' ? 'cyan' : v === 'SENIOR' ? 'purple' : 'red')}
+          >
+            {meta.label}
+          </Tag>
+        );
+      },
+    },
     { title: 'HC',    dataIndex: 'headcount', width: 60, align: 'center', render: (v: number) => <Text style={{ color: textPrimary }}>{v}</Text> },
-    { title: 'Lương', key: 'salary', width: 140, render: (_: unknown, r: JobOpening) => <Text style={{ color: textMuted }}>{fmtSalary(r.salaryFrom, r.salaryTo)}</Text> },
-    { title: 'Ứng viên', key: 'cnt', width: 90, align: 'center', render: (_: unknown, r: JobOpening) => <Tag color="blue">{r._count?.candidates ?? 0}</Tag> },
-    { title: 'Trạng thái', dataIndex: 'status', width: 120, render: (s: JobStatus) => <Tag color={STATUS_META[s].color}>{STATUS_META[s].label}</Tag> },
+    { title: 'Lương', key: 'salary', width: 140, render: (_: unknown, r: JobOpening) => <Text style={{ color: linkColor, fontWeight: 500 }}>{fmtSalary(r.salaryFrom, r.salaryTo)}</Text> },
+    {
+      title: 'Ứng viên', key: 'cnt', width: 90, align: 'center',
+      render: (_: unknown, r: JobOpening) => {
+        const count = r._count?.candidates ?? 0;
+        return (
+          <Tag
+            style={isDark ? { background: 'rgba(59,130,246,0.15)', color: '#93C5FD', borderColor: 'rgba(59,130,246,0.3)' } : {}}
+            color={isDark ? undefined : 'blue'}
+          >
+            {count}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: 'Trạng thái', dataIndex: 'status', width: 120,
+      render: (s: JobStatus) => {
+        const meta = STATUS_META[s];
+        return (
+          <Tag
+            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
+            color={isDark ? undefined : (s === 'OPEN' ? 'green' : s === 'ON_HOLD' ? 'orange' : 'default')}
+          >
+            {meta.label}
+          </Tag>
+        );
+      },
+    },
     {
       title: '', key: 'actions', width: 100, align: 'right',
       render: (_: unknown, row: JobOpening) => (
@@ -133,20 +175,35 @@ export default function JobsPage() {
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
+  const totalJobs = data?.total ?? 0;
+  const openJobs = data?.data?.filter(j => j.status === 'OPEN').length ?? 0;
+  const onHoldJobs = data?.data?.filter(j => j.status === 'ON_HOLD').length ?? 0;
+  const totalCandidates = data?.data?.reduce((sum, j) => sum + (j._count?.candidates ?? 0), 0) ?? 0;
+
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <SolutionOutlined style={{ color: '#0EA5E9', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Job Openings</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Tạo vị trí
-        </Button>
-      </div>
+      <PageHeader
+        title="Vị trí tuyển dụng"
+        icon={<SolutionOutlined />}
+        iconColor="#3B82F6"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Tạo vị trí
+          </Button>
+        }
+      />
 
-      <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      {/* Stat Cards */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={12} sm={6}><StatCard label="Tổng vị trí" value={totalJobs} color="#6366F1" icon={<SolutionOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Đang mở" value={openJobs} color="#10B981" icon={<SolutionOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Tạm dừng" value={onHoldJobs} color="#F59E0B" icon={<SolutionOutlined />} /></Col>
+        <Col xs={12} sm={6}><StatCard label="Tổng ứng viên" value={totalCandidates} color="#8B5CF6" icon={<UsergroupAddOutlined />} /></Col>
+      </Row>
+
+      {/* Filter Bar */}
+      <FilterBar>
         <Select placeholder="Trạng thái" style={{ width: 140 }} allowClear options={STATUS_OPTIONS}
           onChange={v => setFilters(f => ({ ...f, status: v, page: 1 }))} />
         <Select placeholder="Level" style={{ width: 120 }} allowClear options={LEVEL_OPTIONS}
@@ -154,8 +211,9 @@ export default function JobsPage() {
         <Select placeholder="Bộ phận" style={{ width: 200 }} allowClear showSearch optionFilterProp="label"
           options={(orgUnits as { id: string; name: string }[]).map(o => ({ value: o.id, label: o.name }))}
           onChange={v => setFilters(f => ({ ...f, orgUnitId: v, page: 1 }))} />
-      </div>
+      </FilterBar>
 
+      {/* Table */}
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<JobOpening>
           rowKey="id"
