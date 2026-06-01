@@ -73,24 +73,7 @@ function StatusTag({ status, isDark }: { status: string; isDark: boolean }) {
   );
 }
 
-// ─── Tab 1: Bảng công tháng (DEPRECATED - seeded to Chi tiết) ─────────────────
-
-function MonthlyTab() {
-  const { textMuted, bgContainer, borderColor } = useThemePalette();
-
-  return (
-    <div style={{ padding: 24, background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, textAlign: 'center' }}>
-      <Text style={{ color: textMuted, fontSize: 14 }}>
-        Tổng hợp bảng công tháng đã được chuyển sang tab <strong>Chi tiết chấm công</strong>.
-        {' '}
-        <br />
-        Vui lòng sử dụng các bộ lọc tháng và phòng ban ở tab đó để xem tổng hợp chi tiết.
-      </Text>
-    </div>
-  );
-}
-
-// ─── Tab 2: Chi tiết chấm công + Bảng công tháng ──────────────────────────────
+// ─── Tab 1: Chi tiết chấm công + Tổng hợp bảng công tháng ────────────────────
 
 function DetailTab() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
@@ -627,7 +610,7 @@ function DetailTab() {
   );
 }
 
-// ─── Tab 3: Nhập chấm công thủ công ─────────────────────────────────────────
+// ─── Tab 2: Nhập chấm công thủ công ──────────────────────────────────────────
 
 function ManualEntryTab() {
   const { textMuted } = useThemePalette();
@@ -743,11 +726,6 @@ export default function AttendancePage() {
             key: 'detail',
             label: 'Chi tiết chấm công',
             children: <DetailTab />,
-          },
-          {
-            key: 'monthly',
-            label: 'Bảng công tháng',
-            children: <MonthlyTab />,
           },
           {
             key: 'manual',
