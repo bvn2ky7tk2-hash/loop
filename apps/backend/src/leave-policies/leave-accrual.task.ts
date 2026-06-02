@@ -23,15 +23,18 @@ export class LeaveAccrualTask {
 
     const currentYear = new Date().getFullYear();
 
-    // Lấy tất cả employee có leavePolicy với accrualMode = MONTHLY_ACCRUAL
+    // Lấy employee có gói MONTHLY_ACCRUAL — gán trực tiếp HOẶC qua chức danh
     const employees = await this.prisma.employee.findMany({
       where: {
-        leavePolicyId: { not: null },
-        leavePolicy: { accrualMode: 'MONTHLY_ACCRUAL', isActive: true },
         employeeStatus: { not: EmployeeStatus.TERMINATED },
+        OR: [
+          { leavePolicy: { accrualMode: 'MONTHLY_ACCRUAL', isActive: true } },
+          { leavePolicyId: null, jobTitle: { leavePolicy: { accrualMode: 'MONTHLY_ACCRUAL', isActive: true } } },
+        ],
       },
       include: {
         leavePolicy: true,
+        jobTitle: { include: { leavePolicy: true } },
       },
       take: 2000,
     });
@@ -39,9 +42,8 @@ export class LeaveAccrualTask {
     let processed = 0;
 
     for (const emp of employees) {
-      if (!emp.leavePolicy) continue;
-
-      const policy = emp.leavePolicy;
+      const policy = emp.leavePolicy ?? emp.jobTitle?.leavePolicy;
+      if (!policy) continue;
       const seniorityBonus = (policy.seniorityBonus as any[] ?? []);
 
       // Tính thâm niên
@@ -116,14 +118,16 @@ export class LeaveAccrualTask {
     const newYear = new Date().getFullYear();
     const prevYear = newYear - 1;
 
-    // Lấy tất cả employee có leavePolicyId
+    // Lấy employee có gói phép — gán trực tiếp HOẶC qua chức danh
     const employees = await this.prisma.employee.findMany({
       where: {
-        leavePolicyId: { not: null },
-        leavePolicy: { isActive: true },
         employeeStatus: { not: EmployeeStatus.TERMINATED },
+        OR: [
+          { leavePolicy: { isActive: true } },
+          { leavePolicyId: null, jobTitle: { leavePolicy: { isActive: true } } },
+        ],
       },
-      include: { leavePolicy: true },
+      include: { leavePolicy: true, jobTitle: { include: { leavePolicy: true } } },
       take: 5000,
     });
 
@@ -135,9 +139,8 @@ export class LeaveAccrualTask {
     let processed = 0;
 
     for (const emp of employees) {
-      if (!emp.leavePolicy) continue;
-
-      const policy = emp.leavePolicy;
+      const policy = emp.leavePolicy ?? emp.jobTitle?.leavePolicy;
+      if (!policy) continue;
       const seniorityBonus = (policy.seniorityBonus as any[] ?? []);
 
       // Tính thâm niên

@@ -10,7 +10,16 @@ export interface JobTitle {
   description?: string;
   isActive: boolean;
   createdAt: string;
+  leavePolicyId?: string | null;
+  leavePolicy?: { id: string; name: string; baseAnnualDays: number; accrualMode: string } | null;
   _count?: { positions: number };
+}
+
+export interface LeavePolicyLite {
+  id: string;
+  name: string;
+  baseAnnualDays: number;
+  accrualMode: 'ANNUAL_UPFRONT' | 'MONTHLY_ACCRUAL';
 }
 
 export interface Position {
@@ -58,6 +67,7 @@ export const jobTitlesApi = {
     name: string;
     band?: string;
     description?: string;
+    leavePolicyId?: string | null;
   }) =>
     apiClient.post<JobTitle>('/job-titles', data).then((r) => r.data),
 
@@ -66,6 +76,15 @@ export const jobTitlesApi = {
 
   deactivate: (id: string) =>
     apiClient.delete(`/job-titles/${id}/deactivate`).then((r) => r.data),
+};
+
+// ─── Leave Policies API (cho dropdown gán theo chức danh) ──────────────────────
+
+export const leavePoliciesApi = {
+  list: () =>
+    apiClient
+      .get<PaginatedResult<LeavePolicyLite>>('/leave-policies', { params: { limit: 100 } })
+      .then((r) => r.data.data),
 };
 
 // ─── Positions API ────────────────────────────────────────────────────────────

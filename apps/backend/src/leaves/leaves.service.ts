@@ -252,13 +252,15 @@ export class LeavesService extends TenantAwareService {
           },
         });
 
-        // Nếu loại nghỉ có deductsAnnualLeave = true, tự động trừ phép năm tồn
+        // Nếu loại nghỉ có deductsAnnualLeave = true, tự động trừ thêm vào quỹ "Phép năm".
         // (LeaveType là danh mục global — không lọc theo tenant)
         if (leaveTypeForBalance?.deductsAnnualLeave) {
           const annualLeaveType = await tx.leaveType.findFirst({
             where: { name: { contains: 'Phép năm' } },
           });
-          if (annualLeaveType) {
+          // Guard: nếu chính đơn này ĐÃ là loại "Phép năm" thì balance đã được trừ ở trên
+          // → KHÔNG trừ lần nữa (tránh double-count cùng một dòng balance).
+          if (annualLeaveType && annualLeaveType.id !== request.leaveTypeId) {
             await tx.leaveBalance.upsert({
               where: {
                 employeeId_leaveTypeId_year: {

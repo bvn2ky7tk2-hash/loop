@@ -16,7 +16,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { jobTitlesApi, type JobTitle } from '../../api/hr-core';
+import { jobTitlesApi, leavePoliciesApi, type JobTitle } from '../../api/hr-core';
 
 const { Text } = Typography;
 
@@ -64,6 +64,12 @@ export default function JobTitlesPage() {
 
   const items = data?.data ?? [];
   const total = data?.total ?? 0;
+
+  // ── Danh sách gói phép năm (cho dropdown) ──
+  const { data: leavePolicies = [] } = useQuery({
+    queryKey: ['leave-policies-lite'],
+    queryFn: () => leavePoliciesApi.list(),
+  });
 
   // ── Stats (tính từ data hiện tại, hoặc dùng all-items query) ──
   const { data: allData } = useQuery({
@@ -122,6 +128,7 @@ export default function JobTitlesPage() {
       name: item.name,
       band: item.band,
       description: item.description,
+      leavePolicyId: item.leavePolicyId ?? undefined,
     });
     setModalOpen(true);
   };
@@ -165,6 +172,22 @@ export default function JobTitlesPage() {
           <Text style={{ color: textMuted }}>{v}</Text>
         ) : (
           <Text style={{ color: textMuted }}>—</Text>
+        ),
+    },
+    {
+      title: 'Gói phép năm',
+      dataIndex: 'leavePolicy',
+      width: 200,
+      render: (lp?: JobTitle['leavePolicy']) =>
+        lp ? (
+          <Text style={{ color: textPrimary }}>
+            {lp.name}{' '}
+            <Text style={{ color: textMuted, fontSize: 12 }}>
+              ({lp.baseAnnualDays} ngày · {lp.accrualMode === 'MONTHLY_ACCRUAL' ? 'theo tháng' : 'đầu năm'})
+            </Text>
+          </Text>
+        ) : (
+          <Text style={{ color: textMuted }}>— Chưa gán —</Text>
         ),
     },
     {
@@ -354,6 +377,21 @@ export default function JobTitlesPage() {
             rules={[{ max: 50, message: 'Tối đa 50 ký tự' }]}
           >
             <Input placeholder="VD: IC3, M2, L5..." maxLength={50} />
+          </Form.Item>
+
+          <Form.Item
+            name="leavePolicyId"
+            label="Gói phép năm"
+            tooltip="Quy định số phép/năm, bậc thâm niên, chế độ tính (đầu năm / theo tháng) cho chức danh này"
+          >
+            <Select
+              placeholder="Chọn gói phép năm áp dụng cho chức danh"
+              allowClear
+              options={leavePolicies.map((p) => ({
+                value: p.id,
+                label: `${p.name} — ${p.baseAnnualDays} ngày/năm (${p.accrualMode === 'MONTHLY_ACCRUAL' ? 'cộng theo tháng' : 'cấp đầu năm'})`,
+              }))}
+            />
           </Form.Item>
 
           <Form.Item

@@ -21,6 +21,10 @@ export class CreateJobTitleDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  leavePolicyId?: string;
 }
 
 export class UpdateJobTitleDto {
@@ -42,6 +46,10 @@ export class UpdateJobTitleDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
+  leavePolicyId?: string;
 }
 
 export class JobTitleQueryDto extends PaginationDto {

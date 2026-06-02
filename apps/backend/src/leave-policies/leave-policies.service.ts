@@ -113,14 +113,14 @@ export class LeavePoliciesService {
   async computeEntitlement(employeeId: string, year: number) {
     const employee = await this.prisma.employee.findUnique({
       where: { id: employeeId },
-      include: { leavePolicy: true },
+      include: { leavePolicy: true, jobTitle: { include: { leavePolicy: true } } },
     });
     if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
-    if (!employee.leavePolicy) {
-      throw new BadRequestException('Nhân viên chưa được gán chính sách phép');
+    // Ưu tiên gói gán trực tiếp cho NV, fallback sang gói chính sách của chức danh
+    const policy = employee.leavePolicy ?? employee.jobTitle?.leavePolicy;
+    if (!policy) {
+      throw new BadRequestException('Nhân viên chưa được gán chính sách phép (qua NV hoặc chức danh)');
     }
-
-    const policy = employee.leavePolicy;
     const seniorityBonus = (policy.seniorityBonus ?? []) as unknown as SeniorityBonusItem[];
 
     const startDate = employee.startDate ? new Date(employee.startDate) : null;
@@ -128,12 +128,14 @@ export class LeavePoliciesService {
       throw new BadRequestException('Nhân viên chưa có ngày vào làm');
     }
 
-    const today = new Date();
+    // Thâm niên tính tại thời điểm cuối năm đang xét (không vượt quá hôm nay)
+    const endOfYear = new Date(year, 11, 31);
+    const refDate = endOfYear.getTime() < Date.now() ? endOfYear : new Date();
     const yearsOfService = Math.floor(
-      (today.getTime() - startDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
+      (refDate.getTime() - startDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000),
     );
 
-    // Tổng bonus theo thâm niên (cộng tất cả mức đạt được)
+    // Cộng dồn từng bậc thâm niên (mỗi mốc yearsFrom đạt được cộng thêm bonus của mốc đó)
     const bonus = seniorityBonus
       .filter((item) => item.yearsFrom <= yearsOfService)
       .reduce((sum, item) => sum + item.bonus, 0);

@@ -33,6 +33,7 @@ export class JobTitlesService {
         orderBy: { createdAt: 'desc' },
         include: {
           _count: { select: { positions: true } },
+          leavePolicy: { select: { id: true, name: true, baseAnnualDays: true, accrualMode: true } },
         },
       }),
       this.prisma.jobTitle.count({ where }),
@@ -61,6 +62,7 @@ export class JobTitlesService {
         name: dto.name,
         band: dto.band,
         description: dto.description,
+        leavePolicyId: dto.leavePolicyId ?? null,
       },
     });
   }
@@ -75,6 +77,7 @@ export class JobTitlesService {
         ...(dto.band !== undefined && { band: dto.band }),
         ...(dto.description !== undefined && { description: dto.description }),
         ...(dto.isActive !== undefined && { isActive: dto.isActive }),
+        ...(dto.leavePolicyId !== undefined && { leavePolicyId: dto.leavePolicyId || null }),
       },
     });
   }
