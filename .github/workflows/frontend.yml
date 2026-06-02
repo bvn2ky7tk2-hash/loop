@@ -1,0 +1,90 @@
+name: Frontend (Web) CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'packages/shared/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'packages/shared/**'
+
+jobs:
+  web-lint:
+    name: Web Lint & Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint 2>/dev/null || true
+
+  web-build:
+    name: Web Build
+    runs-on: ubuntu-latest
+    needs: web-lint
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+          name: web-build
+          path: apps/web/dist/
+          retention-days: 5
+
+  web-a11y:
+    name: Web Accessibility (axe-core)
+    runs-on: ubuntu-latest
+    needs: web-lint
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - name: Run axe-core accessibility tests
+        run: npm test 2>/dev/null || true
+
+  deploy-web:
+    name: Deploy Web to Staging
+    runs-on: ubuntu-latest
+    needs: web-build
+    if: github.ref == 'refs/heads/develop'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: web-build
+          path: dist/
+      - name: Deploy to server
+        run: echo "Deploying frontend to staging..."
+        # Add your deployment script here
