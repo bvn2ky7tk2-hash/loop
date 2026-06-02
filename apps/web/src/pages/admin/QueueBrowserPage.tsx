@@ -172,7 +172,7 @@ function QueueCard({ queue }: { queue: QueueStats }) {
             dataSource={jobsData?.data ?? []}
             loading={loadingJobs}
             size="small"
-            pagination={{ pageSize: 10, showTotal: (t) => `${t} jobs` }}
+            pagination={{ pageSize: 10, showSizeChanger: true, pageSizeOptions: [10, 20, 50], showTotal: (t) => `${t} bản ghi` }}
             scroll={{ x: 700 }}
           />
         </div>

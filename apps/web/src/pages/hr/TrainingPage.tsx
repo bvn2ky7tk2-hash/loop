@@ -7,6 +7,7 @@ import { PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetTrainingPrograms, useGetTrainingRecords, useCreateTrainingProgram,
   useCreateTrainingRecord, useUpdateTrainingRecord,
@@ -29,6 +30,8 @@ const STATUS_META: Record<TrainingStatus, { label: string; color: string }> = {
 
 export default function TrainingPage() {
   const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
+  const { paginationProps: recordPaginationProps } = usePagination(20);
+  const { paginationProps: progPaginationProps } = usePagination(20);
 
   const [progModalOpen, setProgModalOpen] = useState(false);
   const [recModalOpen, setRecModalOpen] = useState(false);
@@ -149,7 +152,7 @@ export default function TrainingPage() {
                     dataSource={records}
                     columns={recordColumns}
                     loading={recLoading}
-                    pagination={{ pageSize: 20 }}
+                    pagination={recordPaginationProps(records.length, 'khóa đào tạo')}
                     size="middle"
                     locale={{
                       emptyText: (
@@ -180,7 +183,7 @@ export default function TrainingPage() {
                     dataSource={programs}
                     columns={programColumns}
                     loading={progLoading}
-                    pagination={{ pageSize: 20 }}
+                    pagination={progPaginationProps(programs.length, 'khóa đào tạo')}
                     size="middle"
                     locale={{
                       emptyText: (

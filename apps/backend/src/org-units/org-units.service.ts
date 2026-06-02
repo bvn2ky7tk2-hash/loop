@@ -62,7 +62,7 @@ export class OrgUnitsService extends TenantAwareService {
   async findAll(): Promise<OrgUnitTree[]> {
     const units = await this.prisma.orgUnit.findMany({
       where: this.tenantWhere(),
-      orderBy: [{ level: 'asc' }, { name: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { level: 'asc' }, { name: 'asc' }],
       include: {
         _count: { select: { users: true, employees: true } },
         headJobTitle: { select: { id: true, name: true } },

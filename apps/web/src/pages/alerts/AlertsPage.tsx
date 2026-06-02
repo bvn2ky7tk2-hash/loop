@@ -7,6 +7,7 @@ import { PlusOutlined, DeleteOutlined, BellOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectsApi } from '../../api/projects';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { notificationsApi, type Notification } from '../../api/notifications';
 import { apiClient } from '../../api/client';
 import dayjs from 'dayjs';
@@ -38,6 +39,7 @@ export default function AlertsPage() {
   const { message } = App.useApp();
   const { textMuted } = useThemePalette();
   const qc = useQueryClient();
+  const { paginationProps } = usePagination(50);
   const [projectId, setProjectId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm] = Form.useForm();
@@ -166,6 +168,7 @@ export default function AlertsPage() {
                   rowKey="id"
                   size="middle"
                   locale={{ emptyText: projectId ? 'Chưa có cảnh báo' : 'Chọn dự án để xem' }}
+                  pagination={paginationProps(alerts.length, 'cảnh báo')}
                 />
               </>
             ),

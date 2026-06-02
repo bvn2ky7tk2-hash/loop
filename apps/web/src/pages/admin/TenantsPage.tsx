@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { confirmDelete } from '../../components/ui/confirmDelete';
@@ -25,6 +26,7 @@ const TIMEZONE_OPTIONS = [
 
 export default function TenantsPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -209,7 +211,7 @@ export default function TenantsPage() {
           loading={isLoading}
           dataSource={tenants}
           columns={columns}
-          pagination={{ pageSize: 20, showTotal: (t) => `${t} tenant` }}
+          pagination={paginationProps(tenants.length, 'bản ghi')}
         />
       </div>
 

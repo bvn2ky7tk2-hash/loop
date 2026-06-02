@@ -180,7 +180,7 @@ export class ForecastService {
         include: {
           customer: { select: { id: true, name: true } },
         },
-        orderBy: { value: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -201,7 +201,7 @@ export class ForecastService {
   listTargets(periodType?: string) {
     return this.prisma.revenueTarget.findMany({
       where: periodType ? { periodType } : undefined,
-      orderBy: { period: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

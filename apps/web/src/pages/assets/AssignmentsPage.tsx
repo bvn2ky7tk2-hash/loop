@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, Typography, Select, Tag, Space } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetAllAssignments, useGetAssets,
   type AssetAssignment, type AssignmentFilterParams,
@@ -14,7 +15,13 @@ const { Title, Text } = Typography;
 export default function AssetAssignmentsPage() {
   const { bgContainer, borderColor, textPrimary, textMuted } = useThemePalette();
 
-  const [filters, setFilters] = useState<AssignmentFilterParams & { page: number; limit: number }>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [assetIdFilter, setAssetIdFilter] = useState<string | undefined>();
+  const [statusFilter, setStatusFilter] = useState<'active' | 'returned' | undefined>();
+  const filters: AssignmentFilterParams & { page: number; limit: number } = { page, limit: pageSize, assetId: assetIdFilter, status: statusFilter };
+
+  useEffect(() => { resetPage(); }, [assetIdFilter, statusFilter, resetPage]);
+
   const { data, isLoading }   = useGetAllAssignments(filters);
   const { data: assetsData }  = useGetAssets({ limit: 200 });
   const assets = assetsData?.data ?? [];
@@ -78,16 +85,15 @@ export default function AssetAssignmentsPage() {
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select placeholder="Tài sản" style={{ width: 250 }} allowClear showSearch optionFilterProp="label"
           options={assets.map(a => ({ value: a.id, label: `${a.code} — ${a.name}` }))}
-          onChange={v => setFilters(f => ({ ...f, assetId: v, page: 1 }))} />
+          onChange={v => setAssetIdFilter(v)} />
         <Select placeholder="Trạng thái" style={{ width: 160 }} allowClear options={STATUS_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, status: v as 'active' | 'returned' | undefined, page: 1 }))} />
+          onChange={v => setStatusFilter(v as 'active' | 'returned' | undefined)} />
       </div>
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<AssetAssignment>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total ?? 0, 'bàn giao')}
         />
       </div>
     </div>

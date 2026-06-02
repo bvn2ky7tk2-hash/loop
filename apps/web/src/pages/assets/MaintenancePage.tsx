@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Typography, Select, Space, Form,
   Input, InputNumber, DatePicker, message,
@@ -8,6 +8,7 @@ import { PlusOutlined, ToolOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetAllMaintenance, useGetAssets, useAddMaintenance,
   type AssetMaintenance, type MaintenanceFilterParams,
@@ -27,7 +28,15 @@ const TYPE_OPTIONS = [
 export default function AssetMaintenancePage() {
   const { bgContainer, borderColor, textPrimary, textMuted, preset } = useThemePalette();
 
-  const [filters, setFilters] = useState<MaintenanceFilterParams & { page: number; limit: number }>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [assetIdFilter, setAssetIdFilter] = useState<string | undefined>();
+  const [typeFilter, setTypeFilter] = useState<string | undefined>();
+  const [dateFrom, setDateFrom] = useState<string | undefined>();
+  const [dateTo, setDateTo] = useState<string | undefined>();
+  const filters: MaintenanceFilterParams & { page: number; limit: number } = { page, limit: pageSize, assetId: assetIdFilter, type: typeFilter, dateFrom, dateTo };
+
+  useEffect(() => { resetPage(); }, [assetIdFilter, typeFilter, dateFrom, dateTo, resetPage]);
+
   const [drawerOpen, setDrawer] = useState(false);
   const [form] = Form.useForm();
 
@@ -106,17 +115,15 @@ export default function AssetMaintenancePage() {
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select placeholder="Tài sản" style={{ width: 250 }} allowClear showSearch optionFilterProp="label"
           options={assets.map(a => ({ value: a.id, label: `${a.code} — ${a.name}` }))}
-          onChange={v => setFilters(f => ({ ...f, assetId: v, page: 1 }))} />
+          onChange={v => setAssetIdFilter(v)} />
         <Select placeholder="Loại bảo trì" style={{ width: 180 }} allowClear options={TYPE_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, type: v, page: 1 }))} />
+          onChange={v => setTypeFilter(v)} />
         <DatePicker.RangePicker
           format="DD/MM/YYYY"
-          onChange={dates => setFilters(f => ({
-            ...f,
-            dateFrom: dates?.[0]?.format('YYYY-MM-DD'),
-            dateTo:   dates?.[1]?.format('YYYY-MM-DD'),
-            page: 1,
-          }))}
+          onChange={dates => {
+            setDateFrom(dates?.[0]?.format('YYYY-MM-DD'));
+            setDateTo(dates?.[1]?.format('YYYY-MM-DD'));
+          }}
         />
       </div>
 
@@ -136,8 +143,7 @@ export default function AssetMaintenancePage() {
               </div>
             ),
           }}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total ?? 0, 'bảo dưỡng')}
         />
       </div>
 

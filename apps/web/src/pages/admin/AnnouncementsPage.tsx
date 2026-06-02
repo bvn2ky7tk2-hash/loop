@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { announcementsApi, type SystemAnnouncement } from '../../api/announcements';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
@@ -34,6 +35,7 @@ export default function AnnouncementsPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<SystemAnnouncement | null>(null);
@@ -237,7 +239,7 @@ export default function AnnouncementsPage() {
           columns={columns}
           dataSource={rows}
           loading={isLoading}
-          pagination={{ pageSize: 20, showTotal: (t) => `${t} thông báo` }}
+          pagination={paginationProps(rows.length, 'thông báo')}
         />
       </div>
 

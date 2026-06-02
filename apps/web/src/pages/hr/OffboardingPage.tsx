@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -43,6 +44,7 @@ const STATUS_META: Record<OffboardStatus, { label: string; color: string; darkBg
 
 export default function OffboardingPage() {
   const { isDark, textMuted, textSecondary, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const { message } = App.useApp();
 
   const [search, setSearch] = useState('');
@@ -228,7 +230,7 @@ export default function OffboardingPage() {
           columns={columns}
           dataSource={filtered}
           loading={isLoading}
-          pagination={{ pageSize: 20, showSizeChanger: false }}
+          pagination={paginationProps(filtered.length, 'nhân sự')}
           scroll={{ x: 800 }}
           locale={{ emptyText: <Text style={{ color: textMuted }}>Không có nhân viên đang offboarding</Text> }}
         />

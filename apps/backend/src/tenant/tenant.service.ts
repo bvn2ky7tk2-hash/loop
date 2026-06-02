@@ -8,7 +8,7 @@ export class TenantService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.tenant.findMany({ orderBy: { createdAt: 'asc' } });
+    return this.prisma.tenant.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   async findOne(id: string) {

@@ -308,9 +308,11 @@ res.json({ error: e.stack });          // lộ stack trace
 - [ ] Palette: dùng `useThemePalette()` — KHÔNG tự khai báo `textPrimary`, `bgCard`, `isDark`...
 - [ ] Header trang: dùng `<PageHeader title icon actions />` — KHÔNG tự làm div inline
 - [ ] Stat card đầu trang: dùng `<StatCard>` — KHÔNG tự làm div+Statistic
+- [ ] Detail popup / form CRUD: dùng `<CenteredModal>` — KHÔNG dùng `<Drawer>` (Drawer mở bên phải, vi phạm UX hệ thống)
 - [ ] Xóa item: dùng `confirmDelete({ itemName, onConfirm })` — KHÔNG dùng `Modal.confirm` inline
 - [ ] Filter bar: dùng `<FilterBar>` bao ngoài các Select/Input filter
 - [ ] Column toggle: dùng `<ColumnToggle>` + `useColumnVisibility`
+- [ ] Phân trang: dùng `usePagination()` — KHÔNG dùng `pagination={{ pageSize: X }}` inline cứng
 - [ ] Link/code/accent text: dùng `linkColor` từ `useThemePalette()` (xem Nguyên tắc #4)
 - [ ] Column render Table: KHÔNG trả plain string — wrap trong `<Text style={{ color: textPrimary/textMuted }}>` (xem Nguyên tắc #5)
 - [ ] Tag entity-name: dùng explicit isDark style (xem Nguyên tắc #6)
@@ -330,6 +332,7 @@ res.json({ error: e.stack });          // lộ stack trace
 | `useThemePalette()` | `hooks/useThemePalette.ts` | Mọi component cần màu (textPrimary, bgCard, linkColor...) |
 | `useColumnVisibility()` | `hooks/useColumnVisibility.ts` | Table có ẩn/hiện cột |
 | `usePermissions()` | `hooks/usePermissions.ts` | Kiểm tra quyền trong component |
+| `usePagination()` | `hooks/usePagination.ts` | Phân trang chuẩn cho mọi Table (client-side & server-side) |
 
 ### UI Component
 
@@ -338,7 +341,7 @@ res.json({ error: e.stack });          // lộ stack trace
 | `<PageHeader>` | `components/ui/PageHeader.tsx` | Header đầu mọi trang (title + icon + nút thêm) |
 | `<StatCard>` | `components/ui/StatCard.tsx` | Stat/KPI card đầu trang (nền đặc màu) |
 | `<SparklineCard>` | `components/ui/SparklineCard.tsx` | Stat card có sparkline chart (dashboard) |
-| `<CenteredModal>` | `components/ui/CenteredModal.tsx` | Modal form (thay thế `<Modal>` mặc định) |
+| `<CenteredModal>` | `components/ui/CenteredModal.tsx` | Modal form + detail popup — thay thế cả `<Modal>` lẫn `<Drawer>` (KHÔNG dùng Drawer) |
 | `<FilterBar>` | `components/FilterBar.tsx` | Thanh filter (bao ngoài Select/Input) |
 | `<ColumnToggle>` | `components/ColumnToggle.tsx` | Toggle ẩn/hiện cột Table |
 | `<TaskStatusPill>` | `components/ui/TaskStatusPill.tsx` | Badge trạng thái task |
@@ -357,6 +360,7 @@ res.json({ error: e.stack });          // lộ stack trace
 
 ```tsx
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -364,6 +368,9 @@ import { confirmDelete } from '../../components/ui/confirmDelete';
 
 export default function MyPage() {
   const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
+  // Client-side: const { resetPage, paginationProps } = usePagination(20);
+  // Server-side: const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  // useEffect(() => { resetPage(); }, [filter1, filter2, resetPage]);
 
   return (
     <div style={{ padding: 24 }}>

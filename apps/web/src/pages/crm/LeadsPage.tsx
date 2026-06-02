@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Form,
   Input, InputNumber, Tag, Modal, message,
@@ -8,6 +8,7 @@ import { confirmDelete } from '../../components/ui/confirmDelete';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FunnelPlotOutlined, SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { usersApi } from '../../api/users';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -44,8 +45,15 @@ export default function LeadsPage() {
   const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
   const { user }  = useAuthStore();
 
-  const [filters, setFilters] = useState<LeadFilterDto>({ page: 1, limit: 20 });
-  const [drawerOpen, setDrawerOpen]     = useState(false);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | undefined>();
+  const [sourceFilter, setSourceFilter] = useState<LeadSource | undefined>();
+  const [assigneeIdFilter, setAssigneeIdFilter] = useState<string | undefined>();
+  const filters: LeadFilterDto = { page, limit: pageSize, status: statusFilter, source: sourceFilter, assigneeId: assigneeIdFilter };
+
+  useEffect(() => { resetPage(); }, [statusFilter, sourceFilter, assigneeIdFilter, resetPage]);
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [convertOpen, setConvertOpen]   = useState(false);
   const [editing, setEditing]           = useState<Lead | null>(null);
   const [converting, setConverting]     = useState<Lead | null>(null);
@@ -185,14 +193,14 @@ export default function LeadsPage() {
           style={{ width: 160 }}
           allowClear
           options={STATUS_OPTIONS}
-          onChange={(v) => setFilters(f => ({ ...f, status: v, page: 1 }))}
+          onChange={(v) => setStatusFilter(v)}
         />
         <Select
           placeholder="Nguồn"
           style={{ width: 160 }}
           allowClear
           options={SOURCE_OPTIONS}
-          onChange={(v) => setFilters(f => ({ ...f, source: v, page: 1 }))}
+          onChange={(v) => setSourceFilter(v)}
         />
         <Select
           placeholder="Phụ trách"
@@ -201,7 +209,7 @@ export default function LeadsPage() {
           showSearch
           optionFilterProp="label"
           options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
-          onChange={(v) => setFilters(f => ({ ...f, assigneeId: v, page: 1 }))}
+          onChange={(v) => setAssigneeIdFilter(v)}
         />
       </div>
 
@@ -211,13 +219,7 @@ export default function LeadsPage() {
           columns={columns}
           dataSource={data?.data ?? []}
           loading={isLoading}
-          pagination={{
-            current: filters.page,
-            pageSize: filters.limit,
-            total: data?.total ?? 0,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
-            showSizeChanger: true,
-          }}
+          pagination={paginationProps(data?.total ?? 0, 'tiềm năng')}
         />
       </div>
 

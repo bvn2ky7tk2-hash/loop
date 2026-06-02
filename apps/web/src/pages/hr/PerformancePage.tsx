@@ -8,6 +8,7 @@ import { PlusOutlined, TrophyOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetPerformanceReviews, useCreatePerformanceReview, useUpdatePerformanceReview,
   type PerformanceReview, type ReviewStatus,
@@ -29,6 +30,7 @@ const STATUS_META: Record<ReviewStatus, { label: string; color: string }> = {
 
 export default function PerformancePage() {
   const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
+  const { paginationProps } = usePagination(20);
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   const [periodFilter, setPeriodFilter] = useState<string | undefined>(undefined);
@@ -138,7 +140,7 @@ export default function PerformancePage() {
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, overflow: 'hidden' }}>
         <Table<PerformanceReview>
           rowKey="id" dataSource={reviews} columns={columns}
-          loading={isLoading} pagination={{ pageSize: 20 }} size="middle"
+          loading={isLoading} pagination={paginationProps(reviews.length, 'đánh giá')} size="middle"
         />
       </div>
 

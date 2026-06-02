@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { CustomerSelect } from '../../components/selects';
 
 const PROJECT_COL_DEFS = [
@@ -29,6 +29,7 @@ import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
 import type { ProjectStatus } from '../../components/ui/TaskStatusPill';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
+import { usePagination } from '../../hooks/usePagination';
 import { ColumnToggle } from '../../components/ColumnToggle';
 import { FilterBar } from '../../components/FilterBar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -76,6 +77,9 @@ export default function ProjectsPage() {
   const [searchText, setSearchText]     = useState('');
   const [filterStatus, setFilterStatus] = useState<string[]>([]);
   const [filterType, setFilterType]     = useState<string | null>(null);
+  const { resetPage, paginationProps } = usePagination(50);
+
+  useEffect(() => { resetPage(); }, [searchText, filterStatus, filterType, resetPage]);
 
   const { isVisible, toggle, reset: resetCols } = useColumnVisibility('projects', PROJECT_COL_DEFS);
 
@@ -409,6 +413,7 @@ export default function ProjectsPage() {
         loading={isLoading}
         size="middle"
         locale={{ emptyText: 'Không có dự án phù hợp' }}
+        pagination={paginationProps(filteredProjects.length, 'dự án')}
       />
 
       <Modal

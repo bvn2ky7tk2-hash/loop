@@ -8,6 +8,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -25,9 +26,10 @@ const { Text } = Typography;
 export default function VehicleManagePage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark, linkColor, preset } = useThemePalette();
 
-  const [modalOpen, setModalOpen]         = useState(false);
-  const [editing, setEditing]             = useState<Vehicle | null>(null);
-  const [vehicleForm]                     = Form.useForm();
+  const { paginationProps } = usePagination(20);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing]     = useState<Vehicle | null>(null);
+  const [vehicleForm]             = Form.useForm();
 
   const { data: vehicles = [], isLoading } = useVehicles();
   const { data: stats }                    = useVehicleStats();
@@ -192,7 +194,7 @@ export default function VehicleManagePage() {
           columns={columns}
           dataSource={vehicles}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(vehicles.length, 'xe')}
           scroll={{ x: 800 }}
           locale={{
             emptyText: (

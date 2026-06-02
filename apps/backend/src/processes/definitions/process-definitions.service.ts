@@ -22,7 +22,7 @@ export class ProcessDefinitionsService {
         where,
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: [{ name: 'asc' }, { version: 'desc' }],
+        orderBy: [{ createdAt: 'desc' }, { name: 'asc' }, { version: 'desc' }],
         select: {
           id: true,
           name: true,

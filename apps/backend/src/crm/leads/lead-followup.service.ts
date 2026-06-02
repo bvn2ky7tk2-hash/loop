@@ -101,7 +101,7 @@ export class LeadFollowUpService extends TenantAwareService {
           deal:     { select: { id: true, title: true } },
           assignee: { select: { id: true, name: true } },
         },
-        orderBy: { scheduledDate: 'asc' },
+        orderBy: { createdAt: 'desc' },
         skip:    (page - 1) * limit,
         take:    limit,
       }),

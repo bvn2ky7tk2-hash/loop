@@ -22,7 +22,7 @@ export class PermissionsAdminService {
   // ── All permissions ──────────────────────────────────────────────────────────
 
   async listAll() {
-    return this.prisma.permission.findMany({ orderBy: [{ module: 'asc' }, { action: 'asc' }] });
+    return this.prisma.permission.findMany({ orderBy: [{ createdAt: 'desc' }, { module: 'asc' }, { action: 'asc' }] });
   }
 
   // ── System Role permissions ──────────────────────────────────────────────────

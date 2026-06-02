@@ -12,6 +12,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -78,7 +79,7 @@ export default function PositionsPage() {
   const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [jobTitleFilter, setJobTitleFilter] = useState<string | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
-  const [page, setPage] = useState(1);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Position | null>(null);
   const [form] = Form.useForm();
@@ -89,7 +90,7 @@ export default function PositionsPage() {
     queryFn: () =>
       positionsApi.list({
         page,
-        limit: 20,
+        limit: pageSize,
         search: search || undefined,
         orgUnitId: orgUnitFilter,
         jobTitleId: jobTitleFilter,
@@ -323,7 +324,7 @@ export default function PositionsPage() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPage(1);
+            resetPage();
           }}
           allowClear
           style={{ width: 260 }}
@@ -333,7 +334,7 @@ export default function PositionsPage() {
           value={orgUnitFilter}
           onChange={(v) => {
             setOrgUnitFilter(v);
-            setPage(1);
+            resetPage();
           }}
           allowClear
           style={{ width: 200 }}
@@ -346,7 +347,7 @@ export default function PositionsPage() {
           value={jobTitleFilter}
           onChange={(v) => {
             setJobTitleFilter(v);
-            setPage(1);
+            resetPage();
           }}
           allowClear
           style={{ width: 220 }}
@@ -382,14 +383,7 @@ export default function PositionsPage() {
           columns={columns}
           dataSource={filteredItems}
           loading={isLoading}
-          pagination={{
-            current: page,
-            pageSize: 20,
-            total,
-            showSizeChanger: false,
-            showTotal: (t) => `Tổng ${t} vị trí`,
-            onChange: (p) => setPage(p),
-          }}
+          pagination={paginationProps(total, 'vị trí')}
         />
       </div>
 

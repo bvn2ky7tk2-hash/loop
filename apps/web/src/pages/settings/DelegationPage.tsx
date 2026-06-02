@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -85,6 +86,7 @@ export default function DelegationPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
   const { message } = App.useApp();
   const qc = useQueryClient();
+  const { paginationProps } = usePagination(50);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [form] = Form.useForm();
@@ -273,10 +275,7 @@ export default function DelegationPage() {
           columns={columns}
           dataSource={delegations}
           loading={isLoading}
-          pagination={{
-            pageSize: 10,
-            showTotal: (t) => `Tổng ${t} ủy quyền`,
-          }}
+          pagination={paginationProps(delegations.length, 'ủy quyền')}
         />
       </div>
 

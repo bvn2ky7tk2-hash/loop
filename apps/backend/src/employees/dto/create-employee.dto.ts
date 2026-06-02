@@ -5,11 +5,12 @@ import {
 import { EmployeeLevel, Gender, MaritalStatus, IdType } from '../../generated/prisma';
 
 export class CreateEmployeeDto {
+  @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(20)
   @Matches(/^[A-Z0-9_-]+$/, { message: 'Code chỉ dùng chữ hoa, số, gạch ngang' })
-  code: string;
+  code?: string;
 
   @IsString()
   @MinLength(1)

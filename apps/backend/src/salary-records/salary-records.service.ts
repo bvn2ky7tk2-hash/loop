@@ -22,7 +22,7 @@ export class SalaryRecordsService extends TenantAwareService {
 
     const records = await this.prisma.salaryRecord.findMany({
       where: { employeeId },
-      orderBy: { effectiveDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 200,
     });
 

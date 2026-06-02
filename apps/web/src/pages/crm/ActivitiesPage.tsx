@@ -12,6 +12,7 @@ import {
 import dayjs from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -41,7 +42,7 @@ export default function ActivitiesPage() {
 
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<CrmActivity | null>(null);
   const [detail, setDetail] = useState<CrmActivity | null>(null);
@@ -50,7 +51,7 @@ export default function ActivitiesPage() {
   const { data: stats } = useQuery({ queryKey: ['crm-activity-stats'], queryFn: crmActivitiesApi.stats });
   const { data, isLoading } = useQuery({
     queryKey: ['crm-activities', typeFilter, page],
-    queryFn: () => crmActivitiesApi.list({ type: typeFilter, page, limit: 20 }),
+    queryFn: () => crmActivitiesApi.list({ type: typeFilter, page, limit: pageSize }),
   });
   const { data: customers } = useQuery({
     queryKey: ['customers-simple'],
@@ -201,7 +202,7 @@ export default function ActivitiesPage() {
           placeholder="Loại hoạt động"
           allowClear style={{ width: 160 }}
           value={typeFilter}
-          onChange={v => { setTypeFilter(v); setPage(1); }}
+          onChange={v => { setTypeFilter(v); resetPage(); }}
           options={[
             { value: 'CALL',       label: 'Cuộc gọi' },
             { value: 'EMAIL',      label: 'Email' },
@@ -222,13 +223,7 @@ export default function ActivitiesPage() {
           dataSource={filtered}
           loading={isLoading}
           scroll={{ x: 900 }}
-          pagination={{
-            current: page,
-            pageSize: 20,
-            total: data?.total ?? 0,
-            onChange: setPage,
-            showTotal: t => <Text style={{ color: textMuted }}>Tổng {t} hoạt động</Text>,
-          }}
+          pagination={paginationProps(data?.total ?? 0, 'hoạt động')}
         />
       </div>
 

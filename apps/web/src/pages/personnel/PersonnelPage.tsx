@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Table, Button, Modal, Form, Input, Select, Space,
@@ -18,6 +18,7 @@ import {
   PlayCircleOutlined, IdcardOutlined, InfoCircleOutlined, CrownOutlined,
 } from '@ant-design/icons';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
+import { usePagination } from '../../hooks/usePagination';
 import { ColumnToggle } from '../../components/ColumnToggle';
 import { FilterBar } from '../../components/FilterBar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -444,12 +445,17 @@ export default function PersonnelPage() {
   const [onboardingLoading, setOnboardingLoading] = useState<string | null>(null);
 
   const { isVisible, toggle, reset: resetCols } = useColumnVisibility('personnel', PERSONNEL_COL_DEFS);
+  const { resetPage, paginationProps } = usePagination(50);
+
+  // Reset về trang 1 khi bất kỳ filter nào thay đổi
+  useEffect(() => { resetPage(); }, [searchText, filterLevel, filterTechStack, selectedOrgId, filterFree, resetPage]);
 
   // ── Queries ──────────────────────────────────────────────────────────────────
 
   const { data: employees = [], isLoading } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
+    staleTime: 0,
   });
 
   const { data: orgTree = [], isLoading: orgLoading } = useQuery({
@@ -578,8 +584,8 @@ export default function PersonnelPage() {
 
   const createMutation = useMutation({
     mutationFn: employeesApi.create,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['employees'] });
+    onSuccess: async () => {
+      await qc.refetchQueries({ queryKey: ['employees'], exact: true });
       setCreateOpen(false);
       setCreateError('');
       createForm.resetFields();
@@ -1157,7 +1163,7 @@ export default function PersonnelPage() {
             rowKey="id"
             loading={isLoading}
             size="small"
-            pagination={{ pageSize: 50, showSizeChanger: true, showTotal: (t) => `${t} nhân sự` }}
+            pagination={paginationProps(filteredEmployees.length, 'nhân sự')}
             locale={{ emptyText: 'Không có nhân sự phù hợp' }}
             scroll={{ x: 980 }}
           />
@@ -1312,16 +1318,9 @@ export default function PersonnelPage() {
             cccdIssueDate: v.cccdIssueDate?.format('YYYY-MM-DD'),
           })}
         >
-          <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
-            <Form.Item name="code" label="Mã nhân sự" style={{ flex: 1 }}
-              rules={[{ required: true, message: 'Nhập mã' }, { pattern: /^[A-Z0-9_-]+$/, message: 'Chỉ dùng chữ HOA, số, gạch ngang' }]}
-            >
-              <Input placeholder="EMP001" onChange={(e) => createForm.setFieldValue('code', e.target.value.toUpperCase())} />
-            </Form.Item>
-            <Form.Item name="level" label="Cấp độ" style={{ flex: 1 }} rules={[{ required: true, message: 'Chọn cấp độ' }]}>
-              <Select options={LEVELS.map((l) => ({ value: l, label: l }))} />
-            </Form.Item>
-          </Space>
+          <Form.Item name="level" label="Cấp độ" rules={[{ required: true, message: 'Chọn cấp độ' }]}>
+            <Select options={LEVELS.map((l) => ({ value: l, label: l }))} placeholder="Chọn cấp độ" />
+          </Form.Item>
           <Form.Item name="fullName" label="Họ và tên đầy đủ" rules={[{ required: true, message: 'Nhập họ tên' }]}>
             <Input />
           </Form.Item>

@@ -16,7 +16,7 @@ export class SkillsService {
         ...(!includeInactive ? { isActive: true } : {}),
       },
       include: { _count: { select: { employees: true } } },
-      orderBy: [{ category: 'asc' }, { name: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { category: 'asc' }, { name: 'asc' }],
     });
   }
 

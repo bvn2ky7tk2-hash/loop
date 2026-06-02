@@ -58,7 +58,7 @@ export class KbService extends TenantAwareService {
       include: {
         _count: { select: { articles: true } },
       },
-      orderBy: { sortOrder: 'asc' },
+      orderBy: [{ createdAt: 'desc' }, { sortOrder: 'asc' }],
     });
   }
 
@@ -102,7 +102,7 @@ export class KbService extends TenantAwareService {
           category: { select: { id: true, name: true, color: true, icon: true } },
           author:   { select: { id: true, name: true } },
         },
-        orderBy: [{ isPinned: 'desc' }, { updatedAt: 'desc' }],
+        orderBy: [{ createdAt: 'desc' }, { isPinned: 'desc' }, { updatedAt: 'desc' }],
         skip: (page - 1) * limit,
         take: limit,
       }),

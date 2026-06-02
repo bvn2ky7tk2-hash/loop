@@ -11,6 +11,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -49,7 +50,7 @@ export default function JobTitlesPage() {
   // ── State ──
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined);
-  const [page, setPage] = useState(1);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<JobTitle | null>(null);
   const [form] = Form.useForm();
@@ -58,7 +59,7 @@ export default function JobTitlesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['job-titles', { page, search, isActive: activeFilter }],
     queryFn: () =>
-      jobTitlesApi.list({ page, limit: 20, search: search || undefined, isActive: activeFilter }),
+      jobTitlesApi.list({ page, limit: pageSize, search: search || undefined, isActive: activeFilter }),
   });
 
   const items = data?.data ?? [];
@@ -270,7 +271,7 @@ export default function JobTitlesPage() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPage(1);
+            resetPage();
           }}
           allowClear
           style={{ width: 280 }}
@@ -280,7 +281,7 @@ export default function JobTitlesPage() {
           value={activeFilter === undefined ? null : String(activeFilter)}
           onChange={(v) => {
             setActiveFilter(v === null || v === undefined ? undefined : v === 'true');
-            setPage(1);
+            resetPage();
           }}
           allowClear
           style={{ width: 160 }}
@@ -305,14 +306,7 @@ export default function JobTitlesPage() {
           columns={columns}
           dataSource={items}
           loading={isLoading}
-          pagination={{
-            current: page,
-            pageSize: 20,
-            total,
-            showSizeChanger: false,
-            showTotal: (t) => `Tổng ${t} chức danh`,
-            onChange: (p) => setPage(p),
-          }}
+          pagination={paginationProps(total, 'chức danh')}
         />
       </div>
 

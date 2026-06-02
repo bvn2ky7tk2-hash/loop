@@ -30,7 +30,7 @@ export class JobTitlesService {
         where,
         skip,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           _count: { select: { positions: true } },
         },

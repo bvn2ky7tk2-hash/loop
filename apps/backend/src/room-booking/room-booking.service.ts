@@ -36,7 +36,7 @@ export class RoomBookingService extends TenantAwareService {
       this.prisma.meetingRoom.findMany({
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { name: 'asc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           _count: { select: { bookings: true } },
         },
@@ -125,7 +125,7 @@ export class RoomBookingService extends TenantAwareService {
         where,
         skip:    (page - 1) * limit,
         take:    limit,
-        orderBy: { startTime: 'asc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           room:     { select: { id: true, name: true, floor: true } },
           bookedBy: { select: { id: true, name: true } },

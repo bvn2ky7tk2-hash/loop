@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form,
   Input, InputNumber, DatePicker, Modal, message, Row, Col,
@@ -13,6 +13,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { orgUnitsApi } from '../../api/org-units';
 import { usersApi } from '../../api/users';
@@ -50,7 +51,13 @@ const STATUS_OPTIONS   = Object.entries(STATUS_META).map(([k, v]) => ({ value: k
 export default function AssetsPage() {
   const { bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters]       = useState<AssetFilterParams>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [categoryFilter, setCategoryFilter] = useState<AssetCategory | undefined>();
+  const [statusFilter, setStatusFilter] = useState<AssetStatus | undefined>();
+  const [orgUnitIdFilter, setOrgUnitIdFilter] = useState<string | undefined>();
+  const filters: AssetFilterParams = { page, limit: pageSize, category: categoryFilter, status: statusFilter, orgUnitId: orgUnitIdFilter };
+
+  useEffect(() => { resetPage(); }, [categoryFilter, statusFilter, orgUnitIdFilter, resetPage]);
   const [drawerOpen, setDrawer]     = useState(false);
   const [editing, setEditing]       = useState<Asset | null>(null);
   const [assignOpen, setAssignOpen] = useState(false);
@@ -227,20 +234,19 @@ export default function AssetsPage() {
       {/* Filters */}
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select placeholder="Loại tài sản" style={{ width: 150 }} allowClear options={CATEGORY_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, category: v, page: 1 }))} />
+          onChange={v => setCategoryFilter(v)} />
         <Select placeholder="Trạng thái" style={{ width: 160 }} allowClear options={STATUS_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, status: v, page: 1 }))} />
+          onChange={v => setStatusFilter(v)} />
         <Select placeholder="Bộ phận" style={{ width: 200 }} allowClear showSearch optionFilterProp="label"
           options={(orgUnits as { id: string; name: string }[]).map(o => ({ value: o.id, label: o.name }))}
-          onChange={v => setFilters(f => ({ ...f, orgUnitId: v, page: 1 }))} />
+          onChange={v => setOrgUnitIdFilter(v)} />
       </div>
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Asset>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           locale={{ emptyText: 'Chưa có tài sản nào' }}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total ?? 0, 'tài sản')}
         />
       </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DndContext, DragOverlay,
   PointerSensor, useSensor, useSensors, useDroppable, useDraggable,
@@ -24,6 +24,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { usersApi } from '../../api/users';
 import {
   useGetDeals, useCreateDeal, useUpdateDeal, useMarkDealWon, useMarkDealLost, useDeleteDeal,
@@ -173,8 +174,14 @@ export default function DealsPage() {
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
   const { user } = useAuthStore();
 
-  const [viewMode, setViewMode]       = useState<'kanban' | 'list'>('kanban');
-  const [filters, setFilters]         = useState<DealFilterDto>({ page: 1, limit: 40 });
+  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
+  const { page, pageSize, resetPage, paginationProps } = usePagination(40);
+  const [stageFilter, setStageFilter] = useState<DealFilterDto['stage']>();
+  const [customerIdFilter, setCustomerIdFilter] = useState<string | undefined>();
+  const [assigneeIdFilter, setAssigneeIdFilter] = useState<string | undefined>();
+  const filters: DealFilterDto = { page, limit: pageSize, stage: stageFilter, customerId: customerIdFilter, assigneeId: assigneeIdFilter };
+
+  useEffect(() => { resetPage(); }, [stageFilter, customerIdFilter, assigneeIdFilter, resetPage]);
   const [drawerOpen, setDrawerOpen]   = useState(false);
   const [wonModalOpen, setWonModal]   = useState(false);
   const [lostModalOpen, setLostModal] = useState(false);
@@ -405,7 +412,7 @@ export default function DealsPage() {
           style={{ width: 160 }}
           allowClear
           options={STAGES.map(s => ({ value: s.key, label: s.label }))}
-          onChange={(v) => setFilters(f => ({ ...f, stage: v, page: 1 }))}
+          onChange={(v) => setStageFilter(v)}
         />
         <Select
           placeholder="Khách hàng"
@@ -414,7 +421,7 @@ export default function DealsPage() {
           showSearch
           optionFilterProp="label"
           options={customers.map(c => ({ value: c.id, label: c.name }))}
-          onChange={(v) => setFilters(f => ({ ...f, customerId: v, page: 1 }))}
+          onChange={(v) => setCustomerIdFilter(v)}
         />
         <Select
           placeholder="Phụ trách"
@@ -423,7 +430,7 @@ export default function DealsPage() {
           showSearch
           optionFilterProp="label"
           options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
-          onChange={(v) => setFilters(f => ({ ...f, assigneeId: v, page: 1 }))}
+          onChange={(v) => setAssigneeIdFilter(v)}
         />
       </div>
 
@@ -438,13 +445,7 @@ export default function DealsPage() {
             loading={isLoading}
             locale={{ emptyText: 'Chưa có deal nào' }}
             onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewDeal(record); }, style: { cursor: 'pointer' } })}
-            pagination={{
-              current: filters.page,
-              pageSize: filters.limit,
-              total: data?.total ?? 0,
-              onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
-              showSizeChanger: true,
-            }}
+            pagination={paginationProps(data?.total ?? 0, 'cơ hội')}
           />
         </div>
       )}

@@ -265,9 +265,10 @@ export default function BugListPage() {
           total:    data?.meta.total,
           pageSize: filters.pageSize,
           current:  filters.page,
-          onChange: (page) => setFilters((f) => ({ ...f, page })),
+          onChange: (page, size) => setFilters((f) => ({ ...f, page, pageSize: size })),
           showSizeChanger: true,
-          onShowSizeChange: (_, size) => setFilters((f) => ({ ...f, pageSize: size, page: 1 })),
+          pageSizeOptions: [20, 50, 100, 200],
+          showTotal: (t) => `${t} lỗi`,
         }}
         style={{ background: token.colorBgContainer }}
       />

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -182,12 +183,12 @@ function OverviewTab() {
 function PipelineTab() {
   const [stage, setStage] = useState<string | undefined>();
   const [month, setMonth] = useState<string | undefined>();
-  const [page, setPage] = useState(1);
   const { isDark, textPrimary, textMuted, linkColor } = useThemePalette();
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
 
   const { data, isLoading } = useQuery({
     queryKey: ['forecast-deals', stage, month, page],
-    queryFn: () => forecastApi.deals({ stage, month, page, limit: 20 }),
+    queryFn: () => forecastApi.deals({ stage, month, page, limit: pageSize }),
   });
 
   const columns = [
@@ -263,7 +264,7 @@ function PipelineTab() {
           placeholder="Tất cả giai đoạn"
           allowClear
           value={stage}
-          onChange={v => { setStage(v); setPage(1); }}
+          onChange={v => { setStage(v); resetPage(); }}
           options={Object.entries(STAGE_LABEL).map(([k, v]) => ({ value: k, label: v }))}
           style={{ width: 160 }}
         />
@@ -271,7 +272,7 @@ function PipelineTab() {
           placeholder="Tháng"
           allowClear
           value={month}
-          onChange={v => { setMonth(v); setPage(1); }}
+          onChange={v => { setMonth(v); resetPage(); }}
           options={monthOptions}
           style={{ width: 140 }}
         />
@@ -281,13 +282,7 @@ function PipelineTab() {
         columns={columns}
         dataSource={data?.data}
         loading={isLoading}
-        pagination={{
-          current: page,
-          total: data?.total,
-          pageSize: 20,
-          onChange: setPage,
-          showTotal: t => `${t} deals`,
-        }}
+        pagination={paginationProps(data?.total, 'cơ hội')}
         size="middle"
       />
     </>

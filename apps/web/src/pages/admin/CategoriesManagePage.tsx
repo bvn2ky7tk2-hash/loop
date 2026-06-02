@@ -4,6 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, AppstoreOutlined } from '@a
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -26,6 +27,7 @@ export default function CategoriesManagePage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { textPrimary, textMuted, borderColor, bgContainer, linkColor } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [type, setType] = useState<string>('province');
   const [parentId, setParentId] = useState<string | undefined>();
@@ -138,7 +140,7 @@ export default function CategoriesManagePage() {
         dataSource={isWard && !parentId ? [] : items}
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
-        pagination={{ pageSize: 20, showTotal: (t) => `${t} mục` }}
+        pagination={paginationProps(isWard && !parentId ? 0 : items.length, 'mục')}
         locale={{ emptyText: isWard && !parentId ? 'Chọn Tỉnh/Thành phố để xem Phường/Xã' : 'Chưa có mục danh mục' }}
       />
 

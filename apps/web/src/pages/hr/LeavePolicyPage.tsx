@@ -7,6 +7,7 @@ import { PlusOutlined, CalendarOutlined, DeleteOutlined, EditOutlined } from '@a
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
@@ -23,6 +24,7 @@ interface SeniorityRow {
 
 export default function LeavePolicyPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -220,7 +222,7 @@ export default function LeavePolicyPage() {
                     columns={columns}
                     dataSource={policies}
                     loading={isLoading}
-                    pagination={{ pageSize: 20 }}
+                    pagination={paginationProps(policies.length, 'chính sách nghỉ')}
                     size="middle"
                   />
                 </div>

@@ -208,7 +208,7 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
 
   return (
     <>
-      <Table rowKey="id" dataSource={candidates} columns={columns} pagination={{ pageSize: 20 }} />
+      <Table rowKey="id" dataSource={candidates} columns={columns} pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} nhân sự` }} />
       <CandidateDetailDrawer candidate={detail} open={!!detail} onClose={() => setDetail(null)} />
     </>
   );
@@ -364,7 +364,7 @@ function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
       rowKey="id"
       dataSource={instances}
       columns={columns}
-      pagination={{ pageSize: 20 }}
+      pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} nhân sự` }}
     />
   );
 }

@@ -1,7 +1,8 @@
-import { Drawer, Descriptions, Tag, Avatar, Typography, Divider, Empty } from 'antd';
+import { Descriptions, Tag, Avatar, Typography, Divider, Empty } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { CenteredModal } from '../../components/ui/CenteredModal';
 import type { Candidate, CandidateStage } from '../../api/recruit';
 
 const { Text } = Typography;
@@ -41,10 +42,10 @@ export function CandidateDetailDrawer({
   );
 
   return (
-    <Drawer
+    <CenteredModal
       open={open}
       onClose={onClose}
-      width={460}
+      width={560}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Avatar size={40} icon={<UserOutlined />} style={{ background: `${stage.color}33`, color: stage.color }} />
@@ -102,6 +103,6 @@ export function CandidateDetailDrawer({
           </div>
         ))
       ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<Text style={{ color: textMuted }}>Chưa có phỏng vấn</Text>} />}
-    </Drawer>
+    </CenteredModal>
   );
 }

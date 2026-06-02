@@ -345,7 +345,7 @@ export default function ImportPage() {
             columns={buildValidColumns(previewResult.valid)}
             rowKey="_key"
             size="small"
-            pagination={{ pageSize: 10, showSizeChanger: false }}
+            pagination={{ pageSize: 10, showSizeChanger: true, pageSizeOptions: [10, 20, 50], showTotal: (t) => `${t} bản ghi` }}
             style={{ marginBottom: 20, background: bgContainer }}
             scroll={{ x: 'max-content' }}
           />

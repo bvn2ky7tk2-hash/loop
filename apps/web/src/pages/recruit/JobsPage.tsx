@@ -231,6 +231,7 @@ export default function JobsPage() {
             ),
           }}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
+            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} vị trí tuyển`,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />
       </div>

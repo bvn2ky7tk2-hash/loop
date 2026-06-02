@@ -283,6 +283,7 @@ export default function ExpensePage() {
   const [statusFilter, setStatusFilter] = useState<ExpenseStatus | undefined>();
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | undefined>();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
 
@@ -295,7 +296,7 @@ export default function ExpensePage() {
 
   const params = {
     page,
-    pageSize: 20,
+    pageSize,
     status: statusFilter,
     category: categoryFilter,
   };
@@ -538,10 +539,12 @@ export default function ExpensePage() {
         onRow={(record) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setViewExpense(record); }, style: { cursor: 'pointer' } })}
         pagination={{
           total: data?.total,
-          pageSize: 20,
+          pageSize,
           current: page,
-          onChange: setPage,
-          showSizeChanger: false,
+          onChange: (p, ps) => { setPage(p); setPageSize(ps); },
+          showSizeChanger: true,
+          pageSizeOptions: [20, 50, 100, 200],
+          showTotal: (t) => `${t} chi phí`,
         }}
         style={{ background: bgContainer }}
         expandable={{

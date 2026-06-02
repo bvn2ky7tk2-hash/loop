@@ -23,25 +23,22 @@ export class EmployeesService extends TenantAwareService {
   }
 
   async create(dto: CreateEmployeeDto) {
-    const existing = await this.prisma.employee.findFirst({ where: { code: dto.code, deletedAt: null } });
+    const code = dto.code ?? await this.generateNextCode();
+
+    const existing = await this.prisma.employee.findFirst({ where: { code, deletedAt: null } });
     if (existing) throw new ConflictException('Mã nhân sự đã tồn tại');
+
+    const { code: _c, startDate, birthdate, cccdIssueDate, idIssueDate, ...rest } = dto;
 
     return this.prisma.employee.create({
       data: {
-        code: dto.code,
-        fullName: dto.fullName,
-        orgUnitId: dto.orgUnitId,
-        level: dto.level,
-        startDate: new Date(dto.startDate),
-        birthdate: dto.birthdate ? new Date(dto.birthdate) : null,
-        techStack: dto.techStack ?? [],
-        email: dto.email,
-        cccd: dto.cccd,
-        cccdIssueDate: dto.cccdIssueDate ? new Date(dto.cccdIssueDate) : null,
-        cccdIssuePlace: dto.cccdIssuePlace,
-        userId: dto.userId,
-        positionId: dto.positionId,
-        jobTitleId: dto.jobTitleId,
+        ...rest,
+        code,
+        startDate: new Date(startDate),
+        birthdate: birthdate ? new Date(birthdate) : null,
+        cccdIssueDate: cccdIssueDate ? new Date(cccdIssueDate) : null,
+        idIssueDate: idIssueDate ? new Date(idIssueDate) : null,
+        techStack: rest.techStack ?? [],
         tenantId: this.getTenantId(),
       },
       include: {
@@ -50,6 +47,33 @@ export class EmployeesService extends TenantAwareService {
         position: { select: { id: true, code: true, jobTitle: { select: { name: true } } } },
       },
     });
+  }
+
+  private async generateNextCode(): Promise<string> {
+    const tenantId = this.getTenantId();
+
+    // Tìm số thứ tự lớn nhất từ các mã đúng dạng EMP-[0-9]+ (bỏ qua EMP-DEMO-DEV* và các mã cũ)
+    const rows = tenantId
+      ? await this.prisma.$queryRaw<{ maxnum: number | null }[]>`
+          SELECT MAX(CAST(SUBSTRING(code, 5) AS INTEGER)) AS maxnum
+          FROM employees
+          WHERE code ~ '^EMP-[0-9]+$' AND deleted_at IS NULL AND tenant_id = ${tenantId}
+        `
+      : await this.prisma.$queryRaw<{ maxnum: number | null }[]>`
+          SELECT MAX(CAST(SUBSTRING(code, 5) AS INTEGER)) AS maxnum
+          FROM employees
+          WHERE code ~ '^EMP-[0-9]+$' AND deleted_at IS NULL
+        `;
+
+    let seq = Number(rows[0]?.maxnum ?? 0) + 1;
+    let code = `EMP-${String(seq).padStart(4, '0')}`;
+
+    // Đảm bảo không trùng (edge case: có gap do xóa)
+    while (await this.prisma.employee.findFirst({ where: this.tenantWhere({ code }) })) {
+      seq++;
+      code = `EMP-${String(seq).padStart(4, '0')}`;
+    }
+    return code;
   }
 
   async findAll(orgUnitIds: string[] | null, callerRole: Role, page = 1, limit = 50) {
@@ -73,7 +97,7 @@ export class EmployeesService extends TenantAwareService {
             select: { id: true },
           },
         },
-        orderBy: { fullName: 'asc' },
+        orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),

@@ -10,6 +10,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -29,6 +30,7 @@ const { TextArea } = Input;
 export default function VehicleBookingPage() {
   const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark, linkColor } = useThemePalette();
 
+  const { paginationProps } = usePagination(20);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingForm] = Form.useForm();
 
@@ -261,7 +263,7 @@ export default function VehicleBookingPage() {
                   columns={myRequestColumns}
                   dataSource={requests}
                   loading={requestsLoading}
-                  pagination={{ pageSize: 20 }}
+                  pagination={paginationProps(requests.length, 'yêu cầu')}
                   scroll={{ x: 800 }}
                   locale={{
                     emptyText: (

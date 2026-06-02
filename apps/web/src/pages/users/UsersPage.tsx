@@ -4,6 +4,7 @@ import {
   App, Space, Tooltip, Switch, Divider, Typography,
 } from 'antd';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { PlusOutlined, EditOutlined, KeyOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -30,6 +31,7 @@ export default function UsersPage() {
   const { message } = App.useApp();
   const { isDark, textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
+  const { resetPage, paginationProps } = usePagination(50);
   const [createOpen, setCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
   const [pwUser, setPwUser] = useState<UserRecord | null>(null);
@@ -50,7 +52,7 @@ export default function UsersPage() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
     enabled: createOpen,
   });
 
@@ -188,7 +190,7 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      <Table dataSource={users} columns={columns} rowKey="id" loading={isLoading} size="middle" />
+      <Table dataSource={users} columns={columns} rowKey="id" loading={isLoading} size="middle" pagination={paginationProps(users.length, 'người dùng')} />
 
       {/* Modal tạo mới */}
       <Modal

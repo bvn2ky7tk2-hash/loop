@@ -132,7 +132,9 @@ export default function ChangelogAdminPage() {
         pagination={{
           total: data?.total ?? 0,
           pageSize: 20,
-          showSizeChanger: false,
+          showSizeChanger: true,
+          pageSizeOptions: [20, 50, 100, 200],
+          showTotal: (t) => `${t} bản ghi`,
         }}
         expandable={{
           expandedRowRender: (record) => (

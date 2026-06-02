@@ -44,7 +44,7 @@ export class CalendarService extends TenantAwareService {
       include: {
         createdBy: { select: { id: true, name: true } },
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: [{ createdAt: 'desc' }, { startTime: 'asc' }],
       take: 500,
     });
   }
@@ -64,7 +64,7 @@ export class CalendarService extends TenantAwareService {
         room: { select: { id: true, name: true, floor: true } },
         bookedBy: { select: { id: true, name: true } },
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: [{ createdAt: 'desc' }, { startTime: 'asc' }],
       take: 500,
     });
   }

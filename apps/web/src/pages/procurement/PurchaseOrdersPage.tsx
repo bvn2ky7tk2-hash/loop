@@ -10,6 +10,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { confirmDelete } from '../../components/ui/confirmDelete';
@@ -36,6 +37,7 @@ function fmtMoney(v: number | string) {
 export default function PurchaseOrdersPage() {
   const { textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
   const qc = useQueryClient();
+  const { resetPage, paginationProps } = usePagination(50);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
   const [createOpen, setCreateOpen] = useState(false);
@@ -134,7 +136,7 @@ export default function PurchaseOrdersPage() {
           columns={columns}
           dataSource={data?.data ?? []}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(data?.total ?? data?.data?.length ?? 0, 'đơn hàng')}
           scroll={{ x: 900 }}
           size="small"
         />

@@ -12,6 +12,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { FilterBar } from '../../components/FilterBar';
@@ -77,6 +78,7 @@ function StatusTag({ status, isDark }: { status: string; isDark: boolean }) {
 
 function MonthlyTab() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
   const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
@@ -237,7 +239,7 @@ function MonthlyTab() {
           columns={columns}
           dataSource={monthlyRows}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(monthlyRows.length, 'bản ghi')}
           size="middle"
         />
       </div>
@@ -249,6 +251,7 @@ function MonthlyTab() {
 
 function DetailTab() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { paginationProps: detailPaginationProps } = usePagination(20);
   const { message: msg } = App.useApp();
   const qc = useQueryClient();
 
@@ -606,7 +609,7 @@ function DetailTab() {
           columns={detailColumns}
           dataSource={records}
           loading={detailLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={detailPaginationProps(records.length, 'bản ghi')}
           size="small"
           scroll={{ x: 1000 }}
         />

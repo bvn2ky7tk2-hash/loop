@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -199,6 +200,8 @@ export default function PortalManagePage() {
   const [ticketStatus, setTicketStatus] = useState<string | undefined>();
   const [form] = Form.useForm();
   const { isDark, textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
+  const { paginationProps: portalPagination } = usePagination(50);
+  const { paginationProps: ticketPagination } = usePagination(50);
   const qc = useQueryClient();
 
   const { data: portals = [], isLoading } = useQuery({
@@ -348,7 +351,7 @@ export default function PortalManagePage() {
               columns={portalCols}
               dataSource={portals}
               loading={isLoading}
-              pagination={{ pageSize: 10 }}
+              pagination={portalPagination(portals.length, 'portal')}
               size="middle"
             />
           ),
@@ -372,7 +375,7 @@ export default function PortalManagePage() {
                 rowKey="id"
                 columns={ticketCols}
                 dataSource={allTickets}
-                pagination={{ pageSize: 15 }}
+                pagination={ticketPagination(allTickets.length, 'ticket')}
                 size="middle"
               />
             </>

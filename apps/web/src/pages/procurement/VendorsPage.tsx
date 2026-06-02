@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -25,6 +26,7 @@ const CATEGORIES = ['IT', 'Office Supplies', 'Marketing', 'Hardware', 'Software'
 export default function VendorsPage() {
   const { textPrimary, textMuted, borderColor } = useThemePalette();
   const qc = useQueryClient();
+  const { paginationProps } = usePagination(50);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
   const [modalOpen, setModalOpen] = useState(false);
@@ -136,7 +138,7 @@ export default function VendorsPage() {
           columns={columns}
           dataSource={data?.data ?? []}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(data?.total ?? data?.data?.length ?? 0, 'nhà cung cấp')}
           scroll={{ x: 1000 }}
           size="small"
         />

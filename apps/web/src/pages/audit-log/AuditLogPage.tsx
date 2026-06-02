@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination, PAGE_SIZE_OPTIONS } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { auditLogsApi, type AuditLogRecord } from '../../api/audit-logs';
@@ -272,7 +273,8 @@ export default function AuditLogPage() {
             pageSize:   filters.limit,
             total:      data?.total ?? 0,
             showSizeChanger: true,
-            pageSizeOptions: ['20', '50', '100'],
+            pageSizeOptions: PAGE_SIZE_OPTIONS,
+            locale: { items_per_page: '/ trang' },
             showTotal:  (total) => (
               <Text style={{ color: textMuted }}>Tổng {total} bản ghi</Text>
             ),

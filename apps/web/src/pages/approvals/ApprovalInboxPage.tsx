@@ -7,6 +7,7 @@ import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -27,12 +28,12 @@ export default function ApprovalInboxPage() {
   const { textPrimary, textMuted, borderColor, bgContainer, isDark } = useThemePalette();
 
   const [dateFilter, setDateFilter] = useState('');
-  const [page, setPage] = useState(1);
+  const { page, pageSize, paginationProps } = usePagination(50);
 
   // Lấy tất cả user tasks đang chờ xử lý (PENDING + IN_PROGRESS)
   const { data: tasksData, isLoading } = useQuery({
-    queryKey: ['approval-inbox', page],
-    queryFn: () => processesApi.listUserTasks({ page, pageSize: 50 }),
+    queryKey: ['approval-inbox', page, pageSize],
+    queryFn: () => processesApi.listUserTasks({ page, pageSize }),
     refetchInterval: 30_000,
   });
 
@@ -224,14 +225,7 @@ export default function ApprovalInboxPage() {
           columns={columns}
           size="middle"
           loading={isLoading}
-          pagination={{
-            current: page,
-            total: tasksData?.meta?.total,
-            pageSize: 50,
-            showSizeChanger: false,
-            onChange: setPage,
-            showTotal: (t) => `Tổng ${t} task`,
-          }}
+          pagination={paginationProps(tasksData?.meta?.total, 'task')}
           locale={{ emptyText: <Text style={{ color: textMuted }}>Không có yêu cầu nào đang chờ</Text> }}
         />
       </div>

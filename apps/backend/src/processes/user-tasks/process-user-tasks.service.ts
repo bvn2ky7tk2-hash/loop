@@ -41,7 +41,7 @@ export class ProcessUserTasksService {
         where,
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: { dueDate: 'asc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           instance: {
             select: {

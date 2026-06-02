@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -54,9 +55,10 @@ export default function RoomManagePage() {
   const { message } = App.useApp();
   const { textPrimary, textMuted, isDark, preset, linkColor } = useThemePalette();
 
-  const [modalOpen, setModalOpen]     = useState(false);
-  const [editing, setEditing]         = useState<MeetingRoom | null>(null);
-  const [form]                        = Form.useForm();
+  const { paginationProps } = usePagination(20);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing]     = useState<MeetingRoom | null>(null);
+  const [form]                    = Form.useForm();
 
   const { data: roomsRaw, isLoading } = useRooms({ limit: 200 });
   const { data: stats }               = useRoomStats();
@@ -218,7 +220,7 @@ export default function RoomManagePage() {
         columns={columns}
         dataSource={rooms}
         loading={isLoading}
-        pagination={{ pageSize: 20 }}
+        pagination={paginationProps(rooms.length, 'phòng')}
       />
 
       <CenteredModal

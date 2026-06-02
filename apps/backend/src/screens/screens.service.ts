@@ -8,7 +8,7 @@ export class ScreensService {
   findAll() {
     return this.prisma.screen.findMany({
       where: { isActive: true },
-      orderBy: [{ module: 'asc' }, { sortOrder: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { module: 'asc' }, { sortOrder: 'asc' }],
     });
   }
 }

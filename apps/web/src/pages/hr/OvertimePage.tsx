@@ -27,6 +27,7 @@ import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -119,6 +120,7 @@ function OtStatusTag({
 export default function OvertimePage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } =
     useThemePalette();
+  const { paginationProps } = usePagination(20);
   const { hasRole } = usePermissions();
   const qc = useQueryClient();
   const canManage = hasRole('ADMIN') || hasRole('HR') || hasRole('PM');
@@ -465,7 +467,7 @@ export default function OvertimePage() {
           columns={columns}
           dataSource={records}
           loading={isFetching}
-          pagination={{ pageSize: 20, showSizeChanger: false }}
+          pagination={paginationProps(records.length, 'đơn OT')}
           size="middle"
         />
       </div>

@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -188,6 +189,8 @@ function ProposalStatusTag({ status, isDark }: { status: SalaryProposal['status'
 
 export default function SalaryBandPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { paginationProps: bandPaginationProps } = usePagination(50);
+  const { paginationProps: proposalPaginationProps } = usePagination(50);
   const [msgApi, msgCtx] = message.useMessage();
   const qc = useQueryClient();
 
@@ -577,7 +580,7 @@ export default function SalaryBandPage() {
                     columns={bandColumns}
                     dataSource={filteredBands}
                     loading={bandsLoading}
-                    pagination={{ pageSize: 10, showTotal: (t) => `Tổng ${t} band` }}
+                    pagination={bandPaginationProps(filteredBands.length, 'bậc lương')}
                     locale={{ emptyText: 'Chưa có band lương nào' }}
                   />
                 </div>
@@ -632,7 +635,7 @@ export default function SalaryBandPage() {
                     columns={proposalColumns}
                     dataSource={filteredProposals}
                     loading={reviewsLoading}
-                    pagination={{ pageSize: 10, showTotal: (t) => `Tổng ${t} đề xuất` }}
+                    pagination={proposalPaginationProps(filteredProposals.length, 'bậc lương')}
                     locale={{ emptyText: 'Chưa có đề xuất điều chỉnh lương' }}
                   />
                 </div>

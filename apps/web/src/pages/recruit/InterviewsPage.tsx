@@ -176,6 +176,7 @@ export default function InterviewsPage() {
         <Table<Interview>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
+            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} lịch phỏng vấn`,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />
       </div>

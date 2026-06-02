@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { permissionAuditApi, type UserPermissionRow } from '../../api/permission-audit';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { StatCard } from '../../components/ui/StatCard';
@@ -25,6 +26,7 @@ const ROLE_COLORS: Record<string, string> = {
 export default function PermissionAuditPage() {
   const { message } = App.useApp();
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [search, setSearch] = useState('');
   const [permSearch, setPermSearch] = useState('');
@@ -212,7 +214,7 @@ export default function PermissionAuditPage() {
           columns={columns}
           dataSource={filtered}
           loading={isLoading}
-          pagination={{ pageSize: 20, showTotal: (t) => `${t} user` }}
+          pagination={paginationProps(filtered.length, 'bản ghi')}
           scroll={{ x: 900 }}
         />
       </div>

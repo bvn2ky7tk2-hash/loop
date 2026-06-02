@@ -60,7 +60,7 @@ export class UsersService {
           },
         },
       },
-      orderBy: { name: 'asc' },
+      orderBy: { createdAt: 'desc' },
     });
 
     return users.map(this.toPublic);

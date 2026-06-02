@@ -24,6 +24,7 @@ import { projectsApi } from '../../api/projects';
 import { employeesApi } from '../../api/employees';
 import dayjs from 'dayjs';
 import { useColumnVisibility } from '../../hooks/useColumnVisibility';
+import { usePagination } from '../../hooks/usePagination';
 import { ColumnToggle } from '../../components/ColumnToggle';
 import { FilterBar } from '../../components/FilterBar';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -78,6 +79,10 @@ export default function TasksPage() {
   const { token } = theme.useToken();
   const { isDark, linkColor, preset, textMuted } = useThemePalette();
   const qc = useQueryClient();
+
+  // ── Pagination ────────────────────────────────────────────────────────────
+  const { paginationProps: taskPaginationProps } = usePagination(50);
+  const { paginationProps: approvalPaginationProps } = usePagination(50);
 
   // ── Tab 1: Task list state ────────────────────────────────────────────────
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -603,7 +608,7 @@ export default function TasksPage() {
                     expandedRowKeys: expandedKeys,
                     onExpandedRowsChange: (keys) => setExpandedKeys(keys as React.Key[]),
                   }}
-                  pagination={{ pageSize: 50, showSizeChanger: true, showTotal: (t) => `${t} task` }}
+                  pagination={taskPaginationProps(filteredTree.length, 'task')}
                   scroll={{ x: 900 }}
                   locale={{ emptyText: projectId ? 'Không có task phù hợp' : 'Chọn dự án để xem task' }}
                   rowClassName={(r) => (r as TaskWithDepth)._depth === 0 ? 'task-row-root' : 'task-row-child'}
@@ -655,7 +660,7 @@ export default function TasksPage() {
                   rowKey="id"
                   loading={pendingLoading}
                   size="small"
-                  pagination={{ pageSize: 20, showSizeChanger: true, showTotal: (t) => `${t} task chờ duyệt` }}
+                  pagination={approvalPaginationProps(filteredPendingTasks.length, 'task chờ duyệt')}
                   scroll={{ x: 1050 }}
                   locale={{ emptyText: 'Không có task nào đang chờ phê duyệt' }}
                   onRow={(r) => ({ onClick: (e) => { if ((e.target as HTMLElement).closest('button')) return; setDetailTaskId(r.id); }, style: { cursor: 'pointer' } })}

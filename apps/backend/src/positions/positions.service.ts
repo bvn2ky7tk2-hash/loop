@@ -44,7 +44,7 @@ export class PositionsService {
         where,
         skip,
         take: limit,
-        orderBy: { code: 'asc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           jobTitle: { select: { id: true, name: true, band: true } },
           orgUnit: { select: { id: true, name: true } },

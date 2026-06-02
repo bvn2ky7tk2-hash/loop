@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Input, Form,
   Descriptions, Tag, message,
@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer,
   type Customer, type CustomerFilterDto,
@@ -20,8 +21,12 @@ const { Title, Text } = Typography;
 export default function CustomersPage() {
   const { bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters] = useState<CustomerFilterDto>({ page: 1, limit: 20 });
-  const [createOpen, setCreateOpen]   = useState(false);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [search, setSearch] = useState<string | undefined>();
+  const filters: CustomerFilterDto = { page, limit: pageSize, search };
+
+  useEffect(() => { resetPage(); }, [search, resetPage]);
+  const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen]       = useState(false);
   const [detailOpen, setDetailOpen]   = useState(false);
   const [selected, setSelected]       = useState<Customer | null>(null);
@@ -138,7 +143,7 @@ export default function CustomersPage() {
           prefix={<SearchOutlined />}
           style={{ width: 320 }}
           allowClear
-          onSearch={(v) => setFilters(f => ({ ...f, search: v || undefined, page: 1 }))}
+          onSearch={(v) => setSearch(v || undefined)}
         />
       </div>
 
@@ -149,13 +154,7 @@ export default function CustomersPage() {
           dataSource={data?.data ?? []}
           loading={isLoading}
           locale={{ emptyText: 'Chưa có khách hàng nào' }}
-          pagination={{
-            current: filters.page,
-            pageSize: filters.limit,
-            total: data?.total ?? 0,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
-            showSizeChanger: true,
-          }}
+          pagination={paginationProps(data?.total ?? 0, 'khách hàng')}
         />
       </div>
 

@@ -141,7 +141,9 @@ export default function ProcessInstancesPage() {
         pagination={{
           total: data?.meta.total,
           pageSize: data?.meta.pageSize,
-          showSizeChanger: false,
+          showSizeChanger: true,
+          pageSizeOptions: [50, 100, 200, 500],
+          showTotal: (t) => `${t} tiến trình`,
         }}
       />
     </div>

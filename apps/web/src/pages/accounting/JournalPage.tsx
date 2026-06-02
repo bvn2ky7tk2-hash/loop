@@ -162,6 +162,9 @@ export default function JournalPage() {
             pageSize: filter.limit,
             total: data?.total,
             onChange: (page, limit) => setFilter(f => ({ ...f, page, limit })),
+            showSizeChanger: true,
+            pageSizeOptions: [50, 100, 200, 500],
+            locale: { items_per_page: '/ trang' },
             showTotal: (total) => <Text style={{ color: textSecondary }}>Tổng {total} bút toán</Text>,
           }}
           expandable={{

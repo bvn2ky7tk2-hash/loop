@@ -30,6 +30,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 import { apiClient } from '../../api/client';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -75,6 +76,8 @@ const EVENT_LABEL: Record<InsuranceEventType, string> = {
 export default function InsurancePage() {
   const qc = useQueryClient();
   const { textPrimary, textMuted, isDark } = useThemePalette();
+  const { paginationProps: enrollPaginationProps } = usePagination(20);
+  const { paginationProps: bookPaginationProps } = usePagination(20);
 
   // Filter state
   const [search, setSearch] = useState('');
@@ -565,7 +568,7 @@ export default function InsurancePage() {
                   columns={enrollColumns}
                   dataSource={enrollments}
                   loading={isLoading}
-                  pagination={{ pageSize: 20, showTotal: (t) => `Tổng ${t} bản ghi` }}
+                  pagination={enrollPaginationProps(enrollments.length, 'nhân sự')}
                   size="middle"
                   scroll={{ x: 900 }}
                 />
@@ -585,7 +588,7 @@ export default function InsurancePage() {
                 columns={bookColumns}
                 dataSource={bookNotReceived}
                 loading={isLoading}
-                pagination={{ pageSize: 20, showTotal: (t) => `Tổng ${t} bản ghi` }}
+                pagination={bookPaginationProps(bookNotReceived.length, 'nhân sự')}
                 size="middle"
                 scroll={{ x: 800 }}
               />

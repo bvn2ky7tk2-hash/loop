@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { payrollApi, type PayrollPeriod, type PayrollRecord } from '../../api/payroll';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { formatCurrency } from '../../utils/format';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
@@ -934,11 +935,11 @@ export default function PayrollPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PayrollPeriod | null>(null);
   const [form] = Form.useForm();
-  const [page, setPage] = useState(1);
   const [exportingTax, setExportingTax] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterSearch, setFilterSearch] = useState<string>('');
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { page, pageSize, resetPage, paginationProps } = usePagination(50);
 
   const handleExportTax = async () => {
     setExportingTax(true);
@@ -953,8 +954,8 @@ export default function PayrollPage() {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['payroll-periods', page],
-    queryFn: () => payrollApi.listPeriods(page, 50),
+    queryKey: ['payroll-periods', page, pageSize],
+    queryFn: () => payrollApi.listPeriods(page, pageSize),
   });
 
   const createMut = useMutation({
@@ -1113,14 +1114,14 @@ export default function PayrollPage() {
                     style={{ width: 240 }}
                     allowClear
                     value={filterSearch}
-                    onChange={e => { setFilterSearch(e.target.value); setPage(1); }}
+                    onChange={e => { setFilterSearch(e.target.value); resetPage(); }}
                   />
                   <Select
                     placeholder="Tất cả trạng thái"
                     style={{ width: 180 }}
                     allowClear
                     value={filterStatus || undefined}
-                    onChange={v => { setFilterStatus(v ?? ''); setPage(1); }}
+                    onChange={v => { setFilterStatus(v ?? ''); resetPage(); }}
                     options={[
                       { value: 'DRAFT',      label: 'Bản nháp' },
                       { value: 'PROCESSING', label: 'Đang xử lý' },
@@ -1138,14 +1139,7 @@ export default function PayrollPage() {
                   columns={cols}
                   size="small"
                   style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
-                  pagination={{
-                    current: page,
-                    total: periods.length,
-                    pageSize: 20,
-                    onChange: setPage,
-                    showTotal: t => `${t} kỳ lương`,
-                    showSizeChanger: false,
-                  }}
+                  pagination={paginationProps(periods.length, 'kỳ lương')}
                   onRow={r => ({ onClick: () => setSelectedPeriod(r), style: { cursor: 'pointer' } })}
                 />
               </>

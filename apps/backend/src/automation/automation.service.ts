@@ -24,7 +24,7 @@ export class AutomationService {
   ) {}
 
   async listRules() {
-    return this.prisma.automationRule.findMany({ orderBy: { createdAt: 'asc' } });
+    return this.prisma.automationRule.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   /** Wrapper: load rule theo key rồi gọi evaluateRule — dùng từ controller */

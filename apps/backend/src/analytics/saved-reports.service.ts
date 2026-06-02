@@ -13,7 +13,7 @@ export class SavedReportsService {
         ...(tid ? { tenantId: tid } : {}),
         OR: [{ createdBy: userId }, { isPublic: true }],
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 200,
     });
   }

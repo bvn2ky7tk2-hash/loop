@@ -121,7 +121,7 @@ export class CostService extends TenantAwareService {
         task: { select: { id: true, title: true } },
         user: { select: { id: true, name: true } },
       },
-      orderBy: { logDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 5000,
     });
   }

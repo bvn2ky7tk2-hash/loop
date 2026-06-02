@@ -228,6 +228,7 @@ export default function CandidatesPage() {
         <Table<Candidate>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
           pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
+            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} ứng viên`,
             onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
         />
       </div>

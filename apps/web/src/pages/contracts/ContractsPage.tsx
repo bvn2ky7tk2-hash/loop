@@ -22,6 +22,7 @@ import { payrollApi } from '../../api/payroll';
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { OrgUnitSelect } from '../../components/selects';
 import { formatNumber } from '../../utils/format';
@@ -857,8 +858,6 @@ export default function ContractsPage() {
   const { token } = theme.useToken();
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, textSecondary, linkColor } = useThemePalette();
 
-  const [page, setPage]                         = useState(1);
-  const [pageSize, setPageSize]                 = useState(20);
   const [searchText, setSearchText]             = useState('');
   const [filterStatus, setFilterStatus]         = useState<ContractStatus | ''>('');
   const [filterType, setFilterType]             = useState<ContractType | ''>('');
@@ -868,6 +867,7 @@ export default function ContractsPage() {
   const [renewTarget, setRenewTarget]           = useState<Contract | null>(null);
   const [renewModalOpen, setRenewModalOpen]     = useState(false);
   const [detailContract, setDetailContract]     = useState<Contract | null>(null);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(50);
 
   const { data: paginated, isLoading } = useQuery({
     queryKey: ['contracts', page, pageSize, filterOrgUnit],
@@ -1051,14 +1051,14 @@ export default function ContractsPage() {
           placeholder="Tìm theo tên nhân viên..."
           style={{ width: 240 }}
           value={searchText}
-          onChange={(e) => { setSearchText(e.target.value); setPage(1); }}
+          onChange={(e) => { setSearchText(e.target.value); resetPage(); }}
           allowClear
         />
         <Select
           placeholder="Trạng thái"
           style={{ minWidth: 160 }}
           value={filterStatus || undefined}
-          onChange={(v) => { setFilterStatus(v ?? ''); setPage(1); }}
+          onChange={(v) => { setFilterStatus(v ?? ''); resetPage(); }}
           allowClear
           options={CONTRACT_STATUSES.map((s) => ({ value: s, label: CONTRACT_STATUS_LABELS[s] }))}
         />
@@ -1066,7 +1066,7 @@ export default function ContractsPage() {
           placeholder="Loại hợp đồng"
           style={{ minWidth: 190 }}
           value={filterType || undefined}
-          onChange={(v) => { setFilterType(v ?? ''); setPage(1); }}
+          onChange={(v) => { setFilterType(v ?? ''); resetPage(); }}
           allowClear
           options={CONTRACT_TYPES.map((t) => ({ value: t, label: CONTRACT_TYPE_LABELS[t] }))}
         />
@@ -1074,7 +1074,7 @@ export default function ContractsPage() {
           placeholder="Phòng ban"
           style={{ minWidth: 180 }}
           value={filterOrgUnit}
-          onChange={(v) => { setFilterOrgUnit(v); setPage(1); }}
+          onChange={(v) => { setFilterOrgUnit(v); resetPage(); }}
           allowClear
         />
       </div>
@@ -1102,15 +1102,7 @@ export default function ContractsPage() {
             },
             style: { cursor: 'pointer' },
           })}
-          pagination={{
-            current: page,
-            pageSize,
-            total: paginated?.total ?? 0,
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50'],
-            showTotal: (total) => `${total} hợp đồng`,
-            onChange: (p, ps) => { setPage(p); setPageSize(ps); },
-          }}
+          pagination={paginationProps(paginated?.total ?? 0, 'hợp đồng')}
         />
       </div>
 

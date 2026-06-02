@@ -11,6 +11,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -84,7 +85,7 @@ export default function SalaryReviewPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ReviewSuggestionStatus | undefined>(undefined);
   const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
-  const [page, setPage] = useState(1);
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
 
   // ── Queries ──
   const { data: suggestions = [], isLoading, isError } = useQuery({
@@ -92,7 +93,7 @@ export default function SalaryReviewPage() {
     queryFn: () =>
       apiClient
         .get<{ data: SalaryReviewSuggestion[]; total: number }>('/hr/salary-reviews', {
-          params: { page, limit: 50, status: statusFilter, orgUnitId: orgUnitFilter || undefined },
+          params: { page, limit: pageSize, status: statusFilter, orgUnitId: orgUnitFilter || undefined },
         })
         .then((r) => r.data.data ?? [])
         .catch(() => { throw new Error('API not available'); }),
@@ -299,7 +300,7 @@ export default function SalaryReviewPage() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPage(1);
+            resetPage();
           }}
           style={{ width: 260 }}
           allowClear
@@ -311,7 +312,7 @@ export default function SalaryReviewPage() {
           value={statusFilter}
           onChange={(v) => {
             setStatusFilter(v);
-            setPage(1);
+            resetPage();
           }}
           options={Object.entries(STATUS_META).map(([k, v]) => ({
             value: k,
@@ -322,7 +323,7 @@ export default function SalaryReviewPage() {
           placeholder="Phòng ban"
           style={{ minWidth: 180 }}
           value={orgUnitFilter}
-          onChange={(v) => { setOrgUnitFilter(v); setPage(1); }}
+          onChange={(v) => { setOrgUnitFilter(v); resetPage(); }}
           allowClear
         />
       </FilterBar>
@@ -350,15 +351,7 @@ export default function SalaryReviewPage() {
             columns={columns}
             dataSource={filtered}
             loading={isLoading}
-            pagination={{
-              current: page,
-              pageSize: 20,
-              onChange: (p) => setPage(p),
-              showSizeChanger: false,
-              showTotal: (t) => (
-                <Text style={{ color: textMuted }}>Tổng {t} đề xuất</Text>
-              ),
-            }}
+            pagination={paginationProps(filtered.length, 'nhân sự')}
             scroll={{ x: 1100 }}
             locale={{
               emptyText: <Text style={{ color: textMuted }}>Không có đề xuất điều chỉnh lương</Text>,

@@ -22,7 +22,7 @@ export class TrainingService extends TenantAwareService {
   // ── Programs ────────────────────────────────────────────────────────────────
 
   async listPrograms() {
-    return this.prisma.trainingProgram.findMany({ orderBy: { title: 'asc' } });
+    return this.prisma.trainingProgram.findMany({ orderBy: { createdAt: 'desc' } });
   }
 
   async createProgram(dto: CreateTrainingProgramDto) {
@@ -56,7 +56,7 @@ export class TrainingService extends TenantAwareService {
             },
           },
         },
-        orderBy: { startDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.trainingRecord.count({ where }),
     ]);

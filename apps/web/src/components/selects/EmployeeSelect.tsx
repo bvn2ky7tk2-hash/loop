@@ -31,10 +31,10 @@ export const EmployeeSelect: React.FC<Props> = ({
     queryKey: ['employees-select', filterByOrgUnitId],
     queryFn: () =>
       apiClient
-        .get<EmployeeOption[]>('/employees', {
-          params: filterByOrgUnitId ? { orgUnitId: filterByOrgUnitId } : undefined,
+        .get<{ data: EmployeeOption[] } | EmployeeOption[]>('/employees', {
+          params: { limit: 500, ...(filterByOrgUnitId ? { orgUnitId: filterByOrgUnitId } : {}) },
         })
-        .then((r) => r.data),
+        .then((r) => (Array.isArray(r.data) ? r.data : r.data.data)),
     staleTime: 60_000,
   });
 

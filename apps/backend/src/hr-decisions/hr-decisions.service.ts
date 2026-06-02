@@ -114,7 +114,7 @@ export class HrDecisionsService extends TenantAwareService {
         where,
         skip,
         take: limit,
-        orderBy: { effectiveDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
         include: {
           employee: {
             select: {
@@ -578,7 +578,7 @@ export class HrDecisionsService extends TenantAwareService {
   async findByEmployee(employeeId: string) {
     return this.prisma.hrDecision.findMany({
       where: { employeeId },
-      orderBy: { effectiveDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
       include: {
         employee: {
           select: {

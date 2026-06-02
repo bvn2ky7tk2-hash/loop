@@ -11,6 +11,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -35,14 +36,13 @@ function BalanceTab({
   setYear: (y: number) => void; setOrgUnit: (v?: string) => void;
 }) {
   const { textPrimary, textMuted, isDark, linkColor } = useThemePalette();
+  const { page, pageSize, resetPage, paginationProps } = usePagination(50);
   const { message: msg } = App.useApp();
   const qc = useQueryClient();
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 50;
 
   const { data, isLoading } = useQuery({
     queryKey: ['leave-summary-all', year, orgUnitId, page],
-    queryFn: () => leavesApi.getAllBalance({ year, orgUnitId, page, limit: PAGE_SIZE }),
+    queryFn: () => leavesApi.getAllBalance({ year, orgUnitId, page, limit: pageSize }),
     placeholderData: (prev) => prev,
   });
 
@@ -222,7 +222,7 @@ function BalanceTab({
         <DatePicker
           picker="year"
           value={dayjs().year(year)}
-          onChange={(d) => { if (d) { setYear(d.year()); setPage(1); } }}
+          onChange={(d) => { if (d) { setYear(d.year()); resetPage(); } }}
           style={{ width: 100 }}
         />
         <Select
@@ -230,7 +230,7 @@ function BalanceTab({
           allowClear
           style={{ width: 220 }}
           value={orgUnitId}
-          onChange={(v) => { setOrgUnit(v); setPage(1); }}
+          onChange={(v) => { setOrgUnit(v); resetPage(); }}
           options={orgOptions}
           showSearch
           filterOption={(input, opt) => String(opt?.label ?? '').toLowerCase().includes(input.toLowerCase())}
@@ -242,14 +242,7 @@ function BalanceTab({
         columns={columns}
         dataSource={employees}
         loading={isLoading}
-        pagination={{
-          current: page,
-          pageSize: PAGE_SIZE,
-          total,
-          showSizeChanger: false,
-          showTotal: (t) => `${t} nhân viên`,
-          onChange: setPage,
-        }}
+        pagination={paginationProps(total, 'nhân sự')}
         size="small"
         scroll={{ x: 900 }}
       />

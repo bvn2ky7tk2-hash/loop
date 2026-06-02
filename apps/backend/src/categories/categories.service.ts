@@ -13,7 +13,7 @@ export class CategoriesService {
         ...(parentId !== undefined ? { parentId: parentId === 'null' ? null : parentId } : {}),
         ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
       },
-      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { sortOrder: 'asc' }, { name: 'asc' }],
       take: 5000,
     });
   }

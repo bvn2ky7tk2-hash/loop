@@ -324,6 +324,7 @@ export default function LeavePage() {
   const [statusFilter, setStatusFilter] = useState<LeaveStatus | undefined>();
   const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [rejectModal, setRejectModal] = useState<{ id: string } | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [configLeaveType, setConfigLeaveType] = useState<LeaveType | null>(null);
@@ -352,7 +353,7 @@ export default function LeavePage() {
 
   const params = {
     page,
-    pageSize: 20,
+    pageSize,
     status: statusFilter,
     ...(activeTab === 'my' && currentEmployee ? { employeeId: currentEmployee.id } : {}),
     ...(activeTab === 'team' && orgUnitFilter ? { orgUnitId: orgUnitFilter } : {}),
@@ -572,10 +573,12 @@ export default function LeavePage() {
         }}
         pagination={{
           total: data?.total,
-          pageSize: 20,
+          pageSize,
           current: page,
-          onChange: setPage,
-          showSizeChanger: false,
+          onChange: (p, ps) => { setPage(p); setPageSize(ps); },
+          showSizeChanger: true,
+          pageSizeOptions: [20, 50, 100, 200],
+          showTotal: (t) => `${t} đơn nghỉ`,
         }}
         style={{ background: bgContainer }}
       />

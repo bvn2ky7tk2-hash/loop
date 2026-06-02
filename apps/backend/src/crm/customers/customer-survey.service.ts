@@ -83,7 +83,7 @@ export class CustomerSurveyService extends TenantAwareService {
           customer: { select: { id: true, name: true } },
           assignee: { select: { id: true, name: true } },
         },
-        orderBy: { nextDueAt: 'asc' },
+        orderBy: { createdAt: 'desc' },
         skip:    (page - 1) * limit,
         take:    limit,
       }),

@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -70,6 +71,7 @@ function TypeTag({ type, isDark }: { type: ExplanationType; isDark: boolean }) {
 
 export default function AttendanceExplanationPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
   const qc = useQueryClient();
   const [form] = Form.useForm();
 
@@ -80,7 +82,6 @@ export default function AttendanceExplanationPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [rejectModal, setRejectModal] = useState<{ open: boolean; id: string }>({ open: false, id: '' });
   const [rejectReason, setRejectReason] = useState('');
-  const [page, setPage] = useState(1);
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees-all'],
@@ -95,7 +96,7 @@ export default function AttendanceExplanationPage() {
         employeeId: filterEmployeeId,
         orgUnitId: filterOrgUnitId,
         page,
-        limit: 20,
+        limit: pageSize,
       }),
   });
 
@@ -296,7 +297,7 @@ export default function AttendanceExplanationPage() {
           optionFilterProp="children"
           style={{ width: 200 }}
           value={filterEmployeeId}
-          onChange={v => { setFilterEmployeeId(v); setPage(1); }}
+          onChange={v => { setFilterEmployeeId(v); resetPage(); }}
         >
           {employees.map((e: any) => (
             <Option key={e.id} value={e.id}>{e.fullName}</Option>
@@ -307,7 +308,7 @@ export default function AttendanceExplanationPage() {
           allowClear
           style={{ width: 140 }}
           value={filterStatus}
-          onChange={v => { setFilterStatus(v); setPage(1); }}
+          onChange={v => { setFilterStatus(v); resetPage(); }}
         >
           <Option value="PENDING">Chờ duyệt</Option>
           <Option value="APPROVED">Đã duyệt</Option>
@@ -317,7 +318,7 @@ export default function AttendanceExplanationPage() {
           placeholder="Phòng ban"
           style={{ minWidth: 180 }}
           value={filterOrgUnitId}
-          onChange={(v) => { setFilterOrgUnitId(v); setPage(1); }}
+          onChange={(v) => { setFilterOrgUnitId(v); resetPage(); }}
           allowClear
         />
       </FilterBar>
@@ -329,13 +330,7 @@ export default function AttendanceExplanationPage() {
           columns={columns}
           dataSource={displayList}
           loading={isLoading}
-          pagination={{
-            current: page,
-            pageSize: 20,
-            total,
-            onChange: setPage,
-            showTotal: (t) => `Tổng ${t} giải trình`,
-          }}
+          pagination={paginationProps(total, 'giải trình')}
           size="small"
         />
       </div>

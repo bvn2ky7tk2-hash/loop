@@ -37,7 +37,7 @@ export class WorkHistoryService extends TenantAwareService {
         where,
         skip,
         take: limit,
-        orderBy: { eventDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.workHistory.count({ where }),
     ]);

@@ -7,6 +7,7 @@ import {
   StopOutlined, ClockCircleOutlined, PercentageOutlined,
 } from '@ant-design/icons';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useQuery } from '@tanstack/react-query';
@@ -43,6 +44,7 @@ const STATUS_BADGE: Record<WorkStatusType, { bg: string; color: string }> = {
 export default function TimesheetManagerPage() {
   const { user } = useAuthStore();
   const { isDark, preset, primary, bgContainer } = useThemePalette();
+  const { paginationProps } = usePagination(50);
   const chartCardStyle = {
     borderRadius: 12,
     background: isDark ? bgContainer : `${primary}09`,
@@ -187,7 +189,7 @@ export default function TimesheetManagerPage() {
             dataSource={teamStatus}
             columns={columns}
             loading={isLoading}
-            pagination={{ pageSize: 20, showSizeChanger: false }}
+            pagination={paginationProps(teamStatus.length, 'nhân sự')}
             size="small"
             rowClassName={(record) => (!record.todayCheckIn ? 'ant-table-row-absent' : '')}
           />

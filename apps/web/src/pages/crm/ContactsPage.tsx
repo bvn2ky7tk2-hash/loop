@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Input, Form,
   Select, message, Tag,
@@ -8,6 +8,7 @@ import { confirmDelete } from '../../components/ui/confirmDelete';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ContactsOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   useGetContacts, useCreateContact, useUpdateContact, useDeleteContact,
   useGetCustomers, type Contact, type ContactFilterDto,
@@ -18,7 +19,13 @@ const { Title, Text } = Typography;
 export default function ContactsPage() {
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters] = useState<ContactFilterDto>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [search, setSearch] = useState<string | undefined>();
+  const [customerIdFilter, setCustomerIdFilter] = useState<string | undefined>();
+  const filters: ContactFilterDto = { page, limit: pageSize, search, customerId: customerIdFilter };
+
+  useEffect(() => { resetPage(); }, [search, customerIdFilter, resetPage]);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing]       = useState<Contact | null>(null);
   const [form] = Form.useForm();
@@ -105,7 +112,7 @@ export default function ContactsPage() {
           placeholder="Tìm theo tên, email..."
           style={{ width: 280 }}
           allowClear
-          onSearch={(v) => setFilters(f => ({ ...f, search: v || undefined, page: 1 }))}
+          onSearch={(v) => setSearch(v || undefined)}
         />
         <Select
           placeholder="Khách hàng"
@@ -114,7 +121,7 @@ export default function ContactsPage() {
           showSearch
           optionFilterProp="label"
           options={customers.map(c => ({ value: c.id, label: c.name }))}
-          onChange={(v) => setFilters(f => ({ ...f, customerId: v, page: 1 }))}
+          onChange={(v) => setCustomerIdFilter(v)}
         />
       </div>
 
@@ -124,13 +131,7 @@ export default function ContactsPage() {
           columns={columns}
           dataSource={data?.data ?? []}
           loading={isLoading}
-          pagination={{
-            current: filters.page,
-            pageSize: filters.limit,
-            total: data?.total ?? 0,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })),
-            showSizeChanger: true,
-          }}
+          pagination={paginationProps(data?.total ?? 0, 'liên hệ')}
         />
       </div>
 

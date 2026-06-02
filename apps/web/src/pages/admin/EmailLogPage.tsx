@@ -40,6 +40,7 @@ export default function EmailLogPage() {
   const [module, setModule] = useState('');
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
 
   const filter = {
     ...(status ? { status } : {}),
@@ -47,7 +48,7 @@ export default function EmailLogPage() {
     ...(dateRange?.[0] ? { fromDate: dateRange[0].toISOString() } : {}),
     ...(dateRange?.[1] ? { toDate: dateRange[1].endOf('day').toISOString() } : {}),
     page,
-    limit: 50,
+    limit: pageSize,
   };
 
   const { data, isLoading } = useQuery({
@@ -203,9 +204,11 @@ export default function EmailLogPage() {
           pagination={{
             current: page,
             total,
-            pageSize: 50,
-            onChange: setPage,
-            showTotal: (t) => `${t} email`,
+            pageSize,
+            onChange: (p, ps) => { setPage(p); setPageSize(ps); },
+            showSizeChanger: true,
+            pageSizeOptions: [50, 100, 200, 500],
+            showTotal: (t) => `${t} bản ghi`,
           }}
           scroll={{ x: 900 }}
         />

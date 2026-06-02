@@ -9,6 +9,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -35,6 +36,7 @@ const STATUS_OPTIONS = [
 export default function VehicleApprovalsPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
 
+  const { paginationProps } = usePagination(20);
   const [statusFilter, setStatusFilter] = useState<string>('PENDING');
   const [rejectOpen, setRejectOpen]     = useState(false);
   const [rejectId, setRejectId]         = useState('');
@@ -195,7 +197,7 @@ export default function VehicleApprovalsPage() {
           columns={columns}
           dataSource={filtered}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(filtered.length, 'yêu cầu')}
           scroll={{ x: 900 }}
           locale={{
             emptyText: (

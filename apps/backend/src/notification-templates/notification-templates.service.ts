@@ -12,6 +12,7 @@ export class NotificationTemplatesService {
     const dbRecords = await this.prisma.notificationTemplate.findMany({
       where: { tenantId: tenantId ?? null },
       take: 200,
+      orderBy: { createdAt: 'desc' },
     });
     const dbMap = new Map(dbRecords.map((r) => [r.key, r]));
 

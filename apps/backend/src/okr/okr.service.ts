@@ -106,7 +106,7 @@ export class OkrService extends TenantAwareService implements OnModuleInit {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.okrObjective.findMany({
         where, include: OBJ_INCLUDE,
-        orderBy: [{ year: 'desc' }, { cycle: 'asc' }],
+        orderBy: [{ createdAt: 'desc' }, { year: 'desc' }, { cycle: 'asc' }],
         skip: (page - 1) * limit, take: limit,
       }),
       this.prisma.okrObjective.count({ where }),

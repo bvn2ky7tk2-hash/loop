@@ -312,6 +312,8 @@ export default function InvoicesPage() {
             total:       data?.total ?? 0,
             onChange:    (page, limit) => setFilters(f => ({ ...f, page, limit })),
             showSizeChanger: true,
+            pageSizeOptions: [20, 50, 100, 200],
+            showTotal: (t) => `${t} hóa đơn`,
           }}
         />
       </div>

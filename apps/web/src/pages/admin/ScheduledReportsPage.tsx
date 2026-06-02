@@ -362,7 +362,7 @@ export default function ScheduledReportsPage() {
         columns={columns}
         dataSource={filtered}
         loading={isLoading}
-        pagination={{ pageSize: 20, showSizeChanger: false }}
+        pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} bản ghi` }}
         scroll={{ x: 900 }}
       />
 

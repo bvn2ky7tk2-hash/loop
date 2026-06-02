@@ -15,6 +15,7 @@ import { message } from 'antd';
 import dayjs from 'dayjs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -103,6 +104,7 @@ function KrRow({ kr, objId, onUpdate, onDelete }: { kr: OkrKeyResult; objId: str
 // ─── OKR Tab ──────────────────────────────────────────────────────────────────
 function OkrTab() {
   const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const user = useAuthStore(s => s.user);
   const qc = useQueryClient();
 
@@ -246,7 +248,7 @@ function OkrTab() {
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table rowKey="id" columns={columns} dataSource={objectives?.data ?? []} loading={isLoading}
-          pagination={{ pageSize: 20, total: objectives?.total, showTotal: t => <Text style={{ color: textMuted }}>Tổng {t}</Text> }} />
+          pagination={paginationProps(objectives?.total, 'mục tiêu')} />
       </div>
 
       {/* Detail Drawer */}

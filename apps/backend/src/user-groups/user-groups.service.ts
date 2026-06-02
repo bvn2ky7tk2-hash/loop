@@ -14,7 +14,7 @@ export class UserGroupsService {
 
   async findAll() {
     return this.prisma.userGroup.findMany({
-      orderBy: { name: 'asc' },
+      orderBy: { createdAt: 'desc' },
       include: {
         _count: { select: { members: true, permissions: true } },
         orgAccess: { select: { orgUnitId: true, includeChildren: true } },

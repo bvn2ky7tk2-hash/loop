@@ -24,7 +24,7 @@ export class PayrollConfigService {
   async listInsuranceConfigs(page = 1, limit = 20): Promise<PaginatedResult<any>> {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.insuranceConfig.findMany({
-        orderBy: { effectiveFrom: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -156,7 +156,7 @@ export class PayrollConfigService {
   async listTaxBrackets(page = 1, limit = 20): Promise<PaginatedResult<any>> {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.taxBracket.findMany({
-        orderBy: { effectiveFrom: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -277,7 +277,7 @@ export class PayrollConfigService {
   async listTaxDeductions(page = 1, limit = 20): Promise<PaginatedResult<any>> {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.taxDeductionConfig.findMany({
-        orderBy: { effectiveFrom: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
@@ -332,7 +332,7 @@ export class PayrollConfigService {
 
   async listSalaryColumns(): Promise<any[]> {
     return this.prisma.salaryColumn.findMany({
-      orderBy: [{ isActive: 'desc' }, { sortOrder: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { isActive: 'desc' }, { sortOrder: 'asc' }],
       include: { allowanceType: { select: { id: true, name: true } } },
     });
   }

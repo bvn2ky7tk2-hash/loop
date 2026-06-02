@@ -58,6 +58,7 @@ export interface HrDecisionListParams {
   employeeId?: string;
   type?: HrDecisionType;
   status?: HrDecisionStatus;
+  orgUnitId?: string;
   effectiveDateFrom?: string;
   effectiveDateTo?: string;
 }

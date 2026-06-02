@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Table,
   Button,
@@ -34,6 +34,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -104,7 +105,11 @@ export default function HrDecisionsPage() {
   const [statusFilter, setStatusFilter] = useState<HrDecisionStatus | undefined>(undefined);
   const [orgUnitFilter, setOrgUnitFilter] = useState<string | undefined>(undefined);
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
-  const [page, setPage] = useState(1);
+
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+
+  // Reset trang 1 khi filter thay đổi
+  useEffect(() => { resetPage(); }, [search, typeFilter, statusFilter, orgUnitFilter, dateRange, resetPage]);
 
   // ── UI state ──
   const [detailRecord, setDetailRecord] = useState<HrDecision | null>(null);
@@ -122,23 +127,25 @@ export default function HrDecisionsPage() {
   // ── Queries ──
   const queryParams = useMemo(() => ({
     page,
-    limit: 20,
+    limit: pageSize,
     search: search || undefined,
     type: typeFilter,
     status: statusFilter,
     orgUnitId: orgUnitFilter,
     effectiveDateFrom: dateRange?.[0]?.format('YYYY-MM-DD'),
     effectiveDateTo: dateRange?.[1]?.format('YYYY-MM-DD'),
-  }), [page, search, typeFilter, statusFilter, orgUnitFilter, dateRange]);
+  }), [page, pageSize, search, typeFilter, statusFilter, orgUnitFilter, dateRange]);
 
   const { data: decisionsData, isLoading } = useQuery({
     queryKey: ['hr-decisions', queryParams],
     queryFn: () => hrDecisionsApi.list(queryParams),
   });
 
+  // Dùng queryKey riêng + limit cao để load đủ nhân viên cho dropdown
   const { data: employees = [] } = useQuery({
-    queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryKey: ['employees-dropdown'],
+    queryFn: () => employeesApi.list({ limit: 2000 }),
+    staleTime: 5 * 60_000,
   });
 
   const { data: selectedEmpDetail } = useQuery({
@@ -182,11 +189,13 @@ export default function HrDecisionsPage() {
   ).length;
 
   // ── Mutations ──
+  const refresh = () => queryClient.refetchQueries({ queryKey: ['hr-decisions'], exact: false });
+
   const createMutation = useMutation({
     mutationFn: (data: Partial<HrDecision>) => hrDecisionsApi.create(data),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refresh();
       message.success('Tạo quyết định thành công');
-      queryClient.invalidateQueries({ queryKey: ['hr-decisions'] });
       closeForm();
     },
     onError: () => message.error('Không thể tạo quyết định'),
@@ -195,9 +204,9 @@ export default function HrDecisionsPage() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<HrDecision> }) =>
       hrDecisionsApi.update(id, data),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refresh();
       message.success('Cập nhật quyết định thành công');
-      queryClient.invalidateQueries({ queryKey: ['hr-decisions'] });
       closeForm();
     },
     onError: () => message.error('Không thể cập nhật quyết định'),
@@ -205,9 +214,9 @@ export default function HrDecisionsPage() {
 
   const submitMutation = useMutation({
     mutationFn: (id: string) => hrDecisionsApi.submit(id),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refresh();
       message.success('Đã nộp quyết định để duyệt');
-      queryClient.invalidateQueries({ queryKey: ['hr-decisions'] });
       setDetailRecord(null);
     },
     onError: () => message.error('Không thể nộp quyết định'),
@@ -215,9 +224,9 @@ export default function HrDecisionsPage() {
 
   const approveMutation = useMutation({
     mutationFn: (id: string) => hrDecisionsApi.approve(id),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refresh();
       message.success('Đã duyệt quyết định');
-      queryClient.invalidateQueries({ queryKey: ['hr-decisions'] });
       setDetailRecord(null);
     },
     onError: () => message.error('Không thể duyệt quyết định'),
@@ -226,9 +235,9 @@ export default function HrDecisionsPage() {
   const rejectMutation = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
       hrDecisionsApi.reject(id, reason),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await refresh();
       message.success('Đã từ chối quyết định');
-      queryClient.invalidateQueries({ queryKey: ['hr-decisions'] });
       setRejectOpen(false);
       setRejectTarget(null);
       setRejectReason('');
@@ -495,10 +504,7 @@ export default function HrDecisionsPage() {
           prefix={<span style={{ color: textMuted }}>🔍</span>}
           placeholder="Tìm tên nhân viên hoặc số QĐ..."
           value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
+          onChange={(e) => setSearch(e.target.value)}
           style={{ width: 260 }}
           allowClear
         />
@@ -507,10 +513,7 @@ export default function HrDecisionsPage() {
           style={{ width: 180 }}
           allowClear
           value={typeFilter}
-          onChange={(v) => {
-            setTypeFilter(v);
-            setPage(1);
-          }}
+          onChange={(v) => setTypeFilter(v)}
           options={Object.entries(DECISION_TYPE_MAP).map(([k, v]) => ({
             value: k,
             label: v.label,
@@ -521,10 +524,7 @@ export default function HrDecisionsPage() {
           style={{ width: 140 }}
           allowClear
           value={statusFilter}
-          onChange={(v) => {
-            setStatusFilter(v);
-            setPage(1);
-          }}
+          onChange={(v) => setStatusFilter(v)}
           options={Object.entries(STATUS_MAP).map(([k, v]) => ({
             value: k,
             label: v.label,
@@ -534,16 +534,13 @@ export default function HrDecisionsPage() {
           placeholder="Phòng ban"
           style={{ minWidth: 180 }}
           value={orgUnitFilter}
-          onChange={(v) => { setOrgUnitFilter(v); setPage(1); }}
+          onChange={(v) => setOrgUnitFilter(v)}
           allowClear
         />
         <DatePicker.RangePicker
           placeholder={['Từ ngày HLực', 'Đến ngày']}
           format="DD/MM/YYYY"
-          onChange={(vals) => {
-            setDateRange(vals as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null);
-            setPage(1);
-          }}
+          onChange={(vals) => setDateRange(vals as [dayjs.Dayjs | null, dayjs.Dayjs | null] | null)}
           style={{ width: 240 }}
         />
       </FilterBar>
@@ -562,16 +559,7 @@ export default function HrDecisionsPage() {
           columns={columns}
           dataSource={decisions}
           loading={isLoading}
-          pagination={{
-            current: page,
-            pageSize: 20,
-            total,
-            onChange: (p) => setPage(p),
-            showSizeChanger: false,
-            showTotal: (t) => (
-              <Text style={{ color: textMuted }}>Tổng {t} quyết định</Text>
-            ),
-          }}
+          pagination={paginationProps(total, 'quyết định')}
           scroll={{ x: 900 }}
         />
       </div>

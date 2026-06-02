@@ -314,7 +314,7 @@ export default function BudgetPage() {
         columns={columns}
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
-        pagination={{ pageSize: 20, showTotal: t => `${t} dòng` }}
+        pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} ngân sách` }}
         locale={{ emptyText: 'Không có dữ liệu ngân sách' }}
         summary={() => (
           <Table.Summary.Row>

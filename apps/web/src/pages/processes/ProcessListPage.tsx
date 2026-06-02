@@ -201,7 +201,7 @@ export default function ProcessListPage() {
         rowKey="id"
         loading={isLoading}
         size="middle"
-        pagination={{ total: data?.meta.total, pageSize: data?.meta.pageSize, showSizeChanger: false }}
+        pagination={{ total: data?.meta.total, pageSize: data?.meta.pageSize, showSizeChanger: true, pageSizeOptions: [50, 100, 200, 500], showTotal: (t) => `${t} quy trình` }}
       />
 
       {/* Modal tạo mới */}

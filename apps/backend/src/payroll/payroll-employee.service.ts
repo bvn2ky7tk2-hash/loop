@@ -21,7 +21,7 @@ export class PayrollEmployeeService {
       where: { employeeId },
       include: {
         dependents: {
-          orderBy: { registeredFrom: 'desc' },
+          orderBy: { createdAt: 'desc' },
         },
       },
     });
@@ -56,7 +56,7 @@ export class PayrollEmployeeService {
     await this.ensureTaxProfile(employeeId);
     return this.prisma.dependent.findMany({
       where: { employeeId },
-      orderBy: { registeredFrom: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -104,7 +104,7 @@ export class PayrollEmployeeService {
 
   async listAllowanceTypes() {
     return this.prisma.allowanceType.findMany({
-      orderBy: [{ isActive: 'desc' }, { name: 'asc' }],
+      orderBy: [{ createdAt: 'desc' }, { isActive: 'desc' }, { name: 'asc' }],
     });
   }
 
@@ -170,7 +170,7 @@ export class PayrollEmployeeService {
           },
         },
       },
-      orderBy: { period: { startDate: 'desc' } },
+      orderBy: { createdAt: 'desc' },
     });
 
     return records.map(r => ({

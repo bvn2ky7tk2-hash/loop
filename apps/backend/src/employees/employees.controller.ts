@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Body, Param, Req, Res, Query } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -57,8 +57,18 @@ export class EmployeesController {
   @Get()
   @RequirePermission(PERMISSIONS.EMPLOYEES_READ)
   @ApiOperation({ summary: 'Danh sách nhân sự (org scoped)' })
-  findAll(@Req() req: { orgUnitIds: string[] | null }, @CurrentUser() user: JwtUser) {
-    return this.service.findAll(req.orgUnitIds, user.role);
+  findAll(
+    @Req() req: { orgUnitIds: string[] | null },
+    @CurrentUser() user: JwtUser,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.service.findAll(
+      req.orgUnitIds,
+      user.role,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 500,
+    );
   }
 
   @Get(':id')

@@ -9,6 +9,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 import 'dayjs/locale/vi';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { hrHolidaysApi, type HolidayCalendar, type HolidayType } from '../../api/hr-attendance';
@@ -47,6 +48,7 @@ const WEEKDAY_NAMES: Record<number, string> = {
 
 export default function HolidaysPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
   const currentYear = dayjs().year();
@@ -227,7 +229,7 @@ export default function HolidaysPage() {
           columns={columns}
           dataSource={sortedHolidays}
           loading={isLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={paginationProps(sortedHolidays.length, 'ngày nghỉ lễ')}
           size="middle"
         />
       </div>

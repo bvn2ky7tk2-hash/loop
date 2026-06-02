@@ -37,7 +37,7 @@ export class PayrollService extends TenantAwareService {
   async listPeriods(page = 1, limit = 20): Promise<PaginatedResult<any>> {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.payrollPeriod.findMany({
-        orderBy: { startDate: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
         include: {
@@ -98,7 +98,7 @@ export class PayrollService extends TenantAwareService {
             },
           },
         },
-        orderBy: { employee: { user: { name: 'asc' } } },
+        orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),

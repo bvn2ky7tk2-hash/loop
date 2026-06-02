@@ -24,7 +24,7 @@ export class AlertsService extends TenantAwareService {
     const tid = this.getTenantId();
     const tenantFilter = tid ? { project: { tenantId: tid } } : {};
     // Giới hạn an toàn — số loại cảnh báo trên 1 dự án hữu hạn
-    return this.prisma.alertConfig.findMany({ where: { projectId, ...tenantFilter }, take: 500 });
+    return this.prisma.alertConfig.findMany({ where: { projectId, ...tenantFilter }, take: 500, orderBy: { createdAt: 'desc' } });
   }
 
   async upsert(projectId: string, dto: CreateAlertDto) {
