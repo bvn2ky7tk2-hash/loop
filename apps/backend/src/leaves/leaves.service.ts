@@ -22,7 +22,7 @@ const LEAVE_REQUEST_INCLUDE = {
       position: { include: { jobTitle: { select: { id: true, name: true } } } },
     },
   },
-  leaveType: { select: { id: true, name: true, isPaid: true, color: true } },
+  leaveType: { select: { id: true, name: true, isPaid: true, color: true, deductsAnnualLeave: true, maxDaysPerYear: true } },
   approvedBy: { select: { id: true, name: true } },
 };
 
@@ -251,6 +251,34 @@ export class LeavesService extends TenantAwareService {
             usedDays: { increment: Number(request.days) },
           },
         });
+
+        // Nếu loại nghỉ có deductsAnnualLeave = true, tự động trừ phép năm tồn
+        if (leaveTypeForBalance?.deductsAnnualLeave) {
+          const annualLeaveType = await tx.leaveType.findFirst({
+            where: { name: { contains: 'Phép năm' }, tenantId: this.tenantId },
+          });
+          if (annualLeaveType) {
+            await tx.leaveBalance.upsert({
+              where: {
+                employeeId_leaveTypeId_year: {
+                  employeeId: request.employeeId,
+                  leaveTypeId: annualLeaveType.id,
+                  year: currentYear,
+                },
+              },
+              create: {
+                employeeId: request.employeeId,
+                leaveTypeId: annualLeaveType.id,
+                year: currentYear,
+                totalDays: annualLeaveType.maxDaysPerYear,
+                usedDays: Number(request.days),
+              },
+              update: {
+                usedDays: { increment: Number(request.days) },
+              },
+            });
+          }
+        }
       }
 
       return result;
