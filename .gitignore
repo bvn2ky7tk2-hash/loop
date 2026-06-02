@@ -44,3 +44,4 @@ apps/backend/prisma/migrations/.shadow_db
 
 # Test coverage
 coverage
+dump.rdb
