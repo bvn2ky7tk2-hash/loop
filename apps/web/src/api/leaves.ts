@@ -163,6 +163,12 @@ export const leavesApi = {
       '/leaves/init-balances', {}, { params }
     ).then((r) => r.data),
 
+  // Tính lại phép năm toàn bộ NV theo gói chính sách (số phép + thâm niên + pro-rata)
+  recalculateAll: (year: number) =>
+    apiClient.post<{ message: string; year: number; recalculated: number; skipped: number; total: number }>(
+      '/leave-policies/recalculate-all', {}, { params: { year } }
+    ).then((r) => r.data),
+
   getMonthlyStats: (params?: { year?: number; orgUnitId?: string }) =>
     apiClient.get<{
       year: number;

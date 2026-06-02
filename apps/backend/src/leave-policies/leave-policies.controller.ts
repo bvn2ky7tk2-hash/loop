@@ -67,4 +67,23 @@ export class LeavePoliciesController {
   assign(@Body() dto: AssignPolicyDto) {
     return this.svc.assignToEmployee(dto);
   }
+
+  // POST /api/v1/leave-policies/recalculate/:employeeId — tính lại 1 NV
+  @Post('recalculate/:employeeId')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  recalculate(
+    @Param('employeeId') employeeId: string,
+    @Query('year', new DefaultValuePipe(new Date().getFullYear()), ParseIntPipe) year: number,
+  ) {
+    return this.svc.recalculateBalance(employeeId, year);
+  }
+
+  // POST /api/v1/leave-policies/recalculate-all — tính lại toàn bộ (nút HR)
+  @Post('recalculate-all')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
+  recalculateAll(
+    @Query('year', new DefaultValuePipe(new Date().getFullYear()), ParseIntPipe) year: number,
+  ) {
+    return this.svc.recalculateAll(year);
+  }
 }

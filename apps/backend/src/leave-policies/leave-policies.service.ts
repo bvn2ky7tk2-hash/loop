@@ -175,25 +175,76 @@ export class LeavePoliciesService {
   async recalculateBalance(employeeId: string, year: number) {
     const { entitlement } = await this.computeEntitlement(employeeId, year);
 
-    // Lấy tất cả LeaveBalance của nhân viên trong năm
-    const balances = await this.prisma.leaveBalance.findMany({
-      where: { employeeId, year },
+    // Loại "Phép năm" — đây là quỹ cần đồng bộ tổng ngày được hưởng (totalDays)
+    const annualType = await this.prisma.leaveType.findFirst({
+      where: { name: { contains: 'phép năm', mode: 'insensitive' }, isActive: true },
+      select: { id: true },
     });
 
-    // Cập nhật entitlementDays cho từng balance
-    const updates = balances.map((b) =>
-      this.prisma.leaveBalance.update({
-        where: { id: b.id },
-        data: { entitlementDays: entitlement },
-      }),
+    // Cập nhật entitlementDays cho mọi balance trong năm
+    const balances = await this.prisma.leaveBalance.findMany({ where: { employeeId, year } });
+    await this.prisma.$transaction(
+      balances.map((b) =>
+        this.prisma.leaveBalance.update({
+          where: { id: b.id },
+          data: { entitlementDays: entitlement },
+        }),
+      ),
     );
 
-    await this.prisma.$transaction(updates);
+    // Đồng bộ quỹ Phép năm: totalDays = entitlement (giữ nguyên usedDays đã dùng)
+    if (annualType) {
+      await this.prisma.leaveBalance.upsert({
+        where: {
+          employeeId_leaveTypeId_year: { employeeId, leaveTypeId: annualType.id, year },
+        },
+        update: { totalDays: entitlement, entitlementDays: entitlement },
+        create: {
+          employeeId,
+          leaveTypeId: annualType.id,
+          year,
+          totalDays: entitlement,
+          usedDays: 0,
+          entitlementDays: entitlement,
+        },
+      });
+    }
+
+    return { employeeId, year, entitlement, balancesUpdated: balances.length };
+  }
+
+  // ─── 8. Tính lại phép năm HÀNG LOẠT (cho nút "Tính lại phép năm" của HR) ─────
+  async recalculateAll(year: number) {
+    // Chỉ NV còn làm + có gói phép (trực tiếp hoặc qua chức danh)
+    const employees = await this.prisma.employee.findMany({
+      where: {
+        deletedAt: null,
+        OR: [
+          { leavePolicyId: { not: null } },
+          { jobTitle: { leavePolicyId: { not: null } } },
+        ],
+      },
+      select: { id: true },
+      take: 5000,
+    });
+
+    let ok = 0;
+    let skipped = 0;
+    for (const e of employees) {
+      try {
+        await this.recalculateBalance(e.id, year);
+        ok++;
+      } catch {
+        skipped++; // NV thiếu ngày vào làm / chưa gán gói → bỏ qua
+      }
+    }
 
     return {
-      message: `Đã cập nhật ${updates.length} bản ghi leave balance`,
-      entitlement,
-      balancesUpdated: updates.length,
+      message: `Đã tính lại phép năm ${year} cho ${ok} nhân viên (bỏ qua ${skipped}).`,
+      year,
+      recalculated: ok,
+      skipped,
+      total: employees.length,
     };
   }
 }

@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import {
   ScheduleOutlined, HistoryOutlined, UserOutlined,
-  BarChartOutlined, ThunderboltOutlined,
+  BarChartOutlined, ThunderboltOutlined, ReloadOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -53,6 +53,15 @@ function BalanceTab({
       qc.invalidateQueries({ queryKey: ['leave-summary-all'] });
     },
     onError: () => msg.error('Khởi tạo thất bại'),
+  });
+
+  const recalcMutation = useMutation({
+    mutationFn: () => leavesApi.recalculateAll(year),
+    onSuccess: (res) => {
+      msg.success(res.message);
+      qc.invalidateQueries({ queryKey: ['leave-summary-all'] });
+    },
+    onError: () => msg.error('Tính lại phép năm thất bại'),
   });
 
   const employees = data?.data ?? [];
@@ -196,27 +205,52 @@ function BalanceTab({
 
       <FilterBar
         right={
-          <Popconfirm
-            title={`Khởi tạo phép năm ${year}`}
-            description={
-              <span>
-                Tạo số dư phép ban đầu cho toàn bộ nhân viên<br />
-                dựa trên tất cả loại phép đang hoạt động.<br />
-                Bản ghi đã có <strong>sẽ không bị ghi đè</strong>.
-              </span>
-            }
-            onConfirm={() => initMutation.mutate()}
-            okText="Khởi tạo"
-            cancelText="Hủy"
-          >
-            <Button
-              icon={<ThunderboltOutlined />}
-              loading={initMutation.isPending}
-              disabled={initMutation.isPending}
+          <Space>
+            <Popconfirm
+              title={`Tính lại phép năm ${year}`}
+              description={
+                <span>
+                  Tính lại số ngày phép năm cho toàn bộ nhân viên theo<br />
+                  <strong>gói chính sách của chức danh</strong> (số phép gốc +<br />
+                  thâm niên + pro-rata nếu vào giữa năm).<br />
+                  Số ngày <strong>đã dùng được giữ nguyên</strong>.
+                </span>
+              }
+              onConfirm={() => recalcMutation.mutate()}
+              okText="Tính lại"
+              cancelText="Hủy"
             >
-              Khởi tạo phép năm {year}
-            </Button>
-          </Popconfirm>
+              <Button
+                type="primary"
+                icon={<ReloadOutlined />}
+                loading={recalcMutation.isPending}
+                disabled={recalcMutation.isPending}
+              >
+                Tính lại phép năm {year}
+              </Button>
+            </Popconfirm>
+            <Popconfirm
+              title={`Khởi tạo phép năm ${year}`}
+              description={
+                <span>
+                  Tạo số dư phép ban đầu cho toàn bộ nhân viên<br />
+                  dựa trên tất cả loại phép đang hoạt động.<br />
+                  Bản ghi đã có <strong>sẽ không bị ghi đè</strong>.
+                </span>
+              }
+              onConfirm={() => initMutation.mutate()}
+              okText="Khởi tạo"
+              cancelText="Hủy"
+            >
+              <Button
+                icon={<ThunderboltOutlined />}
+                loading={initMutation.isPending}
+                disabled={initMutation.isPending}
+              >
+                Khởi tạo phép năm {year}
+              </Button>
+            </Popconfirm>
+          </Space>
         }
       >
         <DatePicker

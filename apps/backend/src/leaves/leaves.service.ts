@@ -256,7 +256,7 @@ export class LeavesService extends TenantAwareService {
         // (LeaveType là danh mục global — không lọc theo tenant)
         if (leaveTypeForBalance?.deductsAnnualLeave) {
           const annualLeaveType = await tx.leaveType.findFirst({
-            where: { name: { contains: 'Phép năm' } },
+            where: { name: { contains: 'phép năm', mode: 'insensitive' } },
           });
           // Guard: nếu chính đơn này ĐÃ là loại "Phép năm" thì balance đã được trừ ở trên
           // → KHÔNG trừ lần nữa (tránh double-count cùng một dòng balance).
