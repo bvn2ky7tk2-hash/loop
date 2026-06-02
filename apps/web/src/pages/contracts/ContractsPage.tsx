@@ -264,6 +264,7 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
         startDate:     editing.startDate ? dayjs(editing.startDate) : null,
         endDate:       editing.endDate   ? dayjs(editing.endDate)   : null,
         salaryMonthly: editing.salaryMonthly,
+        insuranceSalary: editing.insuranceSalary ?? undefined,
         currency:      editing.currency ?? 'VND',
         note:          editing.note ?? '',
         signedAt:      editing.signedAt  ? dayjs(editing.signedAt)  : null,
@@ -290,6 +291,7 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
       startDate:     (values.startDate as dayjs.Dayjs).format('YYYY-MM-DD'),
       endDate:       values.endDate ? (values.endDate as dayjs.Dayjs).format('YYYY-MM-DD') : undefined,
       salaryMonthly: values.salaryMonthly as number,
+      insuranceSalary: values.insuranceSalary != null ? (values.insuranceSalary as number) : undefined,
       currency:      (values.currency as string) ?? 'VND',
       note:          (values.note as string) || undefined,
       signedAt:      values.signedAt ? (values.signedAt as dayjs.Dayjs).format('YYYY-MM-DD') : undefined,
@@ -473,19 +475,33 @@ function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawerProps)
           />
         )}
 
-        {/* Lương tháng */}
-        <Form.Item
-          name="salaryMonthly" label="Lương tháng (VND)"
-          rules={[{ required: true, message: 'Nhập mức lương' }]}
-        >
-          <InputNumber<number>
-            style={{ width: '100%' }}
-            min={0} step={500000}
-            formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={(v) => Number(v?.replace(/,/g, '') ?? 0)}
-            placeholder="VD: 15,000,000"
-          />
-        </Form.Item>
+        {/* Lương tháng + Mức đóng BHXH */}
+        <Space style={{ width: '100%' }} styles={{ item: { flex: 1 } }}>
+          <Form.Item
+            name="salaryMonthly" label="Lương tháng (VND)" style={{ flex: 1 }}
+            rules={[{ required: true, message: 'Nhập mức lương' }]}
+          >
+            <InputNumber<number>
+              style={{ width: '100%' }}
+              min={0} step={500000}
+              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(v) => Number(v?.replace(/,/g, '') ?? 0)}
+              placeholder="VD: 15,000,000"
+            />
+          </Form.Item>
+          <Form.Item
+            name="insuranceSalary" label="Mức đóng BHXH (VND)" style={{ flex: 1 }}
+            tooltip="Lương dùng để tính BHXH/BHYT/BHTN. Bỏ trống → mặc định bằng lương tháng."
+          >
+            <InputNumber<number>
+              style={{ width: '100%' }}
+              min={0} step={500000}
+              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(v) => Number(v?.replace(/,/g, '') ?? 0)}
+              placeholder="Bỏ trống = bằng lương tháng"
+            />
+          </Form.Item>
+        </Space>
 
         {/* Phụ cấp */}
         <div style={{

@@ -42,6 +42,7 @@ export interface Contract {
   startDate: string;
   endDate?: string | null;
   salaryMonthly: number;
+  insuranceSalary?: number | null;
   currency: string;
   note?: string | null;
   signedAt?: string | null;
@@ -59,6 +60,7 @@ export interface CreateContractDto {
   startDate: string;
   endDate?: string;
   salaryMonthly: number;
+  insuranceSalary?: number | null;
   currency?: string;
   note?: string;
   signedAt?: string;
