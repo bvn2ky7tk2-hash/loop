@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../generated/prisma';
 import { HealthService } from './health.service';
@@ -18,7 +18,14 @@ export class HealthController {
     return this.healthService.getDemoStatus();
   }
 
+  @Post('demo/snapshot')
+  @HttpCode(200)
+  createSnapshot() {
+    return this.healthService.createSnapshot();
+  }
+
   @Post('demo/reset')
+  @HttpCode(200)
   resetDemo() {
     return this.healthService.resetDemo();
   }

@@ -197,13 +197,11 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-people-dev', label: 'Phát triển nhân lực', visible: true,
         items: [
-          { key: '/hr/training',                  label: 'Đào tạo',               visible: true },
-          { key: '/hr/performance',               label: 'Đánh giá năng lực',     visible: true },
-          { key: '/hr/skill-matrix',              label: 'Ma trận kỹ năng',       visible: true },
-          { key: '/hr/okr',                       label: 'OKR & KPI',              visible: true },
-          { key: '/hr/analytics',                 label: 'HR Analytics',           visible: true },
-          { key: '/hr/performance/bonus-config',  label: 'Cấu hình Bonus',        visible: true },
-          { key: '/hr/performance/salary-review', label: 'Xem xét lương',         visible: true },
+          { key: '/hr/training',     label: 'Đào tạo',           visible: true },
+          { key: '/hr/performance',  label: 'Đánh giá năng lực', visible: true },
+          { key: '/hr/skill-matrix', label: 'Ma trận kỹ năng',   visible: true },
+          { key: '/hr/okr',          label: 'OKR & KPI',          visible: true },
+          { key: '/hr/analytics',    label: 'HR Analytics',       visible: true },
         ],
       },
     ],
@@ -238,10 +236,12 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-att-payroll', label: 'Lương & Phúc lợi', visible: true,
         items: [
-          { key: '/payroll',          label: 'Bảng lương',       visible: true },
-          { key: '/payroll/settings', label: 'Cài đặt lương',    visible: true },
-          { key: '/hr/insurance',     label: 'Bảo hiểm xã hội',  visible: true },
-          { key: '/hr/salary-bands',  label: 'Band lương',       visible: true },
+          { key: '/payroll',                          label: 'Bảng lương',        visible: true },
+          { key: '/payroll/settings',                 label: 'Cài đặt lương',     visible: true },
+          { key: '/hr/performance/salary-review',     label: 'Xem xét lương',     visible: true },
+          { key: '/hr/performance/bonus-config',      label: 'Cấu hình Bonus',    visible: true },
+          { key: '/hr/salary-bands',                  label: 'Band lương',        visible: true },
+          { key: '/hr/insurance',                     label: 'Bảo hiểm xã hội',   visible: true },
         ],
       },
     ],
@@ -262,11 +262,11 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-recruit-main', label: 'Tuyển dụng', visible: true,
         items: [
-          { key: '/recruit/onboarding',  label: 'Onboarding',       visible: true },
-          { key: '/recruit/pipeline',   label: 'Phễu tuyển dụng', visible: true },
-          { key: '/recruit/candidates', label: 'Ứng viên',        visible: true },
-          { key: '/recruit/interviews', label: 'Lịch phỏng vấn',  visible: true },
-          { key: '/recruit/jobs',       label: 'Tin tuyển dụng',  visible: true },
+          { key: '/recruit/jobs',        label: 'Tin tuyển dụng',  visible: true },
+          { key: '/recruit/pipeline',    label: 'Phễu tuyển dụng', visible: true },
+          { key: '/recruit/candidates',  label: 'Ứng viên',        visible: true },
+          { key: '/recruit/interviews',  label: 'Lịch phỏng vấn',  visible: true },
+          { key: '/recruit/onboarding',  label: 'Onboarding',      visible: true },
         ],
       },
     ],
@@ -285,13 +285,18 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-finance-ops', label: 'Vận hành tài chính', visible: true,
+        key: 'g-finance-cashflow', label: 'Thu - Chi', visible: true,
         items: [
-          { key: '/expenses',       label: 'Đề nghị thanh toán', visible: true },
-          { key: '/cost',           label: 'Chi phí dự án',      visible: true },
-          { key: '/budget',         label: 'Ngân sách dự án',    visible: true },
-          { key: '/finance/budget', label: 'Kế hoạch ngân sách', visible: true },
-          { key: '/invoices',       label: 'Hóa đơn',            visible: true },
+          { key: '/expenses', label: 'Đề nghị thanh toán', visible: true },
+          { key: '/invoices', label: 'Hóa đơn',            visible: true },
+        ],
+      },
+      {
+        key: 'g-finance-budget', label: 'Ngân sách', visible: true,
+        items: [
+          { key: '/finance/budget', label: 'Ngân sách tổng thể',  visible: true },
+          { key: '/budget',         label: 'Ngân sách dự án',     visible: true },
+          { key: '/cost',           label: 'Chi phí dự án',       visible: true },
         ],
       },
       {

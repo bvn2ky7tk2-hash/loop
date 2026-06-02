@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
 import { validateEnv } from '../../common/env-validation';
+import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class HealthService {
@@ -108,18 +111,112 @@ export class HealthService {
     return { status: hasMinioConfig ? 'ok' : 'error' };
   }
 
-  // Demo mode state (in-memory for simplicity)
-  private demoLastReset: string | null = null;
+  // ─── Demo Mode ───────────────────────────────────────────────────────────
+
+  private get snapshotPath(): string {
+    return process.env.DEMO_SNAPSHOT_PATH || path.join(process.cwd(), 'demo-snapshot.sql');
+  }
+
+  private get metaPath(): string {
+    return this.snapshotPath.replace(/\.sql$/, '') + '-meta.json';
+  }
+
+  private readMeta(): { lastReset: string | null; lastSnapshot: string | null; rowCount?: number } {
+    try {
+      return JSON.parse(fs.readFileSync(this.metaPath, 'utf8'));
+    } catch {
+      return { lastReset: null, lastSnapshot: null };
+    }
+  }
+
+  private writeMeta(meta: { lastReset: string | null; lastSnapshot: string | null; rowCount?: number }) {
+    fs.writeFileSync(this.metaPath, JSON.stringify(meta, null, 2));
+  }
 
   getDemoStatus() {
+    const meta = this.readMeta();
+    const snapshotExists = fs.existsSync(this.snapshotPath);
+    const snapshotSizeKb = snapshotExists
+      ? Math.round(fs.statSync(this.snapshotPath).size / 1024)
+      : null;
     return {
       isDemoMode: !!process.env.DEMO_MODE,
-      lastReset: this.demoLastReset,
+      snapshotExists,
+      snapshotSizeKb,
+      lastReset: meta.lastReset,
+      lastSnapshot: meta.lastSnapshot,
+      rowCount: meta.rowCount ?? null,
     };
   }
 
-  resetDemo() {
-    this.demoLastReset = new Date().toISOString();
-    return { message: 'Demo reset queued', status: 'ok' };
+  async createSnapshot() {
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
+
+    try {
+      // pg_dump: data only, column-inserts (INSERT statements), disable triggers for FK order
+      execSync(
+        `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -f "${this.snapshotPath}" "${dbUrl}"`,
+        { stdio: 'pipe' },
+      );
+
+      // Count rows for info
+      const result = await this.prisma.$queryRaw<[{ total: bigint }]>`
+        SELECT SUM(n_live_tup)::bigint AS total
+        FROM pg_stat_user_tables
+      `;
+      const rowCount = Number(result[0]?.total ?? 0);
+
+      const meta = this.readMeta();
+      this.writeMeta({ ...meta, lastSnapshot: new Date().toISOString(), rowCount });
+
+      return { message: 'Snapshot tạo thành công', path: this.snapshotPath, rowCount };
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new InternalServerErrorException(`Tạo snapshot thất bại: ${msg}`);
+    }
+  }
+
+  async resetDemo() {
+    if (!fs.existsSync(this.snapshotPath)) {
+      throw new BadRequestException('Chưa có snapshot. Hãy tạo snapshot trước khi reset.');
+    }
+
+    const dbUrl = process.env.DATABASE_URL;
+    if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
+
+    try {
+      // 1. Truncate all user tables (bypass FK via session_replication_role)
+      await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'replica'`);
+      await this.prisma.$executeRawUnsafe(`
+        DO $$
+        DECLARE r RECORD;
+        BEGIN
+          FOR r IN (
+            SELECT tablename FROM pg_tables
+            WHERE schemaname = 'public'
+              AND tablename NOT IN ('_prisma_migrations')
+          )
+          LOOP
+            EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE';
+          END LOOP;
+        END $$
+      `);
+      await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`);
+
+      // 2. Restore from snapshot
+      execSync(`psql "${dbUrl}" -f "${this.snapshotPath}"`, { stdio: 'pipe' });
+
+      const meta = this.readMeta();
+      const now = new Date().toISOString();
+      this.writeMeta({ ...meta, lastReset: now });
+
+      return { message: 'Demo data đã được khôi phục thành công', resetAt: now };
+    } catch (err: unknown) {
+      // Re-enable FK in case of error
+      try { await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`); } catch {}
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new InternalServerErrorException(`Reset demo thất bại: ${msg}`);
+    }
   }
 }
