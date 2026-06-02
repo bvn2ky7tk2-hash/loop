@@ -5,7 +5,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import {
   UserOutlined, CalendarOutlined, DollarOutlined, ClockCircleOutlined,
-  FileTextOutlined, RightOutlined, PlusOutlined, SendOutlined,
+  FileTextOutlined, RightOutlined, PlusOutlined,
   ApartmentOutlined, IdcardOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -337,7 +337,6 @@ export default function SelfServicePage() {
               </Button>
             )}
             <Button icon={<PlusOutlined />} onClick={() => navigate('/leaves')}>Xin nghỉ phép</Button>
-            <Button icon={<SendOutlined />} onClick={() => navigate('/expenses')}>Khai chi phí</Button>
           </Space>
         }
       />
