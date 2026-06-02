@@ -285,6 +285,15 @@ export const useUpdateDeal = () => {
   });
 };
 
+export const useChangeDealStage = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, stage }: { id: string; stage: DealStage }) =>
+      apiClient.patch<Deal>(`/crm/deals/${id}/stage`, { stage }).then(r => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: crmKeys.deals.all }),
+  });
+};
+
 export const useMarkDealWon = () => {
   const qc = useQueryClient();
   return useMutation({

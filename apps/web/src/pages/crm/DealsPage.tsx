@@ -1,5 +1,11 @@
 import { useState } from 'react';
 import {
+  DndContext, DragOverlay,
+  PointerSensor, useSensor, useSensors, useDroppable, useDraggable,
+} from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import {
   Table, Button, Space, Typography, Select, Form, Input,
   InputNumber, DatePicker, Tag, Modal, message, Radio, Tooltip, Badge,
   Drawer, Descriptions, Divider, Steps,
@@ -21,7 +27,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usersApi } from '../../api/users';
 import {
   useGetDeals, useCreateDeal, useUpdateDeal, useMarkDealWon, useMarkDealLost, useDeleteDeal,
-  useGetCustomers,
+  useChangeDealStage, useGetCustomers,
   type Deal, type DealFilterDto, type DealStage,
 } from '../../api/crm';
 import { useAuthStore } from '../../store/auth.store';
@@ -111,6 +117,56 @@ function DealCard({
   );
 }
 
+// ─── Drag & drop wrappers ─────────────────────────────────────────────────────
+
+type DealCardProps = Omit<Parameters<typeof DealCard>[0], 'deal'>;
+
+function DraggableDeal({ deal, cardProps }: { deal: Deal; cardProps: DealCardProps }) {
+  const disabled = deal.stage === 'WON' || deal.stage === 'LOST';
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: deal.id, data: { stage: deal.stage }, disabled,
+  });
+  return (
+    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), zIndex: isDragging ? 999 : undefined, opacity: isDragging ? 0.5 : 1 }} {...attributes}>
+      <div {...(!disabled ? listeners : {})} style={{ touchAction: 'none', cursor: disabled ? 'default' : 'grab' }}>
+        <DealCard deal={deal} {...cardProps} />
+      </div>
+    </div>
+  );
+}
+
+function DealColumn({
+  stage, total, count, isDark, borderColor, textMuted, children,
+}: {
+  stage: { key: DealStage; label: string; color: string; bg: string };
+  total: number; count: number; isDark: boolean; borderColor: string; textMuted: string;
+  children: React.ReactNode;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: stage.key });
+  return (
+    <div style={{
+      minWidth: 240, maxWidth: 280, flex: '0 0 260px',
+      background: isDark ? '#1A2744' : stage.bg,
+      borderRadius: 10, border: `1px solid ${isOver ? stage.color : borderColor}`, overflow: 'hidden',
+      transition: 'border-color 0.15s',
+    }}>
+      <div style={{ padding: '10px 12px 8px', borderBottom: `1px solid ${borderColor}`, background: isDark ? `${stage.color}18` : stage.bg }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontWeight: 600, color: stage.color, fontSize: 13 }}>{stage.label}</Text>
+          <Badge count={count} style={{ backgroundColor: stage.color }} showZero />
+        </div>
+        {total > 0 && <div style={{ fontSize: 12, color: textMuted, marginTop: 2 }}>{total.toLocaleString('vi-VN')} ₫</div>}
+      </div>
+      <div ref={setNodeRef} style={{
+        padding: '10px 10px 2px', minHeight: 80,
+        background: isOver ? `${stage.color}0F` : 'transparent', transition: 'background 0.15s',
+      }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function DealsPage() {
@@ -141,8 +197,35 @@ export default function DealsPage() {
   const wonMutation    = useMarkDealWon();
   const lostMutation   = useMarkDealLost();
   const deleteMutation = useDeleteDeal();
+  const stageMutation  = useChangeDealStage();
 
   const deals = data?.data ?? [];
+
+  // ─── Drag & drop ───────────────────────────────────────────────────────────
+  const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  function handleDragStart(e: DragStartEvent) {
+    setActiveDeal(deals.find((d) => d.id === e.active.id) ?? null);
+  }
+  async function handleDragEnd(e: DragEndEvent) {
+    setActiveDeal(null);
+    const { active, over } = e;
+    if (!over) return;
+    const id = active.id as string;
+    const target = over.id as DealStage;
+    const deal = deals.find((d) => d.id === id);
+    if (!deal || deal.stage === target) return;
+    if (target === 'WON') { openWon(deal); return; }   // WON qua wizard tạo project
+    if (target === 'LOST') { openLost(deal); return; }  // LOST cần lý do
+    try {
+      await stageMutation.mutateAsync({ id, stage: target });
+      message.success(`Đã chuyển "${deal.title}" → ${STAGE_MAP[target]?.label ?? target}`);
+    } catch (err) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      message.error(msg ?? 'Không thể chuyển giai đoạn');
+    }
+  }
 
   const openCreate = () => {
     setEditing(null);
@@ -217,60 +300,31 @@ export default function DealsPage() {
 
   // ─── Kanban view ─────────────────────────────────────────────────────────
 
-  const KanbanView = () => (
-    <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0 8px' }}>
-      {STAGES.map(stage => {
-        const stageDeals = deals.filter(d => d.stage === stage.key);
-        const total = stageDeals.reduce((s, d) => s + (d.value ? Number(d.value) : 0), 0);
+  const dealCardProps = { isDark, borderColor, textPrimary, textMuted, preset, onEdit: openEdit, onWon: openWon, onLost: openLost, onDelete: handleDelete };
 
-        return (
-          <div key={stage.key} style={{
-            minWidth: 240, maxWidth: 280, flex: '0 0 260px',
-            background: isDark ? '#1A2744' : stage.bg,
-            borderRadius: 10,
-            border: `1px solid ${borderColor}`,
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              padding: '10px 12px 8px',
-              borderBottom: `1px solid ${borderColor}`,
-              background: isDark ? `${stage.color}18` : stage.bg,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontWeight: 600, color: stage.color, fontSize: 13 }}>{stage.label}</Text>
-                <Badge count={stageDeals.length} style={{ backgroundColor: stage.color }} />
-              </div>
-              {total > 0 && (
-                <div style={{ fontSize: 12, color: textMuted, marginTop: 2 }}>
-                  {total.toLocaleString('vi-VN')} ₫
-                </div>
-              )}
-            </div>
-            <div style={{ padding: '10px 10px 2px', minHeight: 60 }}>
+  const KanbanView = () => (
+    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0 8px', alignItems: 'flex-start' }}>
+        {STAGES.map(stage => {
+          const stageDeals = deals.filter(d => d.stage === stage.key);
+          const total = stageDeals.reduce((s, d) => s + (d.value ? Number(d.value) : 0), 0);
+          return (
+            <DealColumn key={stage.key} stage={stage} total={total} count={stageDeals.length} isDark={isDark} borderColor={borderColor} textMuted={textMuted}>
               {stageDeals.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '16px 0', color: textMuted, fontSize: 12 }}>
-                  Chưa có deal
+                  {stage.key === 'WON' ? 'Kéo vào để chốt thắng' : stage.key === 'LOST' ? 'Kéo vào để đánh mất' : 'Chưa có deal'}
                 </div>
               ) : stageDeals.map(deal => (
-                <DealCard
-                  key={deal.id}
-                  deal={deal}
-                  isDark={isDark}
-                  borderColor={borderColor}
-                  textPrimary={textPrimary}
-                  textMuted={textMuted}
-                  preset={preset}
-                  onEdit={openEdit}
-                  onWon={openWon}
-                  onLost={openLost}
-                  onDelete={handleDelete}
-                />
+                <DraggableDeal key={deal.id} deal={deal} cardProps={dealCardProps} />
               ))}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+            </DealColumn>
+          );
+        })}
+      </div>
+      <DragOverlay>
+        {activeDeal && <DealCard deal={activeDeal} {...dealCardProps} />}
+      </DragOverlay>
+    </DndContext>
   );
 
   // ─── List view ───────────────────────────────────────────────────────────

@@ -16,13 +16,23 @@ import { HireCandidateDto } from './dto/hire-candidate.dto';
 import { Candidate, CandidateStage } from '../../generated/prisma';
 import { HrEventBus } from '../../common/events/hr-event-bus.service';
 
+// Kanban: cho phép kéo-thả tự do giữa các stage không kết thúc (tiến/lùi/mở lại).
+// HIRED là đích đặc biệt — chỉ đạt được qua luồng /hire (tạo Employee + onboarding),
+// không cho set trực tiếp bằng kéo-thả để giữ tính toàn vẹn dữ liệu.
+const OPEN_STAGES = [
+  CandidateStage.APPLIED,
+  CandidateStage.SCREENING,
+  CandidateStage.INTERVIEW,
+  CandidateStage.OFFER,
+  CandidateStage.REJECTED,
+];
 const ALLOWED_TRANSITIONS: Record<CandidateStage, CandidateStage[]> = {
-  [CandidateStage.APPLIED]:    [CandidateStage.SCREENING, CandidateStage.REJECTED],
-  [CandidateStage.SCREENING]:  [CandidateStage.INTERVIEW, CandidateStage.REJECTED],
-  [CandidateStage.INTERVIEW]:  [CandidateStage.OFFER, CandidateStage.REJECTED],
-  [CandidateStage.OFFER]:      [CandidateStage.HIRED, CandidateStage.REJECTED],
+  [CandidateStage.APPLIED]:    OPEN_STAGES.filter((s) => s !== CandidateStage.APPLIED),
+  [CandidateStage.SCREENING]:  OPEN_STAGES.filter((s) => s !== CandidateStage.SCREENING),
+  [CandidateStage.INTERVIEW]:  OPEN_STAGES.filter((s) => s !== CandidateStage.INTERVIEW),
+  [CandidateStage.OFFER]:      OPEN_STAGES.filter((s) => s !== CandidateStage.OFFER),
   [CandidateStage.HIRED]:      [],
-  [CandidateStage.REJECTED]:   [],
+  [CandidateStage.REJECTED]:   OPEN_STAGES.filter((s) => s !== CandidateStage.REJECTED),
 };
 
 const ALLOWED_CV_MIMES = [
@@ -55,6 +65,13 @@ export class CandidatesService {
         source: dto.source,
         expectedSalary: dto.expectedSalary,
         notes: dto.notes,
+        educationLevel: dto.educationLevel,
+        address: dto.address,
+        yearsOfExperience: dto.yearsOfExperience,
+        currentPosition: dto.currentPosition,
+        currentCompany: dto.currentCompany,
+        skills: dto.skills ?? [],
+        birthdate: dto.birthdate ? new Date(dto.birthdate) : undefined,
       },
     });
   }
@@ -74,6 +91,7 @@ export class CandidatesService {
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: 'desc' },
+        include: { jobOpening: { select: { id: true, title: true, code: true } } },
       }),
       this.prisma.candidate.count({ where }),
     ]);
@@ -95,7 +113,11 @@ export class CandidatesService {
 
   async update(id: string, dto: UpdateCandidateDto): Promise<Candidate> {
     await this.findOne(id);
-    return this.prisma.candidate.update({ where: { id }, data: dto });
+    const { birthdate, ...rest } = dto;
+    return this.prisma.candidate.update({
+      where: { id },
+      data: { ...rest, ...(birthdate ? { birthdate: new Date(birthdate) } : {}) },
+    });
   }
 
   async remove(id: string): Promise<void> {

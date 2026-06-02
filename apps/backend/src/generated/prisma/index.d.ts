@@ -96856,10 +96856,12 @@ export namespace Prisma {
 
   export type CandidateAvgAggregateOutputType = {
     expectedSalary: Decimal | null
+    yearsOfExperience: number | null
   }
 
   export type CandidateSumAggregateOutputType = {
     expectedSalary: Decimal | null
+    yearsOfExperience: number | null
   }
 
   export type CandidateMinAggregateOutputType = {
@@ -96873,6 +96875,12 @@ export namespace Prisma {
     assigneeId: string | null
     source: $Enums.LeadSource | null
     expectedSalary: Decimal | null
+    educationLevel: string | null
+    address: string | null
+    yearsOfExperience: number | null
+    currentPosition: string | null
+    currentCompany: string | null
+    birthdate: Date | null
     employeeId: string | null
     processInstanceId: string | null
     notes: string | null
@@ -96892,6 +96900,12 @@ export namespace Prisma {
     assigneeId: string | null
     source: $Enums.LeadSource | null
     expectedSalary: Decimal | null
+    educationLevel: string | null
+    address: string | null
+    yearsOfExperience: number | null
+    currentPosition: string | null
+    currentCompany: string | null
+    birthdate: Date | null
     employeeId: string | null
     processInstanceId: string | null
     notes: string | null
@@ -96911,6 +96925,13 @@ export namespace Prisma {
     assigneeId: number
     source: number
     expectedSalary: number
+    educationLevel: number
+    address: number
+    yearsOfExperience: number
+    currentPosition: number
+    currentCompany: number
+    skills: number
+    birthdate: number
     employeeId: number
     processInstanceId: number
     notes: number
@@ -96923,10 +96944,12 @@ export namespace Prisma {
 
   export type CandidateAvgAggregateInputType = {
     expectedSalary?: true
+    yearsOfExperience?: true
   }
 
   export type CandidateSumAggregateInputType = {
     expectedSalary?: true
+    yearsOfExperience?: true
   }
 
   export type CandidateMinAggregateInputType = {
@@ -96940,6 +96963,12 @@ export namespace Prisma {
     assigneeId?: true
     source?: true
     expectedSalary?: true
+    educationLevel?: true
+    address?: true
+    yearsOfExperience?: true
+    currentPosition?: true
+    currentCompany?: true
+    birthdate?: true
     employeeId?: true
     processInstanceId?: true
     notes?: true
@@ -96959,6 +96988,12 @@ export namespace Prisma {
     assigneeId?: true
     source?: true
     expectedSalary?: true
+    educationLevel?: true
+    address?: true
+    yearsOfExperience?: true
+    currentPosition?: true
+    currentCompany?: true
+    birthdate?: true
     employeeId?: true
     processInstanceId?: true
     notes?: true
@@ -96978,6 +97013,13 @@ export namespace Prisma {
     assigneeId?: true
     source?: true
     expectedSalary?: true
+    educationLevel?: true
+    address?: true
+    yearsOfExperience?: true
+    currentPosition?: true
+    currentCompany?: true
+    skills?: true
+    birthdate?: true
     employeeId?: true
     processInstanceId?: true
     notes?: true
@@ -97084,6 +97126,13 @@ export namespace Prisma {
     assigneeId: string | null
     source: $Enums.LeadSource | null
     expectedSalary: Decimal | null
+    educationLevel: string | null
+    address: string | null
+    yearsOfExperience: number | null
+    currentPosition: string | null
+    currentCompany: string | null
+    skills: string[]
+    birthdate: Date | null
     employeeId: string | null
     processInstanceId: string | null
     notes: string | null
@@ -97122,6 +97171,13 @@ export namespace Prisma {
     assigneeId?: boolean
     source?: boolean
     expectedSalary?: boolean
+    educationLevel?: boolean
+    address?: boolean
+    yearsOfExperience?: boolean
+    currentPosition?: boolean
+    currentCompany?: boolean
+    skills?: boolean
+    birthdate?: boolean
     employeeId?: boolean
     processInstanceId?: boolean
     notes?: boolean
@@ -97145,6 +97201,13 @@ export namespace Prisma {
     assigneeId?: boolean
     source?: boolean
     expectedSalary?: boolean
+    educationLevel?: boolean
+    address?: boolean
+    yearsOfExperience?: boolean
+    currentPosition?: boolean
+    currentCompany?: boolean
+    skills?: boolean
+    birthdate?: boolean
     employeeId?: boolean
     processInstanceId?: boolean
     notes?: boolean
@@ -97166,6 +97229,13 @@ export namespace Prisma {
     assigneeId?: boolean
     source?: boolean
     expectedSalary?: boolean
+    educationLevel?: boolean
+    address?: boolean
+    yearsOfExperience?: boolean
+    currentPosition?: boolean
+    currentCompany?: boolean
+    skills?: boolean
+    birthdate?: boolean
     employeeId?: boolean
     processInstanceId?: boolean
     notes?: boolean
@@ -97187,6 +97257,13 @@ export namespace Prisma {
     assigneeId?: boolean
     source?: boolean
     expectedSalary?: boolean
+    educationLevel?: boolean
+    address?: boolean
+    yearsOfExperience?: boolean
+    currentPosition?: boolean
+    currentCompany?: boolean
+    skills?: boolean
+    birthdate?: boolean
     employeeId?: boolean
     processInstanceId?: boolean
     notes?: boolean
@@ -97195,7 +97272,7 @@ export namespace Prisma {
     tenantId?: boolean
   }
 
-  export type CandidateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "cvStoragePath" | "jobOpeningId" | "stage" | "assigneeId" | "source" | "expectedSalary" | "employeeId" | "processInstanceId" | "notes" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["candidate"]>
+  export type CandidateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "phone" | "cvStoragePath" | "jobOpeningId" | "stage" | "assigneeId" | "source" | "expectedSalary" | "educationLevel" | "address" | "yearsOfExperience" | "currentPosition" | "currentCompany" | "skills" | "birthdate" | "employeeId" | "processInstanceId" | "notes" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["candidate"]>
   export type CandidateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     jobOpening?: boolean | JobOpeningDefaultArgs<ExtArgs>
     interviews?: boolean | Candidate$interviewsArgs<ExtArgs>
@@ -97229,6 +97306,13 @@ export namespace Prisma {
       assigneeId: string | null
       source: $Enums.LeadSource | null
       expectedSalary: Prisma.Decimal | null
+      educationLevel: string | null
+      address: string | null
+      yearsOfExperience: number | null
+      currentPosition: string | null
+      currentCompany: string | null
+      skills: string[]
+      birthdate: Date | null
       employeeId: string | null
       processInstanceId: string | null
       notes: string | null
@@ -97671,6 +97755,13 @@ export namespace Prisma {
     readonly assigneeId: FieldRef<"Candidate", 'String'>
     readonly source: FieldRef<"Candidate", 'LeadSource'>
     readonly expectedSalary: FieldRef<"Candidate", 'Decimal'>
+    readonly educationLevel: FieldRef<"Candidate", 'String'>
+    readonly address: FieldRef<"Candidate", 'String'>
+    readonly yearsOfExperience: FieldRef<"Candidate", 'Int'>
+    readonly currentPosition: FieldRef<"Candidate", 'String'>
+    readonly currentCompany: FieldRef<"Candidate", 'String'>
+    readonly skills: FieldRef<"Candidate", 'String[]'>
+    readonly birthdate: FieldRef<"Candidate", 'DateTime'>
     readonly employeeId: FieldRef<"Candidate", 'String'>
     readonly processInstanceId: FieldRef<"Candidate", 'String'>
     readonly notes: FieldRef<"Candidate", 'String'>
@@ -211163,6 +211254,13 @@ export namespace Prisma {
     assigneeId: 'assigneeId',
     source: 'source',
     expectedSalary: 'expectedSalary',
+    educationLevel: 'educationLevel',
+    address: 'address',
+    yearsOfExperience: 'yearsOfExperience',
+    currentPosition: 'currentPosition',
+    currentCompany: 'currentCompany',
+    skills: 'skills',
+    birthdate: 'birthdate',
     employeeId: 'employeeId',
     processInstanceId: 'processInstanceId',
     notes: 'notes',
@@ -220109,6 +220207,13 @@ export namespace Prisma {
     assigneeId?: StringNullableFilter<"Candidate"> | string | null
     source?: EnumLeadSourceNullableFilter<"Candidate"> | $Enums.LeadSource | null
     expectedSalary?: DecimalNullableFilter<"Candidate"> | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: StringNullableFilter<"Candidate"> | string | null
+    address?: StringNullableFilter<"Candidate"> | string | null
+    yearsOfExperience?: IntNullableFilter<"Candidate"> | number | null
+    currentPosition?: StringNullableFilter<"Candidate"> | string | null
+    currentCompany?: StringNullableFilter<"Candidate"> | string | null
+    skills?: StringNullableListFilter<"Candidate">
+    birthdate?: DateTimeNullableFilter<"Candidate"> | Date | string | null
     employeeId?: StringNullableFilter<"Candidate"> | string | null
     processInstanceId?: StringNullableFilter<"Candidate"> | string | null
     notes?: StringNullableFilter<"Candidate"> | string | null
@@ -220131,6 +220236,13 @@ export namespace Prisma {
     assigneeId?: SortOrderInput | SortOrder
     source?: SortOrderInput | SortOrder
     expectedSalary?: SortOrderInput | SortOrder
+    educationLevel?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    yearsOfExperience?: SortOrderInput | SortOrder
+    currentPosition?: SortOrderInput | SortOrder
+    currentCompany?: SortOrderInput | SortOrder
+    skills?: SortOrder
+    birthdate?: SortOrderInput | SortOrder
     employeeId?: SortOrderInput | SortOrder
     processInstanceId?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
@@ -220157,6 +220269,13 @@ export namespace Prisma {
     assigneeId?: StringNullableFilter<"Candidate"> | string | null
     source?: EnumLeadSourceNullableFilter<"Candidate"> | $Enums.LeadSource | null
     expectedSalary?: DecimalNullableFilter<"Candidate"> | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: StringNullableFilter<"Candidate"> | string | null
+    address?: StringNullableFilter<"Candidate"> | string | null
+    yearsOfExperience?: IntNullableFilter<"Candidate"> | number | null
+    currentPosition?: StringNullableFilter<"Candidate"> | string | null
+    currentCompany?: StringNullableFilter<"Candidate"> | string | null
+    skills?: StringNullableListFilter<"Candidate">
+    birthdate?: DateTimeNullableFilter<"Candidate"> | Date | string | null
     processInstanceId?: StringNullableFilter<"Candidate"> | string | null
     notes?: StringNullableFilter<"Candidate"> | string | null
     createdAt?: DateTimeFilter<"Candidate"> | Date | string
@@ -220178,6 +220297,13 @@ export namespace Prisma {
     assigneeId?: SortOrderInput | SortOrder
     source?: SortOrderInput | SortOrder
     expectedSalary?: SortOrderInput | SortOrder
+    educationLevel?: SortOrderInput | SortOrder
+    address?: SortOrderInput | SortOrder
+    yearsOfExperience?: SortOrderInput | SortOrder
+    currentPosition?: SortOrderInput | SortOrder
+    currentCompany?: SortOrderInput | SortOrder
+    skills?: SortOrder
+    birthdate?: SortOrderInput | SortOrder
     employeeId?: SortOrderInput | SortOrder
     processInstanceId?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
@@ -220205,6 +220331,13 @@ export namespace Prisma {
     assigneeId?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
     source?: EnumLeadSourceNullableWithAggregatesFilter<"Candidate"> | $Enums.LeadSource | null
     expectedSalary?: DecimalNullableWithAggregatesFilter<"Candidate"> | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
+    address?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
+    yearsOfExperience?: IntNullableWithAggregatesFilter<"Candidate"> | number | null
+    currentPosition?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
+    currentCompany?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
+    skills?: StringNullableListFilter<"Candidate">
+    birthdate?: DateTimeNullableWithAggregatesFilter<"Candidate"> | Date | string | null
     employeeId?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
     processInstanceId?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
     notes?: StringNullableWithAggregatesFilter<"Candidate"> | string | null
@@ -234716,6 +234849,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -234737,6 +234877,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -234756,6 +234903,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -234777,6 +234931,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -234797,6 +234958,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -234815,6 +234983,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -234833,6 +235008,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -249071,6 +249253,13 @@ export namespace Prisma {
     assigneeId?: SortOrder
     source?: SortOrder
     expectedSalary?: SortOrder
+    educationLevel?: SortOrder
+    address?: SortOrder
+    yearsOfExperience?: SortOrder
+    currentPosition?: SortOrder
+    currentCompany?: SortOrder
+    skills?: SortOrder
+    birthdate?: SortOrder
     employeeId?: SortOrder
     processInstanceId?: SortOrder
     notes?: SortOrder
@@ -249081,6 +249270,7 @@ export namespace Prisma {
 
   export type CandidateAvgOrderByAggregateInput = {
     expectedSalary?: SortOrder
+    yearsOfExperience?: SortOrder
   }
 
   export type CandidateMaxOrderByAggregateInput = {
@@ -249094,6 +249284,12 @@ export namespace Prisma {
     assigneeId?: SortOrder
     source?: SortOrder
     expectedSalary?: SortOrder
+    educationLevel?: SortOrder
+    address?: SortOrder
+    yearsOfExperience?: SortOrder
+    currentPosition?: SortOrder
+    currentCompany?: SortOrder
+    birthdate?: SortOrder
     employeeId?: SortOrder
     processInstanceId?: SortOrder
     notes?: SortOrder
@@ -249113,6 +249309,12 @@ export namespace Prisma {
     assigneeId?: SortOrder
     source?: SortOrder
     expectedSalary?: SortOrder
+    educationLevel?: SortOrder
+    address?: SortOrder
+    yearsOfExperience?: SortOrder
+    currentPosition?: SortOrder
+    currentCompany?: SortOrder
+    birthdate?: SortOrder
     employeeId?: SortOrder
     processInstanceId?: SortOrder
     notes?: SortOrder
@@ -249123,6 +249325,7 @@ export namespace Prisma {
 
   export type CandidateSumOrderByAggregateInput = {
     expectedSalary?: SortOrder
+    yearsOfExperience?: SortOrder
   }
 
   export type EnumCandidateStageWithAggregatesFilter<$PrismaModel = never> = {
@@ -263486,6 +263689,10 @@ export namespace Prisma {
     deleteMany?: CandidateScalarWhereInput | CandidateScalarWhereInput[]
   }
 
+  export type CandidateCreateskillsInput = {
+    set: string[]
+  }
+
   export type JobOpeningCreateNestedOneWithoutCandidatesInput = {
     create?: XOR<JobOpeningCreateWithoutCandidatesInput, JobOpeningUncheckedCreateWithoutCandidatesInput>
     connectOrCreate?: JobOpeningCreateOrConnectWithoutCandidatesInput
@@ -263518,6 +263725,11 @@ export namespace Prisma {
 
   export type NullableEnumLeadSourceFieldUpdateOperationsInput = {
     set?: $Enums.LeadSource | null
+  }
+
+  export type CandidateUpdateskillsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type JobOpeningUpdateOneRequiredWithoutCandidatesNestedInput = {
@@ -306660,6 +306872,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -306679,6 +306898,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -306847,6 +307073,13 @@ export namespace Prisma {
     assigneeId?: StringNullableFilter<"Candidate"> | string | null
     source?: EnumLeadSourceNullableFilter<"Candidate"> | $Enums.LeadSource | null
     expectedSalary?: DecimalNullableFilter<"Candidate"> | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: StringNullableFilter<"Candidate"> | string | null
+    address?: StringNullableFilter<"Candidate"> | string | null
+    yearsOfExperience?: IntNullableFilter<"Candidate"> | number | null
+    currentPosition?: StringNullableFilter<"Candidate"> | string | null
+    currentCompany?: StringNullableFilter<"Candidate"> | string | null
+    skills?: StringNullableListFilter<"Candidate">
+    birthdate?: DateTimeNullableFilter<"Candidate"> | Date | string | null
     employeeId?: StringNullableFilter<"Candidate"> | string | null
     processInstanceId?: StringNullableFilter<"Candidate"> | string | null
     notes?: StringNullableFilter<"Candidate"> | string | null
@@ -307393,6 +307626,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -307413,6 +307653,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -307566,6 +307813,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -307586,6 +307840,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -324623,6 +324884,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -324643,6 +324911,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -345093,6 +345368,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -345111,6 +345393,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -345130,6 +345419,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -345149,6 +345445,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -347136,6 +347439,13 @@ export namespace Prisma {
     assigneeId?: string | null
     source?: $Enums.LeadSource | null
     expectedSalary?: Decimal | DecimalJsLike | number | string | null
+    educationLevel?: string | null
+    address?: string | null
+    yearsOfExperience?: number | null
+    currentPosition?: string | null
+    currentCompany?: string | null
+    skills?: CandidateCreateskillsInput | string[]
+    birthdate?: Date | string | null
     employeeId?: string | null
     processInstanceId?: string | null
     notes?: string | null
@@ -349103,6 +349413,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -349123,6 +349440,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -349142,6 +349466,13 @@ export namespace Prisma {
     assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     source?: NullableEnumLeadSourceFieldUpdateOperationsInput | $Enums.LeadSource | null
     expectedSalary?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    educationLevel?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    currentPosition?: NullableStringFieldUpdateOperationsInput | string | null
+    currentCompany?: NullableStringFieldUpdateOperationsInput | string | null
+    skills?: CandidateUpdateskillsInput | string[]
+    birthdate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     employeeId?: NullableStringFieldUpdateOperationsInput | string | null
     processInstanceId?: NullableStringFieldUpdateOperationsInput | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null

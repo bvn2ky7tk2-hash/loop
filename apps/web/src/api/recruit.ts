@@ -39,6 +39,13 @@ export interface Candidate {
   assigneeId?:       string;
   source?:           LeadSource;
   expectedSalary?:   string;
+  educationLevel?:   string;
+  address?:          string;
+  yearsOfExperience?: number;
+  currentPosition?:  string;
+  currentCompany?:   string;
+  skills?:           string[];
+  birthdate?:        string;
   employeeId?:       string;
   processInstanceId?: string;
   notes?:            string;

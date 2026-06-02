@@ -5,7 +5,11 @@ import {
   IsUUID,
   IsEmail,
   IsNumber,
+  IsInt,
+  IsArray,
+  IsDateString,
   Min,
+  Max,
   MinLength,
   MaxLength,
   IsPhoneNumber,
@@ -55,6 +59,49 @@ export class CreateCandidateDto {
   @IsNumber()
   @Min(0)
   expectedSalary?: number;
+
+  // ── Hồ sơ ứng viên đầy đủ ──
+  @ApiPropertyOptional({ example: 'Đại học' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  educationLevel?: string;
+
+  @ApiPropertyOptional({ example: 'Hà Nội' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(300)
+  address?: string;
+
+  @ApiPropertyOptional({ example: 5 })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(60)
+  yearsOfExperience?: number;
+
+  @ApiPropertyOptional({ example: 'Senior Developer' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  currentPosition?: string;
+
+  @ApiPropertyOptional({ example: 'FPT Software' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  currentCompany?: string;
+
+  @ApiPropertyOptional({ type: [String], example: ['React', 'Node.js'] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  skills?: string[];
+
+  @ApiPropertyOptional({ example: '1995-05-20' })
+  @IsOptional()
+  @IsDateString()
+  birthdate?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

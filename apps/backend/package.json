@@ -31,6 +31,7 @@
     "seed:vn-locations": "npx tsx prisma/seed-vn-locations-full.ts",
     "seed:hr-full-profile": "npx tsx prisma/seed-hr-full-profile.ts",
     "seed:leave-consolidate": "npx tsx prisma/seed-leave-types-consolidate.ts",
+    "seed:candidate-profile": "npx tsx prisma/seed-candidate-profile.ts",
     "seed:payroll": "npx tsx prisma/seed-payroll.ts",
     "seed:payroll-demo": "npx tsx prisma/seed-payroll-demo.ts",
     "seed:okr": "node prisma/seed-okr.js",

@@ -6,12 +6,13 @@ import {
 import {
   UserAddOutlined, TeamOutlined, CheckCircleOutlined,
   LoadingOutlined, RocketOutlined, ClockCircleOutlined,
-  FileTextOutlined, LaptopOutlined, ScheduleOutlined,
+  FileTextOutlined, LaptopOutlined, ScheduleOutlined, EyeOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { CandidateDetailDrawer } from './CandidateDetailDrawer';
 import { useGetCandidates, useHireCandidate, type Candidate } from '../../api/recruit';
 import {
   processesApi,
@@ -149,25 +150,37 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
   const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
   const { data, isLoading } = useGetCandidates({ stage: 'OFFER', limit: 100 });
   const candidates = data?.data ?? [];
+  const [detail, setDetail] = useState<Candidate | null>(null);
 
   const columns = [
     {
       title: 'Ứng viên',
       dataIndex: 'name',
-      render: (v: string) => <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      render: (v?: string) => v
-        ? <a href={`mailto:${v}`} style={{ color: linkColor }}>{v}</a>
-        : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Vị trí',
-      render: (_: unknown, r: Candidate) => (
-        <Text style={{ color: textPrimary }}>{r.jobOpening?.title ?? '—'}</Text>
+      render: (v: string, r: Candidate) => (
+        <div>
+          <Text style={{ color: textPrimary, fontWeight: 500, display: 'block' }}>{v}</Text>
+          {r.phone && <Text style={{ color: textMuted, fontSize: 12 }}>{r.phone}</Text>}
+        </div>
       ),
+    },
+    {
+      title: 'Vị trí ứng tuyển',
+      render: (_: unknown, r: Candidate) => (
+        <div>
+          <Text style={{ color: textPrimary, display: 'block' }}>{r.jobOpening?.title ?? '—'}</Text>
+          {r.currentPosition && <Text style={{ color: textMuted, fontSize: 12 }}>Hiện tại: {r.currentPosition}</Text>}
+        </div>
+      ),
+    },
+    {
+      title: 'Học vấn',
+      dataIndex: 'educationLevel',
+      render: (v?: string) => <Text style={{ color: v ? textPrimary : textMuted }}>{v ?? '—'}</Text>,
+    },
+    {
+      title: 'Kinh nghiệm',
+      dataIndex: 'yearsOfExperience',
+      render: (v?: number) => <Text style={{ color: v != null ? textPrimary : textMuted }}>{v != null ? `${v} năm` : '—'}</Text>,
     },
     {
       title: 'Lương kỳ vọng',
@@ -177,29 +190,15 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
         : <Text style={{ color: textMuted }}>—</Text>,
     },
     {
-      title: 'Stage',
-      dataIndex: 'stage',
-      render: (v: string) => (
-        <Tag
-          color={isDark ? undefined : STAGE_COLORS[v]}
-          style={isDark ? { background: 'rgba(139,92,246,0.15)', color: '#C4B5FD', borderColor: 'rgba(139,92,246,0.3)' } : {}}
-        >
-          {STAGE_LABELS[v] ?? v}
-        </Tag>
-      ),
-    },
-    {
       title: '',
       key: 'action',
       render: (_: unknown, record: Candidate) => (
-        <Button
-          type="primary"
-          size="small"
-          icon={<RocketOutlined />}
-          onClick={() => onHire(record)}
-        >
-          Hire & Onboard
-        </Button>
+        <Space>
+          <Button size="small" icon={<EyeOutlined />} onClick={() => setDetail(record)}>Chi tiết</Button>
+          <Button type="primary" size="small" icon={<RocketOutlined />} onClick={() => onHire(record)}>
+            Hire & Onboard
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -208,12 +207,10 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
   if (!candidates.length) return <Empty description="Không có ứng viên ở giai đoạn Offer" />;
 
   return (
-    <Table
-      rowKey="id"
-      dataSource={candidates}
-      columns={columns}
-      pagination={{ pageSize: 20 }}
-    />
+    <>
+      <Table rowKey="id" dataSource={candidates} columns={columns} pagination={{ pageSize: 20 }} />
+      <CandidateDetailDrawer candidate={detail} open={!!detail} onClose={() => setDetail(null)} />
+    </>
   );
 }
 

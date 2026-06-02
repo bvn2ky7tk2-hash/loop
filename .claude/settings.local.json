@@ -347,7 +347,8 @@
       "Bash(awk '/tenantId.*tenant_id/,0' /Users/leophan188/Downloads/Loop/apps/backend/prisma/schema.prisma)",
       "Bash(awk *)",
       "Bash",
-      "Bash(cat >> *)"
+      "Bash(cat >> *)",
+      "WebFetch(domain:github.com)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

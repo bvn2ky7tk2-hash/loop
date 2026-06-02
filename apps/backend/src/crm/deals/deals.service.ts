@@ -19,13 +19,14 @@ import { KickoffWizardDto } from './dto/kickoff-wizard.dto';
 import { TenantAwareService } from '../../common/services/tenant-aware.service';
 import { ProcessInstancesService } from '../../processes/instances/process-instances.service';
 
-// Stage transitions được phép
+// Kanban: kéo-thả tự do giữa các stage mở (QUALIFICATION/PROPOSAL/NEGOTIATION) + LOST.
+// WON đạt được qua luồng /won (tạo project) — không set trực tiếp bằng changeStage.
 const VALID_TRANSITIONS: Record<DealStage, DealStage[]> = {
-  [DealStage.QUALIFICATION]: [DealStage.PROPOSAL, DealStage.LOST],
+  [DealStage.QUALIFICATION]: [DealStage.PROPOSAL, DealStage.NEGOTIATION, DealStage.LOST],
   [DealStage.PROPOSAL]:      [DealStage.QUALIFICATION, DealStage.NEGOTIATION, DealStage.LOST],
-  [DealStage.NEGOTIATION]:   [DealStage.PROPOSAL, DealStage.WON, DealStage.LOST],
+  [DealStage.NEGOTIATION]:   [DealStage.QUALIFICATION, DealStage.PROPOSAL, DealStage.WON, DealStage.LOST],
   [DealStage.WON]:           [],
-  [DealStage.LOST]:          [],
+  [DealStage.LOST]:          [DealStage.QUALIFICATION, DealStage.PROPOSAL, DealStage.NEGOTIATION],
 };
 
 @Injectable({ scope: Scope.REQUEST })

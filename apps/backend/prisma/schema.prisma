@@ -1799,6 +1799,14 @@ model Candidate {
   assigneeId        String?        @map("assignee_id")
   source            LeadSource?
   expectedSalary    Decimal?       @db.Decimal(18, 2) @map("expected_salary")
+  // Thông tin hồ sơ ứng viên đầy đủ
+  educationLevel    String?        @map("education_level")    // Trình độ học vấn
+  address           String?                                   // Địa chỉ
+  yearsOfExperience Int?           @map("years_of_experience") // Số năm kinh nghiệm
+  currentPosition   String?        @map("current_position")   // Vị trí hiện tại
+  currentCompany    String?        @map("current_company")    // Công ty hiện tại
+  skills            String[]                                  // Kỹ năng
+  birthdate         DateTime?      @db.Date                   // Ngày sinh
   interviews        Interview[]
   employeeId        String?        @unique @map("employee_id")
   processInstanceId String?        @map("process_instance_id")
