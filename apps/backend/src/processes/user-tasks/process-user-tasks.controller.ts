@@ -85,6 +85,16 @@ export class ProcessUserTasksController {
     return this.service.returnTask(id, user.id, dto);
   }
 
+  @Post(':id/reassign')
+  @ApiOperation({ summary: 'Ủy quyền / giao task cho người khác xử lý' })
+  reassign(
+    @Param('id') id: string,
+    @CurrentUser() user: JwtUser,
+    @Body() dto: { userId: string; note?: string },
+  ) {
+    return this.service.reassign(id, dto.userId, user.id, dto.note);
+  }
+
   @Post('batch-approve')
   @ApiOperation({ summary: 'Duyệt/Từ chối nhiều user tasks cùng lúc' })
   batchApprove(

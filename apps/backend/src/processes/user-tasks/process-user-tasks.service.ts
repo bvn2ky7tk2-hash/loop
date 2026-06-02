@@ -71,6 +71,7 @@ export class ProcessUserTasksService {
                   id: true,
                   name: true,
                   version: true,
+                  formFields: true,
                   taskFormFields: true,
                 },
               },
@@ -90,12 +91,34 @@ export class ProcessUserTasksService {
       where: { id },
       include: {
         instance: {
-          include: {
+          select: {
+            id: true,
+            status: true,
+            variables: true,
+            startedByUser: {
+              select: {
+                id: true,
+                name: true,
+                employee: {
+                  select: {
+                    code: true,
+                    fullName: true,
+                    orgUnit: { select: { name: true } },
+                    position: {
+                      select: {
+                        jobTitle: { select: { name: true } },
+                      },
+                    },
+                  },
+                },
+              },
+            },
             definition: {
               select: {
                 id: true,
                 name: true,
                 version: true,
+                formFields: true,
                 taskFormFields: true,
               },
             },
@@ -126,6 +149,63 @@ export class ProcessUserTasksService {
       where: { id },
       data: { assigneeId: userId, status: UserTaskStatus.IN_PROGRESS },
     });
+
+    return { data: updated };
+  }
+
+  /**
+   * Ủy quyền / giao task cho người khác xử lý.
+   * Người đang giữ task (hoặc task chưa gán) chuyển sang assignee mới, kèm ghi chú.
+   */
+  async reassign(id: string, targetUserId: string, currentUserId: string, note?: string) {
+    const task = await this.prisma.processUserTask.findUnique({ where: { id } });
+    if (!task) throw new NotFoundException('Không tìm thấy user task');
+    if (task.status === UserTaskStatus.COMPLETED || task.status === UserTaskStatus.SKIPPED) {
+      throw new BadRequestException('Task đã kết thúc, không thể ủy quyền');
+    }
+    // Chỉ người đang giữ task (hoặc task chưa gán) mới được ủy quyền
+    if (task.assigneeId && task.assigneeId !== currentUserId) {
+      throw new ForbiddenException('Chỉ người đang xử lý task mới có thể ủy quyền');
+    }
+    const target = await this.prisma.user.findUnique({
+      where: { id: targetUserId }, select: { id: true, name: true },
+    });
+    if (!target) throw new NotFoundException('Không tìm thấy người được ủy quyền');
+
+    const updated = await this.prisma.processUserTask.update({
+      where: { id },
+      data: { assigneeId: targetUserId, status: UserTaskStatus.PENDING },
+    });
+
+    const fromUser = await this.prisma.user.findUnique({
+      where: { id: currentUserId }, select: { name: true },
+    });
+    await this.prisma.processActivityLog.create({
+      data: {
+        instanceId: task.instanceId,
+        activityId: task.activityId,
+        activityName: `${task.name} — ủy quyền cho ${target.name}${note ? ` (${note})` : ''}`,
+        activityType: 'reassign',
+        performedBy: currentUserId,
+        startedAt: new Date(),
+        completedAt: new Date(),
+      },
+    });
+
+    // Thông báo cho người được ủy quyền
+    try {
+      await this.prisma.notification.create({
+        data: {
+          userId: targetUserId,
+          type: 'PROCESS_TASK_ASSIGNED' as never,
+          title: 'Bạn được ủy quyền xử lý công việc',
+          body: `${fromUser?.name ?? 'Người dùng'} đã ủy quyền cho bạn xử lý: "${task.name}"${note ? ` — ${note}` : ''}`,
+          link: `/processes/instances/${task.instanceId}`,
+          entityType: 'ProcessUserTask',
+          entityId: task.id,
+        },
+      });
+    } catch { /* notification không bắt buộc */ }
 
     return { data: updated };
   }

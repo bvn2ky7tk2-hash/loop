@@ -76,6 +76,12 @@ const GRID = (name, label, criteria, scoreMin = 1, scoreMax = 10) => ({
   name, label, type: 'criteria_grid', required: true, criteria, scoreMin, scoreMax,
 });
 
+// Kết quả đánh giá Đạt / Không đạt (đi kèm bảng tiêu chí)
+const PASS_FAIL = {
+  name: 'evalResult', label: 'Kết quả đánh giá', type: 'select', required: true,
+  options: [{ label: 'Đạt', value: 'PASS' }, { label: 'Không đạt', value: 'FAIL' }],
+};
+
 // Bộ tiêu chí đánh giá hiệu suất nhân sự (tổng trọng số = 100%)
 const PERF_CRITERIA = [
   { key: 'completion',   label: 'Mức độ hoàn thành công việc', weight: 30 },
@@ -126,6 +132,7 @@ const PROCESSES = [
     taskForm: {
       ManagerReview: [
         GRID('scoreGrid', 'Bảng tiêu chí đánh giá (thang 1–10)', PERF_CRITERIA),
+        PASS_FAIL,
         { name: 'strengths', label: 'Điểm mạnh', type: 'textarea', required: false },
         { name: 'improvements', label: 'Cần cải thiện', type: 'textarea', required: false },
       ],
@@ -144,6 +151,7 @@ const PROCESSES = [
     taskForm: {
       ManagerEvaluate: [
         GRID('scoreGrid', 'Bảng tiêu chí đánh giá gia hạn (thang 1–10)', RENEWAL_CRITERIA),
+        PASS_FAIL,
         { name: 'recommendation', label: 'Đề xuất', type: 'select', required: true, options: [
           { label: 'Gia hạn', value: 'RENEW' }, { label: 'Không gia hạn', value: 'TERMINATE' }] },
         { name: 'newDuration', label: 'Thời hạn mới (tháng)', type: 'number', required: false },
@@ -163,6 +171,7 @@ const PROCESSES = [
     taskForm: {
       MentorEvaluate: [
         GRID('scoreGrid', 'Bảng tiêu chí đánh giá thử việc (thang 1–10)', PROBATION_CRITERIA),
+        PASS_FAIL,
         { name: 'comment', label: 'Nhận xét tổng quan', type: 'textarea', required: true },
       ],
       ManagerDecide: [

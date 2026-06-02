@@ -1,13 +1,14 @@
 import { useState, useMemo } from 'react';
 import {
   Button, Form, Space, Spin, Typography, Divider,
-  Alert, Tag, Popconfirm, App, Collapse, Badge,
+  Alert, Tag, Popconfirm, App, Collapse, Badge, Modal, Select, Input,
   theme as antTheme,
 } from 'antd';
+import { useQuery } from '@tanstack/react-query';
 import { CenteredModal } from '../../../components/ui/CenteredModal';
 import {
   CheckOutlined, LikeOutlined, DislikeOutlined, RollbackOutlined,
-  FileTextOutlined, CalendarOutlined, UserOutlined,
+  FileTextOutlined, CalendarOutlined, UserOutlined, SwapOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import {
@@ -15,11 +16,13 @@ import {
   useUserTasks,
   useCompleteTask,
   useReturnTask,
+  processesApi,
   type ProcessUserTask,
   type FormField,
   type CriteriaGridValue,
   type CriterionConfig,
 } from '../../../api/processes.api';
+import { usersApi } from '../../../api/users';
 import { DynamicFormFields } from './DynamicFormFields';
 import { CriteriaGridField } from './CriteriaGridField';
 
@@ -54,6 +57,25 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
     if (!tfFields) return [];
     return tfFields[fullTask.activityId] ?? [];
   }, [fullTask]);
+
+  // Nội dung đơn gốc người gửi điền (instance.variables) + nhãn từ formFields khởi tạo
+  const requestFields: FormField[] = useMemo(
+    () => fullTask?.instance?.definition?.formFields ?? [],
+    [fullTask],
+  );
+  const requestData: Record<string, unknown> = useMemo(() => {
+    const vars = (fullTask?.instance?.variables ?? {}) as Record<string, unknown>;
+    if (requestFields.length === 0) return {};
+    // Chỉ lấy các key thuộc form khởi tạo (bỏ biến hệ thống như decision, approved...)
+    const out: Record<string, unknown> = {};
+    for (const f of requestFields) {
+      if (vars[f.name] !== undefined && vars[f.name] !== null && vars[f.name] !== '') {
+        out[f.name] = vars[f.name];
+      }
+    }
+    return out;
+  }, [fullTask, requestFields]);
+  const hasRequestContent = Object.keys(requestData).length > 0;
 
   // Các bước đã hoàn thành trước bước hiện tại (có formData)
   const completedPrevTasks: ProcessUserTask[] = useMemo(() => {
@@ -123,13 +145,40 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
     );
   };
 
+  // ── Ủy quyền cho người khác xử lý ──
+  const [reassignOpen, setReassignOpen] = useState(false);
+  const [reassignUser, setReassignUser] = useState<string | undefined>();
+  const [reassignNote, setReassignNote] = useState('');
+  const [reassignLoading, setReassignLoading] = useState(false);
+  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list, enabled: reassignOpen });
+
+  const handleReassign = async () => {
+    if (!task || !reassignUser) { message.warning('Chọn người được ủy quyền'); return; }
+    setReassignLoading(true);
+    try {
+      await processesApi.reassignTask(task.id, reassignUser, reassignNote || undefined);
+      message.success('Đã ủy quyền task cho người được chọn');
+      setReassignOpen(false); setReassignUser(undefined); setReassignNote('');
+      onClose();
+    } catch {
+      message.error('Không thể ủy quyền task');
+    } finally {
+      setReassignLoading(false);
+    }
+  };
+
   const footerButtons = (
     <Space style={{ justifyContent: 'space-between', width: '100%', display: 'flex' }}>
-      <Popconfirm title="Trả lại task này?" onConfirm={handleReturn}>
-        <Button icon={<RollbackOutlined />} loading={returnMutation.isPending} disabled={returnMutation.isPending}>
-          Trả lại
+      <Space>
+        <Popconfirm title="Trả lại task này?" onConfirm={handleReturn}>
+          <Button icon={<RollbackOutlined />} loading={returnMutation.isPending} disabled={returnMutation.isPending}>
+            Trả lại
+          </Button>
+        </Popconfirm>
+        <Button icon={<SwapOutlined />} onClick={() => setReassignOpen(true)}>
+          Ủy quyền
         </Button>
-      </Popconfirm>
+      </Space>
       <Space>
         <Button onClick={onClose}>Đóng</Button>
         {isApproval ? (
@@ -195,6 +244,16 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
+          {/* ── Nội dung đơn gốc người gửi ───────────────────────────── */}
+          {hasRequestContent && (
+            <RequestContentSection
+              requester={fullTask?.instance?.startedByUser}
+              formData={requestData}
+              fields={requestFields}
+              token={token}
+            />
+          )}
+
           {/* ── Previous steps ──────────────────────────────────────── */}
           {completedPrevTasks.length > 0 && (
             <PreviousStepsSection
@@ -240,7 +299,87 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
           </div>
         </div>
       )}
+
+      {/* Modal ủy quyền cho người khác xử lý */}
+      <Modal
+        title="Ủy quyền xử lý công việc"
+        open={reassignOpen}
+        onCancel={() => setReassignOpen(false)}
+        onOk={handleReassign}
+        confirmLoading={reassignLoading}
+        okText="Ủy quyền"
+        cancelText="Hủy"
+        zIndex={1100}
+      >
+        <div style={{ marginBottom: 12 }}>
+          <Text type="secondary">Giao công việc "{fullTask?.name}" cho người khác xử lý thay bạn.</Text>
+        </div>
+        <Form layout="vertical">
+          <Form.Item label="Người được ủy quyền" required>
+            <Select
+              showSearch
+              placeholder="Chọn người xử lý..."
+              optionFilterProp="label"
+              value={reassignUser}
+              onChange={setReassignUser}
+              options={users.map((u) => ({ value: u.id, label: u.name }))}
+            />
+          </Form.Item>
+          <Form.Item label="Ghi chú (tuỳ chọn)">
+            <Input.TextArea
+              rows={2}
+              placeholder="Lý do ủy quyền / hướng dẫn xử lý..."
+              value={reassignNote}
+              onChange={(e) => setReassignNote(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </CenteredModal>
+  );
+}
+
+// ─── Request Content Section (nội dung đơn gốc) ───────────────────────────────
+
+interface RequestContentSectionProps {
+  requester?: { id: string; name: string; employee?: { fullName: string; code: string } | null };
+  formData: Record<string, unknown>;
+  fields: FormField[];
+  token: ReturnType<typeof useToken>['token'];
+}
+
+function RequestContentSection({ requester, formData, fields, token }: RequestContentSectionProps) {
+  const requesterName = requester?.employee?.fullName ?? requester?.name;
+  return (
+    <div
+      style={{
+        borderBottom: `1px solid ${token.colorBorderSecondary}`,
+        background: token.colorPrimaryBg,
+        padding: '14px 24px 16px',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <FileTextOutlined style={{ color: token.colorPrimary, fontSize: 14 }} />
+        <Text
+          style={{
+            fontWeight: 600,
+            fontSize: 13,
+            color: token.colorPrimary,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          Nội dung yêu cầu
+        </Text>
+        {requesterName && (
+          <Tag color="blue" style={{ marginLeft: 'auto', fontSize: 11 }}>
+            <UserOutlined style={{ marginRight: 4 }} />
+            {requesterName}
+          </Tag>
+        )}
+      </div>
+      <PrevTaskFormData formData={formData} fields={fields} token={token} />
+    </div>
   );
 }
 

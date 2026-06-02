@@ -132,6 +132,7 @@ export interface ProcessUserTask {
       id: string;
       name: string;
       version: number;
+      formFields?: FormField[] | null;
       taskFormFields?: Record<string, FormField[]> | null;
     };
   };
@@ -253,6 +254,11 @@ export const processesApi = {
   returnTask: (id: string, reason?: string) =>
     apiClient
       .post<SingleResponse<ProcessUserTask>>(`/processes/user-tasks/${id}/return`, { reason })
+      .then((r) => r.data),
+
+  reassignTask: (id: string, userId: string, note?: string) =>
+    apiClient
+      .post<SingleResponse<ProcessUserTask>>(`/processes/user-tasks/${id}/reassign`, { userId, note })
       .then((r) => r.data),
 
   batchApprove: (taskIds: string[], decision: 'APPROVE' | 'REJECT') =>
