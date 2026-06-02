@@ -106,7 +106,7 @@ export class CustomerSurveyService extends TenantAwareService {
    * Cron 9:00 daily — kiểm tra CustomerSurveySchedule có nextDueAt = hôm nay.
    * Nếu match → tạo CrmActivity type=SURVEY → update lastSentAt + tính nextDueAt mới.
    */
-  @Cron('0 9 * * *')
+  // Cron tách ra CustomerSurveyTask (DEFAULT scope) — service này REQUEST scope
   async dailySurveyCron() {
     this.logger.log('CustomerSurvey daily cron started');
     try {

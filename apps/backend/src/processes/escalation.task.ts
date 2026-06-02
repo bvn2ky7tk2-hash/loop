@@ -20,7 +20,7 @@ export class EscalationTask {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  @Cron('0,30 * * * *')
+  // Cron tách ra EscalationCronTask (DEFAULT scope) — task này bị bubbling REQUEST scope
   async runEscalation(): Promise<void> {
     const now = new Date();
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);

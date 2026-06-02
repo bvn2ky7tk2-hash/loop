@@ -6,6 +6,7 @@ import { ProcessUserTasksModule } from './user-tasks/process-user-tasks.module';
 import { BpmnEngineService } from './engine/bpmn-engine.service';
 import { TimerEventService } from './timers/timer-event.service';
 import { EscalationTask } from './escalation.task';
+import { EscalationCronTask } from './escalation-cron.task';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { ProcessEventBus } from './process-event-bus.service';
 import { DelegationModule } from '../delegation/delegation.module';
@@ -19,7 +20,7 @@ import { DelegationModule } from '../delegation/delegation.module';
     ProcessUserTasksModule,
     DelegationModule,
   ],
-  providers: [BpmnEngineService, TimerEventService, ProcessEventBus, EscalationTask],
+  providers: [BpmnEngineService, TimerEventService, ProcessEventBus, EscalationTask, EscalationCronTask],
   exports: [
     ProcessDefinitionsModule,
     ProcessInstancesModule,

@@ -132,7 +132,7 @@ export class LeadFollowUpService extends TenantAwareService {
   /**
    * Cron 8:00 daily — notify assignee về các follow-up đến hạn hôm nay.
    */
-  @Cron('0 8 * * *')
+  // Cron tách ra LeadFollowUpTask (DEFAULT scope) — service này REQUEST scope
   async dailyFollowUpNotification() {
     this.logger.log('LeadFollowUp daily notify cron started');
     try {

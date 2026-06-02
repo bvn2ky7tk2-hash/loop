@@ -18,7 +18,7 @@ export class AlertSchedulerService {
     private readonly prisma: PrismaService,
   ) {}
 
-  @Cron(CronExpression.EVERY_HOUR)
+  // Cron tách ra AlertSchedulerTask (DEFAULT scope) — service này bị bubbling REQUEST scope
   async runAlertChecks() {
     this.logger.log('Running scheduled alert checks...');
     await Promise.all([

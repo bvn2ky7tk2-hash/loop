@@ -4,13 +4,14 @@ import { InvoicesService } from './invoices.service';
 import { InvoicesController } from './invoices.controller';
 import { FinanceAnalyticsService } from './finance-analytics.service';
 import { FinanceAnalyticsController } from './finance-analytics.controller';
+import { InvoicesTask } from './invoices.task';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AccountingModule } from '../accounting/accounting.module';
 
 @Module({
   imports: [PrismaModule, ScheduleModule.forRoot(), AccountingModule],
   controllers: [InvoicesController, FinanceAnalyticsController],
-  providers: [InvoicesService, FinanceAnalyticsService],
+  providers: [InvoicesService, FinanceAnalyticsService, InvoicesTask],
   exports: [InvoicesService],
 })
 export class InvoicesModule {}

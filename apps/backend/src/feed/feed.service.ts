@@ -93,8 +93,7 @@ export class FeedService extends TenantAwareService {
     }
   }
 
-  /** Cron job hằng ngày lúc 8h sáng — tự động đăng BIRTHDAY */
-  @Cron('0 8 * * *')
+  /** Tự động đăng BIRTHDAY — cron tách ra FeedTask (DEFAULT scope) */
   async autoPostBirthdays() {
     const today = new Date();
     const month = today.getMonth() + 1;
@@ -135,8 +134,7 @@ export class FeedService extends TenantAwareService {
     }
   }
 
-  /** Cron job hằng ngày lúc 8h sáng — tự động đăng ANNIVERSARY cho nhân viên đủ năm thâm niên */
-  @Cron('5 8 * * *')
+  /** Tự động đăng ANNIVERSARY cho nhân viên đủ năm thâm niên — cron tách ra FeedTask */
   async autoPostAnniversaries() {
     const today = new Date();
     const month = today.getMonth() + 1;

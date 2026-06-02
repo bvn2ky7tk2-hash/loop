@@ -6,10 +6,11 @@ import { LeadsService } from './leads.service';
 import { LeadsController } from './leads.controller';
 import { LeadFollowUpService } from './lead-followup.service';
 import { LeadFollowUpController } from './lead-followup.controller';
+import { LeadFollowUpTask } from './lead-followup.task';
 
 @Module({
   imports: [PrismaModule, NotificationsModule, ScheduleModule.forRoot()],
-  providers: [LeadsService, LeadFollowUpService],
+  providers: [LeadsService, LeadFollowUpService, LeadFollowUpTask],
   controllers: [LeadsController, LeadFollowUpController],
   exports: [LeadsService, LeadFollowUpService],
 })

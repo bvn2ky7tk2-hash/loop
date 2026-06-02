@@ -6,7 +6,7 @@ import type { ColumnsType } from 'antd/es/table';
 import {
   UserOutlined, CalendarOutlined, DollarOutlined, ClockCircleOutlined,
   FileTextOutlined, RightOutlined, PlusOutlined, SendOutlined,
-  ApartmentOutlined,
+  ApartmentOutlined, IdcardOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
@@ -331,6 +331,11 @@ export default function SelfServicePage() {
         iconColor="#6366F1"
         actions={
           <Space>
+            {myEmployee?.id && (
+              <Button type="primary" icon={<IdcardOutlined />} onClick={() => navigate(`/hr/employees/${myEmployee.id}`)}>
+                Xem hồ sơ đầy đủ
+              </Button>
+            )}
             <Button icon={<PlusOutlined />} onClick={() => navigate('/leaves')}>Xin nghỉ phép</Button>
             <Button icon={<SendOutlined />} onClick={() => navigate('/expenses')}>Khai chi phí</Button>
           </Space>

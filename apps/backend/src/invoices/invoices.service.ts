@@ -249,8 +249,7 @@ export class InvoicesService extends TenantAwareService {
     };
   }
 
-  // Cron hàng ngày 8:00 — đánh dấu quá hạn (bỏ qua hóa đơn đã xóa mềm)
-  @Cron('0 8 * * *')
+  // Cron tách ra InvoicesTask (DEFAULT scope) — service này REQUEST scope
   async markOverdueInvoices() {
     const result = await this.prisma.invoice.updateMany({
       where: { status: 'SENT', dueDate: { lt: new Date() }, deletedAt: null },

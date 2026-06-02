@@ -23,15 +23,9 @@ export class AutomationScheduler {
     }
   }
 
-  @Cron('0 17 * * 5')   // Thứ 6 17h
+  // Cron tách ra AutomationCronTask (DEFAULT scope) — scheduler này bị bubbling REQUEST scope
   async timesheetCron()  { await this.run('timesheet-reminder'); }
-
-  @Cron('0 9 * * *')    // Mỗi ngày 9h
   async contractCron()   { await this.run('contract-expiry'); }
-
-  @Cron('0 10 * * *')   // Mỗi ngày 10h
   async leaveCron()      { await this.run('leave-escalation'); }
-
-  @Cron('0 9 * * 1')    // Thứ 2 9h
   async okrCron()        { await this.run('okr-checkin-reminder'); }
 }
