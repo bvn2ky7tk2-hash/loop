@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Row, Col, Table, Tag, Button, Select, Typography, Space, App, Spin } from 'antd';
+import { useState, useMemo } from 'react';
+import { Row, Col, Table, Tag, Button, Select, Input, Typography, Space, App, Spin } from 'antd';
 import {
-  InboxOutlined, CheckOutlined, CloseOutlined,
+  InboxOutlined, CheckOutlined, CloseOutlined, EyeOutlined, SearchOutlined,
 } from '@ant-design/icons';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -11,7 +11,9 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
-import { processesApi, type ProcessUserTask } from '../../api/processes.api';
+import { processesApi, useDefinitions, type ProcessUserTask } from '../../api/processes.api';
+import { usersApi } from '../../api/users';
+import { TaskCompleteDrawer } from '../processes/components/TaskCompleteDrawer';
 
 const { Text } = Typography;
 
@@ -28,7 +30,18 @@ export default function ApprovalInboxPage() {
   const { textPrimary, textMuted, borderColor, bgContainer, isDark } = useThemePalette();
 
   const [dateFilter, setDateFilter] = useState('');
+  const [search, setSearch]         = useState('');
+  const [statusFilter, setStatus]   = useState('');
+  const [defFilter, setDefFilter]   = useState('');
+  const [requesterFilter, setRequester] = useState('');
+  const [assigneeFilter, setAssignee]    = useState('');
+  const [detailTask, setDetailTask] = useState<ProcessUserTask | null>(null);
   const { page, pageSize, paginationProps } = usePagination(50);
+
+  // Options cho filter
+  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
+  const { data: defsData } = useDefinitions({ pageSize: 100 });
+  const definitions = (defsData?.data ?? []).filter((d) => d.status === 'ACTIVE');
 
   // Lấy tất cả user tasks đang chờ xử lý (PENDING + IN_PROGRESS)
   const { data: tasksData, isLoading } = useQuery({
@@ -57,16 +70,29 @@ export default function ApprovalInboxPage() {
 
   const allTasks = (tasksData?.data ?? []) as ProcessUserTask[];
 
-  // Filter theo ngày
-  const filteredTasks = allTasks.filter((task) => {
-    if (!dateFilter) return true;
-    const created = dayjs(task.dueDate || (task as any).createdAt);
-    const now = dayjs();
-    if (dateFilter === 'today') return created.isSame(now, 'day');
-    if (dateFilter === 'week') return created.isSame(now, 'week');
-    if (dateFilter === 'month') return created.isSame(now, 'month');
+  // Gộp tất cả điều kiện lọc
+  const filteredTasks = useMemo(() => allTasks.filter((task) => {
+    // Tìm theo tên bước / tên quy trình
+    if (search) {
+      const hay = `${task.name ?? ''} ${task.instance?.definition?.name ?? ''}`.toLowerCase();
+      if (!hay.includes(search.toLowerCase())) return false;
+    }
+    if (statusFilter && task.status !== statusFilter) return false;
+    if (defFilter && task.instance?.definition?.id !== defFilter) return false;
+    if (requesterFilter && task.instance?.startedByUser?.id !== requesterFilter) return false;
+    if (assigneeFilter) {
+      if (assigneeFilter === '__UNASSIGNED__') { if (task.assignee?.id) return false; }
+      else if (task.assignee?.id !== assigneeFilter) return false;
+    }
+    if (dateFilter) {
+      const created = dayjs(task.dueDate || (task as any).createdAt);
+      const now = dayjs();
+      if (dateFilter === 'today' && !created.isSame(now, 'day')) return false;
+      if (dateFilter === 'week'  && !created.isSame(now, 'week')) return false;
+      if (dateFilter === 'month' && !created.isSame(now, 'month')) return false;
+    }
     return true;
-  });
+  }), [allTasks, search, statusFilter, defFilter, requesterFilter, assigneeFilter, dateFilter]);
 
   const pendingCount = allTasks.filter(t => t.status === 'PENDING' || t.status === 'IN_PROGRESS').length;
   const today = dayjs().startOf('day');
@@ -116,6 +142,25 @@ export default function ApprovalInboxPage() {
       },
     },
     {
+      title: 'Người thực hiện (bước này)',
+      key: 'assignee',
+      width: 190,
+      render: (_: unknown, record: ProcessUserTask) => {
+        if (!record.assignee?.id) {
+          return (
+            <Tag style={isDark
+              ? { background: '#F59E0B22', color: '#FBBF24', borderColor: '#F59E0B55' }
+              : {}}
+              color={isDark ? undefined : 'orange'}
+            >
+              Chưa nhận
+            </Tag>
+          );
+        }
+        return <Text style={{ color: textPrimary, fontSize: 13 }}>{record.assignee.name}</Text>;
+      },
+    },
+    {
       title: 'Hạn xử lý',
       dataIndex: 'dueDate',
       width: 130,
@@ -148,20 +193,31 @@ export default function ApprovalInboxPage() {
     {
       title: 'Hành động',
       key: 'actions',
-      width: 170,
+      width: 230,
       render: (_: unknown, record: ProcessUserTask) => {
+        const viewBtn = (
+          <Button
+            size="small"
+            icon={<EyeOutlined />}
+            onClick={(e) => { e.stopPropagation(); setDetailTask(record); }}
+            style={{ fontSize: 12 }}
+          >
+            Xem
+          </Button>
+        );
         if (record.status === 'COMPLETED' || record.status === 'SKIPPED') {
-          return <Text style={{ color: textMuted, fontSize: 12 }}>—</Text>;
+          return viewBtn;
         }
         const isLoading = completeMutation.isPending && (completeMutation.variables as any)?.taskId === record.id;
         return (
           <Space size={6}>
+            {viewBtn}
             <Button
               type="primary"
               size="small"
               icon={<CheckOutlined />}
               loading={isLoading}
-              onClick={() => completeMutation.mutate({ taskId: record.id, outcome: 'APPROVED' })}
+              onClick={(e) => { e.stopPropagation(); completeMutation.mutate({ taskId: record.id, outcome: 'APPROVED' }); }}
               style={{ fontSize: 12 }}
             >
               Duyệt
@@ -171,7 +227,7 @@ export default function ApprovalInboxPage() {
               size="small"
               icon={<CloseOutlined />}
               loading={isLoading}
-              onClick={() => completeMutation.mutate({ taskId: record.id, outcome: 'REJECTED' })}
+              onClick={(e) => { e.stopPropagation(); completeMutation.mutate({ taskId: record.id, outcome: 'REJECTED' }); }}
               style={{ fontSize: 12 }}
             >
               Từ chối
@@ -208,13 +264,73 @@ export default function ApprovalInboxPage() {
 
       {/* Filter bar */}
       <FilterBar>
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Tìm bước duyệt / quy trình..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          allowClear
+          style={{ width: 240 }}
+        />
+        <Select
+          placeholder="Quy trình"
+          value={defFilter || undefined}
+          onChange={(v) => setDefFilter(v ?? '')}
+          allowClear
+          showSearch
+          optionFilterProp="label"
+          options={definitions.map((d) => ({ value: d.id, label: d.name }))}
+          style={{ width: 220 }}
+        />
+        <Select
+          placeholder="Người yêu cầu"
+          value={requesterFilter || undefined}
+          onChange={(v) => setRequester(v ?? '')}
+          allowClear
+          showSearch
+          optionFilterProp="label"
+          options={users.map((u) => ({ value: u.id, label: u.name }))}
+          style={{ width: 180 }}
+        />
+        <Select
+          placeholder="Người thực hiện"
+          value={assigneeFilter || undefined}
+          onChange={(v) => setAssignee(v ?? '')}
+          allowClear
+          showSearch
+          optionFilterProp="label"
+          options={[
+            { value: '__UNASSIGNED__', label: '— Chưa nhận —' },
+            ...users.map((u) => ({ value: u.id, label: u.name })),
+          ]}
+          style={{ width: 180 }}
+        />
+        <Select
+          placeholder="Trạng thái"
+          value={statusFilter || undefined}
+          onChange={(v) => setStatus(v ?? '')}
+          allowClear
+          options={[
+            { value: 'PENDING', label: 'Chờ duyệt' },
+            { value: 'IN_PROGRESS', label: 'Đang xử lý' },
+            { value: 'COMPLETED', label: 'Đã hoàn thành' },
+          ]}
+          style={{ width: 150 }}
+        />
         <Select
           value={dateFilter}
           onChange={setDateFilter}
           options={DATE_OPTIONS}
-          style={{ width: 160 }}
+          style={{ width: 150 }}
           placeholder="Thời gian"
         />
+        {(search || defFilter || requesterFilter || assigneeFilter || statusFilter || dateFilter) && (
+          <Button size="small" onClick={() => {
+            setSearch(''); setDefFilter(''); setRequester(''); setAssignee(''); setStatus(''); setDateFilter('');
+          }}>
+            Xóa lọc
+          </Button>
+        )}
       </FilterBar>
 
       {/* Table */}
@@ -226,9 +342,24 @@ export default function ApprovalInboxPage() {
           size="middle"
           loading={isLoading}
           pagination={paginationProps(tasksData?.meta?.total, 'task')}
+          onRow={(record) => ({
+            onClick: () => setDetailTask(record),
+            style: { cursor: 'pointer' },
+          })}
           locale={{ emptyText: <Text style={{ color: textMuted }}>Không có yêu cầu nào đang chờ</Text> }}
         />
       </div>
+
+      {/* Modal chi tiết — xem nội dung đơn + form duyệt (dùng chung TaskCompleteDrawer) */}
+      <TaskCompleteDrawer
+        task={detailTask}
+        open={!!detailTask}
+        onClose={() => {
+          setDetailTask(null);
+          void qc.invalidateQueries({ queryKey: ['approval-inbox'] });
+          void qc.invalidateQueries({ queryKey: ['approval-inbox-completed-today'] });
+        }}
+      />
     </div>
   );
 }
