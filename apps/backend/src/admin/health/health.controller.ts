@@ -3,7 +3,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../generated/prisma';
 import { HealthService } from './health.service';
 
-@Controller('admin')
+@Controller('api/v1/admin')
 @Roles(Role.ADMIN)
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
