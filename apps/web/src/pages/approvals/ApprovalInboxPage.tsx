@@ -142,7 +142,7 @@ export default function ApprovalInboxPage() {
       },
     },
     {
-      title: 'Người thực hiện (bước này)',
+      title: 'Người thực hiện',
       key: 'assignee',
       width: 190,
       render: (_: unknown, record: ProcessUserTask) => {
