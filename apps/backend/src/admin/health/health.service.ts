@@ -9,6 +9,15 @@ interface DemoSnapshot {
   filePath: string;
   lastUsedAt: string | null;
 }
+
+interface DbConnectionParams {
+  host: string;
+  port: number;
+  user: string;
+  password: string;
+  database: string;
+}
+
 import { PrismaService } from '../../prisma/prisma.service';
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
@@ -123,6 +132,21 @@ export class HealthService {
 
   // ─── Demo Mode (multi-snapshot) ─────────────────────────────────────────
 
+  private parseDbUrl(dbUrl: string): DbConnectionParams {
+    try {
+      const url = new URL(dbUrl);
+      return {
+        host: url.hostname || 'localhost',
+        port: parseInt(url.port || '5432', 10),
+        user: url.username || 'postgres',
+        password: url.password || '',
+        database: url.pathname.substring(1) || 'postgres',
+      };
+    } catch (err) {
+      throw new InternalServerErrorException(`DATABASE_URL format không hợp lệ: ${dbUrl}`);
+    }
+  }
+
   private get snapshotsDir(): string {
     return process.env.DEMO_SNAPSHOTS_DIR || path.join(process.cwd(), 'demo-snapshots');
   }
@@ -169,6 +193,7 @@ export class HealthService {
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
+    const db = this.parseDbUrl(dbUrl);
     this.ensureDir();
 
     const id = `snap_${Date.now()}`;
@@ -178,10 +203,11 @@ export class HealthService {
     const displayLabel = label?.trim() || `Snapshot ${new Date(createdAt).toLocaleString('vi-VN')}`;
 
     try {
-      execSync(
-        `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -f "${filePath}" "${dbUrl}"`,
-        { stdio: 'pipe' },
-      );
+      const cmd = `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -h ${db.host} -p ${db.port} -U ${db.user} -f "${filePath}" ${db.database}`;
+      execSync(cmd, {
+        stdio: 'pipe',
+        env: { ...process.env, PGPASSWORD: db.password },
+      });
 
       const result = await this.prisma.$queryRaw<[{ total: bigint }]>`
         SELECT SUM(n_live_tup)::bigint AS total FROM pg_stat_user_tables
@@ -211,6 +237,8 @@ export class HealthService {
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
+    const db = this.parseDbUrl(dbUrl);
+
     try {
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'replica'`);
       await this.prisma.$executeRawUnsafe(`
@@ -228,7 +256,11 @@ export class HealthService {
       `);
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`);
 
-      execSync(`psql "${dbUrl}" -f "${snap.filePath}"`, { stdio: 'pipe' });
+      const cmd = `psql -h ${db.host} -p ${db.port} -U ${db.user} -d ${db.database} -f "${snap.filePath}"`;
+      execSync(cmd, {
+        stdio: 'pipe',
+        env: { ...process.env, PGPASSWORD: db.password },
+      });
 
       const now = new Date().toISOString();
       const updated = snapshots.map(s => s.id === snapshotId ? { ...s, lastUsedAt: now } : s);
