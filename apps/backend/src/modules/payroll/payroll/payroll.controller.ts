@@ -59,6 +59,13 @@ export class PayrollController {
     return this.service.getPeriodRecords(id, query.page, query.limit);
   }
 
+  // ── Danh sách phiếu lương (alias) ──────────────────────────────────────────
+  @Get('periods/:id/payslips')
+  @ApiOperation({ summary: 'Danh sách phiếu lương của kỳ lương (alias để tương thích UI)' })
+  getPeriodPayslips(@Param('id') id: string, @Query() query: PaginationDto) {
+    return this.service.getPeriodRecords(id, query.page, query.limit);
+  }
+
   // ── Cập nhật bản ghi lương ─────────────────────────────────────────────────
   @Patch('records/:recordId')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
