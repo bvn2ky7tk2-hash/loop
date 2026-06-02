@@ -13,7 +13,6 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { employeesApi } from '../../api/employees';
 import { leavePoliciesApi, type LeavePolicy } from '../../api/hr-attendance';
-import LeaveTypesManager from '../../components/leave/LeaveTypesManager';
 
 const { Text } = Typography;
 
@@ -262,11 +261,6 @@ export default function LeavePolicyPage() {
                 </div>
               </>
             ),
-          },
-          {
-            key: 'types',
-            label: 'Loại nghỉ',
-            children: <LeaveTypesManager />,
           },
         ]}
       />
