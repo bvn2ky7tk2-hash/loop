@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 
 /**
  * E22.4 — Cron task nhắc nhở CRM activities đến hạn / quá hạn.
@@ -16,10 +17,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export class CrmReminderTask {
   private readonly logger = new Logger(CrmReminderTask.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tenantRunner: TenantRunner,
+  ) {}
 
   @Cron('0 8 * * *')
   async handleCrmReminders(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[CrmReminderTask] Bắt đầu kiểm tra CRM activities đến hạn...');
 
     const now = new Date();
@@ -163,6 +168,7 @@ export class CrmReminderTask {
     this.logger.log(
       `[CrmReminderTask] Đã gửi ${upcomingCount} notification sắp đến hạn, ${overdueCount} notification quá hạn.`,
     );
+    });
   }
 }
 

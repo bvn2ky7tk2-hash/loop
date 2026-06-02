@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { DealStage } from '../generated/prisma';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 
 export interface MonthlyPipeline {
   month: string;   // "YYYY-MM"
@@ -23,7 +24,10 @@ export interface KpiSummary {
 export class CrmKpiService {
   private readonly logger = new Logger(CrmKpiService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tenantRunner: TenantRunner,
+  ) {}
 
   /** Tính weighted pipeline theo tháng expectedCloseDate */
   private async calcWeightedPipeline(tenantId?: string): Promise<MonthlyPipeline[]> {
@@ -185,13 +189,15 @@ export class CrmKpiService {
   /** Cron chạy lúc 1:00 AM mỗi ngày — aggregate KPI cho mọi tenant */
   @Cron('0 1 * * *')
   async dailyKpiCron() {
-    this.logger.log('CRM KPI daily cron started');
-    try {
-      // Aggregate global (không filter tenant) — đủ cho setup single-tenant
-      await this.aggregateDealKpis();
-    } catch (err) {
-      this.logger.error('CRM KPI cron failed', err);
-    }
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
+      this.logger.log('CRM KPI daily cron started');
+      try {
+        // Aggregate global (không filter tenant) — đủ cho setup single-tenant
+        await this.aggregateDealKpis();
+      } catch (err) {
+        this.logger.error('CRM KPI cron failed', err);
+      }
+    });
   }
 
   /** Summary endpoint-friendly: trả KpiRecord mới nhất từ DB hoặc tính live */

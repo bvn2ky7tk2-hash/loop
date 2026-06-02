@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
 import { HrEventBus } from '../common/events/hr-event-bus.service';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 
 /**
  * E18.1 — Cron task kiểm tra HĐ sắp hết hạn và tự động expire.
@@ -17,10 +18,12 @@ export class ContractExpiryTask {
   constructor(
     private readonly prisma: PrismaService,
     private readonly hrEventBus: HrEventBus,
+    private readonly tenantRunner: TenantRunner,
   ) {}
 
   @Cron('0 8 * * *')
   async handleContractExpiry(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[ContractExpiryTask] Bắt đầu kiểm tra HĐ sắp hết hạn...');
 
     const today = new Date();
@@ -128,5 +131,6 @@ export class ContractExpiryTask {
     }
 
     this.logger.log('[ContractExpiryTask] Hoàn tất.');
+    });
   }
 }

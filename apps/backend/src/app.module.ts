@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ClsModule } from 'nestjs-cls';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { CommonModule } from './common/common.module';
 import { OrgScopeInterceptor } from './common/guards/org-scope.interceptor';
+import { TenantClsInterceptor } from './common/interceptors/tenant-cls.interceptor';
+import { TenantResolverMiddleware } from './common/middleware/tenant-resolver.middleware';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { PermissionGuard } from './common/guards/permission.guard';
@@ -88,10 +91,16 @@ import { AnalyticsModule } from './analytics/analytics.module';
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: PermissionGuard },
     { provide: APP_GUARD, useClass: TenantGuard },
+    // Chạy SAU guards, TRƯỚC OrgScopeInterceptor → set tenantId vào CLS cho Prisma extension.
+    { provide: APP_INTERCEPTOR, useClass: TenantClsInterceptor },
     { provide: APP_INTERCEPTOR, useClass: OrgScopeInterceptor },
   ],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: true, generateId: true },
+    }),
     CommonModule,
     ThrottlerModule.forRoot({
       throttlers: [
@@ -187,4 +196,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AnalyticsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenantResolverMiddleware).forRoutes('*');
+  }
+}

@@ -199,6 +199,7 @@ exports.Prisma.EmployeeScalarFieldEnum = {
 
 exports.Prisma.SkillScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   category: 'category',
   description: 'description',
@@ -208,6 +209,7 @@ exports.Prisma.SkillScalarFieldEnum = {
 
 exports.Prisma.EmployeeSkillScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   skillId: 'skillId',
   level: 'level',
@@ -219,6 +221,7 @@ exports.Prisma.EmployeeSkillScalarFieldEnum = {
 
 exports.Prisma.EmployeeRateScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   ratePerDay: 'ratePerDay',
   currency: 'currency',
@@ -287,6 +290,7 @@ exports.Prisma.TaskScalarFieldEnum = {
 
 exports.Prisma.TimeLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   taskId: 'taskId',
   userId: 'userId',
   logDate: 'logDate',
@@ -297,6 +301,7 @@ exports.Prisma.TimeLogScalarFieldEnum = {
 
 exports.Prisma.WorkStatusScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   statusType: 'statusType',
   startedAt: 'startedAt',
@@ -325,6 +330,7 @@ exports.Prisma.TimeEntryScalarFieldEnum = {
 
 exports.Prisma.TimesheetRecordScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   periodStart: 'periodStart',
   periodEnd: 'periodEnd',
@@ -348,6 +354,7 @@ exports.Prisma.TimesheetRecordScalarFieldEnum = {
 
 exports.Prisma.AlertConfigScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   projectId: 'projectId',
   type: 'type',
   threshold: 'threshold',
@@ -359,6 +366,7 @@ exports.Prisma.AlertConfigScalarFieldEnum = {
 
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   type: 'type',
   title: 'title',
@@ -373,6 +381,7 @@ exports.Prisma.NotificationScalarFieldEnum = {
 
 exports.Prisma.PushTokenScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   token: 'token',
   platform: 'platform',
@@ -381,6 +390,7 @@ exports.Prisma.PushTokenScalarFieldEnum = {
 
 exports.Prisma.TelegramConfigScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   botToken: 'botToken',
   chatId: 'chatId',
   isEnabled: 'isEnabled',
@@ -390,6 +400,7 @@ exports.Prisma.TelegramConfigScalarFieldEnum = {
 
 exports.Prisma.TelegramMessageScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   taskId: 'taskId',
   eventType: 'eventType',
   messageId: 'messageId',
@@ -429,6 +440,7 @@ exports.Prisma.ProcessInstanceScalarFieldEnum = {
 
 exports.Prisma.ProcessUserTaskScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   instanceId: 'instanceId',
   activityId: 'activityId',
   name: 'name',
@@ -443,6 +455,7 @@ exports.Prisma.ProcessUserTaskScalarFieldEnum = {
 
 exports.Prisma.ProcessActivityLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   instanceId: 'instanceId',
   activityId: 'activityId',
   activityName: 'activityName',
@@ -481,11 +494,13 @@ exports.Prisma.BugScalarFieldEnum = {
 
 exports.Prisma.BugTaskScalarFieldEnum = {
   bugId: 'bugId',
-  taskId: 'taskId'
+  taskId: 'taskId',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.BugAttachmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   bugId: 'bugId',
   uploaderId: 'uploaderId',
   filename: 'filename',
@@ -497,6 +512,7 @@ exports.Prisma.BugAttachmentScalarFieldEnum = {
 
 exports.Prisma.BugCommentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   bugId: 'bugId',
   authorId: 'authorId',
   content: 'content',
@@ -506,7 +522,8 @@ exports.Prisma.BugCommentScalarFieldEnum = {
 
 exports.Prisma.BugTagScalarFieldEnum = {
   bugId: 'bugId',
-  tag: 'tag'
+  tag: 'tag',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.PermissionScalarFieldEnum = {
@@ -540,7 +557,8 @@ exports.Prisma.UserPermissionScalarFieldEnum = {
   userId: 'userId',
   permissionCode: 'permissionCode',
   granted: 'granted',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.ModuleRoleScalarFieldEnum = {
@@ -561,11 +579,13 @@ exports.Prisma.ModuleRolePermissionScalarFieldEnum = {
 exports.Prisma.UserModuleRoleScalarFieldEnum = {
   userId: 'userId',
   roleCode: 'roleCode',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.AuditLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   action: 'action',
   module: 'module',
@@ -580,6 +600,7 @@ exports.Prisma.AuditLogScalarFieldEnum = {
 
 exports.Prisma.UserGroupScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   description: 'description',
   isDefault: 'isDefault',
@@ -589,18 +610,21 @@ exports.Prisma.UserGroupScalarFieldEnum = {
 
 exports.Prisma.GroupPermissionScalarFieldEnum = {
   groupId: 'groupId',
-  permCode: 'permCode'
+  permCode: 'permCode',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.GroupMembershipScalarFieldEnum = {
   userId: 'userId',
-  groupId: 'groupId'
+  groupId: 'groupId',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.GroupOrgAccessScalarFieldEnum = {
   groupId: 'groupId',
   orgUnitId: 'orgUnitId',
-  includeChildren: 'includeChildren'
+  includeChildren: 'includeChildren',
+  tenantId: 'tenantId'
 };
 
 exports.Prisma.ContractScalarFieldEnum = {
@@ -611,6 +635,7 @@ exports.Prisma.ContractScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   salaryMonthly: 'salaryMonthly',
+  insuranceSalary: 'insuranceSalary',
   currency: 'currency',
   note: 'note',
   signedAt: 'signedAt',
@@ -626,6 +651,7 @@ exports.Prisma.ContractScalarFieldEnum = {
 
 exports.Prisma.ContractAllowanceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   contractId: 'contractId',
   allowanceTypeId: 'allowanceTypeId',
   amount: 'amount',
@@ -634,6 +660,7 @@ exports.Prisma.ContractAllowanceScalarFieldEnum = {
 
 exports.Prisma.LeaveTypeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   maxDaysPerYear: 'maxDaysPerYear',
   isPaid: 'isPaid',
@@ -677,6 +704,7 @@ exports.Prisma.LeaveBalanceScalarFieldEnum = {
 
 exports.Prisma.OvertimeRequestScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   date: 'date',
   fromTime: 'fromTime',
@@ -747,6 +775,7 @@ exports.Prisma.PayrollRecordScalarFieldEnum = {
 
 exports.Prisma.ExpenseScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   projectId: 'projectId',
   submittedById: 'submittedById',
   employeeId: 'employeeId',
@@ -766,6 +795,7 @@ exports.Prisma.ExpenseScalarFieldEnum = {
 
 exports.Prisma.ExpenseItemScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   expenseId: 'expenseId',
   description: 'description',
   amount: 'amount'
@@ -905,6 +935,7 @@ exports.Prisma.ClientContractScalarFieldEnum = {
 
 exports.Prisma.ContractMilestoneScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   contractId: 'contractId',
   name: 'name',
   dueDate: 'dueDate',
@@ -944,6 +975,7 @@ exports.Prisma.InvoiceScalarFieldEnum = {
 
 exports.Prisma.InvoiceItemScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   invoiceId: 'invoiceId',
   description: 'description',
   quantity: 'quantity',
@@ -1032,6 +1064,7 @@ exports.Prisma.AssetScalarFieldEnum = {
 
 exports.Prisma.AssetAssignmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   assetId: 'assetId',
   employeeId: 'employeeId',
   assignedAt: 'assignedAt',
@@ -1042,6 +1075,7 @@ exports.Prisma.AssetAssignmentScalarFieldEnum = {
 
 exports.Prisma.AssetMaintenanceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   assetId: 'assetId',
   type: 'type',
   performedAt: 'performedAt',
@@ -1053,6 +1087,7 @@ exports.Prisma.AssetMaintenanceScalarFieldEnum = {
 
 exports.Prisma.ChartOfAccountScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   code: 'code',
   name: 'name',
   type: 'type',
@@ -1063,6 +1098,7 @@ exports.Prisma.ChartOfAccountScalarFieldEnum = {
 
 exports.Prisma.JournalEntryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   date: 'date',
   description: 'description',
   reference: 'reference',
@@ -1072,6 +1108,7 @@ exports.Prisma.JournalEntryScalarFieldEnum = {
 
 exports.Prisma.JournalLineScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   entryId: 'entryId',
   accountCode: 'accountCode',
   debit: 'debit',
@@ -1081,6 +1118,7 @@ exports.Prisma.JournalLineScalarFieldEnum = {
 
 exports.Prisma.TrainingProgramScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   type: 'type',
   durationHours: 'durationHours',
@@ -1091,6 +1129,7 @@ exports.Prisma.TrainingProgramScalarFieldEnum = {
 
 exports.Prisma.TrainingRecordScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   programId: 'programId',
   employeeId: 'employeeId',
   startDate: 'startDate',
@@ -1105,6 +1144,7 @@ exports.Prisma.TrainingRecordScalarFieldEnum = {
 
 exports.Prisma.PerformanceReviewScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   reviewerId: 'reviewerId',
   period: 'period',
@@ -1168,6 +1208,7 @@ exports.Prisma.WageZoneConfigScalarFieldEnum = {
 
 exports.Prisma.EmployeeTaxProfileScalarFieldEnum = {
   employeeId: 'employeeId',
+  tenantId: 'tenantId',
   taxId: 'taxId',
   residencyStatus: 'residencyStatus',
   wageZone: 'wageZone',
@@ -1176,6 +1217,7 @@ exports.Prisma.EmployeeTaxProfileScalarFieldEnum = {
 
 exports.Prisma.DependentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   name: 'name',
   relationship: 'relationship',
@@ -1187,6 +1229,7 @@ exports.Prisma.DependentScalarFieldEnum = {
 
 exports.Prisma.AllowanceTypeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   defaultAmount: 'defaultAmount',
   calculationMode: 'calculationMode',
@@ -1199,6 +1242,7 @@ exports.Prisma.AllowanceTypeScalarFieldEnum = {
 
 exports.Prisma.BonusTypeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   isBhxhExempt: 'isBhxhExempt',
   isActive: 'isActive',
@@ -1207,6 +1251,7 @@ exports.Prisma.BonusTypeScalarFieldEnum = {
 
 exports.Prisma.EmployeeBonusScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   payrollRecordId: 'payrollRecordId',
   bonusTypeId: 'bonusTypeId',
   amount: 'amount',
@@ -1215,6 +1260,7 @@ exports.Prisma.EmployeeBonusScalarFieldEnum = {
 
 exports.Prisma.EmployeeYearlyTaxSummaryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   year: 'year',
   ytdGross: 'ytdGross',
@@ -1226,6 +1272,7 @@ exports.Prisma.EmployeeYearlyTaxSummaryScalarFieldEnum = {
 
 exports.Prisma.EmployeeAllowanceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   payrollRecordId: 'payrollRecordId',
   allowanceTypeId: 'allowanceTypeId',
   amount: 'amount',
@@ -1266,6 +1313,7 @@ exports.Prisma.OkrObjectiveScalarFieldEnum = {
 
 exports.Prisma.OkrKeyResultScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   objectiveId: 'objectiveId',
   title: 'title',
   unit: 'unit',
@@ -1278,6 +1326,7 @@ exports.Prisma.OkrKeyResultScalarFieldEnum = {
 
 exports.Prisma.KpiMetricScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   description: 'description',
   unit: 'unit',
@@ -1291,6 +1340,7 @@ exports.Prisma.KpiMetricScalarFieldEnum = {
 
 exports.Prisma.KpiRecordScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   metricId: 'metricId',
   period: 'period',
   value: 'value',
@@ -1300,6 +1350,7 @@ exports.Prisma.KpiRecordScalarFieldEnum = {
 
 exports.Prisma.RevenueTargetScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   period: 'period',
   periodType: 'periodType',
   target: 'target',
@@ -1311,6 +1362,7 @@ exports.Prisma.RevenueTargetScalarFieldEnum = {
 
 exports.Prisma.KbCategoryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   description: 'description',
   icon: 'icon',
@@ -1354,6 +1406,7 @@ exports.Prisma.CustomerPortalScalarFieldEnum = {
 
 exports.Prisma.CustomerTicketScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   portalId: 'portalId',
   title: 'title',
   description: 'description',
@@ -1410,6 +1463,7 @@ exports.Prisma.PurchaseOrderScalarFieldEnum = {
 
 exports.Prisma.PurchaseOrderItemScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   poId: 'poId',
   description: 'description',
   unit: 'unit',
@@ -1436,6 +1490,7 @@ exports.Prisma.CommentScalarFieldEnum = {
 
 exports.Prisma.FeedPostScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   type: 'type',
   authorId: 'authorId',
   title: 'title',
@@ -1451,6 +1506,7 @@ exports.Prisma.FeedPostScalarFieldEnum = {
 
 exports.Prisma.FeedReactionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   postId: 'postId',
   userId: 'userId',
   emoji: 'emoji',
@@ -1459,6 +1515,7 @@ exports.Prisma.FeedReactionScalarFieldEnum = {
 
 exports.Prisma.AutomationRuleScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   key: 'key',
   name: 'name',
   description: 'description',
@@ -1477,6 +1534,7 @@ exports.Prisma.AutomationRuleScalarFieldEnum = {
 
 exports.Prisma.AutomationRuleLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   ruleId: 'ruleId',
   triggeredAt: 'triggeredAt',
   entityId: 'entityId',
@@ -1488,6 +1546,7 @@ exports.Prisma.AutomationRuleLogScalarFieldEnum = {
 
 exports.Prisma.ScheduledReportScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   template: 'template',
   recipients: 'recipients',
@@ -1518,6 +1577,7 @@ exports.Prisma.SavedReportScalarFieldEnum = {
 
 exports.Prisma.WebhookEndpointScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   url: 'url',
   secret: 'secret',
@@ -1529,6 +1589,7 @@ exports.Prisma.WebhookEndpointScalarFieldEnum = {
 
 exports.Prisma.WebhookLogScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   endpointId: 'endpointId',
   event: 'event',
   payload: 'payload',
@@ -1541,6 +1602,7 @@ exports.Prisma.WebhookLogScalarFieldEnum = {
 
 exports.Prisma.ModuleConfigScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   moduleId: 'moduleId',
   isEnabled: 'isEnabled',
   displayName: 'displayName',
@@ -1551,6 +1613,7 @@ exports.Prisma.ModuleConfigScalarFieldEnum = {
 
 exports.Prisma.MeetingRoomScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   floor: 'floor',
   capacity: 'capacity',
@@ -1563,6 +1626,7 @@ exports.Prisma.MeetingRoomScalarFieldEnum = {
 
 exports.Prisma.RoomBookingScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   roomId: 'roomId',
   bookedById: 'bookedById',
   title: 'title',
@@ -1577,6 +1641,7 @@ exports.Prisma.RoomBookingScalarFieldEnum = {
 
 exports.Prisma.VehicleScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   plateNumber: 'plateNumber',
   type: 'type',
@@ -1590,6 +1655,7 @@ exports.Prisma.VehicleScalarFieldEnum = {
 
 exports.Prisma.VehicleRequestScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   vehicleId: 'vehicleId',
   requestedById: 'requestedById',
   approvedById: 'approvedById',
@@ -1608,6 +1674,7 @@ exports.Prisma.VehicleRequestScalarFieldEnum = {
 
 exports.Prisma.BudgetPlanScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   fiscalYear: 'fiscalYear',
   type: 'type',
@@ -1626,6 +1693,7 @@ exports.Prisma.BudgetPlanScalarFieldEnum = {
 
 exports.Prisma.BudgetLineScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   planId: 'planId',
   category: 'category',
   description: 'description',
@@ -1639,6 +1707,7 @@ exports.Prisma.BudgetLineScalarFieldEnum = {
 
 exports.Prisma.BudgetTransactionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   lineId: 'lineId',
   sourceType: 'sourceType',
   sourceId: 'sourceId',
@@ -1679,6 +1748,7 @@ exports.Prisma.PerformanceBonusScalarFieldEnum = {
 
 exports.Prisma.CalendarEventScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   title: 'title',
   description: 'description',
   eventType: 'eventType',
@@ -1717,6 +1787,7 @@ exports.Prisma.InvoiceAccountMappingScalarFieldEnum = {
 
 exports.Prisma.ProjectCostSnapshotScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   projectId: 'projectId',
   snapshotDate: 'snapshotDate',
   totalLaborCost: 'totalLaborCost',
@@ -1730,6 +1801,7 @@ exports.Prisma.ProjectCostSnapshotScalarFieldEnum = {
 
 exports.Prisma.ProjectCostByEmployeeScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   snapshotId: 'snapshotId',
   employeeId: 'employeeId',
   hours: 'hours',
@@ -1758,6 +1830,7 @@ exports.Prisma.ProjectJournalScalarFieldEnum = {
 
 exports.Prisma.SalaryBandScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   positionId: 'positionId',
   minSalary: 'minSalary',
   midSalary: 'midSalary',
@@ -1769,6 +1842,7 @@ exports.Prisma.SalaryBandScalarFieldEnum = {
 
 exports.Prisma.SalaryReviewSuggestionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   reviewId: 'reviewId',
   employeeId: 'employeeId',
   salaryBandId: 'salaryBandId',
@@ -1801,6 +1875,7 @@ exports.Prisma.TenantScalarFieldEnum = {
 
 exports.Prisma.JobTitleScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   code: 'code',
   name: 'name',
   band: 'band',
@@ -1813,6 +1888,7 @@ exports.Prisma.JobTitleScalarFieldEnum = {
 
 exports.Prisma.PositionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   code: 'code',
   jobTitleId: 'jobTitleId',
   orgUnitId: 'orgUnitId',
@@ -1826,6 +1902,7 @@ exports.Prisma.PositionScalarFieldEnum = {
 
 exports.Prisma.PositionHistoryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   positionId: 'positionId',
   employeeId: 'employeeId',
   startDate: 'startDate',
@@ -1835,6 +1912,7 @@ exports.Prisma.PositionHistoryScalarFieldEnum = {
 
 exports.Prisma.HrDecisionScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   decisionNumber: 'decisionNumber',
   type: 'type',
   employeeId: 'employeeId',
@@ -1858,6 +1936,7 @@ exports.Prisma.HrDecisionScalarFieldEnum = {
 
 exports.Prisma.WorkHistoryScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   eventType: 'eventType',
   eventDate: 'eventDate',
@@ -1869,6 +1948,7 @@ exports.Prisma.WorkHistoryScalarFieldEnum = {
 
 exports.Prisma.SalaryRecordScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   basicSalary: 'basicSalary',
   effectiveDate: 'effectiveDate',
@@ -1882,6 +1962,7 @@ exports.Prisma.SalaryRecordScalarFieldEnum = {
 
 exports.Prisma.LeavePolicyScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   baseAnnualDays: 'baseAnnualDays',
   seniorityBonus: 'seniorityBonus',
@@ -1897,6 +1978,7 @@ exports.Prisma.LeavePolicyScalarFieldEnum = {
 
 exports.Prisma.HolidayCalendarScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   date: 'date',
   name: 'name',
   type: 'type',
@@ -1906,6 +1988,7 @@ exports.Prisma.HolidayCalendarScalarFieldEnum = {
 
 exports.Prisma.InsuranceEnrollmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   bhxhBookNumber: 'bhxhBookNumber',
   insuranceSalary: 'insuranceSalary',
@@ -1918,6 +2001,7 @@ exports.Prisma.InsuranceEnrollmentScalarFieldEnum = {
 
 exports.Prisma.SocialInsuranceBookScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   enrollmentId: 'enrollmentId',
   bookNumber: 'bookNumber',
@@ -1931,6 +2015,7 @@ exports.Prisma.SocialInsuranceBookScalarFieldEnum = {
 
 exports.Prisma.InsuranceEventScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   enrollmentId: 'enrollmentId',
   eventType: 'eventType',
   insuranceSalary: 'insuranceSalary',
@@ -1942,6 +2027,7 @@ exports.Prisma.InsuranceEventScalarFieldEnum = {
 
 exports.Prisma.AttendanceRecordScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   monthlyAttendanceId: 'monthlyAttendanceId',
   shiftId: 'shiftId',
@@ -1965,6 +2051,7 @@ exports.Prisma.AttendanceRecordScalarFieldEnum = {
 
 exports.Prisma.MonthlyAttendanceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   year: 'year',
   month: 'month',
@@ -2003,6 +2090,7 @@ exports.Prisma.AttendanceExplanationScalarFieldEnum = {
 
 exports.Prisma.WorkShiftScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   code: 'code',
   type: 'type',
@@ -2017,6 +2105,7 @@ exports.Prisma.WorkShiftScalarFieldEnum = {
 
 exports.Prisma.ShiftAssignmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   shiftId: 'shiftId',
   effectiveFrom: 'effectiveFrom',
@@ -2027,6 +2116,7 @@ exports.Prisma.ShiftAssignmentScalarFieldEnum = {
 
 exports.Prisma.WorkScheduleScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   name: 'name',
   description: 'description',
   repeatType: 'repeatType',
@@ -2037,6 +2127,7 @@ exports.Prisma.WorkScheduleScalarFieldEnum = {
 
 exports.Prisma.WorkSchedulePhaseScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   workScheduleId: 'workScheduleId',
   shiftId: 'shiftId',
   phaseOrder: 'phaseOrder',
@@ -2045,6 +2136,7 @@ exports.Prisma.WorkSchedulePhaseScalarFieldEnum = {
 
 exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   employeeId: 'employeeId',
   orgUnitId: 'orgUnitId',
   scheduleId: 'scheduleId',
@@ -2056,6 +2148,7 @@ exports.Prisma.WorkScheduleEnrollmentScalarFieldEnum = {
 
 exports.Prisma.NotificationPreferenceScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   moduleType: 'moduleType',
   channel: 'channel',
@@ -2065,6 +2158,7 @@ exports.Prisma.NotificationPreferenceScalarFieldEnum = {
 
 exports.Prisma.SavedFilterPresetScalarFieldEnum = {
   id: 'id',
+  tenantId: 'tenantId',
   userId: 'userId',
   pageKey: 'pageKey',
   name: 'name',

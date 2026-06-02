@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ProjectCostService } from './project-cost.service';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 
 /**
  * E20.1 — Daily snapshot chi phí dự án.
@@ -12,11 +13,16 @@ import { ProjectCostService } from './project-cost.service';
 export class ProjectCostTask {
   private readonly logger = new Logger(ProjectCostTask.name);
 
-  constructor(private readonly projectCostService: ProjectCostService) {}
+  constructor(
+    private readonly projectCostService: ProjectCostService,
+    private readonly tenantRunner: TenantRunner,
+  ) {}
 
   @Cron('30 0 * * *')
   async handleDailyCostSnapshot(): Promise<void> {
-    this.logger.log('[ProjectCostTask] Trigger daily cost snapshot...');
-    await this.projectCostService.snapshotAllActiveProjects();
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
+      this.logger.log('[ProjectCostTask] Trigger daily cost snapshot...');
+      await this.projectCostService.snapshotAllActiveProjects();
+    });
   }
 }

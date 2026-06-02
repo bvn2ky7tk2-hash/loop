@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 
 /**
  * E17.5 — Cron daily 9:00 — cảnh báo BudgetLine utilization cao.
@@ -19,10 +20,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export class BudgetAlertTask {
   private readonly logger = new Logger(BudgetAlertTask.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tenantRunner: TenantRunner,
+  ) {}
 
   @Cron('0 9 * * *')
   async checkBudgetUtilization(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[BudgetAlertTask] Kiểm tra budget utilization...');
 
     // Lấy tất cả BudgetLine thuộc plan chưa CLOSED, có allocatedAmount > 0
@@ -184,5 +189,6 @@ export class BudgetAlertTask {
     this.logger.log(
       `[BudgetAlertTask] Hoàn tất. WARNING=${warningCount}, CRITICAL=${criticalCount}`,
     );
+    });
   }
 }

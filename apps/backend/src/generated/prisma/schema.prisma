@@ -209,6 +209,7 @@ model Employee {
 
 model Skill {
   id          String          @id @default(uuid())
+  tenantId    String?         @map("tenant_id")
   name        String          @unique
   category    SkillCategory   @default(TECHNICAL)
   description String?
@@ -216,11 +217,13 @@ model Skill {
   createdAt   DateTime        @default(now()) @map("created_at")
   employees   EmployeeSkill[]
 
+  @@index([tenantId])
   @@map("skills")
 }
 
 model EmployeeSkill {
   id          String     @id @default(uuid())
+  tenantId    String?    @map("tenant_id")
   employeeId  String     @map("employee_id")
   skillId     String     @map("skill_id")
   level       SkillLevel @default(BEGINNER)
@@ -232,6 +235,7 @@ model EmployeeSkill {
   skill       Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
   @@unique([employeeId, skillId])
+  @@index([tenantId])
   @@map("employee_skills")
 }
 
@@ -256,6 +260,7 @@ enum SkillLevel {
 
 model EmployeeRate {
   id            String         @id @default(uuid())
+  tenantId      String?        @map("tenant_id")
   employeeId    String         @map("employee_id")
   ratePerDay    Decimal        @map("rate_per_day") @db.Decimal(12, 2)
   currency      BudgetCurrency @default(VND)
@@ -264,6 +269,7 @@ model EmployeeRate {
   employee      Employee       @relation(fields: [employeeId], references: [id])
 
   @@unique([employeeId, effectiveDate])
+  @@index([tenantId])
   @@map("employee_rates")
 }
 
@@ -368,6 +374,7 @@ model Task {
 
 model TimeLog {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   taskId    String   @map("task_id")
   userId    String   @map("user_id")
   logDate   DateTime @map("log_date") @db.Date
@@ -377,11 +384,13 @@ model TimeLog {
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([tenantId])
   @@map("time_logs")
 }
 
 model WorkStatus {
   id         String         @id @default(uuid())
+  tenantId   String?        @map("tenant_id")
   userId     String         @map("user_id")
   statusType WorkStatusType @map("status_type")
   startedAt  DateTime       @map("started_at")
@@ -391,6 +400,7 @@ model WorkStatus {
   user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, startedAt(sort: Desc)])
+  @@index([tenantId])
   @@map("work_statuses")
 }
 
@@ -421,6 +431,7 @@ model TimeEntry {
 
 model TimesheetRecord {
   id              String          @id @default(uuid())
+  tenantId        String?         @map("tenant_id")
   userId          String          @map("user_id")
   periodStart     DateTime        @map("period_start") @db.Date
   periodEnd       DateTime        @map("period_end") @db.Date
@@ -445,11 +456,13 @@ model TimesheetRecord {
 
   @@unique([userId, periodStart])
   @@index([userId, periodStart])
+  @@index([tenantId])
   @@map("timesheet_records")
 }
 
 model AlertConfig {
   id            String           @id @default(uuid())
+  tenantId      String?          @map("tenant_id")
   projectId     String           @map("project_id")
   type          NotificationType
   threshold     Decimal?         @db.Decimal(5, 2)
@@ -460,11 +473,13 @@ model AlertConfig {
   project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, type])
+  @@index([tenantId])
   @@map("alert_configs")
 }
 
 model Notification {
   id         String           @id @default(uuid())
+  tenantId   String?          @map("tenant_id")
   userId     String           @map("user_id")
   type       NotificationType
   title      String
@@ -478,33 +493,39 @@ model Notification {
   user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead])
+  @@index([tenantId])
   @@map("notifications")
 }
 
 model PushToken {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   userId    String   @map("user_id")
   token     String   @unique
   platform  String
   createdAt DateTime @default(now()) @map("created_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("push_tokens")
 }
 
 model TelegramConfig {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   botToken  String   @map("bot_token")
   chatId    String   @map("chat_id")
   isEnabled Boolean  @default(false) @map("is_enabled")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("telegram_configs")
 }
 
 model TelegramMessage {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   taskId    String   @map("task_id")
   eventType String   @map("event_type")
   messageId Int      @map("message_id")
@@ -513,6 +534,7 @@ model TelegramMessage {
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@unique([taskId, eventType, sentDate])
+  @@index([tenantId])
   @@map("telegram_messages")
 }
 
@@ -574,6 +596,7 @@ model ProcessInstance {
 
 model ProcessUserTask {
   id              String          @id @default(uuid())
+  tenantId        String?         @map("tenant_id")
   instanceId      String          @map("instance_id")
   activityId      String          @map("activity_id")
   name            String
@@ -589,11 +612,13 @@ model ProcessUserTask {
 
   @@index([instanceId])
   @@index([assigneeId, status])
+  @@index([tenantId])
   @@map("process_user_tasks")
 }
 
 model ProcessActivityLog {
   id           String          @id @default(uuid())
+  tenantId     String?         @map("tenant_id")
   instanceId   String          @map("instance_id")
   activityId   String          @map("activity_id")
   activityName String          @map("activity_name")
@@ -604,6 +629,7 @@ model ProcessActivityLog {
   instance     ProcessInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@index([instanceId])
+  @@index([tenantId])
   @@map("process_activity_logs")
 }
 
@@ -653,17 +679,20 @@ model Bug {
 }
 
 model BugTask {
-  bugId  String @map("bug_id")
-  taskId String @map("task_id")
-  bug    Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  bugId    String  @map("bug_id")
+  taskId   String  @map("task_id")
+  bug      Bug     @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  task     Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tenantId String? @map("tenant_id")
 
   @@id([bugId, taskId])
+  @@index([tenantId])
   @@map("bug_tasks")
 }
 
 model BugAttachment {
   id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
   bugId       String   @map("bug_id")
   uploaderId  String   @map("uploader_id")
   filename    String
@@ -675,11 +704,13 @@ model BugAttachment {
   uploader    User     @relation(fields: [uploaderId], references: [id])
 
   @@index([bugId])
+  @@index([tenantId])
   @@map("bug_attachments")
 }
 
 model BugComment {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   bugId     String   @map("bug_id")
   authorId  String   @map("author_id")
   content   String
@@ -689,15 +720,18 @@ model BugComment {
   bug       Bug      @relation(fields: [bugId], references: [id], onDelete: Cascade)
 
   @@index([bugId])
+  @@index([tenantId])
   @@map("bug_comments")
 }
 
 model BugTag {
-  bugId String @map("bug_id")
-  tag   String
-  bug   Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  bugId    String  @map("bug_id")
+  tag      String
+  bug      Bug     @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  tenantId String? @map("tenant_id")
 
   @@id([bugId, tag])
+  @@index([tenantId])
   @@map("bug_tags")
 }
 
@@ -753,8 +787,10 @@ model UserPermission {
   createdAt      DateTime   @default(now()) @map("created_at")
   permission     Permission @relation(fields: [permissionCode], references: [code], onDelete: Cascade)
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId       String?    @map("tenant_id")
 
   @@id([userId, permissionCode])
+  @@index([tenantId])
   @@map("user_permissions")
 }
 
@@ -788,8 +824,10 @@ model UserModuleRole {
   createdAt DateTime   @default(now()) @map("created_at")
   role      ModuleRole @relation(fields: [roleCode], references: [code], onDelete: Cascade)
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId  String?    @map("tenant_id")
 
   @@id([userId, roleCode])
+  @@index([tenantId])
   @@map("user_module_roles")
 }
 
@@ -949,6 +987,7 @@ enum BugItemType {
 
 model AuditLog {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   userId    String?  @map("user_id")
   action    String
   module    String?
@@ -967,6 +1006,7 @@ model AuditLog {
   @@index([module])
   @@index([action])
   @@index([createdAt])
+  @@index([tenantId])
   @@map("audit_logs")
 }
 
@@ -974,6 +1014,7 @@ model AuditLog {
 
 model UserGroup {
   id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
   name        String   @unique
   description String?
   isDefault   Boolean  @default(false) @map("is_default")
@@ -984,6 +1025,7 @@ model UserGroup {
   members     GroupMembership[]
   orgAccess   GroupOrgAccess[]
 
+  @@index([tenantId])
   @@map("user_groups")
 }
 
@@ -991,9 +1033,11 @@ model GroupPermission {
   groupId  String @map("group_id")
   permCode String @map("perm_code")
 
-  group UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  tenantId String?   @map("tenant_id")
 
   @@id([groupId, permCode])
+  @@index([tenantId])
   @@map("group_permissions")
 }
 
@@ -1001,10 +1045,12 @@ model GroupMembership {
   userId  String @map("user_id")
   groupId String @map("group_id")
 
-  user  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  tenantId String?   @map("tenant_id")
 
   @@id([userId, groupId])
+  @@index([tenantId])
   @@map("group_memberships")
 }
 
@@ -1013,10 +1059,12 @@ model GroupOrgAccess {
   orgUnitId       String  @map("org_unit_id")
   includeChildren Boolean @default(true) @map("include_children")
 
-  group   UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  orgUnit OrgUnit   @relation(fields: [orgUnitId], references: [id], onDelete: Cascade)
+  group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  orgUnit  OrgUnit   @relation(fields: [orgUnitId], references: [id], onDelete: Cascade)
+  tenantId String?   @map("tenant_id")
 
   @@id([groupId, orgUnitId])
+  @@index([tenantId])
   @@map("group_org_access")
 }
 
@@ -1030,6 +1078,7 @@ model Contract {
   startDate          DateTime            @map("start_date") @db.Date
   endDate            DateTime?           @map("end_date") @db.Date
   salaryMonthly      Decimal             @map("salary_monthly") @db.Decimal(15, 2)
+  insuranceSalary    Decimal?            @map("insurance_salary") @db.Decimal(15, 2)
   currency           BudgetCurrency      @default(VND)
   note               String?
   signedAt           DateTime?           @map("signed_at") @db.Date
@@ -1059,6 +1108,7 @@ model Contract {
 
 model ContractAllowance {
   id              String        @id @default(uuid())
+  tenantId        String?       @map("tenant_id")
   contractId      String        @map("contract_id")
   allowanceTypeId String        @map("allowance_type_id")
   amount          Decimal       @db.Decimal(12, 2)
@@ -1068,6 +1118,7 @@ model ContractAllowance {
 
   @@unique([contractId, allowanceTypeId])
   @@index([contractId])
+  @@index([tenantId])
   @@map("contract_allowances")
 }
 
@@ -1097,6 +1148,7 @@ enum ContractStatus {
 
 model LeaveType {
   id                   String         @id @default(uuid())
+  tenantId             String?        @map("tenant_id")
   name                 String         @unique
   maxDaysPerYear       Int            @map("max_days_per_year")
   isPaid               Boolean        @default(true) @map("is_paid")
@@ -1110,6 +1162,7 @@ model LeaveType {
   requests             LeaveRequest[]
   balances             LeaveBalance[]
 
+  @@index([tenantId])
   @@map("leave_types")
 }
 
@@ -1188,6 +1241,7 @@ enum OtDayType {
 
 model OvertimeRequest {
   id                String           @id @default(uuid())
+  tenantId          String?          @map("tenant_id")
   employeeId        String           @map("employee_id")
   date              DateTime         @db.Date
   fromTime          String?          @map("from_time")
@@ -1209,6 +1263,7 @@ model OvertimeRequest {
   @@unique([employeeId, date])
   @@index([employeeId])
   @@index([status])
+  @@index([tenantId])
   @@map("overtime_requests")
 }
 
@@ -1299,6 +1354,7 @@ enum PayrollStatus {
 
 model Expense {
   id                String           @id @default(uuid())
+  tenantId          String?          @map("tenant_id")
   projectId         String?          @map("project_id")
   submittedById     String           @map("submitted_by_id")
   employeeId        String?          @map("employee_id")
@@ -1324,16 +1380,19 @@ model Expense {
   @@index([submittedById])
   @@index([status])
   @@index([processInstanceId])
+  @@index([tenantId])
   @@map("expenses")
 }
 
 model ExpenseItem {
   id          String  @id @default(uuid())
+  tenantId    String? @map("tenant_id")
   expenseId   String  @map("expense_id")
   description String
   amount      Decimal @db.Decimal(15, 2)
   expense     Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
 
+  @@index([tenantId])
   @@map("expense_items")
 }
 
@@ -1642,6 +1701,7 @@ model ClientContract {
 
 model ContractMilestone {
   id         String          @id @default(uuid())
+  tenantId   String?         @map("tenant_id")
   contractId String          @map("contract_id")
   name       String          @db.VarChar(200)
   dueDate    DateTime        @map("due_date") @db.Date
@@ -1655,6 +1715,7 @@ model ContractMilestone {
   contract   ClientContract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
 
   @@index([contractId])
+  @@index([tenantId])
   @@map("contract_milestones")
 }
 
@@ -1732,6 +1793,7 @@ model Invoice {
 
 model InvoiceItem {
   id          String  @id @default(uuid())
+  tenantId    String? @map("tenant_id")
   invoiceId   String  @map("invoice_id")
   invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   description String
@@ -1741,6 +1803,7 @@ model InvoiceItem {
   taxRate     Decimal @default(0) @map("tax_rate") @db.Decimal(5, 2)
 
   @@index([invoiceId])
+  @@index([tenantId])
   @@map("invoice_items")
 }
 
@@ -1913,6 +1976,7 @@ model Asset {
 
 model AssetAssignment {
   id         String    @id @default(uuid())
+  tenantId   String?   @map("tenant_id")
   assetId    String    @map("asset_id")
   asset      Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
   employeeId String    @map("employee_id")
@@ -1924,11 +1988,13 @@ model AssetAssignment {
 
   @@index([assetId], name: "idx_asset_assignments_asset_id")
   @@index([employeeId], name: "idx_asset_assignments_employee_id")
+  @@index([tenantId])
   @@map("asset_assignments")
 }
 
 model AssetMaintenance {
   id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
   assetId     String   @map("asset_id")
   asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
   type        String   @db.VarChar(50)
@@ -1939,6 +2005,7 @@ model AssetMaintenance {
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@index([assetId])
+  @@index([tenantId])
   @@map("asset_maintenance")
 }
 
@@ -1969,6 +2036,7 @@ enum AssetStatus {
 
 model ChartOfAccount {
   id             String                  @id @default(uuid())
+  tenantId       String?                 @map("tenant_id")
   code           String                  @unique @db.VarChar(20)
   name           String                  @db.VarChar(200)
   type           AccountType
@@ -1981,11 +2049,13 @@ model ChartOfAccount {
   createdAt      DateTime                @default(now()) @map("created_at")
 
   @@index([type])
+  @@index([tenantId])
   @@map("chart_of_accounts")
 }
 
 model JournalEntry {
   id          String        @id @default(uuid())
+  tenantId    String?       @map("tenant_id")
   date        DateTime      @db.Date
   description String        @db.VarChar(500)
   reference   String?       @db.VarChar(100)
@@ -1994,11 +2064,13 @@ model JournalEntry {
   createdAt   DateTime      @default(now()) @map("created_at")
 
   @@index([date])
+  @@index([tenantId])
   @@map("journal_entries")
 }
 
 model JournalLine {
   id          String         @id @default(uuid())
+  tenantId    String?        @map("tenant_id")
   entryId     String         @map("entry_id")
   entry       JournalEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   accountCode String         @map("account_code") @db.VarChar(20)
@@ -2009,6 +2081,7 @@ model JournalLine {
 
   @@index([entryId])
   @@index([accountCode])
+  @@index([tenantId])
   @@map("journal_lines")
 }
 
@@ -2026,6 +2099,7 @@ enum AccountType {
 
 model TrainingProgram {
   id            String           @id @default(uuid())
+  tenantId      String?          @map("tenant_id")
   title         String           @db.VarChar(200)
   type          String           @db.VarChar(50)
   durationHours Int              @map("duration_hours")
@@ -2034,11 +2108,13 @@ model TrainingProgram {
   createdAt     DateTime         @default(now()) @map("created_at")
   updatedAt     DateTime         @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("training_programs")
 }
 
 model TrainingRecord {
   id          String          @id @default(uuid())
+  tenantId    String?         @map("tenant_id")
   programId   String          @map("program_id")
   program     TrainingProgram @relation(fields: [programId], references: [id], onDelete: Restrict)
   employeeId  String          @map("employee_id")
@@ -2054,11 +2130,13 @@ model TrainingRecord {
 
   @@index([employeeId, status])
   @@index([programId])
+  @@index([tenantId])
   @@map("training_records")
 }
 
 model PerformanceReview {
   id                String             @id @default(uuid())
+  tenantId          String?            @map("tenant_id")
   employeeId        String             @map("employee_id")
   employee          Employee           @relation("ReviewSubject", fields: [employeeId], references: [id], onDelete: Restrict)
   reviewerId        String             @map("reviewer_id")
@@ -2079,6 +2157,7 @@ model PerformanceReview {
   @@unique([employeeId, period])
   @@index([reviewerId])
   @@index([status])
+  @@index([tenantId])
   @@map("performance_reviews")
 }
 
@@ -2161,6 +2240,7 @@ model WageZoneConfig {
 
 model EmployeeTaxProfile {
   employeeId      String          @id @map("employee_id")
+  tenantId        String?         @map("tenant_id")
   taxId           String?         @map("tax_id")
   residencyStatus ResidencyStatus @default(RESIDENT) @map("residency_status")
   wageZone        Int             @default(1) @map("wage_zone")
@@ -2168,11 +2248,13 @@ model EmployeeTaxProfile {
   employee        Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   dependents      Dependent[]
 
+  @@index([tenantId])
   @@map("employee_tax_profiles")
 }
 
 model Dependent {
   id             String             @id @default(uuid())
+  tenantId       String?            @map("tenant_id")
   employeeId     String             @map("employee_id")
   name           String
   relationship   String
@@ -2184,11 +2266,13 @@ model Dependent {
   familyMember   FamilyMember?
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("dependents")
 }
 
 model AllowanceType {
   id                 String                   @id @default(uuid())
+  tenantId           String?                  @map("tenant_id")
   name               String                   @unique
   defaultAmount      Decimal                  @map("default_amount") @db.Decimal(12, 2)
   calculationMode    AllowanceCalculationMode @default(FIXED) @map("calculation_mode")
@@ -2201,6 +2285,7 @@ model AllowanceType {
   contractAllowances ContractAllowance[]
   salaryColumns      SalaryColumn[]
 
+  @@index([tenantId])
   @@map("allowance_types")
 }
 
@@ -2213,17 +2298,20 @@ enum AllowanceCalculationMode {
 
 model BonusType {
   id              String          @id @default(uuid())
+  tenantId        String?         @map("tenant_id")
   name            String          @unique
   isBhxhExempt    Boolean         @default(true) @map("is_bhxh_exempt")
   isActive        Boolean         @default(true) @map("is_active")
   createdAt       DateTime        @default(now()) @map("created_at")
   employeeBonuses EmployeeBonus[]
 
+  @@index([tenantId])
   @@map("bonus_types")
 }
 
 model EmployeeBonus {
   id              String        @id @default(uuid())
+  tenantId        String?       @map("tenant_id")
   payrollRecordId String        @map("payroll_record_id")
   bonusTypeId     String        @map("bonus_type_id")
   amount          Decimal       @db.Decimal(15, 2)
@@ -2232,11 +2320,13 @@ model EmployeeBonus {
   bonusType       BonusType     @relation(fields: [bonusTypeId], references: [id])
 
   @@unique([payrollRecordId, bonusTypeId])
+  @@index([tenantId])
   @@map("employee_bonuses")
 }
 
 model EmployeeYearlyTaxSummary {
   id               String   @id @default(uuid())
+  tenantId         String?  @map("tenant_id")
   employeeId       String   @map("employee_id")
   year             Int
   ytdGross         Decimal  @default(0) @map("ytd_gross") @db.Decimal(15, 2)
@@ -2248,11 +2338,13 @@ model EmployeeYearlyTaxSummary {
 
   @@unique([employeeId, year])
   @@index([employeeId, year])
+  @@index([tenantId])
   @@map("employee_yearly_tax_summaries")
 }
 
 model EmployeeAllowance {
   id              String        @id @default(uuid())
+  tenantId        String?       @map("tenant_id")
   payrollRecordId String        @map("payroll_record_id")
   allowanceTypeId String        @map("allowance_type_id")
   amount          Decimal       @db.Decimal(12, 2)
@@ -2261,6 +2353,7 @@ model EmployeeAllowance {
   allowanceType   AllowanceType @relation(fields: [allowanceTypeId], references: [id])
 
   @@unique([payrollRecordId, allowanceTypeId])
+  @@index([tenantId])
   @@map("employee_allowances")
 }
 
@@ -2373,6 +2466,7 @@ model OkrObjective {
 
 model OkrKeyResult {
   id           String       @id @default(uuid())
+  tenantId     String?      @map("tenant_id")
   objectiveId  String       @map("objective_id")
   objective    OkrObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
   title        String       @db.VarChar(300)
@@ -2384,11 +2478,13 @@ model OkrKeyResult {
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
   @@index([objectiveId])
+  @@index([tenantId])
   @@map("okr_key_results")
 }
 
 model KpiMetric {
   id          String       @id @default(uuid())
+  tenantId    String?      @map("tenant_id")
   name        String       @db.VarChar(200)
   description String?      @db.Text
   unit        String       @default("")
@@ -2400,11 +2496,13 @@ model KpiMetric {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("kpi_metrics")
 }
 
 model KpiRecord {
   id        String    @id @default(uuid())
+  tenantId  String?   @map("tenant_id")
   metricId  String    @map("metric_id")
   metric    KpiMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
   period    String    @db.VarChar(20)
@@ -2414,11 +2512,13 @@ model KpiRecord {
 
   @@unique([metricId, period])
   @@index([metricId])
+  @@index([tenantId])
   @@map("kpi_records")
 }
 
 model RevenueTarget {
   id         String   @id @default(uuid())
+  tenantId   String?  @map("tenant_id")
   period     String   @db.VarChar(20) // "2026-05" | "2026-Q2"
   periodType String   @default("MONTHLY") @map("period_type") @db.VarChar(20)
   target     Decimal  @db.Decimal(18, 2)
@@ -2428,6 +2528,7 @@ model RevenueTarget {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@unique([period, periodType])
+  @@index([tenantId])
   @@map("revenue_targets")
 }
 
@@ -2443,6 +2544,7 @@ enum KbStatus {
 
 model KbCategory {
   id          String      @id @default(uuid())
+  tenantId    String?     @map("tenant_id")
   name        String      @db.VarChar(100)
   description String?     @db.Text
   icon        String?     @db.VarChar(50)
@@ -2452,6 +2554,7 @@ model KbCategory {
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("kb_categories")
 }
 
@@ -2526,6 +2629,7 @@ model CustomerPortal {
 
 model CustomerTicket {
   id          String         @id @default(uuid())
+  tenantId    String?        @map("tenant_id")
   portalId    String         @map("portal_id")
   portal      CustomerPortal @relation(fields: [portalId], references: [id], onDelete: Cascade)
   title       String         @db.VarChar(300)
@@ -2540,6 +2644,7 @@ model CustomerTicket {
   updatedAt   DateTime       @updatedAt @map("updated_at")
 
   @@index([portalId])
+  @@index([tenantId])
   @@map("customer_tickets")
 }
 
@@ -2636,6 +2741,7 @@ model PurchaseOrder {
 
 model PurchaseOrderItem {
   id          String        @id @default(uuid())
+  tenantId    String?       @map("tenant_id")
   poId        String        @map("po_id")
   po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
   description String        @db.VarChar(300)
@@ -2649,6 +2755,7 @@ model PurchaseOrderItem {
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
   @@index([poId])
+  @@index([tenantId])
   @@map("purchase_order_items")
 }
 
@@ -2687,6 +2794,7 @@ model Comment {
 
 model FeedPost {
   id          String         @id @default(uuid())
+  tenantId    String?        @map("tenant_id")
   type        FeedPostType   @default(ANNOUNCEMENT)
   authorId    String         @map("author_id")
   title       String?        @db.VarChar(300)
@@ -2702,11 +2810,13 @@ model FeedPost {
   reactions   FeedReaction[]
 
   @@index([createdAt])
+  @@index([tenantId])
   @@map("feed_posts")
 }
 
 model FeedReaction {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   postId    String   @map("post_id")
   userId    String   @map("user_id")
   emoji     String   @db.VarChar(10)
@@ -2715,6 +2825,7 @@ model FeedReaction {
   user      User     @relation("FeedReactions", fields: [userId], references: [id])
 
   @@unique([postId, userId, emoji])
+  @@index([tenantId])
   @@map("feed_reactions")
 }
 
@@ -2728,6 +2839,7 @@ enum AutomationRunStatus {
 
 model AutomationRule {
   id          String              @id @default(uuid())
+  tenantId    String?             @map("tenant_id")
   key         String              @unique @db.VarChar(100)
   name        String              @db.VarChar(200)
   description String?             @db.Text
@@ -2744,11 +2856,13 @@ model AutomationRule {
   lastError   String?             @map("last_error")
   logs        AutomationRuleLog[]
 
+  @@index([tenantId])
   @@map("automation_rules")
 }
 
 model AutomationRuleLog {
   id          String              @id @default(uuid())
+  tenantId    String?             @map("tenant_id")
   ruleId      String              @map("rule_id")
   triggeredAt DateTime            @default(now()) @map("triggered_at")
   entityId    String?             @map("entity_id")
@@ -2759,6 +2873,7 @@ model AutomationRuleLog {
   rule        AutomationRule      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
 
   @@index([ruleId])
+  @@index([tenantId])
   @@map("automation_rule_logs")
 }
 
@@ -2781,6 +2896,7 @@ enum ReportFormat {
 
 model ScheduledReport {
   id         String          @id @default(uuid())
+  tenantId   String?         @map("tenant_id")
   name       String          @db.VarChar(200)
   template   String          @db.VarChar(100)
   recipients String[]
@@ -2795,6 +2911,7 @@ model ScheduledReport {
   createdAt  DateTime        @default(now()) @map("created_at")
   updatedAt  DateTime        @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("scheduled_reports")
 }
 
@@ -2821,6 +2938,7 @@ model SavedReport {
 
 model WebhookEndpoint {
   id        String       @id @default(uuid())
+  tenantId  String?      @map("tenant_id")
   name      String       @db.VarChar(200)
   url       String       @db.VarChar(500)
   secret    String?      @db.VarChar(200)
@@ -2830,11 +2948,13 @@ model WebhookEndpoint {
   updatedAt DateTime     @updatedAt @map("updated_at")
   logs      WebhookLog[]
 
+  @@index([tenantId])
   @@map("webhook_endpoints")
 }
 
 model WebhookLog {
   id           String          @id @default(uuid())
+  tenantId     String?         @map("tenant_id")
   endpointId   String          @map("endpoint_id")
   event        String          @db.VarChar(100)
   payload      Json
@@ -2847,6 +2967,7 @@ model WebhookLog {
 
   @@index([endpointId])
   @@index([event])
+  @@index([tenantId])
   @@map("webhook_logs")
 }
 
@@ -2854,6 +2975,7 @@ model WebhookLog {
 
 model ModuleConfig {
   id          String   @id @default(uuid())
+  tenantId    String?  @map("tenant_id")
   moduleId    String   @unique @map("module_id") @db.VarChar(50)
   isEnabled   Boolean  @default(true) @map("is_enabled")
   displayName String   @map("display_name") @db.VarChar(100)
@@ -2861,6 +2983,7 @@ model ModuleConfig {
   isCore      Boolean  @default(false) @map("is_core")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  @@index([tenantId])
   @@map("module_configs")
 }
 
@@ -2883,6 +3006,7 @@ enum BookingStatus {
 
 model MeetingRoom {
   id        String        @id @default(uuid())
+  tenantId  String?       @map("tenant_id")
   name      String        @db.VarChar(200)
   floor     String?       @db.VarChar(100)
   capacity  Int           @default(1)
@@ -2893,11 +3017,13 @@ model MeetingRoom {
   updatedAt DateTime      @updatedAt @map("updated_at")
   bookings  RoomBooking[]
 
+  @@index([tenantId])
   @@map("meeting_rooms")
 }
 
 model RoomBooking {
   id         String        @id @default(uuid())
+  tenantId   String?       @map("tenant_id")
   roomId     String        @map("room_id")
   bookedById String        @map("booked_by_id")
   title      String        @db.VarChar(300)
@@ -2913,6 +3039,7 @@ model RoomBooking {
 
   @@index([roomId, startTime, endTime])
   @@index([bookedById])
+  @@index([tenantId])
   @@map("room_bookings")
 }
 
@@ -2940,6 +3067,7 @@ enum VehicleRequestStatus {
 
 model Vehicle {
   id          String           @id @default(uuid())
+  tenantId    String?          @map("tenant_id")
   name        String           @db.VarChar(200)
   plateNumber String           @unique @map("plate_number") @db.VarChar(20)
   type        String           @db.VarChar(50)
@@ -2952,11 +3080,13 @@ model Vehicle {
   requests    VehicleRequest[]
   driver      User?            @relation("VehicleDriver", fields: [driverId], references: [id])
 
+  @@index([tenantId])
   @@map("vehicles")
 }
 
 model VehicleRequest {
   id                String               @id @default(uuid())
+  tenantId          String?              @map("tenant_id")
   vehicleId         String               @map("vehicle_id")
   requestedById     String               @map("requested_by_id")
   approvedById      String?              @map("approved_by_id")
@@ -2980,6 +3110,7 @@ model VehicleRequest {
   @@index([requestedById])
   @@index([status])
   @@index([processInstanceId])
+  @@index([tenantId])
   @@map("vehicle_requests")
 }
 
@@ -2987,6 +3118,7 @@ model VehicleRequest {
 
 model BudgetPlan {
   id             String           @id @default(uuid())
+  tenantId       String?          @map("tenant_id")
   name           String
   fiscalYear     Int              @map("fiscal_year")
   type           BudgetPlanType   @default(DEPARTMENT)
@@ -3008,11 +3140,13 @@ model BudgetPlan {
   @@index([fiscalYear])
   @@index([orgUnitId])
   @@index([status])
+  @@index([tenantId])
   @@map("budget_plans")
 }
 
 model BudgetLine {
   id              String              @id @default(uuid())
+  tenantId        String?             @map("tenant_id")
   planId          String              @map("plan_id")
   category        String
   description     String?
@@ -3027,11 +3161,13 @@ model BudgetLine {
 
   @@index([planId])
   @@index([category])
+  @@index([tenantId])
   @@map("budget_lines")
 }
 
 model BudgetTransaction {
   id         String                @id @default(uuid())
+  tenantId   String?               @map("tenant_id")
   lineId     String                @map("line_id")
   sourceType String                @map("source_type")
   sourceId   String                @map("source_id")
@@ -3043,6 +3179,7 @@ model BudgetTransaction {
 
   @@index([lineId])
   @@index([sourceType, sourceId])
+  @@index([tenantId])
   @@map("budget_transactions")
 }
 
@@ -3139,6 +3276,7 @@ enum CalendarEventType {
 
 model CalendarEvent {
   id          String            @id @default(uuid())
+  tenantId    String?           @map("tenant_id")
   title       String            @db.VarChar(300)
   description String?           @db.Text
   eventType   CalendarEventType @default(MEETING) @map("event_type")
@@ -3154,6 +3292,7 @@ model CalendarEvent {
   createdBy   User              @relation("CalendarEventCreator", fields: [createdById], references: [id])
 
   @@index([startTime, endTime])
+  @@index([tenantId])
   @@map("calendar_events")
 }
 
@@ -3195,6 +3334,7 @@ model InvoiceAccountMapping {
 
 model ProjectCostSnapshot {
   id                String                  @id @default(uuid())
+  tenantId          String?                 @map("tenant_id")
   projectId         String                  @map("project_id")
   snapshotDate      DateTime                @map("snapshot_date") @db.Date
   totalLaborCost    Decimal                 @default(0) @map("total_labor_cost") @db.Decimal(18, 2)
@@ -3210,11 +3350,13 @@ model ProjectCostSnapshot {
   @@unique([projectId, snapshotDate])
   @@index([projectId])
   @@index([snapshotDate])
+  @@index([tenantId])
   @@map("project_cost_snapshots")
 }
 
 model ProjectCostByEmployee {
   id          String              @id @default(uuid())
+  tenantId    String?             @map("tenant_id")
   snapshotId  String              @map("snapshot_id")
   employeeId  String              @map("employee_id")
   hours       Decimal             @db.Decimal(10, 2)
@@ -3224,6 +3366,7 @@ model ProjectCostByEmployee {
   employee    Employee            @relation(fields: [employeeId], references: [id])
 
   @@index([snapshotId])
+  @@index([tenantId])
   @@map("project_cost_by_employees")
 }
 
@@ -3266,6 +3409,7 @@ enum SalaryReviewStatus {
 
 model SalaryBand {
   id            String                   @id @default(uuid())
+  tenantId      String?                  @map("tenant_id")
   positionId    String                   @map("position_id")
   minSalary     Decimal                  @map("min_salary") @db.Decimal(18, 2)
   midSalary     Decimal                  @map("mid_salary") @db.Decimal(18, 2)
@@ -3277,11 +3421,13 @@ model SalaryBand {
   suggestions   SalaryReviewSuggestion[]
 
   @@index([positionId])
+  @@index([tenantId])
   @@map("salary_bands")
 }
 
 model SalaryReviewSuggestion {
   id              String             @id @default(uuid())
+  tenantId        String?            @map("tenant_id")
   reviewId        String             @map("review_id")
   employeeId      String             @map("employee_id")
   salaryBandId    String?            @map("salary_band_id")
@@ -3300,6 +3446,7 @@ model SalaryReviewSuggestion {
 
   @@index([employeeId])
   @@index([reviewId])
+  @@index([tenantId])
   @@map("salary_review_suggestions")
 }
 
@@ -3367,6 +3514,7 @@ model Tenant {
 
 model JobTitle {
   id            String       @id @default(uuid())
+  tenantId      String?      @map("tenant_id")
   code          String       @unique
   name          String
   band          String?
@@ -3380,11 +3528,13 @@ model JobTitle {
   orgUnits      OrgUnit[]
   employees     Employee[]
 
+  @@index([tenantId])
   @@map("job_titles")
 }
 
 model Position {
   id          String            @id @default(uuid())
+  tenantId    String?           @map("tenant_id")
   code        String            @unique
   jobTitleId  String            @map("job_title_id")
   orgUnitId   String            @map("org_unit_id")
@@ -3400,11 +3550,13 @@ model Position {
   histories   PositionHistory[]
   salaryBands SalaryBand[]
 
+  @@index([tenantId])
   @@map("positions")
 }
 
 model PositionHistory {
   id         String    @id @default(uuid())
+  tenantId   String?   @map("tenant_id")
   positionId String    @map("position_id")
   employeeId String    @map("employee_id")
   startDate  DateTime  @map("start_date") @db.Date
@@ -3413,6 +3565,7 @@ model PositionHistory {
   position   Position  @relation(fields: [positionId], references: [id])
   employee   Employee  @relation(fields: [employeeId], references: [id])
 
+  @@index([tenantId])
   @@map("position_histories")
 }
 
@@ -3420,6 +3573,7 @@ model PositionHistory {
 
 model HrDecision {
   id                String           @id @default(uuid())
+  tenantId          String?          @map("tenant_id")
   decisionNumber    String?          @unique @map("decision_number") @db.VarChar(100)
   type              HrDecisionType
   employeeId        String           @map("employee_id")
@@ -3445,11 +3599,13 @@ model HrDecision {
 
   @@index([employeeId])
   @@index([effectiveDate])
+  @@index([tenantId])
   @@map("hr_decisions")
 }
 
 model WorkHistory {
   id           String               @id @default(uuid())
+  tenantId     String?              @map("tenant_id")
   employeeId   String               @map("employee_id")
   eventType    WorkHistoryEventType @map("event_type")
   eventDate    DateTime             @map("event_date") @db.Date
@@ -3461,11 +3617,13 @@ model WorkHistory {
   hrDecision   HrDecision?          @relation(fields: [hrDecisionId], references: [id])
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("work_history")
 }
 
 model SalaryRecord {
   id            String      @id @default(uuid())
+  tenantId      String?     @map("tenant_id")
   employeeId    String      @map("employee_id")
   basicSalary   Decimal     @map("basic_salary") @db.Decimal(18, 2)
   effectiveDate DateTime    @map("effective_date") @db.Date
@@ -3479,6 +3637,7 @@ model SalaryRecord {
   hrDecision    HrDecision? @relation(fields: [hrDecisionId], references: [id])
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("salary_records")
 }
 
@@ -3554,6 +3713,7 @@ enum LeaveAccrualMode {
 
 model LeavePolicy {
   id                    String                @id @default(uuid())
+  tenantId              String?               @map("tenant_id")
   name                  String
   baseAnnualDays        Int                   @map("base_annual_days")
   seniorityBonus        Json                  @default("[]") @map("seniority_bonus")
@@ -3568,6 +3728,7 @@ model LeavePolicy {
   employees             Employee[]
   jobTitles             JobTitle[]
 
+  @@index([tenantId])
   @@map("leave_policies")
 }
 
@@ -3584,6 +3745,7 @@ enum HolidayType {
 
 model HolidayCalendar {
   id        String      @id @default(uuid())
+  tenantId  String?     @map("tenant_id")
   date      DateTime    @unique @db.Date
   name      String
   type      HolidayType @default(NATIONAL_HOLIDAY)
@@ -3591,6 +3753,7 @@ model HolidayCalendar {
   createdAt DateTime    @default(now()) @map("created_at")
 
   @@index([year])
+  @@index([tenantId])
   @@map("holiday_calendars")
 }
 
@@ -3616,6 +3779,7 @@ enum InsuranceEventType {
 
 model InsuranceEnrollment {
   id                  String                    @id @default(uuid())
+  tenantId            String?                   @map("tenant_id")
   employeeId          String                    @map("employee_id")
   bhxhBookNumber      String?                   @map("bhxh_book_number")
   insuranceSalary     Decimal                   @map("insurance_salary") @db.Decimal(15, 2)
@@ -3629,11 +3793,13 @@ model InsuranceEnrollment {
   events              InsuranceEvent[]
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("insurance_enrollments")
 }
 
 model SocialInsuranceBook {
   id                 String               @id @default(uuid())
+  tenantId           String?              @map("tenant_id")
   employeeId         String               @unique @map("employee_id")
   enrollmentId       String?              @unique @map("enrollment_id")
   bookNumber         String               @unique @map("book_number")
@@ -3646,11 +3812,13 @@ model SocialInsuranceBook {
   employee           Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   enrollment         InsuranceEnrollment? @relation(fields: [enrollmentId], references: [id])
 
+  @@index([tenantId])
   @@map("social_insurance_books")
 }
 
 model InsuranceEvent {
   id              String              @id @default(uuid())
+  tenantId        String?             @map("tenant_id")
   enrollmentId    String              @map("enrollment_id")
   eventType       InsuranceEventType  @map("event_type")
   insuranceSalary Decimal?            @map("insurance_salary") @db.Decimal(15, 2)
@@ -3661,6 +3829,7 @@ model InsuranceEvent {
   enrollment      InsuranceEnrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 
   @@index([enrollmentId])
+  @@index([tenantId])
   @@map("insurance_events")
 }
 
@@ -3692,6 +3861,7 @@ enum MonthlyAttendanceStatus {
 
 model AttendanceRecord {
   id                  String                  @id @default(uuid())
+  tenantId            String?                 @map("tenant_id")
   employeeId          String                  @map("employee_id")
   monthlyAttendanceId String?                 @map("monthly_attendance_id")
   shiftId             String?                 @map("shift_id")
@@ -3717,11 +3887,13 @@ model AttendanceRecord {
 
   @@unique([employeeId, date])
   @@index([employeeId])
+  @@index([tenantId])
   @@map("attendance_records")
 }
 
 model MonthlyAttendance {
   id              String                  @id @default(uuid())
+  tenantId        String?                 @map("tenant_id")
   employeeId      String                  @map("employee_id")
   year            Int
   month           Int
@@ -3741,6 +3913,7 @@ model MonthlyAttendance {
 
   @@unique([employeeId, year, month])
   @@index([employeeId])
+  @@index([tenantId])
   @@map("monthly_attendances")
 }
 
@@ -3808,6 +3981,7 @@ enum ShiftType {
 
 model WorkShift {
   id             String              @id @default(uuid())
+  tenantId       String?             @map("tenant_id")
   name           String
   code           String              @unique
   type           ShiftType           @default(HANH_CHINH)
@@ -3821,11 +3995,13 @@ model WorkShift {
   assignments    ShiftAssignment[]
   schedulePhases WorkSchedulePhase[]
 
+  @@index([tenantId])
   @@map("work_shifts")
 }
 
 model ShiftAssignment {
   id            String    @id @default(uuid())
+  tenantId      String?   @map("tenant_id")
   employeeId    String    @map("employee_id")
   shiftId       String    @map("shift_id")
   effectiveFrom DateTime  @map("effective_from") @db.Date
@@ -3836,11 +4012,13 @@ model ShiftAssignment {
   shift         WorkShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("shift_assignments")
 }
 
 model WorkSchedule {
   id          String                   @id @default(uuid())
+  tenantId    String?                  @map("tenant_id")
   name        String
   description String?
   repeatType  String?                  @map("repeat_type")
@@ -3850,11 +4028,13 @@ model WorkSchedule {
   phases      WorkSchedulePhase[]
   enrollments WorkScheduleEnrollment[]
 
+  @@index([tenantId])
   @@map("work_schedules")
 }
 
 model WorkSchedulePhase {
   id             String       @id @default(uuid())
+  tenantId       String?      @map("tenant_id")
   workScheduleId String       @map("work_schedule_id")
   shiftId        String?      @map("shift_id")
   phaseOrder     Int          @map("phase_order")
@@ -3863,11 +4043,13 @@ model WorkSchedulePhase {
   shift          WorkShift?   @relation(fields: [shiftId], references: [id], onDelete: SetNull)
 
   @@index([workScheduleId])
+  @@index([tenantId])
   @@map("work_schedule_phases")
 }
 
 model WorkScheduleEnrollment {
   id            String       @id @default(uuid())
+  tenantId      String?      @map("tenant_id")
   employeeId    String?      @map("employee_id")
   orgUnitId     String?      @map("org_unit_id")
   scheduleId    String       @map("schedule_id")
@@ -3879,6 +4061,7 @@ model WorkScheduleEnrollment {
   schedule      WorkSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
+  @@index([tenantId])
   @@map("work_schedule_enrollments")
 }
 
@@ -3894,6 +4077,7 @@ enum NotificationChannel {
 
 model NotificationPreference {
   id         String              @id @default(uuid())
+  tenantId   String?             @map("tenant_id")
   userId     String              @map("user_id")
   moduleType String              @map("module_type")
   channel    NotificationChannel @default(BOTH)
@@ -3902,6 +4086,7 @@ model NotificationPreference {
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, moduleType])
+  @@index([tenantId])
   @@map("notification_preferences")
 }
 
@@ -3909,6 +4094,7 @@ model NotificationPreference {
 
 model SavedFilterPreset {
   id        String   @id @default(uuid())
+  tenantId  String?  @map("tenant_id")
   userId    String   @map("user_id")
   pageKey   String   @map("page_key")
   name      String
@@ -3917,6 +4103,7 @@ model SavedFilterPreset {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, pageKey])
+  @@index([tenantId])
   @@map("saved_filter_presets")
 }
 

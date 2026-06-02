@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import { TenantRunner } from '../common/cls/tenant-runner.service';
 import { EmployeeStatus } from '../generated/prisma';
 
 /**
@@ -14,11 +15,15 @@ import { EmployeeStatus } from '../generated/prisma';
 export class LeaveAccrualTask {
   private readonly logger = new Logger(LeaveAccrualTask.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tenantRunner: TenantRunner,
+  ) {}
 
   // ─── E16F.5 — Mùng 1 hàng tháng 00:00: cộng 1/12 entitlement cho MONTHLY_ACCRUAL ──
   @Cron('0 0 1 * *')
   async processMonthlyAccrual(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[LeaveAccrualTask] Bắt đầu tích lũy phép hàng tháng...');
 
     const currentYear = new Date().getFullYear();
@@ -108,11 +113,13 @@ export class LeaveAccrualTask {
     }
 
     this.logger.log(`[LeaveAccrualTask] Tích lũy tháng: đã xử lý ${processed} nhân viên.`);
+    });
   }
 
   // ─── E16F.6 — Mùng 1 tháng 1 01:00: khởi tạo số dư phép năm mới + carry-over ──
   @Cron('0 1 1 1 *')
   async initNewYearLeaveBalance(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[LeaveAccrualTask] Bắt đầu khởi tạo số dư phép năm mới...');
 
     const newYear = new Date().getFullYear();
@@ -207,11 +214,13 @@ export class LeaveAccrualTask {
     }
 
     this.logger.log(`[LeaveAccrualTask] Năm mới ${newYear}: đã khởi tạo số dư cho ${processed} nhân viên.`);
+    });
   }
 
   // ─── E16F.7 — Mỗi ngày 02:00: xử lý hết hạn carry-over ──────────────────────
   @Cron('0 2 * * *')
   async processCarryOverExpiry(): Promise<void> {
+    await this.tenantRunner.forEachTenant(async (tenantId) => {
     this.logger.log('[LeaveAccrualTask] Kiểm tra hết hạn carry-over...');
 
     const today = new Date();
@@ -234,6 +243,7 @@ export class LeaveAccrualTask {
       this.logger.log('[LeaveAccrualTask] Không có policy nào hết hạn carry-over hôm nay.');
       return;
     }
+
 
     let clearCount = 0;
     let payOutCount = 0;
@@ -343,5 +353,6 @@ export class LeaveAccrualTask {
     this.logger.log(
       `[LeaveAccrualTask] Carry-over expiry: CLEAR=${clearCount}, PAY_OUT=${payOutCount}.`,
     );
+    });
   }
 }
