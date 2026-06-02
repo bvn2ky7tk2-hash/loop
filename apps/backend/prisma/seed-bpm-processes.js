@@ -250,7 +250,20 @@ async function upsert(client, p, orgUnitId) {
   // taskForm mặc định: mỗi task có decision + note nếu chưa khai báo
   const taskForm = p.taskForm ?? p.tasks.reduce((acc, t) => { acc[t.id] = [DECISION(), NOTE]; return acc; }, {});
   const stepConfig = Object.fromEntries(
-    Object.entries(p.approvers ?? {}).map(([taskId, v]) => [taskId, { assigneeFromVariable: v, notifyOnAssign: true }])
+    Object.entries(p.approvers ?? {}).map(([taskId, variablePath]) => [
+      taskId,
+      {
+        assigneeConfig: { mode: 'variable', variablePath },
+        notificationConfig: {
+          taskAssigned: {
+            enabled: true,
+            recipients: ['assignee'],
+            subject: `[Loop 360] Bạn có task mới: {{task.name}}`,
+            bodyTemplate: `<p>Xin chào {{assignee.name}},</p><p>Bạn có task mới từ quy trình <strong>{{process.name}}</strong>:</p><p><strong>{{task.name}}</strong></p><p>Vui lòng xử lý trước <em>{{dueDate}}</em></p>`,
+          },
+        },
+      },
+    ])
   );
   const existing = await client.query('SELECT id FROM process_definitions WHERE key = $1', [p.key]);
   if (existing.rows.length > 0) {

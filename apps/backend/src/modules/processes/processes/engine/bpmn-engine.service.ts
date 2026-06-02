@@ -351,7 +351,27 @@ export class BpmnEngineService {
         dueDate,
         status: UserTaskStatus.PENDING,
       },
+      include: { assignee: true },
     });
+
+    // Gửi email notification khi task được assign
+    if (assigneeId && instance) {
+      try {
+        const trigger = (instance.definition.stepConfig as StepConfigMap | null)?.[activityId]?.notificationConfig?.taskAssigned;
+        if (trigger?.enabled && trigger.recipients?.length) {
+          await this.sendStepNotification(trigger, {
+            taskId: task.id,
+            instanceId,
+            taskName: name,
+            instance,
+            assignee: task.assignee ?? null,
+            dueDate: dueDate?.toISOString(),
+          });
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to send taskAssigned notification for task ${task.id}`, err);
+      }
+    }
 
     // Delegation middleware: nếu assignee đang ủy quyền, tạo task bản sao cho delegate
     if (assigneeId && instance) {

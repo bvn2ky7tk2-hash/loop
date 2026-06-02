@@ -507,30 +507,46 @@ async function main() {
   await db.connect();
   console.log('✅ Connected to database');
 
-  // ── 1. Clear all data except org_units (proper FK order) ───────────────────
+  // ── 1. Clear all data except org_units (disable FK to avoid constraint issues) ───────────────────
   console.log('🗑  Clearing old data...');
-  // Thứ tự xóa đảm bảo không vi phạm FK constraint
-  const CLEAR_ORDER = [
-    'audit_logs', 'telegram_messages', 'time_logs',
-    'bug_tasks', 'bug_tags', 'bug_comments', 'bug_attachments',
-    'notifications', 'push_tokens', 'work_statuses', 'time_entries', 'timesheet_records',
-    'alert_configs', 'asset_maintenance', 'asset_assignments', 'assets',
-    'interviews', 'candidates', 'job_openings',
-    'invoice_items', 'invoices',
-    'expense_items', 'leave_balances', 'leave_requests',
-    'payroll_records', 'payroll_periods',
-    'bugs', 'expenses',
-    'deals', 'leads', 'contacts', 'customers',
-    'contracts', 'employee_rates', 'allocations',
-    'tasks',
-    'process_activity_logs', 'process_user_tasks', 'process_instances', 'process_definitions',
-    'leave_types', 'employees', 'projects',
-    'group_org_access', 'group_memberships', 'group_permissions', 'user_groups',
-    'module_role_permissions', 'user_module_roles', 'module_roles',
-    'user_permissions', 'role_permissions', 'screens', 'permissions', 'users',
-  ];
-  for (const t of CLEAR_ORDER) {
-    await db.query(`DELETE FROM "${t}"`);
+  // Disable FK constraints, truncate all tables, re-enable
+  try {
+    await db.query('SET session_replication_role = replica');
+    const result = await db.query(`
+      SELECT tablename FROM pg_tables
+      WHERE schemaname='public' AND tablename != 'org_units'
+      ORDER BY tablename
+    `);
+    for (const row of result.rows) {
+      await db.query(`DELETE FROM "${row.tablename}"`);
+    }
+    await db.query('SET session_replication_role = default');
+  } catch (err) {
+    console.warn('  ⚠ FK constraint bypass attempt failed, using explicit order...');
+    const CLEAR_ORDER = [
+      'audit_logs', 'telegram_messages', 'time_logs',
+      'bug_tasks', 'bug_tags', 'bug_comments', 'bug_attachments',
+      'notifications', 'push_tokens', 'work_statuses', 'time_entries', 'timesheet_records',
+      'alert_configs', 'asset_maintenance', 'asset_assignments', 'assets',
+      'interviews', 'candidates', 'job_openings',
+      'invoice_items', 'invoices',
+      'expense_items', 'leave_balances', 'leave_requests',
+      'payroll_records', 'payroll_periods',
+      'position_histories', 'work_histories',
+      'bugs', 'expenses',
+      'deals', 'leads', 'contacts',
+      'client_contracts', 'customer_portals', 'customers',
+      'contracts', 'employee_rates', 'allocations',
+      'tasks', 'processes',
+      'process_activity_logs', 'process_user_tasks', 'process_instances', 'process_definitions',
+      'leave_types', 'employees', 'projects',
+      'group_org_access', 'group_memberships', 'group_permissions', 'user_groups',
+      'module_role_permissions', 'user_module_roles', 'module_roles',
+      'user_permissions', 'role_permissions', 'screens', 'permissions', 'users',
+    ];
+    for (const t of CLEAR_ORDER) {
+      try { await db.query(`DELETE FROM "${t}"`); } catch (e) { console.warn(`  ⚠ Could not clear ${t}`); }
+    }
   }
   console.log('  ✓ All tables cleared (org_units preserved)');
 
