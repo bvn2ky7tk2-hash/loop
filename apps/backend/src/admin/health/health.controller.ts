@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../generated/prisma';
 import { HealthService } from './health.service';
@@ -20,13 +20,18 @@ export class HealthController {
 
   @Post('demo/snapshot')
   @HttpCode(200)
-  createSnapshot() {
-    return this.healthService.createSnapshot();
+  createSnapshot(@Body() body: { label?: string }) {
+    return this.healthService.createSnapshot(body?.label);
   }
 
   @Post('demo/reset')
   @HttpCode(200)
-  resetDemo() {
-    return this.healthService.resetDemo();
+  resetDemo(@Body() body: { snapshotId: string }) {
+    return this.healthService.resetDemo(body.snapshotId);
+  }
+
+  @Delete('demo/snapshot/:id')
+  deleteSnapshot(@Param('id') id: string) {
+    return this.healthService.deleteSnapshot(id);
   }
 }

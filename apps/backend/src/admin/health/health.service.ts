@@ -1,4 +1,14 @@
-import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+
+interface DemoSnapshot {
+  id: string;
+  label: string;
+  createdAt: string;
+  sizeKb: number;
+  rowCount: number;
+  filePath: string;
+  lastUsedAt: string | null;
+}
 import { PrismaService } from '../../prisma/prisma.service';
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
@@ -111,82 +121,97 @@ export class HealthService {
     return { status: hasMinioConfig ? 'ok' : 'error' };
   }
 
-  // ─── Demo Mode ───────────────────────────────────────────────────────────
+  // ─── Demo Mode (multi-snapshot) ─────────────────────────────────────────
 
-  private get snapshotPath(): string {
-    return process.env.DEMO_SNAPSHOT_PATH || path.join(process.cwd(), 'demo-snapshot.sql');
+  private get snapshotsDir(): string {
+    return process.env.DEMO_SNAPSHOTS_DIR || path.join(process.cwd(), 'demo-snapshots');
   }
 
-  private get metaPath(): string {
-    return this.snapshotPath.replace(/\.sql$/, '') + '-meta.json';
+  private get indexPath(): string {
+    return path.join(this.snapshotsDir, 'index.json');
   }
 
-  private readMeta(): { lastReset: string | null; lastSnapshot: string | null; rowCount?: number } {
+  private ensureDir() {
+    if (!fs.existsSync(this.snapshotsDir)) fs.mkdirSync(this.snapshotsDir, { recursive: true });
+  }
+
+  private readIndex(): DemoSnapshot[] {
     try {
-      return JSON.parse(fs.readFileSync(this.metaPath, 'utf8'));
+      return JSON.parse(fs.readFileSync(this.indexPath, 'utf8'));
     } catch {
-      return { lastReset: null, lastSnapshot: null };
+      return [];
     }
   }
 
-  private writeMeta(meta: { lastReset: string | null; lastSnapshot: string | null; rowCount?: number }) {
-    fs.writeFileSync(this.metaPath, JSON.stringify(meta, null, 2));
+  private writeIndex(snapshots: DemoSnapshot[]) {
+    this.ensureDir();
+    fs.writeFileSync(this.indexPath, JSON.stringify(snapshots, null, 2));
   }
 
   getDemoStatus() {
-    const meta = this.readMeta();
-    const snapshotExists = fs.existsSync(this.snapshotPath);
-    const snapshotSizeKb = snapshotExists
-      ? Math.round(fs.statSync(this.snapshotPath).size / 1024)
-      : null;
+    const snapshots = this.readIndex().map(s => ({
+      ...s,
+      filePath: undefined,
+    }));
+    const lastReset = snapshots
+      .filter(s => s.lastUsedAt)
+      .sort((a, b) => (b.lastUsedAt! > a.lastUsedAt! ? 1 : -1))[0]?.lastUsedAt ?? null;
+
     return {
       isDemoMode: !!process.env.DEMO_MODE,
-      snapshotExists,
-      snapshotSizeKb,
-      lastReset: meta.lastReset,
-      lastSnapshot: meta.lastSnapshot,
-      rowCount: meta.rowCount ?? null,
+      snapshotCount: snapshots.length,
+      lastReset,
+      snapshots,
     };
   }
 
-  async createSnapshot() {
+  async createSnapshot(label?: string) {
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
+    this.ensureDir();
+
+    const id = `snap_${Date.now()}`;
+    const fileName = `${id}.sql`;
+    const filePath = path.join(this.snapshotsDir, fileName);
+    const createdAt = new Date().toISOString();
+    const displayLabel = label?.trim() || `Snapshot ${new Date(createdAt).toLocaleString('vi-VN')}`;
+
     try {
-      // pg_dump: data only, column-inserts (INSERT statements), disable triggers for FK order
       execSync(
-        `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -f "${this.snapshotPath}" "${dbUrl}"`,
+        `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -f "${filePath}" "${dbUrl}"`,
         { stdio: 'pipe' },
       );
 
-      // Count rows for info
       const result = await this.prisma.$queryRaw<[{ total: bigint }]>`
-        SELECT SUM(n_live_tup)::bigint AS total
-        FROM pg_stat_user_tables
+        SELECT SUM(n_live_tup)::bigint AS total FROM pg_stat_user_tables
       `;
       const rowCount = Number(result[0]?.total ?? 0);
+      const sizeKb = Math.round(fs.statSync(filePath).size / 1024);
 
-      const meta = this.readMeta();
-      this.writeMeta({ ...meta, lastSnapshot: new Date().toISOString(), rowCount });
+      const snapshot: DemoSnapshot = { id, label: displayLabel, createdAt, sizeKb, rowCount, filePath, lastUsedAt: null };
+      const snapshots = this.readIndex();
+      snapshots.unshift(snapshot);
+      this.writeIndex(snapshots);
 
-      return { message: 'Snapshot tạo thành công', path: this.snapshotPath, rowCount };
+      return { id, label: displayLabel, createdAt, sizeKb, rowCount };
     } catch (err: unknown) {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       const msg = err instanceof Error ? err.message : String(err);
       throw new InternalServerErrorException(`Tạo snapshot thất bại: ${msg}`);
     }
   }
 
-  async resetDemo() {
-    if (!fs.existsSync(this.snapshotPath)) {
-      throw new BadRequestException('Chưa có snapshot. Hãy tạo snapshot trước khi reset.');
-    }
+  async resetDemo(snapshotId: string) {
+    const snapshots = this.readIndex();
+    const snap = snapshots.find(s => s.id === snapshotId);
+    if (!snap) throw new BadRequestException(`Snapshot "${snapshotId}" không tồn tại`);
+    if (!fs.existsSync(snap.filePath)) throw new BadRequestException('File snapshot không tìm thấy trên disk');
 
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
     try {
-      // 1. Truncate all user tables (bypass FK via session_replication_role)
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'replica'`);
       await this.prisma.$executeRawUnsafe(`
         DO $$
@@ -194,8 +219,7 @@ export class HealthService {
         BEGIN
           FOR r IN (
             SELECT tablename FROM pg_tables
-            WHERE schemaname = 'public'
-              AND tablename NOT IN ('_prisma_migrations')
+            WHERE schemaname = 'public' AND tablename NOT IN ('_prisma_migrations')
           )
           LOOP
             EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || ' RESTART IDENTITY CASCADE';
@@ -204,19 +228,28 @@ export class HealthService {
       `);
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`);
 
-      // 2. Restore from snapshot
-      execSync(`psql "${dbUrl}" -f "${this.snapshotPath}"`, { stdio: 'pipe' });
+      execSync(`psql "${dbUrl}" -f "${snap.filePath}"`, { stdio: 'pipe' });
 
-      const meta = this.readMeta();
       const now = new Date().toISOString();
-      this.writeMeta({ ...meta, lastReset: now });
+      const updated = snapshots.map(s => s.id === snapshotId ? { ...s, lastUsedAt: now } : s);
+      this.writeIndex(updated);
 
-      return { message: 'Demo data đã được khôi phục thành công', resetAt: now };
+      return { message: `Đã khôi phục snapshot "${snap.label}"`, snapshotId, resetAt: now };
     } catch (err: unknown) {
-      // Re-enable FK in case of error
       try { await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`); } catch {}
       const msg = err instanceof Error ? err.message : String(err);
       throw new InternalServerErrorException(`Reset demo thất bại: ${msg}`);
     }
+  }
+
+  deleteSnapshot(snapshotId: string) {
+    const snapshots = this.readIndex();
+    const snap = snapshots.find(s => s.id === snapshotId);
+    if (!snap) throw new BadRequestException(`Snapshot "${snapshotId}" không tồn tại`);
+
+    if (fs.existsSync(snap.filePath)) fs.unlinkSync(snap.filePath);
+    this.writeIndex(snapshots.filter(s => s.id !== snapshotId));
+
+    return { message: `Đã xóa snapshot "${snap.label}"` };
   }
 }
