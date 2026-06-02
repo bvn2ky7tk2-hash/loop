@@ -120,6 +120,8 @@ export function tenantExtension(cls: ClsService) {
               return ctx.$parent[model].findUnique(args);
             }
             const a: any = args ?? {};
+            // eslint-disable-next-line no-console
+            console.error('[DBG findUnique override]', model, 'compound=', JSON.stringify([...(COMPOUND_KEYS.get(model) ?? [])]), 'where=', JSON.stringify(a.where));
             return ctx.$parent[model].findFirst({
               ...a,
               where: { ...flattenCompoundWhere(model, a.where ?? {}), tenantId },
