@@ -253,9 +253,10 @@ export class LeavesService extends TenantAwareService {
         });
 
         // Nếu loại nghỉ có deductsAnnualLeave = true, tự động trừ phép năm tồn
+        // (LeaveType là danh mục global — không lọc theo tenant)
         if (leaveTypeForBalance?.deductsAnnualLeave) {
           const annualLeaveType = await tx.leaveType.findFirst({
-            where: { name: { contains: 'Phép năm' }, tenantId: this.tenantId },
+            where: { name: { contains: 'Phép năm' } },
           });
           if (annualLeaveType) {
             await tx.leaveBalance.upsert({

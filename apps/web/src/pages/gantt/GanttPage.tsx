@@ -317,6 +317,9 @@ export default function GanttPage() {
   const border = `1px solid ${token.colorBorderSecondary}`;
   const bg     = token.colorBgContainer;
   const hBg    = token.colorFillAlter;
+  // Nền header phải ĐỤC hoàn toàn: phủ colorFillAlter (bán trong suốt) lên nền container
+  // → vùng cuộn bên phải không xuyên chữ qua cột trái/dòng header khi kéo ngang
+  const hBgSolid = `linear-gradient(${hBg}, ${hBg}), ${bg}`;
   const altBg  = token.colorFillQuaternary;
 
   // Unit grid lines (day & week modes)
@@ -425,13 +428,13 @@ export default function GanttPage() {
 
           {/* ── Header row 1: Year/Month groups ── */}
           <div style={{
-            position: 'sticky', top: 0, zIndex: 20,
-            display: 'flex', height: COL_H, borderBottom: border, background: hBg,
+            position: 'sticky', top: 0, zIndex: 30,
+            display: 'flex', height: COL_H, borderBottom: border, background: hBgSolid,
           }}>
             <div style={{
               ...cellBase, position: 'sticky', left: 0, zIndex: 31,
               width: leftW, minWidth: leftW, height: COL_H,
-              background: hBg, fontWeight: 700, fontSize: 12,
+              background: hBgSolid, fontWeight: 700, fontSize: 12,
               borderRight: `2px solid ${token.colorBorder}`,
             }}>
               Công việc
@@ -454,11 +457,11 @@ export default function GanttPage() {
 
           {/* ── Header row 2: Column labels + unit cells ── */}
           <div style={{
-            position: 'sticky', top: COL_H, zIndex: 20,
+            position: 'sticky', top: COL_H, zIndex: 30,
             display: 'flex', height: COL_H,
-            borderBottom: `2px solid ${token.colorBorder}`, background: hBg,
+            borderBottom: `2px solid ${token.colorBorder}`, background: hBgSolid,
           }}>
-            <div style={{ position: 'sticky', left: 0, zIndex: 31, display: 'flex', background: hBg, borderRight: `2px solid ${token.colorBorder}` }}>
+            <div style={{ position: 'sticky', left: 0, zIndex: 31, display: 'flex', background: hBgSolid, borderRight: `2px solid ${token.colorBorder}` }}>
               {leftCols.map((col, ci) => (
                 <div key={col.key} style={{
                   ...cellBase,

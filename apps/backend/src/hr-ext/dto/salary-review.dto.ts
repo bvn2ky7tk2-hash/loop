@@ -17,6 +17,11 @@ export class ApproveReviewDto {
   approverId: string;
 }
 
+export class RejectReviewDto {
+  @IsOptional() @IsString()
+  reason?: string;
+}
+
 export class FilterSalaryReviewDto extends PaginationDto {
   @IsOptional() @IsString()
   employeeId?: string;

@@ -140,6 +140,7 @@ export class HrProfileService extends TenantAwareService {
         // Thông tin tổ chức
         startDate: employee.startDate,
         endDate: employee.endDate,
+        tenure: this.calcTenure(employee.startDate, employee.endDate),
         isActive: employee.isActive,
         employeeStatus: employee.employeeStatus,
         orgUnit: (employee as any).orgUnit,
@@ -153,6 +154,23 @@ export class HrProfileService extends TenantAwareService {
       training,
       performance,
     };
+  }
+
+  // ── Tính thâm niên công tác từ ngày vào (đến endDate nếu đã nghỉ, ngược lại đến nay) ──
+  private calcTenure(startDate: Date | null, endDate: Date | null) {
+    if (!startDate) return null;
+    const end = endDate ? new Date(endDate) : new Date();
+    const start = new Date(startDate);
+    let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    if (end.getDate() < start.getDate()) months -= 1;
+    if (months < 0) months = 0;
+    const years = Math.floor(months / 12);
+    const remMonths = months % 12;
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years} năm`);
+    if (remMonths > 0) parts.push(`${remMonths} tháng`);
+    if (parts.length === 0) parts.push('Dưới 1 tháng');
+    return { years, months: remMonths, totalMonths: months, formatted: parts.join(' ') };
   }
 
   // ── Cập nhật thông tin cá nhân ──────────────────────────────────────────────

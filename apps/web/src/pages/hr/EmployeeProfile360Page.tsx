@@ -538,6 +538,7 @@ export default function EmployeeProfile360Page() {
             </Tag>
             <Text style={{ color: textMuted, fontSize: 12 }}>Mã NV: <Text style={{ color: textPrimary, fontWeight: 600 }}>{personal?.code}</Text></Text>
             {personal?.startDate && <Text style={{ color: textMuted, fontSize: 12 }}>Ngày vào: {dayjs(personal.startDate).format('DD/MM/YYYY')}</Text>}
+            {personal?.tenure?.formatted && <Text style={{ color: textMuted, fontSize: 12 }}>Thâm niên: <Text style={{ color: textPrimary, fontWeight: 600 }}>{personal.tenure.formatted}</Text></Text>}
             {personal?.phoneNumber && <Text style={{ color: textMuted, fontSize: 12 }}>SĐT: <a href={`tel:${personal.phoneNumber}`} style={{ color: linkColor }}>{personal.phoneNumber}</a></Text>}
           </div>
         </div>
@@ -561,6 +562,12 @@ export default function EmployeeProfile360Page() {
                   <Descriptions column={1} size="small">
                     <Descriptions.Item label={<Text style={{ color: textMuted }}>Ngày sinh</Text>}>
                       <Text style={{ color: textPrimary }}>{personal?.birthdate ? dayjs(personal.birthdate).format('DD/MM/YYYY') : '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Thâm niên công tác</Text>}>
+                      <Text style={{ color: textPrimary, fontWeight: 600 }}>
+                        {personal?.tenure?.formatted ?? '—'}
+                        {personal?.startDate ? <Text style={{ color: textMuted, fontWeight: 400 }}> (từ {dayjs(personal.startDate).format('DD/MM/YYYY')})</Text> : null}
+                      </Text>
                     </Descriptions.Item>
                     <Descriptions.Item label={<Text style={{ color: textMuted }}>Giới tính</Text>}>
                       <Text style={{ color: textPrimary }}>{personal?.gender ? GENDER_LABEL[personal.gender] ?? personal.gender : '—'}</Text>

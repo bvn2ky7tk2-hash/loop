@@ -188,6 +188,33 @@ export class SalaryReviewService extends TenantAwareService {
   }
 
   /**
+   * Từ chối đề xuất PENDING → REJECTED
+   */
+  async rejectReview(id: string, approverId: string, reason?: string) {
+    const suggestion = await this.findOne(id);
+    if (suggestion.status !== 'PENDING') {
+      throw new BadRequestException('Chỉ có thể từ chối đề xuất ở trạng thái PENDING');
+    }
+    return this.prisma.salaryReviewSuggestion.update({
+      where: { id },
+      data: {
+        status: 'REJECTED',
+        approvedById: approverId,
+        ...(reason ? { reason } : {}),
+      },
+      include: {
+        employee: {
+          select: {
+            id: true, fullName: true, code: true, userId: true,
+            orgUnit:  { select: { id: true, name: true, code: true } },
+            position: { include: { jobTitle: { select: { id: true, name: true } } } },
+          },
+        },
+      },
+    });
+  }
+
+  /**
    * Áp dụng đề xuất APPROVED → cập nhật lương hợp đồng + set appliedAt
    */
   async applyReview(id: string) {

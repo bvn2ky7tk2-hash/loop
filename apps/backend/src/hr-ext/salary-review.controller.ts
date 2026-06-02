@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
 import { SalaryReviewService } from './salary-review.service';
-import { SuggestFromReviewDto, ApproveReviewDto, FilterSalaryReviewDto } from './dto/salary-review.dto';
+import { SuggestFromReviewDto, FilterSalaryReviewDto, RejectReviewDto } from './dto/salary-review.dto';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import type { JwtUser } from '../common/types/jwt-user.type';
 
 @Controller('api/v1/hr')
 export class SalaryReviewController {
@@ -35,8 +37,14 @@ export class SalaryReviewController {
 
   @Post('salary-reviews/:id/approve')
   @RequirePermission('employees:update')
-  approve(@Param('id') id: string, @Body() dto: ApproveReviewDto) {
-    return this.svc.approveReview(id, dto.approverId);
+  approve(@Param('id') id: string, @CurrentUser() user: JwtUser) {
+    return this.svc.approveReview(id, user.sub);
+  }
+
+  @Post('salary-reviews/:id/reject')
+  @RequirePermission('employees:update')
+  reject(@Param('id') id: string, @CurrentUser() user: JwtUser, @Body() dto: RejectReviewDto) {
+    return this.svc.rejectReview(id, user.sub, dto.reason);
   }
 
   @Post('salary-reviews/:id/apply')

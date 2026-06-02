@@ -50,6 +50,8 @@ export interface Profile360 {
     email?: string;
     birthdate?: string;
     startDate: string;
+    endDate?: string;
+    tenure?: { years: number; months: number; totalMonths: number; formatted: string } | null;
     // Giấy tờ tùy thân
     idType?: string;
     idNumber?: string;

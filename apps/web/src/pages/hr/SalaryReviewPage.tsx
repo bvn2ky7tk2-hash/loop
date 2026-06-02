@@ -102,7 +102,7 @@ export default function SalaryReviewPage() {
   // ── Mutations ──
   const approveMutation = useMutation({
     mutationFn: (id: string) =>
-      apiClient.patch(`/hr/salary-reviews/${id}/approve`).then((r) => r.data),
+      apiClient.post(`/hr/salary-reviews/${id}/approve`).then((r) => r.data),
     onSuccess: () => {
       message.success('Đã phê duyệt đề xuất lương');
       queryClient.invalidateQueries({ queryKey: ['salary-reviews'] });
@@ -112,7 +112,7 @@ export default function SalaryReviewPage() {
 
   const rejectMutation = useMutation({
     mutationFn: (id: string) =>
-      apiClient.patch(`/hr/salary-reviews/${id}/reject`).then((r) => r.data),
+      apiClient.post(`/hr/salary-reviews/${id}/reject`).then((r) => r.data),
     onSuccess: () => {
       message.success('Đã từ chối đề xuất lương');
       queryClient.invalidateQueries({ queryKey: ['salary-reviews'] });
