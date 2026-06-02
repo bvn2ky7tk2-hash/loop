@@ -24,32 +24,30 @@ const MODELS_WITH_TENANT: ReadonlySet<string> = new Set(
     .map((m) => m.name),
 );
 
-// Tên khóa unique GHÉP (compound) theo model — vd PayrollRecord: 'periodId_employeeId'.
-// findUnique nhận where { periodId_employeeId: { periodId, employeeId } } nhưng findFirst
-// KHÔNG hiểu cú pháp này → khi rewrite findUnique→findFirst phải "làm phẳng".
-const COMPOUND_KEYS: ReadonlyMap<string, ReadonlySet<string>> = new Map(
-  Prisma.dmmf.datamodel.models.map((m) => {
-    const keys = new Set<string>();
-    if (m.primaryKey && m.primaryKey.fields.length > 1) {
-      keys.add(m.primaryKey.name ?? m.primaryKey.fields.join('_'));
-    }
-    for (const u of m.uniqueIndexes ?? []) {
-      if (u.fields.length > 1) keys.add(u.name ?? u.fields.join('_'));
-    }
-    return [m.name, keys as ReadonlySet<string>] as const;
-  }),
-);
+// Toán tử filter của Prisma — dùng để phân biệt "selector khóa ghép" với "filter scalar".
+const FILTER_OPS: ReadonlySet<string> = new Set([
+  'equals', 'not', 'in', 'notIn', 'lt', 'lte', 'gt', 'gte',
+  'contains', 'startsWith', 'endsWith', 'mode', 'search',
+  'AND', 'OR', 'NOT', 'some', 'every', 'none', 'is', 'isNot',
+]);
 
-/** Làm phẳng khóa unique ghép trong `where` để dùng được với findFirst. */
-function flattenCompoundWhere(model: string, where: Record<string, unknown>): Record<string, unknown> {
-  const compound = COMPOUND_KEYS.get(model);
-  if (!compound || compound.size === 0) return where;
+/**
+ * Làm phẳng khóa unique GHÉP trong `where` để rewrite findUnique→findFirst.
+ * Client runtime DMMF KHÔNG expose tên khóa ghép, nên phát hiện theo cấu trúc:
+ * where của findUnique chỉ chứa selector unique; entry nào có value là object
+ * mà KHÔNG phải filter operator (vd { periodId_employeeId: { periodId, employeeId } })
+ * chính là khóa ghép → trải các field con ra ngoài.
+ */
+function flattenCompoundWhere(where: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...where };
-  for (const key of compound) {
-    const val = out[key];
-    if (val && typeof val === 'object' && !Array.isArray(val)) {
-      Object.assign(out, val as Record<string, unknown>);
-      delete out[key];
+  for (const [k, v] of Object.entries(where)) {
+    if (v && typeof v === 'object' && !Array.isArray(v)) {
+      const subKeys = Object.keys(v as Record<string, unknown>);
+      const isFilter = subKeys.length === 0 || subKeys.some((sk) => FILTER_OPS.has(sk));
+      if (!isFilter) {
+        Object.assign(out, v as Record<string, unknown>);
+        delete out[k];
+      }
     }
   }
   return out;
@@ -120,11 +118,9 @@ export function tenantExtension(cls: ClsService) {
               return ctx.$parent[model].findUnique(args);
             }
             const a: any = args ?? {};
-            // eslint-disable-next-line no-console
-            console.error('[DBG findUnique override]', model, 'compound=', JSON.stringify([...(COMPOUND_KEYS.get(model) ?? [])]), 'where=', JSON.stringify(a.where));
             return ctx.$parent[model].findFirst({
               ...a,
-              where: { ...flattenCompoundWhere(model, a.where ?? {}), tenantId },
+              where: { ...flattenCompoundWhere(a.where ?? {}), tenantId },
             });
           },
           async findUniqueOrThrow<T, A>(this: T, args: A): Promise<unknown> {
@@ -137,7 +133,7 @@ export function tenantExtension(cls: ClsService) {
             const a: any = args ?? {};
             return ctx.$parent[model].findFirstOrThrow({
               ...a,
-              where: { ...flattenCompoundWhere(model, a.where ?? {}), tenantId },
+              where: { ...flattenCompoundWhere(a.where ?? {}), tenantId },
             });
           },
         },
