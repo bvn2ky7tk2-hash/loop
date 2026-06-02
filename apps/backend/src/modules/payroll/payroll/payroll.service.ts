@@ -433,4 +433,37 @@ export class PayrollService extends TenantAwareService {
 
     return wb.xlsx.writeBuffer() as unknown as Promise<Buffer>;
   }
+
+  // ── Phiếu lương của user hiện tại ──────────────────────────────────────────
+  async getMyRecords(userId: string) {
+    const employee = await this.prisma.employee.findFirst({
+      where: { user: { id: userId } },
+      select: { id: true },
+    });
+    if (!employee) throw new NotFoundException('Nhân viên không tìm thấy');
+
+    const records = await this.prisma.payrollRecord.findMany({
+      where: { employeeId: employee.id },
+      include: {
+        employee: {
+          select: {
+            id: true,
+            code: true,
+            user: { select: { id: true, name: true, email: true } },
+            orgUnit: { select: { name: true } },
+            position: { select: { jobTitle: { select: { name: true } } } },
+          },
+        },
+        period: { select: { id: true, name: true, startDate: true, endDate: true } },
+      },
+      orderBy: { period: { startDate: 'desc' } },
+    });
+
+    return records.map(r => ({
+      ...r,
+      periodName: r.period.name,
+      periodStart: r.period.startDate,
+      periodEnd: r.period.endDate,
+    }));
+  }
 }

@@ -152,4 +152,11 @@ export class PayrollController {
   async checkPayslipJob(@Param('jobId') jobId: string) {
     return this.payslipQueue.checkJob(jobId);
   }
+
+  // ── Phiếu lương của user hiện tại ──────────────────────────────────────────
+  @Get('my-records')
+  @ApiOperation({ summary: 'Phiếu lương của nhân viên hiện tại' })
+  async getMyRecords(@Req() req: any) {
+    return this.service.getMyRecords(req.user.id);
+  }
 }
