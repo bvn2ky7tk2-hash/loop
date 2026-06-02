@@ -7,8 +7,5 @@ export * from './constants';
 
 // Utils - format, validation, date, number, string
 export * from './utils';
-
-// Legacy - backward compatibility
-export * from './enums';
-export { queryClient } from './query-client';
-export { SCREENS_REGISTRY } from './screens.registry';
+export { createQueryClient, registerLogoutHandler } from './query-client';
+export { SCREEN_REGISTRY } from './screens.registry';

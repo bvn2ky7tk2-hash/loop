@@ -1,5 +1,8 @@
 // Validation utilities
 
+// For Node.js/isomorphic environments
+declare const URL: any;
+
 export const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
