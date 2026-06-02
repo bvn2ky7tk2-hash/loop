@@ -19714,10 +19714,12 @@ export namespace Prisma {
 
   export type LeavePolicyCountOutputType = {
     employees: number
+    jobTitles: number
   }
 
   export type LeavePolicyCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employees?: boolean | LeavePolicyCountOutputTypeCountEmployeesArgs
+    jobTitles?: boolean | LeavePolicyCountOutputTypeCountJobTitlesArgs
   }
 
   // Custom InputTypes
@@ -19736,6 +19738,13 @@ export namespace Prisma {
    */
   export type LeavePolicyCountOutputTypeCountEmployeesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: EmployeeWhereInput
+  }
+
+  /**
+   * LeavePolicyCountOutputType without action
+   */
+  export type LeavePolicyCountOutputTypeCountJobTitlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: JobTitleWhereInput
   }
 
 
@@ -171865,6 +171874,7 @@ export namespace Prisma {
     band: string | null
     description: string | null
     isActive: boolean | null
+    leavePolicyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -171876,6 +171886,7 @@ export namespace Prisma {
     band: string | null
     description: string | null
     isActive: boolean | null
+    leavePolicyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -171887,6 +171898,7 @@ export namespace Prisma {
     band: number
     description: number
     isActive: number
+    leavePolicyId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -171900,6 +171912,7 @@ export namespace Prisma {
     band?: true
     description?: true
     isActive?: true
+    leavePolicyId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -171911,6 +171924,7 @@ export namespace Prisma {
     band?: true
     description?: true
     isActive?: true
+    leavePolicyId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -171922,6 +171936,7 @@ export namespace Prisma {
     band?: true
     description?: true
     isActive?: true
+    leavePolicyId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -172006,6 +172021,7 @@ export namespace Prisma {
     band: string | null
     description: string | null
     isActive: boolean
+    leavePolicyId: string | null
     createdAt: Date
     updatedAt: Date
     _count: JobTitleCountAggregateOutputType | null
@@ -172034,8 +172050,10 @@ export namespace Prisma {
     band?: boolean
     description?: boolean
     isActive?: boolean
+    leavePolicyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
     positions?: boolean | JobTitle$positionsArgs<ExtArgs>
     orgUnits?: boolean | JobTitle$orgUnitsArgs<ExtArgs>
     employees?: boolean | JobTitle$employeesArgs<ExtArgs>
@@ -172049,8 +172067,10 @@ export namespace Prisma {
     band?: boolean
     description?: boolean
     isActive?: boolean
+    leavePolicyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
   }, ExtArgs["result"]["jobTitle"]>
 
   export type JobTitleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -172060,8 +172080,10 @@ export namespace Prisma {
     band?: boolean
     description?: boolean
     isActive?: boolean
+    leavePolicyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
   }, ExtArgs["result"]["jobTitle"]>
 
   export type JobTitleSelectScalar = {
@@ -172071,23 +172093,30 @@ export namespace Prisma {
     band?: boolean
     description?: boolean
     isActive?: boolean
+    leavePolicyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type JobTitleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "band" | "description" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["jobTitle"]>
+  export type JobTitleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "name" | "band" | "description" | "isActive" | "leavePolicyId" | "createdAt" | "updatedAt", ExtArgs["result"]["jobTitle"]>
   export type JobTitleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
     positions?: boolean | JobTitle$positionsArgs<ExtArgs>
     orgUnits?: boolean | JobTitle$orgUnitsArgs<ExtArgs>
     employees?: boolean | JobTitle$employeesArgs<ExtArgs>
     _count?: boolean | JobTitleCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type JobTitleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type JobTitleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type JobTitleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
+  }
+  export type JobTitleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    leavePolicy?: boolean | JobTitle$leavePolicyArgs<ExtArgs>
+  }
 
   export type $JobTitlePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "JobTitle"
     objects: {
+      leavePolicy: Prisma.$LeavePolicyPayload<ExtArgs> | null
       positions: Prisma.$PositionPayload<ExtArgs>[]
       orgUnits: Prisma.$OrgUnitPayload<ExtArgs>[]
       employees: Prisma.$EmployeePayload<ExtArgs>[]
@@ -172099,6 +172128,7 @@ export namespace Prisma {
       band: string | null
       description: string | null
       isActive: boolean
+      leavePolicyId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["jobTitle"]>
@@ -172495,6 +172525,7 @@ export namespace Prisma {
    */
   export interface Prisma__JobTitleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    leavePolicy<T extends JobTitle$leavePolicyArgs<ExtArgs> = {}>(args?: Subset<T, JobTitle$leavePolicyArgs<ExtArgs>>): Prisma__LeavePolicyClient<$Result.GetResult<Prisma.$LeavePolicyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     positions<T extends JobTitle$positionsArgs<ExtArgs> = {}>(args?: Subset<T, JobTitle$positionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PositionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     orgUnits<T extends JobTitle$orgUnitsArgs<ExtArgs> = {}>(args?: Subset<T, JobTitle$orgUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrgUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     employees<T extends JobTitle$employeesArgs<ExtArgs> = {}>(args?: Subset<T, JobTitle$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -172533,6 +172564,7 @@ export namespace Prisma {
     readonly band: FieldRef<"JobTitle", 'String'>
     readonly description: FieldRef<"JobTitle", 'String'>
     readonly isActive: FieldRef<"JobTitle", 'Boolean'>
+    readonly leavePolicyId: FieldRef<"JobTitle", 'String'>
     readonly createdAt: FieldRef<"JobTitle", 'DateTime'>
     readonly updatedAt: FieldRef<"JobTitle", 'DateTime'>
   }
@@ -172789,6 +172821,10 @@ export namespace Prisma {
      */
     data: JobTitleCreateManyInput | JobTitleCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobTitleIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -172859,6 +172895,10 @@ export namespace Prisma {
      * Limit how many JobTitles to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobTitleIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -172925,6 +172965,25 @@ export namespace Prisma {
      * Limit how many JobTitles to delete.
      */
     limit?: number
+  }
+
+  /**
+   * JobTitle.leavePolicy
+   */
+  export type JobTitle$leavePolicyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the LeavePolicy
+     */
+    select?: LeavePolicySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the LeavePolicy
+     */
+    omit?: LeavePolicyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: LeavePolicyInclude<ExtArgs> | null
+    where?: LeavePolicyWhereInput
   }
 
   /**
@@ -179281,6 +179340,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     employees?: boolean | LeavePolicy$employeesArgs<ExtArgs>
+    jobTitles?: boolean | LeavePolicy$jobTitlesArgs<ExtArgs>
     _count?: boolean | LeavePolicyCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["leavePolicy"]>
 
@@ -179332,6 +179392,7 @@ export namespace Prisma {
   export type LeavePolicyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "baseAnnualDays" | "seniorityBonus" | "maxCarryOver" | "carryOverExpiry" | "carryOverExpiryAction" | "probationPolicy" | "accrualMode" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["leavePolicy"]>
   export type LeavePolicyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     employees?: boolean | LeavePolicy$employeesArgs<ExtArgs>
+    jobTitles?: boolean | LeavePolicy$jobTitlesArgs<ExtArgs>
     _count?: boolean | LeavePolicyCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LeavePolicyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -179341,6 +179402,7 @@ export namespace Prisma {
     name: "LeavePolicy"
     objects: {
       employees: Prisma.$EmployeePayload<ExtArgs>[]
+      jobTitles: Prisma.$JobTitlePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -179750,6 +179812,7 @@ export namespace Prisma {
   export interface Prisma__LeavePolicyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     employees<T extends LeavePolicy$employeesArgs<ExtArgs> = {}>(args?: Subset<T, LeavePolicy$employeesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    jobTitles<T extends LeavePolicy$jobTitlesArgs<ExtArgs> = {}>(args?: Subset<T, LeavePolicy$jobTitlesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobTitlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -180205,6 +180268,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: EmployeeScalarFieldEnum | EmployeeScalarFieldEnum[]
+  }
+
+  /**
+   * LeavePolicy.jobTitles
+   */
+  export type LeavePolicy$jobTitlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the JobTitle
+     */
+    select?: JobTitleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the JobTitle
+     */
+    omit?: JobTitleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: JobTitleInclude<ExtArgs> | null
+    where?: JobTitleWhereInput
+    orderBy?: JobTitleOrderByWithRelationInput | JobTitleOrderByWithRelationInput[]
+    cursor?: JobTitleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: JobTitleScalarFieldEnum | JobTitleScalarFieldEnum[]
   }
 
   /**
@@ -212269,6 +212356,7 @@ export namespace Prisma {
     band: 'band',
     description: 'description',
     isActive: 'isActive',
+    leavePolicyId: 'leavePolicyId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -225678,8 +225766,10 @@ export namespace Prisma {
     band?: StringNullableFilter<"JobTitle"> | string | null
     description?: StringNullableFilter<"JobTitle"> | string | null
     isActive?: BoolFilter<"JobTitle"> | boolean
+    leavePolicyId?: StringNullableFilter<"JobTitle"> | string | null
     createdAt?: DateTimeFilter<"JobTitle"> | Date | string
     updatedAt?: DateTimeFilter<"JobTitle"> | Date | string
+    leavePolicy?: XOR<LeavePolicyNullableScalarRelationFilter, LeavePolicyWhereInput> | null
     positions?: PositionListRelationFilter
     orgUnits?: OrgUnitListRelationFilter
     employees?: EmployeeListRelationFilter
@@ -225692,8 +225782,10 @@ export namespace Prisma {
     band?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    leavePolicyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    leavePolicy?: LeavePolicyOrderByWithRelationInput
     positions?: PositionOrderByRelationAggregateInput
     orgUnits?: OrgUnitOrderByRelationAggregateInput
     employees?: EmployeeOrderByRelationAggregateInput
@@ -225709,8 +225801,10 @@ export namespace Prisma {
     band?: StringNullableFilter<"JobTitle"> | string | null
     description?: StringNullableFilter<"JobTitle"> | string | null
     isActive?: BoolFilter<"JobTitle"> | boolean
+    leavePolicyId?: StringNullableFilter<"JobTitle"> | string | null
     createdAt?: DateTimeFilter<"JobTitle"> | Date | string
     updatedAt?: DateTimeFilter<"JobTitle"> | Date | string
+    leavePolicy?: XOR<LeavePolicyNullableScalarRelationFilter, LeavePolicyWhereInput> | null
     positions?: PositionListRelationFilter
     orgUnits?: OrgUnitListRelationFilter
     employees?: EmployeeListRelationFilter
@@ -225723,6 +225817,7 @@ export namespace Prisma {
     band?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     isActive?: SortOrder
+    leavePolicyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: JobTitleCountOrderByAggregateInput
@@ -225740,6 +225835,7 @@ export namespace Prisma {
     band?: StringNullableWithAggregatesFilter<"JobTitle"> | string | null
     description?: StringNullableWithAggregatesFilter<"JobTitle"> | string | null
     isActive?: BoolWithAggregatesFilter<"JobTitle"> | boolean
+    leavePolicyId?: StringNullableWithAggregatesFilter<"JobTitle"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"JobTitle"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"JobTitle"> | Date | string
   }
@@ -226214,6 +226310,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"LeavePolicy"> | Date | string
     updatedAt?: DateTimeFilter<"LeavePolicy"> | Date | string
     employees?: EmployeeListRelationFilter
+    jobTitles?: JobTitleListRelationFilter
   }
 
   export type LeavePolicyOrderByWithRelationInput = {
@@ -226230,6 +226327,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     employees?: EmployeeOrderByRelationAggregateInput
+    jobTitles?: JobTitleOrderByRelationAggregateInput
   }
 
   export type LeavePolicyWhereUniqueInput = Prisma.AtLeast<{
@@ -226249,6 +226347,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"LeavePolicy"> | Date | string
     updatedAt?: DateTimeFilter<"LeavePolicy"> | Date | string
     employees?: EmployeeListRelationFilter
+    jobTitles?: JobTitleListRelationFilter
   }, "id">
 
   export type LeavePolicyOrderByWithAggregationInput = {
@@ -240883,6 +240982,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    leavePolicy?: LeavePolicyCreateNestedOneWithoutJobTitlesInput
     positions?: PositionCreateNestedManyWithoutJobTitleInput
     orgUnits?: OrgUnitCreateNestedManyWithoutHeadJobTitleInput
     employees?: EmployeeCreateNestedManyWithoutJobTitleInput
@@ -240895,6 +240995,7 @@ export namespace Prisma {
     band?: string | null
     description?: string | null
     isActive?: boolean
+    leavePolicyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     positions?: PositionUncheckedCreateNestedManyWithoutJobTitleInput
@@ -240911,6 +241012,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leavePolicy?: LeavePolicyUpdateOneWithoutJobTitlesNestedInput
     positions?: PositionUpdateManyWithoutJobTitleNestedInput
     orgUnits?: OrgUnitUpdateManyWithoutHeadJobTitleNestedInput
     employees?: EmployeeUpdateManyWithoutJobTitleNestedInput
@@ -240923,6 +241025,7 @@ export namespace Prisma {
     band?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     positions?: PositionUncheckedUpdateManyWithoutJobTitleNestedInput
@@ -240937,6 +241040,7 @@ export namespace Prisma {
     band?: string | null
     description?: string | null
     isActive?: boolean
+    leavePolicyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -240959,6 +241063,7 @@ export namespace Prisma {
     band?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -241471,6 +241576,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     employees?: EmployeeCreateNestedManyWithoutLeavePolicyInput
+    jobTitles?: JobTitleCreateNestedManyWithoutLeavePolicyInput
   }
 
   export type LeavePolicyUncheckedCreateInput = {
@@ -241487,6 +241593,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     employees?: EmployeeUncheckedCreateNestedManyWithoutLeavePolicyInput
+    jobTitles?: JobTitleUncheckedCreateNestedManyWithoutLeavePolicyInput
   }
 
   export type LeavePolicyUpdateInput = {
@@ -241503,6 +241610,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     employees?: EmployeeUpdateManyWithoutLeavePolicyNestedInput
+    jobTitles?: JobTitleUpdateManyWithoutLeavePolicyNestedInput
   }
 
   export type LeavePolicyUncheckedUpdateInput = {
@@ -241519,6 +241627,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     employees?: EmployeeUncheckedUpdateManyWithoutLeavePolicyNestedInput
+    jobTitles?: JobTitleUncheckedUpdateManyWithoutLeavePolicyNestedInput
   }
 
   export type LeavePolicyCreateManyInput = {
@@ -253186,6 +253295,7 @@ export namespace Prisma {
     band?: SortOrder
     description?: SortOrder
     isActive?: SortOrder
+    leavePolicyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -253197,6 +253307,7 @@ export namespace Prisma {
     band?: SortOrder
     description?: SortOrder
     isActive?: SortOrder
+    leavePolicyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -253208,6 +253319,7 @@ export namespace Prisma {
     band?: SortOrder
     description?: SortOrder
     isActive?: SortOrder
+    leavePolicyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -253528,6 +253640,16 @@ export namespace Prisma {
     in?: $Enums.LeaveAccrualMode[] | ListEnumLeaveAccrualModeFieldRefInput<$PrismaModel>
     notIn?: $Enums.LeaveAccrualMode[] | ListEnumLeaveAccrualModeFieldRefInput<$PrismaModel>
     not?: NestedEnumLeaveAccrualModeFilter<$PrismaModel> | $Enums.LeaveAccrualMode
+  }
+
+  export type JobTitleListRelationFilter = {
+    every?: JobTitleWhereInput
+    some?: JobTitleWhereInput
+    none?: JobTitleWhereInput
+  }
+
+  export type JobTitleOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type LeavePolicyCountOrderByAggregateInput = {
@@ -268251,6 +268373,12 @@ export namespace Prisma {
     update?: XOR<XOR<TenantSmtpConfigUpdateToOneWithWhereWithoutTenantInput, TenantSmtpConfigUpdateWithoutTenantInput>, TenantSmtpConfigUncheckedUpdateWithoutTenantInput>
   }
 
+  export type LeavePolicyCreateNestedOneWithoutJobTitlesInput = {
+    create?: XOR<LeavePolicyCreateWithoutJobTitlesInput, LeavePolicyUncheckedCreateWithoutJobTitlesInput>
+    connectOrCreate?: LeavePolicyCreateOrConnectWithoutJobTitlesInput
+    connect?: LeavePolicyWhereUniqueInput
+  }
+
   export type PositionCreateNestedManyWithoutJobTitleInput = {
     create?: XOR<PositionCreateWithoutJobTitleInput, PositionUncheckedCreateWithoutJobTitleInput> | PositionCreateWithoutJobTitleInput[] | PositionUncheckedCreateWithoutJobTitleInput[]
     connectOrCreate?: PositionCreateOrConnectWithoutJobTitleInput | PositionCreateOrConnectWithoutJobTitleInput[]
@@ -268291,6 +268419,16 @@ export namespace Prisma {
     connectOrCreate?: EmployeeCreateOrConnectWithoutJobTitleInput | EmployeeCreateOrConnectWithoutJobTitleInput[]
     createMany?: EmployeeCreateManyJobTitleInputEnvelope
     connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+  }
+
+  export type LeavePolicyUpdateOneWithoutJobTitlesNestedInput = {
+    create?: XOR<LeavePolicyCreateWithoutJobTitlesInput, LeavePolicyUncheckedCreateWithoutJobTitlesInput>
+    connectOrCreate?: LeavePolicyCreateOrConnectWithoutJobTitlesInput
+    upsert?: LeavePolicyUpsertWithoutJobTitlesInput
+    disconnect?: LeavePolicyWhereInput | boolean
+    delete?: LeavePolicyWhereInput | boolean
+    connect?: LeavePolicyWhereUniqueInput
+    update?: XOR<XOR<LeavePolicyUpdateToOneWithWhereWithoutJobTitlesInput, LeavePolicyUpdateWithoutJobTitlesInput>, LeavePolicyUncheckedUpdateWithoutJobTitlesInput>
   }
 
   export type PositionUpdateManyWithoutJobTitleNestedInput = {
@@ -268736,11 +268874,25 @@ export namespace Prisma {
     connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
   }
 
+  export type JobTitleCreateNestedManyWithoutLeavePolicyInput = {
+    create?: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput> | JobTitleCreateWithoutLeavePolicyInput[] | JobTitleUncheckedCreateWithoutLeavePolicyInput[]
+    connectOrCreate?: JobTitleCreateOrConnectWithoutLeavePolicyInput | JobTitleCreateOrConnectWithoutLeavePolicyInput[]
+    createMany?: JobTitleCreateManyLeavePolicyInputEnvelope
+    connect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+  }
+
   export type EmployeeUncheckedCreateNestedManyWithoutLeavePolicyInput = {
     create?: XOR<EmployeeCreateWithoutLeavePolicyInput, EmployeeUncheckedCreateWithoutLeavePolicyInput> | EmployeeCreateWithoutLeavePolicyInput[] | EmployeeUncheckedCreateWithoutLeavePolicyInput[]
     connectOrCreate?: EmployeeCreateOrConnectWithoutLeavePolicyInput | EmployeeCreateOrConnectWithoutLeavePolicyInput[]
     createMany?: EmployeeCreateManyLeavePolicyInputEnvelope
     connect?: EmployeeWhereUniqueInput | EmployeeWhereUniqueInput[]
+  }
+
+  export type JobTitleUncheckedCreateNestedManyWithoutLeavePolicyInput = {
+    create?: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput> | JobTitleCreateWithoutLeavePolicyInput[] | JobTitleUncheckedCreateWithoutLeavePolicyInput[]
+    connectOrCreate?: JobTitleCreateOrConnectWithoutLeavePolicyInput | JobTitleCreateOrConnectWithoutLeavePolicyInput[]
+    createMany?: JobTitleCreateManyLeavePolicyInputEnvelope
+    connect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
   }
 
   export type EnumCarryOverExpiryActionFieldUpdateOperationsInput = {
@@ -268765,6 +268917,20 @@ export namespace Prisma {
     deleteMany?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
   }
 
+  export type JobTitleUpdateManyWithoutLeavePolicyNestedInput = {
+    create?: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput> | JobTitleCreateWithoutLeavePolicyInput[] | JobTitleUncheckedCreateWithoutLeavePolicyInput[]
+    connectOrCreate?: JobTitleCreateOrConnectWithoutLeavePolicyInput | JobTitleCreateOrConnectWithoutLeavePolicyInput[]
+    upsert?: JobTitleUpsertWithWhereUniqueWithoutLeavePolicyInput | JobTitleUpsertWithWhereUniqueWithoutLeavePolicyInput[]
+    createMany?: JobTitleCreateManyLeavePolicyInputEnvelope
+    set?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    disconnect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    delete?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    connect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    update?: JobTitleUpdateWithWhereUniqueWithoutLeavePolicyInput | JobTitleUpdateWithWhereUniqueWithoutLeavePolicyInput[]
+    updateMany?: JobTitleUpdateManyWithWhereWithoutLeavePolicyInput | JobTitleUpdateManyWithWhereWithoutLeavePolicyInput[]
+    deleteMany?: JobTitleScalarWhereInput | JobTitleScalarWhereInput[]
+  }
+
   export type EmployeeUncheckedUpdateManyWithoutLeavePolicyNestedInput = {
     create?: XOR<EmployeeCreateWithoutLeavePolicyInput, EmployeeUncheckedCreateWithoutLeavePolicyInput> | EmployeeCreateWithoutLeavePolicyInput[] | EmployeeUncheckedCreateWithoutLeavePolicyInput[]
     connectOrCreate?: EmployeeCreateOrConnectWithoutLeavePolicyInput | EmployeeCreateOrConnectWithoutLeavePolicyInput[]
@@ -268777,6 +268943,20 @@ export namespace Prisma {
     update?: EmployeeUpdateWithWhereUniqueWithoutLeavePolicyInput | EmployeeUpdateWithWhereUniqueWithoutLeavePolicyInput[]
     updateMany?: EmployeeUpdateManyWithWhereWithoutLeavePolicyInput | EmployeeUpdateManyWithWhereWithoutLeavePolicyInput[]
     deleteMany?: EmployeeScalarWhereInput | EmployeeScalarWhereInput[]
+  }
+
+  export type JobTitleUncheckedUpdateManyWithoutLeavePolicyNestedInput = {
+    create?: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput> | JobTitleCreateWithoutLeavePolicyInput[] | JobTitleUncheckedCreateWithoutLeavePolicyInput[]
+    connectOrCreate?: JobTitleCreateOrConnectWithoutLeavePolicyInput | JobTitleCreateOrConnectWithoutLeavePolicyInput[]
+    upsert?: JobTitleUpsertWithWhereUniqueWithoutLeavePolicyInput | JobTitleUpsertWithWhereUniqueWithoutLeavePolicyInput[]
+    createMany?: JobTitleCreateManyLeavePolicyInputEnvelope
+    set?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    disconnect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    delete?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    connect?: JobTitleWhereUniqueInput | JobTitleWhereUniqueInput[]
+    update?: JobTitleUpdateWithWhereUniqueWithoutLeavePolicyInput | JobTitleUpdateWithWhereUniqueWithoutLeavePolicyInput[]
+    updateMany?: JobTitleUpdateManyWithWhereWithoutLeavePolicyInput | JobTitleUpdateManyWithWhereWithoutLeavePolicyInput[]
+    deleteMany?: JobTitleScalarWhereInput | JobTitleScalarWhereInput[]
   }
 
   export type EnumHolidayTypeFieldUpdateOperationsInput = {
@@ -276000,6 +276180,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    leavePolicy?: LeavePolicyCreateNestedOneWithoutJobTitlesInput
     positions?: PositionCreateNestedManyWithoutJobTitleInput
     employees?: EmployeeCreateNestedManyWithoutJobTitleInput
   }
@@ -276011,6 +276192,7 @@ export namespace Prisma {
     band?: string | null
     description?: string | null
     isActive?: boolean
+    leavePolicyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     positions?: PositionUncheckedCreateNestedManyWithoutJobTitleInput
@@ -276894,6 +277076,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leavePolicy?: LeavePolicyUpdateOneWithoutJobTitlesNestedInput
     positions?: PositionUpdateManyWithoutJobTitleNestedInput
     employees?: EmployeeUpdateManyWithoutJobTitleNestedInput
   }
@@ -276905,6 +277088,7 @@ export namespace Prisma {
     band?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     positions?: PositionUncheckedUpdateManyWithoutJobTitleNestedInput
@@ -278191,6 +278375,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    leavePolicy?: LeavePolicyCreateNestedOneWithoutJobTitlesInput
     positions?: PositionCreateNestedManyWithoutJobTitleInput
     orgUnits?: OrgUnitCreateNestedManyWithoutHeadJobTitleInput
   }
@@ -278202,6 +278387,7 @@ export namespace Prisma {
     band?: string | null
     description?: string | null
     isActive?: boolean
+    leavePolicyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     positions?: PositionUncheckedCreateNestedManyWithoutJobTitleInput
@@ -278997,6 +279183,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    jobTitles?: JobTitleCreateNestedManyWithoutLeavePolicyInput
   }
 
   export type LeavePolicyUncheckedCreateWithoutEmployeesInput = {
@@ -279012,6 +279199,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    jobTitles?: JobTitleUncheckedCreateNestedManyWithoutLeavePolicyInput
   }
 
   export type LeavePolicyCreateOrConnectWithoutEmployeesInput = {
@@ -280278,6 +280466,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leavePolicy?: LeavePolicyUpdateOneWithoutJobTitlesNestedInput
     positions?: PositionUpdateManyWithoutJobTitleNestedInput
     orgUnits?: OrgUnitUpdateManyWithoutHeadJobTitleNestedInput
   }
@@ -280289,6 +280478,7 @@ export namespace Prisma {
     band?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     positions?: PositionUncheckedUpdateManyWithoutJobTitleNestedInput
@@ -280860,6 +281050,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobTitles?: JobTitleUpdateManyWithoutLeavePolicyNestedInput
   }
 
   export type LeavePolicyUncheckedUpdateWithoutEmployeesInput = {
@@ -280875,6 +281066,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    jobTitles?: JobTitleUncheckedUpdateManyWithoutLeavePolicyNestedInput
   }
 
   export type InsuranceEnrollmentUpsertWithWhereUniqueWithoutEmployeeInput = {
@@ -326275,6 +326467,43 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type LeavePolicyCreateWithoutJobTitlesInput = {
+    id?: string
+    name: string
+    baseAnnualDays: number
+    seniorityBonus?: JsonNullValueInput | InputJsonValue
+    maxCarryOver?: number
+    carryOverExpiry?: string | null
+    carryOverExpiryAction?: $Enums.CarryOverExpiryAction
+    probationPolicy?: NullableJsonNullValueInput | InputJsonValue
+    accrualMode?: $Enums.LeaveAccrualMode
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employees?: EmployeeCreateNestedManyWithoutLeavePolicyInput
+  }
+
+  export type LeavePolicyUncheckedCreateWithoutJobTitlesInput = {
+    id?: string
+    name: string
+    baseAnnualDays: number
+    seniorityBonus?: JsonNullValueInput | InputJsonValue
+    maxCarryOver?: number
+    carryOverExpiry?: string | null
+    carryOverExpiryAction?: $Enums.CarryOverExpiryAction
+    probationPolicy?: NullableJsonNullValueInput | InputJsonValue
+    accrualMode?: $Enums.LeaveAccrualMode
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    employees?: EmployeeUncheckedCreateNestedManyWithoutLeavePolicyInput
+  }
+
+  export type LeavePolicyCreateOrConnectWithoutJobTitlesInput = {
+    where: LeavePolicyWhereUniqueInput
+    create: XOR<LeavePolicyCreateWithoutJobTitlesInput, LeavePolicyUncheckedCreateWithoutJobTitlesInput>
+  }
+
   export type PositionCreateWithoutJobTitleInput = {
     id?: string
     code: string
@@ -326549,6 +326778,49 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type LeavePolicyUpsertWithoutJobTitlesInput = {
+    update: XOR<LeavePolicyUpdateWithoutJobTitlesInput, LeavePolicyUncheckedUpdateWithoutJobTitlesInput>
+    create: XOR<LeavePolicyCreateWithoutJobTitlesInput, LeavePolicyUncheckedCreateWithoutJobTitlesInput>
+    where?: LeavePolicyWhereInput
+  }
+
+  export type LeavePolicyUpdateToOneWithWhereWithoutJobTitlesInput = {
+    where?: LeavePolicyWhereInput
+    data: XOR<LeavePolicyUpdateWithoutJobTitlesInput, LeavePolicyUncheckedUpdateWithoutJobTitlesInput>
+  }
+
+  export type LeavePolicyUpdateWithoutJobTitlesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    baseAnnualDays?: IntFieldUpdateOperationsInput | number
+    seniorityBonus?: JsonNullValueInput | InputJsonValue
+    maxCarryOver?: IntFieldUpdateOperationsInput | number
+    carryOverExpiry?: NullableStringFieldUpdateOperationsInput | string | null
+    carryOverExpiryAction?: EnumCarryOverExpiryActionFieldUpdateOperationsInput | $Enums.CarryOverExpiryAction
+    probationPolicy?: NullableJsonNullValueInput | InputJsonValue
+    accrualMode?: EnumLeaveAccrualModeFieldUpdateOperationsInput | $Enums.LeaveAccrualMode
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeUpdateManyWithoutLeavePolicyNestedInput
+  }
+
+  export type LeavePolicyUncheckedUpdateWithoutJobTitlesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    baseAnnualDays?: IntFieldUpdateOperationsInput | number
+    seniorityBonus?: JsonNullValueInput | InputJsonValue
+    maxCarryOver?: IntFieldUpdateOperationsInput | number
+    carryOverExpiry?: NullableStringFieldUpdateOperationsInput | string | null
+    carryOverExpiryAction?: EnumCarryOverExpiryActionFieldUpdateOperationsInput | $Enums.CarryOverExpiryAction
+    probationPolicy?: NullableJsonNullValueInput | InputJsonValue
+    accrualMode?: EnumLeaveAccrualModeFieldUpdateOperationsInput | $Enums.LeaveAccrualMode
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    employees?: EmployeeUncheckedUpdateManyWithoutLeavePolicyNestedInput
+  }
+
   export type PositionUpsertWithWhereUniqueWithoutJobTitleInput = {
     where: PositionWhereUniqueInput
     update: XOR<PositionUpdateWithoutJobTitleInput, PositionUncheckedUpdateWithoutJobTitleInput>
@@ -326606,6 +326878,7 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    leavePolicy?: LeavePolicyCreateNestedOneWithoutJobTitlesInput
     orgUnits?: OrgUnitCreateNestedManyWithoutHeadJobTitleInput
     employees?: EmployeeCreateNestedManyWithoutJobTitleInput
   }
@@ -326617,6 +326890,7 @@ export namespace Prisma {
     band?: string | null
     description?: string | null
     isActive?: boolean
+    leavePolicyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutHeadJobTitleInput
@@ -326935,6 +327209,7 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    leavePolicy?: LeavePolicyUpdateOneWithoutJobTitlesNestedInput
     orgUnits?: OrgUnitUpdateManyWithoutHeadJobTitleNestedInput
     employees?: EmployeeUpdateManyWithoutJobTitleNestedInput
   }
@@ -326946,6 +327221,7 @@ export namespace Prisma {
     band?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    leavePolicyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orgUnits?: OrgUnitUncheckedUpdateManyWithoutHeadJobTitleNestedInput
@@ -329085,6 +329361,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type JobTitleCreateWithoutLeavePolicyInput = {
+    id?: string
+    code: string
+    name: string
+    band?: string | null
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    positions?: PositionCreateNestedManyWithoutJobTitleInput
+    orgUnits?: OrgUnitCreateNestedManyWithoutHeadJobTitleInput
+    employees?: EmployeeCreateNestedManyWithoutJobTitleInput
+  }
+
+  export type JobTitleUncheckedCreateWithoutLeavePolicyInput = {
+    id?: string
+    code: string
+    name: string
+    band?: string | null
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    positions?: PositionUncheckedCreateNestedManyWithoutJobTitleInput
+    orgUnits?: OrgUnitUncheckedCreateNestedManyWithoutHeadJobTitleInput
+    employees?: EmployeeUncheckedCreateNestedManyWithoutJobTitleInput
+  }
+
+  export type JobTitleCreateOrConnectWithoutLeavePolicyInput = {
+    where: JobTitleWhereUniqueInput
+    create: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput>
+  }
+
+  export type JobTitleCreateManyLeavePolicyInputEnvelope = {
+    data: JobTitleCreateManyLeavePolicyInput | JobTitleCreateManyLeavePolicyInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EmployeeUpsertWithWhereUniqueWithoutLeavePolicyInput = {
     where: EmployeeWhereUniqueInput
     update: XOR<EmployeeUpdateWithoutLeavePolicyInput, EmployeeUncheckedUpdateWithoutLeavePolicyInput>
@@ -329099,6 +329413,37 @@ export namespace Prisma {
   export type EmployeeUpdateManyWithWhereWithoutLeavePolicyInput = {
     where: EmployeeScalarWhereInput
     data: XOR<EmployeeUpdateManyMutationInput, EmployeeUncheckedUpdateManyWithoutLeavePolicyInput>
+  }
+
+  export type JobTitleUpsertWithWhereUniqueWithoutLeavePolicyInput = {
+    where: JobTitleWhereUniqueInput
+    update: XOR<JobTitleUpdateWithoutLeavePolicyInput, JobTitleUncheckedUpdateWithoutLeavePolicyInput>
+    create: XOR<JobTitleCreateWithoutLeavePolicyInput, JobTitleUncheckedCreateWithoutLeavePolicyInput>
+  }
+
+  export type JobTitleUpdateWithWhereUniqueWithoutLeavePolicyInput = {
+    where: JobTitleWhereUniqueInput
+    data: XOR<JobTitleUpdateWithoutLeavePolicyInput, JobTitleUncheckedUpdateWithoutLeavePolicyInput>
+  }
+
+  export type JobTitleUpdateManyWithWhereWithoutLeavePolicyInput = {
+    where: JobTitleScalarWhereInput
+    data: XOR<JobTitleUpdateManyMutationInput, JobTitleUncheckedUpdateManyWithoutLeavePolicyInput>
+  }
+
+  export type JobTitleScalarWhereInput = {
+    AND?: JobTitleScalarWhereInput | JobTitleScalarWhereInput[]
+    OR?: JobTitleScalarWhereInput[]
+    NOT?: JobTitleScalarWhereInput | JobTitleScalarWhereInput[]
+    id?: StringFilter<"JobTitle"> | string
+    code?: StringFilter<"JobTitle"> | string
+    name?: StringFilter<"JobTitle"> | string
+    band?: StringNullableFilter<"JobTitle"> | string | null
+    description?: StringNullableFilter<"JobTitle"> | string | null
+    isActive?: BoolFilter<"JobTitle"> | boolean
+    leavePolicyId?: StringNullableFilter<"JobTitle"> | string | null
+    createdAt?: DateTimeFilter<"JobTitle"> | Date | string
+    updatedAt?: DateTimeFilter<"JobTitle"> | Date | string
   }
 
   export type EmployeeCreateWithoutInsuranceEnrollmentsInput = {
@@ -350935,6 +351280,17 @@ export namespace Prisma {
     guardianName?: string | null
   }
 
+  export type JobTitleCreateManyLeavePolicyInput = {
+    id?: string
+    code: string
+    name: string
+    band?: string | null
+    description?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type EmployeeUpdateWithoutLeavePolicyInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
@@ -351154,6 +351510,45 @@ export namespace Prisma {
     bloodType?: NullableStringFieldUpdateOperationsInput | string | null
     healthNote?: NullableStringFieldUpdateOperationsInput | string | null
     guardianName?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type JobTitleUpdateWithoutLeavePolicyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    band?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    positions?: PositionUpdateManyWithoutJobTitleNestedInput
+    orgUnits?: OrgUnitUpdateManyWithoutHeadJobTitleNestedInput
+    employees?: EmployeeUpdateManyWithoutJobTitleNestedInput
+  }
+
+  export type JobTitleUncheckedUpdateWithoutLeavePolicyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    band?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    positions?: PositionUncheckedUpdateManyWithoutJobTitleNestedInput
+    orgUnits?: OrgUnitUncheckedUpdateManyWithoutHeadJobTitleNestedInput
+    employees?: EmployeeUncheckedUpdateManyWithoutJobTitleNestedInput
+  }
+
+  export type JobTitleUncheckedUpdateManyWithoutLeavePolicyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    band?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InsuranceEventCreateManyEnrollmentInput = {

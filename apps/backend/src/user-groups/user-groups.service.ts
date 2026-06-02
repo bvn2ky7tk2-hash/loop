@@ -46,12 +46,17 @@ export class UserGroupsService {
   async create(dto: CreateUserGroupDto) {
     const exists = await this.prisma.userGroup.findUnique({ where: { name: dto.name } });
     if (exists) throw new ConflictException('Tên nhóm đã tồn tại');
-    return this.prisma.userGroup.create({ data: dto });
+    return this.prisma.userGroup.create({
+      data: { name: dto.name, description: dto.description, isDefault: dto.isDefault ?? false },
+    });
   }
 
   async update(id: string, dto: UpdateUserGroupDto) {
     await this.findOne(id);
-    return this.prisma.userGroup.update({ where: { id }, data: dto });
+    return this.prisma.userGroup.update({
+      where: { id },
+      data: { name: dto.name, description: dto.description, isDefault: dto.isDefault },
+    });
   }
 
   async remove(id: string) {

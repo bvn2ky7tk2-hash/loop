@@ -3366,17 +3366,19 @@ model Tenant {
 // ─── HR v4 — Danh mục chức danh & vị trí biên chế ───────────────────────────
 
 model JobTitle {
-  id          String     @id @default(uuid())
-  code        String     @unique
-  name        String
-  band        String?
-  description String?
-  isActive    Boolean    @default(true) @map("is_active")
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
-  positions   Position[]
-  orgUnits    OrgUnit[]
-  employees   Employee[]
+  id            String       @id @default(uuid())
+  code          String       @unique
+  name          String
+  band          String?
+  description   String?
+  isActive      Boolean      @default(true) @map("is_active")
+  leavePolicyId String?      @map("leave_policy_id")
+  leavePolicy   LeavePolicy? @relation(fields: [leavePolicyId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  positions     Position[]
+  orgUnits      OrgUnit[]
+  employees     Employee[]
 
   @@map("job_titles")
 }
@@ -3564,6 +3566,7 @@ model LeavePolicy {
   createdAt             DateTime              @default(now()) @map("created_at")
   updatedAt             DateTime              @updatedAt @map("updated_at")
   employees             Employee[]
+  jobTitles             JobTitle[]
 
   @@map("leave_policies")
 }

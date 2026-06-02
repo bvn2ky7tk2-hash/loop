@@ -19,7 +19,9 @@ export class ProcurementService {
   // ─── Vendors ───────────────────────────────────────────────────────────────
 
   async listVendors(query: PaginationDto & { status?: string; category?: string; search?: string }) {
-    const { page = 1, limit = 50, status, category, search } = query;
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 50;
+    const { status, category, search } = query;
     const where: any = {};
     if (status)   where.status = status;
     if (category) where.category = category;

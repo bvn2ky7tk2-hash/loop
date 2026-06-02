@@ -1806,6 +1806,7 @@ exports.Prisma.JobTitleScalarFieldEnum = {
   band: 'band',
   description: 'description',
   isActive: 'isActive',
+  leavePolicyId: 'leavePolicyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -46,3 +46,6 @@ apps/backend/prisma/migrations/.shadow_db
 coverage
 dump.rdb
 backups/
+
+# Demo mode runtime snapshots (DB dumps — không commit)
+apps/backend/demo-snapshots/

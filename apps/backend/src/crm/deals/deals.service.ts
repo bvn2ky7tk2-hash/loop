@@ -84,7 +84,13 @@ export class DealsService extends TenantAwareService {
 
   async create(dto: CreateDealDto) {
     try {
-      return await this.prisma.deal.create({ data: { ...dto, tenantId: this.getTenantId() ?? null } });
+      return await this.prisma.deal.create({
+        data: {
+          ...dto,
+          expectedCloseDate: dto.expectedCloseDate ? new Date(dto.expectedCloseDate) : undefined,
+          tenantId: this.getTenantId() ?? null,
+        },
+      });
     } catch (err: any) {
       if (err?.code === 'P2002') {
         throw new ConflictException(`Mã deal "${dto.code}" đã tồn tại`);
