@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma';
 import bcrypt from 'bcrypt';
+import { seedDemoRoles } from './seed-demo-roles';
 import {
   ALL_PERMISSIONS,
   DEFAULT_ROLE_PERMISSIONS,
@@ -385,6 +386,9 @@ async function main() {
   await seedAutomationRules();
   console.log('Seeding Scheduled Reports...');
   await seedScheduledReports();
+
+  console.log('Seeding Demo Roles (4 role tài khoản + phê duyệt)...');
+  await seedDemoRoles();
 
   console.log('✅ Seed xong: admin@loop.vn / admin | pm@loop.vn / admin | user.demo@loop.vn / Demo@1234');
 }
