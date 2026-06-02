@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  DndContext, DragOverlay,
+  DndContext, DragOverlay, closestCorners,
   PointerSensor, useSensor, useSensors, useDroppable, useDraggable,
 } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
@@ -310,7 +310,7 @@ export default function DealsPage() {
   const dealCardProps = { isDark, borderColor, textPrimary, textMuted, preset, onEdit: openEdit, onWon: openWon, onLost: openLost, onDelete: handleDelete };
 
   const KanbanView = () => (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div style={{ display: 'flex', gap: 12, overflowX: 'auto', padding: '4px 0 8px', alignItems: 'flex-start' }}>
         {STAGES.map(stage => {
           const stageDeals = deals.filter(d => d.stage === stage.key);

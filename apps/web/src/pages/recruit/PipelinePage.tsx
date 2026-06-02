@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import {
-  DndContext, DragOverlay,
+  DndContext, DragOverlay, closestCorners,
   PointerSensor, useSensor, useSensors, useDroppable, useDraggable,
 } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
@@ -231,7 +231,7 @@ export default function PipelinePage() {
         </Text>
       </Tooltip>
 
-      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 12, alignItems: 'flex-start' }}>
           {COLUMNS.map((stage) => <Column key={stage} stage={stage} cards={byStage[stage]} onOpen={setDetail} />)}
         </div>
