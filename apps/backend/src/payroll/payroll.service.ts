@@ -98,7 +98,7 @@ export class PayrollService extends TenantAwareService {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { employeeId: 'asc' },
         skip: (page - 1) * limit,
         take: limit,
       }),

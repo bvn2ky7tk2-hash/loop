@@ -34,7 +34,7 @@ export class ModuleConfigService implements OnModuleInit {
   async listModules() {
     return this.prisma.moduleConfig.findMany({
       orderBy: [
-        { createdAt: 'desc' },
+        { updatedAt: 'desc' },
         { isCore: 'desc' },
         { displayName: 'asc' },
       ],

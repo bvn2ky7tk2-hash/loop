@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { WorkHistoryService } from './work-history.service';
 import { CreateWorkHistoryDto } from './dto/work-history.dto';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { RequirePermission } from '../../common/decorators/require-permission.decorator';
-import { WorkHistoryEventType, Role } from '../../generated/prisma';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { WorkHistoryEventType, Role } from '../generated/prisma';
 import { IsOptional, IsEnum, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 

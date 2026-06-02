@@ -170,7 +170,7 @@ export class PayrollEmployeeService {
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { period: { startDate: 'desc' } },
     });
 
     return records.map(r => ({
