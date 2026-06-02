@@ -555,13 +555,22 @@ async function main() {
   const orgMap = {}; // code → id
   for (const o of ORG_DEF) {
     const parentId = o.parent ? orgMap[o.parent] : null;
-    const res = await db.query(
-      `INSERT INTO org_units (id, name, code, parent_id, level, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,NOW(),NOW())
-       ON CONFLICT (code) DO UPDATE SET name=EXCLUDED.name, parent_id=EXCLUDED.parent_id, level=EXCLUDED.level
-       RETURNING id`,
-      [uid(), o.name, o.code, parentId, o.level]
-    );
+    // org_units được preserve qua bước clear → SELECT-or-INSERT theo code
+    // (unique constraint là (tenant_id, code) nên không dùng ON CONFLICT (code) được)
+    const existing = await db.query(`SELECT id FROM org_units WHERE code = $1 LIMIT 1`, [o.code]);
+    let res;
+    if (existing.rows.length > 0) {
+      res = await db.query(
+        `UPDATE org_units SET name=$2, parent_id=$3, level=$4, updated_at=NOW() WHERE id=$1 RETURNING id`,
+        [existing.rows[0].id, o.name, parentId, o.level]
+      );
+    } else {
+      res = await db.query(
+        `INSERT INTO org_units (id, name, code, parent_id, level, created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,NOW(),NOW()) RETURNING id`,
+        [uid(), o.name, o.code, parentId, o.level]
+      );
+    }
     orgMap[o.code] = res.rows[0].id;
   }
   console.log(`  ✓ ${ORG_DEF.length} org units upserted`);
