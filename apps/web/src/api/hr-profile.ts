@@ -72,6 +72,16 @@ export interface Profile360 {
     // Ngân hàng
     bankAccount?: string;
     bankName?: string;
+    // Liên hệ khẩn cấp & y tế & giám hộ (hồ sơ HR đầy đủ)
+    secondaryPhone?: string;
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
+    emergencyContactRelation?: string;
+    bloodType?: string;
+    healthNote?: string;
+    guardianName?: string;
+    // Thuế & cư trú
+    taxInfo?: { taxId?: string; residencyStatus?: string; wageZone?: number } | null;
     // Tổ chức
     orgUnit?: { name: string };
     position?: { code: string; jobTitle?: { name: string } };

@@ -94,4 +94,40 @@ export class UpdatePersonalInfoDto {
   @IsString()
   @MaxLength(100)
   bankName?: string;
+
+  // Liên hệ khẩn cấp & y tế & giám hộ (hồ sơ HR đầy đủ)
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  secondaryPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  emergencyContactName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  emergencyContactPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  emergencyContactRelation?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(10)
+  bloodType?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  healthNote?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  guardianName?: string;
 }

@@ -23,6 +23,7 @@ import {
   Popconfirm,
   Empty,
   Tooltip,
+  Divider,
 } from 'antd';
 import {
   FileProtectOutlined,
@@ -642,6 +643,53 @@ export default function EmployeeProfile360Page() {
                   </Descriptions>
                 </div>
               </Col>
+
+              {/* Thuế & Cư trú */}
+              <Col xs={24} md={12}>
+                <div style={cardStyle}>
+                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Thuế & Cư trú</Text>
+                  <Descriptions column={1} size="small">
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Mã số thuế (MST)</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.taxId ?? '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Trạng thái cư trú thuế</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.residencyStatus === 'RESIDENT' ? 'Cư trú' : personal?.taxInfo?.residencyStatus === 'NON_RESIDENT' ? 'Không cư trú' : '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Vùng lương tối thiểu</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.wageZone ? `Vùng ${personal.taxInfo.wageZone}` : '—'}</Text>
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+              </Col>
+
+              {/* Liên hệ khẩn cấp & Y tế */}
+              <Col xs={24} md={12}>
+                <div style={cardStyle}>
+                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Liên hệ khẩn cấp & Y tế</Text>
+                  <Descriptions column={1} size="small">
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Người liên hệ khẩn cấp</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.emergencyContactName ?? '—'}{personal?.emergencyContactRelation ? <Text style={{ color: textMuted }}> ({personal.emergencyContactRelation})</Text> : null}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>SĐT khẩn cấp</Text>}>
+                      {personal?.emergencyContactPhone
+                        ? <a href={`tel:${personal.emergencyContactPhone}`} style={{ color: linkColor }}>{personal.emergencyContactPhone}</a>
+                        : <Text style={{ color: textMuted }}>—</Text>}
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>SĐT phụ</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.secondaryPhone ?? '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Nhóm máu</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.bloodType ?? '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Tình trạng sức khỏe</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.healthNote ?? '—'}</Text>
+                    </Descriptions.Item>
+                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Người giám hộ</Text>}>
+                      <Text style={{ color: textPrimary }}>{personal?.guardianName ?? '—'}</Text>
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+              </Col>
             </Row>
           ),
         },
@@ -825,6 +873,19 @@ export default function EmployeeProfile360Page() {
             <Col span={12}><Form.Item name="bankName" label="Ngân hàng"><Input placeholder="VD: Vietcombank" /></Form.Item></Col>
             <Col span={12}><Form.Item name="bankAccount" label="Số tài khoản"><Input /></Form.Item></Col>
           </Row>
+
+          <Divider style={{ margin: '8px 0 16px' }}>Liên hệ khẩn cấp & Y tế</Divider>
+          <Row gutter={16}>
+            <Col span={8}><Form.Item name="emergencyContactName" label="Người liên hệ khẩn cấp"><Input placeholder="Họ tên" /></Form.Item></Col>
+            <Col span={8}><Form.Item name="emergencyContactPhone" label="SĐT khẩn cấp"><Input /></Form.Item></Col>
+            <Col span={8}><Form.Item name="emergencyContactRelation" label="Quan hệ"><Input placeholder="VD: Vợ/Chồng, Cha/Mẹ" /></Form.Item></Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={8}><Form.Item name="secondaryPhone" label="SĐT phụ"><Input /></Form.Item></Col>
+            <Col span={8}><Form.Item name="bloodType" label="Nhóm máu"><Select allowClear placeholder="Chọn"><Select.Option value="A">A</Select.Option><Select.Option value="B">B</Select.Option><Select.Option value="AB">AB</Select.Option><Select.Option value="O">O</Select.Option></Select></Form.Item></Col>
+            <Col span={8}><Form.Item name="guardianName" label="Người giám hộ"><Input placeholder="Nếu có" /></Form.Item></Col>
+          </Row>
+          <Form.Item name="healthNote" label="Tình trạng sức khỏe"><Input.TextArea rows={2} placeholder="Ghi chú sức khỏe, dị ứng, bệnh nền…" /></Form.Item>
         </Form>
       </CenteredModal>
 

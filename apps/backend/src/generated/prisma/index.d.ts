@@ -24041,6 +24041,13 @@ export namespace Prisma {
     phoneNumber: string | null
     hometown: string | null
     placeOfBirth: string | null
+    secondaryPhone: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    bloodType: string | null
+    healthNote: string | null
+    guardianName: string | null
   }
 
   export type EmployeeMaxAggregateOutputType = {
@@ -24083,6 +24090,13 @@ export namespace Prisma {
     phoneNumber: string | null
     hometown: string | null
     placeOfBirth: string | null
+    secondaryPhone: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    bloodType: string | null
+    healthNote: string | null
+    guardianName: string | null
   }
 
   export type EmployeeCountAggregateOutputType = {
@@ -24126,6 +24140,13 @@ export namespace Prisma {
     phoneNumber: number
     hometown: number
     placeOfBirth: number
+    secondaryPhone: number
+    emergencyContactName: number
+    emergencyContactPhone: number
+    emergencyContactRelation: number
+    bloodType: number
+    healthNote: number
+    guardianName: number
     _all: number
   }
 
@@ -24170,6 +24191,13 @@ export namespace Prisma {
     phoneNumber?: true
     hometown?: true
     placeOfBirth?: true
+    secondaryPhone?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    bloodType?: true
+    healthNote?: true
+    guardianName?: true
   }
 
   export type EmployeeMaxAggregateInputType = {
@@ -24212,6 +24240,13 @@ export namespace Prisma {
     phoneNumber?: true
     hometown?: true
     placeOfBirth?: true
+    secondaryPhone?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    bloodType?: true
+    healthNote?: true
+    guardianName?: true
   }
 
   export type EmployeeCountAggregateInputType = {
@@ -24255,6 +24290,13 @@ export namespace Prisma {
     phoneNumber?: true
     hometown?: true
     placeOfBirth?: true
+    secondaryPhone?: true
+    emergencyContactName?: true
+    emergencyContactPhone?: true
+    emergencyContactRelation?: true
+    bloodType?: true
+    healthNote?: true
+    guardianName?: true
     _all?: true
   }
 
@@ -24371,6 +24413,13 @@ export namespace Prisma {
     phoneNumber: string | null
     hometown: string | null
     placeOfBirth: string | null
+    secondaryPhone: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    bloodType: string | null
+    healthNote: string | null
+    guardianName: string | null
     _count: EmployeeCountAggregateOutputType | null
     _min: EmployeeMinAggregateOutputType | null
     _max: EmployeeMaxAggregateOutputType | null
@@ -24431,6 +24480,13 @@ export namespace Prisma {
     phoneNumber?: boolean
     hometown?: boolean
     placeOfBirth?: boolean
+    secondaryPhone?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    bloodType?: boolean
+    healthNote?: boolean
+    guardianName?: boolean
     allocations?: boolean | Employee$allocationsArgs<ExtArgs>
     contracts?: boolean | Employee$contractsArgs<ExtArgs>
     leaveRequests?: boolean | Employee$leaveRequestsArgs<ExtArgs>
@@ -24519,6 +24575,13 @@ export namespace Prisma {
     phoneNumber?: boolean
     hometown?: boolean
     placeOfBirth?: boolean
+    secondaryPhone?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    bloodType?: boolean
+    healthNote?: boolean
+    guardianName?: boolean
     orgUnit?: boolean | OrgUnitDefaultArgs<ExtArgs>
     user?: boolean | Employee$userArgs<ExtArgs>
     position?: boolean | Employee$positionArgs<ExtArgs>
@@ -24569,6 +24632,13 @@ export namespace Prisma {
     phoneNumber?: boolean
     hometown?: boolean
     placeOfBirth?: boolean
+    secondaryPhone?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    bloodType?: boolean
+    healthNote?: boolean
+    guardianName?: boolean
     orgUnit?: boolean | OrgUnitDefaultArgs<ExtArgs>
     user?: boolean | Employee$userArgs<ExtArgs>
     position?: boolean | Employee$positionArgs<ExtArgs>
@@ -24619,9 +24689,16 @@ export namespace Prisma {
     phoneNumber?: boolean
     hometown?: boolean
     placeOfBirth?: boolean
+    secondaryPhone?: boolean
+    emergencyContactName?: boolean
+    emergencyContactPhone?: boolean
+    emergencyContactRelation?: boolean
+    bloodType?: boolean
+    healthNote?: boolean
+    guardianName?: boolean
   }
 
-  export type EmployeeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "userId" | "orgUnitId" | "fullName" | "birthdate" | "techStack" | "level" | "cccd" | "cccdIssueDate" | "cccdIssuePlace" | "startDate" | "endDate" | "isActive" | "employeeStatus" | "positionId" | "jobTitleId" | "createdAt" | "updatedAt" | "email" | "directManagerId" | "tenantId" | "deletedAt" | "leavePolicyId" | "idType" | "idNumber" | "idIssueDate" | "idIssuePlace" | "permanentAddress" | "currentAddress" | "ethnicity" | "religion" | "nationality" | "bankAccount" | "bankName" | "gender" | "maritalStatus" | "phoneNumber" | "hometown" | "placeOfBirth", ExtArgs["result"]["employee"]>
+  export type EmployeeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "userId" | "orgUnitId" | "fullName" | "birthdate" | "techStack" | "level" | "cccd" | "cccdIssueDate" | "cccdIssuePlace" | "startDate" | "endDate" | "isActive" | "employeeStatus" | "positionId" | "jobTitleId" | "createdAt" | "updatedAt" | "email" | "directManagerId" | "tenantId" | "deletedAt" | "leavePolicyId" | "idType" | "idNumber" | "idIssueDate" | "idIssuePlace" | "permanentAddress" | "currentAddress" | "ethnicity" | "religion" | "nationality" | "bankAccount" | "bankName" | "gender" | "maritalStatus" | "phoneNumber" | "hometown" | "placeOfBirth" | "secondaryPhone" | "emergencyContactName" | "emergencyContactPhone" | "emergencyContactRelation" | "bloodType" | "healthNote" | "guardianName", ExtArgs["result"]["employee"]>
   export type EmployeeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | Employee$allocationsArgs<ExtArgs>
     contracts?: boolean | Employee$contractsArgs<ExtArgs>
@@ -24777,6 +24854,13 @@ export namespace Prisma {
       phoneNumber: string | null
       hometown: string | null
       placeOfBirth: string | null
+      secondaryPhone: string | null
+      emergencyContactName: string | null
+      emergencyContactPhone: string | null
+      emergencyContactRelation: string | null
+      bloodType: string | null
+      healthNote: string | null
+      guardianName: string | null
     }, ExtArgs["result"]["employee"]>
     composites: {}
   }
@@ -25284,6 +25368,13 @@ export namespace Prisma {
     readonly phoneNumber: FieldRef<"Employee", 'String'>
     readonly hometown: FieldRef<"Employee", 'String'>
     readonly placeOfBirth: FieldRef<"Employee", 'String'>
+    readonly secondaryPhone: FieldRef<"Employee", 'String'>
+    readonly emergencyContactName: FieldRef<"Employee", 'String'>
+    readonly emergencyContactPhone: FieldRef<"Employee", 'String'>
+    readonly emergencyContactRelation: FieldRef<"Employee", 'String'>
+    readonly bloodType: FieldRef<"Employee", 'String'>
+    readonly healthNote: FieldRef<"Employee", 'String'>
+    readonly guardianName: FieldRef<"Employee", 'String'>
   }
     
 
@@ -210102,7 +210193,14 @@ export namespace Prisma {
     maritalStatus: 'maritalStatus',
     phoneNumber: 'phoneNumber',
     hometown: 'hometown',
-    placeOfBirth: 'placeOfBirth'
+    placeOfBirth: 'placeOfBirth',
+    secondaryPhone: 'secondaryPhone',
+    emergencyContactName: 'emergencyContactName',
+    emergencyContactPhone: 'emergencyContactPhone',
+    emergencyContactRelation: 'emergencyContactRelation',
+    bloodType: 'bloodType',
+    healthNote: 'healthNote',
+    guardianName: 'guardianName'
   };
 
   export type EmployeeScalarFieldEnum = (typeof EmployeeScalarFieldEnum)[keyof typeof EmployeeScalarFieldEnum]
@@ -214464,6 +214562,13 @@ export namespace Prisma {
     phoneNumber?: StringNullableFilter<"Employee"> | string | null
     hometown?: StringNullableFilter<"Employee"> | string | null
     placeOfBirth?: StringNullableFilter<"Employee"> | string | null
+    secondaryPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactName?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"Employee"> | string | null
+    bloodType?: StringNullableFilter<"Employee"> | string | null
+    healthNote?: StringNullableFilter<"Employee"> | string | null
+    guardianName?: StringNullableFilter<"Employee"> | string | null
     allocations?: AllocationListRelationFilter
     contracts?: ContractListRelationFilter
     leaveRequests?: LeaveRequestListRelationFilter
@@ -214551,6 +214656,13 @@ export namespace Prisma {
     phoneNumber?: SortOrderInput | SortOrder
     hometown?: SortOrderInput | SortOrder
     placeOfBirth?: SortOrderInput | SortOrder
+    secondaryPhone?: SortOrderInput | SortOrder
+    emergencyContactName?: SortOrderInput | SortOrder
+    emergencyContactPhone?: SortOrderInput | SortOrder
+    emergencyContactRelation?: SortOrderInput | SortOrder
+    bloodType?: SortOrderInput | SortOrder
+    healthNote?: SortOrderInput | SortOrder
+    guardianName?: SortOrderInput | SortOrder
     allocations?: AllocationOrderByRelationAggregateInput
     contracts?: ContractOrderByRelationAggregateInput
     leaveRequests?: LeaveRequestOrderByRelationAggregateInput
@@ -214642,6 +214754,13 @@ export namespace Prisma {
     phoneNumber?: StringNullableFilter<"Employee"> | string | null
     hometown?: StringNullableFilter<"Employee"> | string | null
     placeOfBirth?: StringNullableFilter<"Employee"> | string | null
+    secondaryPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactName?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"Employee"> | string | null
+    bloodType?: StringNullableFilter<"Employee"> | string | null
+    healthNote?: StringNullableFilter<"Employee"> | string | null
+    guardianName?: StringNullableFilter<"Employee"> | string | null
     allocations?: AllocationListRelationFilter
     contracts?: ContractListRelationFilter
     leaveRequests?: LeaveRequestListRelationFilter
@@ -214729,6 +214848,13 @@ export namespace Prisma {
     phoneNumber?: SortOrderInput | SortOrder
     hometown?: SortOrderInput | SortOrder
     placeOfBirth?: SortOrderInput | SortOrder
+    secondaryPhone?: SortOrderInput | SortOrder
+    emergencyContactName?: SortOrderInput | SortOrder
+    emergencyContactPhone?: SortOrderInput | SortOrder
+    emergencyContactRelation?: SortOrderInput | SortOrder
+    bloodType?: SortOrderInput | SortOrder
+    healthNote?: SortOrderInput | SortOrder
+    guardianName?: SortOrderInput | SortOrder
     _count?: EmployeeCountOrderByAggregateInput
     _max?: EmployeeMaxOrderByAggregateInput
     _min?: EmployeeMinOrderByAggregateInput
@@ -214778,6 +214904,13 @@ export namespace Prisma {
     phoneNumber?: StringNullableWithAggregatesFilter<"Employee"> | string | null
     hometown?: StringNullableWithAggregatesFilter<"Employee"> | string | null
     placeOfBirth?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    secondaryPhone?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    emergencyContactName?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    emergencyContactPhone?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    emergencyContactRelation?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    bloodType?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    healthNote?: StringNullableWithAggregatesFilter<"Employee"> | string | null
+    guardianName?: StringNullableWithAggregatesFilter<"Employee"> | string | null
   }
 
   export type SkillWhereInput = {
@@ -228584,6 +228717,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -228671,6 +228811,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -228744,6 +228891,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -228831,6 +228985,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -228911,6 +229072,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type EmployeeUpdateManyMutationInput = {
@@ -228947,6 +229115,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EmployeeUncheckedUpdateManyInput = {
@@ -228990,6 +229165,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type SkillCreateInput = {
@@ -244659,6 +244841,13 @@ export namespace Prisma {
     phoneNumber?: SortOrder
     hometown?: SortOrder
     placeOfBirth?: SortOrder
+    secondaryPhone?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    bloodType?: SortOrder
+    healthNote?: SortOrder
+    guardianName?: SortOrder
   }
 
   export type EmployeeMaxOrderByAggregateInput = {
@@ -244701,6 +244890,13 @@ export namespace Prisma {
     phoneNumber?: SortOrder
     hometown?: SortOrder
     placeOfBirth?: SortOrder
+    secondaryPhone?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    bloodType?: SortOrder
+    healthNote?: SortOrder
+    guardianName?: SortOrder
   }
 
   export type EmployeeMinOrderByAggregateInput = {
@@ -244743,6 +244939,13 @@ export namespace Prisma {
     phoneNumber?: SortOrder
     hometown?: SortOrder
     placeOfBirth?: SortOrder
+    secondaryPhone?: SortOrder
+    emergencyContactName?: SortOrder
+    emergencyContactPhone?: SortOrder
+    emergencyContactRelation?: SortOrder
+    bloodType?: SortOrder
+    healthNote?: SortOrder
+    guardianName?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -271480,6 +271683,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -271565,6 +271775,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -273608,6 +273825,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -273693,6 +273917,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -275261,6 +275492,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -275346,6 +275584,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -275599,6 +275844,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -275685,6 +275937,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -276277,6 +276536,13 @@ export namespace Prisma {
     phoneNumber?: StringNullableFilter<"Employee"> | string | null
     hometown?: StringNullableFilter<"Employee"> | string | null
     placeOfBirth?: StringNullableFilter<"Employee"> | string | null
+    secondaryPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactName?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactPhone?: StringNullableFilter<"Employee"> | string | null
+    emergencyContactRelation?: StringNullableFilter<"Employee"> | string | null
+    bloodType?: StringNullableFilter<"Employee"> | string | null
+    healthNote?: StringNullableFilter<"Employee"> | string | null
+    guardianName?: StringNullableFilter<"Employee"> | string | null
   }
 
   export type PositionUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -276478,6 +276744,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -276564,6 +276837,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -277903,6 +278183,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -277989,6 +278276,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -278066,6 +278360,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -278151,6 +278452,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -279952,6 +280260,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -280038,6 +280353,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -280883,6 +281205,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -280969,6 +281298,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -281080,6 +281416,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -281166,6 +281509,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -281267,6 +281617,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -281353,6 +281710,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -281441,6 +281805,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -281527,6 +281898,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -282959,6 +283337,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
@@ -283045,6 +283430,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
@@ -283321,6 +283713,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
@@ -283407,6 +283806,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -283824,6 +284230,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -283910,6 +284323,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -284508,6 +284928,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -284594,6 +285021,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -293905,6 +294339,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
@@ -293991,6 +294432,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
@@ -294068,6 +294516,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -294154,6 +294609,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -294488,6 +294950,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
@@ -294574,6 +295043,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -294657,6 +295133,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -294743,6 +295226,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -295320,6 +295810,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceCreateNestedManyWithoutEmployeeInput
@@ -295406,6 +295903,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveBalances?: LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
@@ -295816,6 +296320,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUpdateManyWithoutEmployeeNestedInput
@@ -295902,6 +296413,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveBalances?: LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -296320,6 +296838,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -296406,6 +296931,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -296648,6 +297180,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -296734,6 +297273,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -296972,6 +297518,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -297058,6 +297611,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -297314,6 +297874,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -297400,6 +297967,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -298433,6 +299007,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -298519,6 +299100,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -298817,6 +299405,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -298903,6 +299498,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -299540,6 +300142,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -299626,6 +300235,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -300128,6 +300744,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -300214,6 +300837,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -307743,6 +308373,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -307829,6 +308466,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -307972,6 +308616,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -308058,6 +308709,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -308665,6 +309323,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -308751,6 +309416,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -308870,6 +309542,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -308956,6 +309635,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -309028,6 +309714,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -309114,6 +309807,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -309191,6 +309891,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -309277,6 +309984,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -309407,6 +310121,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -309493,6 +310214,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -309576,6 +310304,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -309662,6 +310397,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -309750,6 +310492,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -309836,6 +310585,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -309956,6 +310712,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -310042,6 +310805,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -310686,6 +311456,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -310772,6 +311549,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -310860,6 +311644,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -310946,6 +311737,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -317969,6 +318767,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -318055,6 +318860,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -318171,6 +318983,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -318257,6 +319076,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -318345,6 +319171,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -318431,6 +319264,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -318559,6 +319399,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -318645,6 +319492,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -320406,6 +321260,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -320492,6 +321353,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -320617,6 +321485,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -320703,6 +321578,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -321555,6 +322437,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -321641,6 +322530,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -321883,6 +322779,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -321969,6 +322872,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -322391,6 +323301,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -322476,6 +323393,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -325202,6 +326126,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -325287,6 +326218,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -325496,6 +326434,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -325581,6 +326526,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -325909,6 +326861,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -325995,6 +326954,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -326124,6 +327090,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -326210,6 +327183,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -326282,6 +327262,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -326368,6 +327355,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -326520,6 +327514,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -326606,6 +327607,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -326710,6 +327718,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -326796,6 +327811,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -326937,6 +327959,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -327023,6 +328052,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -327154,6 +328190,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -327240,6 +328283,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -327381,6 +328431,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -327467,6 +328524,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -327598,6 +328662,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -327683,6 +328754,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -327782,6 +328860,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -327868,6 +328953,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -328015,6 +329107,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -328101,6 +329200,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -328238,6 +329344,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -328324,6 +329437,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -328443,6 +329563,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -328529,6 +329656,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -328706,6 +329840,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -328792,6 +329933,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -328969,6 +330117,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -329055,6 +330210,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -329190,6 +330352,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -329276,6 +330445,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -329420,6 +330596,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -329506,6 +330689,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -329594,6 +330784,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -329680,6 +330877,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -329938,6 +331142,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -330024,6 +331235,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -330373,6 +331591,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -330459,6 +331684,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -330582,6 +331814,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -330668,6 +331907,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -331003,6 +332249,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -331089,6 +332342,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -331204,6 +332464,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -331290,6 +332557,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -333359,6 +334633,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -333445,6 +334726,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -333533,6 +334821,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -333619,6 +334914,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -333691,6 +334993,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -333777,6 +335086,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -333865,6 +335181,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -333951,6 +335274,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -334023,6 +335353,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationCreateNestedManyWithoutEmployeeInput
     contracts?: ContractCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestCreateNestedManyWithoutEmployeeInput
@@ -334109,6 +335446,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
     allocations?: AllocationUncheckedCreateNestedManyWithoutEmployeeInput
     contracts?: ContractUncheckedCreateNestedManyWithoutEmployeeInput
     leaveRequests?: LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
@@ -334224,6 +335568,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -334310,6 +335661,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -337369,6 +338727,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type PositionCreateManyOrgUnitInput = {
@@ -337520,6 +338885,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -337605,6 +338977,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -337684,6 +339063,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PositionUpdateWithoutOrgUnitInput = {
@@ -338474,6 +339860,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type OvertimeRequestCreateManyEmployeeInput = {
@@ -339530,6 +340923,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -339615,6 +341015,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -339694,6 +341101,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OvertimeRequestUpdateWithoutEmployeeInput = {
@@ -345288,6 +346702,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type ProjectCreateManyTenantInput = {
@@ -346137,6 +347558,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -346222,6 +347650,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -346301,6 +347736,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProjectUpdateWithoutTenantInput = {
@@ -348355,6 +349797,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type PositionUpdateWithoutJobTitleInput = {
@@ -348487,6 +349936,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -348572,6 +350028,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -348651,6 +350114,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type EmployeeCreateManyPositionInput = {
@@ -348693,6 +350163,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type PositionHistoryCreateManyPositionInput = {
@@ -348747,6 +350224,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -348832,6 +350316,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -348911,6 +350402,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PositionHistoryUpdateWithoutPositionInput = {
@@ -349097,6 +350595,13 @@ export namespace Prisma {
     phoneNumber?: string | null
     hometown?: string | null
     placeOfBirth?: string | null
+    secondaryPhone?: string | null
+    emergencyContactName?: string | null
+    emergencyContactPhone?: string | null
+    emergencyContactRelation?: string | null
+    bloodType?: string | null
+    healthNote?: string | null
+    guardianName?: string | null
   }
 
   export type EmployeeUpdateWithoutLeavePolicyInput = {
@@ -349133,6 +350638,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUpdateManyWithoutEmployeeNestedInput
@@ -349218,6 +350730,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
     allocations?: AllocationUncheckedUpdateManyWithoutEmployeeNestedInput
     contracts?: ContractUncheckedUpdateManyWithoutEmployeeNestedInput
     leaveRequests?: LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -349297,6 +350816,13 @@ export namespace Prisma {
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     hometown?: NullableStringFieldUpdateOperationsInput | string | null
     placeOfBirth?: NullableStringFieldUpdateOperationsInput | string | null
+    secondaryPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactName?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    emergencyContactRelation?: NullableStringFieldUpdateOperationsInput | string | null
+    bloodType?: NullableStringFieldUpdateOperationsInput | string | null
+    healthNote?: NullableStringFieldUpdateOperationsInput | string | null
+    guardianName?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InsuranceEventCreateManyEnrollmentInput = {

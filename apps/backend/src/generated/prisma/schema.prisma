@@ -192,6 +192,15 @@ model Employee {
   hometown      String? // Quê quán
   placeOfBirth  String?        @map("place_of_birth") // Nơi sinh
 
+  // Hồ sơ HR đầy đủ — liên hệ khẩn cấp, y tế, giám hộ
+  secondaryPhone           String? @map("secondary_phone") // SĐT phụ
+  emergencyContactName     String? @map("emergency_contact_name") // Người liên hệ khẩn cấp
+  emergencyContactPhone    String? @map("emergency_contact_phone") // SĐT khẩn cấp
+  emergencyContactRelation String? @map("emergency_contact_relation") // Quan hệ
+  bloodType                String? @map("blood_type") // Nhóm máu
+  healthNote               String? @map("health_note") // Tình trạng sức khỏe
+  guardianName             String? @map("guardian_name") // Người giám hộ
+
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([deletedAt])

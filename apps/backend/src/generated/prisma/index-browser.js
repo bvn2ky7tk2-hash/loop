@@ -187,7 +187,14 @@ exports.Prisma.EmployeeScalarFieldEnum = {
   maritalStatus: 'maritalStatus',
   phoneNumber: 'phoneNumber',
   hometown: 'hometown',
-  placeOfBirth: 'placeOfBirth'
+  placeOfBirth: 'placeOfBirth',
+  secondaryPhone: 'secondaryPhone',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelation: 'emergencyContactRelation',
+  bloodType: 'bloodType',
+  healthNote: 'healthNote',
+  guardianName: 'guardianName'
 };
 
 exports.Prisma.SkillScalarFieldEnum = {

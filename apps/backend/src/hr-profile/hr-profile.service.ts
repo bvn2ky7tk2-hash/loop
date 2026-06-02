@@ -28,6 +28,7 @@ export class HrProfileService extends TenantAwareService {
             jobTitle: { select: { id: true, name: true } },
           },
         },
+        taxProfile: { select: { taxId: true, residencyStatus: true, wageZone: true } },
       },
     });
 
@@ -137,6 +138,16 @@ export class HrProfileService extends TenantAwareService {
         // Ngân hàng
         bankAccount: employee.bankAccount,
         bankName: employee.bankName,
+        // Liên hệ khẩn cấp & y tế & giám hộ (hồ sơ HR đầy đủ)
+        secondaryPhone: employee.secondaryPhone,
+        emergencyContactName: employee.emergencyContactName,
+        emergencyContactPhone: employee.emergencyContactPhone,
+        emergencyContactRelation: employee.emergencyContactRelation,
+        bloodType: employee.bloodType,
+        healthNote: employee.healthNote,
+        guardianName: employee.guardianName,
+        // Thuế & cư trú (từ EmployeeTaxProfile)
+        taxInfo: (employee as any).taxProfile ?? null,
         // Thông tin tổ chức
         startDate: employee.startDate,
         endDate: employee.endDate,
@@ -206,6 +217,14 @@ export class HrProfileService extends TenantAwareService {
         // Ngân hàng
         ...(dto.bankAccount !== undefined ? { bankAccount: dto.bankAccount } : {}),
         ...(dto.bankName !== undefined ? { bankName: dto.bankName } : {}),
+        // Liên hệ khẩn cấp & y tế & giám hộ
+        ...(dto.secondaryPhone !== undefined ? { secondaryPhone: dto.secondaryPhone } : {}),
+        ...(dto.emergencyContactName !== undefined ? { emergencyContactName: dto.emergencyContactName } : {}),
+        ...(dto.emergencyContactPhone !== undefined ? { emergencyContactPhone: dto.emergencyContactPhone } : {}),
+        ...(dto.emergencyContactRelation !== undefined ? { emergencyContactRelation: dto.emergencyContactRelation } : {}),
+        ...(dto.bloodType !== undefined ? { bloodType: dto.bloodType } : {}),
+        ...(dto.healthNote !== undefined ? { healthNote: dto.healthNote } : {}),
+        ...(dto.guardianName !== undefined ? { guardianName: dto.guardianName } : {}),
       },
       select: {
         id: true, code: true, fullName: true, email: true, birthdate: true,
@@ -214,6 +233,8 @@ export class HrProfileService extends TenantAwareService {
         idType: true, idNumber: true, idIssueDate: true, idIssuePlace: true,
         permanentAddress: true, currentAddress: true,
         bankAccount: true, bankName: true,
+        secondaryPhone: true, emergencyContactName: true, emergencyContactPhone: true,
+        emergencyContactRelation: true, bloodType: true, healthNote: true, guardianName: true,
       },
     });
   }
