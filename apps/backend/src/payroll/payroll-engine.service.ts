@@ -322,8 +322,12 @@ export class PayrollEngineService {
 
     if (!bhxhExempt && insuranceConfig) {
       const ceiling = Number(insuranceConfig.wageBase) * insuranceConfig.bhxhCeilingMultiple;
-      // BHXH base = rawSalary (contract.salaryMonthly hiện tại, cuối kỳ), không phải weighted avg
-      bhxhBase = Math.min(rawSalary, ceiling);
+      // Mức lương đóng BH: ưu tiên contract.insuranceSalary (mỗi NV có thể đóng mức riêng);
+      // nếu không khai → mặc định = lương hợp đồng (rawSalary). Áp trần BHXH.
+      const insuranceBase = contract.insuranceSalary != null
+        ? Number(contract.insuranceSalary)
+        : rawSalary;
+      bhxhBase = Math.min(insuranceBase, ceiling);
 
       bhxhEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployeeRate));
       bhytEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployeeRate));

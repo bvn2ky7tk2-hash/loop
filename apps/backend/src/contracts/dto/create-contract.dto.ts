@@ -58,6 +58,12 @@ export class CreateContractDto {
   @IsPositive()
   salaryMonthly: number;
 
+  @ApiPropertyOptional({ example: 10000000, description: 'Mức lương đóng BHXH (nếu khác lương HĐ). Bỏ trống → dùng lương HĐ' })
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  insuranceSalary?: number;
+
   @ApiPropertyOptional({ enum: BudgetCurrency, default: BudgetCurrency.VND })
   @IsOptional()
   @IsEnum(BudgetCurrency)
