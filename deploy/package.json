@@ -1,0 +1,18 @@
+{
+  "name": "loop-erp-deploy",
+  "version": "7.0.0",
+  "description": "Loop ERP - Windows Server Deployment Package",
+  "scripts": {
+    "start": "start-all.bat",
+    "start:fe": "start-fe.bat",
+    "start:be": "start-be.bat"
+  },
+  "keywords": [
+    "loop",
+    "erp",
+    "windows",
+    "deployment"
+  ],
+  "author": "Loop Team",
+  "license": "PROPRIETARY"
+}

@@ -1,0 +1,129 @@
+================================================================================
+                    LOOP ERP - WINDOWS DEPLOY - QUICK START
+================================================================================
+
+STEP 1: On Your Dev Machine (Build)
+================================================================================
+
+  1. Open Command Prompt
+  2. Navigate to: cd path\to\Loop\deploy
+  3. Run: deploy.bat
+  4. Wait 3-5 minutes for build to complete
+  5. Output folder: deploy\output\ (ready to copy)
+
+STEP 2: Copy to Server
+================================================================================
+
+  Method A - Using SCP (Linux/Mac):
+    scp -r deploy\output\* user@192.168.1.100:/C/app/loop/
+
+  Method B - Using WinSCP:
+    1. Download WinSCP
+    2. Connect to server
+    3. Drag & drop deploy\output\ folder to server
+
+  Method C - Using RDP:
+    1. Connect via RDP
+    2. Copy-paste deploy\output\ folder
+    3. Paste on server (e.g., C:\app\loop\)
+
+Server folder structure:
+  C:\app\loop\
+    ├── fe\ (frontend static files)
+    ├── be\ (backend node app)
+    ├── start-fe.bat
+    ├── start-be.bat
+    └── start-all.bat
+
+STEP 3: Configure Server
+================================================================================
+
+  1. On server, edit: C:\app\loop\be\.env
+
+  2. Update these values:
+     - DATABASE_URL = "postgresql://user:pass@localhost:5432/loop_db"
+     - JWT_SECRET = "your-secret-key"
+     - FRONTEND_URL = "http://server-ip:5173"
+     - NODE_ENV = "production"
+
+  3. Install backend dependencies (if needed):
+     cd C:\app\loop\be
+     npm install --production
+
+STEP 4: Start Servers
+================================================================================
+
+  Option A - Simple (for testing):
+    cd C:\app\loop
+    start-all.bat
+
+    Opens 2 windows:
+    - Frontend: http://localhost:5173
+    - Backend: http://localhost:3000
+
+  Option B - Production (recommended):
+    1. Install PM2: npm install -g pm2
+    2. In C:\app\loop:
+       pm2 start "node dist/main.js" --name loop-backend --cwd ./be
+       pm2 start "npx http-server . -p 5173 -c-1" --name loop-frontend --cwd ./fe
+    3. pm2 save
+    4. pm2 startup (auto-restart on reboot)
+
+STEP 5: Verify
+================================================================================
+
+  ✓ Frontend loads: http://localhost:5173
+  ✓ Backend API works: http://localhost:3000/api/health
+  ✓ Can login to app
+  ✓ Database connected
+
+TROUBLESHOOTING
+================================================================================
+
+  "Port 3000 already in use":
+    netstat -ano | findstr :3000
+    taskkill /PID <PID> /F
+
+  "Cannot connect to database":
+    - Check .env DATABASE_URL
+    - Verify PostgreSQL is running
+    - Verify network connectivity to DB server
+
+  "CORS errors in browser":
+    - Update FRONTEND_URL in .env to correct IP/domain
+    - Restart backend: pm2 restart loop-backend
+
+  "High memory usage":
+    pm2 restart loop-backend
+    Check for memory leaks in code
+
+FULL DOCUMENTATION
+================================================================================
+
+  See: HUONG_DAN_DEPLOY.md (Tiếng Việt)
+
+  Topics:
+  - Detailed prerequisites
+  - Production setup (PM2, Nginx, IIS)
+  - Monitoring & logs
+  - Backup & update process
+  - Environment variables explained
+
+NEED HELP?
+================================================================================
+
+  1. Check logs:
+     pm2 logs loop-backend
+     pm2 logs loop-frontend
+
+  2. Check ports:
+     netstat -ano | findstr :3000
+     netstat -ano | findstr :5173
+
+  3. Read full guide: HUONG_DAN_DEPLOY.md
+
+  4. Contact: Your team lead / DevOps
+
+================================================================================
+                    Happy Deploying! 🚀
+================================================================================
