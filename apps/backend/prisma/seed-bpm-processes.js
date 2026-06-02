@@ -71,6 +71,37 @@ const DECISION = (label = 'Quyết định') => ({
 });
 const NOTE = { name: 'note', label: 'Ý kiến / Ghi chú', type: 'textarea', required: false };
 
+// Helper: bảng tiêu chí chấm điểm (criteria_grid). weight = trọng số %, tổng nên = 100.
+const GRID = (name, label, criteria, scoreMin = 1, scoreMax = 10) => ({
+  name, label, type: 'criteria_grid', required: true, criteria, scoreMin, scoreMax,
+});
+
+// Bộ tiêu chí đánh giá hiệu suất nhân sự (tổng trọng số = 100%)
+const PERF_CRITERIA = [
+  { key: 'completion',   label: 'Mức độ hoàn thành công việc', weight: 30 },
+  { key: 'quality',      label: 'Chất lượng & độ chính xác',    weight: 25 },
+  { key: 'expertise',    label: 'Kỹ năng chuyên môn',           weight: 15 },
+  { key: 'attitude',     label: 'Thái độ & kỷ luật',            weight: 15 },
+  { key: 'teamwork',     label: 'Phối hợp & tinh thần đồng đội', weight: 15 },
+];
+
+// Bộ tiêu chí đánh giá hết thử việc (tổng trọng số = 100%)
+const PROBATION_CRITERIA = [
+  { key: 'knowledge',    label: 'Kiến thức chuyên môn',         weight: 25 },
+  { key: 'performance',  label: 'Hiệu suất công việc',          weight: 25 },
+  { key: 'learning',     label: 'Khả năng học hỏi & tiếp thu',  weight: 20 },
+  { key: 'attitude',     label: 'Thái độ & tác phong',          weight: 15 },
+  { key: 'culture',      label: 'Hòa nhập văn hóa công ty',     weight: 15 },
+];
+
+// Bộ tiêu chí đánh giá gia hạn hợp đồng (tổng trọng số = 100%)
+const RENEWAL_CRITERIA = [
+  { key: 'results',      label: 'Kết quả công việc kỳ qua',     weight: 35 },
+  { key: 'growth',       label: 'Sự tiến bộ & phát triển',      weight: 25 },
+  { key: 'commitment',   label: 'Cam kết & gắn bó',             weight: 20 },
+  { key: 'attitude',     label: 'Thái độ & kỷ luật',            weight: 20 },
+];
+
 // Danh sách quy trình cần tạo
 const PROCESSES = [
   {
@@ -94,7 +125,7 @@ const PROCESSES = [
     ],
     taskForm: {
       ManagerReview: [
-        { name: 'score', label: 'Điểm đánh giá (1-10)', type: 'number', required: true, min: 1, max: 10 },
+        GRID('scoreGrid', 'Bảng tiêu chí đánh giá (thang 1–10)', PERF_CRITERIA),
         { name: 'strengths', label: 'Điểm mạnh', type: 'textarea', required: false },
         { name: 'improvements', label: 'Cần cải thiện', type: 'textarea', required: false },
       ],
@@ -112,6 +143,7 @@ const PROCESSES = [
     ],
     taskForm: {
       ManagerEvaluate: [
+        GRID('scoreGrid', 'Bảng tiêu chí đánh giá gia hạn (thang 1–10)', RENEWAL_CRITERIA),
         { name: 'recommendation', label: 'Đề xuất', type: 'select', required: true, options: [
           { label: 'Gia hạn', value: 'RENEW' }, { label: 'Không gia hạn', value: 'TERMINATE' }] },
         { name: 'newDuration', label: 'Thời hạn mới (tháng)', type: 'number', required: false },
@@ -130,8 +162,8 @@ const PROCESSES = [
     ],
     taskForm: {
       MentorEvaluate: [
-        { name: 'score', label: 'Điểm thử việc (1-10)', type: 'number', required: true, min: 1, max: 10 },
-        { name: 'comment', label: 'Nhận xét', type: 'textarea', required: true },
+        GRID('scoreGrid', 'Bảng tiêu chí đánh giá thử việc (thang 1–10)', PROBATION_CRITERIA),
+        { name: 'comment', label: 'Nhận xét tổng quan', type: 'textarea', required: true },
       ],
       ManagerDecide: [
         { name: 'result', label: 'Kết quả', type: 'select', required: true, options: [
