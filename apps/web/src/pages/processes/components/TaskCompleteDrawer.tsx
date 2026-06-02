@@ -167,6 +167,13 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
     }
   };
 
+  // Bước đầu "nhân viên tự đánh giá" = người thực hiện chính là người tạo đơn
+  // → không cho ủy quyền (không thể ủy quyền việc tự đánh giá của mình).
+  const requesterId = fullTask?.instance?.startedByUser?.id;
+  const assigneeId  = fullTask?.assignee?.id;
+  const isSelfStep  = !!requesterId && !!assigneeId && requesterId === assigneeId;
+  const canDelegate = !isSelfStep;
+
   const footerButtons = (
     <Space style={{ justifyContent: 'space-between', width: '100%', display: 'flex' }}>
       <Space>
@@ -175,9 +182,11 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
             Trả lại
           </Button>
         </Popconfirm>
-        <Button icon={<SwapOutlined />} onClick={() => setReassignOpen(true)}>
-          Ủy quyền
-        </Button>
+        {canDelegate && (
+          <Button icon={<SwapOutlined />} onClick={() => setReassignOpen(true)}>
+            Ủy quyền
+          </Button>
+        )}
       </Space>
       <Space>
         <Button onClick={onClose}>Đóng</Button>
