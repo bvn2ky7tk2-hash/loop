@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../common/services/redis.service';
+import { isTenantEnforced } from '../common/config/tenant.config';
 import { DashboardHrProvider } from './providers/dashboard-hr.provider';
 import { DashboardFinanceProvider } from './providers/dashboard-finance.provider';
 import { DashboardCrmProvider } from './providers/dashboard-crm.provider';
@@ -31,6 +32,9 @@ export class DashboardService {
   // ─── Helper cache wrapper ───────────────────────────────────────────────────
 
   private async cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+    // Fail-safe SaaS: nếu key rơi vào ':default' (tenantId rỗng) khi enforcement bật,
+    // KHÔNG cache để tránh đụng key chéo tenant. Data vẫn đúng (calc scoped bởi CLS extension).
+    if (isTenantEnforced() && /:(default|undefined|null)$/.test(key)) return fn();
     const hit = await this.redis.get(key).catch(() => null);
     if (hit) return JSON.parse(hit) as T;
     const data = await fn();

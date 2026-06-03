@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../common/services/redis.service';
+import { isTenantEnforced } from '../common/config/tenant.config';
 
 const CACHE_TTL = 300; // 5 phút
 
@@ -12,6 +13,9 @@ export class AnalyticsService {
   ) {}
 
   private async cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+    // Fail-safe SaaS: key ':default' (tenantId rỗng) khi enforcement bật → KHÔNG cache
+    // (tránh đụng key chéo tenant). Data vẫn đúng nhờ CLS extension scope.
+    if (isTenantEnforced() && /:(default|undefined|null)$/.test(key)) return fn();
     const hit = await this.redis.get(key).catch(() => null);
     if (hit) return JSON.parse(hit) as T;
     const data = await fn();
