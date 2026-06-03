@@ -1,37 +1,23 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Avatar,
   Tabs,
-  Descriptions,
-  Timeline,
   Table,
   Tag,
   Button,
   Form,
-  Input,
-  Select,
-  DatePicker,
   Space,
   Typography,
   Spin,
-  Row,
-  Col,
-  Badge,
-  InputNumber,
-  Switch,
+  Tooltip,
   Popconfirm,
   Empty,
-  Tooltip,
-  Divider,
 } from 'antd';
 import {
   FileProtectOutlined,
   FileTextOutlined,
   SafetyOutlined,
   ClockCircleOutlined,
-  CheckCircleOutlined,
-  StopOutlined,
   EditOutlined,
   PlusOutlined,
   UserOutlined,
@@ -46,84 +32,26 @@ import dayjs, { Dayjs } from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { CenteredModal } from '../../components/ui/CenteredModal';
-import { ProvinceWardSelect, CategorySelect } from '../../components/selects';
 import { hrProfileApi, type EducationRecord, type WorkExperience, type FamilyMember } from '../../api/hr-profile';
 import { formatCurrency } from '../../utils/format';
 
-const { Text, Title } = Typography;
+import {
+  STATUS_CONFIG,
+  CONTRACT_TYPE_LABEL,
+  DEGREE_LEVEL_LABEL,
+  RELATIONSHIP_LABEL,
+} from './employee-profile-360/constants';
+import { ProfileHeader } from './employee-profile-360/components/ProfileHeader';
+import { OverviewTab } from './employee-profile-360/components/OverviewTab';
+import { WorkHistoryTab } from './employee-profile-360/components/WorkHistoryTab';
+import { InsuranceTab } from './employee-profile-360/components/InsuranceTab';
+import { EditPersonalModal } from './employee-profile-360/components/EditPersonalModal';
+import { EducationModal } from './employee-profile-360/components/EducationModal';
+import { WorkExperienceModal } from './employee-profile-360/components/WorkExperienceModal';
+import { FamilyModal } from './employee-profile-360/components/FamilyModal';
+import { DependentModal } from './employee-profile-360/components/DependentModal';
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
-const EVENT_ICON: Record<string, React.ReactNode> = {
-  HR_DECISION: <FileProtectOutlined style={{ color: '#6366F1' }} />,
-  CONTRACT_SIGNED: <FileTextOutlined style={{ color: '#10B981' }} />,
-  INSURANCE_ENROLLED: <SafetyOutlined style={{ color: '#3B82F6' }} />,
-  PROBATION_STARTED: <ClockCircleOutlined style={{ color: '#F59E0B' }} />,
-  PROBATION_ENDED: <CheckCircleOutlined style={{ color: '#10B981' }} />,
-  TERMINATION: <StopOutlined style={{ color: '#EF4444' }} />,
-};
-
-const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
-  ACTIVE: { label: 'Đang làm việc', color: 'green' },
-  PROBATION: { label: 'Thử việc', color: 'blue' },
-  TERMINATED: { label: 'Đã nghỉ', color: 'default' },
-  ON_LEAVE: { label: 'Nghỉ phép', color: 'orange' },
-};
-
-const CONTRACT_TYPE_LABEL: Record<string, string> = {
-  INDEFINITE: 'Không xác định thời hạn',
-  FIXED_TERM_12: '12 tháng',
-  FIXED_TERM_24: '24 tháng',
-  SEASONAL: 'Thời vụ',
-  PROBATION: 'Thử việc',
-};
-
-const DEGREE_LEVEL_LABEL: Record<string, string> = {
-  PRIMARY: 'Tiểu học',
-  SECONDARY: 'THPT/THCS',
-  VOCATIONAL: 'Trung cấp',
-  COLLEGE: 'Cao đẳng',
-  BACHELOR: 'Đại học',
-  MASTER: 'Thạc sĩ',
-  DOCTORATE: 'Tiến sĩ',
-  OTHER: 'Khác',
-};
-
-const GENDER_LABEL: Record<string, string> = {
-  MALE: 'Nam',
-  FEMALE: 'Nữ',
-  OTHER: 'Khác',
-};
-
-const MARITAL_LABEL: Record<string, string> = {
-  SINGLE: 'Độc thân',
-  MARRIED: 'Đã kết hôn',
-  DIVORCED: 'Đã ly hôn',
-  WIDOWED: 'Góa',
-};
-
-const RELATIONSHIP_LABEL: Record<string, string> = {
-  SPOUSE: 'Vợ/Chồng',
-  PARENT: 'Cha/Mẹ',
-  CHILD: 'Con',
-  SIBLING: 'Anh/Chị/Em',
-  GRANDPARENT: 'Ông/Bà',
-  OTHER: 'Khác',
-};
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function getInitials(name: string): string {
-  return name.split(' ').filter(Boolean).slice(-2).map((w) => w[0].toUpperCase()).join('');
-}
-
-function avatarColor(name: string): string {
-  const colors = ['#6366F1', '#10B981', '#F59E0B', '#3B82F6', '#8B5CF6', '#EF4444', '#F97316'];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return colors[Math.abs(hash) % colors.length];
-}
+const { Text } = Typography;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -132,6 +60,7 @@ export default function EmployeeProfile360Page() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { textPrimary, textMuted, bgCard, borderColor, isDark, linkColor } = useThemePalette();
+  const palette = { textPrimary, textMuted, bgCard, borderColor, isDark, linkColor };
 
   const [editOpen, setEditOpen] = useState(false);
   const [editForm] = Form.useForm();
@@ -508,6 +437,19 @@ export default function EmployeeProfile360Page() {
     });
   };
 
+  const handleDependentSubmit = () => {
+    dependentForm.validateFields().then((vals) => {
+      if (!dependentTarget) return;
+      registerDependentMutation.mutate({
+        memberId: dependentTarget.id,
+        isDependent: true,
+        taxId: vals.taxId,
+        registeredFrom: (vals.registeredFrom as ReturnType<typeof dayjs>)?.format('YYYY-MM-DD'),
+        registeredTo: (vals.registeredTo as ReturnType<typeof dayjs> | undefined)?.format('YYYY-MM-DD'),
+      });
+    });
+  };
+
   const cardStyle = { background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: 20 };
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -520,178 +462,21 @@ export default function EmployeeProfile360Page() {
       </Button>
 
       {/* Header */}
-      <div style={{ ...cardStyle, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
-        <Avatar size={72} style={{ background: avatarColor(personal?.fullName ?? 'NV'), fontSize: 24, fontWeight: 700, flexShrink: 0 }}>
-          {getInitials(personal?.fullName ?? 'NV')}
-        </Avatar>
-        <div style={{ flex: 1, minWidth: 200 }}>
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>{personal?.fullName}</Title>
-          <Text style={{ color: textMuted, display: 'block', marginTop: 2 }}>
-            {personal?.position?.jobTitle?.name ?? personal?.position?.code ?? '—'} &nbsp;·&nbsp; {personal?.orgUnit?.name ?? '—'}
-          </Text>
-          <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-            <Tag
-              color={isDark ? undefined : statusCfg.color}
-              style={isDark && personal?.employeeStatus === 'ACTIVE' ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' }
-                : isDark && personal?.employeeStatus === 'PROBATION' ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}
-            >
-              {statusCfg.label}
-            </Tag>
-            <Text style={{ color: textMuted, fontSize: 12 }}>Mã NV: <Text style={{ color: textPrimary, fontWeight: 600 }}>{personal?.code}</Text></Text>
-            {personal?.startDate && <Text style={{ color: textMuted, fontSize: 12 }}>Ngày vào: {dayjs(personal.startDate).format('DD/MM/YYYY')}</Text>}
-            {personal?.tenure?.formatted && <Text style={{ color: textMuted, fontSize: 12 }}>Thâm niên: <Text style={{ color: textPrimary, fontWeight: 600 }}>{personal.tenure.formatted}</Text></Text>}
-            {personal?.phoneNumber && <Text style={{ color: textMuted, fontSize: 12 }}>SĐT: <a href={`tel:${personal.phoneNumber}`} style={{ color: linkColor }}>{personal.phoneNumber}</a></Text>}
-          </div>
-        </div>
-        <Space>
-          <Button icon={<EditOutlined />} onClick={handleOpenEdit}>Chỉnh sửa</Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate(`/hr/decisions?employeeId=${employeeId}`)}>Tạo quyết định</Button>
-        </Space>
-      </div>
+      <ProfileHeader
+        personal={personal}
+        statusCfg={statusCfg}
+        cardStyle={cardStyle}
+        palette={palette}
+        onEdit={handleOpenEdit}
+        onCreateDecision={() => navigate(`/hr/decisions?employeeId=${employeeId}`)}
+      />
 
       {/* Tabs */}
       <Tabs defaultActiveKey="overview" items={[
         {
           key: 'overview',
           label: <span><UserOutlined /> Tổng quan</span>,
-          children: (
-            <Row gutter={[16, 16]}>
-              {/* Thông tin cá nhân */}
-              <Col xs={24} md={12}>
-                <div style={cardStyle}>
-                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Thông tin cá nhân</Text>
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Ngày sinh</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.birthdate ? dayjs(personal.birthdate).format('DD/MM/YYYY') : '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Thâm niên công tác</Text>}>
-                      <Text style={{ color: textPrimary, fontWeight: 600 }}>
-                        {personal?.tenure?.formatted ?? '—'}
-                        {personal?.startDate ? <Text style={{ color: textMuted, fontWeight: 400 }}> (từ {dayjs(personal.startDate).format('DD/MM/YYYY')})</Text> : null}
-                      </Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Giới tính</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.gender ? GENDER_LABEL[personal.gender] ?? personal.gender : '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Tình trạng hôn nhân</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.maritalStatus ? MARITAL_LABEL[personal.maritalStatus] ?? personal.maritalStatus : '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Quê quán</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.hometown ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Nơi sinh</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.placeOfBirth ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Dân tộc</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.ethnicity ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Tôn giáo</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.religion ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Quốc tịch</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.nationality ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Email</Text>}>
-                      {personal?.email
-                        ? <a href={`mailto:${personal.email}`} style={{ color: linkColor }}>{personal.email}</a>
-                        : <Text style={{ color: textMuted }}>—</Text>}
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Điện thoại</Text>}>
-                      {personal?.phoneNumber
-                        ? <a href={`tel:${personal.phoneNumber}`} style={{ color: linkColor }}>{personal.phoneNumber}</a>
-                        : <Text style={{ color: textMuted }}>—</Text>}
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
-              </Col>
-
-              {/* Giấy tờ tùy thân */}
-              <Col xs={24} md={12}>
-                <div style={cardStyle}>
-                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Giấy tờ tùy thân</Text>
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Loại giấy tờ</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.idType ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Số CMND/CCCD</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.idNumber ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Ngày cấp</Text>}>
-                      <Text style={{ color: textMuted }}>{personal?.idIssueDate ? dayjs(personal.idIssueDate).format('DD/MM/YYYY') : '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Nơi cấp</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.idIssuePlace ?? '—'}</Text>
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
-
-                <div style={{ ...cardStyle, marginTop: 16 }}>
-                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Địa chỉ & Tài khoản ngân hàng</Text>
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Địa chỉ thường trú</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.permanentAddress ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Địa chỉ hiện tại</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.currentAddress ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Ngân hàng</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.bankName ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Số tài khoản</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.bankAccount ?? '—'}</Text>
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
-              </Col>
-
-              {/* Thuế & Cư trú */}
-              <Col xs={24} md={12}>
-                <div style={cardStyle}>
-                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Thuế & Cư trú</Text>
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Mã số thuế (MST)</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.taxId ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Trạng thái cư trú thuế</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.residencyStatus === 'RESIDENT' ? 'Cư trú' : personal?.taxInfo?.residencyStatus === 'NON_RESIDENT' ? 'Không cư trú' : '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Vùng lương tối thiểu</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.taxInfo?.wageZone ? `Vùng ${personal.taxInfo.wageZone}` : '—'}</Text>
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
-              </Col>
-
-              {/* Liên hệ khẩn cấp & Y tế */}
-              <Col xs={24} md={12}>
-                <div style={cardStyle}>
-                  <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Liên hệ khẩn cấp & Y tế</Text>
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Người liên hệ khẩn cấp</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.emergencyContactName ?? '—'}{personal?.emergencyContactRelation ? <Text style={{ color: textMuted }}> ({personal.emergencyContactRelation})</Text> : null}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>SĐT khẩn cấp</Text>}>
-                      {personal?.emergencyContactPhone
-                        ? <a href={`tel:${personal.emergencyContactPhone}`} style={{ color: linkColor }}>{personal.emergencyContactPhone}</a>
-                        : <Text style={{ color: textMuted }}>—</Text>}
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>SĐT phụ</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.secondaryPhone ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Nhóm máu</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.bloodType ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Tình trạng sức khỏe</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.healthNote ?? '—'}</Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={<Text style={{ color: textMuted }}>Người giám hộ</Text>}>
-                      <Text style={{ color: textPrimary }}>{personal?.guardianName ?? '—'}</Text>
-                    </Descriptions.Item>
-                  </Descriptions>
-                </div>
-              </Col>
-            </Row>
-          ),
+          children: <OverviewTab personal={personal} cardStyle={cardStyle} palette={palette} />,
         },
 
         // ── Học vấn ────────────────────────────────────────────────────────
@@ -755,18 +540,7 @@ export default function EmployeeProfile360Page() {
         {
           key: 'workHistory',
           label: <span><ClockCircleOutlined /> Công tác</span>,
-          children: profile.workHistory.length === 0
-            ? <Text style={{ color: textMuted }}>Chưa có lịch sử công tác</Text>
-            : <Timeline items={profile.workHistory.map((ev) => ({
-                dot: EVENT_ICON[ev.eventType] ?? <ClockCircleOutlined />,
-                children: (
-                  <div>
-                    <Text strong style={{ color: textPrimary }}>{ev.title}</Text>
-                    <Text style={{ color: textMuted, marginLeft: 8, fontSize: 12 }}>{dayjs(ev.eventDate).format('DD/MM/YYYY')}</Text>
-                    {ev.description && <div><Text style={{ color: textMuted, fontSize: 13 }}>{ev.description}</Text></div>}
-                  </div>
-                ),
-              }))} />,
+          children: <WorkHistoryTab workHistory={profile.workHistory} palette={palette} />,
         },
 
         { key: 'salary', label: <span><FileTextOutlined /> Lương</span>, children: <Table rowKey="id" columns={salaryColumns} dataSource={profile.salaryHistory} pagination={false} size="middle" /> },
@@ -774,25 +548,7 @@ export default function EmployeeProfile360Page() {
         {
           key: 'insurance',
           label: <span><SafetyOutlined /> BHXH</span>,
-          children: profile.insurance ? (
-            <div style={{ ...cardStyle, maxWidth: 480 }}>
-              <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 14, fontSize: 14 }}>Thông tin BHXH</Text>
-              <Descriptions column={1} size="small">
-                <Descriptions.Item label={<Text style={{ color: textMuted }}>Trạng thái</Text>}>
-                  <Badge status={profile.insurance.status === 'ACTIVE' ? 'success' : 'default'} text={<Text style={{ color: textPrimary }}>{profile.insurance.status === 'ACTIVE' ? 'Đang đóng' : profile.insurance.status}</Text>} />
-                </Descriptions.Item>
-                <Descriptions.Item label={<Text style={{ color: textMuted }}>Mức đóng</Text>}>
-                  <Text style={{ color: textPrimary, fontWeight: 600 }}>{formatCurrency(profile.insurance.insuranceSalary)}</Text>
-                </Descriptions.Item>
-                <Descriptions.Item label={<Text style={{ color: textMuted }}>Ngày bắt đầu</Text>}>
-                  <Text style={{ color: textMuted }}>{dayjs(profile.insurance.startDate).format('DD/MM/YYYY')}</Text>
-                </Descriptions.Item>
-                <Descriptions.Item label={<Text style={{ color: textMuted }}>Số sổ BHXH</Text>}>
-                  <Text style={{ color: textPrimary }}>{profile.insurance.bhxhBookNumber ?? '—'}</Text>
-                </Descriptions.Item>
-              </Descriptions>
-            </div>
-          ) : <Text style={{ color: textMuted }}>Chưa có thông tin BHXH</Text>,
+          children: <InsuranceTab insurance={profile.insurance} cardStyle={cardStyle} palette={palette} />,
         },
 
         { key: 'contracts', label: <span><FileProtectOutlined /> Hợp đồng</span>, children: <Table rowKey="id" columns={contractColumns} dataSource={profile.contracts} pagination={false} size="middle" /> },
@@ -802,259 +558,55 @@ export default function EmployeeProfile360Page() {
       ]} />
 
       {/* ── Modal sửa thông tin cá nhân ────────────────────────────────────── */}
-      <CenteredModal open={editOpen} onClose={() => { setEditOpen(false); editForm.resetFields(); }}
-        title="Chỉnh sửa thông tin cá nhân" width={700}
-        footer={
-          <Space>
-            <Button onClick={() => { setEditOpen(false); editForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleEditSubmit} loading={updateMutation.isPending}>Lưu thay đổi</Button>
-          </Space>
-        }
-      >
-        <Form form={editForm} layout="vertical">
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="fullName" label="Họ và tên"><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="email" label="Email"><Input type="email" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={8}><Form.Item name="birthdate" label="Ngày sinh"><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item></Col>
-            <Col span={8}>
-              <Form.Item name="gender" label="Giới tính">
-                <Select allowClear placeholder="Chọn giới tính">
-                  <Select.Option value="MALE">Nam</Select.Option>
-                  <Select.Option value="FEMALE">Nữ</Select.Option>
-                  <Select.Option value="OTHER">Khác</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item name="maritalStatus" label="Tình trạng hôn nhân">
-                <Select allowClear placeholder="Chọn tình trạng">
-                  <Select.Option value="SINGLE">Độc thân</Select.Option>
-                  <Select.Option value="MARRIED">Đã kết hôn</Select.Option>
-                  <Select.Option value="DIVORCED">Đã ly hôn</Select.Option>
-                  <Select.Option value="WIDOWED">Góa</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="phoneNumber" label="Số điện thoại"><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="nationality" label="Quốc tịch"><Input placeholder="VD: Việt Nam" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="hometown" label="Quê quán"><ProvinceWardSelect /></Form.Item></Col>
-            <Col span={12}><Form.Item name="placeOfBirth" label="Nơi sinh"><Input placeholder="VD: Hà Nội" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="ethnicity" label="Dân tộc"><CategorySelect type="ethnicity" placeholder="Chọn dân tộc" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="religion" label="Tôn giáo"><CategorySelect type="religion" placeholder="Chọn tôn giáo" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item name="idType" label="Loại giấy tờ">
-                <Select allowClear>
-                  <Select.Option value="CCCD">CCCD</Select.Option>
-                  <Select.Option value="CMND">CMND</Select.Option>
-                  <Select.Option value="PASSPORT">Hộ chiếu</Select.Option>
-                  <Select.Option value="OTHER">Khác</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}><Form.Item name="idNumber" label="Số giấy tờ"><Input /></Form.Item></Col>
-            <Col span={8}><Form.Item name="idIssueDate" label="Ngày cấp"><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}><Form.Item name="idIssuePlace" label="Nơi cấp"><Input /></Form.Item></Col>
-          </Row>
-          <Form.Item name="permanentAddress" label="Địa chỉ thường trú (Tỉnh/Phường)"><ProvinceWardSelect /></Form.Item>
-          <Form.Item name="currentAddress" label="Địa chỉ tạm trú (Tỉnh/Phường)"><ProvinceWardSelect /></Form.Item>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="bankName" label="Ngân hàng"><Input placeholder="VD: Vietcombank" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="bankAccount" label="Số tài khoản"><Input /></Form.Item></Col>
-          </Row>
-
-          <Divider style={{ margin: '8px 0 16px' }}>Liên hệ khẩn cấp & Y tế</Divider>
-          <Row gutter={16}>
-            <Col span={8}><Form.Item name="emergencyContactName" label="Người liên hệ khẩn cấp"><Input placeholder="Họ tên" /></Form.Item></Col>
-            <Col span={8}><Form.Item name="emergencyContactPhone" label="SĐT khẩn cấp"><Input /></Form.Item></Col>
-            <Col span={8}><Form.Item name="emergencyContactRelation" label="Quan hệ"><Input placeholder="VD: Vợ/Chồng, Cha/Mẹ" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={8}><Form.Item name="secondaryPhone" label="SĐT phụ"><Input /></Form.Item></Col>
-            <Col span={8}><Form.Item name="bloodType" label="Nhóm máu"><Select allowClear placeholder="Chọn"><Select.Option value="A">A</Select.Option><Select.Option value="B">B</Select.Option><Select.Option value="AB">AB</Select.Option><Select.Option value="O">O</Select.Option></Select></Form.Item></Col>
-            <Col span={8}><Form.Item name="guardianName" label="Người giám hộ"><Input placeholder="Nếu có" /></Form.Item></Col>
-          </Row>
-          <Form.Item name="healthNote" label="Tình trạng sức khỏe"><Input.TextArea rows={2} placeholder="Ghi chú sức khỏe, dị ứng, bệnh nền…" /></Form.Item>
-        </Form>
-      </CenteredModal>
+      <EditPersonalModal
+        open={editOpen}
+        form={editForm}
+        loading={updateMutation.isPending}
+        onClose={() => { setEditOpen(false); editForm.resetFields(); }}
+        onSubmit={handleEditSubmit}
+      />
 
       {/* ── Modal thêm/sửa học vấn ─────────────────────────────────────────── */}
-      <CenteredModal open={eduOpen} onClose={() => { setEduOpen(false); setEditingEdu(null); eduForm.resetFields(); }}
-        title={editingEdu ? 'Sửa bằng cấp / học vấn' : 'Thêm bằng cấp / học vấn'} width={560}
-        footer={
-          <Space>
-            <Button onClick={() => { setEduOpen(false); setEditingEdu(null); eduForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleEduSubmit} loading={createEduMutation.isPending || updateEduMutation.isPending}>
-              {editingEdu ? 'Lưu thay đổi' : 'Thêm mới'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={eduForm} layout="vertical">
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="degreeLevel" label="Trình độ học vấn" rules={[{ required: true }]}>
-                <Select placeholder="Chọn trình độ">
-                  {Object.entries(DEGREE_LEVEL_LABEL).map(([k, v]) => <Select.Option key={k} value={k}>{v}</Select.Option>)}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="isMainDegree" label="Bằng chính" valuePropName="checked">
-                <Switch />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="schoolName" label="Tên trường" rules={[{ required: true }]}><Input placeholder="VD: Đại học Bách Khoa Hà Nội" /></Form.Item>
-          <Form.Item name="major" label="Chuyên ngành"><Input placeholder="VD: Công nghệ thông tin" /></Form.Item>
-          <Row gutter={16}>
-            <Col span={8}><Form.Item name="startYear" label="Năm bắt đầu"><InputNumber style={{ width: '100%' }} min={1950} max={2100} /></Form.Item></Col>
-            <Col span={8}><Form.Item name="endYear" label="Năm kết thúc"><InputNumber style={{ width: '100%' }} min={1950} max={2100} /></Form.Item></Col>
-            <Col span={8}><Form.Item name="graduationYear" label="Năm tốt nghiệp"><InputNumber style={{ width: '100%' }} min={1950} max={2100} /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="result" label="Kết quả / Xếp loại"><Input placeholder="VD: Giỏi, 3.5/4.0" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="certificateNumber" label="Số bằng / chứng chỉ"><Input /></Form.Item></Col>
-          </Row>
-          <Form.Item name="description" label="Ghi chú"><Input.TextArea rows={2} /></Form.Item>
-        </Form>
-      </CenteredModal>
+      <EducationModal
+        open={eduOpen}
+        form={eduForm}
+        editing={editingEdu}
+        loading={createEduMutation.isPending || updateEduMutation.isPending}
+        onClose={() => { setEduOpen(false); setEditingEdu(null); eduForm.resetFields(); }}
+        onSubmit={handleEduSubmit}
+      />
 
       {/* ── Modal thêm/sửa kinh nghiệm ────────────────────────────────────── */}
-      <CenteredModal open={expOpen} onClose={() => { setExpOpen(false); setEditingExp(null); expForm.resetFields(); }}
-        title={editingExp ? 'Sửa kinh nghiệm làm việc' : 'Thêm kinh nghiệm làm việc'} width={520}
-        footer={
-          <Space>
-            <Button onClick={() => { setExpOpen(false); setEditingExp(null); expForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleExpSubmit} loading={createExpMutation.isPending || updateExpMutation.isPending}>
-              {editingExp ? 'Lưu thay đổi' : 'Thêm mới'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={expForm} layout="vertical">
-          <Form.Item name="companyName" label="Tên công ty" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="position" label="Chức danh / Vị trí"><Input /></Form.Item>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="startDate" label="Từ tháng"><DatePicker picker="month" style={{ width: '100%' }} format="MM/YYYY" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="endDate" label="Đến tháng"><DatePicker picker="month" style={{ width: '100%' }} format="MM/YYYY" placeholder="Để trống nếu vẫn đang làm" /></Form.Item></Col>
-          </Row>
-          <Form.Item name="description" label="Mô tả công việc"><Input.TextArea rows={3} /></Form.Item>
-        </Form>
-      </CenteredModal>
+      <WorkExperienceModal
+        open={expOpen}
+        form={expForm}
+        editing={editingExp}
+        loading={createExpMutation.isPending || updateExpMutation.isPending}
+        onClose={() => { setExpOpen(false); setEditingExp(null); expForm.resetFields(); }}
+        onSubmit={handleExpSubmit}
+      />
 
       {/* ── Modal đăng ký Người phụ thuộc ────────────────────────────────── */}
-      <CenteredModal
+      <DependentModal
         open={dependentOpen}
+        form={dependentForm}
+        target={dependentTarget}
+        loading={registerDependentMutation.isPending}
+        palette={palette}
         onClose={() => { setDependentOpen(false); setDependentTarget(null); dependentForm.resetFields(); }}
-        title={dependentTarget?.dependent ? 'Cập nhật đăng ký người phụ thuộc' : `Đăng ký người phụ thuộc — ${dependentTarget?.fullName ?? ''}`}
-        width={480}
-        footer={
-          <Space>
-            <Button onClick={() => { setDependentOpen(false); setDependentTarget(null); dependentForm.resetFields(); }}>Hủy</Button>
-            {dependentTarget?.dependent && (
-              <Button
-                danger
-                loading={registerDependentMutation.isPending}
-                onClick={() => dependentTarget && registerDependentMutation.mutate({ memberId: dependentTarget.id, isDependent: false })}
-              >
-                Hủy đăng ký
-              </Button>
-            )}
-            <Button
-              type="primary"
-              loading={registerDependentMutation.isPending}
-              onClick={() => {
-                dependentForm.validateFields().then((vals) => {
-                  if (!dependentTarget) return;
-                  registerDependentMutation.mutate({
-                    memberId: dependentTarget.id,
-                    isDependent: true,
-                    taxId: vals.taxId,
-                    registeredFrom: (vals.registeredFrom as ReturnType<typeof dayjs>)?.format('YYYY-MM-DD'),
-                    registeredTo: (vals.registeredTo as ReturnType<typeof dayjs> | undefined)?.format('YYYY-MM-DD'),
-                  });
-                });
-              }}
-            >
-              {dependentTarget?.dependent ? 'Lưu thay đổi' : 'Đăng ký'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={dependentForm} layout="vertical">
-          <Form.Item name="taxId" label="Mã số thuế / Số CCCD người phụ thuộc">
-            <Input placeholder="Nhập MST hoặc số CCCD" />
-          </Form.Item>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="registeredFrom" label="Ngày bắt đầu tính giảm trừ" rules={[{ required: true, message: 'Chọn ngày' }]}>
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="registeredTo" label="Ngày kết thúc (để trống nếu vô thời hạn)">
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-          </Row>
-          {dependentTarget && (
-            <div style={{ padding: '10px 12px', background: isDark ? 'rgba(99,102,241,0.1)' : '#EEF2FF', borderRadius: 8, fontSize: 13 }}>
-              <Text style={{ color: textMuted }}>Thông tin từ hồ sơ: </Text>
-              <Text style={{ color: textPrimary }}>{dependentTarget.fullName}</Text>
-              <Text style={{ color: textMuted }}> · {RELATIONSHIP_LABEL[dependentTarget.relationship] ?? dependentTarget.relationship}</Text>
-              {dependentTarget.birthdate && <Text style={{ color: textMuted }}> · {dayjs(dependentTarget.birthdate).format('DD/MM/YYYY')}</Text>}
-            </div>
-          )}
-        </Form>
-      </CenteredModal>
+        onSubmit={handleDependentSubmit}
+        onUnregister={() => dependentTarget && registerDependentMutation.mutate({ memberId: dependentTarget.id, isDependent: false })}
+      />
 
       {/* ── Modal thêm/sửa gia đình ───────────────────────────────────────── */}
-      <CenteredModal open={familyOpen} onClose={() => { setFamilyOpen(false); setEditingFamily(null); familyForm.resetFields(); }}
-        title={editingFamily ? 'Sửa thông tin thân nhân' : 'Thêm thân nhân'} width={520}
-        footer={
-          <Space>
-            <Button onClick={() => { setFamilyOpen(false); setEditingFamily(null); familyForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleFamilySubmit} loading={createFamilyMutation.isPending || updateFamilyMutation.isPending}>
-              {editingFamily ? 'Lưu thay đổi' : 'Thêm mới'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={familyForm} layout="vertical">
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item name="relationship" label="Quan hệ" rules={[{ required: true }]}>
-                <Select placeholder="Chọn quan hệ">
-                  {Object.entries(RELATIONSHIP_LABEL).map(([k, v]) => <Select.Option key={k} value={k}>{v}</Select.Option>)}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}><Form.Item name="fullName" label="Họ và tên" rules={[{ required: true }]}><Input /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="birthdate" label="Ngày sinh"><DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" /></Form.Item></Col>
-            <Col span={12}><Form.Item name="idNumber" label="Số CCCD / MST"><Input placeholder="CCCD hoặc MST cá nhân" /></Form.Item></Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}><Form.Item name="occupation" label="Nghề nghiệp"><Input /></Form.Item></Col>
-            <Col span={12}><Form.Item name="phoneNumber" label="Số điện thoại"><Input /></Form.Item></Col>
-          </Row>
-          <Form.Item name="address" label="Địa chỉ"><Input /></Form.Item>
-          <Form.Item name="note" label="Ghi chú"><Input.TextArea rows={2} /></Form.Item>
-        </Form>
-      </CenteredModal>
+      <FamilyModal
+        open={familyOpen}
+        form={familyForm}
+        editing={editingFamily}
+        loading={createFamilyMutation.isPending || updateFamilyMutation.isPending}
+        onClose={() => { setFamilyOpen(false); setEditingFamily(null); familyForm.resetFields(); }}
+        onSubmit={handleFamilySubmit}
+      />
     </div>
   );
 }
