@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-const MODULE_DEFAULTS = [
+export const MODULE_DEFAULTS = [
   { moduleId: 'work',    displayName: 'Công việc',   description: 'Task, Bug, Timesheet cá nhân, BPM Inbox', isCore: true,  isEnabled: true },
   { moduleId: 'people',  displayName: 'Nhân sự',     description: 'Quản lý nhân viên, payroll, nghỉ phép',   isCore: false, isEnabled: true },
   { moduleId: 'finance', displayName: 'Tài chính',   description: 'Chi phí, hóa đơn, kế toán, ngân sách',   isCore: false, isEnabled: true },

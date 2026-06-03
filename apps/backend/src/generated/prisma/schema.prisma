@@ -394,6 +394,8 @@ model TimeLog {
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([tenantId, logDate])
+  @@index([tenantId, userId, logDate])
   @@index([tenantId])
   @@map("time_logs")
 }
@@ -436,6 +438,7 @@ model TimeEntry {
   tenant   Tenant? @relation("TenantTimeEntries", fields: [tenantId], references: [id])
 
   @@unique([userId, date])
+  @@index([tenantId, date])
   @@index([tenantId])
   @@map("time_entries")
 }
@@ -1230,6 +1233,8 @@ model LeaveRequest {
   @@index([employeeId])
   @@index([status])
   @@index([processInstanceId])
+  @@index([tenantId, status, startDate])
+  @@index([tenantId, employeeId])
   @@index([tenantId])
   @@map("leave_requests")
 }
@@ -1420,6 +1425,7 @@ model Expense {
   @@index([submittedById])
   @@index([status])
   @@index([processInstanceId])
+  @@index([tenantId, status, createdAt])
   @@index([tenantId])
   @@map("expenses")
 }

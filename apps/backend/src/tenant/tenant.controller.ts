@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { ProvisionTenantDto } from './dto/provision-tenant.dto';
+import { PlatformAdminGuard } from '../common/guards/platform-admin.guard';
 import { Public } from '../common/decorators/public.decorator';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -53,10 +55,20 @@ export class TenantController {
     return this.tenantService.findOne(id, user?.tenantId ?? null);
   }
 
-  @Post()
-  @Roles(Role.ADMIN)
+  // Provision tenant đầy đủ: tạo tenant + bật/tắt module + cấp admin tenant.
+  // Chỉ PLATFORM ADMIN (tạo tenant là thao tác cấp nền tảng).
+  @Post('provision')
+  @UseGuards(PlatformAdminGuard)
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
-  @ApiOperation({ summary: 'Tạo tenant mới (ADMIN)' })
+  @ApiOperation({ summary: 'Provision tenant mới (platform admin): tenant + module config + admin' })
+  provision(@Body() dto: ProvisionTenantDto) {
+    return this.tenantService.provision(dto);
+  }
+
+  @Post()
+  @UseGuards(PlatformAdminGuard)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @ApiOperation({ summary: 'Tạo tenant trống (platform admin)' })
   create(@Body() dto: CreateTenantDto) {
     return this.tenantService.create(dto);
   }
