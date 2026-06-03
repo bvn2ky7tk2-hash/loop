@@ -23,6 +23,9 @@ export class UsersController {
     return this.service.create(dto);
   }
 
+  // Phục vụ dropdown "chọn người" dùng chung khắp UI (giao việc, người duyệt, mention…).
+  // Giữ nhẹ: chỉ cần đăng nhập (JwtAuthGuard global) + đã scope theo org (req.orgUnitIds)
+  // và service chỉ trả về field tối thiểu. Yêu cầu admin:users sẽ chặn nhầm các form thường.
   @Get()
   @ApiOperation({ summary: 'Danh sách người dùng (scoped by org) hoặc tìm kiếm' })
   findAll(

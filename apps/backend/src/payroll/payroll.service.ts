@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
   Inject,
   Scope,
 } from '@nestjs/common';
@@ -9,7 +10,7 @@ import { REQUEST } from '@nestjs/core';
 import ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { PayrollStatus, PayrollPeriodType } from '../generated/prisma';
+import { PayrollStatus, PayrollPeriodType, Role } from '../generated/prisma';
 import { CreatePayrollPeriodDto } from './dto/create-payroll-period.dto';
 import { UpdatePayrollRecordDto } from './dto/update-payroll-record.dto';
 import { paginate, PaginatedResult } from '../common/dto/pagination.dto';
@@ -240,9 +241,25 @@ export class PayrollService extends TenantAwareService {
     return updated;
   }
 
+  // ── Kiểm tra quyền sở hữu bản ghi lương ──────────────────────────────────
+  // Chủ sở hữu (employee.userId === user.id) HOẶC ADMIN/LEADERSHIP mới được xem.
+  async assertOwnerOrAdmin(recordId: string, user: { id: string; role: Role }): Promise<void> {
+    const record = await this.prisma.payrollRecord.findUnique({
+      where: { id: recordId },
+      select: { employee: { select: { userId: true } } },
+    });
+    if (!record) throw new NotFoundException(`PayrollRecord ${recordId} không tìm thấy`);
+
+    const isAdmin = user.role === Role.ADMIN || user.role === Role.LEADERSHIP;
+    if (!isAdmin && record.employee.userId !== user.id) {
+      throw new ForbiddenException('Bạn không có quyền xem phiếu lương này');
+    }
+  }
+
   // ── Lấy presigned URL của phiếu lương PDF ────────────────────────────────
-  // requestUserId kept for API compatibility but ownership check removed (admin access needed)
-  async getPayslipUrl(recordId: string, _requestUserId?: string): Promise<{ url: string | null; pending: boolean }> {
+  async getPayslipUrl(recordId: string, user: { id: string; role: Role }): Promise<{ url: string | null; pending: boolean }> {
+    await this.assertOwnerOrAdmin(recordId, user);
+
     const record = await this.prisma.payrollRecord.findUnique({
       where: { id: recordId },
       select: { payslipPath: true },
@@ -371,7 +388,9 @@ export class PayrollService extends TenantAwareService {
 
   // ── L-10: Payslip Excel ───────────────────────────────────────────────────
 
-  async generatePayslipExcel(recordId: string): Promise<Buffer> {
+  async generatePayslipExcel(recordId: string, user: { id: string; role: Role }): Promise<Buffer> {
+    await this.assertOwnerOrAdmin(recordId, user);
+
     const record = await this.prisma.payrollRecord.findUnique({
       where: { id: recordId },
       include: {

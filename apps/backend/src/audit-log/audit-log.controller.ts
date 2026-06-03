@@ -1,4 +1,5 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import type { Response } from 'express';
 import * as ExcelJS from 'exceljs';
@@ -30,6 +31,7 @@ export class AuditLogController {
   }
 
   @Get('export')
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Export audit logs sang Excel (Admin only)' })
   async export(@Query() query: AuditLogQueryDto, @Res() res: Response) {

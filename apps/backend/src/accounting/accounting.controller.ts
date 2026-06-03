@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Query, Param, Res } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { AccountingService } from './accounting.service';
 import { CreateJournalDto } from './dto/create-journal.dto';
@@ -83,6 +84,7 @@ export class AccountingController {
   // ── L-07: Export Excel báo cáo lãi lỗ ────────────────────────────────────
 
   @Get('reports/profit-loss/export')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission('financial_reports:export', 'finance:export')
   async exportProfitLoss(
     @Query('startDate') startDate: string,
@@ -100,6 +102,7 @@ export class AccountingController {
   // ── Export Excel bảng cân đối kế toán ────────────────────────────────────
 
   @Get('reports/balance-sheet/export')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission('financial_reports:export', 'finance:export')
   async exportBalanceSheet(
     @Query('asOfDate') asOfDate: string,
@@ -117,6 +120,7 @@ export class AccountingController {
   // ── Export Excel báo cáo KQKD ─────────────────────────────────────────────
 
   @Get('reports/income-statement/export')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission('financial_reports:export', 'finance:export')
   async exportIncomeStatement(
     @Query('from') from: string,
@@ -134,6 +138,7 @@ export class AccountingController {
   // ── Export Excel lưu chuyển tiền tệ ──────────────────────────────────────
 
   @Get('reports/cash-flow/export')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @RequirePermission('financial_reports:export', 'finance:export')
   async exportCashFlow(
     @Query('from') from: string,

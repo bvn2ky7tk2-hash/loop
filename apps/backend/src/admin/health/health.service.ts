@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, NotFoundException, ForbiddenException } from '@nestjs/common';
 
 interface DemoSnapshot {
   id: string;
@@ -22,9 +22,28 @@ import { PrismaService } from '../../prisma/prisma.service';
 import Redis from 'ioredis';
 import { Queue } from 'bullmq';
 import { validateEnv } from '../../common/env-validation';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { isTenantEnforced } from '../../common/config/tenant.config';
+
+// Demo/reset là thao tác destructive (TRUNCATE toàn DB). Ở môi trường multi-tenant (SaaS)
+// một ADMIN của tenant bất kỳ KHÔNG được phép xóa data của mọi tenant. Chỉ cho phép ở
+// on-prem/dev (single-tenant). isTenantEnforced() trả true mặc định, false khi onprem.
+function assertDemoAllowed() {
+  if (isTenantEnforced()) {
+    throw new ForbiddenException('Thao tác demo/reset bị vô hiệu ở môi trường multi-tenant');
+  }
+}
+
+// Định danh DB (host/database/user) chỉ chứa ký tự an toàn — chặn shell/arg injection
+// khi truyền vào pg_dump/psql.
+const SAFE_IDENTIFIER = /^[A-Za-z0-9_.-]+$/;
+function assertSafeDbParam(value: string, field: string) {
+  if (!SAFE_IDENTIFIER.test(value)) {
+    throw new BadRequestException(`Tham số DB không hợp lệ (${field})`);
+  }
+}
 
 @Injectable()
 export class HealthService {
@@ -190,10 +209,15 @@ export class HealthService {
   }
 
   async createSnapshot(label?: string) {
+    assertDemoAllowed();
+
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
     const db = this.parseDbUrl(dbUrl);
+    assertSafeDbParam(db.host, 'host');
+    assertSafeDbParam(db.database, 'database');
+    assertSafeDbParam(db.user, 'user');
     this.ensureDir();
 
     const id = `snap_${Date.now()}`;
@@ -203,11 +227,21 @@ export class HealthService {
     const displayLabel = label?.trim() || `Snapshot ${new Date(createdAt).toLocaleString('vi-VN')}`;
 
     try {
-      const cmd = `pg_dump --data-only --column-inserts --disable-triggers --no-owner --no-acl -h ${db.host} -p ${db.port} -U ${db.user} -f "${filePath}" ${db.database}`;
-      execSync(cmd, {
-        stdio: 'pipe',
-        env: { ...process.env, PGPASSWORD: db.password },
-      });
+      execFileSync(
+        'pg_dump',
+        [
+          '--data-only', '--column-inserts', '--disable-triggers', '--no-owner', '--no-acl',
+          '-h', db.host,
+          '-p', String(db.port),
+          '-U', db.user,
+          '-f', filePath,
+          db.database,
+        ],
+        {
+          stdio: 'pipe',
+          env: { ...process.env, PGPASSWORD: db.password },
+        },
+      );
 
       const result = await this.prisma.$queryRaw<[{ total: bigint }]>`
         SELECT SUM(n_live_tup)::bigint AS total FROM pg_stat_user_tables
@@ -229,6 +263,8 @@ export class HealthService {
   }
 
   async resetDemo(snapshotId: string) {
+    assertDemoAllowed();
+
     const snapshots = this.readIndex();
     const snap = snapshots.find(s => s.id === snapshotId);
     if (!snap) throw new BadRequestException(`Snapshot "${snapshotId}" không tồn tại`);
@@ -238,6 +274,9 @@ export class HealthService {
     if (!dbUrl) throw new InternalServerErrorException('DATABASE_URL chưa được cấu hình');
 
     const db = this.parseDbUrl(dbUrl);
+    assertSafeDbParam(db.host, 'host');
+    assertSafeDbParam(db.database, 'database');
+    assertSafeDbParam(db.user, 'user');
 
     try {
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'replica'`);
@@ -256,11 +295,20 @@ export class HealthService {
       `);
       await this.prisma.$executeRawUnsafe(`SET session_replication_role = 'DEFAULT'`);
 
-      const cmd = `psql -h ${db.host} -p ${db.port} -U ${db.user} -d ${db.database} -f "${snap.filePath}"`;
-      execSync(cmd, {
-        stdio: 'pipe',
-        env: { ...process.env, PGPASSWORD: db.password },
-      });
+      execFileSync(
+        'psql',
+        [
+          '-h', db.host,
+          '-p', String(db.port),
+          '-U', db.user,
+          '-d', db.database,
+          '-f', snap.filePath,
+        ],
+        {
+          stdio: 'pipe',
+          env: { ...process.env, PGPASSWORD: db.password },
+        },
+      );
 
       const now = new Date().toISOString();
       const updated = snapshots.map(s => s.id === snapshotId ? { ...s, lastUsedAt: now } : s);

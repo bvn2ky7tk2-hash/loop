@@ -2,6 +2,7 @@ import {
   Controller, Get, Post, Put, Delete, Body, Param, Query, Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginationDto } from '../common/dto/pagination.dto';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -40,6 +41,7 @@ export class TasksController {
   }
 
   @Get('tasks/export')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @Roles(Role.ADMIN, Role.PM)
   @RequirePermission(PERMISSIONS.TASKS_READ)
   @ApiOperation({ summary: 'Export danh sách task ra Excel' })

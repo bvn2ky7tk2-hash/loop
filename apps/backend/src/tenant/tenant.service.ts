@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { CreateTenantDto } from './dto/create-tenant.dto';
@@ -7,11 +7,22 @@ import { CreateTenantDto } from './dto/create-tenant.dto';
 export class TenantService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.tenant.findMany({ orderBy: { createdAt: 'desc' } });
+  // Hệ thống không có super-admin: ADMIN chỉ thao tác trên CHÍNH tenant của mình.
+  private assertSameTenant(id: string, currentTenantId: string | null) {
+    if (!currentTenantId || id !== currentTenantId) {
+      throw new ForbiddenException('Không có quyền trên tenant khác');
+    }
   }
 
-  async findOne(id: string) {
+  // ADMIN tenant chỉ thấy tenant hiện hành (không liệt kê mọi tenant).
+  async findAll(currentTenantId: string | null) {
+    if (!currentTenantId) throw new ForbiddenException('Không có quyền trên tenant khác');
+    const t = await this.prisma.tenant.findUnique({ where: { id: currentTenantId } });
+    return t ? [t] : [];
+  }
+
+  async findOne(id: string, currentTenantId: string | null) {
+    this.assertSameTenant(id, currentTenantId);
     const t = await this.prisma.tenant.findUnique({ where: { id } });
     if (!t) throw new NotFoundException('Tenant không tồn tại');
     return t;
@@ -21,8 +32,10 @@ export class TenantService {
     return this.prisma.tenant.create({ data: dto });
   }
 
-  async deactivate(id: string) {
-    await this.findOne(id); // throws if not found
+  async deactivate(id: string, currentTenantId: string | null) {
+    this.assertSameTenant(id, currentTenantId);
+    const t = await this.prisma.tenant.findUnique({ where: { id } });
+    if (!t) throw new NotFoundException('Tenant không tồn tại');
     return this.prisma.tenant.update({ where: { id }, data: { isActive: false } });
   }
 
@@ -39,7 +52,10 @@ export class TenantService {
     return t;
   }
 
-  async update(id: string, dto: UpdateTenantDto) {
+  async update(id: string, dto: UpdateTenantDto, currentTenantId: string | null) {
+    this.assertSameTenant(id, currentTenantId);
+    const t = await this.prisma.tenant.findUnique({ where: { id } });
+    if (!t) throw new NotFoundException('Tenant không tồn tại');
     return this.prisma.tenant.update({ where: { id }, data: dto });
   }
 }

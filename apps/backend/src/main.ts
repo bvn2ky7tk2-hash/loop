@@ -54,15 +54,18 @@ async function bootstrap() {
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Loop API')
-    .setDescription('Loop Project Management API')
-    .setVersion('1.0')
-    .addCookieAuth('access_token')
-    .build();
+  // Swagger chỉ bật ngoài production — không phơi schema API công khai trên prod.
+  if (process.env.NODE_ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Loop API')
+      .setDescription('Loop Project Management API')
+      .setVersion('1.0')
+      .addCookieAuth('access_token')
+      .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   app.enableCors({
     origin: process.env.CORS_ORIGIN

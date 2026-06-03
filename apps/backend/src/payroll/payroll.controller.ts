@@ -10,6 +10,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Throttle } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../generated/prisma';
@@ -31,6 +32,7 @@ export class PayrollController {
 
   // ── Danh sách kỳ lương ─────────────────────────────────────────────────────
   @Get('periods')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
   @ApiOperation({ summary: 'Danh sách kỳ lương' })
   listPeriods(@Query() query: PaginationDto) {
     return this.service.listPeriods(query.page, query.limit);
@@ -47,6 +49,7 @@ export class PayrollController {
   // ── Tính lương ─────────────────────────────────────────────────────────────
   @Post('periods/:id/generate')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @ApiOperation({ summary: 'Tính lương cho toàn bộ nhân viên trong kỳ' })
   generatePayroll(@Param('id') id: string) {
     return this.service.generatePayroll(id);
@@ -54,6 +57,7 @@ export class PayrollController {
 
   // ── Danh sách bản ghi lương theo kỳ ───────────────────────────────────────
   @Get('periods/:id/records')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
   @ApiOperation({ summary: 'Danh sách bản ghi lương theo kỳ' })
   getPeriodRecords(@Param('id') id: string, @Query() query: PaginationDto) {
     return this.service.getPeriodRecords(id, query.page, query.limit);
@@ -61,6 +65,7 @@ export class PayrollController {
 
   // ── Danh sách phiếu lương (alias) ──────────────────────────────────────────
   @Get('periods/:id/payslips')
+  @Roles(Role.ADMIN, Role.LEADERSHIP)
   @ApiOperation({ summary: 'Danh sách phiếu lương của kỳ lương (alias để tương thích UI)' })
   getPeriodPayslips(@Param('id') id: string, @Query() query: PaginationDto) {
     return this.service.getPeriodRecords(id, query.page, query.limit);
@@ -88,6 +93,7 @@ export class PayrollController {
   // ── Chạy lại kỳ lương ─────────────────────────────────────────────────────
   @Post('periods/:id/rerun')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @ApiOperation({ summary: 'Chạy lại tính lương sau khi đã review' })
   rerunPeriod(@Param('id') id: string) {
     return this.service.rerunPeriod(id);
@@ -113,6 +119,7 @@ export class PayrollController {
   // ── E16G.7: Tính lương tháng 13 ───────────────────────────────────────────
   @Post('periods/:id/calculate-13th')
   @Roles(Role.ADMIN, Role.LEADERSHIP)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @ApiOperation({ summary: 'Tính lương tháng 13 — BQ các kỳ REGULAR APPROVED trong năm' })
   calculate13thMonth(@Param('id') id: string) {
     return this.service.calculate13thMonth(id);
@@ -123,19 +130,21 @@ export class PayrollController {
   @ApiOperation({ summary: 'Lấy presigned URL phiếu lương PDF (chỉ xem của mình)' })
   getPayslipUrl(
     @Param('recordId') recordId: string,
-    @Req() req: { user: { id: string } },
+    @Req() req: { user: { id: string; role: Role } },
   ) {
-    return this.service.getPayslipUrl(recordId, req.user.id);
+    return this.service.getPayslipUrl(recordId, req.user);
   }
 
   // ── L-10: Xuất phiếu lương Excel ──────────────────────────────────────────
   @Get('records/:recordId/payslip/excel')
-  @ApiOperation({ summary: 'Xuất phiếu lương dạng Excel (.xlsx)' })
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @ApiOperation({ summary: 'Xuất phiếu lương dạng Excel (.xlsx) — chỉ chủ sở hữu hoặc quản trị' })
   async getPayslipExcel(
     @Param('recordId') recordId: string,
+    @Req() req: { user: { id: string; role: Role } },
     @Res() res: Response,
   ) {
-    const buffer = await this.service.generatePayslipExcel(recordId);
+    const buffer = await this.service.generatePayslipExcel(recordId, req.user);
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': `attachment; filename="payslip-${recordId}.xlsx"`,
@@ -145,10 +154,13 @@ export class PayrollController {
 
   // ── R-03: Yêu cầu tạo phiếu lương async (enqueue job) ────────────────────
   @Post('records/:recordId/payslip-request')
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @ApiOperation({ summary: 'Enqueue job tạo phiếu lương PDF bất đồng bộ, trả về jobId' })
   async requestPayslip(
     @Param('recordId') recordId: string,
+    @Req() req: { user: { id: string; role: Role } },
   ) {
+    await this.service.assertOwnerOrAdmin(recordId, req.user);
     const jobId = await this.payslipQueue.enqueueOne(recordId);
     return { jobId, status: 'QUEUED' };
   }
