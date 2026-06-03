@@ -78,28 +78,32 @@ async function main() {
       const utilizationRate = budgetCost > 0 ? totalCost / budgetCost : 0;
 
       // Upsert snapshot
-      const snapshot = await prisma.projectCostSnapshot.upsert({
+      const _e = await prisma.projectCostSnapshot.findFirst({
         where: {
-          projectId_snapshotDate: {
-            projectId: project.id,
-            snapshotDate,
-          },
-        },
-        update: {
-          totalLaborCost,
-          totalExpenseCost,
-          totalCost,
-          utilizationRate,
-        },
-        create: {
           projectId: project.id,
           snapshotDate,
-          totalLaborCost,
-          totalExpenseCost,
-          totalCost,
-          utilizationRate,
         },
       });
+      const snapshot = _e
+        ? await prisma.projectCostSnapshot.update({
+            where: { id: _e.id },
+            data: {
+              totalLaborCost,
+              totalExpenseCost,
+              totalCost,
+              utilizationRate,
+            },
+          })
+        : await prisma.projectCostSnapshot.create({
+            data: {
+              projectId: project.id,
+              snapshotDate,
+              totalLaborCost,
+              totalExpenseCost,
+              totalCost,
+              utilizationRate,
+            },
+          });
 
       // Tạo ProjectCostByEmployee cho từng thành viên
       for (const member of project.members) {

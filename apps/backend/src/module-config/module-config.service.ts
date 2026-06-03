@@ -23,11 +23,12 @@ export class ModuleConfigService implements OnModuleInit {
 
   async seedDefaults(): Promise<void> {
     for (const mod of MODULE_DEFAULTS) {
-      await this.prisma.moduleConfig.upsert({
-        where: { moduleId: mod.moduleId },
-        update: {},
-        create: mod,
-      });
+      const _e = await this.prisma.moduleConfig.findFirst({ where: { moduleId: mod.moduleId } });
+      if (_e) {
+        await this.prisma.moduleConfig.update({ where: { id: _e.id }, data: {} });
+      } else {
+        await this.prisma.moduleConfig.create({ data: mod });
+      }
     }
   }
 
@@ -42,7 +43,7 @@ export class ModuleConfigService implements OnModuleInit {
   }
 
   async toggleModule(moduleId: string, isEnabled: boolean) {
-    const mod = await this.prisma.moduleConfig.findUnique({ where: { moduleId } });
+    const mod = await this.prisma.moduleConfig.findFirst({ where: { moduleId } });
     if (!mod) throw new NotFoundException(`Module '${moduleId}' không tồn tại`);
 
     // Core modules cannot be disabled — protect system integrity
@@ -51,13 +52,13 @@ export class ModuleConfigService implements OnModuleInit {
     }
 
     return this.prisma.moduleConfig.update({
-      where: { moduleId },
+      where: { id: mod.id },
       data: { isEnabled },
     });
   }
 
   async getModuleStatus(moduleId: string): Promise<{ isEnabled: boolean }> {
-    const mod = await this.prisma.moduleConfig.findUnique({
+    const mod = await this.prisma.moduleConfig.findFirst({
       where: { moduleId },
       select: { isEnabled: true },
     });

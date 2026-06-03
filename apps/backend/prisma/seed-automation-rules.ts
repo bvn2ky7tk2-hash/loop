@@ -82,26 +82,32 @@ async function main() {
   console.log('Seeding AutomationRule records...');
 
   for (const rule of RULES) {
-    await prisma.automationRule.upsert({
-      where: { key: rule.key },
-      update: {
-        name: rule.name,
-        description: rule.description,
-        cronExpr: rule.cronExpr,
-        triggerType: rule.triggerType,
-        isActive: rule.isActive,
-        actions: rule.actions,
-      },
-      create: {
-        key: rule.key,
-        name: rule.name,
-        description: rule.description,
-        cronExpr: rule.cronExpr,
-        triggerType: rule.triggerType,
-        isActive: rule.isActive,
-        actions: rule.actions,
-      },
-    });
+    const _e = await prisma.automationRule.findFirst({ where: { key: rule.key } });
+    if (_e) {
+      await prisma.automationRule.update({
+        where: { id: _e.id },
+        data: {
+          name: rule.name,
+          description: rule.description,
+          cronExpr: rule.cronExpr,
+          triggerType: rule.triggerType,
+          isActive: rule.isActive,
+          actions: rule.actions,
+        },
+      });
+    } else {
+      await prisma.automationRule.create({
+        data: {
+          key: rule.key,
+          name: rule.name,
+          description: rule.description,
+          cronExpr: rule.cronExpr,
+          triggerType: rule.triggerType,
+          isActive: rule.isActive,
+          actions: rule.actions,
+        },
+      });
+    }
     console.log(`  upserted: ${rule.key}`);
   }
 

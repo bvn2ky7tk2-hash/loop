@@ -233,7 +233,7 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
   }
 
   async getAccount(code: string) {
-    const acc = await this.prisma.chartOfAccount.findUnique({ where: { code } });
+    const acc = await this.prisma.chartOfAccount.findFirst({ where: { code } });
     if (!acc) throw new NotFoundException('Tài khoản kế toán không tìm thấy');
     return acc;
   }

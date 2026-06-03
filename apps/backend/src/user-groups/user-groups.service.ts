@@ -44,7 +44,7 @@ export class UserGroupsService {
   }
 
   async create(dto: CreateUserGroupDto) {
-    const exists = await this.prisma.userGroup.findUnique({ where: { name: dto.name } });
+    const exists = await this.prisma.userGroup.findFirst({ where: { name: dto.name } });
     if (exists) throw new ConflictException('Tên nhóm đã tồn tại');
     return this.prisma.userGroup.create({
       data: { name: dto.name, description: dto.description, isDefault: dto.isDefault ?? false },

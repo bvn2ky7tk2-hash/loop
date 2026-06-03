@@ -68,20 +68,29 @@ export class HrHolidaysService {
 
   // ─── 3. Tạo nhiều ngày lễ — bỏ qua trùng (upsert by date) ──────────────────
   async bulkCreate(dto: BulkCreateHolidayDto) {
-    const upserts = dto.holidays.map((h) =>
-      this.prisma.holidayCalendar.upsert({
-        where: { date: new Date(h.date) },
-        create: {
-          date: new Date(h.date),
-          name: h.name,
-          type: h.type,
-          year: new Date(h.date).getFullYear(),
-        },
-        update: { name: h.name, type: h.type },
-      }),
+    const results = await Promise.all(
+      dto.holidays.map((h) =>
+        (async () => {
+          const _e = await this.prisma.holidayCalendar.findFirst({
+            where: { date: new Date(h.date) },
+          });
+          const _r = _e
+            ? await this.prisma.holidayCalendar.update({
+                where: { id: _e.id },
+                data: { name: h.name, type: h.type },
+              })
+            : await this.prisma.holidayCalendar.create({
+                data: {
+                  date: new Date(h.date),
+                  name: h.name,
+                  type: h.type,
+                  year: new Date(h.date).getFullYear(),
+                },
+              });
+          return _r;
+        })(),
+      ),
     );
-
-    const results = await this.prisma.$transaction(upserts);
 
     return {
       message: `Đã tạo/cập nhật ${results.length} ngày lễ`,
@@ -105,20 +114,29 @@ export class HrHolidaysService {
   async seedVN2026() {
     const allHolidays = [...VN_HOLIDAYS_2026, ...VN_HOLIDAYS_2027];
 
-    const upserts = allHolidays.map((h) =>
-      this.prisma.holidayCalendar.upsert({
-        where: { date: new Date(h.date) },
-        create: {
-          date: new Date(h.date),
-          name: h.name,
-          type: h.type,
-          year: new Date(h.date).getFullYear(),
-        },
-        update: { name: h.name, type: h.type },
-      }),
+    const results = await Promise.all(
+      allHolidays.map((h) =>
+        (async () => {
+          const _e = await this.prisma.holidayCalendar.findFirst({
+            where: { date: new Date(h.date) },
+          });
+          const _r = _e
+            ? await this.prisma.holidayCalendar.update({
+                where: { id: _e.id },
+                data: { name: h.name, type: h.type },
+              })
+            : await this.prisma.holidayCalendar.create({
+                data: {
+                  date: new Date(h.date),
+                  name: h.name,
+                  type: h.type,
+                  year: new Date(h.date).getFullYear(),
+                },
+              });
+          return _r;
+        })(),
+      ),
     );
-
-    const results = await this.prisma.$transaction(upserts);
 
     return {
       message: `Đã seed ${results.length} ngày lễ VN (2026 và 2027)`,

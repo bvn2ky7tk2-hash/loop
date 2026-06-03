@@ -134,11 +134,12 @@ async function main() {
     { name: 'Phụ cấp nhà ở',       defaultAmount: 1000000, isBhxhExempt: false, isPitExempt: false, pitExemptCeiling: null },
   ];
   for (const at of allowanceTypes) {
-    await prisma.allowanceType.upsert({
-      where: { name: at.name },
-      update: {},
-      create: at,
-    });
+    const _e = await prisma.allowanceType.findFirst({ where: { name: at.name } });
+    if (_e) {
+      await prisma.allowanceType.update({ where: { id: _e.id }, data: {} });
+    } else {
+      await prisma.allowanceType.create({ data: at });
+    }
   }
   console.log(`  ✓ ${allowanceTypes.length} AllowanceTypes seeded`);
 
@@ -150,11 +151,12 @@ async function main() {
     { name: 'Thưởng hiệu quả công việc',        isBhxhExempt: false },
   ];
   for (const bt of bonusTypes) {
-    await prisma.bonusType.upsert({
-      where: { name: bt.name },
-      update: {},
-      create: bt,
-    });
+    const _e = await prisma.bonusType.findFirst({ where: { name: bt.name } });
+    if (_e) {
+      await prisma.bonusType.update({ where: { id: _e.id }, data: {} });
+    } else {
+      await prisma.bonusType.create({ data: bt });
+    }
   }
   console.log(`  ✓ ${bonusTypes.length} BonusTypes seeded`);
 

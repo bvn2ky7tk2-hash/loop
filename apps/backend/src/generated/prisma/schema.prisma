@@ -211,13 +211,14 @@ model Skill {
   id          String          @id @default(uuid())
   tenantId    String          @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant          @relation("TenantSkill", fields: [tenantId], references: [id], onDelete: Cascade)
-  name        String          @unique
+  name        String
   category    SkillCategory   @default(TECHNICAL)
   description String?
   isActive    Boolean         @default(true) @map("is_active")
   createdAt   DateTime        @default(now()) @map("created_at")
   employees   EmployeeSkill[]
 
+  @@unique([tenantId, name])
   @@index([tenantId])
   @@map("skills")
 }
@@ -529,6 +530,7 @@ model TelegramConfig {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId])
   @@index([tenantId])
   @@map("telegram_configs")
 }
@@ -1036,7 +1038,7 @@ model UserGroup {
   id          String   @id @default(uuid())
   tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant   @relation("TenantUserGroup", fields: [tenantId], references: [id], onDelete: Cascade)
-  name        String   @unique
+  name        String
   description String?
   isDefault   Boolean  @default(false) @map("is_default")
   createdAt   DateTime @default(now()) @map("created_at")
@@ -1046,6 +1048,7 @@ model UserGroup {
   members     GroupMembership[]
   orgAccess   GroupOrgAccess[]
 
+  @@unique([tenantId, name])
   @@index([tenantId])
   @@map("user_groups")
 }
@@ -1175,7 +1178,7 @@ model LeaveType {
   id                   String         @id @default(uuid())
   tenantId             String         @default("loop-default-tenant-001") @map("tenant_id")
   tenant               Tenant         @relation("TenantLeaveType", fields: [tenantId], references: [id], onDelete: Cascade)
-  name                 String         @unique
+  name                 String
   maxDaysPerYear       Int            @map("max_days_per_year")
   isPaid               Boolean        @default(true) @map("is_paid")
   color                String         @default("#2563EB")
@@ -1188,6 +1191,7 @@ model LeaveType {
   requests             LeaveRequest[]
   balances             LeaveBalance[]
 
+  @@unique([tenantId, name])
   @@index([tenantId])
   @@map("leave_types")
 }
@@ -2071,7 +2075,7 @@ model ChartOfAccount {
   id             String                  @id @default(uuid())
   tenantId       String                  @default("loop-default-tenant-001") @map("tenant_id")
   tenant         Tenant                  @relation("TenantChartOfAccount", fields: [tenantId], references: [id], onDelete: Cascade)
-  code           String                  @unique @db.VarChar(20)
+  code           String                  @db.VarChar(20)
   name           String                  @db.VarChar(200)
   type           AccountType
   parentCode     String?                 @map("parent_code") @db.VarChar(20)
@@ -2082,6 +2086,7 @@ model ChartOfAccount {
   vatMappings    InvoiceAccountMapping[] @relation("MappingVat")
   createdAt      DateTime                @default(now()) @map("created_at")
 
+  @@unique([tenantId, code])
   @@index([type])
   @@index([tenantId])
   @@map("chart_of_accounts")
@@ -2110,7 +2115,7 @@ model JournalLine {
   entryId     String         @map("entry_id")
   entry       JournalEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   accountCode String         @map("account_code") @db.VarChar(20)
-  account     ChartOfAccount @relation(fields: [accountCode], references: [code])
+  account     ChartOfAccount @relation(fields: [tenantId, accountCode], references: [tenantId, code])
   debit       Decimal        @default(0) @db.Decimal(18, 2)
   credit      Decimal        @default(0) @db.Decimal(18, 2)
   description String?        @db.VarChar(200)
@@ -2193,7 +2198,7 @@ model PerformanceReview {
   updatedAt         DateTime           @updatedAt @map("updated_at")
   bonuses           PerformanceBonus[]
 
-  @@unique([employeeId, period])
+  @@unique([tenantId, employeeId, period])
   @@index([reviewerId])
   @@index([status])
   @@index([tenantId])
@@ -2315,7 +2320,7 @@ model AllowanceType {
   id                 String                   @id @default(uuid())
   tenantId           String                   @default("loop-default-tenant-001") @map("tenant_id")
   tenant             Tenant                   @relation("TenantAllowanceType", fields: [tenantId], references: [id], onDelete: Cascade)
-  name               String                   @unique
+  name               String
   defaultAmount      Decimal                  @map("default_amount") @db.Decimal(12, 2)
   calculationMode    AllowanceCalculationMode @default(FIXED) @map("calculation_mode")
   isBhxhExempt       Boolean                  @default(true) @map("is_bhxh_exempt")
@@ -2327,6 +2332,7 @@ model AllowanceType {
   contractAllowances ContractAllowance[]
   salaryColumns      SalaryColumn[]
 
+  @@unique([tenantId, name])
   @@index([tenantId])
   @@map("allowance_types")
 }
@@ -2342,12 +2348,13 @@ model BonusType {
   id              String          @id @default(uuid())
   tenantId        String          @default("loop-default-tenant-001") @map("tenant_id")
   tenant          Tenant          @relation("TenantBonusType", fields: [tenantId], references: [id], onDelete: Cascade)
-  name            String          @unique
+  name            String
   isBhxhExempt    Boolean         @default(true) @map("is_bhxh_exempt")
   isActive        Boolean         @default(true) @map("is_active")
   createdAt       DateTime        @default(now()) @map("created_at")
   employeeBonuses EmployeeBonus[]
 
+  @@unique([tenantId, name])
   @@index([tenantId])
   @@map("bonus_types")
 }
@@ -2577,7 +2584,7 @@ model RevenueTarget {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  @@unique([period, periodType])
+  @@unique([tenantId, period, periodType])
   @@index([tenantId])
   @@map("revenue_targets")
 }
@@ -2896,7 +2903,7 @@ model AutomationRule {
   id          String              @id @default(uuid())
   tenantId    String              @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant              @relation("TenantAutomationRule", fields: [tenantId], references: [id], onDelete: Cascade)
-  key         String              @unique @db.VarChar(100)
+  key         String              @db.VarChar(100)
   name        String              @db.VarChar(200)
   description String?             @db.Text
   cronExpr    String              @map("cron_expr") @db.VarChar(100)
@@ -2912,6 +2919,7 @@ model AutomationRule {
   lastError   String?             @map("last_error")
   logs        AutomationRuleLog[]
 
+  @@unique([tenantId, key])
   @@index([tenantId])
   @@map("automation_rules")
 }
@@ -3037,13 +3045,14 @@ model ModuleConfig {
   id          String   @id @default(uuid())
   tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant   @relation("TenantModuleConfig", fields: [tenantId], references: [id], onDelete: Cascade)
-  moduleId    String   @unique @map("module_id") @db.VarChar(50)
+  moduleId    String   @map("module_id") @db.VarChar(50)
   isEnabled   Boolean  @default(true) @map("is_enabled")
   displayName String   @map("display_name") @db.VarChar(100)
   description String?  @db.Text
   isCore      Boolean  @default(false) @map("is_core")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
+  @@unique([tenantId, moduleId])
   @@index([tenantId])
   @@map("module_configs")
 }
@@ -3133,7 +3142,7 @@ model Vehicle {
   tenantId    String           @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant           @relation("TenantVehicle", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String           @db.VarChar(200)
-  plateNumber String           @unique @map("plate_number") @db.VarChar(20)
+  plateNumber String           @map("plate_number") @db.VarChar(20)
   type        String           @db.VarChar(50)
   seats       Int              @default(4)
   status      VehicleStatus    @default(AVAILABLE)
@@ -3144,6 +3153,7 @@ model Vehicle {
   requests    VehicleRequest[]
   driver      User?            @relation("VehicleDriver", fields: [driverId], references: [id])
 
+  @@unique([tenantId, plateNumber])
   @@index([tenantId])
   @@map("vehicles")
 }
@@ -3417,7 +3427,7 @@ model ProjectCostSnapshot {
   project           Project                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
   employeeBreakdown ProjectCostByEmployee[]
 
-  @@unique([projectId, snapshotDate])
+  @@unique([tenantId, projectId, snapshotDate])
   @@index([projectId])
   @@index([snapshotDate])
   @@index([tenantId])
@@ -3682,7 +3692,7 @@ model JobTitle {
   id            String       @id @default(uuid())
   tenantId      String       @default("loop-default-tenant-001") @map("tenant_id")
   tenant        Tenant       @relation("TenantJobTitle", fields: [tenantId], references: [id], onDelete: Cascade)
-  code          String       @unique
+  code          String
   name          String
   band          String?
   description   String?
@@ -3695,6 +3705,7 @@ model JobTitle {
   orgUnits      OrgUnit[]
   employees     Employee[]
 
+  @@unique([tenantId, code])
   @@index([tenantId])
   @@map("job_titles")
 }
@@ -3703,7 +3714,7 @@ model Position {
   id          String            @id @default(uuid())
   tenantId    String            @default("loop-default-tenant-001") @map("tenant_id")
   tenant      Tenant            @relation("TenantPosition", fields: [tenantId], references: [id], onDelete: Cascade)
-  code        String            @unique
+  code        String
   jobTitleId  String            @map("job_title_id")
   orgUnitId   String            @map("org_unit_id")
   headcount   Int               @default(1)
@@ -3718,6 +3729,7 @@ model Position {
   histories   PositionHistory[]
   salaryBands SalaryBand[]
 
+  @@unique([tenantId, code])
   @@index([tenantId])
   @@map("positions")
 }
@@ -3744,7 +3756,7 @@ model HrDecision {
   id                String           @id @default(uuid())
   tenantId          String           @default("loop-default-tenant-001") @map("tenant_id")
   tenant            Tenant           @relation("TenantHrDecision", fields: [tenantId], references: [id], onDelete: Cascade)
-  decisionNumber    String?          @unique @map("decision_number") @db.VarChar(100)
+  decisionNumber    String?          @map("decision_number") @db.VarChar(100)
   type              HrDecisionType
   employeeId        String           @map("employee_id")
   effectiveDate     DateTime         @map("effective_date") @db.Date
@@ -3767,6 +3779,7 @@ model HrDecision {
   workHistories     WorkHistory[]
   salaryRecords     SalaryRecord[]
 
+  @@unique([tenantId, decisionNumber])
   @@index([employeeId])
   @@index([effectiveDate])
   @@index([tenantId])
@@ -3920,12 +3933,13 @@ model HolidayCalendar {
   id        String      @id @default(uuid())
   tenantId  String      @default("loop-default-tenant-001") @map("tenant_id")
   tenant    Tenant      @relation("TenantHolidayCalendar", fields: [tenantId], references: [id], onDelete: Cascade)
-  date      DateTime    @unique @db.Date
+  date      DateTime    @db.Date
   name      String
   type      HolidayType @default(NATIONAL_HOLIDAY)
   year      Int
   createdAt DateTime    @default(now()) @map("created_at")
 
+  @@unique([tenantId, date])
   @@index([year])
   @@index([tenantId])
   @@map("holiday_calendars")
@@ -3978,7 +3992,7 @@ model SocialInsuranceBook {
   tenant             Tenant               @relation("TenantSocialInsuranceBook", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId         String               @unique @map("employee_id")
   enrollmentId       String?              @unique @map("enrollment_id")
-  bookNumber         String               @unique @map("book_number")
+  bookNumber         String               @map("book_number")
   issueDate          DateTime?            @map("issue_date") @db.Date
   issueAuthority     String?              @map("issue_authority")
   receivedByEmployee Boolean              @default(false) @map("received_by_employee")
@@ -3988,6 +4002,7 @@ model SocialInsuranceBook {
   employee           Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   enrollment         InsuranceEnrollment? @relation(fields: [enrollmentId], references: [id])
 
+  @@unique([tenantId, bookNumber])
   @@index([tenantId])
   @@map("social_insurance_books")
 }
@@ -4163,7 +4178,7 @@ model WorkShift {
   tenantId       String              @default("loop-default-tenant-001") @map("tenant_id")
   tenant         Tenant              @relation("TenantWorkShift", fields: [tenantId], references: [id], onDelete: Cascade)
   name           String
-  code           String              @unique
+  code           String
   type           ShiftType           @default(HANH_CHINH)
   startTime      String              @map("start_time")
   endTime        String              @map("end_time")
@@ -4178,6 +4193,7 @@ model WorkShift {
   assignments    ShiftAssignment[]
   schedulePhases WorkSchedulePhase[]
 
+  @@unique([tenantId, code])
   @@index([tenantId])
   @@map("work_shifts")
 }

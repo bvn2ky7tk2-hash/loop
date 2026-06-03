@@ -376,7 +376,7 @@ async function main() {
   console.log('\n【AC17】 UserGroups demo data:');
   const groupNames = ['PM Team', 'HR Team', 'Finance Team'];
   for (const name of groupNames) {
-    const g = await prisma.userGroup.findUnique({ where: { name } });
+    const g = await prisma.userGroup.findFirst({ where: { name } });
     ok(`Group "${name}" tồn tại`, !!g);
     if (g) {
       const permCount2 = await prisma.groupPermission.count({ where: { groupId: g.id } });
@@ -406,7 +406,7 @@ async function main() {
 
   // ── AC19: GroupPermission idempotency ─────────────────────────────────────
   console.log('\n【AC19】 UserGroup idempotency:');
-  const pmGroupBefore = await prisma.userGroup.findUnique({ where: { name: 'PM Team' } });
+  const pmGroupBefore = await prisma.userGroup.findFirst({ where: { name: 'PM Team' } });
   const pmPermsBefore = pmGroupBefore
     ? await prisma.groupPermission.count({ where: { groupId: pmGroupBefore.id } })
     : 0;
@@ -418,7 +418,7 @@ async function main() {
     await (seedModule2 as any).seedUserGroupsDemo(orgUnitForTest.id);
   }
 
-  const pmGroupAfter = await prisma.userGroup.findUnique({ where: { name: 'PM Team' } });
+  const pmGroupAfter = await prisma.userGroup.findFirst({ where: { name: 'PM Team' } });
   const pmPermsAfter = pmGroupAfter
     ? await prisma.groupPermission.count({ where: { groupId: pmGroupAfter.id } })
     : 0;

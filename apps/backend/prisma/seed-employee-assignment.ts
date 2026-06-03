@@ -40,7 +40,7 @@ async function main() {
     if (!code) continue;
     for (const lvl of LEVELS) {
       const posCode = `${code}-${lvl}`;
-      const exists = await prisma.position.findUnique({ where: { code: posCode } });
+      const exists = await prisma.position.findFirst({ where: { code: posCode } });
       if (exists) continue;
       const jtId = jtByCode.get(LEVEL_JOB_CODE[lvl]) ?? fallbackJtId;
       if (!jtId) continue;

@@ -135,28 +135,32 @@ export class ProjectCostService {
     const utilizationRate = budgetCost > 0 ? totalCost / budgetCost : 0;
 
     // ── 4. Upsert ProjectCostSnapshot ─────────────────────────────────────────
-    const snapshot = await this.prisma.projectCostSnapshot.upsert({
+    const _existingSnapshot = await this.prisma.projectCostSnapshot.findFirst({
       where: {
-        projectId_snapshotDate: {
-          projectId: project.id,
-          snapshotDate,
-        },
-      },
-      update: {
-        totalLaborCost,
-        totalExpenseCost,
-        totalCost,
-        utilizationRate,
-      },
-      create: {
         projectId: project.id,
         snapshotDate,
-        totalLaborCost,
-        totalExpenseCost,
-        totalCost,
-        utilizationRate,
       },
     });
+    const snapshot = _existingSnapshot
+      ? await this.prisma.projectCostSnapshot.update({
+          where: { id: _existingSnapshot.id },
+          data: {
+            totalLaborCost,
+            totalExpenseCost,
+            totalCost,
+            utilizationRate,
+          },
+        })
+      : await this.prisma.projectCostSnapshot.create({
+          data: {
+            projectId: project.id,
+            snapshotDate,
+            totalLaborCost,
+            totalExpenseCost,
+            totalCost,
+            utilizationRate,
+          },
+        });
 
     // ── 5. Upsert ProjectCostByEmployee ───────────────────────────────────────
     for (const [employeeId, data] of employeeMap.entries()) {

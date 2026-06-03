@@ -191,11 +191,10 @@ const DEMO_GROUPS: {
 
 export async function seedUserGroupsDemo(orgUnitId: string) {
   for (const g of DEMO_GROUPS) {
-    const group = await prisma.userGroup.upsert({
-      where: { name: g.name },
-      update: { description: g.description },
-      create: { name: g.name, description: g.description },
-    });
+    const _ug = await prisma.userGroup.findFirst({ where: { name: g.name } });
+    const group = _ug
+      ? await prisma.userGroup.update({ where: { id: _ug.id }, data: { description: g.description } })
+      : await prisma.userGroup.create({ data: { name: g.name, description: g.description } });
 
     // Permissions
     for (const permCode of g.perms) {
@@ -1956,17 +1955,18 @@ async function seedPhase2Demo() {
     const leaveTypes: Record<string, string> = {};
 
     for (const lt of leaveTypeDefs) {
-      const created = await prisma.leaveType.upsert({
-        where: { name: lt.name },
-        update: {},
-        create: {
-          name:                 lt.name,
-          maxDaysPerYear:       lt.maxDaysPerYear,
-          isPaid:               lt.isPaid,
-          color:                lt.color,
-          processDefinitionKey: lt.processDefinitionKey ?? undefined,
-        },
-      });
+      const _lt = await prisma.leaveType.findFirst({ where: { name: lt.name } });
+      const created = _lt
+        ? await prisma.leaveType.update({ where: { id: _lt.id }, data: {} })
+        : await prisma.leaveType.create({
+            data: {
+              name:                 lt.name,
+              maxDaysPerYear:       lt.maxDaysPerYear,
+              isPaid:               lt.isPaid,
+              color:                lt.color,
+              processDefinitionKey: lt.processDefinitionKey ?? undefined,
+            },
+          });
       leaveTypes[lt.name] = created.id;
     }
 
@@ -4601,11 +4601,12 @@ async function seedHrV4Demo() {
 
     let holidayCount = 0;
     for (const h of vn2026) {
-      await prisma.holidayCalendar.upsert({
-        where: { date: new Date(h.date) },
-        update: {},
-        create: { year: 2026, date: new Date(h.date), name: h.name, type: h.type as any },
-      });
+      const _hc = await prisma.holidayCalendar.findFirst({ where: { date: new Date(h.date) } });
+      if (_hc) {
+        await prisma.holidayCalendar.update({ where: { id: _hc.id }, data: {} });
+      } else {
+        await prisma.holidayCalendar.create({ data: { year: 2026, date: new Date(h.date), name: h.name, type: h.type as any } });
+      }
       holidayCount++;
     }
     console.log(`  ✓ ${holidayCount} ngày lễ 2026 seeded`);
@@ -5247,11 +5248,12 @@ async function seedWorkShifts() {
   ];
 
   for (const s of shifts) {
-    await prisma.workShift.upsert({
-      where: { code: s.code },
-      update: {},
-      create: s,
-    });
+    const _ws = await prisma.workShift.findFirst({ where: { code: s.code } });
+    if (_ws) {
+      await prisma.workShift.update({ where: { id: _ws.id }, data: {} });
+    } else {
+      await prisma.workShift.create({ data: s });
+    }
   }
 
   // Gán ca HC mặc định cho 5 nhân viên đầu tiên

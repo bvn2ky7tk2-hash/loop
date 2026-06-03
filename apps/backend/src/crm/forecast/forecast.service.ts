@@ -205,23 +205,30 @@ export class ForecastService {
     });
   }
 
-  upsertTarget(dto: CreateRevenueTargetDto) {
+  async upsertTarget(dto: CreateRevenueTargetDto) {
     const periodType = dto.periodType ?? 'MONTHLY';
-    return this.prisma.revenueTarget.upsert({
-      where: { period_periodType: { period: dto.period, periodType } },
-      create: {
-        period:     dto.period,
-        periodType,
-        target:     dto.target,
-        currency:   dto.currency ?? 'VND',
-        notes:      dto.notes,
-      },
-      update: {
-        target:   dto.target,
-        currency: dto.currency ?? 'VND',
-        notes:    dto.notes,
-      },
+    const _e = await this.prisma.revenueTarget.findFirst({
+      where: { period: dto.period, periodType },
     });
+    const _r = _e
+      ? await this.prisma.revenueTarget.update({
+          where: { id: _e.id },
+          data: {
+            target:   dto.target,
+            currency: dto.currency ?? 'VND',
+            notes:    dto.notes,
+          },
+        })
+      : await this.prisma.revenueTarget.create({
+          data: {
+            period:     dto.period,
+            periodType,
+            target:     dto.target,
+            currency:   dto.currency ?? 'VND',
+            notes:      dto.notes,
+          },
+        });
+    return _r;
   }
 
   updateTarget(id: string, dto: UpdateRevenueTargetDto) {

@@ -113,8 +113,8 @@ export class PerformanceService extends TenantAwareService {
   }
 
   async create(dto: CreatePerformanceReviewDto) {
-    const exists = await this.prisma.performanceReview.findUnique({
-      where: { employeeId_period: { employeeId: dto.employeeId, period: dto.period } },
+    const exists = await this.prisma.performanceReview.findFirst({
+      where: { employeeId: dto.employeeId, period: dto.period },
     });
     if (exists) throw new ConflictException(`Đã có đánh giá kỳ ${dto.period} cho nhân viên này`);
 

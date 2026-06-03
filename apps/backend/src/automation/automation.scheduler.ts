@@ -13,7 +13,7 @@ export class AutomationScheduler {
   ) {}
 
   private async run(key: string) {
-    const rule = await this.prisma.automationRule.findUnique({ where: { key } });
+    const rule = await this.prisma.automationRule.findFirst({ where: { key } });
     if (!rule?.isActive) { this.logger.debug(`${key} inactive — skip`); return; }
     try {
       // executeRule đã tự logRun bên trong — không cần gọi thêm ở đây

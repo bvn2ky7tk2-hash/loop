@@ -121,11 +121,10 @@ export async function seedDemoRoles() {
   ];
   const jt: Record<string, string> = {};
   for (const d of jtDefs) {
-    const rec = await prisma.jobTitle.upsert({
-      where: { code: d.code },
-      update: { name: d.name },
-      create: { code: d.code, name: d.name },
-    });
+    const _e = await prisma.jobTitle.findFirst({ where: { code: d.code } });
+    const rec = _e
+      ? await prisma.jobTitle.update({ where: { id: _e.id }, data: { name: d.name } })
+      : await prisma.jobTitle.create({ data: { code: d.code, name: d.name } });
     jt[d.code] = rec.id;
   }
   console.log('  ✓ JobTitles upserted');

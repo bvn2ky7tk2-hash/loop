@@ -11,16 +11,14 @@ async function main() {
   console.log('🌱 Seed mẫu công chuẩn theo thứ trong tuần...\n');
 
   // 1. Upsert 2 ca với workingDays
-  const office = await prisma.workShift.upsert({
-    where: { code: 'HC-OFFICE' },
-    update: { workingDays: [1, 2, 3, 4, 5] },
-    create: { code: 'HC-OFFICE', name: 'Hành chính (off T7+CN)', type: 'HANH_CHINH', startTime: '08:00', endTime: '17:00', workingDays: [1, 2, 3, 4, 5] },
-  });
-  const worker = await prisma.workShift.upsert({
-    where: { code: 'CN-WORKER' },
-    update: { workingDays: [1, 2, 3, 4, 5, 6] },
-    create: { code: 'CN-WORKER', name: 'Công nhân (off CN)', type: 'CA_SANG', startTime: '07:30', endTime: '16:30', workingDays: [1, 2, 3, 4, 5, 6] },
-  });
+  const _office = await prisma.workShift.findFirst({ where: { code: 'HC-OFFICE' } });
+  const office = _office
+    ? await prisma.workShift.update({ where: { id: _office.id }, data: { workingDays: [1, 2, 3, 4, 5] } })
+    : await prisma.workShift.create({ data: { code: 'HC-OFFICE', name: 'Hành chính (off T7+CN)', type: 'HANH_CHINH', startTime: '08:00', endTime: '17:00', workingDays: [1, 2, 3, 4, 5] } });
+  const _worker = await prisma.workShift.findFirst({ where: { code: 'CN-WORKER' } });
+  const worker = _worker
+    ? await prisma.workShift.update({ where: { id: _worker.id }, data: { workingDays: [1, 2, 3, 4, 5, 6] } })
+    : await prisma.workShift.create({ data: { code: 'CN-WORKER', name: 'Công nhân (off CN)', type: 'CA_SANG', startTime: '07:30', endTime: '16:30', workingDays: [1, 2, 3, 4, 5, 6] } });
   console.log(`   ✓ Ca: ${office.name} [T2-T6], ${worker.name} [T2-T7]`);
 
   // 2. Gán NV round-robin: chẵn→office, lẻ→worker (chỉ NV có userId + timesheet)

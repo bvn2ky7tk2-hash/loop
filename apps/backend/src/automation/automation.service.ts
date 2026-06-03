@@ -29,7 +29,7 @@ export class AutomationService {
 
   /** Wrapper: load rule theo key rồi gọi evaluateRule — dùng từ controller */
   async evaluateRuleByKey(key: string, context: ActionContext): Promise<EvaluateResult & { ruleKey: string; ruleName: string }> {
-    const rule = await this.prisma.automationRule.findUnique({ where: { key } });
+    const rule = await this.prisma.automationRule.findFirst({ where: { key } });
     if (!rule) throw new NotFoundException('Rule không tồn tại');
     const result = this.evaluateRule(rule, context);
     return { ...result, ruleKey: rule.key, ruleName: rule.name };
@@ -81,9 +81,9 @@ export class AutomationService {
   }
 
   async toggleRule(key: string, isActive: boolean) {
-    const rule = await this.prisma.automationRule.findUnique({ where: { key } });
+    const rule = await this.prisma.automationRule.findFirst({ where: { key } });
     if (!rule) throw new NotFoundException('Rule không tồn tại');
-    return this.prisma.automationRule.update({ where: { key }, data: { isActive } });
+    return this.prisma.automationRule.update({ where: { id: rule.id }, data: { isActive } });
   }
 
   async getStats() {
@@ -96,11 +96,11 @@ export class AutomationService {
   }
 
   async runRule(key: string) {
-    const rule = await this.prisma.automationRule.findUnique({ where: { key } });
+    const rule = await this.prisma.automationRule.findFirst({ where: { key } });
     if (!rule) throw new NotFoundException('Rule không tồn tại');
     // executeRule đã tự logRun bên trong
     await this.executeRule(rule.id);
-    return this.prisma.automationRule.findUnique({ where: { key } });
+    return this.prisma.automationRule.findFirst({ where: { key } });
   }
 
   /**
