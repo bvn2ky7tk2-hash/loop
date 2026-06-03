@@ -92,3 +92,18 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 - ✅ **Perf N+1** (`9611972`): leave-accrual (80k→2 query/policy), payroll-engine (5N→5), cost (3N→3) — prefetch findMany({in})/groupBy + Map, giữ nguyên logic.
 
 ## TRẠNG THÁI CUỐI: 6/7 cụm + perf N+1 XONG. Còn CỤM 7 (SaaS-ops program) — feature nhiều ngày, dùng doc này làm roadmap.
+
+---
+
+## CỤM 7 — ĐÃ HOÀN THÀNH PHẦN BẢO MẬT/CÁCH LY (2026-06-03)
+- ✅ **7a** (`0ee0b11`): platform-admin role (User.isPlatformAdmin + PlatformAdminGuard cho categories/RBAC/demo mutation — unblock authz treo) + token revocation tức thì (User.tokenVersion + JwtStrategy stateful + bump khi đổi role/deactivate/đổi mật khẩu).
+- ✅ **7b** (`9a05266`): env fail-fast ở production khi thiếu CRITICAL + TenantThrottlerGuard (rate-limit theo tenant chống noisy-neighbor).
+- ✅ **7c** (`d846e4c`): audit log set tenantId tường minh.
+
+### CÒN LẠI = PRODUCT FEATURES (cần quyết định sản phẩm, KHÔNG phải lỗ hổng):
+- **Tenant provisioning**: seed gì khi tạo tenant (admin user + creds? module nào bật? default config?) — cần quyết định sản phẩm. (Hiện tenant mới chạy được nhờ RBAC/Category global do platform quản.)
+- **Quota/plan tiers**: định nghĩa gói (seat/storage limit) + enforcement — cần quyết định thương mại.
+- **Composite index còn lại** (LeaveRequest/Expense/TimeLog/TimeEntry) — perf minor, additive bất cứ lúc nào.
+- Queue admin IDOR (job đã tag tenantId từ Cụm 2; chỉ cần queues.service admin lọc tenant khi liệt kê) — minor.
+
+## KẾT LUẬN: 7/7 cụm — TOÀN BỘ lỗ hổng bảo mật/cách ly/correctness + perf nặng ĐÃ FIX. Chỉ còn product-features (provisioning/quota) cần quyết định nghiệp vụ.
