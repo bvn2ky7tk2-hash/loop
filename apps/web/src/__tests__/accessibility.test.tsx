@@ -10,14 +10,19 @@ import NotificationBell from '../components/NotificationBell';
 
 expect.extend(toHaveNoViolations);
 
-vi.mock('../api/notifications', () => ({
-  notificationsApi: {
-    list: vi.fn().mockResolvedValue([]),
-    markRead: vi.fn().mockResolvedValue(undefined),
-    markAllRead: vi.fn().mockResolvedValue(undefined),
-    unreadCount: vi.fn().mockResolvedValue(0),
-  },
-}));
+vi.mock('../api/notifications', async (importActual) => {
+  // Giữ các export thuần (vd countActionable) thật, chỉ override notificationsApi (gọi mạng).
+  const actual = await importActual<typeof import('../api/notifications')>();
+  return {
+    ...actual,
+    notificationsApi: {
+      list: vi.fn().mockResolvedValue([]),
+      markRead: vi.fn().mockResolvedValue(undefined),
+      markAllRead: vi.fn().mockResolvedValue(undefined),
+      unreadCount: vi.fn().mockResolvedValue(0),
+    },
+  };
+});
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
