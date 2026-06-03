@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -75,6 +76,7 @@ function daysLeftFromNow(expiryDate: string): number {
 
 export default function HrAnalyticsPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
+  const { paginationProps: contractPagination } = usePagination(6);
   const [deptFilter, setDeptFilter]   = useState<string>('all');
   const [yearFilter, setYearFilter]   = useState<number>(new Date().getFullYear());
 
@@ -423,7 +425,7 @@ export default function HrAnalyticsPage() {
                 rowKey="id"
                 dataSource={contractExpiry}
                 columns={contractColumns}
-                pagination={{ pageSize: 6, size: 'small' }}
+                pagination={{ ...contractPagination(contractExpiry.length, 'hợp đồng'), size: 'small' }}
                 size="small"
               />
             )}

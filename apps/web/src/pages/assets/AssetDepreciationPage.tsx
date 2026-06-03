@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Table, Row, Col, Progress, Select, Typography } from 'antd';
 import { FallOutlined, DollarOutlined, BankOutlined, LineChartOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -42,8 +43,11 @@ function computeDepreciation(a: Asset): DepRow | null {
 
 export default function AssetDepreciationPage() {
   const { textPrimary, textMuted, borderColor, bgContainer, linkColor } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
   const [category, setCategory] = useState<AssetCategory | undefined>();
   const { data, isLoading } = useGetAssets({ limit: 500, category });
+
+  useEffect(() => { resetPage(); }, [category, resetPage]);
 
   const rows = useMemo(
     () => (data?.data ?? []).map(computeDepreciation).filter((r): r is DepRow => r !== null),
@@ -135,7 +139,7 @@ export default function AssetDepreciationPage() {
         dataSource={rows}
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
-        pagination={{ pageSize: 20, showTotal: (t) => `${t} tài sản có khấu hao` }}
+        pagination={paginationProps(rows.length, 'tài sản có khấu hao')}
         scroll={{ x: 1000 }}
         locale={{ emptyText: 'Chưa có tài sản nào có dữ liệu nguyên giá + số năm khấu hao' }}
       />

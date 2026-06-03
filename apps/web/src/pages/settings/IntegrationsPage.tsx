@@ -37,6 +37,7 @@ import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import {
   webhooksApi,
   type WebhookEndpoint,
@@ -60,6 +61,7 @@ const AVAILABLE_EVENTS = [
 function WebhooksTab() {
   const { textPrimary, textMuted, isDark, borderColor, bgContainer, linkColor } = useThemePalette();
   const qc = useQueryClient();
+  const { resetPage: resetLogsPage, paginationProps: logsPaginationProps } = usePagination(20);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEndpoint, setEditingEndpoint] = useState<WebhookEndpoint | null>(null);
@@ -130,7 +132,7 @@ function WebhooksTab() {
     form.setFieldsValue({ name: ep.name, url: ep.url, secret: ep.secret, events: ep.events });
     setModalOpen(true);
   };
-  const openLogs = (ep: WebhookEndpoint) => { setSelectedEndpoint(ep); setLogsDrawerOpen(true); };
+  const openLogs = (ep: WebhookEndpoint) => { setSelectedEndpoint(ep); resetLogsPage(); setLogsDrawerOpen(true); };
 
   const handleSave = async () => {
     const values = await form.validateFields();
@@ -387,7 +389,7 @@ function WebhooksTab() {
           columns={logColumns}
           dataSource={logsAll}
           loading={logsLoading}
-          pagination={{ pageSize: 20 }}
+          pagination={logsPaginationProps(logsAll.length, 'log')}
           size="small"
         />
       </Drawer>

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Typography, Select, Tag, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { BankOutlined } from '@ant-design/icons';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { useGetAccounts, type ChartOfAccount, type AccountType } from '../../api/accounting';
 
 const { Title } = Typography;
@@ -21,9 +22,12 @@ const TYPE_OPTIONS = ([undefined, ...Object.keys(TYPE_META)] as (AccountType | u
 
 export default function ChartOfAccountsPage() {
   const { bgContainer, textPrimary, borderColor, linkColor } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(50);
   const [typeFilter, setTypeFilter] = useState<AccountType | undefined>(undefined);
 
   const { data: accounts = [], isLoading } = useGetAccounts(typeFilter);
+
+  useEffect(() => { resetPage(); }, [typeFilter, resetPage]);
 
   const columns: ColumnsType<ChartOfAccount> = [
     {
@@ -86,7 +90,7 @@ export default function ChartOfAccountsPage() {
           dataSource={accounts}
           columns={columns}
           loading={isLoading}
-          pagination={{ pageSize: 50, showSizeChanger: false }}
+          pagination={paginationProps(accounts.length, 'tài khoản')}
           size="middle"
         />
       </div>

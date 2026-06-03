@@ -82,6 +82,7 @@ function PortalDrawer({
   const [respondModal, setRespondModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<CustomerTicket | null>(null);
   const { isDark, textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
+  const { paginationProps: drawerTicketPagination } = usePagination(10);
   const qc = useQueryClient();
 
   const { data } = useQuery({
@@ -180,7 +181,7 @@ function PortalDrawer({
             columns={ticketCols}
             dataSource={data?.tickets ?? []}
             size="small"
-            pagination={{ pageSize: 10 }}
+            pagination={drawerTicketPagination(data?.tickets?.length, 'ticket')}
           />
 
           <RespondModal

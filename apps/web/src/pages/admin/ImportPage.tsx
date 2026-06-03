@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { apiClient } from '../../api/client';
 
 const { Text, Title } = Typography;
@@ -99,6 +100,7 @@ const TEMPLATES: {
 export default function ImportPage() {
   const { message } = App.useApp();
   const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, linkColor } = useThemePalette();
+  const { paginationProps } = usePagination(50);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey | null>(null);
@@ -345,7 +347,7 @@ export default function ImportPage() {
             columns={buildValidColumns(previewResult.valid)}
             rowKey="_key"
             size="small"
-            pagination={{ pageSize: 10, showSizeChanger: true, pageSizeOptions: [10, 20, 50], showTotal: (t) => `${t} bản ghi` }}
+            pagination={paginationProps(previewResult.valid.length, 'dòng')}
             style={{ marginBottom: 20, background: bgContainer }}
             scroll={{ x: 'max-content' }}
           />

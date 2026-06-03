@@ -17,6 +17,7 @@ import {
 } from '../../api/processes.api';
 import { DefinitionStatusBadge } from './components/ProcessStatusBadge';
 import { FieldBuilderDrawer } from './components/FieldBuilderDrawer';
+import { usePagination } from '../../hooks/usePagination';
 import dayjs from 'dayjs';
 
 export default function ProcessListPage() {
@@ -24,6 +25,7 @@ export default function ProcessListPage() {
   const { token } = theme.useToken();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const { page, pageSize, paginationProps } = usePagination(100);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<ProcessDefinition | null>(null);
@@ -34,7 +36,7 @@ export default function ProcessListPage() {
   const [editForm] = Form.useForm<{ name: string; description?: string }>();
   const [startForm] = Form.useForm<{ variables?: string }>();
 
-  const { data, isLoading } = useDefinitions({ page: 1, pageSize: 100 });
+  const { data, isLoading } = useDefinitions({ page, pageSize });
   const createMutation = useCreateDefinition();
   const updateMutation = useUpdateDefinition();
   const patchStatus = usePatchDefinitionStatus();
@@ -201,7 +203,7 @@ export default function ProcessListPage() {
         rowKey="id"
         loading={isLoading}
         size="middle"
-        pagination={{ total: data?.meta.total, pageSize: data?.meta.pageSize, showSizeChanger: true, pageSizeOptions: [50, 100, 200, 500], showTotal: (t) => `${t} quy trình` }}
+        pagination={paginationProps(data?.meta.total, 'quy trình')}
       />
 
       {/* Modal tạo mới */}

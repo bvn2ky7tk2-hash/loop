@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
   Input, InputNumber, Modal, message,
@@ -11,6 +11,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutli
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { orgUnitsApi } from '../../api/org-units';
 import {
@@ -47,12 +48,15 @@ function fmtSalary(from?: string, to?: string): string {
 export default function JobsPage() {
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters] = useState<JobFilterParams>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [filters, setFilters] = useState<JobFilterParams>({});
   const [drawerOpen, setDrawer] = useState(false);
   const [editing, setEditing]   = useState<JobOpening | null>(null);
   const [form] = Form.useForm();
 
-  const { data, isLoading }          = useGetJobs(filters);
+  useEffect(() => { resetPage(); }, [filters.status, filters.level, filters.orgUnitId, resetPage]);
+
+  const { data, isLoading }          = useGetJobs({ ...filters, page, limit: pageSize });
   const { data: orgUnitsRaw = [] }   = useQuery({ queryKey: ['org-units'], queryFn: orgUnitsApi.list });
   const orgUnits = Array.isArray(orgUnitsRaw) ? orgUnitsRaw : (orgUnitsRaw as { data?: unknown[] }).data ?? [];
 
@@ -205,12 +209,12 @@ export default function JobsPage() {
       {/* Filter Bar */}
       <FilterBar>
         <Select placeholder="Trạng thái" style={{ width: 140 }} allowClear options={STATUS_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, status: v, page: 1 }))} />
+          onChange={v => setFilters(f => ({ ...f, status: v }))} />
         <Select placeholder="Level" style={{ width: 120 }} allowClear options={LEVEL_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, level: v, page: 1 }))} />
+          onChange={v => setFilters(f => ({ ...f, level: v }))} />
         <Select placeholder="Bộ phận" style={{ width: 200 }} allowClear showSearch optionFilterProp="label"
           options={(orgUnits as { id: string; name: string }[]).map(o => ({ value: o.id, label: o.name }))}
-          onChange={v => setFilters(f => ({ ...f, orgUnitId: v, page: 1 }))} />
+          onChange={v => setFilters(f => ({ ...f, orgUnitId: v }))} />
       </FilterBar>
 
       {/* Table */}
@@ -230,9 +234,7 @@ export default function JobsPage() {
               </div>
             ),
           }}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} vị trí tuyển`,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total, 'vị trí tuyển')}
         />
       </div>
 

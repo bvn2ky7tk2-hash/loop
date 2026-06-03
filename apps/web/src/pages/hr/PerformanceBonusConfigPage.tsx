@@ -11,6 +11,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -50,6 +51,7 @@ const GRADE_COLORS: Record<string, { bg: string; text: string; darkBg: string; d
 
 export default function PerformanceBonusConfigPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { paginationProps: pendingPagination } = usePagination(20);
   const { message } = App.useApp();
   const queryClient = useQueryClient();
 
@@ -405,7 +407,7 @@ export default function PerformanceBonusConfigPage() {
                     columns={pendingColumns}
                     dataSource={pendingBonuses}
                     loading={pendingLoading}
-                    pagination={{ pageSize: 20 }}
+                    pagination={pendingPagination(pendingBonuses.length, 'bonus')}
                     locale={{ emptyText: <Text style={{ color: textMuted }}>Không có bonus chờ duyệt</Text> }}
                   />
                 )}

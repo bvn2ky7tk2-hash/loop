@@ -14,6 +14,7 @@ import {
   type Interview, type InterviewType, type InterviewResult,
 } from '../../api/recruit';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 
 const { Text } = Typography;
 const { TextArea } = Input;
@@ -37,14 +38,14 @@ const RESULT_OPTIONS  = Object.entries(RESULT_META).map(([k, v]) => ({ value: k 
 export default function InterviewsPage() {
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters]          = useState({ page: 1, limit: 20 });
+  const { page, pageSize, paginationProps } = usePagination(20);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [resultOpen, setResultOpen]     = useState(false);
   const [selected, setSelected]         = useState<Interview | null>(null);
   const [scheduleForm] = Form.useForm();
   const [resultForm]   = Form.useForm();
 
-  const { data, isLoading }       = useGetAllInterviews({ page: filters.page, limit: filters.limit });
+  const { data, isLoading }       = useGetAllInterviews({ page, limit: pageSize });
   const { data: candidatesData }  = useGetCandidates({ limit: 200 });
   const candidates = candidatesData?.data ?? [];
 
@@ -175,9 +176,7 @@ export default function InterviewsPage() {
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Interview>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} lịch phỏng vấn`,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total, 'lịch phỏng vấn')}
         />
       </div>
 

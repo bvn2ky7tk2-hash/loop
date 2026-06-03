@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Button, Form, Input, Select, InputNumber, DatePicker,
   Space, Table, Tag, Tabs, Typography, Row, Col, App,
@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -160,6 +161,10 @@ export default function HrShiftsPage() {
 
   const [activeTab, setActiveTab] = useState<'shifts' | 'assignments' | 'schedules'>('schedules');
 
+  // ── Pagination ──
+  const { resetPage: resetSchedulePage, paginationProps: schedulePagination } = usePagination(20);
+  const { resetPage: resetAssignPage, paginationProps: assignPagination } = usePagination(50);
+
   // ── Shift modal ──
   const [shiftModalOpen, setShiftModalOpen] = useState(false);
   const [editShift, setEditShift] = useState<WorkShift | null>(null);
@@ -183,6 +188,9 @@ export default function HrShiftsPage() {
   const [filterEmpId, setFilterEmpId] = useState<string | undefined>();
   const [filterShiftId, setFilterShiftId] = useState<string | undefined>();
   const [scheduleSearch, setScheduleSearch] = useState('');
+
+  useEffect(() => { resetSchedulePage(); }, [scheduleSearch, resetSchedulePage]);
+  useEffect(() => { resetAssignPage(); }, [filterEmpId, filterShiftId, resetAssignPage]);
 
   // ── Queries ──
   const { data: shifts = [], isLoading: shiftsLoading } = useQuery({
@@ -678,7 +686,7 @@ export default function HrShiftsPage() {
                     columns={scheduleColumns}
                     dataSource={schedules}
                     loading={schedulesLoading}
-                    pagination={{ pageSize: 20, showTotal: (t) => <Text style={{ color: textMuted }}>Tổng {t} lịch</Text> }}
+                    pagination={schedulePagination(schedules.length, 'lịch')}
                     scroll={{ x: 900 }}
                   />
                 </div>
@@ -730,7 +738,7 @@ export default function HrShiftsPage() {
                     columns={assignColumns}
                     dataSource={assignments}
                     loading={assignmentsLoading}
-                    pagination={{ pageSize: 50, showSizeChanger: false, showTotal: (t) => <Text style={{ color: textMuted }}>Tổng {t} phân công</Text> }}
+                    pagination={assignPagination(assignments.length, 'phân công')}
                     scroll={{ x: 900 }}
                   />
                 </div>

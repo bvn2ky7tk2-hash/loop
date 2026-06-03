@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Table,
@@ -27,6 +27,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -74,6 +75,9 @@ export default function ScheduledReportsPage() {
   const [editingReport, setEditingReport] = useState<ScheduledReport | null>(null);
   const [search, setSearch] = useState('');
   const [frequencyWatch, setFrequencyWatch] = useState<string>('WEEKLY');
+  const { resetPage, paginationProps } = usePagination(20);
+
+  useEffect(() => { resetPage(); }, [search, resetPage]);
 
   const { data, isLoading } = useQuery({
     queryKey: ['scheduled-reports'],
@@ -362,7 +366,7 @@ export default function ScheduledReportsPage() {
         columns={columns}
         dataSource={filtered}
         loading={isLoading}
-        pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} bản ghi` }}
+        pagination={paginationProps(filtered.length, 'báo cáo')}
         scroll={{ x: 900 }}
       />
 

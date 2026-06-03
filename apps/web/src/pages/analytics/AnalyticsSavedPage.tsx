@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { apiClient } from '../../api/client';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 
@@ -39,6 +40,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function AnalyticsSavedPage() {
   const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const navigate = useNavigate();
   const { message } = App.useApp();
   const qc = useQueryClient();
@@ -169,7 +171,7 @@ export default function AnalyticsSavedPage() {
           columns={columns}
           dataSource={data}
           loading={isLoading}
-          pagination={{ pageSize: 20, showSizeChanger: false, hideOnSinglePage: true }}
+          pagination={paginationProps(data.length, 'báo cáo')}
           locale={{
             emptyText: (
               <Empty

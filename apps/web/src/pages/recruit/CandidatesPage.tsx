@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
   Input, InputNumber, Modal, message, Descriptions, Steps, Divider,
@@ -13,6 +13,7 @@ import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { usersApi } from '../../api/users';
 import {
@@ -54,14 +55,17 @@ const STAGE_OPTIONS = Object.entries(STAGE_META).map(([k, v]) => ({ value: k as 
 export default function CandidatesPage() {
   const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
-  const [filters, setFilters]       = useState<CandidateFilterParams>({ page: 1, limit: 20 });
+  const { page, pageSize, resetPage, paginationProps } = usePagination(20);
+  const [filters, setFilters]       = useState<CandidateFilterParams>({});
   const [drawerOpen, setDrawer]     = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [editing, setEditing]       = useState<Candidate | null>(null);
   const [selected, setSelected]     = useState<Candidate | null>(null);
   const [form] = Form.useForm();
 
-  const { data, isLoading }          = useGetCandidates(filters);
+  useEffect(() => { resetPage(); }, [filters.jobOpeningId, filters.stage, resetPage]);
+
+  const { data, isLoading }          = useGetCandidates({ ...filters, page, limit: pageSize });
   const { data: jobsData }           = useGetJobs({ limit: 200 });
   const { data: usersData = [] }     = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
   const jobs = jobsData?.data ?? [];
@@ -218,18 +222,16 @@ export default function CandidatesPage() {
       <FilterBar>
         <Select placeholder="Vị trí" style={{ width: 220 }} allowClear showSearch optionFilterProp="label"
           options={jobs.map(j => ({ value: j.id, label: j.title }))}
-          onChange={v => setFilters(f => ({ ...f, jobOpeningId: v, page: 1 }))} />
+          onChange={v => setFilters(f => ({ ...f, jobOpeningId: v }))} />
         <Select placeholder="Stage" style={{ width: 150 }} allowClear options={STAGE_OPTIONS}
-          onChange={v => setFilters(f => ({ ...f, stage: v, page: 1 }))} />
+          onChange={v => setFilters(f => ({ ...f, stage: v }))} />
       </FilterBar>
 
       {/* Table */}
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
         <Table<Candidate>
           rowKey="id" columns={columns} dataSource={data?.data ?? []} loading={isLoading}
-          pagination={{ current: filters.page, pageSize: filters.limit, total: data?.total ?? 0, showSizeChanger: true,
-            pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} ứng viên`,
-            onChange: (page, limit) => setFilters(f => ({ ...f, page, limit })) }}
+          pagination={paginationProps(data?.total, 'ứng viên')}
         />
       </div>
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Row, Col, Table, Button, Tag, Typography, Select, Form,
-  Input, InputNumber, Drawer, Progress, Space,
+  Input, InputNumber, Progress, Space,
   Tabs, Tooltip, Popconfirm, Divider,
 } from 'antd';
 import { CommentThread } from '../../components/comments/CommentThread';
@@ -102,7 +102,7 @@ function KrRow({ kr, onUpdate, onDelete }: { kr: OkrKeyResult; onUpdate: () => v
 
 // ─── OKR Tab ──────────────────────────────────────────────────────────────────
 function OkrTab() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const user = useAuthStore(s => s.user);
   const qc = useQueryClient();
@@ -250,10 +250,10 @@ function OkrTab() {
           pagination={paginationProps(objectives?.total, 'mục tiêu')} />
       </div>
 
-      {/* Detail Drawer */}
-      <Drawer open={!!detail} onClose={() => setDetail(null)} width={560}
+      {/* Detail Modal */}
+      <CenteredModal open={!!detail} onClose={() => setDetail(null)} width={560} footer={null}
         title={<Text style={{ color: textPrimary, fontWeight: 600 }}>{detail?.title}</Text>}
-        styles={{ body: { background: bgContainer }, header: { background: bgCard, borderBottom: `1px solid ${borderColor}` } }}>
+        styles={{ body: { background: bgContainer } }}>
         {detail && (() => {
           const obj = (objectives?.data ?? []).find(o => o.id === detail.id) ?? detail;
           const pct = objectiveProgress(obj);
@@ -299,7 +299,7 @@ function OkrTab() {
             </>
           );
         })()}
-      </Drawer>
+      </CenteredModal>
 
       {/* Create/Edit Modal */}
       <CenteredModal open={modalOpen} onClose={closeModal} title={editing ? 'Cập nhật Objective' : 'Thêm Objective mới'} footer={null} width={520}>

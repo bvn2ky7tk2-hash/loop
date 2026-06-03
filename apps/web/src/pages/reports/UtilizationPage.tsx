@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Row, Col, Table, DatePicker, Select, Typography } from 'antd';
 import { BarChartOutlined, UserOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import { usePagination } from '../../hooks/usePagination';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
@@ -38,8 +39,11 @@ function utilColor(pct: number) {
 
 export default function UtilizationPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(10);
   const [period, setPeriod] = useState(dayjs().format('YYYY-MM'));
   const [departmentId, setDepartmentId] = useState<string | undefined>();
+
+  useEffect(() => { resetPage(); }, [period, departmentId, resetPage]);
 
   const { data, isFetching } = useQuery<UtilizationData>({
     queryKey: ['reports-utilization', period, departmentId],
@@ -206,7 +210,7 @@ export default function UtilizationPage() {
               rowKey="employeeId"
               size="small"
               loading={isFetching}
-              pagination={{ pageSize: 10, size: 'small' }}
+              pagination={{ ...paginationProps(employees.length, 'nhân viên'), size: 'small' }}
               locale={{ emptyText: <Text style={{ color: textMuted }}>Không có dữ liệu</Text> }}
             />
           </div>

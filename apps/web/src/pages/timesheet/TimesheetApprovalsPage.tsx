@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card, Table, Button, Space, Badge,
   Tooltip, Popconfirm, Input, Modal, Form, Alert, Typography,
 } from 'antd';
+import { usePagination } from '../../hooks/usePagination';
 import {
   CheckCircleOutlined, CloseCircleOutlined,
   WarningOutlined, SearchOutlined,
@@ -20,10 +21,13 @@ const ALLOWED_ROLES = ['PM', 'ADMIN', 'LEADERSHIP'];
 export default function TimesheetApprovalsPage() {
   const { user } = useAuthStore();
   const qc = useQueryClient();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [search, setSearch] = useState('');
   const [rejectTarget, setRejectTarget] = useState<string | null>(null);
   const [rejectForm] = Form.useForm<{ reason: string }>();
+
+  useEffect(() => { resetPage(); }, [search, resetPage]);
 
   if (user && !ALLOWED_ROLES.includes(user.role)) {
     return <Navigate to="/" replace />;
@@ -171,7 +175,7 @@ export default function TimesheetApprovalsPage() {
           rowKey="id"
           loading={isLoading}
           size="small"
-          pagination={{ pageSize: 20, showSizeChanger: false, showTotal: (t) => `${t} bảng công` }}
+          pagination={paginationProps(filtered.length, 'bảng công')}
           rowClassName={(row) => row.isOverdue ? 'ant-table-row-overdue' : ''}
           locale={{ emptyText: 'Không có bảng công chờ duyệt' }}
         />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table, Button, Form, Input, Select, DatePicker, InputNumber,
   Space, Tag, Drawer, Descriptions, Progress, App, Popconfirm, theme,
@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { clientContractsApi, type ClientContract, type ClientContractType, type ClientContractStatus, type MilestoneStatus, type ContractMilestone, type ContractStats } from '../../api/client-contracts';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -180,9 +181,12 @@ export default function ClientContractsPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { textPrimary, textMuted } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ClientContractStatus | ''>('');
+
+  useEffect(() => { resetPage(); }, [search, statusFilter, resetPage]);
   const [selectedContract, setSelectedContract] = useState<ClientContract | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
@@ -377,7 +381,7 @@ export default function ClientContractsPage() {
       <Table
         dataSource={contracts} columns={cols} rowKey="id"
         loading={isLoading} size="small"
-        pagination={{ pageSize: 20, showTotal: t => `${t} hợp đồng` }}
+        pagination={paginationProps(contracts.length, 'hợp đồng')}
         onRow={(c) => ({ style: { cursor: 'pointer' }, onClick: () => { setSelectedContract(c); setDrawerOpen(true); } })}
       />
 

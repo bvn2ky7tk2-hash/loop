@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table, Button, Badge, Typography, Space, Row, Col, App,
 } from 'antd';
@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { queuesApi, type QueueStats, type QueueJob } from '../../api/queues';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 
@@ -28,12 +29,15 @@ function QueueCard({ queue }: { queue: QueueStats }) {
   const qc = useQueryClient();
   const [expanded, setExpanded] = useState(false);
   const [jobStatus, setJobStatus] = useState('failed');
+  const { resetPage, paginationProps } = usePagination(50);
 
   const { data: jobsData, isLoading: loadingJobs } = useQuery({
     queryKey: ['queue-jobs', queue.name, jobStatus],
     queryFn: () => queuesApi.getJobs(queue.name, jobStatus),
     enabled: expanded,
   });
+
+  useEffect(() => { resetPage(); }, [jobStatus, resetPage]);
 
   const retryMut = useMutation({
     mutationFn: ({ jobId }: { jobId: string }) => queuesApi.retryJob(queue.name, jobId),
@@ -171,7 +175,7 @@ function QueueCard({ queue }: { queue: QueueStats }) {
             dataSource={jobsData?.data ?? []}
             loading={loadingJobs}
             size="small"
-            pagination={{ pageSize: 10, showSizeChanger: true, pageSizeOptions: [10, 20, 50], showTotal: (t) => `${t} bản ghi` }}
+            pagination={paginationProps(jobsData?.data?.length, 'job')}
             scroll={{ x: 700 }}
           />
         </div>

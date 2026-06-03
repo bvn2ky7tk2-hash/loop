@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Table, Select, Typography, Progress, Row, Col, Spin,
 } from 'antd';
 import { useQuery } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
@@ -60,9 +61,12 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default function BudgetPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [filterYear, setFilterYear] = useState<number | undefined>(new Date().getFullYear());
   const [filterStatus, setFilterStatus] = useState<string | undefined>();
+
+  useEffect(() => { resetPage(); }, [filterYear, filterStatus, resetPage]);
 
   const { data: rawData, isLoading } = useQuery({
     queryKey: ['budget-plans', filterYear, filterStatus],
@@ -314,7 +318,7 @@ export default function BudgetPage() {
         columns={columns}
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
-        pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} ngân sách` }}
+        pagination={paginationProps(filtered.length, 'ngân sách')}
         locale={{ emptyText: 'Không có dữ liệu ngân sách' }}
         summary={() => (
           <Table.Summary.Row>

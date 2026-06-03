@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CandidateDetailDrawer } from './CandidateDetailDrawer';
@@ -140,6 +141,7 @@ function HireModal({
 
 function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
   const { textPrimary, textMuted, linkColor } = useThemePalette();
+  const { paginationProps } = usePagination(20);
   const { data, isLoading } = useGetCandidates({ stage: 'OFFER', limit: 100 });
   const candidates = data?.data ?? [];
   const [detail, setDetail] = useState<Candidate | null>(null);
@@ -200,7 +202,7 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
 
   return (
     <>
-      <Table rowKey="id" dataSource={candidates} columns={columns} pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} nhân sự` }} />
+      <Table rowKey="id" dataSource={candidates} columns={columns} pagination={paginationProps(candidates.length, 'nhân sự')} />
       <CandidateDetailDrawer candidate={detail} open={!!detail} onClose={() => setDetail(null)} />
     </>
   );
@@ -210,6 +212,7 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
 
 function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
   const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
+  const { paginationProps } = usePagination(20);
 
   // Lấy definition trực tiếp bằng key query param
   const { data: defsData } = useQuery({
@@ -356,7 +359,7 @@ function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
       rowKey="id"
       dataSource={instances}
       columns={columns}
-      pagination={{ pageSize: 20, showSizeChanger: true, pageSizeOptions: [20, 50, 100, 200], showTotal: (t) => `${t} nhân sự` }}
+      pagination={paginationProps(instances.length, 'nhân sự')}
     />
   );
 }

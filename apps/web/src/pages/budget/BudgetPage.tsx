@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Table, Select, Typography, Tag, Progress, Space,
   Row, Col, Statistic, Spin,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { StatCard } from '../../components/ui/StatCard';
+import { usePagination } from '../../hooks/usePagination';
 import {
   DollarOutlined, WarningOutlined, CheckCircleOutlined, BarChartOutlined,
 } from '@ant-design/icons';
@@ -233,9 +234,12 @@ function BudgetDetailDrawer({
 
 export default function BudgetPage() {
   const { isDark, textPrimary, textSecondary, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
+  const { resetPage, paginationProps } = usePagination(20);
 
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | undefined>();
   const [selectedProject, setSelectedProject] = useState<ProjectBudgetRow | null>(null);
+
+  useEffect(() => { resetPage(); }, [statusFilter, resetPage]);
 
   const { data: projects = [], isLoading: projectsLoading } = useQuery({
     queryKey: ['projects'],
@@ -427,7 +431,7 @@ export default function BudgetPage() {
         rowKey="id"
         columns={columns}
         locale={{ emptyText: 'Chưa có dự án nào để hiển thị ngân sách' }}
-        pagination={{ pageSize: 20, showSizeChanger: false }}
+        pagination={paginationProps(rows.length, 'dự án')}
         style={{ background: bgContainer }}
         onRow={(record) => ({
           onClick: () => setSelectedProject(record),
