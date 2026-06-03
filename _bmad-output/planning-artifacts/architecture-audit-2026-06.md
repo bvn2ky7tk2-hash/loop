@@ -89,3 +89,6 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 
 - ✅ **Cụm 3 schema** (`2ff62a0`): migration v6_tenancy_phase2 (apply qua psql, đã backup) — 55 model + insurance/tax thêm @default (non-breaking, giữ nullable); Asset.code/KbArticle.slug → composite unique [tenantId,...] (findUnique→findFirst); composite index tasks/notifications/audit_logs/attendance. tsc 0, jest 81/81.
   - LƯU Ý: Category + RBAC authz BỊ CHẶN bởi thiếu role platform-admin (Category/RBAC là global reference data; fix sạch cần super-admin tách biệt) → gộp vào Cụm 7.
+- ✅ **Perf N+1** (`9611972`): leave-accrual (80k→2 query/policy), payroll-engine (5N→5), cost (3N→3) — prefetch findMany({in})/groupBy + Map, giữ nguyên logic.
+
+## TRẠNG THÁI CUỐI: 6/7 cụm + perf N+1 XONG. Còn CỤM 7 (SaaS-ops program) — feature nhiều ngày, dùng doc này làm roadmap.
