@@ -60,26 +60,26 @@ export class CostService extends TenantAwareService {
       0,
     );
 
-    const members: MemberCost[] = await Promise.all(
-      project.members.map(async (alloc) => {
-        const rate = Number(alloc.ratePerDay ?? 0);
-        const loggedHours = await this.getEmployeeLoggedHours(
-          alloc.employeeId,
-          projectId,
-        );
-        const hoursPerDay = 8;
-        const cost = (loggedHours / hoursPerDay) * rate;
-
-        return {
-          employeeId: alloc.employeeId,
-          fullName: alloc.employee.fullName,
-          allocationRole: alloc.role,
-          ratePerDay: rate,
-          actualHours: loggedHours,
-          cost: Math.round(cost * 100) / 100,
-        };
-      }),
+    const loggedHoursByEmployee = await this.getLoggedHoursForMembers(
+      project.members.map((m) => m.employeeId),
+      projectId,
     );
+
+    const members: MemberCost[] = project.members.map((alloc) => {
+      const rate = Number(alloc.ratePerDay ?? 0);
+      const loggedHours = loggedHoursByEmployee.get(alloc.employeeId) ?? 0;
+      const hoursPerDay = 8;
+      const cost = (loggedHours / hoursPerDay) * rate;
+
+      return {
+        employeeId: alloc.employeeId,
+        fullName: alloc.employee.fullName,
+        allocationRole: alloc.role,
+        ratePerDay: rate,
+        actualHours: loggedHours,
+        cost: Math.round(cost * 100) / 100,
+      };
+    });
 
     const totalCost = members.reduce((s, m) => s + m.cost, 0);
 
@@ -126,15 +126,30 @@ export class CostService extends TenantAwareService {
     });
   }
 
-  private async getEmployeeLoggedHours(
-    employeeId: string,
+  private async getLoggedHoursForMembers(
+    employeeIds: string[],
     projectId: string,
-  ): Promise<number> {
-    const employee = await this.prisma.employee.findUnique({
-      where: { id: employeeId },
-      select: { userId: true },
+  ): Promise<Map<string, number>> {
+    const result = new Map<string, number>();
+    if (employeeIds.length === 0) return result;
+
+    const employees = await this.prisma.employee.findMany({
+      where: { id: { in: employeeIds } },
+      select: { id: true, userId: true },
     });
-    if (!employee?.userId) return 0;
+
+    const userIdByEmployee = new Map<string, string>();
+    const employeeByUserId = new Map<string, string[]>();
+    for (const emp of employees) {
+      if (!emp.userId) continue;
+      userIdByEmployee.set(emp.id, emp.userId);
+      const list = employeeByUserId.get(emp.userId) ?? [];
+      list.push(emp.id);
+      employeeByUserId.set(emp.userId, list);
+    }
+
+    const userIds = [...employeeByUserId.keys()];
+    if (userIds.length === 0) return result;
 
     const tasks = await this.prisma.task.findMany({
       where: this.tenantWhere({ projectId }),
@@ -142,12 +157,20 @@ export class CostService extends TenantAwareService {
     });
     const taskIds = tasks.map((t) => t.id);
 
-    const logs = await this.prisma.timeLog.findMany({
-      where: { userId: employee.userId, taskId: { in: taskIds } },
-      select: { hours: true },
-      take: 10000,
+    const grouped = await this.prisma.timeLog.groupBy({
+      by: ['userId'],
+      where: { userId: { in: userIds }, taskId: { in: taskIds } },
+      _sum: { hours: true },
     });
 
-    return logs.reduce((s, l) => s + Number(l.hours), 0);
+    for (const g of grouped) {
+      const hours = Number(g._sum.hours ?? 0);
+      for (const empId of employeeByUserId.get(g.userId) ?? []) {
+        result.set(empId, hours);
+      }
+    }
+
+    return result;
   }
+
 }

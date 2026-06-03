@@ -62,52 +62,99 @@ export class PayrollEngineService {
       bonusByEmployee.set(b.employeeId, prev + Number(b.bonusAmount));
     }
 
-    // Tính toán nặng (đọc DB + compute) làm TRƯỚC transaction để giữ transaction ngắn.
-    // Gom kết quả per employee, chỉ phần GHI mới đưa vào transaction atomic bên dưới.
-    const recordsToWrite: { employeeId: string; recordData: any }[] = [];
+    // ─── Prefetch: tránh N+1 — gom 5 nguồn dữ liệu bằng query batch theo IN, build Map ──
+    // Trước đây mỗi nhân viên chạy ~5 query tuần tự (5N round-trip).
+    // Nay mỗi nguồn 1 query batch → tổng ~5 query, trong loop chỉ lookup từ Map.
+    const empIds = employees.map((e) => e.id);
+    const userIds = employees
+      .map((e) => e.userId)
+      .filter((u): u is string => !!u);
 
-    for (const emp of employees) {
-      const contract = await this.prisma.contract.findFirst({
+    const [
+      contractsAll,
+      timesheetsAll,
+      taxProfilesAll,
+      existingRecordsAll,
+      salaryRecordsAll,
+    ] = await Promise.all([
+      this.prisma.contract.findMany({
         where: {
-          employeeId: emp.id,
+          employeeId: { in: empIds },
           status: ContractStatus.ACTIVE,
           startDate: { lte: period.endDate },
           OR: [{ endDate: null }, { endDate: { gte: period.startDate } }],
         },
         orderBy: { startDate: 'desc' },
-      });
-      if (!contract) continue;
-
-      const timesheet = emp.userId
-        ? await this.prisma.timesheetRecord.findFirst({
+      }),
+      userIds.length
+        ? this.prisma.timesheetRecord.findMany({
             where: {
-              userId: emp.userId,
+              userId: { in: userIds },
               periodStart: { lte: period.endDate },
               periodEnd: { gte: period.startDate },
             },
             orderBy: { periodStart: 'desc' },
           })
-        : null;
-
-      const taxProfile = await this.prisma.employeeTaxProfile.findUnique({
-        where: { employeeId: emp.id },
+        : Promise.resolve([]),
+      this.prisma.employeeTaxProfile.findMany({
+        where: { employeeId: { in: empIds } },
         include: { dependents: true },
-      });
-
-      const existingRecord = await this.prisma.payrollRecord.findUnique({
-        where: { periodId_employeeId: { periodId, employeeId: emp.id } },
+      }),
+      this.prisma.payrollRecord.findMany({
+        where: { periodId, employeeId: { in: empIds } },
         include: { employeeAllowances: true },
-      });
-
-      // E16G.6: Query SalaryRecord trong period để tính weighted avg salary
-      const salaryRecordsInPeriod = await this.prisma.salaryRecord.findMany({
+      }),
+      this.prisma.salaryRecord.findMany({
         where: {
-          employeeId: emp.id,
+          employeeId: { in: empIds },
           effectiveDate: { gt: period.startDate, lte: period.endDate },
         },
         orderBy: { effectiveDate: 'asc' },
-        take: 50,
-      });
+      }),
+    ]);
+
+    // contract: orderBy startDate desc → bản đầu mỗi nhóm là mới nhất (khớp findFirst cũ)
+    const contractMap = new Map<string, (typeof contractsAll)[number]>();
+    for (const c of contractsAll) {
+      if (!contractMap.has(c.employeeId)) contractMap.set(c.employeeId, c);
+    }
+
+    // timesheet: orderBy periodStart desc → bản đầu mỗi nhóm là mới nhất (khớp findFirst cũ)
+    const timesheetMap = new Map<string, (typeof timesheetsAll)[number]>();
+    for (const t of timesheetsAll) {
+      if (!timesheetMap.has(t.userId)) timesheetMap.set(t.userId, t);
+    }
+
+    const taxProfileMap = new Map<string, (typeof taxProfilesAll)[number]>();
+    for (const p of taxProfilesAll) taxProfileMap.set(p.employeeId, p);
+
+    const existingRecordMap = new Map<string, (typeof existingRecordsAll)[number]>();
+    for (const r of existingRecordsAll) existingRecordMap.set(r.employeeId, r);
+
+    // salaryRecord: giữ thứ tự effectiveDate asc theo từng employee (khớp findMany cũ)
+    const salaryRecordsMap = new Map<string, typeof salaryRecordsAll>();
+    for (const s of salaryRecordsAll) {
+      const arr = salaryRecordsMap.get(s.employeeId);
+      if (arr) arr.push(s);
+      else salaryRecordsMap.set(s.employeeId, [s]);
+    }
+
+    // Tính toán nặng (đọc DB + compute) làm TRƯỚC transaction để giữ transaction ngắn.
+    // Gom kết quả per employee, chỉ phần GHI mới đưa vào transaction atomic bên dưới.
+    const recordsToWrite: { employeeId: string; recordData: any }[] = [];
+
+    for (const emp of employees) {
+      const contract = contractMap.get(emp.id);
+      if (!contract) continue;
+
+      const timesheet = emp.userId ? timesheetMap.get(emp.userId) ?? null : null;
+
+      const taxProfile = taxProfileMap.get(emp.id) ?? null;
+
+      const existingRecord = existingRecordMap.get(emp.id) ?? null;
+
+      // E16G.6: SalaryRecord trong period để tính weighted avg salary
+      const salaryRecordsInPeriod = salaryRecordsMap.get(emp.id) ?? [];
 
       const recordData = this.computeRecord({
         contract,

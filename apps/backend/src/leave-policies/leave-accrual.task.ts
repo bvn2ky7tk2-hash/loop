@@ -270,17 +270,30 @@ export class LeaveAccrualTask {
         take: 20,
       });
 
+      // Prefetch toàn bộ leaveBalance trong 1 query (dập N+1 đọc)
+      const empIds = employees.map((e) => e.id);
+      const ltIds = leaveTypes.map((l) => l.id);
+      const balances = await this.prisma.leaveBalance.findMany({
+        where: {
+          employeeId: { in: empIds },
+          leaveTypeId: { in: ltIds },
+          year: currentYear,
+        },
+      });
+      const balanceMap = new Map(
+        balances.map((b) => [`${b.employeeId}:${b.leaveTypeId}`, b]),
+      );
+
+      // Admin/HR query bất biến — đưa ra ngoài 2 vòng for (dập N+1)
+      const adminUsers = await this.prisma.user.findMany({
+        where: { role: 'ADMIN', isActive: true },
+        select: { id: true },
+        take: 10,
+      });
+
       for (const emp of employees) {
         for (const lt of leaveTypes) {
-          const balance = await this.prisma.leaveBalance.findUnique({
-            where: {
-              employeeId_leaveTypeId_year: {
-                employeeId: emp.id,
-                leaveTypeId: lt.id,
-                year: currentYear,
-              },
-            },
-          });
+          const balance = balanceMap.get(`${emp.id}:${lt.id}`);
 
           if (!balance) continue;
 
@@ -320,13 +333,7 @@ export class LeaveAccrualTask {
               data: { totalDays: newTotal },
             });
 
-            // Thông báo HR/admin về khoản thanh toán
-            const adminUsers = await this.prisma.user.findMany({
-              where: { role: 'ADMIN', isActive: true },
-              select: { id: true },
-              take: 10,
-            });
-
+            // Thông báo HR/admin về khoản thanh toán (adminUsers đã prefetch ngoài loop)
             const notifyTitle = `Thanh toán carry-over: ${emp.fullName}`;
             const notifyBody = `Carry-over ${carriedDays} ngày nghỉ đã hết hạn hôm nay. Khoản thanh toán: ${payoutAmount.toLocaleString('vi-VN')} đ (${carriedDays} ngày × ${dailySalary.toLocaleString('vi-VN')} đ/ngày).`;
 
