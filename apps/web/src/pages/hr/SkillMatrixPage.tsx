@@ -1,26 +1,25 @@
 import { useState } from 'react';
 import {
   Table, Button, Tag, Typography, Select, Input, Form, Row, Col,
-  Space, Tabs, Progress, Modal, InputNumber, DatePicker, Tooltip, Badge,
+  Space, Tabs, InputNumber, DatePicker, Tooltip,
   Popconfirm,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
-  PlusOutlined, EditOutlined, DeleteOutlined, ApartmentOutlined,
-  StarFilled, TrophyOutlined, UserOutlined, TeamOutlined, CheckCircleOutlined,
+  PlusOutlined, DeleteOutlined, ApartmentOutlined,
+  StarFilled, TrophyOutlined, UserOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
   skillsApi, type Skill, type SkillLevel, type SkillCategory,
-  type EmployeeSkill, type EmployeeWithSkills, type ResourceAvailabilityItem,
+  type EmployeeSkill, type EmployeeWithSkills,
 } from '../../api/skills';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { confirmDelete } from '../../components/ui/confirmDelete';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
 const { Text } = Typography;
@@ -40,21 +39,12 @@ const LEVEL_META: Record<SkillLevel, { label: string; color: string; stars: numb
   EXPERT:       { label: 'Chuyên gia',  color: '#F59E0B', stars: 4, progressColor: '#FBBF24' },
 };
 
-function LevelBadge({ level }: { level: SkillLevel }) {
-  const meta = LEVEL_META[level];
-  return (
-    <Tag style={{ borderColor: meta.color, color: meta.color, background: `${meta.color}15` }}>
-      {'★'.repeat(meta.stars)} {meta.label}
-    </Tag>
-  );
-}
-
 // ─── Tab 1: Ma trận kỹ năng ───────────────────────────────────────────────────
 
 function MatrixTab({ skills }: { skills: Skill[] }) {
-  const { textPrimary, textMuted, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, borderColor } = useThemePalette();
   const [page, setPage] = useState(1);
-  const [filterOrgUnit, setFilterOrgUnit] = useState<string>();
+  const [filterOrgUnit] = useState<string>();
   const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
   const [editTarget, setEditTarget] = useState<{ employee: EmployeeWithSkills; skill?: EmployeeSkill } | null>(null);
   const [form] = Form.useForm();
@@ -425,150 +415,9 @@ function SkillCatalogTab() {
   );
 }
 
-// ─── Tab 3: Resource Availability ────────────────────────────────────────────
-
-function ResourceTab({ skills }: { skills: Skill[] }) {
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
-  const [filterSkillId, setFilterSkillId] = useState<string>();
-  const [filterLevel, setFilterLevel]     = useState<string>();
-  const [filterDate, setFilterDate]       = useState<any>(null);
-
-  const { data: resources = [], isLoading } = useQuery({
-    queryKey: ['resource-availability', filterSkillId, filterLevel, filterDate?.format('YYYY-MM-DD')],
-    queryFn: () => skillsApi.getResourceAvailability({
-      skillId:    filterSkillId,
-      skillLevel: filterLevel,
-      date:       filterDate ? filterDate.format('YYYY-MM-DD') : undefined,
-    }),
-  });
-
-  const available   = resources.filter(r => r.availablePct >= 50);
-  const semiBooked  = resources.filter(r => r.availablePct > 0 && r.availablePct < 50);
-  const fullyBooked = resources.filter(r => r.availablePct === 0);
-
-  const columns: ColumnsType<ResourceAvailabilityItem> = [
-    {
-      title: <Text style={{ color: textMuted }}>Nhân sự</Text>,
-      render: (_: any, r) => (
-        <EmployeeInfoCell employee={{ code: r.code, fullName: r.user?.name ?? r.fullName, orgUnit: r.orgUnit ?? undefined }} />
-      ),
-    },
-    {
-      title: <Text style={{ color: textMuted }}>Phòng ban</Text>, width: 160,
-      render: (_: any, r) => <Text style={{ color: textMuted }}>{r.orgUnit?.name ?? '—'}</Text>,
-    },
-    {
-      title: <Text style={{ color: textMuted }}>Kỹ năng liên quan</Text>, width: 220,
-      render: (_: any, r) => (
-        <Space wrap size={4}>
-          {r.skills.filter(s => !filterSkillId || s.skillId === filterSkillId).slice(0, 4).map(s => (
-            <Tag key={s.skillId}
-              style={isDark ? { background: `${LEVEL_META[s.level].progressColor}22`, color: LEVEL_META[s.level].progressColor, borderColor: `${LEVEL_META[s.level].progressColor}44` } : {}}
-              color={isDark ? undefined : 'blue'}
-            >
-              {s.skill.name} · {LEVEL_META[s.level].stars}★
-            </Tag>
-          ))}
-        </Space>
-      ),
-    },
-    {
-      title: <Text style={{ color: textMuted }}>Dự án hiện tại</Text>, width: 200,
-      render: (_: any, r) => (
-        r.allocations.length === 0
-          ? <Tag style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981', borderColor: 'rgba(16,185,129,0.3)' }}>Chưa có việc</Tag>
-          : <Space direction="vertical" size={2}>
-              {r.allocations.map(a => (
-                <Text key={a.projectId} style={{ color: textMuted, fontSize: 12 }}>
-                  {a.projectCode}: {a.pct}%
-                </Text>
-              ))}
-            </Space>
-      ),
-    },
-    {
-      title: <Text style={{ color: textMuted }}>Khả năng tiếp nhận</Text>, width: 180,
-      render: (_: any, r) => {
-        const pct = r.availablePct;
-        const color = pct >= 50 ? '#10B981' : pct > 0 ? '#F59E0B' : '#EF4444';
-        const label = pct >= 50 ? 'Có thể nhận việc' : pct > 0 ? 'Bận một phần' : 'Đã full';
-        return (
-          <div>
-            <Progress percent={pct} showInfo={false} strokeColor={color} trailColor={isDark ? '#334155' : '#E2E8F0'} size="small" style={{ marginBottom: 2 }} />
-            <Text style={{ color, fontSize: 12 }}>{pct}% • {label}</Text>
-          </div>
-        );
-      },
-    },
-  ];
-
-  return (
-    <div>
-      <Row gutter={12} style={{ marginBottom: 16 }}>
-        <Col xs={12} sm={4}><div style={{ textAlign: 'center', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 8, padding: '8px 0' }}>
-          <Text style={{ fontSize: 20, fontWeight: 700, color: '#10B981', display: 'block' }}>{available.length}</Text>
-          <Text style={{ color: textMuted, fontSize: 12 }}>Có thể nhận (≥50%)</Text>
-        </div></Col>
-        <Col xs={12} sm={4}><div style={{ textAlign: 'center', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '8px 0' }}>
-          <Text style={{ fontSize: 20, fontWeight: 700, color: '#F59E0B', display: 'block' }}>{semiBooked.length}</Text>
-          <Text style={{ color: textMuted, fontSize: 12 }}>Bận một phần</Text>
-        </div></Col>
-        <Col xs={12} sm={4}><div style={{ textAlign: 'center', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 0' }}>
-          <Text style={{ fontSize: 20, fontWeight: 700, color: '#EF4444', display: 'block' }}>{fullyBooked.length}</Text>
-          <Text style={{ color: textMuted, fontSize: 12 }}>Đã full</Text>
-        </div></Col>
-      </Row>
-
-      <FilterBar>
-        <Select
-          placeholder="Lọc theo kỹ năng"
-          allowClear style={{ width: 200 }}
-          value={filterSkillId}
-          onChange={setFilterSkillId}
-          showSearch
-          filterOption={(input, opt) => (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())}
-          options={skills.map(s => ({ value: s.id, label: s.name }))}
-        />
-        <Select
-          placeholder="Mức độ"
-          allowClear style={{ width: 150 }}
-          value={filterLevel}
-          onChange={setFilterLevel}
-          options={[
-            { value: 'BEGINNER',     label: 'Mới học' },
-            { value: 'INTERMEDIATE', label: 'Trung cấp' },
-            { value: 'ADVANCED',     label: 'Thành thạo' },
-            { value: 'EXPERT',       label: 'Chuyên gia' },
-          ]}
-        />
-        <DatePicker
-          placeholder="Tính đến ngày"
-          format="DD/MM/YYYY"
-          value={filterDate}
-          onChange={setFilterDate}
-          style={{ width: 160 }}
-        />
-      </FilterBar>
-
-      <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={resources}
-          loading={isLoading}
-          scroll={{ x: 900 }}
-          pagination={{ pageSize: 20, showTotal: t => <Text style={{ color: textMuted }}>Tổng {t} nhân sự</Text> }}
-          rowClassName={(r) => r.availablePct >= 50 ? '' : ''}
-        />
-      </div>
-    </div>
-  );
-}
-
 // ─── Main ──────────────────────────────────────────────────────────────────────
 
 export default function SkillMatrixPage() {
-  const { textPrimary, textMuted } = useThemePalette();
 
   const { data: skills = [] } = useQuery({
     queryKey: ['skills'],

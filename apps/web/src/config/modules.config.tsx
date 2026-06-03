@@ -3,7 +3,6 @@ import {
   ApartmentOutlined,
   BugOutlined,
   SettingOutlined,
-  DashboardOutlined,
   AppstoreOutlined,
   CheckSquareOutlined,
   ScheduleOutlined,

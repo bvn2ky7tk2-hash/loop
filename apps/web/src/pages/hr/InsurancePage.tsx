@@ -118,7 +118,7 @@ export default function InsurancePage() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees-list'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
   });
 
   const enrollments: InsuranceEnrollment[] = Array.isArray(enrollmentsResp)
@@ -705,11 +705,11 @@ export default function InsurancePage() {
             label="Mức đóng BHXH (VNĐ)"
             rules={[{ required: true, message: 'Vui lòng nhập mức đóng' }]}
           >
-            <InputNumber
+            <InputNumber<number>
               min={0}
               style={{ width: '100%' }}
               formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-              parser={(v): number => Number(v?.replace(/\./g, '') ?? 0)}
+              parser={(v) => Number(v?.replace(/\./g, '') ?? 0)}
               placeholder="Ví dụ: 5.000.000"
             />
           </Form.Item>
@@ -783,7 +783,7 @@ export default function InsurancePage() {
                   label="Mức đóng mới (VNĐ)"
                   rules={[{ required: true, message: 'Vui lòng nhập mức đóng mới' }]}
                 >
-                  <InputNumber
+                  <InputNumber<number>
                     min={0}
                     style={{ width: '100%' }}
                     formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
@@ -833,11 +833,11 @@ export default function InsurancePage() {
       >
         <Form form={editEnrollForm} layout="vertical">
           <Form.Item name="insuranceSalary" label="Mức đóng BHXH (VNĐ)" rules={[{ required: true }]}>
-            <InputNumber
+            <InputNumber<number>
               min={0}
               style={{ width: '100%' }}
               formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-              parser={(v): number => Number(v?.replace(/\./g, '') ?? 0)}
+              parser={(v) => Number(v?.replace(/\./g, '') ?? 0)}
             />
           </Form.Item>
           <Form.Item name="status" label="Trạng thái">

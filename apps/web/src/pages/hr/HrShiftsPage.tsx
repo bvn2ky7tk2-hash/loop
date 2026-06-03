@@ -202,7 +202,7 @@ export default function HrShiftsPage() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
   });
 
   // ── Stats ──
@@ -295,7 +295,7 @@ export default function HrShiftsPage() {
 
   const removeEnrollmentMutation = useMutation({
     mutationFn: workShiftsApi.removeEnrollment,
-    onSuccess: (_, id) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['work-schedules'] });
       // Invalidate all enrollment queries
       qc.invalidateQueries({ queryKey: ['enrollments'] });

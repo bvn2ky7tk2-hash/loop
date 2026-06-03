@@ -109,6 +109,7 @@ export default function FinanceAnalyticsPage() {
 
       <FilterBar>
         {/* Placeholder — có thể thêm filter năm tài chính, BU khi cần */}
+        <></>
       </FilterBar>
 
       {/* ── StatCards ── */}
@@ -177,8 +178,8 @@ export default function FinanceAnalyticsPage() {
                 />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number, name: string) => [
-                    name === 'amount' ? formatCompact(v) + ' đ' : String(v),
+                  formatter={(v, name) => [
+                    name === 'amount' ? formatCompact(Number(v)) + ' đ' : String(v),
                     name === 'amount' ? 'Giá trị AR' : 'Số hóa đơn',
                   ]}
                 />
@@ -219,9 +220,9 @@ export default function FinanceAnalyticsPage() {
                 />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number, name: string) => {
-                    if (name === 'revenue') return [formatCompact(v) + ' đ', 'Doanh thu'];
-                    if (name === 'cost')    return [formatCompact(v) + ' đ', 'Chi phí'];
+                  formatter={(v, name) => {
+                    if (name === 'revenue') return [formatCompact(Number(v)) + ' đ', 'Doanh thu'];
+                    if (name === 'cost')    return [formatCompact(Number(v)) + ' đ', 'Chi phí'];
                     return [`${v}%`, 'Net Margin'];
                   }}
                 />

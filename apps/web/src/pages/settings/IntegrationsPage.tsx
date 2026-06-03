@@ -117,8 +117,6 @@ function WebhooksTab() {
   const activeCount = endpoints.filter((e) => e.isActive).length;
 
   const logsAll = logsData?.data ?? [];
-  const now = dayjs();
-  const sevenDaysAgo = now.subtract(7, 'day');
 
   // Tổng log 7 ngày (tất cả endpoints) — chỉ hiển thị khi không có endpoint nào được chọn
   // Thống kê tổng thể dùng dữ liệu endpoints hiện tại; log 7 ngày chỉ ước lượng

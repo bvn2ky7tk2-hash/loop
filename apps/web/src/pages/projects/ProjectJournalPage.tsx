@@ -39,7 +39,7 @@ interface ItemListProps {
   readOnly?: boolean;
 }
 
-function ItemList({ items, isDark, textPrimary, textMuted, linkColor, onConvert, onIgnore, readOnly }: ItemListProps) {
+function ItemList({ items, isDark, textPrimary, textMuted, onConvert, onIgnore, readOnly }: ItemListProps) {
   if (!items.length) {
     return <Text style={{ color: textMuted }}>Không có mục nào.</Text>;
   }
@@ -119,7 +119,7 @@ interface JournalCardProps {
   onSelect: (j: ProjectJournal) => void;
 }
 
-function JournalCard({ journal, isDark, textPrimary, textMuted, textSecondary, bgCard, borderColor, linkColor, onSelect }: JournalCardProps) {
+function JournalCard({ journal, isDark, textPrimary, textMuted, bgCard, borderColor, onSelect }: JournalCardProps) {
   const unresolvedOpen = ((journal.unresolvedItems ?? []) as JournalItem[]).filter(
     (i) => !i.status || i.status === 'OPEN',
   ).length;
@@ -198,7 +198,7 @@ export default function ProjectJournalPage() {
 
   const {
     isDark, textPrimary, textMuted, textSecondary,
-    bgContainer, bgCard, borderColor, linkColor,
+    bgCard, borderColor, linkColor,
   } = useThemePalette();
 
   const [createOpen, setCreateOpen]       = useState(false);

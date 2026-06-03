@@ -120,7 +120,7 @@ function LineItemsEditor({ value = [], onChange }: { value?: InvoiceItemInput[];
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InvoicesPage() {
-  const { isDark, bgContainer, bgCard, bgSubPanel, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
+  const { bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
 
   const [filters, setFilters]   = useState<FilterInvoiceParams>({ page: 1, limit: 20 });
   const [drawerOpen, setDrawer] = useState(false);
@@ -132,7 +132,7 @@ export default function InvoicesPage() {
 
   const { data, isLoading }     = useGetInvoices(filters);
   const { data: summary }       = useGetInvoiceSummary();
-  const { data: customersData } = useGetCustomers({ pageSize: 200 });
+  const { data: customersData } = useGetCustomers({ limit: 200 });
   const customers = customersData?.data ?? [];
 
   const createMutation       = useCreateInvoice();
@@ -381,7 +381,7 @@ export default function InvoicesPage() {
             <TextArea rows={2} />
           </Form.Item>
 
-          <Divider orientation="left" style={{ color: textMuted, fontSize: 13 }}>Dòng mục</Divider>
+          <Divider titlePlacement="left" style={{ color: textMuted, fontSize: 13 }}>Dòng mục</Divider>
 
           <Form.Item name="items" rules={[{ required: true, message: 'Cần ít nhất 1 dòng mục' }]}>
             <LineItemsEditor />

@@ -119,7 +119,7 @@ export default function PositionsPage() {
     queryFn: orgUnitsApi.getTree,
   });
   const orgOptions = useMemo(
-    () => flattenTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
+    () => flattenTree(orgTree as Parameters<typeof flattenTree>[0]).map((u) => ({ value: u.id, label: u.name })),
     [orgTree],
   );
 

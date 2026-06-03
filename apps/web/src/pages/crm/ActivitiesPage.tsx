@@ -271,7 +271,7 @@ export default function ActivitiesPage() {
       {/* Create / Edit Modal */}
       <CenteredModal
         open={modalOpen}
-        onCancel={closeModal}
+        onClose={closeModal}
         title={editing ? 'Cập nhật hoạt động' : 'Ghi hoạt động mới'}
         footer={null}
         width={580}

@@ -44,14 +44,6 @@ const STATUS_COLOR: Record<LeaveStatus, string> = {
   CANCELLED: 'default',
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
-  TRAVEL: '✈️',
-  MEALS: '🍱',
-  EQUIPMENT: '💻',
-  SOFTWARE: '🛠️',
-  TRAINING: '📚',
-  OTHER: '📦',
-};
 
 const PRIVILEGED_ROLES = ['ADMIN', 'LEADERSHIP', 'PM', 'HR'];
 
@@ -165,20 +157,14 @@ function LeaveDrawer({
   onClose,
   leaveTypes,
   employees,
-  isDark,
   bgContainer,
-  borderColor,
-  textPrimary,
   currentEmployeeId,
 }: {
   open: boolean;
   onClose: () => void;
   leaveTypes: LeaveType[];
   employees: { id: string; fullName: string }[];
-  isDark: boolean;
   bgContainer: string;
-  borderColor: string;
-  textPrimary: string;
   currentEmployeeId?: string;
 }) {
   const [form] = Form.useForm();
@@ -231,11 +217,6 @@ function LeaveDrawer({
       width={480}
       styles={{
         body: { background: bgContainer },
-        header: {
-          background: bgContainer,
-          borderBottom: `1px solid ${borderColor}`,
-          color: textPrimary,
-        },
       }}
       footer={
         <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
@@ -309,7 +290,7 @@ function LeaveDrawer({
 // ─── Main LeavePage ───────────────────────────────────────────────────────────
 
 export default function LeavePage() {
-  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, borderColor, preset, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -333,12 +314,12 @@ export default function LeavePage() {
 
   const { data: leaveTypes = [] } = useQuery({
     queryKey: ['leave-types'],
-    queryFn: leavesApi.getTypes,
+    queryFn: () => leavesApi.getTypes(),
   });
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
   });
 
   // Tìm employee của current user
@@ -589,10 +570,7 @@ export default function LeavePage() {
         onClose={() => setDrawerOpen(false)}
         leaveTypes={leaveTypes}
         employees={employees}
-        isDark={isDark}
         bgContainer={bgContainer}
-        borderColor={borderColor}
-        textPrimary={textPrimary}
         currentEmployeeId={currentEmployee?.id}
       />
 

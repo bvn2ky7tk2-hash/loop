@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Row, Col, Table, Tag, Typography, Button, Drawer, Space, Tooltip,
   Popconfirm, Form, Input, Select, Switch, Tabs, Badge, Descriptions,
@@ -46,17 +46,22 @@ function RespondModal({
   ticket, open, onCancel, onOk, loading,
 }: { ticket: CustomerTicket | null; open: boolean; onCancel: () => void; onOk: (v: any) => void; loading: boolean }) {
   const [form] = Form.useForm();
+  useEffect(() => {
+    if (open && ticket) form.setFieldsValue({ status: ticket.status, response: ticket.response ?? '' });
+  }, [open, ticket, form]);
   if (!ticket) return null;
   return (
     <CenteredModal
       title={`Phản hồi ticket — ${ticket.title}`}
       open={open}
-      onCancel={onCancel}
-      onOk={form.submit}
-      confirmLoading={loading}
-      okText="Lưu"
+      onClose={onCancel}
       width={600}
-      afterOpenChange={v => { if (v) form.setFieldsValue({ status: ticket.status, response: ticket.response ?? '' }); }}
+      footer={
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+          <Button onClick={onCancel}>Hủy</Button>
+          <Button type="primary" loading={loading} onClick={form.submit}>Lưu</Button>
+        </div>
+      }
     >
       <Form form={form} layout="vertical" onFinish={onOk}>
         <Form.Item name="status" label="Trạng thái" rules={[{ required: true }]}>
@@ -199,7 +204,7 @@ export default function PortalManagePage() {
   const [editing, setEditing]           = useState<CustomerPortal | null>(null);
   const [ticketStatus, setTicketStatus] = useState<string | undefined>();
   const [form] = Form.useForm();
-  const { isDark, textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
   const { paginationProps: portalPagination } = usePagination(50);
   const { paginationProps: ticketPagination } = usePagination(50);
   const qc = useQueryClient();
@@ -390,10 +395,15 @@ export default function PortalManagePage() {
       <CenteredModal
         title={editing ? 'Cập nhật portal' : 'Tạo portal mới'}
         open={modalOpen}
-        onCancel={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}
-        onOk={form.submit}
-        confirmLoading={mutateSave.isPending}
-        okText={editing ? 'Cập nhật' : 'Tạo'}
+        onClose={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}>Hủy</Button>
+            <Button type="primary" loading={mutateSave.isPending} onClick={form.submit}>
+              {editing ? 'Cập nhật' : 'Tạo'}
+            </Button>
+          </div>
+        }
       >
         <Form form={form} layout="vertical" onFinish={mutateSave.mutate}>
           <Form.Item name="name" label="Tên portal" rules={[{ required: true }]}>

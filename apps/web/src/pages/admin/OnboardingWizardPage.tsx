@@ -8,11 +8,9 @@ import {
   UserAddOutlined, CheckCircleFilled, SettingOutlined, RocketOutlined,
   DeleteOutlined, PlusOutlined, CheckOutlined,
 } from '@ant-design/icons';
-import type { UploadProps } from 'antd';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { moduleConfigApi } from '../../api/module-config';
-import type { ModuleConfig } from '../../api/module-config';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 

@@ -7,6 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { usersApi } from '../../api/users';
 import dayjs from 'dayjs';
+
+// Hình dạng user thực tế trả về từ /users — bù cho type UserRecord upstream
+// đang thiếu các field cơ bản (id, name).
+interface AppUser { id: string; name: string }
+const fetchUsers = (): Promise<AppUser[]> =>
+  usersApi.list() as unknown as Promise<AppUser[]>;
 import { UserTaskList } from './components/UserTaskList';
 import {
   useDefinitions,
@@ -45,7 +51,7 @@ export default function ProcessInboxPage() {
   const [assigneeFilter, setAssignee]     = useState('');
   const [requesterFilter, setRequester]   = useState('');
 
-  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
+  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: fetchUsers });
 
   const { data: defsData } = useDefinitions({ pageSize: 100 });
   const activeDefinitions = (defsData?.data ?? []).filter((d) => d.status === 'ACTIVE');

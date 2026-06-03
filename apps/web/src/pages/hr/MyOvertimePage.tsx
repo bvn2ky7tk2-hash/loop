@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Row, Col, Table, Tag, Button, Space, Typography, Tooltip,
-  Badge, Modal, Form, Input, message,
+  Badge, Modal, Form, message,
 } from 'antd';
 import {
   FieldTimeOutlined, PlusOutlined, StopOutlined, LinkOutlined, CloseOutlined,
@@ -18,7 +18,6 @@ import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { otApi, type OvertimeRequest, type FormField } from '../../api/overtime';
 import { employeesApi } from '../../api/employees';
-import { useAuthStore } from '../../store/auth.store';
 import { DynamicFormFields } from '../processes/components/DynamicFormFields';
 
 const { Text } = Typography;
@@ -56,7 +55,6 @@ function OtStatusTag({ status, isDark }: { status: OvertimeRequest['status']; is
 export default function MyOvertimePage() {
   const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
-  const user = useAuthStore((s) => s.user);
   const qc = useQueryClient();
 
   const now = dayjs();
@@ -95,7 +93,6 @@ export default function MyOvertimePage() {
 
   const records = listData?.data ?? [];
   const pending   = records.filter((r) => r.status === 'PENDING').length;
-  const approved  = records.filter((r) => r.status === 'APPROVED').length;
   const totalHours = records
     .filter((r) => r.status === 'APPROVED')
     .reduce((s, r) => s + Number(r.hours), 0);

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import {
   Row, Col, Table, Button, Tag, Typography, Select, Form,
-  Input, InputNumber, Drawer, Descriptions, Progress, Space,
-  Tabs, Collapse, Tooltip, Popconfirm, Divider,
+  Input, InputNumber, Drawer, Progress, Space,
+  Tabs, Tooltip, Popconfirm, Divider,
 } from 'antd';
 import { CommentThread } from '../../components/comments/CommentThread';
 import type { ColumnsType } from 'antd/es/table';
@@ -26,7 +26,6 @@ import { okrApi, type OkrObjective, type OkrKeyResult, type KpiMetric, type OkrC
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { usersApi } from '../../api/users';
 import { useAuthStore } from '../../store/auth.store';
-import { formatCurrency } from '../../utils/format';
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -53,7 +52,7 @@ function objectiveProgress(obj: OkrObjective) {
 }
 
 // ─── Key Result Row ────────────────────────────────────────────────────────────
-function KrRow({ kr, objId, onUpdate, onDelete }: { kr: OkrKeyResult; objId: string; onUpdate: () => void; onDelete: () => void }) {
+function KrRow({ kr, onUpdate, onDelete }: { kr: OkrKeyResult; onUpdate: () => void; onDelete: () => void }) {
   const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
   const [editing, setEditing] = useState(false);
   const [form] = Form.useForm();
@@ -103,7 +102,7 @@ function KrRow({ kr, objId, onUpdate, onDelete }: { kr: OkrKeyResult; objId: str
 
 // ─── OKR Tab ──────────────────────────────────────────────────────────────────
 function OkrTab() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const user = useAuthStore(s => s.user);
   const qc = useQueryClient();
@@ -274,7 +273,7 @@ function OkrTab() {
 
               <Title level={5} style={{ color: textPrimary }}>Key Results</Title>
               {obj.keyResults.map(kr => (
-                <KrRow key={kr.id} kr={kr} objId={obj.id}
+                <KrRow key={kr.id} kr={kr}
                   onUpdate={() => { qc.invalidateQueries({ queryKey: ['okr-objectives'] }); }}
                   onDelete={() => deleteKr.mutate(kr.id)} />
               ))}
@@ -303,7 +302,7 @@ function OkrTab() {
       </Drawer>
 
       {/* Create/Edit Modal */}
-      <CenteredModal open={modalOpen} onCancel={closeModal} title={editing ? 'Cập nhật Objective' : 'Thêm Objective mới'} footer={null} width={520}>
+      <CenteredModal open={modalOpen} onClose={closeModal} title={editing ? 'Cập nhật Objective' : 'Thêm Objective mới'} footer={null} width={520}>
         <Form form={objForm} layout="vertical"
           onFinish={v => editing ? updateObj.mutate({ id: editing.id, ...v }) : createObj.mutate(v)}>
           <Form.Item name="title" label="Mục tiêu" rules={[{ required: true, message: 'Nhập mục tiêu' }]}>
@@ -332,7 +331,7 @@ function OkrTab() {
           <Form.Item name="ownerId" label="Người phụ trách">
             <Select showSearch placeholder="Chọn người..." allowClear
               filterOption={(input, opt) => (opt?.label as string ?? '').toLowerCase().includes(input.toLowerCase())}
-              options={users.map(u => ({ value: u.id, label: u.name }))} />
+              options={(users as { id: string; name: string }[]).map(u => ({ value: u.id, label: u.name }))} />
           </Form.Item>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
             <Button onClick={closeModal}>Hủy</Button>
@@ -348,10 +347,10 @@ function OkrTab() {
 
 // ─── KPI Tab ──────────────────────────────────────────────────────────────────
 function KpiTab() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
   const qc = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
-  const [editing, setEditing] = useState<KpiMetric | null>(null);
+  const [, setEditing] = useState<KpiMetric | null>(null);
   const [recordModal, setRecordModal] = useState<KpiMetric | null>(null);
   const [form] = Form.useForm();
   const [recordForm] = Form.useForm();
@@ -444,7 +443,7 @@ function KpiTab() {
       </Row>
 
       {/* Create Metric Modal */}
-      <CenteredModal open={modalOpen} onCancel={closeModal} title="Thêm KPI metric" footer={null} width={480}>
+      <CenteredModal open={modalOpen} onClose={closeModal} title="Thêm KPI metric" footer={null} width={480}>
         <Form form={form} layout="vertical" onFinish={v => createMetric.mutate(v)}>
           <Form.Item name="name" label="Tên KPI" rules={[{ required: true }]}>
             <Input placeholder="VD: Tỷ lệ giữ chân khách hàng" maxLength={200} />
@@ -481,7 +480,7 @@ function KpiTab() {
       </CenteredModal>
 
       {/* Add Record Modal */}
-      <CenteredModal open={!!recordModal} onCancel={() => setRecordModal(null)}
+      <CenteredModal open={!!recordModal} onClose={() => setRecordModal(null)}
         title={`Nhập số liệu — ${recordModal?.name}`} footer={null} width={380}>
         <Form form={recordForm} layout="vertical"
           onFinish={v => addRecord.mutate({ metricId: recordModal!.id, ...v })}>
@@ -506,7 +505,6 @@ function KpiTab() {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function OkrPage() {
-  const { textMuted } = useThemePalette();
   const { data: stats } = useQuery({ queryKey: ['okr-stats'], queryFn: okrApi.stats });
 
   return (

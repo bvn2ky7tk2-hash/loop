@@ -30,7 +30,7 @@ interface PageHeaderProps {
  * Thêm prop `greeting` cho trang dashboard để hiện lời chào + ngày.
  */
 export function PageHeader({ title, icon, iconColor, actions, subtitle, greeting, style }: PageHeaderProps) {
-  const { textPrimary, linkColor, textMuted } = useThemePalette();
+  const { textPrimary, linkColor } = useThemePalette();
   const { user } = useAuthStore();
 
   return (

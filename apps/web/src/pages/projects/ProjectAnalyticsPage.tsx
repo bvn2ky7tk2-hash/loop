@@ -18,7 +18,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
-import { formatCompact, formatHours } from '../../utils/format';
+import { formatCompact } from '../../utils/format';
 
 const { Text } = Typography;
 
@@ -211,35 +211,6 @@ export default function ProjectAnalyticsPage() {
     },
   ];
 
-  // ── Utilization columns ──
-  const utilColumns = [
-    {
-      title: 'Nhân viên',
-      dataIndex: 'employeeName',
-      key: 'employeeName',
-      render: (v: string, r: UtilizationItem) => (
-        <div>
-          <Text style={{ color: textPrimary, fontWeight: 500 }}>{v}</Text>
-          <br />
-          <Text style={{ color: textMuted, fontSize: 11 }}>{r.employeeCode}</Text>
-        </div>
-      ),
-    },
-    {
-      title: 'Tổng giờ',
-      dataIndex: 'totalHours',
-      key: 'totalHours',
-      align: 'right' as const,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{formatHours(v)}</Text>,
-    },
-    {
-      title: 'Labor Cost',
-      dataIndex: 'laborCost',
-      key: 'laborCost',
-      align: 'right' as const,
-      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCompact(v)} đ</Text>,
-    },
-  ];
 
   return (
     <div style={{ padding: 24 }}>
@@ -251,6 +222,7 @@ export default function ProjectAnalyticsPage() {
 
       <FilterBar>
         {/* Placeholder — có thể thêm filter năm, PM, status khi cần */}
+        <></>
       </FilterBar>
 
       {/* ── StatCards ── */}
@@ -324,8 +296,8 @@ export default function ProjectAnalyticsPage() {
                 <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => formatCompact(v)} />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number, name: string) => [
-                    formatCompact(v) + ' đ',
+                  formatter={(v, name) => [
+                    formatCompact(Number(v)) + ' đ',
                     name === 'revenue' ? 'Doanh thu' : name === 'cost' ? 'Chi phí' : 'Margin%',
                   ]}
                 />
@@ -353,7 +325,7 @@ export default function ProjectAnalyticsPage() {
                 <YAxis tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}%`} />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number) => [`${v}%`, 'Margin']}
+                  formatter={(v) => [`${Number(v)}%`, 'Margin']}
                 />
                 <Line
                   type="monotone"
@@ -399,8 +371,8 @@ export default function ProjectAnalyticsPage() {
                   />
                   <RTooltip
                     contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                    formatter={(v: number, name: string) => [
-                      name === 'totalHours' ? `${v}h` : formatCompact(v) + ' đ',
+                    formatter={(v, name) => [
+                      name === 'totalHours' ? `${Number(v)}h` : formatCompact(Number(v)) + ' đ',
                       name === 'totalHours' ? 'Giờ làm việc' : 'Labor Cost',
                     ]}
                   />

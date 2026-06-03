@@ -25,7 +25,7 @@ function cloneGroups(groups: MenuGroupCfg[]): MenuGroupCfg[] {
 export function MenuConfigPanel() {
   const { getModuleConfig, setModuleConfig, resetModuleConfig } = useMenuStore();
   const { activeModuleId } = useModuleStore();
-  const { isDark, bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
+  const { bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
 
   const [selectedModuleId, setSelectedModuleId] = useState(activeModuleId);
   const [localTop,    setLocalTop]    = useState<MenuTopItemCfg[]>([]);

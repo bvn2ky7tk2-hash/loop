@@ -8,8 +8,8 @@ import {
   PlusOutlined, EditOutlined, DeleteOutlined, RiseOutlined,
 } from '@ant-design/icons';
 import {
-  BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip as RTooltip,
-  ResponsiveContainer, Legend, CartesianGrid, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip,
+  ResponsiveContainer, Legend, CartesianGrid,
 } from 'recharts';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -18,7 +18,6 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
-import { confirmDelete } from '../../components/ui/confirmDelete';
 import { forecastApi, type DealStage, type RevenueTarget } from '../../api/forecast';
 
 const { Text } = Typography;
@@ -51,10 +50,6 @@ function fmt(v: number): string {
   if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1)}B`;
   if (v >= 1_000_000)     return `${(v / 1_000_000).toFixed(0)}M`;
   return v.toLocaleString('vi-VN');
-}
-
-function fmtFull(v: number): string {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(v);
 }
 
 // ─── Overview Tab ────────────────────────────────────────────────────────────
@@ -116,7 +111,7 @@ function OverviewTab() {
             <RTooltip
               contentStyle={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8 }}
               labelStyle={{ color: textPrimary }}
-              formatter={(v: number) => [`${v}B VNĐ`]}
+              formatter={(v) => [`${v}B VNĐ`] as unknown as [string, string]}
             />
             <Legend />
             <Bar dataKey="Mục tiêu" fill="#94A3B8" radius={[4,4,0,0]} />
@@ -140,7 +135,7 @@ function OverviewTab() {
                 <YAxis tick={{ fill: textMuted as string, fontSize: 12 }} />
                 <RTooltip
                   contentStyle={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8 }}
-                  formatter={(v: number) => [`${v}B VNĐ`]}
+                  formatter={(v) => [`${v}B VNĐ`] as unknown as [string, string]}
                 />
                 <Legend />
                 <Bar dataKey="Mục tiêu" fill="#94A3B8" radius={[4,4,0,0]} />
@@ -414,10 +409,15 @@ function TargetsTab() {
       <CenteredModal
         title={editing ? 'Cập nhật Mục tiêu Doanh thu' : 'Thêm Mục tiêu Doanh thu'}
         open={modalOpen}
-        onCancel={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}
-        onOk={form.submit}
-        confirmLoading={mutateSave.isPending}
-        okText={editing ? 'Cập nhật' : 'Lưu'}
+        onClose={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => { setModalOpen(false); form.resetFields(); setEditing(null); }}>Hủy</Button>
+            <Button type="primary" loading={mutateSave.isPending} onClick={form.submit}>
+              {editing ? 'Cập nhật' : 'Lưu'}
+            </Button>
+          </div>
+        }
       >
         <Form form={form} layout="vertical" onFinish={mutateSave.mutate}>
           {!editing && (
@@ -445,7 +445,7 @@ export default function ForecastPage() {
   });
 
   const achievePct = stats?.targetAchievementPct;
-  const achieveColor = achievePct === null ? '#94A3B8'
+  const achieveColor = achievePct == null ? '#94A3B8'
     : achievePct >= 100 ? '#10B981'
     : achievePct >= 70  ? '#F59E0B'
     : '#EF4444';
@@ -487,7 +487,7 @@ export default function ForecastPage() {
         </Col>
         <Col xs={12} sm={6}>
           <StatCard
-            label={`Target tháng này${achievePct !== null ? ` · ${achievePct}%` : ''}`}
+            label={`Target tháng này${achievePct != null ? ` · ${achievePct}%` : ''}`}
             value={fmt(stats?.targetThisMonth ?? 0)}
             subValue={stats?.wonThisMonth ? `Đã đạt: ${fmt(stats.wonThisMonth)}` : undefined}
             color={achieveColor}

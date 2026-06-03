@@ -1,5 +1,13 @@
 import { apiClient } from './client';
-import type { UserProfile } from '@loop/shared';
+import type { Role } from '@loop/shared';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+  role: Role;
+  orgUnitIds: string[];
+}
 
 export interface UserEmployeeInfo {
   code?: string;

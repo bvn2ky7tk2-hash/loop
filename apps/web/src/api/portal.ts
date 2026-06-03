@@ -46,7 +46,6 @@ export interface PortalData {
 }
 
 const ADMIN_BASE  = '/crm/portals';
-const PUBLIC_BASE = '/public/portal';
 
 export const portalAdminApi = {
   list: (customerId?: string) =>

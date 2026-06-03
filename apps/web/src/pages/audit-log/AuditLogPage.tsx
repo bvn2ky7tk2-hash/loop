@@ -8,7 +8,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { usePagination, PAGE_SIZE_OPTIONS } from '../../hooks/usePagination';
+import { PAGE_SIZE_OPTIONS } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { auditLogsApi, type AuditLogRecord } from '../../api/audit-logs';

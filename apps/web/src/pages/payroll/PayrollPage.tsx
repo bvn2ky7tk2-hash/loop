@@ -194,7 +194,7 @@ function EditRecordModal({
         </Button>
       }
     >
-      <div style={{ padding: '8px 0 12px', background: bgCard, borderRadius: 8, border: `1px solid ${borderColor}`, padding: '12px 16px', marginBottom: 16 }}>
+      <div style={{ background: bgCard, borderRadius: 8, border: `1px solid ${borderColor}`, padding: '12px 16px', marginBottom: 16 }}>
         <Row gutter={16}>
           <Col span={12}>
             <div style={{ textAlign: 'center' }}>
@@ -213,12 +213,12 @@ function EditRecordModal({
       <Form form={form} layout="vertical"
         initialValues={{ bonus: record.bonus, deductions: record.deductions, note: record.note ?? '' }}>
         <Form.Item name="bonus" label="Thưởng thêm (đ)">
-          <InputNumber style={{ width: '100%' }} min={0} step={500000}
+          <InputNumber<number> style={{ width: '100%' }} min={0} step={500000}
             formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
         </Form.Item>
         <Form.Item name="deductions" label="Khấu trừ thêm (đ)">
-          <InputNumber style={{ width: '100%' }} min={0} step={100000}
+          <InputNumber<number> style={{ width: '100%' }} min={0} step={100000}
             formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
             parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
         </Form.Item>
@@ -651,7 +651,7 @@ function PeriodDetailModal({
           </Row>
         )}
 
-        <FilterBar style={{ marginBottom: 12 }}>
+        <FilterBar>
           <Input
             prefix={<SearchOutlined />}
             placeholder="Tìm theo tên hoặc email nhân viên..."
@@ -698,7 +698,7 @@ function Month13Tab() {
   const [createOpen, setCreateOpen] = useState(false);
   const [form] = Form.useForm();
   const [selectedPeriod, setSelectedPeriod] = useState<PayrollPeriod | null>(null);
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey: ['payroll-periods-month13'],
@@ -938,7 +938,7 @@ export default function PayrollPage() {
   const [exportingTax, setExportingTax] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterSearch, setFilterSearch] = useState<string>('');
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const { page, pageSize, resetPage, paginationProps } = usePagination(50);
 
   const handleExportTax = async () => {

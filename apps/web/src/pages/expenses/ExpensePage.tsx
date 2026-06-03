@@ -77,7 +77,6 @@ function ExpenseDrawer({
   open,
   onClose,
   projects,
-  isDark,
   bgContainer,
   bgCard,
   isPrivileged,
@@ -88,7 +87,6 @@ function ExpenseDrawer({
   open: boolean;
   onClose: () => void;
   projects: { id: string; name: string; code: string }[];
-  isDark: boolean;
   bgContainer: string;
   bgCard: string;
   borderColor: string;
@@ -156,11 +154,6 @@ function ExpenseDrawer({
       width={520}
       styles={{
         body: { background: bgContainer },
-        header: {
-          background: bgContainer,
-          borderBottom: `1px solid ${borderColor}`,
-          color: textPrimary,
-        },
       }}
       footer={
         <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
@@ -273,7 +266,7 @@ function ExpenseDrawer({
 // ─── Main ExpensePage ─────────────────────────────────────────────────────────
 
 export default function ExpensePage() {
-  const { isDark, textPrimary, textSecondary, textMuted, bgContainer, bgCard, bgSubPanel, borderColor, linkColor, preset } = useThemePalette();
+  const { textPrimary, textSecondary, bgContainer, bgCard, bgSubPanel, borderColor, linkColor } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -613,7 +606,6 @@ export default function ExpensePage() {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         projects={projects}
-        isDark={isDark}
         bgContainer={bgContainer}
         bgCard={bgCard}
         borderColor={borderColor}

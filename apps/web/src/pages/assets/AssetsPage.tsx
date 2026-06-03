@@ -304,7 +304,7 @@ export default function AssetsPage() {
         <Form form={assignForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="employeeId" label="Nhân viên nhận" rules={[{ required: true }]}>
             <Select showSearch optionFilterProp="label"
-              options={(usersData as { id: string; name: string }[]).map(u => ({ value: u.id, label: u.name }))} />
+              options={usersData.map(u => ({ value: u.id, label: u.name }))} />
           </Form.Item>
           <Form.Item name="notes" label="Ghi chú"><Input.TextArea rows={2} /></Form.Item>
         </Form>

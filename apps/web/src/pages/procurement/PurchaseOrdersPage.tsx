@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
   Table, Button, Input, Select, Tag, Space, Form, Drawer, Typography,
-  InputNumber, Divider, Steps, Tooltip, Descriptions, Empty,
+  InputNumber, Divider, Tooltip, Descriptions,
 } from 'antd';
 import {
-  PlusOutlined, SearchOutlined, FileTextOutlined, EditOutlined,
+  PlusOutlined, SearchOutlined, FileTextOutlined,
   DeleteOutlined, CheckOutlined, CloseOutlined, SendOutlined, EyeOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { FilterBar } from '../../components/FilterBar';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { CenteredModal } from '../../components/ui/CenteredModal';
-import { procurementApi, type PurchaseOrder, type Vendor } from '../../api/procurement';
+import { procurementApi, type PurchaseOrder } from '../../api/procurement';
 
 const { Text, Title } = Typography;
 
@@ -35,9 +35,9 @@ function fmtMoney(v: number | string) {
 }
 
 export default function PurchaseOrdersPage() {
-  const { textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, borderColor } = useThemePalette();
   const qc = useQueryClient();
-  const { resetPage, paginationProps } = usePagination(50);
+  const { paginationProps } = usePagination(50);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
   const [createOpen, setCreateOpen] = useState(false);
@@ -146,10 +146,12 @@ export default function PurchaseOrdersPage() {
       <CenteredModal
         open={createOpen}
         title="Tạo đơn mua hàng"
-        onCancel={() => { setCreateOpen(false); form.resetFields(); }}
-        onOk={() => form.submit()}
-        okText="Tạo đơn"
-        confirmLoading={createMut.isPending}
+        onClose={() => { setCreateOpen(false); form.resetFields(); }}
+        footer={
+          <Button type="primary" loading={createMut.isPending} onClick={() => form.submit()}>
+            Tạo đơn
+          </Button>
+        }
         width={720}
       >
         <Form form={form} layout="vertical" onFinish={vals => createMut.mutate(vals)}>

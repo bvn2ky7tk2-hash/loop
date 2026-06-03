@@ -6,7 +6,7 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
-  PlusOutlined, DeleteOutlined, InfoCircleOutlined,
+  PlusOutlined, DeleteOutlined,
   SettingOutlined, SafetyOutlined, BarsOutlined, CalculatorOutlined,
   GiftOutlined, EditOutlined,
 } from '@ant-design/icons';
@@ -32,7 +32,7 @@ function InsuranceTab() {
   const [open, setOpen] = useState(false);
   const [editItem, setEditItem] = useState<InsuranceConfig | null>(null);
   const [form] = Form.useForm();
-  const { textPrimary, textMuted, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey: ['insurance-configs'],
@@ -203,7 +203,7 @@ function InsuranceTab() {
           <Row gutter={12}>
             <Col span={12}>
               <Form.Item name="wageBase" label="Lương cơ sở (đ)">
-                <InputNumber style={{ width: '100%' }} min={0} step={100000}
+                <InputNumber<number> style={{ width: '100%' }} min={0} step={100000}
                   formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
               </Form.Item>
@@ -230,7 +230,7 @@ function TaxBracketTab() {
   const [deductOpen, setDeductOpen] = useState(false);
   const [form] = Form.useForm();
   const [deductForm] = Form.useForm();
-  const { textPrimary, textMuted, linkColor, bgCard, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
 
   const { data: brackets, isLoading } = useQuery({
     queryKey: ['tax-brackets'],
@@ -409,7 +409,7 @@ function TaxBracketTab() {
                 {fields.map((field, index) => (
                   <div key={field.key} style={{ display: 'flex', gap: 8, alignItems: 'flex-end', marginBottom: 8 }}>
                     <Form.Item {...field} name={[field.name, 'from']} label={index === 0 ? 'Từ (đ)' : ''} style={{ flex: 1, marginBottom: 0 }}>
-                      <InputNumber style={{ width: '100%' }} min={0} formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
+                      <InputNumber<number> style={{ width: '100%' }} min={0} formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
                     </Form.Item>
                     <Form.Item {...field} name={[field.name, 'to']} label={index === 0 ? 'Đến (đ)' : ''} style={{ flex: 1, marginBottom: 0 }}>
                       <InputNumber style={{ width: '100%' }} min={0} placeholder={index === fields.length - 1 ? 'Không giới hạn' : ''} formatter={v => v ? `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''} parser={v => v ? Number(v.replace(/,/g, '')) : null as any} />
@@ -438,12 +438,12 @@ function TaxBracketTab() {
             <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
           </Form.Item>
           <Form.Item name="selfDeduction" label="Giảm trừ bản thân (đ/tháng)">
-            <InputNumber style={{ width: '100%' }} min={0} step={1_000_000}
+            <InputNumber<number> style={{ width: '100%' }} min={0} step={1_000_000}
               formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
           </Form.Item>
           <Form.Item name="dependentDeduction" label="Giảm trừ NPT (đ/người/tháng)">
-            <InputNumber style={{ width: '100%' }} min={0} step={1_000_000}
+            <InputNumber<number> style={{ width: '100%' }} min={0} step={1_000_000}
               formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
               parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
           </Form.Item>
@@ -468,7 +468,7 @@ function SalaryColumnsTab() {
   const [open, setOpen] = useState(false);
   const [editCol, setEditCol] = useState<SalaryColumn | null>(null);
   const [form] = Form.useForm();
-  const { textPrimary, textMuted, linkColor, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey: ['salary-columns'],
@@ -643,7 +643,7 @@ function SalaryColumnsTab() {
           )}
           {sourceValue === 'FIXED_VALUE' && (
             <Form.Item name="fixedValue" label="Giá trị cố định (đ)" rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} min={0} step={100000}
+              <InputNumber<number> style={{ width: '100%' }} min={0} step={100000}
                 formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={v => Number(v?.replace(/,/g, '') ?? 0)} />
             </Form.Item>
@@ -684,7 +684,7 @@ function AllowanceTab() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<AllowanceType | null>(null);
   const [form] = Form.useForm();
-  const { textPrimary, textMuted, linkColor, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
 
   const isPitExemptWatch = Form.useWatch('isPitExempt', form);
 
@@ -831,7 +831,7 @@ function AllowanceTab() {
           <Row gutter={12}>
             <Col span={14}>
               <Form.Item name="defaultAmount" label="Mức phụ cấp" rules={[{ required: true }]}>
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }} min={0} step={100_000}
                   formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   parser={v => Number(v?.replace(/,/g, '') ?? 0)}
@@ -894,7 +894,6 @@ function AllowanceTab() {
 // ─── Main ──────────────────────────────────────────────────────────────────────
 
 export default function PayrollSettingsPage() {
-  const { textMuted } = useThemePalette();
 
   const tabs = [
     {

@@ -24,7 +24,7 @@ import { VehicleStatusTag } from './_vehicle-tags';
 const { Text } = Typography;
 
 export default function VehicleManagePage() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark, linkColor, preset } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor, isDark, linkColor } = useThemePalette();
 
   const { paginationProps } = usePagination(20);
   const [modalOpen, setModalOpen] = useState(false);

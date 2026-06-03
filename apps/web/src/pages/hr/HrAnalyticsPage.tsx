@@ -74,7 +74,7 @@ function daysLeftFromNow(expiryDate: string): number {
 }
 
 export default function HrAnalyticsPage() {
-  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const [deptFilter, setDeptFilter]   = useState<string>('all');
   const [yearFilter, setYearFilter]   = useState<number>(new Date().getFullYear());
 
@@ -295,9 +295,10 @@ export default function HrAnalyticsPage() {
                   <YAxis tick={{ fill: axisColor, fontSize: 11 }} allowDecimals={false} />
                   <RTooltip
                     contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
-                    formatter={(v: number, name: string) => {
+                    formatter={(v, name) => {
                       const labels: Record<string, string> = { total: 'Headcount', newHires: 'Mới vào', resigns: 'Nghỉ việc' };
-                      return [v, labels[name] ?? name];
+                      const key = String(name);
+                      return [v as number, labels[key] ?? key];
                     }}
                   />
                   <Legend
@@ -340,7 +341,7 @@ export default function HrAnalyticsPage() {
                     width={100}
                   />
                   <RTooltip
-                    formatter={(v: number) => [`${v} người`, 'Nghỉ việc']}
+                    formatter={(v) => [`${v} người`, 'Nghỉ việc']}
                     contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
                     labelStyle={{ color: axisColor }}
                   />
@@ -372,7 +373,7 @@ export default function HrAnalyticsPage() {
                   <XAxis dataKey="range" tick={{ fill: axisColor, fontSize: 12 }} />
                   <YAxis tick={{ fill: axisColor, fontSize: 12 }} allowDecimals={false} />
                   <RTooltip
-                    formatter={(v: number) => [`${v} người`, 'Số nhân viên']}
+                    formatter={(v) => [`${v} người`, 'Số nhân viên']}
                     contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
                   />
                   <Bar dataKey="count" name="Số nhân viên" radius={[6, 6, 0, 0]}>

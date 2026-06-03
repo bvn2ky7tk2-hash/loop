@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Form,
   Input, Select, Tabs, Row, Col, message, InputNumber,
@@ -10,7 +10,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -49,121 +49,6 @@ interface SalaryProposal {
   proposedAt: string;
 }
 
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_BANDS: SalaryBand[] = [
-  {
-    id: '1',
-    position: 'Software Engineer',
-    level: 'Junior (L1)',
-    minSalary: 10_000_000,
-    midSalary: 14_000_000,
-    maxSalary: 18_000_000,
-    effectiveFrom: '2025-01-01',
-    currency: 'VND',
-  },
-  {
-    id: '2',
-    position: 'Software Engineer',
-    level: 'Mid (L2)',
-    minSalary: 18_000_000,
-    midSalary: 25_000_000,
-    maxSalary: 32_000_000,
-    effectiveFrom: '2025-01-01',
-    currency: 'VND',
-  },
-  {
-    id: '3',
-    position: 'Software Engineer',
-    level: 'Senior (L3)',
-    minSalary: 30_000_000,
-    midSalary: 42_000_000,
-    maxSalary: 55_000_000,
-    effectiveFrom: '2025-01-01',
-    currency: 'VND',
-  },
-  {
-    id: '4',
-    position: 'Product Manager',
-    level: 'Mid (L2)',
-    minSalary: 25_000_000,
-    midSalary: 35_000_000,
-    maxSalary: 45_000_000,
-    effectiveFrom: '2025-01-01',
-    currency: 'VND',
-  },
-  {
-    id: '5',
-    position: 'Designer',
-    level: 'Junior (L1)',
-    minSalary: 9_000_000,
-    midSalary: 13_000_000,
-    maxSalary: 17_000_000,
-    effectiveFrom: '2025-06-01',
-    currency: 'VND',
-  },
-  {
-    id: '6',
-    position: 'QA Engineer',
-    level: 'Mid (L2)',
-    minSalary: 15_000_000,
-    midSalary: 20_000_000,
-    maxSalary: 28_000_000,
-    effectiveFrom: '2025-01-01',
-    currency: 'VND',
-  },
-];
-
-const MOCK_PROPOSALS: SalaryProposal[] = [
-  {
-    id: '1',
-    employeeName: 'Nguyễn Văn An',
-    position: 'Software Engineer',
-    currentSalary: 22_000_000,
-    proposedSalary: 28_000_000,
-    increasePercent: 27.3,
-    reason: 'Thăng cấp từ Mid lên Senior sau review Q4/2025',
-    status: 'PENDING',
-    proposedBy: 'Trần Thị Bình',
-    proposedAt: '2026-05-20',
-  },
-  {
-    id: '2',
-    employeeName: 'Lê Thị Cúc',
-    position: 'Product Manager',
-    currentSalary: 30_000_000,
-    proposedSalary: 38_000_000,
-    increasePercent: 26.7,
-    reason: 'Điều chỉnh theo thị trường và kết quả KPI vượt chỉ tiêu',
-    status: 'APPROVED',
-    proposedBy: 'Phạm Minh Đức',
-    proposedAt: '2026-05-15',
-  },
-  {
-    id: '3',
-    employeeName: 'Hoàng Văn Em',
-    position: 'QA Engineer',
-    currentSalary: 16_000_000,
-    proposedSalary: 20_000_000,
-    increasePercent: 25.0,
-    reason: 'Hoàn thành chương trình đào tạo Automation Testing',
-    status: 'PENDING',
-    proposedBy: 'Nguyễn Thị Phương',
-    proposedAt: '2026-05-22',
-  },
-  {
-    id: '4',
-    employeeName: 'Vũ Thị Giang',
-    position: 'Designer',
-    currentSalary: 12_000_000,
-    proposedSalary: 11_500_000,
-    increasePercent: -4.2,
-    reason: 'Điều chỉnh lại sau khi xem xét lại mức thị trường',
-    status: 'REJECTED',
-    proposedBy: 'Đinh Hồng Hà',
-    proposedAt: '2026-05-10',
-  },
-];
 
 // ─── Status Tag helper ────────────────────────────────────────────────────────
 
@@ -204,7 +89,7 @@ export default function SalaryBandPage() {
   const [proposalSearch, setProposalSearch] = useState('');
   const [proposalStatusFilter, setProposalStatusFilter] = useState<string | null>(null);
   const [proposalModalOpen, setProposalModalOpen] = useState(false);
-  const [editingProposal, setEditingProposal] = useState<SalaryProposal | null>(null);
+  const [, setEditingProposal] = useState<SalaryProposal | null>(null);
   const [proposalForm] = Form.useForm();
 
   // ── API queries ──
@@ -713,7 +598,7 @@ export default function SalaryBandPage() {
                 label="Lương tối thiểu (đ)"
                 rules={[{ required: true, message: 'Nhập mức tối thiểu' }]}
               >
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
                   step={500_000}
@@ -728,7 +613,7 @@ export default function SalaryBandPage() {
                 label="Lương trung bình (đ)"
                 rules={[{ required: true, message: 'Nhập mức trung bình' }]}
               >
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
                   step={500_000}
@@ -743,7 +628,7 @@ export default function SalaryBandPage() {
                 label="Lương tối đa (đ)"
                 rules={[{ required: true, message: 'Nhập mức tối đa' }]}
               >
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
                   step={500_000}
@@ -815,7 +700,7 @@ export default function SalaryBandPage() {
                 label="Lương hiện tại (đ)"
                 rules={[{ required: true, message: 'Nhập lương hiện tại' }]}
               >
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
                   step={500_000}
@@ -830,7 +715,7 @@ export default function SalaryBandPage() {
                 label="Lương đề xuất (đ)"
                 rules={[{ required: true, message: 'Nhập lương đề xuất' }]}
               >
-                <InputNumber
+                <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
                   step={500_000}

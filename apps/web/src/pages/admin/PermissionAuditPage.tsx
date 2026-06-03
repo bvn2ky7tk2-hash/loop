@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Table, Button, Tag, Typography, Input, Space, Row, Col, Tooltip, App,
 } from 'antd';
@@ -26,7 +26,7 @@ const ROLE_COLORS: Record<string, string> = {
 export default function PermissionAuditPage() {
   const { message } = App.useApp();
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
-  const { resetPage, paginationProps } = usePagination(20);
+  const { paginationProps } = usePagination(20);
 
   const [search, setSearch] = useState('');
   const [permSearch, setPermSearch] = useState('');

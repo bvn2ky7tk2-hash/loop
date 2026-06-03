@@ -5,13 +5,12 @@ import {
   Timeline, Progress, Alert, Spin, Result, Space, Divider,
 } from 'antd';
 import {
-  FileTextOutlined, MessageOutlined, CheckCircleOutlined,
-  ClockCircleOutlined, ExclamationCircleOutlined, SendOutlined,
+  MessageOutlined, CheckCircleOutlined, SendOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { portalPublicApi, type TicketPriority, type TicketStatus } from '../../api/portal';
+import { portalPublicApi, type TicketStatus } from '../../api/portal';
 
-const { Text, Title, Paragraph } = Typography;
+const { Text, Title } = Typography;
 
 const STATUS_COLOR: Record<string, string>  = { DRAFT:'default', ACTIVE:'processing', COMPLETED:'success', CANCELLED:'error', SIGNED:'success' };
 const TICKET_STATUS_LABEL: Record<TicketStatus, string> = { OPEN:'Mới', IN_PROGRESS:'Đang xử lý', RESOLVED:'Giải quyết', CLOSED:'Đóng' };
@@ -70,7 +69,7 @@ export default function CustomerPortalPage() {
     </div>
   );
 
-  const { portal, contracts, deals, tickets } = data;
+  const { portal, contracts, tickets } = data;
   const openTickets = tickets.filter(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS');
 
   // Tính overall progress từ milestones

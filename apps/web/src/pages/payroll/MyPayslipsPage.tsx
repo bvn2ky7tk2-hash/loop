@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import {
   Table, Tag, Typography, Row, Col, Empty, Spin, Button, message, Select, Space,
 } from 'antd';
-import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined, FilterOutlined } from '@ant-design/icons';
+import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { payrollApi, type PayrollRecord } from '../../api/payroll';
@@ -12,7 +12,6 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { formatCurrency } from '../../utils/format';
-import { useAuthStore } from '../../store/auth.store';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -159,9 +158,7 @@ function PayslipDetailModal({
 
 export default function MyPayslipsPage() {
   const { textPrimary, textMuted, borderColor, bgContainer, linkColor } = useThemePalette();
-  const user = useAuthStore(s => s.user);
   const [selectedRecord, setSelectedRecord] = useState<PayrollRecord | null>(null);
-  const [page, setPage] = useState(1);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const handleDownloadPdf = async (recordId: string, e: React.MouseEvent) => {
@@ -295,7 +292,7 @@ export default function MyPayslipsPage() {
       />
 
       {/* Filter năm */}
-      <FilterBar style={{ marginBottom: 16 }}>
+      <FilterBar>
         <Select
           value={filterYear}
           onChange={setFilterYear}

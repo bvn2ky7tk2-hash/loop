@@ -47,11 +47,6 @@ const COL_H = 26;
 
 // ── Lookup maps ───────────────────────────────────────────────────────────────
 
-const STATUS_LABEL: Record<string, string> = {
-  TODO: 'Chưa bắt đầu', IN_PROGRESS: 'Đang thực hiện', DONE: 'Hoàn thành',
-  PENDING_APPROVAL: 'Chờ duyệt', RETURNED: 'Trả lại', CANCELLED: 'Đã hủy',
-};
-
 const TRACK_COLOR_BASE = { upcoming: '#94A3B8', behind: '#F59E0B', overdue: '#EF4444', done: '#10B981' };
 
 const TRACK_LABEL: Record<TrackStatus, string> = {

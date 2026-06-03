@@ -19,7 +19,6 @@ import { useQuery } from '@tanstack/react-query';
 import { employeesApi } from '../../api/employees';
 
 const { Title, Text } = Typography;
-const { TabPane } = Tabs;
 
 const STATUS_META: Record<TrainingStatus, { label: string; color: string }> = {
   SCHEDULED:   { label: 'Đã lên lịch', color: 'blue'    },
@@ -29,7 +28,7 @@ const STATUS_META: Record<TrainingStatus, { label: string; color: string }> = {
 };
 
 export default function TrainingPage() {
-  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
+  const { bgContainer, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
   const { paginationProps: recordPaginationProps } = usePagination(20);
   const { paginationProps: progPaginationProps } = usePagination(20);
 
@@ -42,7 +41,7 @@ export default function TrainingPage() {
 
   const { data: programs = [], isLoading: progLoading } = useGetTrainingPrograms();
   const { data: recordsData, isLoading: recLoading } = useGetTrainingRecords({ limit: 50, status: statusFilter, orgUnitId: orgUnitFilter });
-  const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: employeesApi.list });
+  const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: () => employeesApi.list() });
   const createProgram = useCreateTrainingProgram();
   const createRecord  = useCreateTrainingRecord();
   const updateRecord  = useUpdateTrainingRecord();
@@ -210,7 +209,7 @@ export default function TrainingPage() {
         onOk={handleCreateProgram}
         onCancel={() => { setProgModalOpen(false); progForm.resetFields(); }}
         okText="Tạo" confirmLoading={createProgram.isPending}
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ container: { background: bgContainer }, header: { background: bgContainer } }}
       >
         <Form form={progForm} layout="vertical">
           <Form.Item name="title" label={<span style={{ color: textPrimary }}>Tên chương trình</span>} rules={[{ required: true }]}>
@@ -235,11 +234,11 @@ export default function TrainingPage() {
         onOk={handleCreateRecord}
         onCancel={() => { setRecModalOpen(false); recForm.resetFields(); }}
         okText="Tạo" confirmLoading={createRecord.isPending}
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ container: { background: bgContainer }, header: { background: bgContainer } }}
       >
         <Form form={recForm} layout="vertical">
           <Form.Item name="employeeId" label={<span style={{ color: textPrimary }}>Nhân viên</span>} rules={[{ required: true }]}>
-            <Select options={employeeOptions} showSearch filterOption={(i, o) => (o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn nhân viên" />
+            <Select options={employeeOptions} showSearch filterOption={(i, o) => String(o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn nhân viên" />
           </Form.Item>
           <Form.Item name="programId" label={<span style={{ color: textPrimary }}>Chương trình</span>} rules={[{ required: true }]}>
             <Select options={programOptions} placeholder="Chọn chương trình" />

@@ -483,7 +483,8 @@ export default function LeaveSummaryPage() {
   const [orgUnitId, setOrgUnit] = useState<string | undefined>(undefined);
 
   const { data: orgTree = [] } = useQuery({ queryKey: ['org-tree'], queryFn: orgUnitsApi.getTree });
-  const orgOptions = orgTree.flatMap(function flat(n: { id: string; name: string; children?: typeof orgTree }): { value: string; label: string }[] {
+  type OrgTreeNode = { id: string; name: string; children?: OrgTreeNode[] };
+  const orgOptions = (orgTree as OrgTreeNode[]).flatMap(function flat(n: OrgTreeNode): { value: string; label: string }[] {
     return [{ value: n.id, label: n.name }, ...(n.children ?? []).flatMap(flat)];
   });
 

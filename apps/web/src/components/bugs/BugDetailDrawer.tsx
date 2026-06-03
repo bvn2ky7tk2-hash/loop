@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Button, Space, Typography, Divider,
-  Descriptions, Image, Spin, Popconfirm, Form, Input, Select,
+  Descriptions, Image, Popconfirm, Form, Input, Select,
   Radio, Upload, App, Alert, Modal, Tag,
 } from 'antd';
 import { CenteredModal } from '../ui/CenteredModal';
@@ -301,7 +301,7 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
 
         {bug.tasks && bug.tasks.length > 0 && (
           <>
-            <Divider orientation="left">Task liên quan</Divider>
+            <Divider titlePlacement="left">Task liên quan</Divider>
             <Space wrap>
               {bug.tasks.map((bt) => (
                 <span key={bt.taskId} style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #d9d9d9', fontSize: 13 }}>
@@ -314,7 +314,7 @@ export function BugDetailDrawer({ bugId, onClose }: Props) {
 
         {bug.attachments && bug.attachments.length > 0 && (
           <>
-            <Divider orientation="left"><PaperClipOutlined /> Đính kèm</Divider>
+            <Divider titlePlacement="left"><PaperClipOutlined /> Đính kèm</Divider>
             <Image.PreviewGroup>
               <Space wrap>
                 {bug.attachments.map((att) => (

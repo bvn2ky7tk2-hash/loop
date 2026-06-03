@@ -53,7 +53,7 @@ function RoomStatusTag({ status, isDark }: { status: MeetingRoom['status']; isDa
 
 export default function RoomManagePage() {
   const { message } = App.useApp();
-  const { textPrimary, textMuted, isDark, preset, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, isDark, linkColor } = useThemePalette();
 
   const { paginationProps } = usePagination(20);
   const [modalOpen, setModalOpen] = useState(false);
@@ -177,8 +177,8 @@ export default function RoomManagePage() {
     },
   ];
 
-  const totalRooms      = stats?.total       ?? rooms.length;
-  const activeRooms     = stats?.available   ?? rooms.filter((r) => r.status === 'ACTIVE').length;
+  const totalRooms      = stats?.totalRooms  ?? rooms.length;
+  const activeRooms     = stats?.activeRooms ?? rooms.filter((r) => r.status === 'ACTIVE').length;
   const maintenanceRooms = rooms.filter((r) => r.status === 'MAINTENANCE').length;
 
   return (

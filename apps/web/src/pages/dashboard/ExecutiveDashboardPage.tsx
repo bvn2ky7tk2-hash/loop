@@ -335,7 +335,7 @@ export default function ExecutiveDashboardPage() {
                             ))}
                           </Pie>
                           <RTooltip
-                            formatter={(v: number) => [v, 'Dự án']}
+                            formatter={(v) => [Number(v), 'Dự án']}
                             contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8, fontSize: 12 }}
                           />
                           <Legend
@@ -392,7 +392,7 @@ export default function ExecutiveDashboardPage() {
                       <XAxis dataKey="bucket" tick={{ fill: axisColor, fontSize: 11 }} />
                       <YAxis tick={{ fill: axisColor, fontSize: 11 }} tickFormatter={(v: number) => fmtMoney(v)} />
                       <RTooltip
-                        formatter={(v: number) => [`${fmtViVN(v)} VNĐ`, 'Tổng nợ']}
+                        formatter={(v) => [`${fmtViVN(Number(v))} VNĐ`, 'Tổng nợ']}
                         contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, borderRadius: 8, fontSize: 12 }}
                       />
                       <Bar dataKey="amount" radius={[6, 6, 0, 0]}>

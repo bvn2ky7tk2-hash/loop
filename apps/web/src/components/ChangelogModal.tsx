@@ -76,7 +76,7 @@ export function ChangelogModal({ open: externalOpen, onClose }: ChangelogModalPr
       width={560}
       centered
       styles={{
-        content: { background: isDark ? '#1E293B' : '#ffffff' },
+        container: { background: isDark ? '#1E293B' : '#ffffff' },
         header:  { background: isDark ? '#1E293B' : '#ffffff', borderBottom: `1px solid ${borderColor}` },
         footer:  { background: isDark ? '#1E293B' : '#ffffff', borderTop: `1px solid ${borderColor}` },
       }}

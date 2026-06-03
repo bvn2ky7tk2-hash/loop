@@ -10,12 +10,11 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { clientContractsApi, type ClientContract, type ClientContractType, type ClientContractStatus, type MilestoneStatus, type ContractMilestone } from '../../api/client-contracts';
+import { clientContractsApi, type ClientContract, type ClientContractType, type ClientContractStatus, type MilestoneStatus, type ContractMilestone, type ContractStats } from '../../api/client-contracts';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
-import { confirmDelete } from '../../components/ui/confirmDelete';
 import { formatNumber } from '../../utils/format';
 import { apiClient } from '../../api/client';
 
@@ -180,7 +179,7 @@ function MilestoneSection({ contract }: { contract: ClientContract }) {
 export default function ClientContractsPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
+  const { textPrimary, textMuted } = useThemePalette();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<ClientContractStatus | ''>('');
@@ -196,12 +195,12 @@ export default function ClientContractsPage() {
     queryFn: () => apiClient.get<{ data: { id: string; code: string; name: string }[] }>('/crm/customers?limit=500').then(r => r.data.data),
   });
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<ContractStats>({
     queryKey: ['client-contract-stats'],
     queryFn: clientContractsApi.stats,
   });
 
-  const { data: contractsRes, isLoading } = useQuery({
+  const { data: contractsRes, isLoading } = useQuery<{ data: ClientContract[]; total: number; totalPages: number }>({
     queryKey: ['client-contracts', statusFilter],
     queryFn: () => clientContractsApi.list({ status: statusFilter || undefined, limit: 200 }),
   });
@@ -218,7 +217,7 @@ export default function ClientContractsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => clientContractsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }): Promise<ClientContract> => clientContractsApi.update(id, data),
     onSuccess: (updated) => {
       message.success('Đã cập nhật');
       setFormOpen(false); form.resetFields(); setEditing(null);
@@ -229,7 +228,7 @@ export default function ClientContractsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: clientContractsApi.remove,
+    mutationFn: (id: string) => clientContractsApi.remove(id),
     onSuccess: () => {
       message.success('Đã xóa hợp đồng');
       void qc.invalidateQueries({ queryKey: ['client-contracts'] });

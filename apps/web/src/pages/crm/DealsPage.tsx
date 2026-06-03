@@ -429,7 +429,7 @@ export default function DealsPage() {
           allowClear
           showSearch
           optionFilterProp="label"
-          options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
+          options={usersData.map((u) => ({ value: u.id, label: u.name }))}
           onChange={(v) => setAssigneeIdFilter(v)}
         />
       </div>
@@ -471,7 +471,7 @@ export default function DealsPage() {
           </Form.Item>
           <Form.Item name="assigneeId" label="Phụ trách" rules={[{ required: true }]}>
             <Select showSearch optionFilterProp="label"
-              options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))} />
+              options={usersData.map((u) => ({ value: u.id, label: u.name }))} />
           </Form.Item>
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item name="value" label="Giá trị" style={{ flex: 1, marginBottom: 0 }}>
@@ -610,7 +610,7 @@ export default function DealsPage() {
                   showSearch
                   optionFilterProp="label"
                   placeholder="Chọn PM phụ trách..."
-                  options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
+                  options={usersData.map((u) => ({ value: u.id, label: u.name }))}
                 />
               </Form.Item>
 

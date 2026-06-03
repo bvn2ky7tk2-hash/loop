@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Row, Col, Typography, Alert, Badge, Card, List, Tag, Tooltip, Button, Skeleton } from 'antd';
+import { Row, Col, Typography, Alert, Card, List, Tag, Button, Skeleton } from 'antd';
 import {
   BarChartOutlined, TeamOutlined, ProjectOutlined, ShopOutlined,
   WalletOutlined, WarningOutlined, ClockCircleOutlined, RiseOutlined,
@@ -8,12 +8,11 @@ import {
 } from '@ant-design/icons';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip as RTooltip,
-  ResponsiveContainer, CartesianGrid, Legend, PieChart, Pie, Cell,
+  ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell,
 } from 'recharts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { SparklineCard } from '../../components/ui/SparklineCard';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
 
@@ -66,7 +65,7 @@ function formatM(n: number) {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AnalyticsOverviewPage() {
-  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor, linkColor, preset } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor, linkColor } = useThemePalette();
   const qc = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -243,7 +242,7 @@ export default function AnalyticsOverviewPage() {
                 <YAxis tick={{ fill: axisColor, fontSize: 12 }} />
                 <RTooltip
                   contentStyle={{ background: tooltipBg, border: `1px solid ${borderColor}`, color: textPrimary }}
-                  formatter={(v: number) => [`${v}M đ`, 'Doanh thu']}
+                  formatter={(v) => [`${v}M đ`, 'Doanh thu']}
                 />
                 <Line type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2.5} dot={{ fill: '#10B981', r: 4 }} />
               </LineChart>
@@ -256,7 +255,7 @@ export default function AnalyticsOverviewPage() {
             {dealStages.length > 0 ? (
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
-                  <Pie data={dealStages} dataKey="count" nameKey="stage" cx="50%" cy="50%" outerRadius={80} label={({ stage, count }) => `${stage}: ${count}`}>
+                  <Pie data={dealStages} dataKey="count" nameKey="stage" cx="50%" cy="50%" outerRadius={80} label={({ payload }) => `${payload.stage}: ${payload.count}`}>
                     {dealStages.map((_, i) => (
                       <Cell key={i} fill={DEAL_STAGE_COLORS[i % DEAL_STAGE_COLORS.length]} />
                     ))}
@@ -328,24 +327,24 @@ export default function AnalyticsOverviewPage() {
                 title={<Text style={{ color: textPrimary }}>Rủi ro nhanh</Text>}
               >
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  {risks?.overdueInvoices?.length > 0 && (
+                  {(risks?.overdueInvoices?.length ?? 0) > 0 && (
                     <Tag color="error">
-                      <WarningOutlined /> {risks.overdueInvoices.length} HĐ quá hạn
+                      <WarningOutlined /> {risks?.overdueInvoices?.length} HĐ quá hạn
                     </Tag>
                   )}
-                  {risks?.expiringContracts?.filter(c => (c.daysLeft ?? 99) <= 30).length > 0 && (
+                  {(risks?.expiringContracts?.filter(c => (c.daysLeft ?? 99) <= 30).length ?? 0) > 0 && (
                     <Tag color="error">
-                      <ClockCircleOutlined /> {risks.expiringContracts.filter(c => (c.daysLeft ?? 99) <= 30).length} HĐ LĐ hết hạn
+                      <ClockCircleOutlined /> {risks?.expiringContracts?.filter(c => (c.daysLeft ?? 99) <= 30).length} HĐ LĐ hết hạn
                     </Tag>
                   )}
-                  {risks?.budgetAtRisk?.length > 0 && (
+                  {(risks?.budgetAtRisk?.length ?? 0) > 0 && (
                     <Tag color="warning">
-                      <FallOutlined /> {risks.budgetAtRisk.length} NS vượt ngưỡng
+                      <FallOutlined /> {risks?.budgetAtRisk?.length} NS vượt ngưỡng
                     </Tag>
                   )}
                   {(risks?.pendingApprovals ?? 0) > 0 && (
                     <Tag color="blue">
-                      <FileDoneOutlined /> {risks.pendingApprovals} phê duyệt chờ
+                      <FileDoneOutlined /> {risks?.pendingApprovals} phê duyệt chờ
                     </Tag>
                   )}
                   {!risks?.overdueInvoices?.length && !risks?.budgetAtRisk?.length && !risks?.pendingApprovals && (

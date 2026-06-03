@@ -197,7 +197,7 @@ export default function RoomBookingPage() {
               <Text style={{ color: textMuted, fontSize: 12 }}>Phòng / Giờ</Text>
             </div>
             <div style={{ display: 'flex' }}>
-              {SLOTS.map((slot, i) => (
+              {SLOTS.map((slot) => (
                 <div
                   key={slot.slotIndex}
                   style={{

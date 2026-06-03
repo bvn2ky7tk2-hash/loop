@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import {
   Table, Typography, Tag, Button, App, Tooltip, Space, Empty,
 } from 'antd';
 import {
-  SaveOutlined, PlusOutlined, DeleteOutlined, EditOutlined,
-  EyeOutlined, GlobalOutlined, LockOutlined, BuildOutlined,
+  SaveOutlined, PlusOutlined, DeleteOutlined,
+  GlobalOutlined, LockOutlined, BuildOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +38,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function AnalyticsSavedPage() {
-  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
   const navigate = useNavigate();
   const { message } = App.useApp();
   const qc = useQueryClient();

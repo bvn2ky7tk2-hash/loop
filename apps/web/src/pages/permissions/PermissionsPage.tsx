@@ -24,6 +24,12 @@ import {
 
 const { Text, Title } = Typography;
 
+// Hình dạng user thực tế trả về từ /users (id, name, email) — bù cho type
+// UserRecord upstream đang thiếu các field cơ bản.
+interface AppUser { id: string; name: string; email: string }
+const fetchUsers = (): Promise<AppUser[]> =>
+  usersApi.list() as unknown as Promise<AppUser[]>;
+
 // ─── Derive screens + module groups từ permission list ───────────────────────
 
 interface PermScreen {
@@ -333,7 +339,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
   });
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
-    queryFn: usersApi.list,
+    queryFn: fetchUsers,
   });
   const { data: orgTree = [] } = useQuery({
     queryKey: ['org-units'],
@@ -421,7 +427,7 @@ function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
     },
   });
 
-  const { borderColor: border, bgContainer: cardBg, textMuted, bgSubPanel } = useThemePalette();
+  const { borderColor: border, bgContainer: cardBg } = useThemePalette();
 
   const handleSaveInfo = () =>
     form.validateFields().then(values => {
@@ -831,12 +837,12 @@ function UserGroupsTab() {
 function UserOverridesTab() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { isDark, preset, textMuted, bgSubPanel, bgContainer } = useThemePalette();
+  const { isDark, textMuted, bgSubPanel, bgContainer } = useThemePalette();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [form] = Form.useForm();
 
-  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
+  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: fetchUsers });
 
   const { data: allPermsData = [] } = useQuery({
     queryKey: ['permissions', 'all'],

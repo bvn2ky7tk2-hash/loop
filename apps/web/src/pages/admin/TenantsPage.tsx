@@ -26,7 +26,7 @@ const TIMEZONE_OPTIONS = [
 
 export default function TenantsPage() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
-  const { resetPage, paginationProps } = usePagination(20);
+  const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);

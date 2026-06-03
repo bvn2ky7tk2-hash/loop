@@ -420,7 +420,7 @@ export default function MyTasksPage() {
 
   const { data: allEmployees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
     enabled: isManager && !projectId,
   });
 

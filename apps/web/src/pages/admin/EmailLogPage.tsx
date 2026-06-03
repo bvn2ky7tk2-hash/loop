@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  Table, Button, Tag, Typography, Select, Space, App, DatePicker, Row, Col,
+  Table, Button, Tag, Typography, Select, App, DatePicker, Row, Col,
 } from 'antd';
 import {
   MailOutlined, ReloadOutlined,

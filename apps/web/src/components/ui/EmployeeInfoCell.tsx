@@ -41,7 +41,6 @@ export interface EmployeeInfoCellProps {
 export function EmployeeInfoCell({
   employee,
   variant = 'row',
-  isDark: isDarkProp,
   textPrimary: textPrimaryProp,
   textMuted: textMutedProp,
   linkColor: linkColorProp,

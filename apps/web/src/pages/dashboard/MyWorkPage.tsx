@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import {
-  Row, Col, Card, Typography, Space, Button, Badge, Progress, Spin, Empty, App,
+  Row, Col, Card, Typography, Space, Button, Progress, Spin, Empty, App,
 } from 'antd';
 import {
   AppstoreOutlined, ClockCircleOutlined, CheckCircleOutlined,
@@ -16,7 +15,6 @@ import { StatCard } from '../../components/ui/StatCard';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 import { processesApi } from '../../api/processes.api';
 import { leavesApi } from '../../api/leaves';
-import { apiClient } from '../../api/client';
 import { expensesApi } from '../../api/expenses';
 import { tasksApi } from '../../api/tasks';
 import { timesheetApi } from '../../api/timesheet';
@@ -136,7 +134,7 @@ export default function MyWorkPage() {
   // Giờ làm tuần này từ timesheet period
   const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
   const weekEnd   = dayjs().endOf('week').format('YYYY-MM-DD');
-  const { data: weekPeriod } = useQuery({
+  useQuery({
     queryKey: ['timesheet-week', weekStart, weekEnd],
     queryFn:  () => timesheetApi.periodDetail(weekStart, weekEnd),
     staleTime: 5 * 60_000,
@@ -166,9 +164,6 @@ export default function MyWorkPage() {
   const pendingLeavesCount  = leavesData?.total ?? 0;
   const pendingExpenseCount = expensesData?.total ?? 0;
   const leaveBalance        = meData?.leaveBalance ?? 0;
-  const weekHours = (weekPeriod?.days ?? [])
-    .reduce((sum, d) => sum + (d.workHours ?? 0) + d.overtimeHours, 0)
-    .toFixed(1);
 
   const hasCheckedIn  = !!todaySummary?.checkIn;
   const hasCheckedOut = !!todaySummary?.checkOut;

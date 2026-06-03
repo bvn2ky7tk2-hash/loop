@@ -57,7 +57,7 @@ export default function BugListPage() {
   const { data, isLoading, isError } = useGetBugs(filters);
   const { data: stats }     = useGetBugStats(filters.projectId ? { projectId: filters.projectId } : {});
   const { data: projects = [] } = useQuery({ queryKey: ['projects'], queryFn: projectsApi.list });
-  const { data: users = [] }    = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
+  const { data: users = [] }    = useQuery<Array<{ id: string; name: string }>>({ queryKey: ['users'], queryFn: usersApi.list });
 
   const activeFilterCount = Object.entries(filters).filter(
     ([k, v]) => !['page', 'pageSize'].includes(k) && v !== undefined && v !== '',

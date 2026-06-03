@@ -70,6 +70,14 @@ export interface OkrStats {
 
 const BASE = '/okr';
 
+export interface CreateOkrObjectiveInput {
+  title: string; description?: string; cycle: OkrCycle; year: number; ownerId: string; orgUnitId?: string; status?: OkrStatus;
+}
+
+export interface CreateKpiMetricInput {
+  name: string; description?: string; unit?: string; targetValue?: number; frequency?: KpiFrequency; orgUnitId?: string;
+}
+
 export const okrApi = {
   stats: () => apiClient.get<OkrStats>(`${BASE}/stats`).then(r => r.data),
 
@@ -78,10 +86,10 @@ export const okrApi = {
 
   getObjective: (id: string) => apiClient.get<OkrObjective>(`${BASE}/objectives/${id}`).then(r => r.data),
 
-  createObjective: (data: { title: string; description?: string; cycle: OkrCycle; year: number; ownerId: string; orgUnitId?: string; status?: OkrStatus }) =>
+  createObjective: (data: CreateOkrObjectiveInput) =>
     apiClient.post<OkrObjective>(`${BASE}/objectives`, data).then(r => r.data),
 
-  updateObjective: (id: string, data: Partial<Parameters<typeof okrApi.createObjective>[0]>) =>
+  updateObjective: (id: string, data: Partial<CreateOkrObjectiveInput>) =>
     apiClient.put<OkrObjective>(`${BASE}/objectives/${id}`, data).then(r => r.data),
 
   deleteObjective: (id: string) => apiClient.delete(`${BASE}/objectives/${id}`).then(r => r.data),
@@ -100,10 +108,10 @@ export const okrApi = {
   listMetrics: (orgUnitId?: string) =>
     apiClient.get<KpiMetric[]>(`${BASE}/kpi-metrics`, { params: orgUnitId ? { orgUnitId } : {} }).then(r => r.data),
 
-  createMetric: (data: { name: string; description?: string; unit?: string; targetValue?: number; frequency?: KpiFrequency; orgUnitId?: string }) =>
+  createMetric: (data: CreateKpiMetricInput) =>
     apiClient.post<KpiMetric>(`${BASE}/kpi-metrics`, data).then(r => r.data),
 
-  updateMetric: (id: string, data: Partial<Parameters<typeof okrApi.createMetric>[0]>) =>
+  updateMetric: (id: string, data: Partial<CreateKpiMetricInput>) =>
     apiClient.put<KpiMetric>(`${BASE}/kpi-metrics/${id}`, data).then(r => r.data),
 
   deleteMetric: (id: string) => apiClient.delete(`${BASE}/kpi-metrics/${id}`).then(r => r.data),

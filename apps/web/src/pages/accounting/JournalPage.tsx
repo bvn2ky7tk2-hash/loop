@@ -20,7 +20,7 @@ function formatMoney(v: string | number) {
 }
 
 export default function JournalPage() {
-  const { isDark, bgContainer, bgCard, textPrimary, textMuted, borderColor, linkColor, preset } = useThemePalette();
+  const { isDark, bgContainer, bgCard, textPrimary, textMuted, borderColor, linkColor } = useThemePalette();
   const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
 
   const [filter, setFilter] = useState<JournalFilter>({ page: 1, limit: 50 });
@@ -198,7 +198,7 @@ export default function JournalPage() {
         width={700}
         okText="Tạo bút toán"
         confirmLoading={createJournal.isPending}
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
       >
         <Form form={form} layout="vertical">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

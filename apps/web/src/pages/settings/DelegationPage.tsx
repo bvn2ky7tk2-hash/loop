@@ -98,7 +98,7 @@ export default function DelegationPage() {
   });
   const delegations: DelegationRule[] = paginatedData?.data ?? [];
 
-  const { data: users = [] } = useQuery({
+  const { data: users = [] } = useQuery<Array<{ id: string; name: string; isActive: boolean }>>({
     queryKey: ['users'],
     queryFn: usersApi.list,
   });

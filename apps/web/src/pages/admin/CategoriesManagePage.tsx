@@ -27,7 +27,7 @@ export default function CategoriesManagePage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { textPrimary, textMuted, borderColor, bgContainer, linkColor } = useThemePalette();
-  const { resetPage, paginationProps } = usePagination(20);
+  const { paginationProps } = usePagination(20);
 
   const [type, setType] = useState<string>('province');
   const [parentId, setParentId] = useState<string | undefined>();

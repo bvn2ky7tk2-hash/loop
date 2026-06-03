@@ -3,7 +3,6 @@ import {
   FunnelPlotOutlined,
   TrophyOutlined,
   DollarOutlined,
-  CalendarOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -26,7 +25,7 @@ const STAGE_LABELS: Record<string, string> = {
 };
 
 interface DealAnalyticsStage { stage: string; count: number; totalValue: number }
-interface WinRateData { winRate: number; won: number; total: number }
+interface WinRateData { winRate: number; won?: number; total?: number }
 interface AgingDeal { id: string; title: string; stage: string; ageDays: number; value?: string }
 
 function formatMillion(v: number) {
@@ -51,10 +50,9 @@ export default function CrmDashboard() {
     queryFn: () => apiClient.get<DealAnalyticsStage[]>('/crm/analytics/pipeline-by-stage').then(r => r.data),
   });
 
-  // winRate derive từ crm summary — không cần query riêng
+  // winRate derive từ crm summary — backend chưa trả winRate nên mặc định 0
   const winRate: WinRateData = {
-    winRate: data?.winRate ?? 0,
-    avgCycleTimeDays: 0,
+    winRate: 0,
   };
 
   const { data: aging } = useQuery<AgingDeal[]>({

@@ -39,7 +39,7 @@ export default function ApprovalInboxPage() {
   const { page, pageSize, paginationProps } = usePagination(50);
 
   // Options cho filter
-  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list });
+  const { data: users = [] } = useQuery<Array<{ id: string; name: string }>>({ queryKey: ['users'], queryFn: usersApi.list });
   const { data: defsData } = useDefinitions({ pageSize: 100 });
   const definitions = (defsData?.data ?? []).filter((d) => d.status === 'ACTIVE');
 

@@ -29,7 +29,7 @@ const PIE_COLORS = {
 };
 
 export default function MeDashboard() {
-  const { bgContainer, borderColor, textPrimary, isDark } = useThemePalette();
+  const { bgContainer, borderColor, textPrimary } = useThemePalette();
   const { user } = useAuthStore();
   const navigate = useNavigate();
 

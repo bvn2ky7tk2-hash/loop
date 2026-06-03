@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Switch, Card, Typography, Space, Tag, Badge, Modal, message, Spin,
+  Row, Col, Switch, Card, Typography, Space, Tag, Modal, message, Spin,
 } from 'antd';
 import {
   AppstoreOutlined, LockOutlined, ApiOutlined,

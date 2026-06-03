@@ -98,7 +98,7 @@ const TEMPLATES: {
 
 export default function ImportPage() {
   const { message } = App.useApp();
-  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, linkColor } = useThemePalette();
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey | null>(null);

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import {
-  Row, Col, Card, Typography, Tag, Button, Input, Select, Space, Divider, App,
+  Row, Col, Card, Typography, Tag, Button, Input, Select, Divider,
 } from 'antd';
 import {
-  FileTextOutlined, DownloadOutlined, SearchOutlined, TeamOutlined,
+  FileTextOutlined, SearchOutlined, TeamOutlined,
   BankOutlined, ProjectOutlined, ShopOutlined, BarChartOutlined,
   CalendarOutlined, EyeOutlined,
 } from '@ant-design/icons';
@@ -173,7 +173,7 @@ const CATEGORY_CONFIG = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AnalyticsReportsPage() {
-  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>('all');

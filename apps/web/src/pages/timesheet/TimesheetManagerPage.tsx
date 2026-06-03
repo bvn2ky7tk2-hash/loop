@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import {
   Card, Col, Row, Table, Typography, Badge, Space,
 } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import {
   TeamOutlined, CheckCircleOutlined, HomeOutlined,
   StopOutlined, ClockCircleOutlined, PercentageOutlined,
@@ -43,7 +44,7 @@ const STATUS_BADGE: Record<WorkStatusType, { bg: string; color: string }> = {
 
 export default function TimesheetManagerPage() {
   const { user } = useAuthStore();
-  const { isDark, preset, primary, bgContainer } = useThemePalette();
+  const { isDark, primary, bgContainer } = useThemePalette();
   const { paginationProps } = usePagination(50);
   const chartCardStyle = {
     borderRadius: 12,
@@ -70,7 +71,7 @@ export default function TimesheetManagerPage() {
     return { total, present, wfh, absent, attendanceRate };
   }, [teamStatus]);
 
-  const columns = [
+  const columns: ColumnsType<TeamMemberStatus> = [
     {
       title: 'Nhân sự',
       key: 'employee',
@@ -94,16 +95,17 @@ export default function TimesheetManagerPage() {
         const cfg = STATUS_BADGE[status];
         return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color }}>{STATUS_LABELS[status]}</span>;
       },
-      filters: ([
+      filters: [
         { text: 'Đang làm việc', value: 'WORKING' },
         { text: 'Làm từ xa', value: 'WFH' },
         { text: 'Họp', value: 'MEETING' },
         { text: 'Nghỉ giải lao', value: 'BREAK' },
         { text: 'Nghỉ', value: 'OFF' },
         { text: 'Công tác', value: 'BUSINESS_TRIP' },
-        { text: 'Chưa cập nhật', value: null },
-      ] as { text: string; value: WorkStatusType | null }[]),
-      onFilter: (value: unknown, record: TeamMemberStatus) => record.currentStatus === value,
+        { text: 'Chưa cập nhật', value: '__NONE__' },
+      ],
+      onFilter: (value, record) =>
+        value === '__NONE__' ? record.currentStatus == null : record.currentStatus === value,
     },
     {
       title: 'Từ lúc',

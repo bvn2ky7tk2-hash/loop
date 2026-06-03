@@ -12,7 +12,7 @@ export interface UserGroup {
   orgAccess?: { orgUnitId: string; includeChildren: boolean }[];
 }
 
-export interface UserGroupDetail extends UserGroup {
+export interface UserGroupDetail extends Omit<UserGroup, 'orgAccess'> {
   permissions: { permCode: string }[];
   members: { user: { id: string; name: string; email: string; role: string; orgUnitId?: string } }[];
   orgAccess: { orgUnit: { id: string; name: string; code: string }; includeChildren: boolean }[];

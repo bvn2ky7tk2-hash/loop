@@ -45,7 +45,7 @@ function CardTitle({ icon, label, color }: { icon: React.ReactNode; label: strin
 }
 
 export default function DashboardPage() {
-  const { isDark, preset, primary, textPrimary, textMuted, bgContainer, bgSubPanel, borderColor } = useThemePalette();
+  const { isDark, primary, textPrimary, textMuted, bgContainer, bgSubPanel, borderColor } = useThemePalette();
   const { user } = useAuthStore();
 
   const { data, isLoading } = useQuery({

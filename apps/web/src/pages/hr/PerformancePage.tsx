@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Modal, Form,
-  Input, InputNumber, Select, Rate, Drawer, Descriptions, message, Divider,
+  Input, InputNumber, Select, Drawer, Descriptions, message, Divider,
 } from 'antd';
 import { CommentThread } from '../../components/comments/CommentThread';
 import { PlusOutlined, TrophyOutlined } from '@ant-design/icons';
@@ -29,7 +29,7 @@ const STATUS_META: Record<ReviewStatus, { label: string; color: string }> = {
 };
 
 export default function PerformancePage() {
-  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor, preset } = useThemePalette();
+  const { bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
   const { paginationProps } = usePagination(20);
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
@@ -40,7 +40,7 @@ export default function PerformancePage() {
   const [form] = Form.useForm();
 
   const { data: reviewsData, isLoading } = useGetPerformanceReviews({ limit: 50, status: statusFilter, period: periodFilter, orgUnitId: orgUnitFilter });
-  const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: employeesApi.list });
+  const { data: employees = [] } = useQuery({ queryKey: ['employees'], queryFn: () => employeesApi.list() });
   const createReview = useCreatePerformanceReview();
   const updateReview = useUpdatePerformanceReview();
 
@@ -151,14 +151,14 @@ export default function PerformancePage() {
         onOk={handleCreate}
         onCancel={() => { setCreateOpen(false); form.resetFields(); }}
         okText="Tạo" confirmLoading={createReview.isPending}
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ container: { background: bgContainer }, header: { background: bgContainer } }}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="employeeId" label={<span style={{ color: textPrimary }}>Nhân viên được đánh giá</span>} rules={[{ required: true }]}>
-            <Select options={empOptions} showSearch filterOption={(i, o) => (o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn nhân viên" />
+            <Select options={empOptions} showSearch filterOption={(i, o) => String(o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn nhân viên" />
           </Form.Item>
           <Form.Item name="reviewerId" label={<span style={{ color: textPrimary }}>Người đánh giá</span>} rules={[{ required: true }]}>
-            <Select options={empOptions} showSearch filterOption={(i, o) => (o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn người đánh giá" />
+            <Select options={empOptions} showSearch filterOption={(i, o) => String(o?.label ?? '').toLowerCase().includes(i.toLowerCase())} placeholder="Chọn người đánh giá" />
           </Form.Item>
           <Form.Item name="period" label={<span style={{ color: textPrimary }}>Kỳ đánh giá</span>} rules={[{ required: true }]}>
             <Select options={PERIODS.map(p => ({ value: p, label: p }))} placeholder="VD: 2026-H1" />

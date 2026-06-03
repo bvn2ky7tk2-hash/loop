@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Card, Table, Button, Space, Badge,
-  Tooltip, Popconfirm, Input, Modal, Form, Alert,
+  Tooltip, Popconfirm, Input, Modal, Form, Alert, Typography,
 } from 'antd';
 import {
   CheckCircleOutlined, CloseCircleOutlined,
@@ -13,7 +13,7 @@ import { useAuthStore } from '../../store/auth.store';
 import dayjs from 'dayjs';
 import { Navigate } from 'react-router-dom';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const ALLOWED_ROLES = ['PM', 'ADMIN', 'LEADERSHIP'];
 

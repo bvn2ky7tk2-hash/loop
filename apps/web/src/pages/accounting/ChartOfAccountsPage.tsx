@@ -5,7 +5,7 @@ import { BankOutlined } from '@ant-design/icons';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { useGetAccounts, type ChartOfAccount, type AccountType } from '../../api/accounting';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const TYPE_META: Record<AccountType, { label: string; color: string }> = {
   ASSET:     { label: 'Tài sản',     color: 'blue'   },
@@ -20,7 +20,7 @@ const TYPE_OPTIONS = ([undefined, ...Object.keys(TYPE_META)] as (AccountType | u
 );
 
 export default function ChartOfAccountsPage() {
-  const { isDark, bgContainer, textPrimary, borderColor, linkColor, preset } = useThemePalette();
+  const { bgContainer, textPrimary, borderColor, linkColor } = useThemePalette();
   const [typeFilter, setTypeFilter] = useState<AccountType | undefined>(undefined);
 
   const { data: accounts = [], isLoading } = useGetAccounts(typeFilter);

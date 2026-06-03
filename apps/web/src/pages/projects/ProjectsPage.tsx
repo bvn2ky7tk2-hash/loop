@@ -96,7 +96,7 @@ export default function ProjectsPage() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
     enabled: memberOpen,
   });
 

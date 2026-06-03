@@ -173,7 +173,7 @@ export function BugCommentSection({ bugId }: Props) {
 
   return (
     <div>
-      <Divider orientation="left" style={{ marginTop: 24 }}>
+      <Divider titlePlacement="left" style={{ marginTop: 24 }}>
         <Title level={5} style={{ margin: 0 }}>
           Bình luận {comments.length > 0 && `(${comments.length})`}
         </Title>

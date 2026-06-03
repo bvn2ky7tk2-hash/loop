@@ -168,7 +168,7 @@ export default function FinanceDashboard() {
                   borderRadius: 8,
                   fontSize:     12,
                 }}
-                formatter={(value: number) => [`${value}M VNĐ`]}
+                formatter={(value) => [`${Number(value)}M VNĐ`, '']}
               />
               <Legend iconType="circle" iconSize={8} />
               <Line type="monotone" dataKey="revenue" name="Doanh thu" stroke="#10B981" strokeWidth={2} dot={false} />

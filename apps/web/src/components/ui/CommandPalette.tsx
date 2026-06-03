@@ -316,7 +316,7 @@ export function CommandPalette() {
       closable={false}
       styles={{
         body:    { padding: 0, overflow: 'hidden', borderRadius: 12 },
-        content: {
+        container: {
           padding: 0,
           background: bgContainer,
           border: `1px solid ${borderColor}`,

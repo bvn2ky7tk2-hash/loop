@@ -444,7 +444,6 @@ export const PERM_DOMAIN_MODULE: Record<string, string> = {
   skills:              'people',
   okr:                 'people',
   // Attendance — chấm công + lương
-  leaves:              'workspace',
   leaves_approve:      'attendance',
   attendance:          'attendance',
   timesheet_manager:   'attendance',

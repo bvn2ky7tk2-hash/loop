@@ -36,7 +36,7 @@ function getLevelStyle(level: number) {
 export default function OrgPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { isDark, textMuted, bgCard, borderColor: bc } = useThemePalette();
+  const { isDark, textMuted, borderColor: bc } = useThemePalette();
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<OrgUnitTree | null>(null);
   const [createForm] = Form.useForm();

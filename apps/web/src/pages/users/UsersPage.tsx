@@ -11,7 +11,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi, type UserRecord } from '../../api/users';
 import { employeesApi } from '../../api/employees';
 import { orgUnitsApi } from '../../api/org-units';
-import { Role } from '@loop/shared';
 
 
 
@@ -31,7 +30,7 @@ export default function UsersPage() {
   const { message } = App.useApp();
   const { isDark, textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
-  const { resetPage, paginationProps } = usePagination(50);
+  const { paginationProps } = usePagination(50);
   const [createOpen, setCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserRecord | null>(null);
   const [pwUser, setPwUser] = useState<UserRecord | null>(null);
@@ -226,7 +225,7 @@ export default function UsersPage() {
           </Form.Item>
           <Form.Item name="role" label="Vai trò" rules={[{ required: true }]}>
             <Select>
-              {Object.values(Role).map((r) => (
+              {Object.keys(ROLE_LABELS).map((r) => (
                 <Select.Option key={r} value={r}>{ROLE_LABELS[r] ?? r}</Select.Option>
               ))}
             </Select>
@@ -263,7 +262,7 @@ export default function UsersPage() {
           </Form.Item>
           <Form.Item name="role" label="Vai trò" rules={[{ required: true }]}>
             <Select>
-              {Object.values(Role).map((r) => (
+              {Object.keys(ROLE_LABELS).map((r) => (
                 <Select.Option key={r} value={r}>{ROLE_LABELS[r] ?? r}</Select.Option>
               ))}
             </Select>

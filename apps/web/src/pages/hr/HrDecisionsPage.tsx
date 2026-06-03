@@ -15,7 +15,6 @@ import {
   Col,
   App,
   Tooltip,
-  Divider,
 } from 'antd';
 import {
   PlusOutlined,
@@ -120,7 +119,7 @@ export default function HrDecisionsPage() {
   const [rejectReason, setRejectReason] = useState('');
   const [selectedType, setSelectedType] = useState<HrDecisionType | undefined>(undefined);
   const [selectedEmpId, setSelectedEmpId] = useState<string | undefined>(undefined);
-  const [signedByEmpId, setSignedByEmpId] = useState<string | undefined>(undefined);
+  const [, setSignedByEmpId] = useState<string | undefined>(undefined);
 
   const [form] = Form.useForm();
 
@@ -170,13 +169,14 @@ export default function HrDecisionsPage() {
     queryFn: orgUnitsApi.getTree,
     staleTime: 5 * 60_000,
   });
-  function flattenOrgUnits(nodes: typeof orgTree): { value: string; label: string }[] {
+  type OrgTreeNode = { id: string; name: string; children?: OrgTreeNode[] };
+  function flattenOrgUnits(nodes: OrgTreeNode[]): { value: string; label: string }[] {
     return nodes.flatMap((n) => [
       { value: n.id, label: n.name },
       ...flattenOrgUnits(n.children ?? []),
     ]);
   }
-  const orgOptions = flattenOrgUnits(orgTree);
+  const orgOptions = flattenOrgUnits(orgTree as OrgTreeNode[]);
 
   const decisions = decisionsData?.data ?? [];
   const total = decisionsData?.total ?? 0;

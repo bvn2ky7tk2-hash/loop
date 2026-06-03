@@ -60,7 +60,7 @@ export function SparklineCard({
   style,
   onClick,
 }: SparklineCardProps) {
-  const { isDark, textPrimary, textMuted, bgContainer: bgContainerPalette } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer: bgContainerPalette } = useThemePalette();
 
   const resolvedColor = color ?? 'var(--color-primary, #4F46E5)';
   const isCssVar = resolvedColor.startsWith('var(');

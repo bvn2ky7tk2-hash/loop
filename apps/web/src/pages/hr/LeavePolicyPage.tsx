@@ -330,7 +330,7 @@ export default function LeavePolicyPage() {
             <Switch checkedChildren="Hoạt động" unCheckedChildren="Tắt" />
           </Form.Item>
 
-          <Divider orientation="left" style={{ fontSize: 13 }}>Thâm niên bonus</Divider>
+          <Divider titlePlacement="left" style={{ fontSize: 13 }}>Thâm niên bonus</Divider>
 
           {seniorityRows.map((row, idx) => (
             <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'center' }}>

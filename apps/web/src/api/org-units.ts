@@ -1,5 +1,12 @@
 import { apiClient } from './client';
-import type { OrgUnit } from '@loop/shared';
+
+export interface OrgUnit {
+  id: string;
+  name: string;
+  parentId: string | null;
+  level: number;
+  children?: OrgUnit[];
+}
 
 export interface LeaderInfo {
   id: string;

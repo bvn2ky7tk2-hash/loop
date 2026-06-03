@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Alert, Space, Button } from 'antd';
 import { CloseOutlined, InfoCircleOutlined, WarningOutlined, AlertOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';

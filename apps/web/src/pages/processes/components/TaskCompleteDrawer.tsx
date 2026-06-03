@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  Button, Form, Space, Spin, Typography, Divider,
+  Button, Form, Space, Spin, Typography,
   Alert, Tag, Popconfirm, App, Collapse, Badge, Modal, Select, Input,
   theme as antTheme,
 } from 'antd';
@@ -25,6 +25,12 @@ import {
 import { usersApi } from '../../../api/users';
 import { DynamicFormFields } from './DynamicFormFields';
 import { CriteriaGridField } from './CriteriaGridField';
+
+// Hình dạng user thực tế trả về từ /users — bù cho type UserRecord upstream
+// đang thiếu các field cơ bản (id, name).
+interface AppUser { id: string; name: string }
+const fetchUsers = (): Promise<AppUser[]> =>
+  usersApi.list() as unknown as Promise<AppUser[]>;
 
 const { useToken } = antTheme;
 const { Text, Title } = Typography;
@@ -150,7 +156,7 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
   const [reassignUser, setReassignUser] = useState<string | undefined>();
   const [reassignNote, setReassignNote] = useState('');
   const [reassignLoading, setReassignLoading] = useState(false);
-  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: usersApi.list, enabled: reassignOpen });
+  const { data: users = [] } = useQuery({ queryKey: ['users'], queryFn: fetchUsers, enabled: reassignOpen });
 
   const handleReassign = async () => {
     if (!task || !reassignUser) { message.warning('Chọn người được ủy quyền'); return; }
@@ -240,10 +246,6 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
       destroyOnClose
       styles={{
         body: { padding: 0 },
-        footer: {
-          padding: '12px 24px',
-          borderTop: `1px solid ${token.colorBorderSecondary}`,
-        },
       }}
     >
       {isLoading ? (

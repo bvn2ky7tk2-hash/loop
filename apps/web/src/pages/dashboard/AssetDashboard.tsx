@@ -21,7 +21,7 @@ const CATEGORY_COLORS = [
 ];
 
 export default function AssetDashboard() {
-  const { bgContainer, borderColor, textPrimary, isDark } = useThemePalette();
+  const { bgContainer, borderColor, textPrimary } = useThemePalette();
 
   const { data } = useQuery({
     queryKey: ['dashboard-asset'],

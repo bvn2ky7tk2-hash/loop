@@ -339,11 +339,14 @@ export default function AttendanceExplanationPage() {
       <CenteredModal
         title="Tạo giải trình chấm công"
         open={modalOpen}
-        onCancel={() => { setModalOpen(false); form.resetFields(); }}
-        onOk={() => form.submit()}
-        confirmLoading={createMut.isPending}
-        okText="Tạo giải trình"
+        onClose={() => { setModalOpen(false); form.resetFields(); }}
         width={540}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => { setModalOpen(false); form.resetFields(); }}>Hủy</Button>
+            <Button type="primary" loading={createMut.isPending} onClick={() => form.submit()}>Tạo giải trình</Button>
+          </div>
+        }
       >
         <Form form={form} layout="vertical" onFinish={vals => createMut.mutate(vals)}>
           <Form.Item name="employeeId" label="Nhân viên" rules={[{ required: true, message: 'Chọn nhân viên' }]}>
@@ -398,12 +401,14 @@ export default function AttendanceExplanationPage() {
       <CenteredModal
         title="Từ chối giải trình"
         open={rejectModal.open}
-        onCancel={() => setRejectModal({ open: false, id: '' })}
-        onOk={() => rejectMut.mutate({ id: rejectModal.id, reason: rejectReason || undefined })}
-        confirmLoading={rejectMut.isPending}
-        okText="Từ chối"
-        okButtonProps={{ danger: true }}
+        onClose={() => setRejectModal({ open: false, id: '' })}
         width={440}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => setRejectModal({ open: false, id: '' })}>Hủy</Button>
+            <Button danger type="primary" loading={rejectMut.isPending} onClick={() => rejectMut.mutate({ id: rejectModal.id, reason: rejectReason || undefined })}>Từ chối</Button>
+          </div>
+        }
       >
         <div style={{ marginBottom: 8 }}>
           <Text style={{ color: textMuted }}>Lý do từ chối (tùy chọn):</Text>

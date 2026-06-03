@@ -28,7 +28,7 @@ function cloneGroups(groups: MenuGroupCfg[]): MenuGroupCfg[] {
 
 export function MenuConfigDrawer({ open, onClose }: MenuConfigDrawerProps) {
   const { topItems: stTop, groups: stGroups, setConfig } = useMenuStore();
-  const { isDark, bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
+  const { bgContainer: rowBg, bgSubPanel: groupHdrBg, borderColor, textMuted: mutedText } = useThemePalette();
 
   const [localTop, setLocalTop]       = useState<MenuTopItemCfg[]>([]);
   const [localGroups, setLocalGroups] = useState<MenuGroupCfg[]>([]);

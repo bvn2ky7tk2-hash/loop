@@ -77,7 +77,7 @@ const COL_DEFS = [
 export default function TasksPage() {
   const { message, modal } = App.useApp();
   const { token } = theme.useToken();
-  const { isDark, linkColor, preset, textMuted } = useThemePalette();
+  const { linkColor, textMuted } = useThemePalette();
   const qc = useQueryClient();
 
   // ── Pagination ────────────────────────────────────────────────────────────
@@ -116,7 +116,7 @@ export default function TasksPage() {
 
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
   });
 
   const { data: projectMembers = [] } = useQuery({

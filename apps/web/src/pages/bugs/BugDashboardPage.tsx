@@ -65,7 +65,7 @@ export default function BugDashboardPage() {
     'Resolved': d.resolved,
   })) ?? [];
 
-  const projectColumns: ColumnsType<(typeof stats)['openByProject'][0]> = [
+  const projectColumns: ColumnsType<NonNullable<typeof stats>['openByProject'][0]> = [
     {
       title: 'Dự án', dataIndex: 'projectName',
       render: (name, row) => (
@@ -79,7 +79,7 @@ export default function BugDashboardPage() {
     { title: 'Tổng',     dataIndex: 'total',    width: 80, align: 'right' },
   ];
 
-  const taskColumns: ColumnsType<(typeof stats)['openByTask'][0]> = [
+  const taskColumns: ColumnsType<NonNullable<typeof stats>['openByTask'][0]> = [
     { title: 'Task',         dataIndex: 'taskTitle',   ellipsis: true },
     { title: 'Dự án',        dataIndex: 'projectName', width: 140, ellipsis: true },
     { title: 'Bug đang mở',  dataIndex: 'openCount',   width: 100, align: 'right' },
@@ -92,7 +92,7 @@ export default function BugDashboardPage() {
     Tổng:      r.total,
   }));
 
-  const assigneeColumns: ColumnsType<(typeof stats)['openByAssignee'][0]> = [
+  const assigneeColumns: ColumnsType<NonNullable<typeof stats>['openByAssignee'][0]> = [
     {
       title: 'Nhân sự', dataIndex: 'assigneeName', ellipsis: true,
       render: (name: string) => <Typography.Text strong>{name}</Typography.Text>,
@@ -121,7 +121,7 @@ export default function BugDashboardPage() {
     Tổng:      r.total,
   }));
 
-  const reporterColumns: ColumnsType<(typeof stats)['openByReporter'][0]> = [
+  const reporterColumns: ColumnsType<NonNullable<typeof stats>['openByReporter'][0]> = [
     {
       title: 'Người tạo', dataIndex: 'reporterName', ellipsis: true,
       render: (name: string) => <Typography.Text strong>{name}</Typography.Text>,

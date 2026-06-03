@@ -45,7 +45,7 @@ interface MentionInputProps {
 }
 
 function MentionInput({ value, onChange, placeholder, autoSize, onSubmit, disabled }: MentionInputProps) {
-  const { bgCard, borderColor, textPrimary, textMuted } = useThemePalette();
+  const { bgCard, borderColor, textPrimary } = useThemePalette();
   const [mentionSearch, setMentionSearch]   = useState('');
   const [mentionVisible, setMentionVisible] = useState(false);
   const [mentionIndex, setMentionIndex]     = useState(0);
@@ -363,7 +363,7 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
 
   return (
     <div>
-      <Divider orientation="left" style={{ marginTop: 24 }}>
+      <Divider titlePlacement="left" style={{ marginTop: 24 }}>
         <Title level={5} style={{ margin: 0, color: textPrimary }}>
           Bình luận{totalCount > 0 ? ` (${totalCount})` : ''}
         </Title>

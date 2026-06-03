@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Row, Col, Table, Typography, Tag, Avatar, Space, Skeleton } from 'antd';
+import { Row, Col, Table, Typography, Avatar, Space, Skeleton } from 'antd';
 import {
   FunnelPlotOutlined,
   TrophyOutlined,
@@ -221,7 +221,7 @@ export default function CrmAnalyticsPage() {
                 <BarChart
                   data={pipelineStages}
                   margin={{ top: 4, right: 24, left: 0, bottom: 0 }}
-                  onClick={(d) => d && setSelectedStage(d.activeLabel ?? null)}
+                  onClick={(d) => d && setSelectedStage(d.activeLabel != null ? String(d.activeLabel) : null)}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} vertical={false} />
                   <XAxis
@@ -256,10 +256,10 @@ export default function CrmAnalyticsPage() {
                       fontSize: 12,
                       color: textPrimary as string,
                     }}
-                    formatter={(value: number, name: string) =>
+                    formatter={(value, name) =>
                       name === 'count'
                         ? [`${value} deals`, 'Số lượng']
-                        : [formatValue(value), 'Giá trị']
+                        : [formatValue(Number(value)), 'Giá trị']
                     }
                   />
                   <Bar yAxisId="count" dataKey="count" name="count" radius={[6, 6, 0, 0]} maxBarSize={64}>

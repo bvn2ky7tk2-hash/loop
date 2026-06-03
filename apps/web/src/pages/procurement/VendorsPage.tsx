@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
-  Table, Button, Input, Select, Tag, Space, Form, Drawer, Rate, Tooltip,
+  Table, Button, Input, Select, Tag, Space, Form, Rate, Tooltip,
 } from 'antd';
 import {
   PlusOutlined, SearchOutlined, ShopOutlined, EditOutlined, DeleteOutlined,
-  StarOutlined, PhoneOutlined, MailOutlined,
+  PhoneOutlined, MailOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -147,10 +147,12 @@ export default function VendorsPage() {
       <CenteredModal
         open={modalOpen}
         title={editing ? 'Sửa nhà cung cấp' : 'Thêm nhà cung cấp'}
-        onCancel={closeModal}
-        onOk={() => form.submit()}
-        okText="Lưu"
-        confirmLoading={save.isPending}
+        onClose={closeModal}
+        footer={
+          <Button type="primary" loading={save.isPending} onClick={() => form.submit()}>
+            Lưu
+          </Button>
+        }
         width={620}
       >
         <Form form={form} layout="vertical" onFinish={vals => save.mutate(vals)}>

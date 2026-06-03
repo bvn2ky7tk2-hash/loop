@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Button, Form, Input, DatePicker, Table, Popconfirm,
+  Button, Form, Input, DatePicker, Table,
   App, Space, Tag, Typography, Row, Col,
 } from 'antd';
 import {
@@ -17,7 +17,7 @@ import {
   type ChangelogEntry,
 } from '../../api/changelog';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 export default function ChangelogAdminPage() {

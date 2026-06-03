@@ -51,7 +51,7 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
         </span>
       }
       styles={{
-        content: { background: bgContainer, borderRadius: 14, padding: 0 },
+        container: { background: bgContainer, borderRadius: 14, padding: 0 },
         header:  { background: bgContainer, borderBottom: `1px solid ${borderColor}`, padding: '16px 20px 14px', marginBottom: 0, borderRadius: '14px 14px 0 0' },
         body:    { padding: '12px 16px 16px', maxHeight: 'calc(80vh - 70px)', overflowY: 'auto' },
       }}

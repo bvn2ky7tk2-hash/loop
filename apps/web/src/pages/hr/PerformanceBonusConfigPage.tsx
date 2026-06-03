@@ -49,7 +49,7 @@ const GRADE_COLORS: Record<string, { bg: string; text: string; darkBg: string; d
 };
 
 export default function PerformanceBonusConfigPage() {
-  const { isDark, textPrimary, textMuted, textSecondary, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
   const { message } = App.useApp();
   const queryClient = useQueryClient();
 

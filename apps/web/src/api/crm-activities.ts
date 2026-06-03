@@ -32,6 +32,13 @@ export interface ActivityStats {
 
 const BASE = '/crm/activities';
 
+export interface CreateCrmActivityInput {
+  type: ActivityType; subject: string; content?: string;
+  customerId?: string; dealId?: string; contactId?: string; leadId?: string;
+  scheduledAt?: string; completedAt?: string; duration?: number;
+  outcome?: string; nextAction?: string; nextActionDueAt?: string;
+}
+
 export const crmActivitiesApi = {
   stats: () =>
     apiClient.get<ActivityStats>(`${BASE}/stats`).then(r => r.data),
@@ -42,14 +49,9 @@ export const crmActivitiesApi = {
   get: (id: string) =>
     apiClient.get<CrmActivity>(`${BASE}/${id}`).then(r => r.data),
 
-  create: (data: {
-    type: ActivityType; subject: string; content?: string;
-    customerId?: string; dealId?: string; contactId?: string; leadId?: string;
-    scheduledAt?: string; completedAt?: string; duration?: number;
-    outcome?: string; nextAction?: string; nextActionDueAt?: string;
-  }) => apiClient.post<CrmActivity>(BASE, data).then(r => r.data),
+  create: (data: CreateCrmActivityInput) => apiClient.post<CrmActivity>(BASE, data).then(r => r.data),
 
-  update: (id: string, data: Partial<Parameters<typeof crmActivitiesApi.create>[0]>) =>
+  update: (id: string, data: Partial<CreateCrmActivityInput>) =>
     apiClient.patch<CrmActivity>(`${BASE}/${id}`, data).then(r => r.data),
 
   remove: (id: string) =>

@@ -178,7 +178,7 @@ export default function RecruitDashboard() {
                   background: bgContainer, border: `1px solid ${borderColor}`,
                   borderRadius: 8, fontSize: 12,
                 }}
-                formatter={(value: number) => [value, 'Ứng viên']}
+                formatter={(value) => [Number(value), 'Ứng viên']}
               />
               <Bar dataKey="count" name="Ứng viên" radius={[0, 4, 4, 0]}>
                 {stageData.map((entry) => (

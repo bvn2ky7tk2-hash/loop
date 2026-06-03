@@ -25,14 +25,6 @@ const { Text } = Typography;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const STAGE_COLORS: Record<string, string> = {
-  APPLIED: 'default', SCREENING: 'blue', INTERVIEW: 'orange',
-  OFFER: 'purple', HIRED: 'green', REJECTED: 'red',
-};
-const STAGE_LABELS: Record<string, string> = {
-  APPLIED: 'Ứng tuyển', SCREENING: 'Sàng lọc', INTERVIEW: 'Phỏng vấn',
-  OFFER: 'Đề nghị', HIRED: 'Đã tuyển', REJECTED: 'Từ chối',
-};
 const STEP_ICONS: Record<string, React.ReactNode> = {
   HRDocuments:     <FileTextOutlined />,
   ITSetup:         <LaptopOutlined />,
@@ -129,7 +121,7 @@ function HireModal({
               />
             </Form.Item>
             <Form.Item name="ratePerDay" label="Rate/ngày (VNĐ)" rules={[{ required: true }]}>
-              <InputNumber
+              <InputNumber<number>
                 style={{ width: '100%' }}
                 min={0}
                 formatter={v => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -147,7 +139,7 @@ function HireModal({
 // ─── Tab 1: Candidates OFFER ──────────────────────────────────────────────────
 
 function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
-  const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
   const { data, isLoading } = useGetCandidates({ stage: 'OFFER', limit: 100 });
   const candidates = data?.data ?? [];
   const [detail, setDetail] = useState<Candidate | null>(null);

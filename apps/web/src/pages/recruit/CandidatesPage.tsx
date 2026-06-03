@@ -255,7 +255,7 @@ export default function CandidatesPage() {
           </Form.Item>
           <Form.Item name="assigneeId" label="HR phụ trách">
             <Select allowClear showSearch optionFilterProp="label"
-              options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))} />
+              options={usersData.map((u) => ({ value: u.id, label: u.name }))} />
           </Form.Item>
           <Form.Item name="notes" label="Ghi chú"><TextArea rows={2} /></Form.Item>
         </Form>

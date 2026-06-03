@@ -51,7 +51,10 @@ export function GlobalSearch() {
     if (isAdmin) return ALL_ITEMS;
     return ALL_ITEMS.filter((item) => {
       const mod = MODULES.find((m) => m.id === item.moduleId);
-      if (mod?.gatePermission && !user?.permissions.includes(mod.gatePermission)) return false;
+      if (mod?.gatePermission) {
+        const gates = Array.isArray(mod.gatePermission) ? mod.gatePermission : [mod.gatePermission];
+        if (!gates.some((p) => user?.permissions.includes(p))) return false;
+      }
       const routePerm = ROUTE_PERMISSION_MAP[item.route];
       if (!routePerm) return true;
       return user?.permissions.includes(routePerm) ?? false;

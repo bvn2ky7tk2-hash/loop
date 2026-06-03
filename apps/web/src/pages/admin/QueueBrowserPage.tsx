@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
-  Table, Button, Badge, Typography, Space, Row, Col, Collapse, App, Tag, Descriptions,
+  Table, Button, Badge, Typography, Space, Row, Col, App,
 } from 'antd';
 import {
   ThunderboltOutlined, ReloadOutlined, RightOutlined,
@@ -13,7 +13,6 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 
 const { Text } = Typography;
-const { Panel } = Collapse;
 
 const QUEUE_LABELS: Record<string, string> = {
   automation:      'Automation',
@@ -24,7 +23,7 @@ const QUEUE_LABELS: Record<string, string> = {
 };
 
 function QueueCard({ queue }: { queue: QueueStats }) {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const { message } = App.useApp();
   const qc = useQueryClient();
   const [expanded, setExpanded] = useState(false);

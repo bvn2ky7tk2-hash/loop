@@ -79,7 +79,7 @@ function issueLabel(type: ExplanationType | null): string {
 
 export default function TimesheetPage() {
   const qc = useQueryClient();
-  const { isDark, textPrimary, textMuted, linkColor, bgCard, borderColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted } = useThemePalette();
   const [month, setMonth]             = useState<Dayjs>(dayjs().startOf('month'));
   const [filterStatus, setFilterStatus] = useState<string>('all');
 

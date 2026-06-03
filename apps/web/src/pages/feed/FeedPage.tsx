@@ -10,7 +10,7 @@ import {
   NotificationOutlined, FileTextOutlined, ThunderboltOutlined,
   BulbOutlined, QuestionCircleOutlined, ClockCircleOutlined,
   BookOutlined, PhoneOutlined, FilterOutlined, EnvironmentOutlined,
-  UserAddOutlined, PauseCircleOutlined, FormOutlined,
+  UserAddOutlined, FormOutlined,
   CheckSquareOutlined, BugOutlined, InboxOutlined, FieldTimeOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Row, Col, Switch, Button, Table, Tag, Typography, Space, Tooltip, message } from 'antd';
 import {
   ThunderboltOutlined, ClockCircleOutlined, PlayCircleOutlined,

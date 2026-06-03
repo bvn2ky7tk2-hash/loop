@@ -242,14 +242,15 @@ export default function PayrollAnalyticsPage() {
                     tickFormatter={v => `${v}M`}
                   />
                   <RTooltip
-                    formatter={(v: number, name: string) => {
+                    formatter={(v, name) => {
                       const labels: Record<string, string> = {
                         baseSalary:  'Lương cơ bản',
                         allowances:  'Phụ cấp',
                         bonus:       'Thưởng',
                         overtimePay: 'OT',
                       };
-                      return [`${formatMillions(v * 1_000_000)}`, labels[name] ?? name];
+                      const key = String(name);
+                      return [`${formatMillions(Number(v) * 1_000_000)}`, labels[key] ?? key];
                     }}
                     contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
                   />
@@ -299,9 +300,9 @@ export default function PayrollAnalyticsPage() {
                     width={100}
                   />
                   <RTooltip
-                    formatter={(v: number, name: string) => {
+                    formatter={(v, name) => {
                       if (name === 'otHours') return [`${v} giờ`, 'OT Hours'];
-                      return [`${formatMillions(v)}`, 'OT Pay'];
+                      return [`${formatMillions(Number(v))}`, 'OT Pay'];
                     }}
                     contentStyle={{ background: tooltipBg, border: `1px solid ${tooltipBorder}`, borderRadius: 8 }}
                     labelStyle={{ color: axisColor }}

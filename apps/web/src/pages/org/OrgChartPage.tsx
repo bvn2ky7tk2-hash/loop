@@ -350,7 +350,7 @@ export default function OrgChartPage() {
 
   const { data: allEmployees = [] } = useQuery({
     queryKey: ['employees'],
-    queryFn: employeesApi.list,
+    queryFn: () => employeesApi.list(),
   });
 
   const { data: jobTitlesData } = useQuery({

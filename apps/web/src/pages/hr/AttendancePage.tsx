@@ -25,15 +25,16 @@ import {
   type AttendanceStatus,
 } from '../../api/hr-attendance';
 import { workShiftsApi } from '../../api/work-shifts';
-import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
+import { orgUnitsApi } from '../../api/org-units';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 // Helper: flatten org-unit tree thành mảng phẳng để dùng trong Select
-function flattenOrgTree(nodes: OrgUnitTree[]): { id: string; name: string }[] {
+type OrgTreeNode = { id: string; name: string; children?: OrgTreeNode[] };
+function flattenOrgTree(nodes: OrgTreeNode[]): { id: string; name: string }[] {
   const result: { id: string; name: string }[] = [];
-  const walk = (items: OrgUnitTree[], depth: number) => {
+  const walk = (items: OrgTreeNode[], depth: number) => {
     for (const n of items) {
       result.push({ id: n.id, name: ' '.repeat(depth * 2) + n.name });
       if (n.children?.length) walk(n.children, depth + 1);
@@ -79,7 +80,6 @@ function StatusTag({ status, isDark }: { status: string; isDark: boolean }) {
 function MonthlyTab() {
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
-  const qc = useQueryClient();
 
   const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
   const [orgUnitId, setOrgUnitId] = useState<string | undefined>();
@@ -93,7 +93,7 @@ function MonthlyTab() {
   });
 
   const orgUnitOptions = useMemo(
-    () => flattenOrgTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
+    () => flattenOrgTree(orgTree as OrgTreeNode[]).map((u) => ({ value: u.id, label: u.name })),
     [orgTree],
   );
 
@@ -301,7 +301,7 @@ function DetailTab() {
   const year = selectedMonth.year();
   const month = selectedMonth.month() + 1;
 
-  const { data: monthlyRows = [], isLoading: monthlyLoading, refetch: monthlyRefetch } = useQuery({
+  const { refetch: monthlyRefetch } = useQuery({
     queryKey: ['attendance-monthly', year, month, monthOrgUnitId],
     queryFn: () => hrAttendanceApi.monthlyReport({ year, month, orgUnitId: monthOrgUnitId }),
   });
@@ -369,7 +369,7 @@ function DetailTab() {
   }
 
   const orgUnitOptions = useMemo(
-    () => flattenOrgTree(orgTree).map((u) => ({ value: u.id, label: u.name })),
+    () => flattenOrgTree(orgTree as OrgTreeNode[]).map((u) => ({ value: u.id, label: u.name })),
     [orgTree],
   );
 
@@ -703,7 +703,6 @@ function DetailTab() {
 // ─── Tab 2: Nhập chấm công thủ công ──────────────────────────────────────────
 
 function ManualEntryTab() {
-  const { textMuted } = useThemePalette();
   const [form] = Form.useForm();
 
   const { data: employees = [] } = useQuery({

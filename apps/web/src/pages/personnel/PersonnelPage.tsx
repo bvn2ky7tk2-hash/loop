@@ -24,7 +24,7 @@ import { FilterBar } from '../../components/FilterBar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { employeesApi, type Employee } from '../../api/employees';
 import { orgUnitsApi, type OrgUnitTree } from '../../api/org-units';
-import { payrollApi, type EmployeeTaxProfile, type Dependent } from '../../api/payroll';
+import { payrollApi, type Dependent } from '../../api/payroll';
 import { jobTitlesApi, positionsApi } from '../../api/hr-core';
 import { OrgUnitSelect, ProvinceWardSelect } from '../../components/selects';
 import { apiClient } from '../../api/client';
@@ -155,6 +155,7 @@ function TaxProfileTab({ employeeId }: { employeeId: string }) {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
+  const { textMuted } = useThemePalette();
   const [taxForm] = Form.useForm();
   const [depForm] = Form.useForm();
   const [depOpen, setDepOpen] = useState(false);
@@ -406,7 +407,7 @@ export default function PersonnelPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
-  const { textPrimary, textMuted } = useThemePalette();
+  const { textMuted } = useThemePalette();
   const navigate = useNavigate();
 
   // Org state

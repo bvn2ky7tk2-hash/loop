@@ -117,7 +117,7 @@ export function CriteriaGridField({
       render: (key: string, record: CriterionConfig) => {
         const score = value[key];
         if (score === undefined || score === null) {
-          return <Typography.Text type="disabled">—</Typography.Text>;
+          return <Typography.Text disabled>—</Typography.Text>;
         }
         const converted = Math.round(score * (record.weight / 100) * 100) / 100;
         return (

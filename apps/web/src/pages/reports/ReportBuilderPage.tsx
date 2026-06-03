@@ -523,7 +523,7 @@ export default function ReportBuilderPage() {
         onCancel={() => setSaveModalOpen(false)}
         footer={null}
         centered
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
       >
         <Form form={saveForm} layout="vertical" onFinish={handleSave}>
           <Form.Item

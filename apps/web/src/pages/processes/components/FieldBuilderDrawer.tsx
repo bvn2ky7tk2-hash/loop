@@ -24,9 +24,15 @@ import {
 } from '../../../api/processes.api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
-import { usersApi, type UserRecord } from '../../../api/users';
+import { usersApi } from '../../../api/users';
 import { orgUnitsApi, type OrgUnitTree } from '../../../api/org-units';
 import { useThemePalette } from '../../../hooks/useThemePalette';
+
+// Hình dạng user thực tế trả về từ /users — bù cho type UserRecord upstream
+// đang thiếu các field cơ bản (id, email).
+interface AppUser { id: string; name: string; email: string; isActive: boolean }
+const fetchUsers = (): Promise<AppUser[]> =>
+  usersApi.list() as unknown as Promise<AppUser[]>;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -37,6 +43,7 @@ const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   textarea: 'Đoạn văn',
   number: 'Số',
   date: 'Ngày tháng',
+  time: 'Giờ',
   select: 'Lựa chọn',
   criteria_grid: 'Bảng tiêu chí',
 };
@@ -137,7 +144,7 @@ export function FieldBuilderDrawer({ definition, open, onClose }: Props) {
   // Load users + org units cho pickers
   const { data: allUsers = [] } = useQuery({
     queryKey: ['users-list'],
-    queryFn: () => usersApi.list(),
+    queryFn: fetchUsers,
     enabled: open,
   });
   const { data: orgTree = [] } = useQuery({
@@ -287,7 +294,7 @@ interface UserTaskTabProps {
   onFieldsChange: (fields: FormField[]) => void;
   stepConfigItem: StepConfigItem;
   onStepConfigChange: (item: StepConfigItem) => void;
-  allUsers: UserRecord[];
+  allUsers: AppUser[];
   flatOrgUnits: OrgUnitTree[];
   isDark: boolean;
   preset: { primary: string };
@@ -361,7 +368,7 @@ function UserTaskTabContent({
 interface AssigneeConfigSectionProps {
   config?: AssigneeConfig;
   onChange: (cfg: AssigneeConfig | undefined) => void;
-  allUsers: UserRecord[];
+  allUsers: AppUser[];
   flatOrgUnits: OrgUnitTree[];
   isDark: boolean;
   preset: { primary: string };
@@ -369,7 +376,7 @@ interface AssigneeConfigSectionProps {
 }
 
 function AssigneeConfigSection({
-  config, onChange, allUsers, flatOrgUnits, isDark, cardStyle,
+  config, onChange, allUsers, flatOrgUnits, cardStyle,
 }: AssigneeConfigSectionProps) {
   const { textSecondary } = useThemePalette();
   const mode = config?.mode ?? 'fixed';
@@ -480,7 +487,7 @@ function AssigneeConfigSection({
 interface NotificationConfigSectionProps {
   config?: { taskAssigned?: NotificationTrigger; taskCompleted?: NotificationTrigger };
   onChange: (cfg: { taskAssigned?: NotificationTrigger; taskCompleted?: NotificationTrigger } | undefined) => void;
-  allUsers: UserRecord[];
+  allUsers: AppUser[];
   isDark: boolean;
   cardStyle: React.CSSProperties;
 }
@@ -836,7 +843,7 @@ function FieldTabContent({ fields, onChange, description }: FieldTabContentProps
 
           {watchType === 'criteria_grid' && (
             <>
-              <Divider orientation="left" plain style={{ fontSize: 12 }}>
+              <Divider titlePlacement="left" plain style={{ fontSize: 12 }}>
                 Cấu hình bảng tiêu chí
               </Divider>
               <Form.Item

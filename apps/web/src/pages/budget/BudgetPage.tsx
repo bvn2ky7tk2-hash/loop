@@ -55,6 +55,7 @@ interface CostSummary {
 interface ProjectBudgetRow extends Project {
   actualCost: number;
   actualHours: number;
+  budgetHours?: number;
   costLoading: boolean;
   members: CostSummary['members'];
 }
@@ -231,7 +232,7 @@ function BudgetDetailDrawer({
 // ─── Main BudgetPage ──────────────────────────────────────────────────────────
 
 export default function BudgetPage() {
-  const { isDark, textPrimary, textSecondary, bgContainer, bgCard, borderColor, linkColor, preset } = useThemePalette();
+  const { isDark, textPrimary, textSecondary, bgContainer, bgCard, borderColor, linkColor } = useThemePalette();
 
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | undefined>();
   const [selectedProject, setSelectedProject] = useState<ProjectBudgetRow | null>(null);

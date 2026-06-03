@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Table, Button, Tag, Typography, App, Form, Input, Select, DatePicker, Space, Row, Col,
 } from 'antd';
@@ -35,7 +35,7 @@ export default function AnnouncementsPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
-  const { resetPage, paginationProps } = usePagination(20);
+  const { paginationProps } = usePagination(20);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<SystemAnnouncement | null>(null);
@@ -115,7 +115,7 @@ export default function AnnouncementsPage() {
     const [startAt, endAt] = values.timeRange ?? [];
     const dto = {
       message: values.message as string,
-      type: values.type as string,
+      type: values.type as SystemAnnouncement['type'],
       startAt: (startAt as dayjs.Dayjs).toISOString(),
       endAt: endAt ? (endAt as dayjs.Dayjs).toISOString() : undefined,
     };
@@ -246,10 +246,16 @@ export default function AnnouncementsPage() {
       <CenteredModal
         title={editing ? 'Sửa thông báo' : 'Tạo thông báo mới'}
         open={modalOpen}
-        onCancel={() => { setModalOpen(false); setEditing(null); form.resetFields(); }}
-        onOk={handleSubmit}
-        confirmLoading={createMut.isPending || updateMut.isPending}
-        okText={editing ? 'Lưu' : 'Tạo'}
+        onClose={() => { setModalOpen(false); setEditing(null); form.resetFields(); }}
+        extra={
+          <Button
+            type="primary"
+            loading={createMut.isPending || updateMut.isPending}
+            onClick={handleSubmit}
+          >
+            {editing ? 'Lưu' : 'Tạo'}
+          </Button>
+        }
       >
         <Form form={form} layout="vertical">
           <Form.Item

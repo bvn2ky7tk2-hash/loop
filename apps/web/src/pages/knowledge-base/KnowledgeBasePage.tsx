@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Row, Col, Card, Input, Select, Tag, Typography, Button, Drawer,
-  Form, Space, Tooltip, Popconfirm, Badge, Tabs, List, Empty,
+  Form, Space, Tooltip, Popconfirm, Tabs, Empty,
 } from 'antd';
 import {
   BookOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
-  SearchOutlined, EyeOutlined, PushpinOutlined, PushpinFilled,
-  FileTextOutlined, FolderOpenOutlined, TeamOutlined,
+  SearchOutlined, EyeOutlined, PushpinFilled,
+  FileTextOutlined, FolderOpenOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -14,10 +14,9 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
-import { confirmDelete } from '../../components/ui/confirmDelete';
 import { kbApi, type KbArticle, type KbCategory } from '../../api/kb';
 
-const { Text, Title, Paragraph } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const STATUS_COLOR: Record<string, string> = {
@@ -38,7 +37,7 @@ const CATEGORY_COLORS = ['#6366F1', '#10B981', '#3B82F6', '#F59E0B', '#EF4444', 
 function ArticleDrawer({
   article, open, onClose, onEdit,
 }: { article: KbArticle | null; open: boolean; onClose: () => void; onEdit: () => void }) {
-  const { isDark, textPrimary, textMuted, textSecondary, bgCard, bgContainer, bgSubPanel, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, textSecondary, bgContainer, bgSubPanel, borderColor, linkColor } = useThemePalette();
   if (!article) return null;
 
   return (
@@ -121,7 +120,8 @@ function ArticleModal({
 }) {
   const [form] = Form.useForm();
 
-  const handleOpen = () => {
+  useEffect(() => {
+    if (!open) return;
     if (initial) {
       form.setFieldsValue({
         title:      initial.title,
@@ -135,18 +135,19 @@ function ArticleModal({
     } else {
       form.resetFields();
     }
-  };
+  }, [open, initial, form]);
 
   return (
     <CenteredModal
       title={initial ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}
       open={open}
-      onCancel={onCancel}
-      onOk={form.submit}
-      confirmLoading={loading}
-      okText={initial ? 'Cập nhật' : 'Lưu'}
+      onClose={onCancel}
       width={800}
-      afterOpenChange={v => { if (v) handleOpen(); }}
+      footer={
+        <Button type="primary" loading={loading} onClick={form.submit}>
+          {initial ? 'Cập nhật' : 'Lưu'}
+        </Button>
+      }
     >
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         <Form.Item name="title" label="Tiêu đề" rules={[{ required: true }]}>
@@ -204,7 +205,7 @@ export default function KnowledgeBasePage() {
   const [editingCat, setEditingCat] = useState<KbCategory | null>(null);
   const [catForm] = Form.useForm();
 
-  const { isDark, textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgCard, borderColor } = useThemePalette();
   const qc = useQueryClient();
 
   const { data: stats } = useQuery({ queryKey: ['kb-stats'], queryFn: kbApi.stats });
@@ -533,10 +534,12 @@ export default function KnowledgeBasePage() {
       <CenteredModal
         title={editingCat ? 'Cập nhật danh mục' : 'Thêm danh mục'}
         open={catModal}
-        onCancel={() => { setCatModal(false); catForm.resetFields(); setEditingCat(null); }}
-        onOk={catForm.submit}
-        confirmLoading={mutateSaveCat.isPending}
-        okText={editingCat ? 'Cập nhật' : 'Lưu'}
+        onClose={() => { setCatModal(false); catForm.resetFields(); setEditingCat(null); }}
+        footer={
+          <Button type="primary" loading={mutateSaveCat.isPending} onClick={catForm.submit}>
+            {editingCat ? 'Cập nhật' : 'Lưu'}
+          </Button>
+        }
       >
         <Form form={catForm} layout="vertical" onFinish={mutateSaveCat.mutate}>
           <Form.Item name="name" label="Tên danh mục" rules={[{ required: true }]}>

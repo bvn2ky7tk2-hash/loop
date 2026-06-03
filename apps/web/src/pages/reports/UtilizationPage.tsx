@@ -179,7 +179,7 @@ export default function UtilizationPage() {
                 <XAxis type="number" domain={[0, 100]} tick={{ fill: axisColor, fontSize: 12 }} tickFormatter={v => `${v}%`} />
                 <YAxis type="category" dataKey="name" tick={{ fill: axisColor, fontSize: 12 }} width={70} />
                 <RTooltip
-                  formatter={(v: number) => [`${v}%`, 'Utilization']}
+                  formatter={(v) => [`${v}%`, 'Utilization']}
                   contentStyle={{ background: tooltipBg, border: '1px solid #333' }}
                 />
                 <Bar dataKey="pct" radius={[0, 4, 4, 0]}>

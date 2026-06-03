@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Row, Col, Table, Badge, Tag, Typography, Collapse } from 'antd';
+import { useState } from 'react';
+import { Row, Col, Table, Badge, Tag, Typography } from 'antd';
 import {
   HeartOutlined,
   DatabaseOutlined,
@@ -23,10 +23,6 @@ function formatUptime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   return `${h}g ${m}p`;
-}
-
-function formatBytes(bytes: number): string {
-  return (bytes / 1024 / 1024).toFixed(0) + ' MB';
 }
 
 function RespBadge({ ms }: { ms: number }) {

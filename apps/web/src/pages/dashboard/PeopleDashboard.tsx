@@ -9,6 +9,7 @@ import {
   PauseCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, CartesianGrid,
@@ -21,6 +22,7 @@ import { employeesApi } from '../../api/employees';
 
 export default function PeopleDashboard() {
   const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
+  const navigate = useNavigate();
 
   const { data: peopleData } = useQuery({
     queryKey:        ['dashboard-people'],

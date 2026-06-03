@@ -42,7 +42,7 @@ const STATUS_OPTIONS = Object.entries(STATUS_META).map(([k, v]) => ({ value: k a
 const SOURCE_OPTIONS = Object.entries(SOURCE_META).map(([k, v]) => ({ value: k as LeadSource, label: v.label }));
 
 export default function LeadsPage() {
-  const { isDark, bgContainer, bgCard, borderColor, textPrimary, textMuted, preset } = useThemePalette();
+  const { bgContainer, borderColor, textPrimary, textMuted, preset } = useThemePalette();
   const { user }  = useAuthStore();
 
   const { page, pageSize, resetPage, paginationProps } = usePagination(20);
@@ -208,7 +208,7 @@ export default function LeadsPage() {
           allowClear
           showSearch
           optionFilterProp="label"
-          options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
+          options={usersData.map((u) => ({ value: u.id, label: u.name }))}
           onChange={(v) => setAssigneeIdFilter(v)}
         />
       </div>
@@ -250,7 +250,7 @@ export default function LeadsPage() {
           <Form.Item name="assigneeId" label="Phụ trách" rules={[{ required: true }]}>
             <Select
               showSearch optionFilterProp="label"
-              options={usersData.map((u: { id: string; name: string }) => ({ value: u.id, label: u.name }))}
+              options={usersData.map((u) => ({ value: u.id, label: u.name }))}
             />
           </Form.Item>
           <Space.Compact style={{ width: '100%' }}>

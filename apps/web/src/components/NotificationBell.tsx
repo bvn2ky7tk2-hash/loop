@@ -429,7 +429,7 @@ export default function NotificationBell({ unreadCount }: Props) {
       placement="bottomRight"
       arrow={false}
       styles={{
-        body: {
+        content: {
           padding: '12px 14px 10px',
           background: bgContainer,
           borderRadius: 12,

@@ -12,7 +12,6 @@ import {
   Typography,
   Space,
   Spin,
-  Tooltip,
   Row,
   Col,
   Badge,
@@ -45,7 +44,6 @@ import {
   useDeleteEvent,
   type CalendarEvent,
   type NormalisedBooking,
-  type CalendarEventType,
   type CreateEventPayload,
 } from '../../api/calendar';
 import { useAvailableRooms, roomBookingApi } from '../../api/room-booking';
@@ -158,7 +156,6 @@ export default function CalendarPage() {
   const [detailVisible, setDetailVisible] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [prefilledDate, setPrefilledDate] = useState<Dayjs | null>(null);
   const [filterType, setFilterType] = useState<string>('');
 
   const [pickedRange, setPickedRange] = useState<[string, string] | null>(null);
@@ -220,7 +217,6 @@ export default function CalendarPage() {
 
   function openCreate(date?: Dayjs) {
     setEditingEvent(null);
-    setPrefilledDate(date ?? null);
     form.resetFields();
     if (date) {
       form.setFieldsValue({
@@ -329,7 +325,7 @@ export default function CalendarPage() {
   function renderMonthView() {
     const firstOfMonth = currentDate.startOf('month');
     // Mon = 1, start grid on Monday
-    let startOffset = firstOfMonth.day(); // 0=Sun..6=Sat
+    let startOffset: number = firstOfMonth.day(); // 0=Sun..6=Sat
     startOffset = startOffset === 0 ? 6 : startOffset - 1; // shift to Mon-based
 
     const daysInMonth = currentDate.daysInMonth();
@@ -785,7 +781,7 @@ export default function CalendarPage() {
             Chi tiết sự kiện
           </Text>
         }
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
       >
         {selectedEvent && (
           <div>
@@ -897,7 +893,7 @@ export default function CalendarPage() {
         }
         okText={editingEvent ? 'Lưu thay đổi' : 'Tạo sự kiện'}
         cancelText="Hủy"
-        styles={{ content: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
         width={560}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
