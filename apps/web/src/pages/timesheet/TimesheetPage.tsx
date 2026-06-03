@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Card, Row, Col, Table, Button, DatePicker, Select,
   Typography, Alert, Space, Popconfirm, Tooltip, Badge,
@@ -432,13 +433,11 @@ export default function TimesheetPage() {
   return (
     <div className="page-wrapper">
       {/* Header */}
-      <div className="page-header">
-        <h1 className="page-title">
-          <CalendarOutlined style={{ marginRight: 8, fontSize: 18 }} />
-          Bảng công
-        </h1>
-
-        <Space>
+      <PageHeader
+        title="Bảng công"
+        icon={<CalendarOutlined />}
+        actions={
+          <Space>
           <DatePicker
             picker="month"
             value={month}
@@ -457,9 +456,10 @@ export default function TimesheetPage() {
               { value: 'leave',   label: 'Nghỉ phép' },
             ]}
           />
-          <ColumnToggle columns={TIMESHEET_COL_DEFS} isVisible={isVisible} toggle={toggle} reset={resetCols} />
-        </Space>
-      </div>
+            <ColumnToggle columns={TIMESHEET_COL_DEFS} isVisible={isVisible} toggle={toggle} reset={resetCols} />
+          </Space>
+        }
+      />
 
       {/* Summary Cards */}
       {record ? (

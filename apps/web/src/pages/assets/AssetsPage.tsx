@@ -130,9 +130,10 @@ export default function AssetsPage() {
   };
 
   const handleReturn = (a: Asset) => {
-    Modal.confirm({
+    confirmDelete({
       title: `Thu hồi tài sản "${a.name}"?`,
-      onOk: async () => {
+      okText: 'Thu hồi',
+      onConfirm: async () => {
         await returnMutation.mutateAsync({ id: a.id });
         message.success('Đã thu hồi');
       },

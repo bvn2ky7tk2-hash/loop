@@ -344,7 +344,12 @@ res.json({ error: e.stack });          // lộ stack trace
 | `<CenteredModal>` | `components/ui/CenteredModal.tsx` | Modal form + detail popup — thay thế cả `<Modal>` lẫn `<Drawer>` (KHÔNG dùng Drawer) |
 | `<FilterBar>` | `components/FilterBar.tsx` | Thanh filter (bao ngoài Select/Input) |
 | `<ColumnToggle>` | `components/ColumnToggle.tsx` | Toggle ẩn/hiện cột Table |
-| `<TaskStatusPill>` | `components/ui/TaskStatusPill.tsx` | Badge trạng thái task |
+| `<TaskStatusPill>` | `components/ui/TaskStatusPill.tsx` | Badge trạng thái task/project (status cố định) |
+| `<StatusBadge>` | `components/ui/StatusBadge.tsx` | Badge trạng thái KHÁC task — chọn màu qua `tone` (success/warning/error/info/processing/neutral), tự dark/light. KHÔNG tự khai báo bg/color/darkBg |
+| `<EmptyState>` | `components/ui/EmptyState.tsx` | Màn hình trống (icon + title + description + action) — KHÔNG tự dựng `<Empty>` inline |
+| `<SectionCard>` | `components/ui/SectionCard.tsx` | Khối/section wrapper (nền + viền + bo góc) — thay div inline `{ background, border, borderRadius, padding }`. Có `title`/`extra`/`nested`/`noPadding` |
+| `<DetailRow>` / `<DetailGrid>` | `components/ui/DetailRow.tsx` | Cặp "nhãn: giá trị" trong popup chi tiết — tự hiển thị "—" khi rỗng. KHÔNG tự dựng div label:value |
+| `<SearchInput>` / `<FilterSelect>` | `components/ui/FilterControl.tsx` | Ô tìm kiếm + select lọc chuẩn (đặt trong `<FilterBar>`) — width/allowClear nhất quán |
 | `<CanDo>` | `components/common/CanDo.tsx` | Permission gate |
 
 ### Utility function

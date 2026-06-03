@@ -1,5 +1,6 @@
-import { Modal, Table, Button, Popconfirm, Typography, Space } from 'antd';
+import { Modal, Table, Button, Popconfirm, Typography, Space, theme } from 'antd';
 import { WarningOutlined } from '@ant-design/icons';
+import { usePagination } from '../hooks/usePagination';
 
 export interface ConflictDay {
   date: string;
@@ -19,12 +20,14 @@ interface Props {
 const { Text } = Typography;
 
 export default function AllocationConflictModal({ open, conflicts, onAdjust, onForceOverride, onCancel }: Props) {
+  const { token } = theme.useToken();
+  const { paginationProps } = usePagination(10);
   const columns = [
     {
       title: 'Ngày',
       dataIndex: 'date',
       width: 110,
-      render: (v: string) => v,
+      render: (v: string) => <span style={{ color: token.colorText }}>{v}</span>,
     },
     {
       title: 'Dự án hiện tại',
@@ -93,7 +96,7 @@ export default function AllocationConflictModal({ open, conflicts, onAdjust, onF
         columns={columns}
         rowKey="date"
         size="small"
-        pagination={{ pageSize: 10 }}
+        pagination={paginationProps(conflicts.length, 'ngày')}
         scroll={{ y: 300 }}
       />
     </Modal>

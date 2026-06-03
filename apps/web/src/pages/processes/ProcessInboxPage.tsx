@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Button, Modal, Select, Form, App, Input, Space, theme as antTheme,
 } from 'antd';
@@ -105,20 +106,19 @@ export default function ProcessInboxPage() {
 
   return (
     <div className="page-wrapper">
-      <div
-        className="page-header"
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-      >
-        <h1 className="page-title">Process Management</h1>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setOpen(true)}
-          disabled={activeDefinitions.length === 0}
-        >
-          Tạo yêu cầu mới
-        </Button>
-      </div>
+      <PageHeader
+        title="Process Management"
+        actions={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setOpen(true)}
+            disabled={activeDefinitions.length === 0}
+          >
+            Tạo yêu cầu mới
+          </Button>
+        }
+      />
 
       {/* ── Bộ lọc ── */}
       <div

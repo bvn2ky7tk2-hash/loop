@@ -123,7 +123,7 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
                     // Dark: luôn text sáng (#F1F5F9), light: active dùng màu module
                     color: isDark
                       ? (isActive ? '#FFFFFF' : '#E2E8F0')
-                      : (isActive ? mod.color : '#1E293B'),
+                      : (isActive ? mod.color : textPrimary),
                     marginBottom: 3,
                   }}
                 >

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Table, Button, Form, Input, Select, DatePicker, InputNumber,
-  Space, Tag, Drawer, Descriptions, Progress, App, Popconfirm, theme,
+  Space, Tag, Descriptions, Progress, App, Popconfirm, theme,
 } from 'antd';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, FileTextOutlined,
@@ -15,6 +15,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { formatNumber } from '../../utils/format';
 import { apiClient } from '../../api/client';
@@ -385,12 +386,13 @@ export default function ClientContractsPage() {
         onRow={(c) => ({ style: { cursor: 'pointer' }, onClick: () => { setSelectedContract(c); setDrawerOpen(true); } })}
       />
 
-      {/* Detail Drawer */}
-      <Drawer
+      {/* Detail Modal */}
+      <CenteredModal
         title={selectedContract?.title}
         open={drawerOpen}
         onClose={() => { setDrawerOpen(false); setSelectedContract(null); }}
         width={680}
+        footer={null}
         extra={
           selectedContract && (
             <Button icon={<EditOutlined />} onClick={() => { openEdit(selectedContract); setDrawerOpen(false); }}>
@@ -432,14 +434,15 @@ export default function ClientContractsPage() {
             <MilestoneSection contract={selectedContract} />
           </div>
         )}
-      </Drawer>
+      </CenteredModal>
 
       {/* Create / Edit Modal */}
-      <Drawer
+      <CenteredModal
         title={editing ? 'Chỉnh sửa hợp đồng' : 'Tạo hợp đồng mới'}
         open={formOpen}
         onClose={() => { setFormOpen(false); form.resetFields(); setEditing(null); }}
         width={560}
+        footer={null}
         extra={
           <Button type="primary" loading={createMutation.isPending || updateMutation.isPending} disabled={createMutation.isPending || updateMutation.isPending} onClick={() => form.submit()}>
             {editing ? 'Lưu thay đổi' : 'Tạo hợp đồng'}
@@ -494,7 +497,7 @@ export default function ClientContractsPage() {
             <Input.TextArea rows={3} />
           </Form.Item>
         </Form>
-      </Drawer>
+      </CenteredModal>
     </div>
   );
 }

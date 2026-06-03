@@ -4,7 +4,7 @@ import {
   ClockCircleOutlined, SettingOutlined, BugOutlined, SyncOutlined, CheckCircleOutlined,
 } from '@ant-design/icons';
 import { ThemePanel } from '../../components/ui/ThemePanel';
-import { useAuthStore } from '../../store/auth.store';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   PieChart, Pie, Cell, Tooltip as RTooltip, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -46,7 +46,6 @@ function CardTitle({ icon, label, color }: { icon: React.ReactNode; label: strin
 
 export default function DashboardPage() {
   const { isDark, primary, textPrimary, textMuted, bgContainer, bgSubPanel, borderColor } = useThemePalette();
-  const { user } = useAuthStore();
 
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],
@@ -164,20 +163,7 @@ export default function DashboardPage() {
     <div style={{ padding: '24px 28px' }}>
       {/* ── Page header ── */}
       <div style={{ marginBottom: 28, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <h1 style={{
-            fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: '-0.3px',
-            color: textPrimary,
-          }}>
-            Dashboard
-          </h1>
-          <p style={{ fontSize: 15, fontWeight: 600, margin: '6px 0 2px', color: textPrimary }}>
-            Xin chào, {user?.name ?? 'bạn'} 👋
-          </p>
-          <p style={{ fontSize: 13, margin: 0, color: primary, fontWeight: 500 }}>
-            {dayjs().format('dddd, DD MMMM YYYY')}
-          </p>
-        </div>
+        <PageHeader title="Dashboard" greeting style={{ marginBottom: 0 }} />
 
         {/* Tuỳ chỉnh button */}
         <Popover

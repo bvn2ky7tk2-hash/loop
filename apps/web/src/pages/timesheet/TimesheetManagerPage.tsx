@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Card, Col, Row, Table, Typography, Badge, Space,
 } from 'antd';
@@ -140,12 +141,11 @@ export default function TimesheetManagerPage() {
   return (
     <div className="page-wrapper">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <div>
-          <h1 className="page-title" style={{ marginBottom: 4 }}>Attendance Report</h1>
-          <Text type="secondary">
-            Cập nhật lúc {dayjs().format('HH:mm')} · tự động làm mới mỗi 60 giây
-          </Text>
-        </div>
+        <PageHeader
+          title="Attendance Report"
+          style={{ marginBottom: 0 }}
+          subtitle={<Text type="secondary">Cập nhật lúc {dayjs().format('HH:mm')} · tự động làm mới mỗi 60 giây</Text>}
+        />
 
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} lg={4}>

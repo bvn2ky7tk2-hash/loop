@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 import { otApi, type OvertimeRequest, type FormField } from '../../api/overtime';
 import { employeesApi } from '../../api/employees';
 import { DynamicFormFields } from '../processes/components/DynamicFormFields';
@@ -217,13 +218,12 @@ export default function MyOvertimePage() {
               danger
               icon={<StopOutlined />}
               onClick={() =>
-                Modal.confirm({
+                confirmDelete({
                   title: 'Hủy đăng ký OT?',
                   content: `Ngày ${dayjs(row.date).format('DD/MM/YYYY')} — ${row.hours}h`,
                   okText: 'Hủy đăng ký',
-                  okType: 'danger',
                   cancelText: 'Giữ lại',
-                  onOk: () => cancelMut.mutate(row.id),
+                  onConfirm: () => cancelMut.mutate(row.id),
                 })
               }
               loading={cancelMut.isPending}

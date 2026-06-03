@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import {
   Button, Input, Switch, Space, Select,
-  Typography, Divider, Tooltip, Modal,
+  Typography, Divider, Tooltip,
 } from 'antd';
 import { CenteredModal } from '../ui/CenteredModal';
+import { confirmDelete } from '../ui/confirmDelete';
 import {
   ArrowUpOutlined, ArrowDownOutlined,
   EditOutlined, CheckOutlined, CloseOutlined,
@@ -109,11 +110,11 @@ export function MenuConfigDrawer({ open, onClose }: MenuConfigDrawerProps) {
   const handleSave = () => { setConfig(localTop, localGroups); onClose(); };
 
   const handleReset = () =>
-    Modal.confirm({
+    confirmDelete({
       title: 'Đặt lại mặc định?',
       content: 'Tất cả thay đổi cấu hình menu sẽ bị xóa.',
-      okText: 'Đặt lại', cancelText: 'Hủy', okButtonProps: { danger: true },
-      onOk: () => {
+      okText: 'Đặt lại',
+      onConfirm: () => {
         setLocalTop(DEFAULT_TOP_ITEMS.map(i => ({ ...i })));
         setLocalGroups(cloneGroups(DEFAULT_GROUPS));
       },

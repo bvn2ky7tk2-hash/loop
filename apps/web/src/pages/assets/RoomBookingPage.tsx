@@ -183,7 +183,7 @@ export default function RoomBookingPage() {
 
   const renderGantt = () => {
     const headerBg  = isDark ? '#1A2744' : '#F0F4FF';
-    const rowBg     = isDark ? '#1E293B' : '#ffffff';
+    const rowBg     = bgContainer;
     const altRowBg  = isDark ? '#243044' : '#F8FAFC';
     const gridLine  = isDark ? '#334155' : '#E2E8F0';
 

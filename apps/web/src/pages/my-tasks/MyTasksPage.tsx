@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import type { CSSProperties } from 'react';
 import {
   DndContext, DragOverlay, closestCorners,
@@ -524,12 +525,7 @@ export default function MyTasksPage() {
 
       {/* ── Page header ── */}
       <div style={{ marginBottom: 16 }}>
-        <h1 style={{
-          fontSize: 22, fontWeight: 800, margin: '0 0 14px',
-          color: textPrimary, letterSpacing: '-0.3px',
-        }}>
-          Kanban Board
-        </h1>
+        <PageHeader title="Kanban Board" style={{ marginBottom: 14 }} />
 
         {/* Filter bar */}
         <div style={{

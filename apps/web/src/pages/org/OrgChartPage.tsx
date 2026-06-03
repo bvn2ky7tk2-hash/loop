@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Button, Form, App, Spin, Space, Tooltip, theme, Tag,
 } from 'antd';
@@ -208,14 +209,11 @@ export default function OrgChartPage() {
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: textPrimary }}>
-            Sơ đồ tổ chức
-          </h1>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: textSecondary }}>
-            Cơ cấu và phân cấp phòng ban
-          </p>
-        </div>
+        <PageHeader
+          title="Sơ đồ tổ chức"
+          style={{ marginBottom: 0 }}
+          subtitle={<span style={{ fontSize: 13, color: textSecondary }}>Cơ cấu và phân cấp phòng ban</span>}
+        />
         <Space>
           <Tooltip title="Cài đặt hướng hiển thị">
             <Button icon={<SettingOutlined />} onClick={() => setSettingsOpen(true)}>

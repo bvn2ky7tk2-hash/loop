@@ -31,7 +31,7 @@ function DeltaBadge({ delta, filled }: { delta: number; filled?: boolean }) {
   const positive = delta >= 0;
   const color  = filled
     ? (delta >= 0 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.7)')
-    : (delta === 0 ? '#6B7280' : positive ? '#10B981' : '#EF4444');
+    : (delta === 0 ? '#94A3B8' : positive ? '#10B981' : '#EF4444');
   const bg = filled
     ? (delta > 0 ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)')
     : (delta > 0 ? '#ECFDF5' : delta < 0 ? '#FEF2F2' : '#F3F4F6');

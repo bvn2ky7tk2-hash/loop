@@ -1,6 +1,7 @@
 import { Popover, Avatar, Space, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { formatNumber } from '../utils/format';
+import { useThemePalette } from '../hooks/useThemePalette';
 
 const LEVEL_BADGE: Record<string, { bg: string; color: string }> = {
   JUNIOR: { bg: '#ECFDF5', color: '#065F46' },
@@ -26,14 +27,15 @@ interface Props {
 const { Text } = Typography;
 
 function Content({ member }: { member: MemberCost }) {
+  const { linkColor, textSecondary, bgCard } = useThemePalette();
   const md = formatNumber(member.actualHours / 8);
   return (
     <div style={{ width: 300 }}>
       <Space align="center" style={{ marginBottom: 10 }}>
-        <Avatar size={32} icon={<UserOutlined />} style={{ backgroundColor: '#4F46E5' }} />
+        <Avatar size={32} icon={<UserOutlined />} style={{ backgroundColor: linkColor }} />
         <div>
           <Text strong style={{ display: 'block' }}>{member.fullName}</Text>
-          {(() => { const cfg = LEVEL_BADGE[member.level] ?? { bg: '#F1F5F9', color: '#475569' }; return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color, display: 'inline-block', marginTop: 2 }}>{member.level}</span>; })()}
+          {(() => { const cfg = LEVEL_BADGE[member.level] ?? { bg: bgCard, color: textSecondary }; return <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 8px', background: cfg.bg, color: cfg.color, display: 'inline-block', marginTop: 2 }}>{member.level}</span>; })()}
           <Text type="secondary" style={{ fontSize: 12 }}> {member.allocationRole}</Text>
         </div>
       </Space>
@@ -49,7 +51,7 @@ function Content({ member }: { member: MemberCost }) {
         </Space>
         <Space style={{ width: '100%', justifyContent: 'space-between', marginTop: 8, paddingTop: 6, borderTop: '1px solid var(--ant-color-border)' }}>
           <Text strong>Chi phí</Text>
-          <Text strong style={{ color: '#4F46E5' }}>{formatNumber(member.cost)} VND</Text>
+          <Text strong style={{ color: linkColor }}>{formatNumber(member.cost)} VND</Text>
         </Space>
       </div>
     </div>

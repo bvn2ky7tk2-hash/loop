@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Row, Col, Card, Input, Select, Tag, Typography, Button, Drawer,
+  Row, Col, Card, Input, Select, Tag, Typography, Button,
   Form, Space, Tooltip, Popconfirm, Tabs, Empty,
 } from 'antd';
 import {
@@ -41,7 +41,7 @@ function ArticleDrawer({
   if (!article) return null;
 
   return (
-    <Drawer
+    <CenteredModal
       open={open}
       onClose={onClose}
       width={720}
@@ -106,7 +106,7 @@ function ArticleDrawer({
           Lượt xem: <span style={{ color: textSecondary }}>{article.viewCount}</span>
         </Text>
       </div>
-    </Drawer>
+    </CenteredModal>
   );
 }
 

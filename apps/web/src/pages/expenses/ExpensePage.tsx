@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
   Input, Modal, Row, Col, Divider, InputNumber, message,
-  Tooltip, Drawer, Descriptions,
+  Tooltip, Descriptions,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
@@ -266,7 +266,7 @@ function ExpenseDrawer({
 // ─── Main ExpensePage ─────────────────────────────────────────────────────────
 
 export default function ExpensePage() {
-  const { textPrimary, textSecondary, bgContainer, bgCard, bgSubPanel, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textSecondary, textMuted, bgContainer, bgCard, bgSubPanel, borderColor, linkColor } = useThemePalette();
 
   const user = useAuthStore((s) => s.user);
   const isPrivileged = canApprove(user?.role);
@@ -399,7 +399,7 @@ export default function ExpensePage() {
     },
     {
       title: 'Ngày tạo', dataIndex: 'createdAt', width: 110,
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY'),
+      render: (d: string) => <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Thao tác', width: 130,
@@ -576,12 +576,12 @@ export default function ExpensePage() {
       />
 
       {/* View-detail Drawer */}
-      <Drawer
+      <CenteredModal
         open={!!viewExpense}
         onClose={() => setViewExpense(null)}
         width={520}
         title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết expense</span>}
-        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer } }}
       >
         {viewExpense && (
           <>
@@ -600,7 +600,7 @@ export default function ExpensePage() {
             <CommentThread entityType="expense" entityId={viewExpense.id} />
           </>
         )}
-      </Drawer>
+      </CenteredModal>
 
       <ExpenseDrawer
         open={drawerOpen}

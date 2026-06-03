@@ -171,7 +171,7 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const openPalette = useCommandPaletteStore((s) => s.open);
-  const { isDark, textMuted, borderColor: paletteBorderColor, preset } = useThemePalette();
+  const { isDark, textMuted, borderColor: paletteBorderColor, bgPage, bgContainer, preset } = useThemePalette();
   const [quickTaskOpen,      setQuickTaskOpen]      = useState(false);
   const [quickBugOpen,       setQuickBugOpen]       = useState(false);
   const [quickProcessOpen,   setQuickProcessOpen]   = useState(false);
@@ -190,9 +190,9 @@ export function AppTopbar({ sidebarWidth, onToggle }: AppTopbarProps) {
   };
 
   const isNavLight  = !isDark && preset.navTheme === 'light';
-  const topbarBg    = isDark ? '#0F172A' : preset.navBg;
+  const topbarBg    = isDark ? bgPage : preset.navBg;
   const iconColor   = isNavLight ? preset.navText : '#fff';
-  const borderColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : 'transparent';
+  const borderColor = isDark ? bgContainer : isNavLight ? '#E2E8F0' : 'transparent';
 
   const userMenuItems = [
     {

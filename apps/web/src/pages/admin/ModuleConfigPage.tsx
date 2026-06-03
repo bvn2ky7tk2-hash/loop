@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Switch, Card, Typography, Space, Tag, Modal, message, Spin,
+  Row, Col, Switch, Card, Typography, Space, Tag, message, Spin,
 } from 'antd';
 import {
   AppstoreOutlined, LockOutlined, ApiOutlined,
@@ -13,6 +13,7 @@ import type { ModuleConfig } from '../../api/module-config';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { confirmDelete } from '../../components/ui/confirmDelete';
 
 const { Text, Title } = Typography;
 
@@ -51,13 +52,11 @@ export default function ModuleConfigPage() {
 
   const handleToggle = (mod: ModuleConfig, newValue: boolean) => {
     if (!newValue) {
-      Modal.confirm({
+      confirmDelete({
         title: `Tắt module "${mod.displayName}"?`,
         content: 'Tắt module này sẽ ẩn khỏi navigation và không cho phép người dùng truy cập. Bạn có thể bật lại bất kỳ lúc nào.',
         okText: 'Xác nhận tắt',
-        cancelText: 'Hủy',
-        okButtonProps: { danger: true },
-        onOk: () => toggleMut.mutate({ moduleId: mod.moduleId, isEnabled: false }),
+        onConfirm: () => toggleMut.mutate({ moduleId: mod.moduleId, isEnabled: false }),
       });
     } else {
       toggleMut.mutate({ moduleId: mod.moduleId, isEnabled: true });

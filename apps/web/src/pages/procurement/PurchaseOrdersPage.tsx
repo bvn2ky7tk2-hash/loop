@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Table, Button, Input, Select, Tag, Space, Form, Drawer, Typography,
+  Table, Button, Input, Select, Tag, Space, Form, Typography,
   InputNumber, Divider, Tooltip, Descriptions,
 } from 'antd';
 import {
@@ -201,7 +201,7 @@ export default function PurchaseOrdersPage() {
       </CenteredModal>
 
       {/* PO Detail Drawer */}
-      <Drawer
+      <CenteredModal
         open={!!detailPo}
         onClose={() => setDetailPo(null)}
         title={detailPo?.poNumber ?? 'Chi tiết đơn mua hàng'}
@@ -284,7 +284,7 @@ export default function PurchaseOrdersPage() {
             </Space>
           </>
         )}
-      </Drawer>
+      </CenteredModal>
     </div>
   );
 }

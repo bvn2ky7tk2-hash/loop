@@ -8,7 +8,7 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   Table, Button, Space, Typography, Select, Form, Input,
   InputNumber, DatePicker, Tag, Modal, message, Radio, Tooltip, Badge,
-  Drawer, Descriptions, Divider, Steps,
+  Descriptions, Divider, Steps,
 } from 'antd';
 import axios from 'axios';
 import { CenteredModal } from '../../components/ui/CenteredModal';
@@ -490,13 +490,13 @@ export default function DealsPage() {
         </Form>
       </CenteredModal>
 
-      {/* View-detail Drawer */}
-      <Drawer
+      {/* View-detail modal */}
+      <CenteredModal
         open={!!viewDeal}
         onClose={() => setViewDeal(null)}
         width={520}
         title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết Deal</span>}
-        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer } }}
       >
         {viewDeal && (
           <>
@@ -512,7 +512,7 @@ export default function DealsPage() {
             <CommentThread entityType="deal" entityId={viewDeal.id} />
           </>
         )}
-      </Drawer>
+      </CenteredModal>
 
       {/* Won Wizard Modal — 3 bước */}
       <Modal

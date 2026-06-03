@@ -1,15 +1,16 @@
 import { CheckOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons';
 import { useThemeStore, THEME_PRESETS } from '../../store/theme.store';
+import { useThemePalette } from '../../hooks/useThemePalette';
 
 export function ThemePanel() {
   const { mode, toggle, presetId, setPreset, preset } = useThemeStore();
-  const isDark = mode === 'dark';
+  const { isDark, textPrimary, textSecondary, textMuted, bgPage, bgContainer, bgSubPanel } = useThemePalette();
 
   return (
     <div style={{ width: 260, padding: '4px 0' }}>
       {/* Chế độ sáng / tối */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 8 }}>
           Chế độ
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -28,11 +29,11 @@ export function ThemePanel() {
                   padding: '7px 0',
                   border: `2px solid ${active ? preset.primary : 'transparent'}`,
                   borderRadius: 8,
-                  background: active ? `${preset.primary}18` : (isDark ? '#1E293B' : '#F1F5F9'),
+                  background: active ? `${preset.primary}18` : (isDark ? bgContainer : bgPage),
                   cursor: 'pointer',
                   fontSize: 13,
                   fontWeight: active ? 600 : 400,
-                  color: active ? preset.primary : (isDark ? '#94A3B8' : '#475569'),
+                  color: active ? preset.primary : textSecondary,
                   transition: 'all 0.15s',
                 }}
               >
@@ -46,7 +47,7 @@ export function ThemePanel() {
 
       {/* Theme cards */}
       <div>
-        <div style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 10 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: textMuted, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 10 }}>
           Giao diện
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
@@ -63,7 +64,7 @@ export function ThemePanel() {
                   borderRadius: 10,
                   cursor: 'pointer',
                   overflow: 'hidden',
-                  outline: selected ? `2px solid ${isDark ? '#F1F5F9' : '#0F172A'}` : 'none',
+                  outline: selected ? `2px solid ${textPrimary}` : 'none',
                   outlineOffset: 2,
                   position: 'relative',
                   background: 'none',
@@ -115,7 +116,7 @@ export function ThemePanel() {
 
                 {/* Primary color + name */}
                 <div style={{
-                  background: isDark ? '#1E293B' : '#F8FAFC',
+                  background: isDark ? bgContainer : bgSubPanel,
                   padding: '5px 4px 5px',
                   display: 'flex',
                   alignItems: 'center',
@@ -132,7 +133,7 @@ export function ThemePanel() {
                   <span style={{
                     fontSize: 11,
                     fontWeight: selected ? 700 : 500,
-                    color: selected ? (isDark ? '#F1F5F9' : '#0F172A') : (isDark ? '#94A3B8' : '#64748B'),
+                    color: selected ? textPrimary : textMuted,
                   }}>
                     {p.name}
                   </span>

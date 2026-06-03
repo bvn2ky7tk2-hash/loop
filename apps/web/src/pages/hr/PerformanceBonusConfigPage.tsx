@@ -257,7 +257,7 @@ export default function PerformanceBonusConfigPage() {
       title: 'Kỳ',
       dataIndex: 'period',
       width: 110,
-      render: (v: string) => <Tag color="blue">{v}</Tag>,
+      render: (v: string) => <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{v}</Tag>,
     },
     {
       title: 'Điểm',

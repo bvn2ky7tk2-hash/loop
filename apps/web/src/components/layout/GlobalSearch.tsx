@@ -34,7 +34,7 @@ const ALL_ITEMS: SearchItem[] = MODULES.flatMap((mod) => [
 );
 
 export function GlobalSearch() {
-  const { isDark } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const { setActiveModule } = useModuleStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -112,10 +112,8 @@ export function GlobalSearch() {
   const showDropdown = focused && results.length > 0;
 
   // ── Design tokens ──────────────────────────────────────────────────
-  const dropBg       = isDark ? '#18243A' : '#ffffff';
-  const dropBorder   = isDark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.09)';
-  const textPrimary  = isDark ? '#F1F5F9' : '#0F172A';
-  const textMuted    = isDark ? 'rgba(255,255,255,0.38)' : '#94A3B8';
+  const dropBg       = bgContainer;
+  const dropBorder   = borderColor;
   const dividerColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
 
   return (
@@ -269,7 +267,7 @@ export function GlobalSearch() {
                     flex: 1, minWidth: 0,
                     fontSize: 13,
                     fontWeight: isActive ? 600 : 500,
-                    color: isActive ? (isDark ? '#FFFFFF' : '#0F172A') : textPrimary,
+                    color: isActive ? (isDark ? '#FFFFFF' : textPrimary) : textPrimary,
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     transition: 'color 0.12s',
                   }}>

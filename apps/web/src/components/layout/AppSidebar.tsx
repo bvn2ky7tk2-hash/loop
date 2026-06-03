@@ -150,7 +150,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const { user }  = useAuthStore();
-  const { isDark, preset } = useThemePalette();
+  const { isDark, preset, bgPage, bgContainer } = useThemePalette();
   const tenantConfig = useTenantStore(s => s.config);
   const { getModuleConfig } = useMenuStore();
   const { activeModuleId, setActiveModule } = useModuleStore();
@@ -176,12 +176,12 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const [switcherOpen, setSwitcherOpen] = useState(false);
 
   const isNavLight  = !isDark && preset.navTheme === 'light';
-  const sidebarBg   = isDark ? '#0F172A' : preset.navBg;
-  const dividerColor = isDark ? '#1E293B' : isNavLight ? '#E2E8F0' : '#334155';
+  const sidebarBg   = isDark ? bgPage : preset.navBg;
+  const dividerColor = isDark ? bgContainer : isNavLight ? '#E2E8F0' : '#334155';
   const navTextColor = isNavLight ? preset.navText : '#F1F5F9';
   const navTextMuted = isDark ? '#94A3B8' : isNavLight ? '#64748B' : '#94A3B8';
   const navHoverBg   = isDark ? 'rgba(255,255,255,0.06)' : isNavLight ? 'rgba(23,43,77,0.05)' : 'rgba(255,255,255,0.08)';
-  const moduleColor  = activeModule?.color ?? '#2563EB';
+  const moduleColor  = activeModule?.color ?? preset.primary;
   const primaryColor = preset.primary;
 
   // ── data queries ──────────────────────────────────────────────────────────

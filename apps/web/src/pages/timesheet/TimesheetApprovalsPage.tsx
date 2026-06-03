@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Card, Table, Button, Space, Badge,
   Tooltip, Popconfirm, Input, Modal, Form, Alert, Typography,
@@ -138,16 +139,11 @@ export default function TimesheetApprovalsPage() {
   return (
     <div className="page-wrapper">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <Space align="center">
-          <h1 className="page-title">Duyệt bảng công</h1>
-          {overdueCount > 0 && (
-            <Badge
-              count={overdueCount}
-              title={`${overdueCount} bảng công quá hạn 48h`}
-              style={{ backgroundColor: '#EF4444' }}
-            />
-          )}
-        </Space>
+        <PageHeader
+          title="Duyệt bảng công"
+          style={{ marginBottom: 0 }}
+          subtitle={overdueCount > 0 ? <Badge count={overdueCount} title={`${overdueCount} bảng công quá hạn 48h`} style={{ backgroundColor: '#EF4444' }} /> : undefined}
+        />
 
         <Input
           prefix={<SearchOutlined />}

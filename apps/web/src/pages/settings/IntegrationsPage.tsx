@@ -5,7 +5,6 @@ import {
   Table,
   Switch,
   Tag,
-  Drawer,
   Form,
   Input,
   Checkbox,
@@ -372,8 +371,8 @@ function WebhooksTab() {
         </Form>
       </CenteredModal>
 
-      {/* Drawer logs */}
-      <Drawer
+      {/* Modal logs */}
+      <CenteredModal
         title={
           <Space>
             <ApiOutlined />
@@ -383,6 +382,7 @@ function WebhooksTab() {
         open={logsDrawerOpen}
         onClose={() => { setLogsDrawerOpen(false); setSelectedEndpoint(null); }}
         width={820}
+        footer={null}
       >
         <Table
           rowKey="id"
@@ -392,7 +392,7 @@ function WebhooksTab() {
           pagination={logsPaginationProps(logsAll.length, 'log')}
           size="small"
         />
-      </Drawer>
+      </CenteredModal>
     </div>
   );
 }

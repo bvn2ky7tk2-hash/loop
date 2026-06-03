@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Button, Input, Switch, Space, Select,
-  Typography, Divider, Tooltip, Modal, Segmented,
+  Typography, Divider, Tooltip, Segmented,
 } from 'antd';
 import {
   ArrowUpOutlined, ArrowDownOutlined,
@@ -12,6 +12,7 @@ import { useMenuStore, getDefaultModuleConfig } from '../../store/menu.store';
 import type { MenuGroupCfg, MenuTopItemCfg } from '../../store/menu.store';
 import { useModuleStore } from '../../store/module.store';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { confirmDelete } from '../ui/confirmDelete';
 import { MODULES } from '../../config/modules.config';
 
 const { Text } = Typography;
@@ -107,11 +108,11 @@ export function MenuConfigPanel() {
   const handleSave = () => setModuleConfig(selectedModuleId, localTop, localGroups);
 
   const handleReset = () =>
-    Modal.confirm({
+    confirmDelete({
       title: 'Đặt lại mặc định?',
       content: `Cấu hình menu của module "${MODULES.find(m => m.id === selectedModuleId)?.label}" sẽ trở về mặc định.`,
-      okText: 'Đặt lại', cancelText: 'Hủy', okButtonProps: { danger: true },
-      onOk: () => {
+      okText: 'Đặt lại',
+      onConfirm: () => {
         resetModuleConfig(selectedModuleId);
         const def = getDefaultModuleConfig(selectedModuleId);
         setLocalTop(def.topItems.map(i => ({ ...i })));

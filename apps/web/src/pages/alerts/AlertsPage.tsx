@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Select, Table, Button, Modal, Form, Switch, InputNumber,
   Badge, List, Avatar, Popconfirm, App, Tabs,
@@ -136,9 +137,7 @@ export default function AlertsPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">Alerts</h1>
-      </div>
+      <PageHeader title="Alerts" />
 
       <Tabs
         items={[

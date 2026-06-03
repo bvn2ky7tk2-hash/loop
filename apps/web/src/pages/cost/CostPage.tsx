@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Select, Table, Card, Row, Col, DatePicker, Typography, Progress, Tooltip,
 } from 'antd';
@@ -217,16 +218,18 @@ export default function CostPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">Cost</h1>
-        <Select
-          style={{ width: 320 }}
-          placeholder="Chọn dự án"
-          onChange={setProjectId}
-          showSearch={{ optionFilterProp: 'label' }}
-          options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))}
-        />
-      </div>
+      <PageHeader
+        title="Cost"
+        actions={
+          <Select
+            style={{ width: 320 }}
+            placeholder="Chọn dự án"
+            onChange={setProjectId}
+            showSearch={{ optionFilterProp: 'label' }}
+            options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))}
+          />
+        }
+      />
 
       {cost && (
         <>

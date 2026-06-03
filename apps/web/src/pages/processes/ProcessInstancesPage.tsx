@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { Table, Select, Button, Space, Popconfirm, App, Tag, Typography } from 'antd';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { EyeOutlined, StopOutlined } from '@ant-design/icons';
@@ -111,9 +112,7 @@ export default function ProcessInstancesPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">Process Monitor</h1>
-      </div>
+      <PageHeader title="Process Monitor" />
 
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
         <Select

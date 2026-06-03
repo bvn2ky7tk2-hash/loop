@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Tag, Typography, Select, Input, Form,
-  DatePicker, InputNumber, Row, Col, Drawer, Descriptions, Space,
+  DatePicker, InputNumber, Row, Col, Descriptions, Space,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
@@ -228,12 +228,12 @@ export default function ActivitiesPage() {
       </div>
 
       {/* Detail Drawer */}
-      <Drawer
+      <CenteredModal
         open={!!detail}
         onClose={() => setDetail(null)}
         title={<Text style={{ color: textPrimary, fontWeight: 600 }}>{detail?.subject}</Text>}
         width={520}
-        styles={{ body: { background: bgContainer }, header: { background: bgCard, borderBottom: `1px solid ${borderColor}` } }}
+        styles={{ body: { background: bgContainer } }}
       >
         {detail && (
           <>
@@ -266,7 +266,7 @@ export default function ActivitiesPage() {
             </div>
           </>
         )}
-      </Drawer>
+      </CenteredModal>
 
       {/* Create / Edit Modal */}
       <CenteredModal

@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Table, Button, Form, Input, Select,
   Space, App,
@@ -265,9 +266,7 @@ export default function TasksPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">My Tasks</h1>
-      </div>
+      <PageHeader title="My Tasks" />
 
       <Tabs
         defaultActiveKey="tasks"

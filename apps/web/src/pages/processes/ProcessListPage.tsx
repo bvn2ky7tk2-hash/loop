@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Table, Button, Modal, Form, Input, Popconfirm,
   App, Space, Tag, Tooltip, theme,
@@ -127,7 +128,7 @@ export default function ProcessListPage() {
     {
       title: 'Cập nhật',
       dataIndex: 'updatedAt',
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY'),
+      render: (d: string) => <span style={{ color: token.colorTextSecondary }}>{dayjs(d).format('DD/MM/YYYY')}</span>,
       width: 110,
     },
     {
@@ -190,12 +191,14 @@ export default function ProcessListPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 className="page-title">Process Configuration</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-          Tạo quy trình
-        </Button>
-      </div>
+      <PageHeader
+        title="Process Configuration"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+            Tạo quy trình
+          </Button>
+        }
+      />
 
       <Table
         dataSource={data?.data ?? []}

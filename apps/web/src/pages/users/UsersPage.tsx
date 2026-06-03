@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Button, Table, Modal, Form, Input, Select,
   App, Space, Tooltip, Switch, Divider, Typography,
@@ -182,12 +183,14 @@ export default function UsersPage() {
 
   return (
     <div className="page-wrapper">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 className="page-title">Quản lý người dùng</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-          Thêm người dùng
-        </Button>
-      </div>
+      <PageHeader
+        title="Quản lý người dùng"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+            Thêm người dùng
+          </Button>
+        }
+      />
 
       <Table dataSource={users} columns={columns} rowKey="id" loading={isLoading} size="middle" pagination={paginationProps(users.length, 'người dùng')} />
 

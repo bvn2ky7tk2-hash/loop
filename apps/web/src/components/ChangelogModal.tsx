@@ -26,7 +26,7 @@ interface ChangelogModalProps {
 }
 
 export function ChangelogModal({ open: externalOpen, onClose }: ChangelogModalProps = {}) {
-  const { textPrimary, textMuted, bgCard, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark } = useThemePalette();
   const [autoOpen, setAutoOpen] = useState(false);
 
   const { data: entries = [] } = useLatestChangelog();
@@ -76,9 +76,9 @@ export function ChangelogModal({ open: externalOpen, onClose }: ChangelogModalPr
       width={560}
       centered
       styles={{
-        container: { background: isDark ? '#1E293B' : '#ffffff' },
-        header:  { background: isDark ? '#1E293B' : '#ffffff', borderBottom: `1px solid ${borderColor}` },
-        footer:  { background: isDark ? '#1E293B' : '#ffffff', borderTop: `1px solid ${borderColor}` },
+        container: { background: bgContainer },
+        header:  { background: bgContainer, borderBottom: `1px solid ${borderColor}` },
+        footer:  { background: bgContainer, borderTop: `1px solid ${borderColor}` },
       }}
     >
       <div style={{ maxHeight: 420, overflowY: 'auto', paddingRight: 4 }}>

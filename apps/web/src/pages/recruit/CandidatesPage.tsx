@@ -113,10 +113,10 @@ export default function CandidatesPage() {
   };
 
   const handleReject = (c: Candidate) => {
-    Modal.confirm({
+    confirmDelete({
       title: `Từ chối ứng viên "${c.name}"?`,
-      okType: 'danger',
-      onOk: async () => {
+      okText: 'Từ chối',
+      onConfirm: async () => {
         await stageMutation.mutateAsync({ id: c.id, stage: 'REJECTED' });
         message.success('Đã từ chối');
       },

@@ -177,7 +177,7 @@ export default function SelfServicePage() {
             icon={<ApartmentOutlined />}
             style={isDark
               ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' }
-              : { color: '#2563EB', borderColor: '#93C5FD' }
+              : { color: linkColor, borderColor: '#93C5FD' }
             }
             color={isDark ? undefined : 'blue'}
           >

@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo, useEffect } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { CustomerSelect } from '../../components/selects';
 
 const PROJECT_COL_DEFS = [
@@ -370,12 +371,14 @@ export default function ProjectsPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">Project Management</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { setCreateError(''); setCreateOpen(true); }}>
-          Tạo dự án
-        </Button>
-      </div>
+      <PageHeader
+        title="Project Management"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { setCreateError(''); setCreateOpen(true); }}>
+            Tạo dự án
+          </Button>
+        }
+      />
 
       <FilterBar right={<ColumnToggle columns={PROJECT_COL_DEFS} isVisible={isVisible} toggle={toggle} reset={resetCols} />}>
         <Input

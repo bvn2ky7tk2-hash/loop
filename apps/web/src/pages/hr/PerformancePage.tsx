@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Modal, Form,
-  Input, InputNumber, Select, Drawer, Descriptions, message, Divider,
+  Input, InputNumber, Select, Descriptions, message, Divider,
 } from 'antd';
 import { CommentThread } from '../../components/comments/CommentThread';
 import { PlusOutlined, TrophyOutlined } from '@ant-design/icons';
@@ -16,6 +16,7 @@ import {
 import { OrgUnitSelect } from '../../components/selects';
 import { employeesApi } from '../../api/employees';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { CenteredModal } from '../../components/ui/CenteredModal';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -29,7 +30,7 @@ const STATUS_META: Record<ReviewStatus, { label: string; color: string }> = {
 };
 
 export default function PerformancePage() {
-  const { bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
+  const { isDark, bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
   const { paginationProps } = usePagination(20);
 
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
@@ -82,7 +83,7 @@ export default function PerformancePage() {
     },
     {
       title: 'Kỳ đánh giá', dataIndex: 'period', width: 110,
-      render: v => <Tag color="blue">{v}</Tag>,
+      render: v => <Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{v}</Tag>,
     },
     {
       title: 'Điểm', dataIndex: 'score', width: 100, align: 'center' as const,
@@ -179,12 +180,12 @@ export default function PerformancePage() {
       </Modal>
 
       {/* Detail Drawer */}
-      <Drawer
+      <CenteredModal
         open={!!detailReview}
         onClose={() => setDetailReview(null)}
         title={<span style={{ color: textPrimary }}>Chi tiết đánh giá — {detailReview?.period}</span>}
         width={520}
-        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer } }}
         extra={
           <Space>
             {detailReview?.status === 'DRAFT' && (
@@ -220,7 +221,7 @@ export default function PerformancePage() {
                 : <span style={{ color: textPrimary }}>{detailReview.employeeId}</span>}
             </Descriptions.Item>
             <Descriptions.Item label="Người đánh giá">{detailReview.reviewer?.fullName}</Descriptions.Item>
-            <Descriptions.Item label="Kỳ đánh giá"><Tag color="blue">{detailReview.period}</Tag></Descriptions.Item>
+            <Descriptions.Item label="Kỳ đánh giá"><Tag style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}} color={isDark ? undefined : 'blue'}>{detailReview.period}</Tag></Descriptions.Item>
             <Descriptions.Item label="Điểm">
               {detailReview.score ? (
                 <span style={{ color: linkColor, fontWeight: 700, fontSize: 18 }}>{Number(detailReview.score).toFixed(1)} / 5</span>
@@ -246,7 +247,7 @@ export default function PerformancePage() {
             <CommentThread entityType="performance-review" entityId={detailReview.id} />
           </>
         )}
-      </Drawer>
+      </CenteredModal>
     </div>
   );
 }

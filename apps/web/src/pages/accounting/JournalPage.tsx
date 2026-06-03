@@ -20,8 +20,7 @@ function formatMoney(v: string | number) {
 }
 
 export default function JournalPage() {
-  const { isDark, bgContainer, bgCard, textPrimary, textMuted, borderColor, linkColor } = useThemePalette();
-  const textSecondary = isDark ? 'rgba(255,255,255,0.5)' : '#475569';
+  const { bgContainer, bgCard, textPrimary, textSecondary, textMuted, borderColor, linkColor } = useThemePalette();
 
   const [filter, setFilter] = useState<JournalFilter>({ page: 1, limit: 50 });
   const [modalOpen, setModalOpen] = useState(false);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { Typography, Tabs } from 'antd';
 import { BugOutlined, TeamOutlined, ShopOutlined, UsergroupAddOutlined, LaptopOutlined, SwapOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -108,9 +109,7 @@ export default function ReportsPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header" style={{ marginBottom: 20 }}>
-        <h1 className="page-title">Reports</h1>
-      </div>
+      <PageHeader title="Reports" />
 
       <Tabs
         items={[

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Row, Col, Table, Tag, Typography, Button, Drawer, Space, Tooltip,
+  Row, Col, Table, Tag, Typography, Button, Space, Tooltip,
   Popconfirm, Form, Input, Select, Switch, Tabs, Badge, Descriptions,
 } from 'antd';
 import {
@@ -81,7 +81,7 @@ function PortalDrawer({
 }: { portal: CustomerPortal | null; open: boolean; onClose: () => void }) {
   const [respondModal, setRespondModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<CustomerTicket | null>(null);
-  const { isDark, textPrimary, textMuted, bgCard, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, bgSubPanel, borderColor, linkColor } = useThemePalette();
   const { paginationProps: drawerTicketPagination } = usePagination(10);
   const qc = useQueryClient();
 
@@ -138,10 +138,11 @@ function PortalDrawer({
   ];
 
   return (
-    <Drawer
+    <CenteredModal
       open={open}
       onClose={onClose}
       width={760}
+      footer={null}
       title={
         <Space>
           <GlobalOutlined style={{ color: linkColor }} />
@@ -149,7 +150,7 @@ function PortalDrawer({
           <Tag color={portal?.isActive ? 'success' : 'default'}>{portal?.isActive ? 'Active' : 'Inactive'}</Tag>
         </Space>
       }
-      styles={{ body: { background: isDark ? '#0F172A' : '#F8FAFC' } }}
+      styles={{ body: { background: bgSubPanel } }}
     >
       {portal && (
         <>
@@ -193,7 +194,7 @@ function PortalDrawer({
           />
         </>
       )}
-    </Drawer>
+    </CenteredModal>
   );
 }
 

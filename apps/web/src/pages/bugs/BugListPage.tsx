@@ -124,7 +124,7 @@ export default function BugListPage() {
     {
       title: 'Ngày tạo', dataIndex: 'createdAt', width: 110,
       responsive: ['xl'],
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY'),
+      render: (d: string) => <Text style={{ color: token.colorTextSecondary }}>{dayjs(d).format('DD/MM/YYYY')}</Text>,
     },
   ];
 

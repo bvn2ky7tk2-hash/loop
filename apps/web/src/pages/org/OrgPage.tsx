@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   Button, Tree, Card, Form, Input, Select, Modal,
   App, Spin, Space, Popconfirm, Tooltip, Row, Col, Tag,
@@ -227,20 +228,22 @@ export default function OrgPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="page-header">
-        <h1 className="page-title">Cơ cấu tổ chức</h1>
-        <Space>
-          <Tooltip title="Mở rộng tất cả">
-            <Button icon={<PlusSquareOutlined />} onClick={() => setExpandedKeys(flat.map((n) => n.id))} />
-          </Tooltip>
-          <Tooltip title="Thu gọn tất cả">
-            <Button icon={<MinusSquareOutlined />} onClick={() => setExpandedKeys([])} />
-          </Tooltip>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
-            Thêm đơn vị
-          </Button>
-        </Space>
-      </div>
+      <PageHeader
+        title="Cơ cấu tổ chức"
+        actions={
+          <Space>
+            <Tooltip title="Mở rộng tất cả">
+              <Button icon={<PlusSquareOutlined />} onClick={() => setExpandedKeys(flat.map((n) => n.id))} />
+            </Tooltip>
+            <Tooltip title="Thu gọn tất cả">
+              <Button icon={<MinusSquareOutlined />} onClick={() => setExpandedKeys([])} />
+            </Tooltip>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateOpen(true)}>
+              Thêm đơn vị
+            </Button>
+          </Space>
+        }
+      />
 
       {!isLoading && flat.length > 0 && (
         <Row gutter={16} style={{ marginBottom: 16 }}>

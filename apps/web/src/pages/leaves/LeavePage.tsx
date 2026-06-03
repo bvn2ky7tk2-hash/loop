@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import {
   Table, Button, Space, Tag, Typography, Select, Form,
   DatePicker, InputNumber, Input, Modal, Tabs, Row, Col, Card,
-  Tooltip, message, Drawer, Descriptions, Divider,
+  Tooltip, message, Descriptions, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
@@ -391,11 +391,11 @@ export default function LeavePage() {
     },
     {
       title: 'Từ ngày', dataIndex: 'startDate', width: 110,
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY'),
+      render: (d: string) => <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Đến ngày', dataIndex: 'endDate', width: 110,
-      render: (d: string) => dayjs(d).format('DD/MM/YYYY'),
+      render: (d: string) => <Text style={{ color: textMuted }}>{dayjs(d).format('DD/MM/YYYY')}</Text>,
     },
     {
       title: 'Số ngày', dataIndex: 'days', width: 80,
@@ -592,12 +592,12 @@ export default function LeavePage() {
       </Modal>
 
       {/* View-detail Drawer cho đơn nghỉ phép */}
-      <Drawer
+      <CenteredModal
         open={!!viewLeave}
         onClose={() => setViewLeave(null)}
         width={520}
         title={<span style={{ color: textPrimary, fontWeight: 600 }}>Chi tiết đơn nghỉ phép</span>}
-        styles={{ body: { background: bgContainer }, header: { background: bgContainer } }}
+        styles={{ body: { background: bgContainer } }}
       >
         {viewLeave && (
           <>
@@ -622,7 +622,7 @@ export default function LeavePage() {
             <CommentThread entityType="leave" entityId={viewLeave.id} />
           </>
         )}
-      </Drawer>
+      </CenteredModal>
 
       {/* Modal cấu hình workflow cho LeaveType */}
       <LeaveTypeConfigModal

@@ -15,7 +15,7 @@ export function TaxProfileTab({ employeeId }: { employeeId: string }) {
   const { message } = App.useApp();
   const qc = useQueryClient();
   const { token } = theme.useToken();
-  const { textMuted } = useThemePalette();
+  const { textPrimary, textMuted } = useThemePalette();
   const [taxForm] = Form.useForm();
   const [depForm] = Form.useForm();
   const [depOpen, setDepOpen] = useState(false);
@@ -86,7 +86,7 @@ export function TaxProfileTab({ employeeId }: { employeeId: string }) {
   const depCols = [
     { title: 'Họ tên', dataIndex: 'name', key: 'name' },
     { title: 'Quan hệ', dataIndex: 'relationship', key: 'relationship' },
-    { title: 'MST người phụ thuộc', dataIndex: 'taxId', key: 'taxId', render: (v?: string) => v ?? '—' },
+    { title: 'MST người phụ thuộc', dataIndex: 'taxId', key: 'taxId', render: (v?: string) => v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text> },
     {
       title: 'Từ ngày',
       dataIndex: 'registeredFrom',

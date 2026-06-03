@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
-  Input, InputNumber, Modal, message,
+  Input, InputNumber, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -95,11 +95,11 @@ export default function JobsPage() {
   };
 
   const handleClose = (job: JobOpening) => {
-    Modal.confirm({
+    confirmDelete({
       title: `Đóng vị trí "${job.title}"?`,
       content: 'Sau khi đóng sẽ không nhận thêm ứng viên.',
-      okType: 'danger',
-      onOk: async () => { await closeMutation.mutateAsync(job.id); message.success('Đã đóng vị trí'); },
+      okText: 'Đóng vị trí',
+      onConfirm: async () => { await closeMutation.mutateAsync(job.id); message.success('Đã đóng vị trí'); },
     });
   };
 
