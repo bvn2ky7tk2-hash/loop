@@ -1,75 +1,42 @@
 import { useState } from 'react';
-import {
-  Row,
-  Col,
-  Tabs,
-  Table,
-  Tag,
-  Button,
-  Input,
-  Select,
-  DatePicker,
-  Form,
-  InputNumber,
-  Space,
-  Typography,
-  message,
-} from 'antd';
+import { Row, Col, Tabs, Button, Form, message } from 'antd';
 import {
   SafetyOutlined,
   PlusOutlined,
-  SearchOutlined,
   TeamOutlined,
   BookOutlined,
   FileTextOutlined,
-  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs, { Dayjs } from 'dayjs';
-import type { ColumnsType } from 'antd/es/table';
 
 import { apiClient } from '../../api/client';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { FilterBar } from '../../components/FilterBar';
-import { CenteredModal } from '../../components/ui/CenteredModal';
 import { hrInsuranceApi } from '../../api/hr-insurance';
-import { OrgUnitSelect } from '../../components/selects';
 import type {
   InsuranceEnrollment,
   InsuranceEnrollmentStatus,
-  InsuranceEventType,
   SocialInsuranceBook,
 } from '../../api/hr-insurance';
 import { employeesApi } from '../../api/employees';
-import { formatCurrency } from '../../utils/format';
 import { downloadExport } from '../../utils/exportApi';
-import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 
-const { Text } = Typography;
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-const STATUS_COLOR: Record<InsuranceEnrollmentStatus, string> = {
-  ACTIVE: 'green',
-  TERMINATED: 'default',
-  SUSPENDED: 'warning',
-};
-
-const STATUS_LABEL: Record<InsuranceEnrollmentStatus, string> = {
-  ACTIVE: 'Đang đóng',
-  TERMINATED: 'Đã nghỉ',
-  SUSPENDED: 'Tạm dừng',
-};
-
-const EVENT_LABEL: Record<InsuranceEventType, string> = {
-  ENROLL: 'Tăng lao động',
-  TERMINATE: 'Giảm lao động',
-  SALARY_CHANGE: 'Điều chỉnh mức đóng',
-  SUSPEND: 'Tạm dừng',
-};
+import {
+  buildEnrollColumns,
+  buildBookColumns,
+  buildD02EnrolledCols,
+  buildD02SalaryChangedCols,
+} from './insurance/columns';
+import { EnrollmentsTab } from './insurance/components/EnrollmentsTab';
+import { BooksTab } from './insurance/components/BooksTab';
+import { D02Tab } from './insurance/components/D02Tab';
+import { EnrollModal } from './insurance/components/EnrollModal';
+import { EventModal } from './insurance/components/EventModal';
+import { EditEnrollModal } from './insurance/components/EditEnrollModal';
+import { BookModal } from './insurance/components/BookModal';
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -248,227 +215,48 @@ export default function InsurancePage() {
 
   // ─── Table columns ────────────────────────────────────────────────────────
 
-  const enrollColumns: ColumnsType<InsuranceEnrollment> = [
-    {
-      title: 'Nhân viên',
-      key: 'employee',
-      render: (_: unknown, r: InsuranceEnrollment) =>
-        r.employee ? (
-          <EmployeeInfoCell employee={r.employee} />
-        ) : (
-          <Text style={{ color: textMuted }}>—</Text>
-        ),
+  const enrollColumns = buildEnrollColumns({
+    textPrimary,
+    textMuted,
+    isDark,
+    onEdit: (record) => {
+      setEditEnrollRecord(record);
+      editEnrollForm.setFieldsValue({ insuranceSalary: record.insuranceSalary, status: record.status });
+      setEditEnrollOpen(true);
     },
-    {
-      title: 'Mức đóng BHXH',
-      dataIndex: 'insuranceSalary',
-      width: 160,
-      render: (v: number) => (
-        <Text style={{ color: textPrimary }}>{formatCurrency(v)}</Text>
-      ),
+    onBook: (record) => {
+      setBookEnrollment(record);
+      bookForm.setFieldsValue({
+        bookNumber: record.socialInsuranceBook?.bookNumber ?? '',
+        issueAuthority: record.socialInsuranceBook?.issueAuthority ?? '',
+      });
+      setBookOpen(true);
     },
-    {
-      title: 'Ngày bắt đầu',
-      dataIndex: 'startDate',
-      width: 130,
-      render: (v: string) => (
-        <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>
-      ),
+    onEvent: (record) => {
+      setSelectedEnrollment(record);
+      setEventOpen(true);
     },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      width: 120,
-      render: (v: InsuranceEnrollmentStatus) => (
-        <Tag
-          color={isDark ? undefined : STATUS_COLOR[v]}
-          style={
-            isDark
-              ? v === 'ACTIVE'
-                ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' }
-                : v === 'SUSPENDED'
-                ? { background: 'rgba(251,191,36,0.15)', color: '#FCD34D', borderColor: 'rgba(251,191,36,0.3)' }
-                : {}
-              : {}
-          }
-        >
-          {STATUS_LABEL[v]}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Số sổ BHXH',
-      dataIndex: 'bhxhBookNumber',
-      width: 140,
-      render: (v?: string) =>
-        v ? (
-          <Text style={{ color: textPrimary }}>{v}</Text>
-        ) : (
-          <Text style={{ color: textMuted }}>Chưa có</Text>
-        ),
-    },
-    {
-      title: 'Hành động',
-      width: 220,
-      render: (_: unknown, record: InsuranceEnrollment) => (
-        <Space size={4}>
-          <Button
-            size="small"
-            onClick={() => {
-              setEditEnrollRecord(record);
-              editEnrollForm.setFieldsValue({ insuranceSalary: record.insuranceSalary, status: record.status });
-              setEditEnrollOpen(true);
-            }}
-          >
-            Sửa
-          </Button>
-          <Button
-            size="small"
-            icon={<BookOutlined />}
-            onClick={() => {
-              setBookEnrollment(record);
-              bookForm.setFieldsValue({
-                bookNumber: record.socialInsuranceBook?.bookNumber ?? '',
-                issueAuthority: record.socialInsuranceBook?.issueAuthority ?? '',
-              });
-              setBookOpen(true);
-            }}
-          >
-            Sổ BH
-          </Button>
-          <Button
-            size="small"
-            icon={<ThunderboltOutlined />}
-            onClick={() => {
-              setSelectedEnrollment(record);
-              setEventOpen(true);
-            }}
-          >
-            Sự kiện
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+  });
 
-  const bookColumns: ColumnsType<InsuranceEnrollment> = [
-    {
-      title: 'Mã NV',
-      dataIndex: ['employee', 'code'],
-      width: 100,
-      render: (v?: string) =>
-        v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Họ và tên',
-      dataIndex: ['employee', 'fullName'],
-      render: (v?: string) =>
-        v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Số sổ BHXH',
-      dataIndex: ['socialInsuranceBook', 'bookNumber'],
-      render: (v?: string) =>
-        v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Ngày cấp',
-      dataIndex: ['socialInsuranceBook', 'issueDate'],
-      width: 130,
-      render: (v?: string) =>
-        v ? (
-          <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>
-        ) : (
-          <Text style={{ color: textMuted }}>—</Text>
-        ),
-    },
-    {
-      title: 'Nơi cấp',
-      dataIndex: ['socialInsuranceBook', 'issueAuthority'],
-      render: (v?: string) =>
-        v ? <Text style={{ color: textPrimary }}>{v}</Text> : <Text style={{ color: textMuted }}>—</Text>,
-    },
-    {
-      title: 'Hành động',
-      width: 160,
-      render: (_: unknown, record: InsuranceEnrollment) => {
-        const book = record.socialInsuranceBook as SocialInsuranceBook | undefined;
-        if (!book) return null;
-        return (
-          <Button
-            size="small"
-            type="primary"
-            onClick={() =>
-              bookReceivedMutation.mutate({
-                id: book.id,
-                data: {
-                  receivedByEmployee: true,
-                  receivedDate: dayjs().format('YYYY-MM-DD'),
-                },
-              })
-            }
-            loading={bookReceivedMutation.isPending}
-            disabled={bookReceivedMutation.isPending}
-          >
-            Xác nhận đã trả
-          </Button>
-        );
-      },
-    },
-  ];
+  const bookColumns = buildBookColumns({
+    textPrimary,
+    textMuted,
+    isDark,
+    confirmPending: bookReceivedMutation.isPending,
+    onConfirmReceived: (book: SocialInsuranceBook) =>
+      bookReceivedMutation.mutate({
+        id: book.id,
+        data: {
+          receivedByEmployee: true,
+          receivedDate: dayjs().format('YYYY-MM-DD'),
+        },
+      }),
+  });
 
   // ─── D02 preview tables ──────────────────────────────────────────────────
 
-  const d02EnrolledCols = [
-    {
-      title: 'Mã NV',
-      dataIndex: 'employeeCode',
-      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Họ và tên',
-      dataIndex: 'fullName',
-      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Mức đóng',
-      dataIndex: 'insuranceSalary',
-      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCurrency(v)}</Text>,
-    },
-    {
-      title: 'Ngày hiệu lực',
-      dataIndex: 'effectiveDate',
-      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
-    },
-  ];
-
-  const d02SalaryChangedCols = [
-    {
-      title: 'Mã NV',
-      dataIndex: 'employeeCode',
-      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Họ và tên',
-      dataIndex: 'fullName',
-      render: (v: string) => <Text style={{ color: textPrimary }}>{v}</Text>,
-    },
-    {
-      title: 'Mức cũ',
-      dataIndex: 'oldSalary',
-      render: (v: number) => <Text style={{ color: textMuted }}>{formatCurrency(v)}</Text>,
-    },
-    {
-      title: 'Mức mới',
-      dataIndex: 'newSalary',
-      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCurrency(v)}</Text>,
-    },
-    {
-      title: 'Ngày hiệu lực',
-      dataIndex: 'effectiveDate',
-      render: (v: string) => <Text style={{ color: textMuted }}>{dayjs(v).format('DD/MM/YYYY')}</Text>,
-    },
-  ];
+  const d02EnrolledCols = buildD02EnrolledCols({ textPrimary, textMuted });
+  const d02SalaryChangedCols = buildD02SalaryChangedCols({ textPrimary, textMuted });
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -533,46 +321,18 @@ export default function InsurancePage() {
               </span>
             ),
             children: (
-              <>
-                <FilterBar>
-                  <Input
-                    prefix={<SearchOutlined />}
-                    placeholder="Tìm mã NV hoặc tên..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    style={{ width: 240 }}
-                    allowClear
-                  />
-                  <Select
-                    placeholder="Trạng thái"
-                    value={statusFilter}
-                    onChange={setStatusFilter}
-                    allowClear
-                    style={{ width: 160 }}
-                    options={[
-                      { value: 'ACTIVE', label: 'Đang đóng' },
-                      { value: 'TERMINATED', label: 'Đã nghỉ' },
-                      { value: 'SUSPENDED', label: 'Tạm dừng' },
-                    ]}
-                  />
-                  <OrgUnitSelect
-                    placeholder="Phòng ban"
-                    style={{ minWidth: 180 }}
-                    value={orgUnitFilter}
-                    onChange={setOrgUnitFilter}
-                    allowClear
-                  />
-                </FilterBar>
-                <Table
-                  rowKey="id"
-                  columns={enrollColumns}
-                  dataSource={enrollments}
-                  loading={isLoading}
-                  pagination={enrollPaginationProps(enrollments.length, 'nhân sự')}
-                  size="middle"
-                  scroll={{ x: 900 }}
-                />
-              </>
+              <EnrollmentsTab
+                search={search}
+                setSearch={setSearch}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                orgUnitFilter={orgUnitFilter}
+                setOrgUnitFilter={setOrgUnitFilter}
+                columns={enrollColumns}
+                enrollments={enrollments}
+                isLoading={isLoading}
+                pagination={enrollPaginationProps(enrollments.length, 'nhân sự')}
+              />
             ),
           },
           {
@@ -583,14 +343,11 @@ export default function InsurancePage() {
               </span>
             ),
             children: (
-              <Table
-                rowKey="id"
+              <BooksTab
                 columns={bookColumns}
-                dataSource={bookNotReceived}
-                loading={isLoading}
+                bookNotReceived={bookNotReceived}
+                isLoading={isLoading}
                 pagination={bookPaginationProps(bookNotReceived.length, 'nhân sự')}
-                size="middle"
-                scroll={{ x: 800 }}
               />
             ),
           },
@@ -602,291 +359,81 @@ export default function InsurancePage() {
               </span>
             ),
             children: (
-              <div>
-                <Space style={{ marginBottom: 16 }}>
-                  <DatePicker.MonthPicker
-                    placeholder="Chọn tháng/năm"
-                    value={d02Month}
-                    onChange={(val) => {
-                      setD02Month(val);
-                      setD02Preview(null);
-                    }}
-                    format="MM/YYYY"
-                    style={{ width: 160 }}
-                  />
-                  <Button onClick={handleD02Preview} loading={d02Loading}>
-                    Xem trước
-                  </Button>
-                  <Button type="primary" icon={<FileTextOutlined />} onClick={handleD02Export} disabled={!d02Month}>
-                    Xuất Excel
-                  </Button>
-                </Space>
-
-                {d02Preview && (
-                  <div>
-                    <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 8, fontSize: 15 }}>
-                      Tăng lao động ({d02Preview.enrolled.length} người)
-                    </Text>
-                    <Table
-                      rowKey="employeeCode"
-                      columns={d02EnrolledCols}
-                      dataSource={d02Preview.enrolled}
-                      pagination={false}
-                      size="small"
-                      style={{ marginBottom: 24 }}
-                    />
-
-                    <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 8, fontSize: 15 }}>
-                      Giảm lao động ({d02Preview.terminated.length} người)
-                    </Text>
-                    <Table
-                      rowKey="employeeCode"
-                      columns={d02EnrolledCols}
-                      dataSource={d02Preview.terminated}
-                      pagination={false}
-                      size="small"
-                      style={{ marginBottom: 24 }}
-                    />
-
-                    <Text strong style={{ color: textPrimary, display: 'block', marginBottom: 8, fontSize: 15 }}>
-                      Điều chỉnh mức đóng ({d02Preview.salaryChanged.length} người)
-                    </Text>
-                    <Table
-                      rowKey="employeeCode"
-                      columns={d02SalaryChangedCols}
-                      dataSource={d02Preview.salaryChanged}
-                      pagination={false}
-                      size="small"
-                    />
-                  </div>
-                )}
-              </div>
+              <D02Tab
+                textPrimary={textPrimary}
+                d02Month={d02Month}
+                setD02Month={setD02Month}
+                setD02Preview={setD02Preview}
+                d02Preview={d02Preview}
+                d02Loading={d02Loading}
+                onPreview={handleD02Preview}
+                onExport={handleD02Export}
+                enrolledCols={d02EnrolledCols}
+                salaryChangedCols={d02SalaryChangedCols}
+              />
             ),
           },
         ]}
       />
 
       {/* Modal đăng ký BHXH mới */}
-      <CenteredModal
+      <EnrollModal
         open={enrollOpen}
         onClose={() => {
           setEnrollOpen(false);
           enrollForm.resetFields();
         }}
-        title="Đăng ký BHXH mới"
-        width={520}
-        footer={
-          <Space>
-            <Button onClick={() => { setEnrollOpen(false); enrollForm.resetFields(); }}>Hủy</Button>
-            <Button type="primary" onClick={handleEnrollSubmit} loading={enrollMutation.isPending} disabled={enrollMutation.isPending}>
-              Đăng ký
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={enrollForm} layout="vertical">
-          <Form.Item
-            name="employeeId"
-            label="Nhân viên"
-            rules={[{ required: true, message: 'Vui lòng chọn nhân viên' }]}
-          >
-            <Select
-              showSearch
-              placeholder="Tìm theo tên hoặc mã NV..."
-              optionFilterProp="label"
-              options={employees.map((e) => ({
-                value: e.id,
-                label: `${e.code} — ${e.fullName}`,
-              }))}
-            />
-          </Form.Item>
-          <Form.Item
-            name="insuranceSalary"
-            label="Mức đóng BHXH (VNĐ)"
-            rules={[{ required: true, message: 'Vui lòng nhập mức đóng' }]}
-          >
-            <InputNumber<number>
-              min={0}
-              style={{ width: '100%' }}
-              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-              parser={(v) => Number(v?.replace(/\./g, '') ?? 0)}
-              placeholder="Ví dụ: 5.000.000"
-            />
-          </Form.Item>
-          <Form.Item
-            name="startDate"
-            label="Ngày bắt đầu"
-            rules={[{ required: true, message: 'Vui lòng chọn ngày bắt đầu' }]}
-          >
-            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-          </Form.Item>
-          <Form.Item name="bhxhBookNumber" label="Số sổ BHXH (nếu có)">
-            <Input placeholder="VD: 0100100001234" />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        form={enrollForm}
+        employees={employees}
+        onSubmit={handleEnrollSubmit}
+        submitting={enrollMutation.isPending}
+      />
 
       {/* Modal tạo InsuranceEvent */}
-      <CenteredModal
+      <EventModal
         open={eventOpen}
         onClose={() => {
           setEventOpen(false);
           eventForm.resetFields();
           setSelectedEnrollment(null);
         }}
-        title={
-          selectedEnrollment
-            ? `Tạo sự kiện — ${selectedEnrollment.employee?.fullName ?? ''}`
-            : 'Tạo sự kiện BHXH'
-        }
-        width={520}
-        footer={
-          <Space>
-            <Button
-              onClick={() => {
-                setEventOpen(false);
-                eventForm.resetFields();
-                setSelectedEnrollment(null);
-              }}
-            >
-              Hủy
-            </Button>
-            <Button type="primary" onClick={handleEventSubmit} loading={eventMutation.isPending} disabled={eventMutation.isPending}>
-              Tạo sự kiện
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={eventForm} layout="vertical">
-          <Form.Item
-            name="eventType"
-            label="Loại sự kiện"
-            rules={[{ required: true, message: 'Vui lòng chọn loại sự kiện' }]}
-          >
-            <Select
-              placeholder="Chọn loại sự kiện"
-              options={[
-                { value: 'SALARY_CHANGE', label: EVENT_LABEL.SALARY_CHANGE },
-                { value: 'TERMINATE', label: EVENT_LABEL.TERMINATE },
-                { value: 'SUSPEND', label: EVENT_LABEL.SUSPEND },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item
-            noStyle
-            shouldUpdate={(prev, cur) => prev.eventType !== cur.eventType}
-          >
-            {({ getFieldValue }) =>
-              getFieldValue('eventType') === 'SALARY_CHANGE' ? (
-                <Form.Item
-                  name="insuranceSalary"
-                  label="Mức đóng mới (VNĐ)"
-                  rules={[{ required: true, message: 'Vui lòng nhập mức đóng mới' }]}
-                >
-                  <InputNumber<number>
-                    min={0}
-                    style={{ width: '100%' }}
-                    formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-                    parser={(v) => Number(v?.replace(/\./g, '') ?? 0)}
-                  />
-                </Form.Item>
-              ) : null
-            }
-          </Form.Item>
-          <Form.Item
-            name="effectiveDate"
-            label="Ngày hiệu lực"
-            rules={[{ required: true, message: 'Vui lòng chọn ngày hiệu lực' }]}
-          >
-            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-          </Form.Item>
-          <Form.Item name="reason" label="Lý do">
-            <Input.TextArea rows={3} placeholder="Nhập lý do (không bắt buộc)..." />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        form={eventForm}
+        selectedEnrollment={selectedEnrollment}
+        onSubmit={handleEventSubmit}
+        submitting={eventMutation.isPending}
+      />
 
       {/* Modal: Sửa đăng ký BHXH */}
-      <CenteredModal
+      <EditEnrollModal
         open={editEnrollOpen}
         onClose={() => { setEditEnrollOpen(false); editEnrollForm.resetFields(); setEditEnrollRecord(null); }}
-        title={`Cập nhật BHXH — ${editEnrollRecord?.employee?.fullName ?? ''}`}
-        width={440}
-        footer={
-          <Space>
-            <Button onClick={() => { setEditEnrollOpen(false); editEnrollForm.resetFields(); }}>Hủy</Button>
-            <Button
-              type="primary"
-              loading={editEnrollMutation.isPending}
-              disabled={editEnrollMutation.isPending}
-              onClick={() => {
-                editEnrollForm.validateFields().then((vals) => {
-                  if (!editEnrollRecord) return;
-                  editEnrollMutation.mutate({ id: editEnrollRecord.id, data: vals });
-                });
-              }}
-            >
-              Lưu
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={editEnrollForm} layout="vertical">
-          <Form.Item name="insuranceSalary" label="Mức đóng BHXH (VNĐ)" rules={[{ required: true }]}>
-            <InputNumber<number>
-              min={0}
-              style={{ width: '100%' }}
-              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
-              parser={(v) => Number(v?.replace(/\./g, '') ?? 0)}
-            />
-          </Form.Item>
-          <Form.Item name="status" label="Trạng thái">
-            <Select options={[
-              { value: 'ACTIVE', label: 'Đang đóng' },
-              { value: 'SUSPENDED', label: 'Tạm dừng' },
-              { value: 'TERMINATED', label: 'Đã nghỉ' },
-            ]} />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        onCancel={() => { setEditEnrollOpen(false); editEnrollForm.resetFields(); }}
+        form={editEnrollForm}
+        record={editEnrollRecord}
+        onSubmit={() => {
+          editEnrollForm.validateFields().then((vals) => {
+            if (!editEnrollRecord) return;
+            editEnrollMutation.mutate({ id: editEnrollRecord.id, data: vals });
+          });
+        }}
+        submitting={editEnrollMutation.isPending}
+      />
 
       {/* Modal: Quản lý sổ BHXH */}
-      <CenteredModal
+      <BookModal
         open={bookOpen}
         onClose={() => { setBookOpen(false); bookForm.resetFields(); setBookEnrollment(null); }}
-        title={`Sổ BHXH — ${bookEnrollment?.employee?.fullName ?? ''}`}
-        width={480}
-        footer={
-          <Space>
-            <Button onClick={() => { setBookOpen(false); bookForm.resetFields(); }}>Hủy</Button>
-            <Button
-              type="primary"
-              loading={upsertBookMutation.isPending}
-              disabled={upsertBookMutation.isPending}
-              onClick={() => {
-                bookForm.validateFields().then((vals) => {
-                  if (!bookEnrollment) return;
-                  upsertBookMutation.mutate({ employeeId: bookEnrollment.employeeId, ...vals });
-                });
-              }}
-            >
-              Lưu sổ BHXH
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={bookForm} layout="vertical">
-          <Form.Item name="bookNumber" label="Số sổ BHXH" rules={[{ required: true, message: 'Bắt buộc' }]}>
-            <Input placeholder="VD: 0100100001234" />
-          </Form.Item>
-          <Form.Item name="issueDate" label="Ngày cấp">
-            <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-          </Form.Item>
-          <Form.Item name="issueAuthority" label="Cơ quan cấp">
-            <Input placeholder="VD: BHXH TP.HCM" />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        onCancel={() => { setBookOpen(false); bookForm.resetFields(); }}
+        form={bookForm}
+        enrollment={bookEnrollment}
+        onSubmit={() => {
+          bookForm.validateFields().then((vals) => {
+            if (!bookEnrollment) return;
+            upsertBookMutation.mutate({ employeeId: bookEnrollment.employeeId, ...vals });
+          });
+        }}
+        submitting={upsertBookMutation.isPending}
+      />
     </div>
   );
 }
