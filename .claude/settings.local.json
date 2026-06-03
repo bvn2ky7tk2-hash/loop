@@ -348,7 +348,8 @@
       "Bash(awk *)",
       "Bash",
       "Bash(cat >> *)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(cd /Users/leophan188/Downloads/Loop *)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [
@@ -360,7 +361,8 @@
       "/Users/Leopold/Downloads/Loop/apps/web/src/config",
       "/Users/Leopold188/Downloads/Loop/apps/web/public",
       "/Users/leophan188/.claude",
-      "/Users/leophan188/Downloads/Loop/.claude/projects/-Users-leophan188-Downloads-Loop/memory"
+      "/Users/leophan188/Downloads/Loop/.claude/projects/-Users-leophan188-Downloads-Loop/memory",
+      "/Users/leophan188/Downloads/Loop/.claude/projects"
     ]
   },
   "skipDangerousModePermissionPrompt": true
