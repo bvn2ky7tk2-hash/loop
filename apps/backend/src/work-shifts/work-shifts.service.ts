@@ -41,6 +41,7 @@ export class WorkShiftsService {
         startTime: dto.startTime,
         endTime: dto.endTime,
         breakMinutes: dto.breakMinutes,
+        ...(dto.workingDays !== undefined && { workingDays: dto.workingDays }),
         description: dto.description ?? null,
       },
     });
@@ -60,6 +61,7 @@ export class WorkShiftsService {
         ...(dto.startTime !== undefined && { startTime: dto.startTime }),
         ...(dto.endTime !== undefined && { endTime: dto.endTime }),
         ...(dto.breakMinutes !== undefined && { breakMinutes: dto.breakMinutes }),
+        ...(dto.workingDays !== undefined && { workingDays: dto.workingDays }),
         ...(dto.isActive !== undefined && { isActive: dto.isActive }),
         ...(dto.description !== undefined && { description: dto.description }),
       },

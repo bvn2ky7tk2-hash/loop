@@ -50,6 +50,11 @@ export class CreateWorkShiftDto {
   breakMinutes: number;
 
   @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  workingDays?: number[];
+
+  @IsOptional()
   @IsString()
   description?: string;
 }
@@ -81,6 +86,11 @@ export class UpdateWorkShiftDto {
   @Max(120)
   @Type(() => Number)
   breakMinutes?: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  workingDays?: number[];
 
   @IsOptional()
   @IsBoolean()

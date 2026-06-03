@@ -11,6 +11,7 @@ export interface WorkShift {
   startTime: string;
   endTime: string;
   breakMinutes: number;
+  workingDays?: number[];
   isActive: boolean;
   description?: string;
   createdAt?: string;
@@ -67,6 +68,7 @@ export interface CreateShiftDto {
   startTime: string;
   endTime: string;
   breakMinutes?: number;
+  workingDays?: number[];
   isActive?: boolean;
   description?: string;
 }

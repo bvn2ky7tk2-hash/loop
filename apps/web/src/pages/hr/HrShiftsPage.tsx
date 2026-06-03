@@ -786,6 +786,22 @@ export default function HrShiftsPage() {
           <Form.Item name="breakMinutes" label="Nghỉ giữa ca (phút)" initialValue={60}>
             <InputNumber min={0} max={120} style={{ width: '100%' }} />
           </Form.Item>
+          <Form.Item
+            name="workingDays" label="Thứ làm việc trong tuần"
+            initialValue={[1, 2, 3, 4, 5]}
+            tooltip="Dùng để tính công chuẩn. VD hành chính off T7+CN; công nhân chỉ off CN."
+          >
+            <Select
+              mode="multiple"
+              placeholder="Chọn các thứ làm việc"
+              options={[
+                { value: 1, label: 'Thứ 2' }, { value: 2, label: 'Thứ 3' },
+                { value: 3, label: 'Thứ 4' }, { value: 4, label: 'Thứ 5' },
+                { value: 5, label: 'Thứ 6' }, { value: 6, label: 'Thứ 7' },
+                { value: 7, label: 'Chủ nhật' },
+              ]}
+            />
+          </Form.Item>
           {editShift && (
             <Form.Item name="isActive" label="Trạng thái" initialValue={true}>
               <Select options={[{ value: true, label: 'Hoạt động' }, { value: false, label: 'Dừng' }]} />
