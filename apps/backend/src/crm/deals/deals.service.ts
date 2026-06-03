@@ -17,6 +17,7 @@ import { WonDealDto } from './dto/won-deal.dto';
 import { LostDealDto } from './dto/lost-deal.dto';
 import { KickoffWizardDto } from './dto/kickoff-wizard.dto';
 import { TenantAwareService } from '../../common/services/tenant-aware.service';
+import { QuotaService } from '../../common/services/quota.service';
 import { ProcessInstancesService } from '../../processes/instances/process-instances.service';
 
 // Kanban: kéo-thả tự do giữa các stage mở (QUALIFICATION/PROPOSAL/NEGOTIATION) + LOST.
@@ -34,6 +35,7 @@ export class DealsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly processInstancesService: ProcessInstancesService,
+    private readonly quota: QuotaService,
     @Inject(REQUEST) req: any,
   ) {
     super(req);
@@ -298,6 +300,9 @@ export class DealsService extends TenantAwareService {
         'PM chưa thuộc đơn vị tổ chức nào, không thể tạo project',
       );
     }
+
+    // Quota: chuyển Deal → Project cũng phải tuân giới hạn maxProjects của tenant.
+    await this.quota.assertCanAddProject();
 
     const startDate = new Date(dto.startDate);
 

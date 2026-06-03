@@ -9,7 +9,9 @@ export class TenantGuard implements CanActivate {
     }
 
     const req = context.switchToHttp().getRequest();
-    const tenantId = req?.user?.tenantId ?? getDefaultTenantId();
+    // Ưu tiên tenant đã đăng nhập, rồi tới tenant resolver middleware đã resolve
+    // theo subdomain/customDomain — KHÔNG ghi đè bằng default khi đã có giá trị.
+    const tenantId = req?.user?.tenantId ?? req?.__tenantId ?? getDefaultTenantId();
     req.__tenantId = tenantId;
     return true;
   }

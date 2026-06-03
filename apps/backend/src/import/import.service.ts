@@ -1,11 +1,15 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import { PrismaService } from '../prisma/prisma.service';
+import { QuotaService } from '../common/services/quota.service';
 import type { ImportTemplate, ImportRow, ImportError, ImportPreviewResult } from './dto/import.dto';
 
 @Injectable()
 export class ImportService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly quota: QuotaService,
+  ) {}
 
   // ── Parse & validate Excel buffer ──────────────────────────────────────────
 
@@ -171,6 +175,9 @@ export class ImportService {
   private async commitEmployees(rows: ImportRow[]): Promise<number> {
     let count = 0;
     for (const row of rows) {
+      // Quota: chặn cứng khi đạt maxEmployees. ĐẶT NGOÀI try để ForbiddenException
+      // KHÔNG bị catch nuốt — import dừng và báo rõ thay vì lách giới hạn hàng loạt.
+      await this.quota.assertCanAddEmployee();
       try {
         // Lookup orgUnit by name
         let orgUnitId: string | null = null;

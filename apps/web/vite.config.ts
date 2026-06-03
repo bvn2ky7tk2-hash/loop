@@ -32,6 +32,9 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // Cho phép truy cập qua subdomain *.localhost để test multi-tenant cục bộ
+    // (vd test-a.localhost:5173). Vite mặc định chặn host lạ.
+    allowedHosts: ['localhost', '.localhost'],
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
@@ -42,6 +45,11 @@ export default defineConfig({
         // Khi backend đang restart (watch mode) hoặc chưa sẵn sàng, trả 503 rõ ràng
         // kèm thông báo thay vì 502 thô khó hiểu — tránh nhầm là lỗi ứng dụng.
         configure: (proxy) => {
+          // Giữ host gốc (vd test-a.localhost) để backend resolver xác định tenant
+          // theo subdomain/customDomain — changeOrigin ghi đè Host nên cần header này.
+          proxy.on('proxyReq', (proxyReq, req) => {
+            if (req.headers.host) proxyReq.setHeader('x-forwarded-host', req.headers.host);
+          });
           proxy.on('error', (err, _req, res) => {
             const r = res as import('http').ServerResponse;
             if (r && !r.headersSent && typeof r.writeHead === 'function') {

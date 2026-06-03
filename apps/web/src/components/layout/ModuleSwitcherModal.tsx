@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useModuleStore } from '../../store/module.store';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { useAuthStore } from '../../store/auth.store';
+import { useEnabledModules } from '../../hooks/useEnabledModules';
 import { MODULES } from '../../config/modules.config';
 
 interface Props {
@@ -15,10 +16,13 @@ export function ModuleSwitcherModal({ open, onClose }: Props) {
   const { activeModuleId, setActiveModule } = useModuleStore();
   const { isDark, bgCard, bgContainer, borderColor, textPrimary } = useThemePalette();
   const { user } = useAuthStore();
+  const { isModuleEnabled } = useEnabledModules();
   const navigate = useNavigate();
 
   const isAdmin = user?.role === 'ADMIN';
   const canAccessModule = (mod: typeof MODULES[number]) => {
+    // Module bị tắt cho tenant → ẩn với MỌI vai trò (kể cả admin).
+    if (!isModuleEnabled(mod.id)) return false;
     if (isAdmin) return true;
     if (!mod.gatePermission) return true;
     const gates = Array.isArray(mod.gatePermission) ? mod.gatePermission : [mod.gatePermission];

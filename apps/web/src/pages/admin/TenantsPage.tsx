@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
   Button, Table, Tag, Modal, Form, Input, Select, Switch,
-  Space, Typography, Row, Col,
+  Space, Typography, Row, Col, InputNumber, Progress, Divider, Tooltip, App,
 } from 'antd';
 import {
-  PlusOutlined, EditOutlined, StopOutlined, GlobalOutlined,
+  PlusOutlined, EditOutlined, StopOutlined, GlobalOutlined, AppstoreOutlined, LockOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../hooks/useThemePalette';
@@ -16,6 +16,13 @@ import { tenantsApi, type Tenant, type CreateTenantPayload } from '../../api/ten
 
 const { Text } = Typography;
 
+function fmtBytes(b: number): string {
+  if (b < 1024) return `${b} B`;
+  const mb = b / (1024 * 1024);
+  if (mb < 1024) return `${mb < 10 ? mb.toFixed(1) : Math.round(mb)} MB`;
+  return `${(mb / 1024).toFixed(2)} GB`;
+}
+
 const TIMEZONE_OPTIONS = [
   { label: 'Asia/Ho_Chi_Minh (UTC+7)', value: 'Asia/Ho_Chi_Minh' },
   { label: 'UTC', value: 'UTC' },
@@ -25,17 +32,41 @@ const TIMEZONE_OPTIONS = [
 ];
 
 export default function TenantsPage() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
+  const { message } = App.useApp();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Tenant | null>(null);
+  const [moduleTenant, setModuleTenant] = useState<Tenant | null>(null);
   const [form] = Form.useForm();
 
   const { data: tenants = [], isLoading } = useQuery({
     queryKey: ['tenants'],
     queryFn: tenantsApi.list,
+  });
+
+  const { data: usage } = useQuery({
+    queryKey: ['tenant-usage', editing?.id],
+    queryFn: () => tenantsApi.usage(editing!.id),
+    enabled: modalOpen && !!editing,
+  });
+
+  const { data: modules = [], isLoading: modulesLoading } = useQuery({
+    queryKey: ['tenant-modules', moduleTenant?.id],
+    queryFn: () => tenantsApi.modules(moduleTenant!.id),
+    enabled: !!moduleTenant,
+  });
+
+  const setModuleMutation = useMutation({
+    mutationFn: ({ moduleId, isEnabled }: { moduleId: string; isEnabled: boolean }) =>
+      tenantsApi.setModule(moduleTenant!.id, moduleId, isEnabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tenant-modules', moduleTenant?.id] }),
+    onError: (e: unknown) => {
+      const msg = (e as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      message.error(msg ?? 'Không thể cập nhật module');
+    },
   });
 
   const createMutation = useMutation({
@@ -73,12 +104,27 @@ export default function TenantsPage() {
   }
 
   function handleSubmit(values: CreateTenantPayload) {
+    // Ô quota để trống → gửi null tường minh để xóa giới hạn (không giới hạn)
+    const payload: CreateTenantPayload = {
+      ...values,
+      maxUsers: values.maxUsers ?? null,
+      maxProjects: values.maxProjects ?? null,
+      maxEmployees: values.maxEmployees ?? null,
+      maxStorageMb: values.maxStorageMb ?? null,
+    };
     if (editing) {
-      updateMutation.mutate({ id: editing.id, data: values });
+      updateMutation.mutate({ id: editing.id, data: payload });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate(payload);
     }
   }
+
+  const usageRows = usage ? [
+    { key: 'users', label: 'Người dùng', used: usage.users.used, max: usage.users.max, fmt: (n: number) => String(n) },
+    { key: 'projects', label: 'Dự án', used: usage.projects.used, max: usage.projects.max, fmt: (n: number) => String(n) },
+    { key: 'employees', label: 'Nhân viên', used: usage.employees.used, max: usage.employees.max, fmt: (n: number) => String(n) },
+    { key: 'storage', label: 'Lưu trữ', used: usage.storage.usedBytes, max: usage.storage.maxMb != null ? usage.storage.maxMb * 1024 * 1024 : null, fmt: fmtBytes },
+  ] : [];
 
   const totalActive = tenants.filter((t) => t.isActive).length;
   const totalInactive = tenants.filter((t) => !t.isActive).length;
@@ -152,16 +198,41 @@ export default function TenantsPage() {
       ) : null,
     },
     {
+      title: 'Giới hạn gói',
+      key: 'quota',
+      render: (_: unknown, r: Tenant) => {
+        const parts: string[] = [];
+        if (r.maxUsers != null) parts.push(`${r.maxUsers} user`);
+        if (r.maxProjects != null) parts.push(`${r.maxProjects} dự án`);
+        if (r.maxEmployees != null) parts.push(`${r.maxEmployees} NV`);
+        if (r.maxStorageMb != null) parts.push(`${r.maxStorageMb} MB`);
+        return (
+          <Text style={{ color: textMuted, fontSize: 12 }}>
+            {parts.length ? parts.join(' · ') : 'Không giới hạn'}
+          </Text>
+        );
+      },
+    },
+    {
       title: '',
       key: 'actions',
-      width: 100,
+      width: 140,
       render: (_: unknown, record: Tenant) => (
         <Space>
-          <Button
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => openEdit(record)}
-          />
+          <Tooltip title="Cấu hình phân hệ">
+            <Button
+              size="small"
+              icon={<AppstoreOutlined />}
+              onClick={() => setModuleTenant(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => openEdit(record)}
+            />
+          </Tooltip>
           {record.isActive && !record.isDefault && (
             <Button
               size="small"
@@ -282,7 +353,119 @@ export default function TenantsPage() {
               </Form.Item>
             </Col>
           </Row>
+
+          <Divider style={{ margin: '8px 0 16px' }}>Giới hạn gói (Quota)</Divider>
+
+          {editing && usageRows.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <Text style={{ color: textMuted, fontSize: 12 }}>Mức sử dụng hiện tại</Text>
+              <div style={{ marginTop: 8 }}>
+                {usageRows.map((r) => {
+                  const unlimited = r.max == null;
+                  const pct = unlimited ? 0 : Math.min(100, Math.round((r.used / (r.max || 1)) * 100));
+                  const over = !unlimited && r.used >= (r.max || 0);
+                  return (
+                    <div key={r.key} style={{ marginBottom: 8 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+                        <Text style={{ color: textMuted }}>{r.label}</Text>
+                        <Text style={{ color: over ? '#EF4444' : textPrimary }}>
+                          {r.fmt(r.used)} / {unlimited ? '∞' : r.fmt(r.max as number)}
+                        </Text>
+                      </div>
+                      <Progress
+                        percent={pct}
+                        showInfo={false}
+                        size="small"
+                        status={over ? 'exception' : 'normal'}
+                        strokeColor={unlimited ? '#94A3B8' : undefined}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 8 }}>
+            Để trống = không giới hạn
+          </Text>
+          <Row gutter={12}>
+            <Col span={12}>
+              <Form.Item name="maxUsers" label="Tối đa người dùng">
+                <InputNumber min={0} style={{ width: '100%' }} placeholder="Không giới hạn" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="maxEmployees" label="Tối đa nhân viên">
+                <InputNumber min={0} style={{ width: '100%' }} placeholder="Không giới hạn" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={12}>
+            <Col span={12}>
+              <Form.Item name="maxProjects" label="Tối đa dự án">
+                <InputNumber min={0} style={{ width: '100%' }} placeholder="Không giới hạn" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="maxStorageMb" label="Tối đa lưu trữ (MB)">
+                <InputNumber min={0} style={{ width: '100%' }} placeholder="Không giới hạn" />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
+      </Modal>
+
+      <Modal
+        title={moduleTenant ? `Cấu hình phân hệ — ${moduleTenant.name}` : 'Cấu hình phân hệ'}
+        open={!!moduleTenant}
+        onCancel={() => setModuleTenant(null)}
+        footer={<Button onClick={() => setModuleTenant(null)}>Đóng</Button>}
+        width={560}
+      >
+        <Text style={{ color: textMuted, fontSize: 13, display: 'block', marginBottom: 12 }}>
+          Bật/tắt phân hệ cho tenant này. Phân hệ lõi (core) luôn bật, không thể tắt.
+        </Text>
+        <div style={{ opacity: modulesLoading || setModuleMutation.isPending ? 0.6 : 1 }}>
+          {modules.map((m) => (
+            <div
+              key={m.moduleId}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                gap: 12, padding: '12px 14px', marginBottom: 8,
+                background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10,
+              }}
+            >
+              <div style={{ minWidth: 0 }}>
+                <Space size={6}>
+                  <Text strong style={{ color: textPrimary }}>{m.displayName}</Text>
+                  {m.isCore && (
+                    <Tag
+                      color={isDark ? undefined : 'blue'}
+                      style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}
+                    >
+                      Lõi
+                    </Tag>
+                  )}
+                </Space>
+                {m.description && (
+                  <div><Text style={{ color: textMuted, fontSize: 12 }}>{m.description}</Text></div>
+                )}
+              </div>
+              {m.isCore ? (
+                <Tooltip title="Phân hệ lõi — luôn bật">
+                  <LockOutlined style={{ color: textMuted }} />
+                </Tooltip>
+              ) : (
+                <Switch
+                  checked={m.isEnabled}
+                  loading={setModuleMutation.isPending}
+                  onChange={(checked) => setModuleMutation.mutate({ moduleId: m.moduleId, isEnabled: checked })}
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </Modal>
     </div>
   );

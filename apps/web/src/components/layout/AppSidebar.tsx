@@ -14,6 +14,7 @@ import { processesApi } from '../../api/processes.api';
 import { useGetBugStats, useGetMyBugsCount } from '../../api/bugs.api';
 import { ModuleSwitcherModal } from './ModuleSwitcherModal';
 import { useTenantStore } from '../../store/tenant.store';
+import { useEnabledModules } from '../../hooks/useEnabledModules';
 
 interface AppSidebarProps {
   collapsed: boolean;
@@ -154,6 +155,7 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
   const tenantConfig = useTenantStore(s => s.config);
   const { getModuleConfig } = useMenuStore();
   const { activeModuleId, setActiveModule } = useModuleStore();
+  const { isModuleEnabled, loaded: modulesLoaded } = useEnabledModules();
 
   // Auto-sync activeModuleId khi URL thay đổi
   useEffect(() => {
@@ -167,6 +169,21 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
       setActiveModule(derived.module);
     }
   }, [location.pathname]);
+
+  // Route guard: nếu route hiện tại thuộc module ĐÃ TẮT cho tenant → đưa về Workspace.
+  useEffect(() => {
+    if (!modulesLoaded) return;
+    const pathname = location.pathname;
+    const exact = SCREEN_REGISTRY.find(s => s.route === pathname);
+    const derived = exact
+      ?? SCREEN_REGISTRY
+           .filter(s => s.route !== '/' && pathname.startsWith(s.route))
+           .sort((a, b) => b.route.length - a.route.length)[0];
+    if (derived && !isModuleEnabled(derived.module)) {
+      setActiveModule('workspace');
+      navigate('/');
+    }
+  }, [location.pathname, modulesLoaded]);
 
   const activeModule = MODULE_MAP[activeModuleId] ?? MODULE_MAP['workspace'];
   const config   = useMemo(() => getModuleConfig(activeModuleId), [activeModuleId]);

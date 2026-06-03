@@ -20,6 +20,13 @@ export class ModuleConfigController {
     return this.service.listModules();
   }
 
+  @Get('enabled')
+  @Throttle({ global: { ttl: 60_000, limit: 120 } })
+  @ApiOperation({ summary: 'Danh sách module + trạng thái của tenant hiện tại (mọi user đã đăng nhập — để FE ẩn menu)' })
+  listEnabled() {
+    return this.service.listModules();
+  }
+
   @Put(':id/toggle')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Bật/tắt module (ADMIN)' })

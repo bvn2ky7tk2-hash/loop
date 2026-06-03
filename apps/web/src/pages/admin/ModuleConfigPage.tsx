@@ -6,6 +6,7 @@ import {
   AppstoreOutlined, LockOutlined, ApiOutlined,
   TeamOutlined, DollarOutlined, ShopOutlined, LaptopOutlined,
   ToolOutlined, UserOutlined, SettingOutlined,
+  HomeOutlined, ProjectOutlined, ScheduleOutlined, SolutionOutlined, BarChartOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { moduleConfigApi } from '../../api/module-config';
@@ -18,14 +19,16 @@ import { confirmDelete } from '../../components/ui/confirmDelete';
 const { Text, Title } = Typography;
 
 const MODULE_META: Record<string, { icon: React.ReactNode; color: string; features: string }> = {
-  work:    { icon: <ApiOutlined />,    color: '#6366F1', features: 'Task, Bug, Timesheet, BPM Inbox' },
-  people:  { icon: <TeamOutlined />,   color: '#8B5CF6', features: 'Nhân viên, Payroll, Nghỉ phép, Tuyển dụng' },
-  finance: { icon: <DollarOutlined />, color: '#10B981', features: 'Chi phí, Hóa đơn, Kế toán, Ngân sách' },
-  crm:     { icon: <ShopOutlined />,   color: '#F59E0B', features: 'Leads, Deals, Contacts, Pipeline' },
-  asset:   { icon: <LaptopOutlined />, color: '#F97316', features: 'Hardware, Phần mềm, License' },
-  ops:     { icon: <ToolOutlined />,   color: '#3B82F6', features: 'Hợp đồng, Mua hàng, Vận hành' },
-  me:      { icon: <UserOutlined />,   color: '#6366F1', features: 'Dashboard cá nhân, Task của tôi' },
-  admin:   { icon: <SettingOutlined />,color: '#EF4444', features: 'Cấu hình hệ thống, Phân quyền, Audit' },
+  workspace:  { icon: <HomeOutlined />,     color: '#2563EB', features: 'Việc của tôi, Hộp thư, Đơn từ, Lịch' },
+  projects:   { icon: <ProjectOutlined />,  color: '#6366F1', features: 'Dự án, Công việc, Lỗi, Tri thức' },
+  people:     { icon: <TeamOutlined />,     color: '#8B5CF6', features: 'Nhân viên, Tổ chức, Phát triển' },
+  attendance: { icon: <ScheduleOutlined />, color: '#0EA5E9', features: 'Chấm công, Nghỉ phép, OT, Bảng lương' },
+  recruit:    { icon: <SolutionOutlined />, color: '#EC4899', features: 'Ứng viên, Phỏng vấn, Vị trí' },
+  finance:    { icon: <DollarOutlined />,   color: '#10B981', features: 'Chi phí, Hóa đơn, Kế toán, Ngân sách' },
+  crm:        { icon: <ShopOutlined />,     color: '#F59E0B', features: 'Khách hàng, Tiềm năng, Cơ hội' },
+  asset:      { icon: <LaptopOutlined />,   color: '#F97316', features: 'Tài sản, Bảo trì, Mua sắm' },
+  admin:      { icon: <SettingOutlined />,  color: '#EF4444', features: 'Hệ thống, BPM, Phân quyền, Audit' },
+  analytics:  { icon: <BarChartOutlined />, color: '#14B8A6', features: 'Báo cáo và phân tích doanh nghiệp' },
 };
 
 export default function ModuleConfigPage() {

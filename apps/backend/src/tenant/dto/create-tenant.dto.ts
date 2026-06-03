@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsInt, Min, MaxLength } from 'class-validator';
 
 export class CreateTenantDto {
   @IsString() @IsNotEmpty() @MaxLength(200)
@@ -15,4 +15,10 @@ export class CreateTenantDto {
   @IsOptional() @IsString() timezone?: string;
   @IsOptional() @IsBoolean() isActive?: boolean;
   @IsOptional() @IsBoolean() isDefault?: boolean;
+
+  // ── Quota giới hạn gói (null/bỏ trống = không giới hạn) ──
+  @IsOptional() @IsInt() @Min(0) maxUsers?: number;
+  @IsOptional() @IsInt() @Min(0) maxStorageMb?: number;
+  @IsOptional() @IsInt() @Min(0) maxProjects?: number;
+  @IsOptional() @IsInt() @Min(0) maxEmployees?: number;
 }

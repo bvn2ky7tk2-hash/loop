@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { Role } from '../generated/prisma';
@@ -6,6 +7,7 @@ import { MODULE_DEFAULTS } from '../module-config/module-config.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { ProvisionTenantDto } from './dto/provision-tenant.dto';
+import type { JwtUser } from '../common/types/jwt-user.type';
 
 @Injectable()
 export class TenantService {
@@ -57,33 +59,99 @@ export class TenantService {
     });
   }
 
-  // Hệ thống không có super-admin: ADMIN chỉ thao tác trên CHÍNH tenant của mình.
-  private assertSameTenant(id: string, currentTenantId: string | null) {
-    if (!currentTenantId || id !== currentTenantId) {
+  // Platform admin thao tác mọi tenant; ADMIN thường chỉ thao tác trên CHÍNH tenant của mình.
+  private assertCanAccess(id: string, user: JwtUser | null) {
+    if (user?.isPlatformAdmin) return;
+    if (!user?.tenantId || id !== user.tenantId) {
       throw new ForbiddenException('Không có quyền trên tenant khác');
     }
   }
 
-  // ADMIN tenant chỉ thấy tenant hiện hành (không liệt kê mọi tenant).
-  async findAll(currentTenantId: string | null) {
-    if (!currentTenantId) throw new ForbiddenException('Không có quyền trên tenant khác');
-    const t = await this.prisma.tenant.findUnique({ where: { id: currentTenantId } });
+  // Platform admin thấy mọi tenant; ADMIN thường chỉ thấy tenant hiện hành.
+  async findAll(user: JwtUser | null) {
+    if (user?.isPlatformAdmin) {
+      return this.prisma.tenant.findMany({ orderBy: { createdAt: 'asc' } });
+    }
+    if (!user?.tenantId) throw new ForbiddenException('Không có quyền trên tenant khác');
+    const t = await this.prisma.tenant.findUnique({ where: { id: user.tenantId } });
     return t ? [t] : [];
   }
 
-  async findOne(id: string, currentTenantId: string | null) {
-    this.assertSameTenant(id, currentTenantId);
+  async findOne(id: string, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
     const t = await this.prisma.tenant.findUnique({ where: { id } });
     if (!t) throw new NotFoundException('Tenant không tồn tại');
     return t;
+  }
+
+  // Mức sử dụng hiện tại so với quota của tenant. Raw SQL có tenant_id tường minh
+  // (bỏ qua tenant-extension) để platform admin xem được usage của tenant KHÁC.
+  async getUsage(id: string, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
+    const t = await this.prisma.tenant.findUnique({ where: { id } });
+    if (!t) throw new NotFoundException('Tenant không tồn tại');
+
+    const [u, p, e] = await Promise.all([
+      this.prisma.$queryRaw<{ c: number }[]>`SELECT count(*)::int AS c FROM users WHERE tenant_id = ${id}`,
+      this.prisma.$queryRaw<{ c: number }[]>`SELECT count(*)::int AS c FROM projects WHERE tenant_id = ${id}`,
+      this.prisma.$queryRaw<{ c: number }[]>`SELECT count(*)::int AS c FROM employees WHERE tenant_id = ${id}`,
+    ]);
+
+    return {
+      users: { used: u[0]?.c ?? 0, max: t.maxUsers ?? null },
+      projects: { used: p[0]?.c ?? 0, max: t.maxProjects ?? null },
+      employees: { used: e[0]?.c ?? 0, max: t.maxEmployees ?? null },
+      storage: { usedBytes: Number(t.storageUsedBytes ?? 0), maxMb: t.maxStorageMb ?? null },
+    };
+  }
+
+  // Danh sách module + trạng thái của MỘT tenant cụ thể. Raw SQL có tenant_id
+  // tường minh để platform admin cấu hình tenant KHÁC (bỏ qua tenant-extension).
+  async getModules(id: string, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
+    const t = await this.prisma.tenant.findUnique({ where: { id } });
+    if (!t) throw new NotFoundException('Tenant không tồn tại');
+
+    // Đảm bảo đủ hàng cho mọi module mặc định (tenant cũ thiếu module mới vẫn đủ).
+    for (const m of MODULE_DEFAULTS) {
+      await this.prisma.$executeRaw`
+        INSERT INTO module_configs (id, tenant_id, module_id, is_enabled, display_name, description, is_core, updated_at)
+        VALUES (${randomUUID()}, ${id}, ${m.moduleId}, ${m.isEnabled}, ${m.displayName}, ${m.description}, ${m.isCore}, now())
+        ON CONFLICT (tenant_id, module_id) DO NOTHING`;
+    }
+
+    return this.prisma.$queryRaw<
+      Array<{ moduleId: string; isEnabled: boolean; displayName: string; description: string | null; isCore: boolean }>
+    >`
+      SELECT module_id AS "moduleId", is_enabled AS "isEnabled", display_name AS "displayName",
+             description, is_core AS "isCore"
+      FROM module_configs WHERE tenant_id = ${id}
+      ORDER BY is_core DESC, display_name ASC`;
+  }
+
+  // Bật/tắt một module cho MỘT tenant cụ thể. Module core không được tắt.
+  async setModule(id: string, moduleId: string, isEnabled: boolean, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
+    const def = MODULE_DEFAULTS.find((m) => m.moduleId === moduleId);
+    if (!def) throw new NotFoundException(`Module '${moduleId}' không tồn tại`);
+    if (def.isCore && !isEnabled) throw new ForbiddenException('Module core không thể bị tắt');
+    const t = await this.prisma.tenant.findUnique({ where: { id } });
+    if (!t) throw new NotFoundException('Tenant không tồn tại');
+
+    await this.prisma.$executeRaw`
+      INSERT INTO module_configs (id, tenant_id, module_id, is_enabled, display_name, description, is_core, updated_at)
+      VALUES (${randomUUID()}, ${id}, ${moduleId}, ${isEnabled}, ${def.displayName}, ${def.description}, ${def.isCore}, now())
+      ON CONFLICT (tenant_id, module_id) DO UPDATE SET is_enabled = ${isEnabled}, updated_at = now()`;
+
+    return { moduleId, isEnabled };
   }
 
   async create(dto: CreateTenantDto) {
     return this.prisma.tenant.create({ data: dto });
   }
 
-  async deactivate(id: string, currentTenantId: string | null) {
-    this.assertSameTenant(id, currentTenantId);
+  async deactivate(id: string, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
     const t = await this.prisma.tenant.findUnique({ where: { id } });
     if (!t) throw new NotFoundException('Tenant không tồn tại');
     return this.prisma.tenant.update({ where: { id }, data: { isActive: false } });
@@ -102,8 +170,8 @@ export class TenantService {
     return t;
   }
 
-  async update(id: string, dto: UpdateTenantDto, currentTenantId: string | null) {
-    this.assertSameTenant(id, currentTenantId);
+  async update(id: string, dto: UpdateTenantDto, user: JwtUser | null) {
+    this.assertCanAccess(id, user);
     const t = await this.prisma.tenant.findUnique({ where: { id } });
     if (!t) throw new NotFoundException('Tenant không tồn tại');
     return this.prisma.tenant.update({ where: { id }, data: dto });

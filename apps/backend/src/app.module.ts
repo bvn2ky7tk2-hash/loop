@@ -12,6 +12,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { PermissionGuard } from './common/guards/permission.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
+import { ModuleEnabledGuard } from './common/guards/module-enabled.guard';
 import { LoggerModule } from 'nestjs-pino';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -92,6 +93,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: PermissionGuard },
     { provide: APP_GUARD, useClass: TenantGuard },
+    // Chạy SAU TenantGuard (đã có req.__tenantId) → chặn API của module bị tắt.
+    { provide: APP_GUARD, useClass: ModuleEnabledGuard },
     // Chạy SAU guards, TRƯỚC OrgScopeInterceptor → set tenantId vào CLS cho Prisma extension.
     { provide: APP_INTERCEPTOR, useClass: TenantClsInterceptor },
     { provide: APP_INTERCEPTOR, useClass: OrgScopeInterceptor },
