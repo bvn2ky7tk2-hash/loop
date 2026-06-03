@@ -1,34 +1,21 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Table,
   Button,
-  Space,
-  Typography,
-  Tag,
   Form,
   Input,
-  InputNumber,
   Select,
   DatePicker,
-  Descriptions,
   Row,
   Col,
   App,
-  Tooltip,
 } from 'antd';
 import {
   PlusOutlined,
   FileProtectOutlined,
   ClockCircleOutlined,
-  EditOutlined,
   CalendarOutlined,
-  SendOutlined,
-  CheckOutlined,
   CheckCircleOutlined,
-  CloseOutlined,
-  FilePdfOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 
@@ -36,60 +23,17 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
-import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { hrDecisionsApi, type HrDecision, type HrDecisionType, type HrDecisionStatus } from '../../api/hr-decisions';
 import { employeesApi } from '../../api/employees';
 import { positionsApi } from '../../api/hr-core';
 import { orgUnitsApi } from '../../api/org-units';
-import { EmployeeSelect, OrgUnitSelect } from '../../components/selects';
-import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
-
-const { Text } = Typography;
-const { TextArea } = Input;
-
-// ─── Label + color maps ───────────────────────────────────────────────────────
-
-const DECISION_TYPE_MAP: Record<HrDecisionType, { label: string; color: string }> = {
-  HIRE:            { label: 'Tuyển dụng',         color: '#10B981' },
-  PROBATION_END:   { label: 'Kết thúc thử việc',  color: '#3B82F6' },
-  TRANSFER:        { label: 'Điều chuyển',         color: '#8B5CF6' },
-  POSITION_CHANGE: { label: 'Thay đổi vị trí',    color: '#6366F1' },
-  SALARY_CHANGE:   { label: 'Điều chỉnh lương',   color: '#F59E0B' },
-  COMMENDATION:    { label: 'Khen thưởng',         color: '#F97316' },
-  DISCIPLINE:      { label: 'Kỷ luật',             color: '#EF4444' },
-  TERMINATION:     { label: 'Chấm dứt HĐ',         color: '#94A3B8' },
-  PROMOTION:       { label: 'Thăng chức',          color: '#EC4899' },
-  SECONDMENT:      { label: 'Biệt phái',           color: '#0EA5E9' },
-};
-
-const STATUS_MAP: Record<HrDecisionStatus, { label: string; antColor: string }> = {
-  DRAFT:    { label: 'Bản nháp',  antColor: 'default' },
-  PENDING:  { label: 'Chờ duyệt', antColor: 'warning' },
-  APPROVED: { label: 'Đã duyệt',  antColor: 'success' },
-  REJECTED: { label: 'Từ chối',   antColor: 'error'   },
-};
-
-// Helper: render TypeTag với explicit dark-mode style
-function TypeTag({ type, isDark }: { type: HrDecisionType; isDark: boolean }) {
-  const meta = DECISION_TYPE_MAP[type];
-  if (!meta) return <Text>{type}</Text>;
-  const hex = meta.color;
-
-  const style = isDark
-    ? {
-        background: `${hex}26`,
-        color: `${hex}`,
-        borderColor: `${hex}50`,
-      }
-    : {};
-
-  return (
-    <Tag color={isDark ? undefined : hex} style={style}>
-      {meta.label}
-    </Tag>
-  );
-}
+import { OrgUnitSelect } from '../../components/selects';
+import { DECISION_TYPE_MAP, STATUS_MAP } from './hr-decisions/constants';
+import { DecisionsTable } from './hr-decisions/components/DecisionsTable';
+import { DecisionDetailModal } from './hr-decisions/components/DecisionDetailModal';
+import { RejectModal } from './hr-decisions/components/RejectModal';
+import { DecisionFormModal } from './hr-decisions/components/DecisionFormModal';
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
@@ -323,126 +267,6 @@ export default function HrDecisionsPage() {
     rejectMutation.mutate({ id: rejectTarget, reason: rejectReason });
   };
 
-  // ── Table columns ──
-  const columns: ColumnsType<HrDecision> = [
-    {
-      title: 'Số QĐ',
-      key: 'decisionNumber',
-      width: 130,
-      render: (_, record) => (
-        <span
-          style={{ color: linkColor, fontWeight: 600, cursor: 'pointer' }}
-          onClick={() => setDetailRecord(record)}
-        >
-          {record.decisionNumber ?? '—'}
-        </span>
-      ),
-    },
-    {
-      title: 'Nhân viên',
-      key: 'employee',
-      render: (_, record) =>
-        record.employee ? (
-          <EmployeeInfoCell employee={record.employee} />
-        ) : (
-          <Text style={{ color: textMuted }}>{record.employeeId}</Text>
-        ),
-    },
-    {
-      title: 'Loại quyết định',
-      key: 'type',
-      width: 160,
-      render: (_, record) => <TypeTag type={record.type} isDark={isDark} />,
-    },
-    {
-      title: 'Ngày hiệu lực',
-      key: 'effectiveDate',
-      width: 130,
-      render: (_, record) => (
-        <Text style={{ color: textMuted }}>
-          {dayjs(record.effectiveDate).format('DD/MM/YYYY')}
-        </Text>
-      ),
-    },
-    {
-      title: 'Người ký',
-      key: 'signedBy',
-      render: (_, record) => (
-        <Text style={{ color: textMuted }}>{record.signedBy ?? '—'}</Text>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      key: 'status',
-      width: 120,
-      render: (_, record) => {
-        const meta = STATUS_MAP[record.status];
-        return <Tag color={meta?.antColor}>{meta?.label ?? record.status}</Tag>;
-      },
-    },
-    {
-      title: 'Thao tác',
-      key: 'actions',
-      width: 160,
-      render: (_, record) => (
-        <Space size={4}>
-          {(record.status === 'DRAFT') && (
-            <Tooltip title="Sửa">
-              <Button
-                size="small"
-                icon={<EditOutlined />}
-                onClick={() => openEdit(record)}
-              />
-            </Tooltip>
-          )}
-          {record.status === 'DRAFT' && (
-            <Tooltip title="Nộp để duyệt">
-              <Button
-                size="small"
-                icon={<SendOutlined />}
-                onClick={() => submitMutation.mutate(record.id)}
-                loading={submitMutation.isPending}
-                disabled={submitMutation.isPending}
-              />
-            </Tooltip>
-          )}
-          {record.status === 'PENDING' && (
-            <>
-              <Tooltip title="Duyệt">
-                <Button
-                  size="small"
-                  type="primary"
-                  icon={<CheckOutlined />}
-                  onClick={() => approveMutation.mutate(record.id)}
-                  loading={approveMutation.isPending}
-                  disabled={approveMutation.isPending}
-                />
-              </Tooltip>
-              <Tooltip title="Từ chối">
-                <Button
-                  size="small"
-                  danger
-                  icon={<CloseOutlined />}
-                  onClick={() => openReject(record.id)}
-                />
-              </Tooltip>
-            </>
-          )}
-          {record.status === 'APPROVED' && record.pdfPath && (
-            <Tooltip title="Tải PDF">
-              <Button
-                size="small"
-                icon={<FilePdfOutlined />}
-                href={record.pdfPath}
-                target="_blank"
-              />
-            </Tooltip>
-          )}
-        </Space>
-      ),
-    },
-  ];
-
   // ── Render ──
   return (
     <div style={{ padding: 24 }}>
@@ -546,424 +370,75 @@ export default function HrDecisionsPage() {
       </FilterBar>
 
       {/* Table */}
-      <div
-        style={{
-          background: bgContainer,
-          borderRadius: 12,
-          border: `1px solid ${borderColor}`,
-          overflow: 'hidden',
-        }}
-      >
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={decisions}
-          loading={isLoading}
-          pagination={paginationProps(total, 'quyết định')}
-          scroll={{ x: 900 }}
-        />
-      </div>
+      <DecisionsTable
+        decisions={decisions}
+        total={total}
+        isLoading={isLoading}
+        paginationProps={paginationProps}
+        textMuted={textMuted}
+        linkColor={linkColor}
+        borderColor={borderColor}
+        bgContainer={bgContainer}
+        isDark={isDark}
+        onShowDetail={setDetailRecord}
+        onEdit={openEdit}
+        onSubmit={(id) => submitMutation.mutate(id)}
+        onApprove={(id) => approveMutation.mutate(id)}
+        onReject={openReject}
+        submitPending={submitMutation.isPending}
+        approvePending={approveMutation.isPending}
+      />
 
       {/* ─── Modal: Chi tiết quyết định ────────────────────────────────── */}
-      <CenteredModal
-        open={!!detailRecord}
+      <DecisionDetailModal
+        detailRecord={detailRecord}
         onClose={() => setDetailRecord(null)}
-        title="Chi tiết quyết định"
-        width={560}
-        footer={
-          detailRecord && (
-            <Space wrap>
-              {detailRecord.status === 'DRAFT' && (
-                <Button
-                  type="primary"
-                  icon={<SendOutlined />}
-                  loading={submitMutation.isPending}
-                  disabled={submitMutation.isPending}
-                  onClick={() => submitMutation.mutate(detailRecord.id)}
-                >
-                  Nộp để duyệt
-                </Button>
-              )}
-              {detailRecord.status === 'PENDING' && (
-                <>
-                  <Button
-                    type="primary"
-                    icon={<CheckOutlined />}
-                    loading={approveMutation.isPending}
-                    disabled={approveMutation.isPending}
-                    onClick={() => approveMutation.mutate(detailRecord.id)}
-                  >
-                    Duyệt
-                  </Button>
-                  <Button
-                    danger
-                    icon={<CloseOutlined />}
-                    onClick={() => openReject(detailRecord.id)}
-                  >
-                    Từ chối
-                  </Button>
-                </>
-              )}
-              {detailRecord.status === 'APPROVED' && detailRecord.pdfPath && (
-                <Button icon={<FilePdfOutlined />} href={detailRecord.pdfPath} target="_blank">
-                  Tải PDF
-                </Button>
-              )}
-              <Button onClick={() => setDetailRecord(null)}>Đóng</Button>
-            </Space>
-          )
-        }
-      >
-        {detailRecord && (
-          <Descriptions
-            bordered
-            size="small"
-            column={1}
-            labelStyle={{ color: textMuted, width: 160 }}
-            contentStyle={{ color: textPrimary }}
-          >
-            <Descriptions.Item label="Số quyết định">
-              <Text style={{ color: linkColor, fontWeight: 600 }}>
-                {detailRecord.decisionNumber ?? '—'}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Nhân viên">
-              {detailRecord.employee ? (
-                <EmployeeInfoCell employee={detailRecord.employee} variant="descriptions" />
-              ) : (
-                <Text style={{ color: textMuted }}>{detailRecord.employeeId}</Text>
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item label="Loại QĐ">
-              <TypeTag type={detailRecord.type} isDark={isDark} />
-            </Descriptions.Item>
-            <Descriptions.Item label="Trạng thái">
-              <Tag color={STATUS_MAP[detailRecord.status]?.antColor}>
-                {STATUS_MAP[detailRecord.status]?.label ?? detailRecord.status}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label="Ngày ký">
-              <Text style={{ color: textMuted }}>
-                {detailRecord.signedDate ? dayjs(detailRecord.signedDate).format('DD/MM/YYYY') : '—'}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Ngày hiệu lực">
-              <Text style={{ color: textMuted }}>
-                {dayjs(detailRecord.effectiveDate).format('DD/MM/YYYY')}
-              </Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Người ký">
-              <Text style={{ color: textMuted }}>{detailRecord.signedBy ?? '—'}</Text>
-            </Descriptions.Item>
-            {detailRecord.toSalary !== undefined && (
-              <Descriptions.Item label="Lương mới">
-                <Text style={{ color: linkColor, fontWeight: 600 }}>
-                  {detailRecord.toSalary.toLocaleString('vi-VN')} ₫
-                </Text>
-              </Descriptions.Item>
-            )}
-            {detailRecord.fromSalary !== undefined && (
-              <Descriptions.Item label="Lương cũ">
-                <Text style={{ color: textMuted }}>
-                  {detailRecord.fromSalary.toLocaleString('vi-VN')} ₫
-                </Text>
-              </Descriptions.Item>
-            )}
-            <Descriptions.Item label="Nội dung">
-              <Text style={{ color: textPrimary }}>{detailRecord.content ?? '—'}</Text>
-            </Descriptions.Item>
-            <Descriptions.Item label="Ghi chú">
-              <Text style={{ color: textMuted }}>{detailRecord.notes ?? '—'}</Text>
-            </Descriptions.Item>
-          </Descriptions>
-        )}
-      </CenteredModal>
+        onSubmit={(id) => submitMutation.mutate(id)}
+        onApprove={(id) => approveMutation.mutate(id)}
+        onReject={openReject}
+        submitPending={submitMutation.isPending}
+        approvePending={approveMutation.isPending}
+        textPrimary={textPrimary}
+        textMuted={textMuted}
+        linkColor={linkColor}
+        isDark={isDark}
+      />
 
       {/* ─── Modal: Từ chối ─────────────────────────────────────────────── */}
-      <CenteredModal
+      <RejectModal
         open={rejectOpen}
         onClose={() => {
           setRejectOpen(false);
           setRejectTarget(null);
         }}
-        title="Từ chối quyết định"
-        width={440}
-        footer={
-          <Space>
-            <Button onClick={() => setRejectOpen(false)}>Huỷ</Button>
-            <Button
-              danger
-              loading={rejectMutation.isPending}
-              disabled={rejectMutation.isPending}
-              onClick={handleRejectConfirm}
-            >
-              Xác nhận từ chối
-            </Button>
-          </Space>
-        }
-      >
-        <Form layout="vertical">
-          <Form.Item label={<Text style={{ color: textPrimary }}>Lý do từ chối</Text>}>
-            <TextArea
-              rows={3}
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Nhập lý do từ chối..."
-            />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        onCancel={() => setRejectOpen(false)}
+        rejectReason={rejectReason}
+        onReasonChange={setRejectReason}
+        onConfirm={handleRejectConfirm}
+        rejectPending={rejectMutation.isPending}
+        textPrimary={textPrimary}
+      />
 
       {/* ─── Modal: Tạo / Sửa quyết định ──────────────────────────────── */}
-      <CenteredModal
+      <DecisionFormModal
         open={formOpen}
+        editRecord={editRecord}
+        form={form}
         onClose={closeForm}
-        title={editRecord ? 'Sửa quyết định nhân sự' : 'Tạo quyết định nhân sự'}
-        width={620}
-        footer={
-          <Space>
-            <Button onClick={closeForm}>Huỷ</Button>
-            <Button
-              type="primary"
-              loading={createMutation.isPending || updateMutation.isPending}
-              disabled={createMutation.isPending || updateMutation.isPending}
-              onClick={handleSaveForm}
-            >
-              {editRecord ? 'Lưu thay đổi' : 'Tạo quyết định'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={form} layout="vertical" requiredMark="optional">
-          {/* Loại QĐ */}
-          <Form.Item
-            name="type"
-            label={<Text style={{ color: textPrimary }}>Loại quyết định</Text>}
-            rules={[{ required: true, message: 'Vui lòng chọn loại quyết định' }]}
-          >
-            <Select
-              placeholder="Chọn loại quyết định"
-              onChange={(v: HrDecisionType) => setSelectedType(v)}
-              options={Object.entries(DECISION_TYPE_MAP).map(([k, v]) => ({
-                value: k,
-                label: v.label,
-              }))}
-            />
-          </Form.Item>
-
-          {/* Nhân viên */}
-          <Form.Item
-            name="employeeId"
-            label={<Text style={{ color: textPrimary }}>Nhân viên</Text>}
-            rules={[{ required: true, message: 'Vui lòng chọn nhân viên' }]}
-          >
-            <Select
-              showSearch
-              placeholder="Tìm và chọn nhân viên"
-              filterOption={(input, option) =>
-                String(option?.label ?? '')
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-              options={empOptions}
-              onChange={(v: string) => setSelectedEmpId(v)}
-            />
-          </Form.Item>
-
-          {/* Hiển thị thông tin nhân viên được chọn */}
-          {selectedEmpDetail && (
-            <div style={{
-              padding: '8px 12px',
-              borderRadius: 8,
-              background: isDark ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.06)',
-              border: `1px solid ${isDark ? 'rgba(99,102,241,0.3)' : 'rgba(99,102,241,0.2)'}`,
-              marginBottom: 16,
-              display: 'flex', gap: 16, flexWrap: 'wrap',
-            }}>
-              <div>
-                <Text style={{ fontSize: 11, color: textMuted }}>Đơn vị hiện tại</Text>
-                <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
-                  {selectedEmpDetail.orgUnit?.name ?? '—'}
-                </div>
-              </div>
-              <div>
-                <Text style={{ fontSize: 11, color: textMuted }}>Vị trí hiện tại</Text>
-                <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
-                  {selectedEmpDetail.position?.jobTitle?.name ?? '—'}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <Row gutter={12}>
-            {/* Số QĐ */}
-            <Col span={12}>
-              <Form.Item
-                name="decisionNumber"
-                label={<Text style={{ color: textPrimary }}>Số quyết định</Text>}
-              >
-                <Input placeholder="VD: QĐ-2026-001 (để trống = tự động)" />
-              </Form.Item>
-            </Col>
-            {/* Người ký */}
-            <Col span={12}>
-              <Form.Item
-                name="signedByEmpId"
-                label={<Text style={{ color: textPrimary }}>Người ký</Text>}
-              >
-                <EmployeeSelect
-                  allowClear
-                  placeholder="Chọn người ký..."
-                  onChange={(v) => setSignedByEmpId(v)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={12}>
-            {/* Ngày ký */}
-            <Col span={12}>
-              <Form.Item
-                name="signedDate"
-                label={<Text style={{ color: textPrimary }}>Ngày ký</Text>}
-              >
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-            {/* Ngày hiệu lực */}
-            <Col span={12}>
-              <Form.Item
-                name="effectiveDate"
-                label={<Text style={{ color: textPrimary }}>Ngày hiệu lực</Text>}
-                rules={[{ required: true, message: 'Bắt buộc' }]}
-              >
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          {/* Conditional: Điều chỉnh lương */}
-          {(selectedType === 'SALARY_CHANGE') && (
-            <Row gutter={12}>
-              <Col span={12}>
-                <Form.Item
-                  name="fromSalary"
-                  label={<Text style={{ color: textPrimary }}>Lương hiện tại (₫)</Text>}
-                >
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    min={0}
-                    formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    placeholder="0"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="toSalary"
-                  label={<Text style={{ color: textPrimary }}>Lương mới (₫)</Text>}
-                  rules={[{ required: true, message: 'Nhập lương mới' }]}
-                >
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    min={0}
-                    formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    placeholder="0"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-
-          {/* Conditional: Điều chuyển / Thay đổi vị trí / Biệt phái */}
-          {(selectedType === 'TRANSFER' ||
-            selectedType === 'SECONDMENT' ||
-            selectedType === 'POSITION_CHANGE') && (
-            <Row gutter={12}>
-              <Col span={12}>
-                <Form.Item
-                  name="fromOrgUnitId"
-                  label={<Text style={{ color: textPrimary }}>Phòng ban hiện tại</Text>}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Chọn phòng ban..."
-                    filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-                    options={orgOptions}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="toOrgUnitId"
-                  label={<Text style={{ color: textPrimary }}>Phòng ban mới</Text>}
-                  rules={[{ required: true, message: 'Chọn phòng ban mới' }]}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Chọn phòng ban..."
-                    filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-                    options={orgOptions}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-
-          {/* Conditional: Thăng chức / Thay đổi vị trí */}
-          {(selectedType === 'PROMOTION' || selectedType === 'POSITION_CHANGE') && (
-            <Row gutter={12}>
-              <Col span={12}>
-                <Form.Item
-                  name="fromPositionId"
-                  label={<Text style={{ color: textPrimary }}>Vị trí hiện tại</Text>}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Chọn vị trí..."
-                    filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-                    options={positionOptions}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="toPositionId"
-                  label={<Text style={{ color: textPrimary }}>Vị trí mới</Text>}
-                  rules={[{ required: true, message: 'Chọn vị trí mới' }]}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    placeholder="Chọn vị trí..."
-                    filterOption={(input, opt) => (opt?.label as string)?.toLowerCase().includes(input.toLowerCase())}
-                    options={positionOptions}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-
-          {/* Nội dung QĐ */}
-          <Form.Item
-            name="content"
-            label={<Text style={{ color: textPrimary }}>Nội dung quyết định</Text>}
-          >
-            <TextArea rows={3} placeholder="Mô tả nội dung quyết định..." />
-          </Form.Item>
-
-          {/* Ghi chú */}
-          <Form.Item
-            name="notes"
-            label={<Text style={{ color: textPrimary }}>Ghi chú</Text>}
-          >
-            <TextArea rows={2} placeholder="Ghi chú thêm (nếu có)..." />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        onSave={handleSaveForm}
+        savePending={createMutation.isPending || updateMutation.isPending}
+        selectedType={selectedType}
+        onTypeChange={(v) => setSelectedType(v)}
+        onEmpChange={(v) => setSelectedEmpId(v)}
+        onSignedByChange={(v) => setSignedByEmpId(v)}
+        selectedEmpDetail={selectedEmpDetail}
+        empOptions={empOptions}
+        orgOptions={orgOptions}
+        positionOptions={positionOptions}
+        textPrimary={textPrimary}
+        textMuted={textMuted}
+        isDark={isDark}
+      />
     </div>
   );
 }
