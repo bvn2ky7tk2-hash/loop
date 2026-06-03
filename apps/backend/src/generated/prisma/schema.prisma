@@ -209,7 +209,8 @@ model Employee {
 
 model Skill {
   id          String          @id @default(uuid())
-  tenantId    String?         @map("tenant_id")
+  tenantId    String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant          @relation("TenantSkill", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String          @unique
   category    SkillCategory   @default(TECHNICAL)
   description String?
@@ -223,7 +224,8 @@ model Skill {
 
 model EmployeeSkill {
   id          String     @id @default(uuid())
-  tenantId    String?    @map("tenant_id")
+  tenantId    String     @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant     @relation("TenantEmployeeSkill", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId  String     @map("employee_id")
   skillId     String     @map("skill_id")
   level       SkillLevel @default(BEGINNER)
@@ -260,7 +262,8 @@ enum SkillLevel {
 
 model EmployeeRate {
   id            String         @id @default(uuid())
-  tenantId      String?        @map("tenant_id")
+  tenantId      String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant         @relation("TenantEmployeeRate", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId    String         @map("employee_id")
   ratePerDay    Decimal        @map("rate_per_day") @db.Decimal(12, 2)
   currency      BudgetCurrency @default(VND)
@@ -374,7 +377,8 @@ model Task {
 
 model TimeLog {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantTimeLog", fields: [tenantId], references: [id], onDelete: Cascade)
   taskId    String   @map("task_id")
   userId    String   @map("user_id")
   logDate   DateTime @map("log_date") @db.Date
@@ -390,7 +394,8 @@ model TimeLog {
 
 model WorkStatus {
   id         String         @id @default(uuid())
-  tenantId   String?        @map("tenant_id")
+  tenantId   String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant         @relation("TenantWorkStatus", fields: [tenantId], references: [id], onDelete: Cascade)
   userId     String         @map("user_id")
   statusType WorkStatusType @map("status_type")
   startedAt  DateTime       @map("started_at")
@@ -431,7 +436,8 @@ model TimeEntry {
 
 model TimesheetRecord {
   id              String          @id @default(uuid())
-  tenantId        String?         @map("tenant_id")
+  tenantId        String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant          @relation("TenantTimesheetRecord", fields: [tenantId], references: [id], onDelete: Cascade)
   userId          String          @map("user_id")
   periodStart     DateTime        @map("period_start") @db.Date
   periodEnd       DateTime        @map("period_end") @db.Date
@@ -462,7 +468,8 @@ model TimesheetRecord {
 
 model AlertConfig {
   id            String           @id @default(uuid())
-  tenantId      String?          @map("tenant_id")
+  tenantId      String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant           @relation("TenantAlertConfig", fields: [tenantId], references: [id], onDelete: Cascade)
   projectId     String           @map("project_id")
   type          NotificationType
   threshold     Decimal?         @db.Decimal(5, 2)
@@ -479,7 +486,8 @@ model AlertConfig {
 
 model Notification {
   id         String           @id @default(uuid())
-  tenantId   String?          @map("tenant_id")
+  tenantId   String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant           @relation("TenantNotification", fields: [tenantId], references: [id], onDelete: Cascade)
   userId     String           @map("user_id")
   type       NotificationType
   title      String
@@ -499,7 +507,8 @@ model Notification {
 
 model PushToken {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantPushToken", fields: [tenantId], references: [id], onDelete: Cascade)
   userId    String   @map("user_id")
   token     String   @unique
   platform  String
@@ -512,7 +521,8 @@ model PushToken {
 
 model TelegramConfig {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantTelegramConfig", fields: [tenantId], references: [id], onDelete: Cascade)
   botToken  String   @map("bot_token")
   chatId    String   @map("chat_id")
   isEnabled Boolean  @default(false) @map("is_enabled")
@@ -525,7 +535,8 @@ model TelegramConfig {
 
 model TelegramMessage {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantTelegramMessage", fields: [tenantId], references: [id], onDelete: Cascade)
   taskId    String   @map("task_id")
   eventType String   @map("event_type")
   messageId Int      @map("message_id")
@@ -596,7 +607,8 @@ model ProcessInstance {
 
 model ProcessUserTask {
   id              String          @id @default(uuid())
-  tenantId        String?         @map("tenant_id")
+  tenantId        String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant          @relation("TenantProcessUserTask", fields: [tenantId], references: [id], onDelete: Cascade)
   instanceId      String          @map("instance_id")
   activityId      String          @map("activity_id")
   name            String
@@ -618,7 +630,8 @@ model ProcessUserTask {
 
 model ProcessActivityLog {
   id           String          @id @default(uuid())
-  tenantId     String?         @map("tenant_id")
+  tenantId     String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant       Tenant          @relation("TenantProcessActivityLog", fields: [tenantId], references: [id], onDelete: Cascade)
   instanceId   String          @map("instance_id")
   activityId   String          @map("activity_id")
   activityName String          @map("activity_name")
@@ -679,11 +692,12 @@ model Bug {
 }
 
 model BugTask {
-  bugId    String  @map("bug_id")
-  taskId   String  @map("task_id")
-  bug      Bug     @relation(fields: [bugId], references: [id], onDelete: Cascade)
-  task     Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  tenantId String? @map("tenant_id")
+  bugId    String @map("bug_id")
+  taskId   String @map("task_id")
+  bug      Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tenantId String @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant @relation("TenantBugTask", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([bugId, taskId])
   @@index([tenantId])
@@ -692,7 +706,8 @@ model BugTask {
 
 model BugAttachment {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant   @relation("TenantBugAttachment", fields: [tenantId], references: [id], onDelete: Cascade)
   bugId       String   @map("bug_id")
   uploaderId  String   @map("uploader_id")
   filename    String
@@ -710,7 +725,8 @@ model BugAttachment {
 
 model BugComment {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantBugComment", fields: [tenantId], references: [id], onDelete: Cascade)
   bugId     String   @map("bug_id")
   authorId  String   @map("author_id")
   content   String
@@ -725,10 +741,11 @@ model BugComment {
 }
 
 model BugTag {
-  bugId    String  @map("bug_id")
+  bugId    String @map("bug_id")
   tag      String
-  bug      Bug     @relation(fields: [bugId], references: [id], onDelete: Cascade)
-  tenantId String? @map("tenant_id")
+  bug      Bug    @relation(fields: [bugId], references: [id], onDelete: Cascade)
+  tenantId String @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant @relation("TenantBugTag", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([bugId, tag])
   @@index([tenantId])
@@ -787,7 +804,8 @@ model UserPermission {
   createdAt      DateTime   @default(now()) @map("created_at")
   permission     Permission @relation(fields: [permissionCode], references: [code], onDelete: Cascade)
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenantId       String?    @map("tenant_id")
+  tenantId       String     @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant     @relation("TenantUserPermission", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, permissionCode])
   @@index([tenantId])
@@ -824,7 +842,8 @@ model UserModuleRole {
   createdAt DateTime   @default(now()) @map("created_at")
   role      ModuleRole @relation(fields: [roleCode], references: [code], onDelete: Cascade)
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenantId  String?    @map("tenant_id")
+  tenantId  String     @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant     @relation("TenantUserModuleRole", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, roleCode])
   @@index([tenantId])
@@ -987,7 +1006,8 @@ enum BugItemType {
 
 model AuditLog {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantAuditLog", fields: [tenantId], references: [id], onDelete: Cascade)
   userId    String?  @map("user_id")
   action    String
   module    String?
@@ -1014,7 +1034,8 @@ model AuditLog {
 
 model UserGroup {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant   @relation("TenantUserGroup", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String   @unique
   description String?
   isDefault   Boolean  @default(false) @map("is_default")
@@ -1034,7 +1055,8 @@ model GroupPermission {
   permCode String @map("perm_code")
 
   group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  tenantId String?   @map("tenant_id")
+  tenantId String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant    @relation("TenantGroupPermission", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([groupId, permCode])
   @@index([tenantId])
@@ -1047,7 +1069,8 @@ model GroupMembership {
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  tenantId String?   @map("tenant_id")
+  tenantId String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant    @relation("TenantGroupMembership", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, groupId])
   @@index([tenantId])
@@ -1061,7 +1084,8 @@ model GroupOrgAccess {
 
   group    UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
   orgUnit  OrgUnit   @relation(fields: [orgUnitId], references: [id], onDelete: Cascade)
-  tenantId String?   @map("tenant_id")
+  tenantId String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant    @relation("TenantGroupOrgAccess", fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([groupId, orgUnitId])
   @@index([tenantId])
@@ -1108,7 +1132,8 @@ model Contract {
 
 model ContractAllowance {
   id              String        @id @default(uuid())
-  tenantId        String?       @map("tenant_id")
+  tenantId        String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant        @relation("TenantContractAllowance", fields: [tenantId], references: [id], onDelete: Cascade)
   contractId      String        @map("contract_id")
   allowanceTypeId String        @map("allowance_type_id")
   amount          Decimal       @db.Decimal(12, 2)
@@ -1148,7 +1173,8 @@ enum ContractStatus {
 
 model LeaveType {
   id                   String         @id @default(uuid())
-  tenantId             String?        @map("tenant_id")
+  tenantId             String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant               Tenant         @relation("TenantLeaveType", fields: [tenantId], references: [id], onDelete: Cascade)
   name                 String         @unique
   maxDaysPerYear       Int            @map("max_days_per_year")
   isPaid               Boolean        @default(true) @map("is_paid")
@@ -1241,7 +1267,8 @@ enum OtDayType {
 
 model OvertimeRequest {
   id                String           @id @default(uuid())
-  tenantId          String?          @map("tenant_id")
+  tenantId          String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant           @relation("TenantOvertimeRequest", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId        String           @map("employee_id")
   date              DateTime         @db.Date
   fromTime          String?          @map("from_time")
@@ -1354,7 +1381,8 @@ enum PayrollStatus {
 
 model Expense {
   id                String           @id @default(uuid())
-  tenantId          String?          @map("tenant_id")
+  tenantId          String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant           @relation("TenantExpense", fields: [tenantId], references: [id], onDelete: Cascade)
   projectId         String?          @map("project_id")
   submittedById     String           @map("submitted_by_id")
   employeeId        String?          @map("employee_id")
@@ -1386,7 +1414,8 @@ model Expense {
 
 model ExpenseItem {
   id          String  @id @default(uuid())
-  tenantId    String? @map("tenant_id")
+  tenantId    String  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant  @relation("TenantExpenseItem", fields: [tenantId], references: [id], onDelete: Cascade)
   expenseId   String  @map("expense_id")
   description String
   amount      Decimal @db.Decimal(15, 2)
@@ -1701,7 +1730,8 @@ model ClientContract {
 
 model ContractMilestone {
   id         String          @id @default(uuid())
-  tenantId   String?         @map("tenant_id")
+  tenantId   String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant          @relation("TenantContractMilestone", fields: [tenantId], references: [id], onDelete: Cascade)
   contractId String          @map("contract_id")
   name       String          @db.VarChar(200)
   dueDate    DateTime        @map("due_date") @db.Date
@@ -1793,7 +1823,8 @@ model Invoice {
 
 model InvoiceItem {
   id          String  @id @default(uuid())
-  tenantId    String? @map("tenant_id")
+  tenantId    String  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant  @relation("TenantInvoiceItem", fields: [tenantId], references: [id], onDelete: Cascade)
   invoiceId   String  @map("invoice_id")
   invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   description String
@@ -1976,7 +2007,8 @@ model Asset {
 
 model AssetAssignment {
   id         String    @id @default(uuid())
-  tenantId   String?   @map("tenant_id")
+  tenantId   String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant    @relation("TenantAssetAssignment", fields: [tenantId], references: [id], onDelete: Cascade)
   assetId    String    @map("asset_id")
   asset      Asset     @relation(fields: [assetId], references: [id], onDelete: Cascade)
   employeeId String    @map("employee_id")
@@ -1994,7 +2026,8 @@ model AssetAssignment {
 
 model AssetMaintenance {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant   @relation("TenantAssetMaintenance", fields: [tenantId], references: [id], onDelete: Cascade)
   assetId     String   @map("asset_id")
   asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
   type        String   @db.VarChar(50)
@@ -2036,7 +2069,8 @@ enum AssetStatus {
 
 model ChartOfAccount {
   id             String                  @id @default(uuid())
-  tenantId       String?                 @map("tenant_id")
+  tenantId       String                  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant                  @relation("TenantChartOfAccount", fields: [tenantId], references: [id], onDelete: Cascade)
   code           String                  @unique @db.VarChar(20)
   name           String                  @db.VarChar(200)
   type           AccountType
@@ -2055,7 +2089,8 @@ model ChartOfAccount {
 
 model JournalEntry {
   id          String        @id @default(uuid())
-  tenantId    String?       @map("tenant_id")
+  tenantId    String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant        @relation("TenantJournalEntry", fields: [tenantId], references: [id], onDelete: Cascade)
   date        DateTime      @db.Date
   description String        @db.VarChar(500)
   reference   String?       @db.VarChar(100)
@@ -2070,7 +2105,8 @@ model JournalEntry {
 
 model JournalLine {
   id          String         @id @default(uuid())
-  tenantId    String?        @map("tenant_id")
+  tenantId    String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant         @relation("TenantJournalLine", fields: [tenantId], references: [id], onDelete: Cascade)
   entryId     String         @map("entry_id")
   entry       JournalEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   accountCode String         @map("account_code") @db.VarChar(20)
@@ -2099,7 +2135,8 @@ enum AccountType {
 
 model TrainingProgram {
   id            String           @id @default(uuid())
-  tenantId      String?          @map("tenant_id")
+  tenantId      String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant           @relation("TenantTrainingProgram", fields: [tenantId], references: [id], onDelete: Cascade)
   title         String           @db.VarChar(200)
   type          String           @db.VarChar(50)
   durationHours Int              @map("duration_hours")
@@ -2114,7 +2151,8 @@ model TrainingProgram {
 
 model TrainingRecord {
   id          String          @id @default(uuid())
-  tenantId    String?         @map("tenant_id")
+  tenantId    String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant          @relation("TenantTrainingRecord", fields: [tenantId], references: [id], onDelete: Cascade)
   programId   String          @map("program_id")
   program     TrainingProgram @relation(fields: [programId], references: [id], onDelete: Restrict)
   employeeId  String          @map("employee_id")
@@ -2136,7 +2174,8 @@ model TrainingRecord {
 
 model PerformanceReview {
   id                String             @id @default(uuid())
-  tenantId          String?            @map("tenant_id")
+  tenantId          String             @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant             @relation("TenantPerformanceReview", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId        String             @map("employee_id")
   employee          Employee           @relation("ReviewSubject", fields: [employeeId], references: [id], onDelete: Restrict)
   reviewerId        String             @map("reviewer_id")
@@ -2240,7 +2279,8 @@ model WageZoneConfig {
 
 model EmployeeTaxProfile {
   employeeId      String          @id @map("employee_id")
-  tenantId        String?         @map("tenant_id")
+  tenantId        String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant          @relation("TenantEmployeeTaxProfile", fields: [tenantId], references: [id], onDelete: Cascade)
   taxId           String?         @map("tax_id")
   residencyStatus ResidencyStatus @default(RESIDENT) @map("residency_status")
   wageZone        Int             @default(1) @map("wage_zone")
@@ -2254,7 +2294,8 @@ model EmployeeTaxProfile {
 
 model Dependent {
   id             String             @id @default(uuid())
-  tenantId       String?            @map("tenant_id")
+  tenantId       String             @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant             @relation("TenantDependent", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId     String             @map("employee_id")
   name           String
   relationship   String
@@ -2272,7 +2313,8 @@ model Dependent {
 
 model AllowanceType {
   id                 String                   @id @default(uuid())
-  tenantId           String?                  @map("tenant_id")
+  tenantId           String                   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant             Tenant                   @relation("TenantAllowanceType", fields: [tenantId], references: [id], onDelete: Cascade)
   name               String                   @unique
   defaultAmount      Decimal                  @map("default_amount") @db.Decimal(12, 2)
   calculationMode    AllowanceCalculationMode @default(FIXED) @map("calculation_mode")
@@ -2298,7 +2340,8 @@ enum AllowanceCalculationMode {
 
 model BonusType {
   id              String          @id @default(uuid())
-  tenantId        String?         @map("tenant_id")
+  tenantId        String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant          @relation("TenantBonusType", fields: [tenantId], references: [id], onDelete: Cascade)
   name            String          @unique
   isBhxhExempt    Boolean         @default(true) @map("is_bhxh_exempt")
   isActive        Boolean         @default(true) @map("is_active")
@@ -2311,7 +2354,8 @@ model BonusType {
 
 model EmployeeBonus {
   id              String        @id @default(uuid())
-  tenantId        String?       @map("tenant_id")
+  tenantId        String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant        @relation("TenantEmployeeBonus", fields: [tenantId], references: [id], onDelete: Cascade)
   payrollRecordId String        @map("payroll_record_id")
   bonusTypeId     String        @map("bonus_type_id")
   amount          Decimal       @db.Decimal(15, 2)
@@ -2326,7 +2370,8 @@ model EmployeeBonus {
 
 model EmployeeYearlyTaxSummary {
   id               String   @id @default(uuid())
-  tenantId         String?  @map("tenant_id")
+  tenantId         String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant           Tenant   @relation("TenantEmployeeYearlyTaxSummary", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId       String   @map("employee_id")
   year             Int
   ytdGross         Decimal  @default(0) @map("ytd_gross") @db.Decimal(15, 2)
@@ -2344,7 +2389,8 @@ model EmployeeYearlyTaxSummary {
 
 model EmployeeAllowance {
   id              String        @id @default(uuid())
-  tenantId        String?       @map("tenant_id")
+  tenantId        String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant        @relation("TenantEmployeeAllowance", fields: [tenantId], references: [id], onDelete: Cascade)
   payrollRecordId String        @map("payroll_record_id")
   allowanceTypeId String        @map("allowance_type_id")
   amount          Decimal       @db.Decimal(12, 2)
@@ -2466,7 +2512,8 @@ model OkrObjective {
 
 model OkrKeyResult {
   id           String       @id @default(uuid())
-  tenantId     String?      @map("tenant_id")
+  tenantId     String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant       Tenant       @relation("TenantOkrKeyResult", fields: [tenantId], references: [id], onDelete: Cascade)
   objectiveId  String       @map("objective_id")
   objective    OkrObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
   title        String       @db.VarChar(300)
@@ -2484,7 +2531,8 @@ model OkrKeyResult {
 
 model KpiMetric {
   id          String       @id @default(uuid())
-  tenantId    String?      @map("tenant_id")
+  tenantId    String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant       @relation("TenantKpiMetric", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String       @db.VarChar(200)
   description String?      @db.Text
   unit        String       @default("")
@@ -2502,7 +2550,8 @@ model KpiMetric {
 
 model KpiRecord {
   id        String    @id @default(uuid())
-  tenantId  String?   @map("tenant_id")
+  tenantId  String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant    @relation("TenantKpiRecord", fields: [tenantId], references: [id], onDelete: Cascade)
   metricId  String    @map("metric_id")
   metric    KpiMetric @relation(fields: [metricId], references: [id], onDelete: Cascade)
   period    String    @db.VarChar(20)
@@ -2518,7 +2567,8 @@ model KpiRecord {
 
 model RevenueTarget {
   id         String   @id @default(uuid())
-  tenantId   String?  @map("tenant_id")
+  tenantId   String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant   @relation("TenantRevenueTarget", fields: [tenantId], references: [id], onDelete: Cascade)
   period     String   @db.VarChar(20) // "2026-05" | "2026-Q2"
   periodType String   @default("MONTHLY") @map("period_type") @db.VarChar(20)
   target     Decimal  @db.Decimal(18, 2)
@@ -2544,7 +2594,8 @@ enum KbStatus {
 
 model KbCategory {
   id          String      @id @default(uuid())
-  tenantId    String?     @map("tenant_id")
+  tenantId    String      @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant      @relation("TenantKbCategory", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String      @db.VarChar(100)
   description String?     @db.Text
   icon        String?     @db.VarChar(50)
@@ -2629,7 +2680,8 @@ model CustomerPortal {
 
 model CustomerTicket {
   id          String         @id @default(uuid())
-  tenantId    String?        @map("tenant_id")
+  tenantId    String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant         @relation("TenantCustomerTicket", fields: [tenantId], references: [id], onDelete: Cascade)
   portalId    String         @map("portal_id")
   portal      CustomerPortal @relation(fields: [portalId], references: [id], onDelete: Cascade)
   title       String         @db.VarChar(300)
@@ -2741,7 +2793,8 @@ model PurchaseOrder {
 
 model PurchaseOrderItem {
   id          String        @id @default(uuid())
-  tenantId    String?       @map("tenant_id")
+  tenantId    String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant        @relation("TenantPurchaseOrderItem", fields: [tenantId], references: [id], onDelete: Cascade)
   poId        String        @map("po_id")
   po          PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
   description String        @db.VarChar(300)
@@ -2794,7 +2847,8 @@ model Comment {
 
 model FeedPost {
   id          String         @id @default(uuid())
-  tenantId    String?        @map("tenant_id")
+  tenantId    String         @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant         @relation("TenantFeedPost", fields: [tenantId], references: [id], onDelete: Cascade)
   type        FeedPostType   @default(ANNOUNCEMENT)
   authorId    String         @map("author_id")
   title       String?        @db.VarChar(300)
@@ -2816,7 +2870,8 @@ model FeedPost {
 
 model FeedReaction {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantFeedReaction", fields: [tenantId], references: [id], onDelete: Cascade)
   postId    String   @map("post_id")
   userId    String   @map("user_id")
   emoji     String   @db.VarChar(10)
@@ -2839,7 +2894,8 @@ enum AutomationRunStatus {
 
 model AutomationRule {
   id          String              @id @default(uuid())
-  tenantId    String?             @map("tenant_id")
+  tenantId    String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant              @relation("TenantAutomationRule", fields: [tenantId], references: [id], onDelete: Cascade)
   key         String              @unique @db.VarChar(100)
   name        String              @db.VarChar(200)
   description String?             @db.Text
@@ -2862,7 +2918,8 @@ model AutomationRule {
 
 model AutomationRuleLog {
   id          String              @id @default(uuid())
-  tenantId    String?             @map("tenant_id")
+  tenantId    String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant              @relation("TenantAutomationRuleLog", fields: [tenantId], references: [id], onDelete: Cascade)
   ruleId      String              @map("rule_id")
   triggeredAt DateTime            @default(now()) @map("triggered_at")
   entityId    String?             @map("entity_id")
@@ -2896,7 +2953,8 @@ enum ReportFormat {
 
 model ScheduledReport {
   id         String          @id @default(uuid())
-  tenantId   String?         @map("tenant_id")
+  tenantId   String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant          @relation("TenantScheduledReport", fields: [tenantId], references: [id], onDelete: Cascade)
   name       String          @db.VarChar(200)
   template   String          @db.VarChar(100)
   recipients String[]
@@ -2938,7 +2996,8 @@ model SavedReport {
 
 model WebhookEndpoint {
   id        String       @id @default(uuid())
-  tenantId  String?      @map("tenant_id")
+  tenantId  String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant       @relation("TenantWebhookEndpoint", fields: [tenantId], references: [id], onDelete: Cascade)
   name      String       @db.VarChar(200)
   url       String       @db.VarChar(500)
   secret    String?      @db.VarChar(200)
@@ -2954,7 +3013,8 @@ model WebhookEndpoint {
 
 model WebhookLog {
   id           String          @id @default(uuid())
-  tenantId     String?         @map("tenant_id")
+  tenantId     String          @default("loop-default-tenant-001") @map("tenant_id")
+  tenant       Tenant          @relation("TenantWebhookLog", fields: [tenantId], references: [id], onDelete: Cascade)
   endpointId   String          @map("endpoint_id")
   event        String          @db.VarChar(100)
   payload      Json
@@ -2975,7 +3035,8 @@ model WebhookLog {
 
 model ModuleConfig {
   id          String   @id @default(uuid())
-  tenantId    String?  @map("tenant_id")
+  tenantId    String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant   @relation("TenantModuleConfig", fields: [tenantId], references: [id], onDelete: Cascade)
   moduleId    String   @unique @map("module_id") @db.VarChar(50)
   isEnabled   Boolean  @default(true) @map("is_enabled")
   displayName String   @map("display_name") @db.VarChar(100)
@@ -3006,7 +3067,8 @@ enum BookingStatus {
 
 model MeetingRoom {
   id        String        @id @default(uuid())
-  tenantId  String?       @map("tenant_id")
+  tenantId  String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant        @relation("TenantMeetingRoom", fields: [tenantId], references: [id], onDelete: Cascade)
   name      String        @db.VarChar(200)
   floor     String?       @db.VarChar(100)
   capacity  Int           @default(1)
@@ -3023,7 +3085,8 @@ model MeetingRoom {
 
 model RoomBooking {
   id         String        @id @default(uuid())
-  tenantId   String?       @map("tenant_id")
+  tenantId   String        @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant        @relation("TenantRoomBooking", fields: [tenantId], references: [id], onDelete: Cascade)
   roomId     String        @map("room_id")
   bookedById String        @map("booked_by_id")
   title      String        @db.VarChar(300)
@@ -3067,7 +3130,8 @@ enum VehicleRequestStatus {
 
 model Vehicle {
   id          String           @id @default(uuid())
-  tenantId    String?          @map("tenant_id")
+  tenantId    String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant           @relation("TenantVehicle", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String           @db.VarChar(200)
   plateNumber String           @unique @map("plate_number") @db.VarChar(20)
   type        String           @db.VarChar(50)
@@ -3086,7 +3150,8 @@ model Vehicle {
 
 model VehicleRequest {
   id                String               @id @default(uuid())
-  tenantId          String?              @map("tenant_id")
+  tenantId          String               @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant               @relation("TenantVehicleRequest", fields: [tenantId], references: [id], onDelete: Cascade)
   vehicleId         String               @map("vehicle_id")
   requestedById     String               @map("requested_by_id")
   approvedById      String?              @map("approved_by_id")
@@ -3118,7 +3183,8 @@ model VehicleRequest {
 
 model BudgetPlan {
   id             String           @id @default(uuid())
-  tenantId       String?          @map("tenant_id")
+  tenantId       String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant           @relation("TenantBudgetPlan", fields: [tenantId], references: [id], onDelete: Cascade)
   name           String
   fiscalYear     Int              @map("fiscal_year")
   type           BudgetPlanType   @default(DEPARTMENT)
@@ -3146,7 +3212,8 @@ model BudgetPlan {
 
 model BudgetLine {
   id              String              @id @default(uuid())
-  tenantId        String?             @map("tenant_id")
+  tenantId        String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant              @relation("TenantBudgetLine", fields: [tenantId], references: [id], onDelete: Cascade)
   planId          String              @map("plan_id")
   category        String
   description     String?
@@ -3167,7 +3234,8 @@ model BudgetLine {
 
 model BudgetTransaction {
   id         String                @id @default(uuid())
-  tenantId   String?               @map("tenant_id")
+  tenantId   String                @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant                @relation("TenantBudgetTransaction", fields: [tenantId], references: [id], onDelete: Cascade)
   lineId     String                @map("line_id")
   sourceType String                @map("source_type")
   sourceId   String                @map("source_id")
@@ -3276,7 +3344,8 @@ enum CalendarEventType {
 
 model CalendarEvent {
   id          String            @id @default(uuid())
-  tenantId    String?           @map("tenant_id")
+  tenantId    String            @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant            @relation("TenantCalendarEvent", fields: [tenantId], references: [id], onDelete: Cascade)
   title       String            @db.VarChar(300)
   description String?           @db.Text
   eventType   CalendarEventType @default(MEETING) @map("event_type")
@@ -3334,7 +3403,8 @@ model InvoiceAccountMapping {
 
 model ProjectCostSnapshot {
   id                String                  @id @default(uuid())
-  tenantId          String?                 @map("tenant_id")
+  tenantId          String                  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant                  @relation("TenantProjectCostSnapshot", fields: [tenantId], references: [id], onDelete: Cascade)
   projectId         String                  @map("project_id")
   snapshotDate      DateTime                @map("snapshot_date") @db.Date
   totalLaborCost    Decimal                 @default(0) @map("total_labor_cost") @db.Decimal(18, 2)
@@ -3356,7 +3426,8 @@ model ProjectCostSnapshot {
 
 model ProjectCostByEmployee {
   id          String              @id @default(uuid())
-  tenantId    String?             @map("tenant_id")
+  tenantId    String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant              @relation("TenantProjectCostByEmployee", fields: [tenantId], references: [id], onDelete: Cascade)
   snapshotId  String              @map("snapshot_id")
   employeeId  String              @map("employee_id")
   hours       Decimal             @db.Decimal(10, 2)
@@ -3409,7 +3480,8 @@ enum SalaryReviewStatus {
 
 model SalaryBand {
   id            String                   @id @default(uuid())
-  tenantId      String?                  @map("tenant_id")
+  tenantId      String                   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant                   @relation("TenantSalaryBand", fields: [tenantId], references: [id], onDelete: Cascade)
   positionId    String                   @map("position_id")
   minSalary     Decimal                  @map("min_salary") @db.Decimal(18, 2)
   midSalary     Decimal                  @map("mid_salary") @db.Decimal(18, 2)
@@ -3427,7 +3499,8 @@ model SalaryBand {
 
 model SalaryReviewSuggestion {
   id              String             @id @default(uuid())
-  tenantId        String?            @map("tenant_id")
+  tenantId        String             @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant             @relation("TenantSalaryReviewSuggestion", fields: [tenantId], references: [id], onDelete: Cascade)
   reviewId        String             @map("review_id")
   employeeId      String             @map("employee_id")
   salaryBandId    String?            @map("salary_band_id")
@@ -3451,61 +3524,154 @@ model SalaryReviewSuggestion {
 }
 
 model Tenant {
-  id                     String                   @id @default(uuid())
-  name                   String
-  slug                   String                   @unique
-  logoUrl                String?                  @map("logo_url")
-  faviconUrl             String?                  @map("favicon_url")
-  primaryColor           String?                  @map("primary_color")
-  customDomain           String?                  @map("custom_domain")
-  address                String?
-  timezone               String                   @default("Asia/Ho_Chi_Minh")
-  isDefault              Boolean                  @default(false) @map("is_default")
-  isActive               Boolean                  @default(true) @map("is_active")
-  createdAt              DateTime                 @default(now()) @map("created_at")
-  updatedAt              DateTime                 @updatedAt @map("updated_at")
-  users                  User[]
-  orgUnits               OrgUnit[]                @relation("TenantOrgUnits")
-  employees              Employee[]               @relation("TenantEmployees")
-  projects               Project[]                @relation("TenantProjects")
-  tasks                  Task[]                   @relation("TenantTasks")
-  bugs                   Bug[]                    @relation("TenantBugs")
-  deals                  Deal[]                   @relation("TenantDeals")
-  customers              Customer[]               @relation("TenantCustomers")
-  contacts               Contact[]                @relation("TenantContacts")
-  leads                  Lead[]                   @relation("TenantLeads")
-  invoices               Invoice[]                @relation("TenantInvoices")
-  contracts              Contract[]               @relation("TenantContracts")
-  assets                 Asset[]                  @relation("TenantAssets")
-  kbArticles             KbArticle[]              @relation("TenantKbArticles")
-  okrObjectives          OkrObjective[]           @relation("TenantOkrObjectives")
-  leaveRequests          LeaveRequest[]           @relation("TenantLeaveRequests")
-  leaveBalances          LeaveBalance[]           @relation("TenantLeaveBalances")
-  timeEntries            TimeEntry[]              @relation("TenantTimeEntries")
-  allocations            Allocation[]             @relation("TenantAllocations")
-  processInstances       ProcessInstance[]        @relation("TenantProcessInstances")
-  processDefinitions     ProcessDefinition[]      @relation("TenantProcessDefinitions")
-  payrollPeriods         PayrollPeriod[]          @relation("TenantPayrollPeriods")
-  payrollRecords         PayrollRecord[]          @relation("TenantPayrollRecords")
-  crmActivities          CrmActivity[]            @relation("TenantCrmActivities")
-  clientContracts        ClientContract[]         @relation("TenantClientContracts")
-  jobOpenings            JobOpening[]             @relation("TenantJobOpenings")
-  candidates             Candidate[]              @relation("TenantCandidates")
-  interviews             Interview[]              @relation("TenantInterviews")
-  customerPortals        CustomerPortal[]         @relation("TenantCustomerPortals")
-  vendors                Vendor[]                 @relation("TenantVendors")
-  purchaseOrders         PurchaseOrder[]          @relation("TenantPurchaseOrders")
-  comments               Comment[]                @relation("TenantComments")
-  invoiceMappings        InvoiceAccountMapping[]  @relation("TenantInvoiceMappings")
-  delegationRules        DelegationRule[]         @relation("TenantDelegations")
-  attendanceExplanations AttendanceExplanation[]  @relation("TenantAttendanceExplanations")
-  projectJournals        ProjectJournal[]         @relation("TenantProjectJournals")
-  leadFollowUps          LeadFollowUpSchedule[]   @relation("TenantLeadFollowUps")
-  customerSurveys        CustomerSurveySchedule[] @relation("TenantCustomerSurveys")
-  announcements          SystemAnnouncement[]     @relation("TenantAnnouncements")
-  apiKeys                ApiKey[]                 @relation("TenantApiKeys")
-  notifTemplates         NotificationTemplate[]   @relation("TenantNotifTemplates")
-  smtpConfig             TenantSmtpConfig?        @relation("TenantSmtpConfig")
+  id                          String                     @id @default(uuid())
+  name                        String
+  slug                        String                     @unique
+  logoUrl                     String?                    @map("logo_url")
+  faviconUrl                  String?                    @map("favicon_url")
+  primaryColor                String?                    @map("primary_color")
+  customDomain                String?                    @map("custom_domain")
+  address                     String?
+  timezone                    String                     @default("Asia/Ho_Chi_Minh")
+  isDefault                   Boolean                    @default(false) @map("is_default")
+  isActive                    Boolean                    @default(true) @map("is_active")
+  createdAt                   DateTime                   @default(now()) @map("created_at")
+  updatedAt                   DateTime                   @updatedAt @map("updated_at")
+  users                       User[]
+  orgUnits                    OrgUnit[]                  @relation("TenantOrgUnits")
+  employees                   Employee[]                 @relation("TenantEmployees")
+  projects                    Project[]                  @relation("TenantProjects")
+  tasks                       Task[]                     @relation("TenantTasks")
+  bugs                        Bug[]                      @relation("TenantBugs")
+  deals                       Deal[]                     @relation("TenantDeals")
+  customers                   Customer[]                 @relation("TenantCustomers")
+  contacts                    Contact[]                  @relation("TenantContacts")
+  leads                       Lead[]                     @relation("TenantLeads")
+  invoices                    Invoice[]                  @relation("TenantInvoices")
+  contracts                   Contract[]                 @relation("TenantContracts")
+  assets                      Asset[]                    @relation("TenantAssets")
+  kbArticles                  KbArticle[]                @relation("TenantKbArticles")
+  okrObjectives               OkrObjective[]             @relation("TenantOkrObjectives")
+  leaveRequests               LeaveRequest[]             @relation("TenantLeaveRequests")
+  leaveBalances               LeaveBalance[]             @relation("TenantLeaveBalances")
+  timeEntries                 TimeEntry[]                @relation("TenantTimeEntries")
+  allocations                 Allocation[]               @relation("TenantAllocations")
+  processInstances            ProcessInstance[]          @relation("TenantProcessInstances")
+  processDefinitions          ProcessDefinition[]        @relation("TenantProcessDefinitions")
+  payrollPeriods              PayrollPeriod[]            @relation("TenantPayrollPeriods")
+  payrollRecords              PayrollRecord[]            @relation("TenantPayrollRecords")
+  crmActivities               CrmActivity[]              @relation("TenantCrmActivities")
+  clientContracts             ClientContract[]           @relation("TenantClientContracts")
+  jobOpenings                 JobOpening[]               @relation("TenantJobOpenings")
+  candidates                  Candidate[]                @relation("TenantCandidates")
+  interviews                  Interview[]                @relation("TenantInterviews")
+  customerPortals             CustomerPortal[]           @relation("TenantCustomerPortals")
+  vendors                     Vendor[]                   @relation("TenantVendors")
+  purchaseOrders              PurchaseOrder[]            @relation("TenantPurchaseOrders")
+  comments                    Comment[]                  @relation("TenantComments")
+  invoiceMappings             InvoiceAccountMapping[]    @relation("TenantInvoiceMappings")
+  delegationRules             DelegationRule[]           @relation("TenantDelegations")
+  attendanceExplanations      AttendanceExplanation[]    @relation("TenantAttendanceExplanations")
+  projectJournals             ProjectJournal[]           @relation("TenantProjectJournals")
+  leadFollowUps               LeadFollowUpSchedule[]     @relation("TenantLeadFollowUps")
+  customerSurveys             CustomerSurveySchedule[]   @relation("TenantCustomerSurveys")
+  announcements               SystemAnnouncement[]       @relation("TenantAnnouncements")
+  apiKeys                     ApiKey[]                   @relation("TenantApiKeys")
+  notifTemplates              NotificationTemplate[]     @relation("TenantNotifTemplates")
+  smtpConfig                  TenantSmtpConfig?          @relation("TenantSmtpConfig")
+  v6_skill                    Skill[]                    @relation("TenantSkill")
+  v6_employeeSkill            EmployeeSkill[]            @relation("TenantEmployeeSkill")
+  v6_employeeRate             EmployeeRate[]             @relation("TenantEmployeeRate")
+  v6_timeLog                  TimeLog[]                  @relation("TenantTimeLog")
+  v6_workStatus               WorkStatus[]               @relation("TenantWorkStatus")
+  v6_timesheetRecord          TimesheetRecord[]          @relation("TenantTimesheetRecord")
+  v6_alertConfig              AlertConfig[]              @relation("TenantAlertConfig")
+  v6_notification             Notification[]             @relation("TenantNotification")
+  v6_pushToken                PushToken[]                @relation("TenantPushToken")
+  v6_telegramConfig           TelegramConfig[]           @relation("TenantTelegramConfig")
+  v6_telegramMessage          TelegramMessage[]          @relation("TenantTelegramMessage")
+  v6_processUserTask          ProcessUserTask[]          @relation("TenantProcessUserTask")
+  v6_processActivityLog       ProcessActivityLog[]       @relation("TenantProcessActivityLog")
+  v6_bugTask                  BugTask[]                  @relation("TenantBugTask")
+  v6_bugAttachment            BugAttachment[]            @relation("TenantBugAttachment")
+  v6_bugComment               BugComment[]               @relation("TenantBugComment")
+  v6_bugTag                   BugTag[]                   @relation("TenantBugTag")
+  v6_userPermission           UserPermission[]           @relation("TenantUserPermission")
+  v6_userModuleRole           UserModuleRole[]           @relation("TenantUserModuleRole")
+  v6_auditLog                 AuditLog[]                 @relation("TenantAuditLog")
+  v6_userGroup                UserGroup[]                @relation("TenantUserGroup")
+  v6_groupPermission          GroupPermission[]          @relation("TenantGroupPermission")
+  v6_groupMembership          GroupMembership[]          @relation("TenantGroupMembership")
+  v6_groupOrgAccess           GroupOrgAccess[]           @relation("TenantGroupOrgAccess")
+  v6_contractAllowance        ContractAllowance[]        @relation("TenantContractAllowance")
+  v6_leaveType                LeaveType[]                @relation("TenantLeaveType")
+  v6_overtimeRequest          OvertimeRequest[]          @relation("TenantOvertimeRequest")
+  v6_expense                  Expense[]                  @relation("TenantExpense")
+  v6_expenseItem              ExpenseItem[]              @relation("TenantExpenseItem")
+  v6_contractMilestone        ContractMilestone[]        @relation("TenantContractMilestone")
+  v6_invoiceItem              InvoiceItem[]              @relation("TenantInvoiceItem")
+  v6_assetAssignment          AssetAssignment[]          @relation("TenantAssetAssignment")
+  v6_assetMaintenance         AssetMaintenance[]         @relation("TenantAssetMaintenance")
+  v6_chartOfAccount           ChartOfAccount[]           @relation("TenantChartOfAccount")
+  v6_journalEntry             JournalEntry[]             @relation("TenantJournalEntry")
+  v6_journalLine              JournalLine[]              @relation("TenantJournalLine")
+  v6_trainingProgram          TrainingProgram[]          @relation("TenantTrainingProgram")
+  v6_trainingRecord           TrainingRecord[]           @relation("TenantTrainingRecord")
+  v6_performanceReview        PerformanceReview[]        @relation("TenantPerformanceReview")
+  v6_employeeTaxProfile       EmployeeTaxProfile[]       @relation("TenantEmployeeTaxProfile")
+  v6_dependent                Dependent[]                @relation("TenantDependent")
+  v6_allowanceType            AllowanceType[]            @relation("TenantAllowanceType")
+  v6_bonusType                BonusType[]                @relation("TenantBonusType")
+  v6_employeeBonus            EmployeeBonus[]            @relation("TenantEmployeeBonus")
+  v6_employeeYearlyTaxSummary EmployeeYearlyTaxSummary[] @relation("TenantEmployeeYearlyTaxSummary")
+  v6_employeeAllowance        EmployeeAllowance[]        @relation("TenantEmployeeAllowance")
+  v6_okrKeyResult             OkrKeyResult[]             @relation("TenantOkrKeyResult")
+  v6_kpiMetric                KpiMetric[]                @relation("TenantKpiMetric")
+  v6_kpiRecord                KpiRecord[]                @relation("TenantKpiRecord")
+  v6_revenueTarget            RevenueTarget[]            @relation("TenantRevenueTarget")
+  v6_kbCategory               KbCategory[]               @relation("TenantKbCategory")
+  v6_customerTicket           CustomerTicket[]           @relation("TenantCustomerTicket")
+  v6_purchaseOrderItem        PurchaseOrderItem[]        @relation("TenantPurchaseOrderItem")
+  v6_feedPost                 FeedPost[]                 @relation("TenantFeedPost")
+  v6_feedReaction             FeedReaction[]             @relation("TenantFeedReaction")
+  v6_automationRule           AutomationRule[]           @relation("TenantAutomationRule")
+  v6_automationRuleLog        AutomationRuleLog[]        @relation("TenantAutomationRuleLog")
+  v6_scheduledReport          ScheduledReport[]          @relation("TenantScheduledReport")
+  v6_webhookEndpoint          WebhookEndpoint[]          @relation("TenantWebhookEndpoint")
+  v6_webhookLog               WebhookLog[]               @relation("TenantWebhookLog")
+  v6_moduleConfig             ModuleConfig[]             @relation("TenantModuleConfig")
+  v6_meetingRoom              MeetingRoom[]              @relation("TenantMeetingRoom")
+  v6_roomBooking              RoomBooking[]              @relation("TenantRoomBooking")
+  v6_vehicle                  Vehicle[]                  @relation("TenantVehicle")
+  v6_vehicleRequest           VehicleRequest[]           @relation("TenantVehicleRequest")
+  v6_budgetPlan               BudgetPlan[]               @relation("TenantBudgetPlan")
+  v6_budgetLine               BudgetLine[]               @relation("TenantBudgetLine")
+  v6_budgetTransaction        BudgetTransaction[]        @relation("TenantBudgetTransaction")
+  v6_calendarEvent            CalendarEvent[]            @relation("TenantCalendarEvent")
+  v6_projectCostSnapshot      ProjectCostSnapshot[]      @relation("TenantProjectCostSnapshot")
+  v6_projectCostByEmployee    ProjectCostByEmployee[]    @relation("TenantProjectCostByEmployee")
+  v6_salaryBand               SalaryBand[]               @relation("TenantSalaryBand")
+  v6_salaryReviewSuggestion   SalaryReviewSuggestion[]   @relation("TenantSalaryReviewSuggestion")
+  v6_jobTitle                 JobTitle[]                 @relation("TenantJobTitle")
+  v6_position                 Position[]                 @relation("TenantPosition")
+  v6_positionHistory          PositionHistory[]          @relation("TenantPositionHistory")
+  v6_hrDecision               HrDecision[]               @relation("TenantHrDecision")
+  v6_workHistory              WorkHistory[]              @relation("TenantWorkHistory")
+  v6_salaryRecord             SalaryRecord[]             @relation("TenantSalaryRecord")
+  v6_leavePolicy              LeavePolicy[]              @relation("TenantLeavePolicy")
+  v6_holidayCalendar          HolidayCalendar[]          @relation("TenantHolidayCalendar")
+  v6_insuranceEnrollment      InsuranceEnrollment[]      @relation("TenantInsuranceEnrollment")
+  v6_socialInsuranceBook      SocialInsuranceBook[]      @relation("TenantSocialInsuranceBook")
+  v6_insuranceEvent           InsuranceEvent[]           @relation("TenantInsuranceEvent")
+  v6_attendanceRecord         AttendanceRecord[]         @relation("TenantAttendanceRecord")
+  v6_monthlyAttendance        MonthlyAttendance[]        @relation("TenantMonthlyAttendance")
+  v6_workShift                WorkShift[]                @relation("TenantWorkShift")
+  v6_shiftAssignment          ShiftAssignment[]          @relation("TenantShiftAssignment")
+  v6_workSchedule             WorkSchedule[]             @relation("TenantWorkSchedule")
+  v6_workSchedulePhase        WorkSchedulePhase[]        @relation("TenantWorkSchedulePhase")
+  v6_workScheduleEnrollment   WorkScheduleEnrollment[]   @relation("TenantWorkScheduleEnrollment")
+  v6_notificationPreference   NotificationPreference[]   @relation("TenantNotificationPreference")
+  v6_savedFilterPreset        SavedFilterPreset[]        @relation("TenantSavedFilterPreset")
 
   @@map("tenants")
 }
@@ -3514,7 +3680,8 @@ model Tenant {
 
 model JobTitle {
   id            String       @id @default(uuid())
-  tenantId      String?      @map("tenant_id")
+  tenantId      String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant       @relation("TenantJobTitle", fields: [tenantId], references: [id], onDelete: Cascade)
   code          String       @unique
   name          String
   band          String?
@@ -3534,7 +3701,8 @@ model JobTitle {
 
 model Position {
   id          String            @id @default(uuid())
-  tenantId    String?           @map("tenant_id")
+  tenantId    String            @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant            @relation("TenantPosition", fields: [tenantId], references: [id], onDelete: Cascade)
   code        String            @unique
   jobTitleId  String            @map("job_title_id")
   orgUnitId   String            @map("org_unit_id")
@@ -3556,7 +3724,8 @@ model Position {
 
 model PositionHistory {
   id         String    @id @default(uuid())
-  tenantId   String?   @map("tenant_id")
+  tenantId   String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant    @relation("TenantPositionHistory", fields: [tenantId], references: [id], onDelete: Cascade)
   positionId String    @map("position_id")
   employeeId String    @map("employee_id")
   startDate  DateTime  @map("start_date") @db.Date
@@ -3573,7 +3742,8 @@ model PositionHistory {
 
 model HrDecision {
   id                String           @id @default(uuid())
-  tenantId          String?          @map("tenant_id")
+  tenantId          String           @default("loop-default-tenant-001") @map("tenant_id")
+  tenant            Tenant           @relation("TenantHrDecision", fields: [tenantId], references: [id], onDelete: Cascade)
   decisionNumber    String?          @unique @map("decision_number") @db.VarChar(100)
   type              HrDecisionType
   employeeId        String           @map("employee_id")
@@ -3605,7 +3775,8 @@ model HrDecision {
 
 model WorkHistory {
   id           String               @id @default(uuid())
-  tenantId     String?              @map("tenant_id")
+  tenantId     String               @default("loop-default-tenant-001") @map("tenant_id")
+  tenant       Tenant               @relation("TenantWorkHistory", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId   String               @map("employee_id")
   eventType    WorkHistoryEventType @map("event_type")
   eventDate    DateTime             @map("event_date") @db.Date
@@ -3623,7 +3794,8 @@ model WorkHistory {
 
 model SalaryRecord {
   id            String      @id @default(uuid())
-  tenantId      String?     @map("tenant_id")
+  tenantId      String      @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant      @relation("TenantSalaryRecord", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId    String      @map("employee_id")
   basicSalary   Decimal     @map("basic_salary") @db.Decimal(18, 2)
   effectiveDate DateTime    @map("effective_date") @db.Date
@@ -3713,7 +3885,8 @@ enum LeaveAccrualMode {
 
 model LeavePolicy {
   id                    String                @id @default(uuid())
-  tenantId              String?               @map("tenant_id")
+  tenantId              String                @default("loop-default-tenant-001") @map("tenant_id")
+  tenant                Tenant                @relation("TenantLeavePolicy", fields: [tenantId], references: [id], onDelete: Cascade)
   name                  String
   baseAnnualDays        Int                   @map("base_annual_days")
   seniorityBonus        Json                  @default("[]") @map("seniority_bonus")
@@ -3745,7 +3918,8 @@ enum HolidayType {
 
 model HolidayCalendar {
   id        String      @id @default(uuid())
-  tenantId  String?     @map("tenant_id")
+  tenantId  String      @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant      @relation("TenantHolidayCalendar", fields: [tenantId], references: [id], onDelete: Cascade)
   date      DateTime    @unique @db.Date
   name      String
   type      HolidayType @default(NATIONAL_HOLIDAY)
@@ -3779,7 +3953,8 @@ enum InsuranceEventType {
 
 model InsuranceEnrollment {
   id                  String                    @id @default(uuid())
-  tenantId            String?                   @map("tenant_id")
+  tenantId            String                    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant              Tenant                    @relation("TenantInsuranceEnrollment", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId          String                    @map("employee_id")
   bhxhBookNumber      String?                   @map("bhxh_book_number")
   insuranceSalary     Decimal                   @map("insurance_salary") @db.Decimal(15, 2)
@@ -3799,7 +3974,8 @@ model InsuranceEnrollment {
 
 model SocialInsuranceBook {
   id                 String               @id @default(uuid())
-  tenantId           String?              @map("tenant_id")
+  tenantId           String               @default("loop-default-tenant-001") @map("tenant_id")
+  tenant             Tenant               @relation("TenantSocialInsuranceBook", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId         String               @unique @map("employee_id")
   enrollmentId       String?              @unique @map("enrollment_id")
   bookNumber         String               @unique @map("book_number")
@@ -3818,7 +3994,8 @@ model SocialInsuranceBook {
 
 model InsuranceEvent {
   id              String              @id @default(uuid())
-  tenantId        String?             @map("tenant_id")
+  tenantId        String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant              @relation("TenantInsuranceEvent", fields: [tenantId], references: [id], onDelete: Cascade)
   enrollmentId    String              @map("enrollment_id")
   eventType       InsuranceEventType  @map("event_type")
   insuranceSalary Decimal?            @map("insurance_salary") @db.Decimal(15, 2)
@@ -3861,7 +4038,8 @@ enum MonthlyAttendanceStatus {
 
 model AttendanceRecord {
   id                  String                  @id @default(uuid())
-  tenantId            String?                 @map("tenant_id")
+  tenantId            String                  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant              Tenant                  @relation("TenantAttendanceRecord", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId          String                  @map("employee_id")
   monthlyAttendanceId String?                 @map("monthly_attendance_id")
   shiftId             String?                 @map("shift_id")
@@ -3893,7 +4071,8 @@ model AttendanceRecord {
 
 model MonthlyAttendance {
   id              String                  @id @default(uuid())
-  tenantId        String?                 @map("tenant_id")
+  tenantId        String                  @default("loop-default-tenant-001") @map("tenant_id")
+  tenant          Tenant                  @relation("TenantMonthlyAttendance", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId      String                  @map("employee_id")
   year            Int
   month           Int
@@ -3981,13 +4160,17 @@ enum ShiftType {
 
 model WorkShift {
   id             String              @id @default(uuid())
-  tenantId       String?             @map("tenant_id")
+  tenantId       String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant              @relation("TenantWorkShift", fields: [tenantId], references: [id], onDelete: Cascade)
   name           String
   code           String              @unique
   type           ShiftType           @default(HANH_CHINH)
   startTime      String              @map("start_time")
   endTime        String              @map("end_time")
   breakMinutes   Int                 @default(60) @map("break_minutes")
+  // Thứ làm việc trong tuần theo ISO (1=T2 … 7=CN). VD office [1,2,3,4,5] off T7/CN;
+  // công nhân [1,2,3,4,5,6] off CN. Dùng để tính công chuẩn động theo thứ.
+  workingDays    Int[]               @default([1, 2, 3, 4, 5]) @map("working_days")
   isActive       Boolean             @default(true) @map("is_active")
   description    String?
   createdAt      DateTime            @default(now()) @map("created_at")
@@ -4001,7 +4184,8 @@ model WorkShift {
 
 model ShiftAssignment {
   id            String    @id @default(uuid())
-  tenantId      String?   @map("tenant_id")
+  tenantId      String    @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant    @relation("TenantShiftAssignment", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId    String    @map("employee_id")
   shiftId       String    @map("shift_id")
   effectiveFrom DateTime  @map("effective_from") @db.Date
@@ -4018,7 +4202,8 @@ model ShiftAssignment {
 
 model WorkSchedule {
   id          String                   @id @default(uuid())
-  tenantId    String?                  @map("tenant_id")
+  tenantId    String                   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant      Tenant                   @relation("TenantWorkSchedule", fields: [tenantId], references: [id], onDelete: Cascade)
   name        String
   description String?
   repeatType  String?                  @map("repeat_type")
@@ -4034,7 +4219,8 @@ model WorkSchedule {
 
 model WorkSchedulePhase {
   id             String       @id @default(uuid())
-  tenantId       String?      @map("tenant_id")
+  tenantId       String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant         Tenant       @relation("TenantWorkSchedulePhase", fields: [tenantId], references: [id], onDelete: Cascade)
   workScheduleId String       @map("work_schedule_id")
   shiftId        String?      @map("shift_id")
   phaseOrder     Int          @map("phase_order")
@@ -4049,7 +4235,8 @@ model WorkSchedulePhase {
 
 model WorkScheduleEnrollment {
   id            String       @id @default(uuid())
-  tenantId      String?      @map("tenant_id")
+  tenantId      String       @default("loop-default-tenant-001") @map("tenant_id")
+  tenant        Tenant       @relation("TenantWorkScheduleEnrollment", fields: [tenantId], references: [id], onDelete: Cascade)
   employeeId    String?      @map("employee_id")
   orgUnitId     String?      @map("org_unit_id")
   scheduleId    String       @map("schedule_id")
@@ -4077,7 +4264,8 @@ enum NotificationChannel {
 
 model NotificationPreference {
   id         String              @id @default(uuid())
-  tenantId   String?             @map("tenant_id")
+  tenantId   String              @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant              @relation("TenantNotificationPreference", fields: [tenantId], references: [id], onDelete: Cascade)
   userId     String              @map("user_id")
   moduleType String              @map("module_type")
   channel    NotificationChannel @default(BOTH)
@@ -4094,7 +4282,8 @@ model NotificationPreference {
 
 model SavedFilterPreset {
   id        String   @id @default(uuid())
-  tenantId  String?  @map("tenant_id")
+  tenantId  String   @default("loop-default-tenant-001") @map("tenant_id")
+  tenant    Tenant   @relation("TenantSavedFilterPreset", fields: [tenantId], references: [id], onDelete: Cascade)
   userId    String   @map("user_id")
   pageKey   String   @map("page_key")
   name      String

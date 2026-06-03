@@ -2097,6 +2097,7 @@ exports.Prisma.WorkShiftScalarFieldEnum = {
   startTime: 'startTime',
   endTime: 'endTime',
   breakMinutes: 'breakMinutes',
+  workingDays: 'workingDays',
   isActive: 'isActive',
   description: 'description',
   createdAt: 'createdAt',
