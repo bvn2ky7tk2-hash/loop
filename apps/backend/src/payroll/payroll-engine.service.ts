@@ -9,12 +9,7 @@ import {
   SalaryColumnSource,
   SalaryColumnType,
 } from '../generated/prisma';
-
-interface BracketItem {
-  from: number;
-  to: number | null;
-  rate: number;
-}
+import { BracketItem, calcProgressivePIT, roundUp100 } from './payroll.util';
 
 @Injectable()
 export class PayrollEngineService {
@@ -344,13 +339,13 @@ export class PayrollEngineService {
         : rawSalary;
       bhxhBase = Math.min(insuranceBase, ceiling);
 
-      bhxhEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployeeRate));
-      bhytEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployeeRate));
-      bhtnEmployee = this.roundUp100(bhxhBase * Number(insuranceConfig.bhtnEmployeeRate));
-      bhxhEmployer = this.roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployerRate));
-      bhytEmployer = this.roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployerRate));
-      bhtnEmployer = this.roundUp100(bhxhBase * Number(insuranceConfig.bhtnEmployerRate));
-      tnldEmployer = this.roundUp100(bhxhBase * Number(insuranceConfig.tnldRate));
+      bhxhEmployee = roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployeeRate));
+      bhytEmployee = roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployeeRate));
+      bhtnEmployee = roundUp100(bhxhBase * Number(insuranceConfig.bhtnEmployeeRate));
+      bhxhEmployer = roundUp100(bhxhBase * Number(insuranceConfig.bhxhEmployerRate));
+      bhytEmployer = roundUp100(bhxhBase * Number(insuranceConfig.bhytEmployerRate));
+      bhtnEmployer = roundUp100(bhxhBase * Number(insuranceConfig.bhtnEmployerRate));
+      tnldEmployer = roundUp100(bhxhBase * Number(insuranceConfig.tnldRate));
     }
 
     const totalInsuranceEmployee = bhxhEmployee + bhytEmployee + bhtnEmployee;
@@ -390,7 +385,7 @@ export class PayrollEngineService {
         0,
       );
       if (taxableIncome > 0) {
-        pitAmount = this.calcProgressivePIT(
+        pitAmount = calcProgressivePIT(
           taxableIncome,
           taxBracket.brackets as BracketItem[],
         );
@@ -513,23 +508,6 @@ export class PayrollEngineService {
     } catch {
       return 0;
     }
-  }
-
-  // Thuế lũy tiến — làm tròn xuống đến đồng (TT 111/2013)
-  private calcProgressivePIT(taxableIncome: number, brackets: BracketItem[]): number {
-    let pit = 0;
-    for (const bracket of brackets) {
-      if (taxableIncome <= bracket.from) break;
-      const upper = bracket.to !== null ? bracket.to : Infinity;
-      const slice = Math.min(taxableIncome, upper) - bracket.from;
-      pit += slice * bracket.rate;
-    }
-    return Math.floor(pit);
-  }
-
-  // NĐ 115/2015: BHXH làm tròn lên bội số 100đ
-  private roundUp100(amount: number): number {
-    return Math.ceil(amount / 100) * 100;
   }
 
   private async findInsuranceConfig(date: Date) {
