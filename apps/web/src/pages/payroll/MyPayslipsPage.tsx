@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  Table, Tag, Typography, Row, Col, Empty, Spin, Button, message, Select, Space,
+  Table, Tag, Typography, Row, Col, Spin, Button, message, Select, Space,
 } from 'antd';
 import { FileTextOutlined, CalendarOutlined, FilePdfOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { formatCurrency } from '../../utils/format';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Text } = Typography;
@@ -316,7 +317,7 @@ export default function MyPayslipsPage() {
         size="small"
         style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
         pagination={false}
-        locale={{ emptyText: <Empty description="Chưa có phiếu lương nào được phê duyệt." /> }}
+        locale={{ emptyText: <EmptyState compact title="Chưa có phiếu lương nào được phê duyệt." /> }}
         onRow={r => ({ onClick: () => setSelectedRecord(r), style: { cursor: 'pointer' } })}
       />
 

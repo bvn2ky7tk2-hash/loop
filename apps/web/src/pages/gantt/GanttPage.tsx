@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
   Select, DatePicker, Segmented, Tooltip, Spin,
-  Empty, theme, Badge, Button, Space,
+  theme, Badge, Button, Space,
 } from 'antd';
 import {
   CaretRightFilled, CaretDownFilled,
@@ -13,6 +13,7 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import { tasksApi, type Task } from '../../api/tasks';
 import { projectsApi } from '../../api/projects';
 import { TaskStatusPill } from '../../components/ui/TaskStatusPill';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { TaskStatus } from '../../components/ui/TaskStatusPill';
 
 dayjs.extend(isoWeek);
@@ -412,7 +413,7 @@ export default function GanttPage() {
       {/* ── Chart ── */}
       {!projectId ? (
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Empty description="Chọn dự án để xem timeline" />
+          <EmptyState title="Chọn dự án để xem timeline" />
         </div>
       ) : isLoading ? (
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -493,7 +494,7 @@ export default function GanttPage() {
           {/* ── Task rows ── */}
           {flat.length === 0 ? (
             <div style={{ padding: 40, display: 'flex', justifyContent: 'center' }}>
-              <Empty description="Chưa có công việc trong dự án này" />
+              <EmptyState title="Chưa có công việc trong dự án này" />
             </div>
           ) : visible.map((task, idx) => {
             const bar         = calcBar(task, viewStart, pxPerDay);

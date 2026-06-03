@@ -5,6 +5,7 @@ import {
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { StatCard } from '../../components/ui/StatCard';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, LaptopOutlined,
   SwapOutlined, RollbackOutlined,
@@ -23,7 +24,7 @@ import {
   type Asset, type AssetCategory, type AssetStatus, type AssetFilterParams,
 } from '../../api/assets';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const CATEGORY_META: Record<AssetCategory, { label: string; color: string }> = {
@@ -207,16 +208,17 @@ export default function AssetsPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <LaptopOutlined style={{ color: '#B45309', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Tài sản</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Thêm tài sản
-        </Button>
-      </div>
+      <PageHeader
+        title="Tài sản"
+        icon={<LaptopOutlined />}
+        iconColor="#B45309"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Thêm tài sản
+          </Button>
+        }
+      />
 
       {/* Summary Cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>

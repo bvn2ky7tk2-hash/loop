@@ -4,6 +4,7 @@ import {
   Input, InputNumber, DatePicker, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { PlusOutlined, ToolOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -14,7 +15,7 @@ import {
   type AssetMaintenance, type MaintenanceFilterParams,
 } from '../../api/assets';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const TYPE_OPTIONS = [
@@ -101,16 +102,17 @@ export default function AssetMaintenancePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ToolOutlined style={{ color: '#B45309', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Bảo trì tài sản</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); setDrawer(true); }}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Log bảo trì
-        </Button>
-      </div>
+      <PageHeader
+        title="Bảo trì tài sản"
+        icon={<ToolOutlined />}
+        iconColor="#B45309"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); setDrawer(true); }}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Log bảo trì
+          </Button>
+        }
+      />
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select placeholder="Tài sản" style={{ width: 250 }} allowClear showSearch optionFilterProp="label"

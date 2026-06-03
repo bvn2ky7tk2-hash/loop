@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Row, Col, Card, Input, Select, Tag, Typography, Button,
-  Form, Space, Tooltip, Popconfirm, Tabs, Empty,
+  Form, Space, Tooltip, Popconfirm, Tabs,
 } from 'antd';
 import {
   BookOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
@@ -14,6 +14,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { kbApi, type KbArticle, type KbCategory } from '../../api/kb';
 
 const { Text } = Typography;
@@ -354,7 +355,7 @@ export default function KnowledgeBasePage() {
               </FilterBar>
 
               {articles.length === 0 && !isLoading ? (
-                <Empty description="Không có bài viết nào" style={{ marginTop: 60 }} />
+                <EmptyState title="Không có bài viết nào" style={{ marginTop: 60 }} />
               ) : (
                 <Row gutter={[16, 16]}>
                   {articles.map(article => (

@@ -11,7 +11,6 @@ import {
   Spin,
   Tooltip,
   Popconfirm,
-  Empty,
 } from 'antd';
 import {
   FileProtectOutlined,
@@ -32,6 +31,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { hrProfileApi, type EducationRecord, type WorkExperience, type FamilyMember } from '../../api/hr-profile';
 import { formatCurrency } from '../../utils/format';
 
@@ -322,9 +323,8 @@ export default function EmployeeProfile360Page() {
         if (dep) {
           return (
             <Tooltip title={`Từ ${dayjs(dep.registeredFrom).format('DD/MM/YYYY')}${dep.registeredTo ? ` → ${dayjs(dep.registeredTo).format('DD/MM/YYYY')}` : ''}`}>
-              <Tag
-                color={isDark ? undefined : 'green'}
-                style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)', cursor: 'pointer' } : { cursor: 'pointer' }}
+              <span
+                style={{ cursor: 'pointer' }}
                 onClick={() => {
                   setDependentTarget(record);
                   dependentForm.setFieldsValue({
@@ -335,8 +335,8 @@ export default function EmployeeProfile360Page() {
                   setDependentOpen(true);
                 }}
               >
-                ✓ Đã đăng ký
-              </Tag>
+                <StatusBadge label="✓ Đã đăng ký" tone="success" style={{ cursor: 'pointer' }} />
+              </span>
             </Tooltip>
           );
         }
@@ -492,7 +492,7 @@ export default function EmployeeProfile360Page() {
                 </Button>
               </div>
               {education.length === 0
-                ? <Empty description={<Text style={{ color: textMuted }}>Chưa có thông tin học vấn</Text>} />
+                ? <EmptyState title="Chưa có thông tin học vấn" />
                 : <Table rowKey="id" columns={educationColumns} dataSource={education} pagination={false} size="middle" />}
             </div>
           ),
@@ -511,7 +511,7 @@ export default function EmployeeProfile360Page() {
                 </Button>
               </div>
               {workExp.length === 0
-                ? <Empty description={<Text style={{ color: textMuted }}>Chưa có kinh nghiệm trước đây</Text>} />
+                ? <EmptyState title="Chưa có kinh nghiệm trước đây" />
                 : <Table rowKey="id" columns={workExpColumns} dataSource={workExp} pagination={false} size="middle" />}
             </div>
           ),
@@ -530,7 +530,7 @@ export default function EmployeeProfile360Page() {
                 </Button>
               </div>
               {familyMembers.length === 0
-                ? <Empty description={<Text style={{ color: textMuted }}>Chưa có thông tin thân nhân</Text>} />
+                ? <EmptyState title="Chưa có thông tin thân nhân" />
                 : <Table rowKey="id" columns={familyColumns} dataSource={familyMembers} pagination={false} size="middle" />}
             </div>
           ),

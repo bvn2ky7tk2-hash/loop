@@ -7,12 +7,13 @@ import { PlusOutlined, BookOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   useGetJournal, useGetAccounts, useCreateJournal,
   type JournalEntry, type JournalFilter,
 } from '../../api/accounting';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 function formatMoney(v: string | number) {
@@ -105,15 +106,15 @@ export default function JournalPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Space>
-          <BookOutlined style={{ fontSize: 22, color: linkColor }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Sổ nhật ký kế toán</Title>
-        </Space>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
-          Tạo bút toán
-        </Button>
-      </div>
+      <PageHeader
+        title="Sổ nhật ký kế toán"
+        icon={<BookOutlined />}
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalOpen(true)}>
+            Tạo bút toán
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <div style={{ background: bgCard, borderRadius: 8, padding: '12px 16px', marginBottom: 16, border: `1px solid ${borderColor}` }}>

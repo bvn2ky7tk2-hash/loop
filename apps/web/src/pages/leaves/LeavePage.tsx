@@ -25,8 +25,9 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { OrgUnitSelect } from '../../components/selects';
 import LeaveTypeConfigModal from '../../components/leave/LeaveTypeConfigModal';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { PageHeader } from '../../components/ui/PageHeader';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
@@ -464,27 +465,28 @@ export default function LeavePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Title level={3} style={{ margin: 0, color: textPrimary }}>
-          <CalendarOutlined style={{ marginRight: 8, color: linkColor }} />
-          Nghỉ phép
-        </Title>
-        <Space>
-          <Button
-            icon={<DownloadOutlined />}
-            onClick={() => downloadExport('/leaves/export', 'nghi-phep.xlsx').catch(() => message.error('Export thất bại'))}
-          >
-            Export
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setDrawerOpen(true)}
-          >
-            Tạo yêu cầu
-          </Button>
-        </Space>
-      </div>
+      <PageHeader
+        title="Nghỉ phép"
+        icon={<CalendarOutlined />}
+        iconColor={linkColor}
+        actions={
+          <>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => downloadExport('/leaves/export', 'nghi-phep.xlsx').catch(() => message.error('Export thất bại'))}
+            >
+              Export
+            </Button>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setDrawerOpen(true)}
+            >
+              Tạo yêu cầu
+            </Button>
+          </>
+        }
+      />
 
       {/* Balance cards */}
       <BalanceWidget

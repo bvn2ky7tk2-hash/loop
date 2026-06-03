@@ -20,6 +20,7 @@ import { payrollApi } from '../../../api/payroll';
 import { employeesApi } from '../../../api/employees';
 import { positionsApi } from '../../../api/hr-core';
 import { useThemePalette } from '../../../hooks/useThemePalette';
+import { DetailRow } from '../../../components/ui/DetailRow';
 import {
   CONTRACT_TYPE_LABELS, CONTRACT_TYPES, CONTRACT_STATUS_LABELS, CONTRACT_STATUSES,
   FIXED_TYPES, PROBATION_OPTIONS, calcEndDate,
@@ -42,7 +43,7 @@ export function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawe
   const [selectedEmpId, setSelectedEmpId] = useState<string | undefined>(undefined);
   const [selectedType, setSelectedType] = useState<ContractType>('INDEFINITE');
   const [probationDays, setProbationDays] = useState(60);
-  const { bgContainer, textPrimary, textMuted, borderColor } = useThemePalette();
+  const { bgContainer, textPrimary, borderColor } = useThemePalette();
 
   const { data: allowanceTypes = [] } = useQuery({
     queryKey: ['allowance-types'],
@@ -244,18 +245,8 @@ export function ContractDrawer({ open, editing, onClose, isDark }: ContractDrawe
             marginBottom: 16,
             display: 'flex', gap: 16, flexWrap: 'wrap',
           }}>
-            <div>
-              <div style={{ fontSize: 11, color: textMuted }}>Đơn vị hiện tại</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
-                {selectedEmpDetail.orgUnit?.name ?? '—'}
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, color: textMuted }}>Vị trí / Chức danh</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>
-                {selectedEmpDetail.position?.jobTitle?.name ?? '—'}
-              </div>
-            </div>
+            <DetailRow label="Đơn vị hiện tại" value={selectedEmpDetail.orgUnit?.name} vertical />
+            <DetailRow label="Vị trí / Chức danh" value={selectedEmpDetail.position?.jobTitle?.name} vertical />
           </div>
         )}
 

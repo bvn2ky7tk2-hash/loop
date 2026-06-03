@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props) {
-  const { preset, textPrimary, bgContainer, borderColor } = useThemePalette();
+  const { linkColor, textPrimary, bgContainer, borderColor } = useThemePalette();
   const qc = useQueryClient();
   const [form] = Form.useForm();
 
@@ -70,7 +70,7 @@ export default function LeaveTypeConfigModal({ leaveType, open, onClose }: Props
     <Modal
       title={
         <span style={{ color: textPrimary }}>
-          <SettingOutlined style={{ color: preset.primary, marginRight: 8 }} />
+          <SettingOutlined style={{ color: linkColor, marginRight: 8 }} />
           {isCreate ? 'Thêm loại nghỉ' : `Cấu hình loại nghỉ — ${leaveType?.name}`}
         </span>
       }

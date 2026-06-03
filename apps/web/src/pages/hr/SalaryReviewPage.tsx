@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Table, Button, Space, Typography, Tag, Input, Select, Row, Col, App, Empty, Tooltip,
+  Table, Button, Space, Typography, Tag, Input, Select, Row, Col, App, Tooltip,
 } from 'antd';
 import {
   DollarOutlined, SearchOutlined, CheckOutlined, CloseOutlined,
@@ -18,6 +18,7 @@ import { FilterBar } from '../../components/FilterBar';
 import { OrgUnitSelect } from '../../components/selects';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
@@ -337,13 +338,9 @@ export default function SalaryReviewPage() {
         }}
       >
         {isError ? (
-          <Empty
+          <EmptyState
             style={{ padding: 48 }}
-            description={
-              <Text style={{ color: textMuted }}>
-                API đang phát triển — endpoint /hr/salary-reviews chưa có
-              </Text>
-            }
+            title="API đang phát triển — endpoint /hr/salary-reviews chưa có"
           />
         ) : (
           <Table<SalaryReviewSuggestion>

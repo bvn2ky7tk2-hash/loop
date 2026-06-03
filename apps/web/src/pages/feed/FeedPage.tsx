@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
   Row, Col, Card, Typography, Tag, Space, Button, Divider,
-  Form, Input, Select, Tooltip, App, Popconfirm, Spin, Empty, InputNumber,
+  Form, Input, Select, Tooltip, App, Popconfirm, Spin, InputNumber,
   Tabs, Carousel,
 } from 'antd';
 import {
@@ -22,6 +22,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { useAuthStore } from '../../store/auth.store';
 import { usePermissions } from '../../hooks/usePermissions';
 import { dashboardV3Api, type TodayEvents } from '../../api/dashboard-v3';
@@ -662,7 +663,7 @@ export default function FeedPage() {
               <Spin size="large" />
             </div>
           ) : !feed?.data?.length ? (
-            <Empty description="Chưa có bài đăng nào" style={{ padding: '40px 0' }} />
+            <EmptyState title="Chưa có bài đăng nào" style={{ padding: '40px 0' }} />
           ) : (
             feed.data.map((post) => (
               <PostCard key={post.id} post={post} currentId={user?.id} isAdmin={isAdmin} />

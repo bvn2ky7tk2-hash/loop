@@ -1,8 +1,9 @@
-import { Descriptions, Tag, Avatar, Typography, Divider, Empty } from 'antd';
+import { Descriptions, Tag, Avatar, Typography, Divider } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { Candidate, CandidateStage } from '../../api/recruit';
 
 const { Text } = Typography;
@@ -102,7 +103,7 @@ export function CandidateDetailDrawer({
             {iv.result && <Tag style={{ marginLeft: 8 }} color={iv.result === 'PASS' ? 'green' : iv.result === 'FAIL' ? 'red' : 'default'}>{iv.result}</Tag>}
           </div>
         ))
-      ) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<Text style={{ color: textMuted }}>Chưa có phỏng vấn</Text>} />}
+      ) : <EmptyState title="Chưa có phỏng vấn" />}
     </CenteredModal>
   );
 }

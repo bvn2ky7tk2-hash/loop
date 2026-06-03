@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Form, InputNumber, Select, Input, App,
-  Tag, Switch, Typography, Row, Col, Alert, Tooltip,
+  Switch, Typography, Row, Col, Alert, Tooltip,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { payrollApi, type AllowanceType } from '../../../../api/payroll';
 import { useThemePalette } from '../../../../hooks/useThemePalette';
 import { CenteredModal } from '../../../../components/ui/CenteredModal';
+import { StatusBadge } from '../../../../components/ui/StatusBadge';
 import { formatCurrency } from '../../../../utils/format';
 
 const { Text } = Typography;
@@ -19,7 +20,7 @@ export function AllowanceTab() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<AllowanceType | null>(null);
   const [form] = Form.useForm();
-  const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, linkColor } = useThemePalette();
 
   const isPitExemptWatch = Form.useWatch('isPitExempt', form);
 
@@ -104,8 +105,8 @@ export function AllowanceTab() {
       width: 100,
       align: 'center',
       render: (v: boolean) => v
-        ? <Tag color={isDark ? undefined : 'green'} style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' } : {}}>Có</Tag>
-        : <Tag color={isDark ? undefined : 'default'} style={isDark ? { background: 'rgba(148,163,184,0.15)', color: '#94A3B8', borderColor: 'rgba(148,163,184,0.3)' } : {}}>Không</Tag>,
+        ? <StatusBadge label="Có" tone="success" />
+        : <StatusBadge label="Không" tone="neutral" />,
     },
     {
       title: 'Miễn TNCN',
@@ -114,9 +115,9 @@ export function AllowanceTab() {
       align: 'center',
       render: (v: boolean, r) => v
         ? <Tooltip title={r.pitExemptCeiling ? `Trần miễn ${formatCurrency(Number(r.pitExemptCeiling))}` : 'Miễn hoàn toàn'}>
-            <Tag color={isDark ? undefined : 'blue'} style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}>Có</Tag>
+            <StatusBadge label="Có" tone="success" />
           </Tooltip>
-        : <Tag color={isDark ? undefined : 'default'} style={isDark ? { background: 'rgba(148,163,184,0.15)', color: '#94A3B8', borderColor: 'rgba(148,163,184,0.3)' } : {}}>Không</Tag>,
+        : <StatusBadge label="Không" tone="neutral" />,
     },
     {
       title: 'Hoạt động',

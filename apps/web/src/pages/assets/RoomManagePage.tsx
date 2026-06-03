@@ -13,6 +13,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import {
   useRooms, useRoomStats, useCreateRoom, useUpdateRoom, useDeleteRoom,
   type MeetingRoom, type CreateRoomInput,
@@ -20,35 +21,14 @@ import {
 
 const { Text } = Typography;
 
-function RoomStatusTag({ status, isDark }: { status: MeetingRoom['status']; isDark: boolean }) {
+function RoomStatusTag({ status }: { status: MeetingRoom['status'] }) {
   if (status === 'ACTIVE') {
-    return (
-      <Tag
-        style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' } : {}}
-        color={isDark ? undefined : 'green'}
-      >
-        Hoạt động
-      </Tag>
-    );
+    return <StatusBadge label="Hoạt động" tone="success" />;
   }
   if (status === 'MAINTENANCE') {
-    return (
-      <Tag
-        style={isDark ? { background: 'rgba(251,191,36,0.15)', color: '#FCD34D', borderColor: 'rgba(251,191,36,0.3)' } : {}}
-        color={isDark ? undefined : 'orange'}
-      >
-        Bảo trì
-      </Tag>
-    );
+    return <StatusBadge label="Bảo trì" tone="warning" />;
   }
-  return (
-    <Tag
-      style={isDark ? { background: 'rgba(148,163,184,0.15)', color: '#CBD5E1', borderColor: 'rgba(148,163,184,0.3)' } : {}}
-      color={isDark ? undefined : 'default'}
-    >
-      Không hoạt động
-    </Tag>
-  );
+  return <StatusBadge label="Không hoạt động" tone="neutral" />;
 }
 
 export default function RoomManagePage() {
@@ -155,7 +135,7 @@ export default function RoomManagePage() {
       title: 'Trạng thái',
       dataIndex: 'status',
       width: 130,
-      render: (v: MeetingRoom['status']) => <RoomStatusTag status={v} isDark={isDark} />,
+      render: (v: MeetingRoom['status']) => <RoomStatusTag status={v} />,
     },
     {
       title: 'Thao tác',

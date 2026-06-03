@@ -9,6 +9,13 @@ import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 import { validateEnv } from './common/env-validation';
 
+// BigInt không serialize được sang JSON mặc định → JSON.stringify throw → 500.
+// Field BigInt duy nhất hiện tại là Tenant.storageUsedBytes (byte, < 2^53) nên trả Number.
+// Thiếu patch này, mọi endpoint trả về Tenant (provision, /tenants/current, /config) đều 500.
+(BigInt.prototype as any).toJSON = function () {
+  return Number(this);
+};
+
 // Nguồn 502 hay gặp: lỗi async ở background task (Telegram poller, BullMQ worker,
 // HrEventBus, cron, fire-and-forget .catch) reject không bắt được → Node crash cả
 // process → proxy trả 502 đến khi restart. Bắt ở mức process để LOG và GIỮ process sống.

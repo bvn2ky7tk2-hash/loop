@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import {
-  Table, Button, Space, Typography, Select, DatePicker, Tag, Modal, message,
+  Table, Button, Space, Typography, Select, DatePicker, Tag, message,
   Form, Input, InputNumber, Divider, Row, Col, Tooltip,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { StatCard } from '../../components/ui/StatCard';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   PlusOutlined, FileTextOutlined, DeleteOutlined, SendOutlined,
   CheckCircleOutlined, CloseCircleOutlined, WarningOutlined, DollarOutlined,
@@ -20,7 +21,7 @@ import {
   type Invoice, type InvoiceStatus, type InvoiceType, type FilterInvoiceParams, type InvoiceItemInput,
 } from '../../api/invoices';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 
@@ -161,9 +162,12 @@ export default function InvoicesPage() {
   };
 
   const handleChangeStatus = (id: string, status: InvoiceStatus, label: string) => {
-    Modal.confirm({
+    confirmDelete({
       title: `Chuyển sang "${label}"?`,
-      onOk: async () => {
+      content: 'Xác nhận cập nhật trạng thái hóa đơn.',
+      okText: 'Chuyển',
+      danger: false,
+      onConfirm: async () => {
         await changeStatusMutation.mutateAsync({ id, status });
         message.success(`Đã cập nhật: ${label}`);
       },
@@ -247,16 +251,17 @@ export default function InvoicesPage() {
   return (
     <div style={{ padding: 24 }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FileTextOutlined style={{ color: '#0D9488', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Hóa đơn</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Tạo hóa đơn
-        </Button>
-      </div>
+      <PageHeader
+        title="Hóa đơn"
+        icon={<FileTextOutlined />}
+        iconColor="#0D9488"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Tạo hóa đơn
+          </Button>
+        }
+      />
 
       {/* Summary cards */}
       {summary && (

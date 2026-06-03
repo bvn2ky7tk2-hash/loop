@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Table, Button, Space, Typography, Select, Tag, Form, Row, Col,
-  Input, InputNumber, Modal, message, Descriptions, Steps, Divider,
+  Input, InputNumber, message, Descriptions, Steps, Divider,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
@@ -103,9 +103,12 @@ export default function CandidatesPage() {
   const handleAdvance = (c: Candidate) => {
     const next = NEXT_STAGE[c.stage];
     if (!next) return;
-    Modal.confirm({
+    confirmDelete({
       title: `Chuyển "${c.name}" → ${STAGE_META[next].label}?`,
-      onOk: async () => {
+      content: 'Xác nhận chuyển giai đoạn ứng viên.',
+      okText: 'Chuyển',
+      danger: false,
+      onConfirm: async () => {
         await stageMutation.mutateAsync({ id: c.id, stage: next });
         message.success(`Đã chuyển sang ${STAGE_META[next].label}`);
       },

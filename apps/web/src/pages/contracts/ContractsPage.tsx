@@ -16,6 +16,7 @@ import {
 } from '../../api/contracts';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { OrgUnitSelect } from '../../components/selects';
 import { formatNumber } from '../../utils/format';
@@ -202,20 +203,21 @@ export default function ContractsPage() {
     <div style={{ padding: '20px 24px', minHeight: '100vh', background: token.colorBgLayout }}>
 
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-        <div>
-          <div style={{ fontSize: 20, fontWeight: 700, color: textPrimary, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <FileTextOutlined style={{ color: token.colorPrimary }} />
-            Quản lý hợp đồng lao động
-          </div>
-          <div style={{ marginTop: 4, fontSize: 13, color: textSecondary }}>
+      <PageHeader
+        title="Quản lý hợp đồng lao động"
+        icon={<FileTextOutlined />}
+        iconColor={token.colorPrimary}
+        subtitle={
+          <span style={{ fontSize: 13, color: textSecondary }}>
             {paginated?.total ?? 0} hợp đồng · Theo Bộ luật Lao động Việt Nam 2019
-          </div>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenCreate}>
-          Hợp đồng mới
-        </Button>
-      </div>
+          </span>
+        }
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleOpenCreate}>
+            Hợp đồng mới
+          </Button>
+        }
+      />
 
       {/* Filter Bar */}
       <div style={{

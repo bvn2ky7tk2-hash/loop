@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Table, Button, Space, Typography, Tag, Input, Form,
-  InputNumber, Tabs, App, Empty, Tooltip, Row, Col,
+  InputNumber, Tabs, App, Tooltip, Row, Col,
 } from 'antd';
 import {
   TrophyOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
@@ -16,6 +16,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { apiClient } from '../../api/client';
 
 const { Text } = Typography;
@@ -363,11 +364,9 @@ export default function PerformanceBonusConfigPage() {
                 }}
               >
                 {configsError ? (
-                  <Empty
+                  <EmptyState
                     style={{ padding: 48 }}
-                    description={
-                      <Text style={{ color: textMuted }}>API đang phát triển — endpoint /hr/performance/bonus-configs chưa có</Text>
-                    }
+                    title="API đang phát triển — endpoint /hr/performance/bonus-configs chưa có"
                   />
                 ) : (
                   <Table<PerformanceBonusConfig>
@@ -395,11 +394,9 @@ export default function PerformanceBonusConfigPage() {
                 }}
               >
                 {pendingError ? (
-                  <Empty
+                  <EmptyState
                     style={{ padding: 48 }}
-                    description={
-                      <Text style={{ color: textMuted }}>API đang phát triển — endpoint /hr/performance/bonuses chưa có</Text>
-                    }
+                    title="API đang phát triển — endpoint /hr/performance/bonuses chưa có"
                   />
                 ) : (
                   <Table<BonusPending>

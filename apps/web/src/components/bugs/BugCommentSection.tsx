@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Typography, Input, Button, Space, Avatar, Divider,
-  Popconfirm, App, Spin, Empty, Tooltip,
+  Popconfirm, App, Spin, Tooltip,
 } from 'antd';
 import { SendOutlined, EditOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
@@ -13,6 +13,7 @@ import {
   type BugComment,
 } from '../../api/bugs.api';
 import { useAuthStore } from '../../store/auth.store';
+import { EmptyState } from '../ui/EmptyState';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -182,7 +183,7 @@ export function BugCommentSection({ bugId }: Props) {
       {isLoading && <Spin size="small" />}
 
       {!isLoading && comments.length === 0 && (
-        <Empty description="Chưa có bình luận nào" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <EmptyState title="Chưa có bình luận nào" />
       )}
 
       {comments.map((c) => (

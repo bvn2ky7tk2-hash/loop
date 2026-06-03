@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import {
   Typography, Input, Button, Space, Avatar, Divider,
-  Popconfirm, App, Spin, Empty, Tooltip, List,
+  Popconfirm, App, Spin, Tooltip, List,
 } from 'antd';
 import {
   SendOutlined, DeleteOutlined, MessageOutlined,
@@ -17,6 +17,7 @@ import {
 } from '../../api/comments';
 import { useAuthStore } from '../../store/auth.store';
 import { usersApi } from '../../api/users';
+import { EmptyState } from '../ui/EmptyState';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -372,7 +373,7 @@ export function CommentThread({ entityType, entityId }: CommentThreadProps) {
       {isLoading && <Spin size="small" />}
 
       {!isLoading && comments.length === 0 && (
-        <Empty description="Chưa có bình luận nào" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <EmptyState title="Chưa có bình luận nào" />
       )}
 
       {comments.map((c) => (

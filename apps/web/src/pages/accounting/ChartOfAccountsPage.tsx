@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Table, Typography, Select, Tag, Space } from 'antd';
+import { Table, Tag, Select } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { BankOutlined } from '@ant-design/icons';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { usePagination } from '../../hooks/usePagination';
 import { useGetAccounts, type ChartOfAccount, type AccountType } from '../../api/accounting';
-
-const { Title } = Typography;
 
 const TYPE_META: Record<AccountType, { label: string; color: string }> = {
   ASSET:     { label: 'Tài sản',     color: 'blue'   },
@@ -69,20 +68,20 @@ export default function ChartOfAccountsPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <Space>
-          <BankOutlined style={{ fontSize: 22, color: linkColor }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Chart of Accounts</Title>
-        </Space>
-        <Select
-          value={typeFilter}
-          onChange={setTypeFilter}
-          style={{ width: 180 }}
-          options={TYPE_OPTIONS}
-          allowClear
-          placeholder="Lọc theo loại"
-        />
-      </div>
+      <PageHeader
+        title="Chart of Accounts"
+        icon={<BankOutlined />}
+        actions={
+          <Select
+            value={typeFilter}
+            onChange={setTypeFilter}
+            style={{ width: 180 }}
+            options={TYPE_OPTIONS}
+            allowClear
+            placeholder="Lọc theo loại"
+          />
+        }
+      />
 
       <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, overflow: 'hidden' }}>
         <Table<ChartOfAccount>

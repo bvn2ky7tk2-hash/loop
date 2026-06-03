@@ -1,4 +1,4 @@
-import { Row, Col, Card, Table, Tag, Typography, Spin, Empty } from 'antd';
+import { Row, Col, Card, Table, Tag, Typography, Spin } from 'antd';
 import {
   CreditCardOutlined, DollarOutlined, FieldTimeOutlined, FileDoneOutlined,
 } from '@ant-design/icons';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { useAuthStore } from '../../store/auth.store';
 import { formatCurrency } from '../../utils/format';
@@ -213,7 +214,7 @@ export default function PayrollAnalyticsPage() {
             style={chartCardStyle}
           >
             {areaData.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu payroll</Text>} />
+              <EmptyState title="Chưa có dữ liệu payroll" />
             ) : (
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={areaData} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
@@ -282,7 +283,7 @@ export default function PayrollAnalyticsPage() {
             style={chartCardStyle}
           >
             {otByDept.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Không có dữ liệu OT tháng này</Text>} />
+              <EmptyState title="Không có dữ liệu OT tháng này" />
             ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart
@@ -338,7 +339,7 @@ export default function PayrollAnalyticsPage() {
             style={chartCardStyle}
           >
             {topEarners.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu payroll</Text>} />
+              <EmptyState title="Chưa có dữ liệu payroll" />
             ) : (
               <Table<TopEarner>
                 rowKey="rank"

@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import {
   Table, Button, Input, Space, Tag, Typography,
-  App, Popconfirm, Row, Col, Empty, Tooltip,
+  App, Popconfirm, Row, Col, Tooltip,
 } from 'antd';
 import { CenteredModal } from '../../../components/ui/CenteredModal';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import { FilterBar } from '../../../components/FilterBar';
+import { SectionCard } from '../../../components/ui/SectionCard';
 import type { ColumnsType } from 'antd/es/table';
 import {
   ThunderboltOutlined, CheckOutlined, DollarOutlined,
@@ -35,7 +37,7 @@ export function PeriodDetailModal({
   const [editRecord, setEditRecord] = useState<PayrollRecord | null>(null);
   const [detailRecord, setDetailRecord] = useState<PayrollRecord | null>(null);
   const [page, setPage] = useState(1);
-  const { textPrimary, textMuted, bgCard, borderColor, linkColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, linkColor, isDark } = useThemePalette();
   const [searchName, setSearchName] = useState('');
 
   const { data, isLoading } = useQuery({
@@ -416,22 +418,22 @@ export function PeriodDetailModal({
         {records.length > 0 && (
           <Row gutter={12} style={{ marginBottom: 16 }}>
             <Col span={6}>
-              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+              <SectionCard nested style={{ borderRadius: 8 }} bodyStyle={{ padding: '10px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 20, fontWeight: 700, color: textPrimary }}>{records.length}</div>
                 <div style={{ fontSize: 11, color: textMuted }}><TeamOutlined /> Nhân viên</div>
-              </div>
+              </SectionCard>
             </Col>
             <Col span={6}>
-              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+              <SectionCard nested style={{ borderRadius: 8 }} bodyStyle={{ padding: '10px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: textPrimary }}>{formatCurrency(totalGross)}</div>
                 <div style={{ fontSize: 11, color: textMuted }}>Tổng thu nhập</div>
-              </div>
+              </SectionCard>
             </Col>
             <Col span={6}>
-              <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
+              <SectionCard nested style={{ borderRadius: 8 }} bodyStyle={{ padding: '10px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#EF4444' }}>-{formatCurrency(totalBHXH + totalPIT)}</div>
                 <div style={{ fontSize: 11, color: textMuted }}>BH + Thuế TNCN</div>
-              </div>
+              </SectionCard>
             </Col>
             <Col span={6}>
               <div style={{ background: isDark ? `${linkColor}18` : `${linkColor}0C`, border: `1px solid ${linkColor}30`, borderRadius: 8, padding: '10px 14px', textAlign: 'center' }}>
@@ -471,7 +473,7 @@ export function PeriodDetailModal({
             onChange: setPage,
             showTotal: t => `${t} nhân viên`,
           }}
-          locale={{ emptyText: <Empty description="Chưa có dữ liệu. Nhấn 'Tính lương' để bắt đầu." /> }}
+          locale={{ emptyText: <EmptyState compact title="Chưa có dữ liệu. Nhấn 'Tính lương' để bắt đầu." /> }}
         />
       </CenteredModal>
 

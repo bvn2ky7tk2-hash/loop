@@ -1,5 +1,5 @@
 import {
-  Row, Col, Card, Typography, Space, Button, Progress, Spin, Empty, App,
+  Row, Col, Card, Typography, Space, Button, Progress, Spin, App,
 } from 'antd';
 import {
   AppstoreOutlined, ClockCircleOutlined, CheckCircleOutlined,
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 import { processesApi } from '../../api/processes.api';
 import { leavesApi } from '../../api/leaves';
@@ -276,7 +277,7 @@ export default function MyWorkPage() {
              (userTasksData?.data ?? []).length === 0 &&
              (leavesData?.data ?? []).length === 0 &&
              (expensesData?.data ?? []).length === 0 && (
-              <Empty description="Không có việc cần xử lý" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <EmptyState title="Không có việc cần xử lý" />
             )}
           </Card>
         </Col>
@@ -297,7 +298,7 @@ export default function MyWorkPage() {
             {todayTasksLoading && <Spin size="small" />}
 
             {!todayTasksLoading && (todayTasks ?? []).length === 0 && (
-              <Empty description="Không có task nào đến hạn hôm nay" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <EmptyState title="Không có task nào đến hạn hôm nay" />
             )}
 
             {(todayTasks ?? []).map((task) => (

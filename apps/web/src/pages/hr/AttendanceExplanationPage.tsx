@@ -17,6 +17,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { StatusBadge, type StatusTone } from '../../components/ui/StatusBadge';
 import { OrgUnitSelect } from '../../components/selects';
 import {
   attendanceExplanationApi,
@@ -40,21 +41,14 @@ const EXPLANATION_TYPE_MAP: Record<ExplanationType, { label: string }> = {
   WFH:              { label: 'Làm việc từ xa' },
 };
 
-function ExplanationStatusTag({ status, isDark }: { status: ExplanationStatus; isDark: boolean }) {
-  const map: Record<ExplanationStatus, { label: string; lightColor: string; darkBg: string; darkColor: string; darkBorder: string }> = {
-    PENDING:  { label: 'Chờ duyệt', lightColor: 'gold',  darkBg: 'rgba(251,191,36,0.15)',  darkColor: '#FCD34D', darkBorder: 'rgba(251,191,36,0.3)' },
-    APPROVED: { label: 'Đã duyệt',  lightColor: 'green', darkBg: 'rgba(52,211,153,0.15)',  darkColor: '#6EE7B7', darkBorder: 'rgba(52,211,153,0.3)' },
-    REJECTED: { label: 'Từ chối',   lightColor: 'red',   darkBg: 'rgba(248,113,113,0.15)', darkColor: '#FCA5A5', darkBorder: 'rgba(248,113,113,0.3)' },
+function ExplanationStatusTag({ status }: { status: ExplanationStatus }) {
+  const map: Record<ExplanationStatus, { label: string; tone: StatusTone }> = {
+    PENDING:  { label: 'Chờ duyệt', tone: 'warning' },
+    APPROVED: { label: 'Đã duyệt',  tone: 'success' },
+    REJECTED: { label: 'Từ chối',   tone: 'error' },
   };
   const m = map[status];
-  return (
-    <Tag
-      style={isDark ? { background: m.darkBg, color: m.darkColor, borderColor: m.darkBorder } : {}}
-      color={isDark ? undefined : m.lightColor}
-    >
-      {m.label}
-    </Tag>
-  );
+  return <StatusBadge label={m.label} tone={m.tone} />;
 }
 
 function TypeTag({ type, isDark }: { type: ExplanationType; isDark: boolean }) {
@@ -208,7 +202,7 @@ export default function AttendanceExplanationPage() {
       title: 'Trạng thái',
       dataIndex: 'status',
       width: 120,
-      render: (v: ExplanationStatus) => <ExplanationStatusTag status={v} isDark={isDark} />,
+      render: (v: ExplanationStatus) => <ExplanationStatusTag status={v} />,
     },
     {
       title: 'Ngày tạo',

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
   Table, Select, Typography, Tag, Progress, Space,
-  Row, Col, Statistic, Spin,
+  Row, Col, Spin,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { StatCard } from '../../components/ui/StatCard';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { usePagination } from '../../hooks/usePagination';
 import {
   DollarOutlined, WarningOutlined, CheckCircleOutlined, BarChartOutlined,
@@ -135,53 +136,40 @@ function BudgetDetailDrawer({
       {/* Summary stats */}
       <Row gutter={12} style={{ marginBottom: 20 }}>
         <Col span={12}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: 16 }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 12 }}>Ngân sách</span>}
-              value={Number(project.budgetCost ?? 0)}
-              formatter={(v) => formatCurrency(Number(v))}
-              valueStyle={{ color: textPrimary, fontSize: 16 }}
-            />
-          </div>
+          <StatCard
+            label="Ngân sách"
+            value={formatCurrency(Number(project.budgetCost ?? 0))}
+            color="#6366F1"
+          />
         </Col>
         <Col span={12}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: 16 }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 12 }}>Chi phí thực tế</span>}
-              value={project.actualCost}
-              formatter={(v) => formatCurrency(Number(v))}
-              valueStyle={{ color: costPct > 100 ? '#FF4D4F' : '#52C41A', fontSize: 16 }}
-            />
-          </div>
+          <StatCard
+            label="Chi phí thực tế"
+            value={formatCurrency(Number(project.actualCost))}
+            subValue={`${costPct}% ngân sách`}
+            color={costPct > 100 ? '#EF4444' : '#10B981'}
+          />
         </Col>
         <Col span={12} style={{ marginTop: 12 }}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: 16 }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 12 }}>Budget giờ</span>}
-              value={Number(project.budgetHours ?? 0)}
-              suffix="h"
-              valueStyle={{ color: textPrimary, fontSize: 16 }}
-            />
-          </div>
+          <StatCard
+            label="Budget giờ"
+            value={`${Number(project.budgetHours ?? 0)}h`}
+            color="#3B82F6"
+          />
         </Col>
         <Col span={12} style={{ marginTop: 12 }}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: 16 }}>
-            <Statistic
-              title={<span style={{ color: textSecondary, fontSize: 12 }}>Giờ thực tế</span>}
-              value={formatHours(project.actualHours)}
-              suffix="h"
-              valueStyle={{ color: hoursPct > 100 ? '#FF4D4F' : textPrimary, fontSize: 16 }}
-            />
-          </div>
+          <StatCard
+            label="Giờ thực tế"
+            value={formatHours(project.actualHours)}
+            subValue={`${hoursPct}% budget`}
+            color={hoursPct > 100 ? '#EF4444' : '#8B5CF6'}
+          />
         </Col>
       </Row>
 
       {/* Utilization bars */}
       {project.budgetCost && project.actualCost > 0 && (
-        <div style={{
-          background: bgCard, border: `1px solid ${borderColor}`,
-          borderRadius: 10, padding: '12px 16px', marginBottom: 16,
-        }}>
+        <SectionCard nested style={{ marginBottom: 16 }}>
           <Text style={{ color: textSecondary, fontSize: 12, display: 'block', marginBottom: 8 }}>
             Sử dụng ngân sách: {costPct}%
           </Text>
@@ -197,7 +185,7 @@ function BudgetDetailDrawer({
               Vượt ngân sách {costPct - 100}%
             </Text>
           )}
-        </div>
+        </SectionCard>
       )}
 
       {/* Members breakdown */}

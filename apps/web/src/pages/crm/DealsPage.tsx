@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import axios from 'axios';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { CommentThread } from '../../components/comments/CommentThread';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, TrophyOutlined,
@@ -35,7 +36,7 @@ import { useAuthStore } from '../../store/auth.store';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { ProjectSelect } from '../../components/selects';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const STAGES: { key: DealStage; label: string; color: string; bg: string }[] = [
@@ -384,27 +385,28 @@ export default function DealsPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <TrophyOutlined style={{ color: '#DC2626', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Pipeline / Cơ hội bán hàng</Title>
-        </div>
-        <Space>
-          <Radio.Group
-            value={viewMode}
-            onChange={(e) => setViewMode(e.target.value)}
-            buttonStyle="solid"
-            size="small"
-          >
-            <Radio.Button value="kanban"><AppstoreOutlined /></Radio.Button>
-            <Radio.Button value="list"><UnorderedListOutlined /></Radio.Button>
-          </Radio.Group>
-          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-            style={{ background: preset.primary, borderColor: preset.primary }}>
-            Thêm deal
-          </Button>
-        </Space>
-      </div>
+      <PageHeader
+        title="Pipeline / Cơ hội bán hàng"
+        icon={<TrophyOutlined />}
+        iconColor="#DC2626"
+        actions={
+          <Space>
+            <Radio.Group
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              buttonStyle="solid"
+              size="small"
+            >
+              <Radio.Button value="kanban"><AppstoreOutlined /></Radio.Button>
+              <Radio.Button value="list"><UnorderedListOutlined /></Radio.Button>
+            </Radio.Group>
+            <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+              style={{ background: preset.primary, borderColor: preset.primary }}>
+              Thêm deal
+            </Button>
+          </Space>
+        }
+      />
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select

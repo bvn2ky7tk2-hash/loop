@@ -8,6 +8,7 @@ import { CenteredModal } from '../../components/ui/CenteredModal';
 import { CommentThread } from '../../components/comments/CommentThread';
 import { EmployeeSelect } from '../../components/selects';
 import { StatCard } from '../../components/ui/StatCard';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   PlusOutlined, DeleteOutlined, CheckOutlined, CloseOutlined,
   WalletOutlined, PlusCircleOutlined, BranchesOutlined, DownloadOutlined,
@@ -26,7 +27,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { formatCurrency } from '../../utils/format';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -467,30 +468,27 @@ export default function ExpensePage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{
-        display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center', marginBottom: 20,
-      }}>
-        <Title level={3} style={{ margin: 0, color: textPrimary }}>
-          <WalletOutlined style={{ marginRight: 8, color: linkColor }} />
-          Chi phí
-        </Title>
-        <Space>
-          <Button
-            icon={<DownloadOutlined />}
-            onClick={() => downloadExport('/expenses/export', 'phieu-chi.xlsx').catch(() => message.error('Export thất bại'))}
-          >
-            Export
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setDrawerOpen(true)}
-          >
-            Tạo yêu cầu
-          </Button>
-        </Space>
-      </div>
+      <PageHeader
+        title="Chi phí"
+        icon={<WalletOutlined />}
+        actions={
+          <Space>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => downloadExport('/expenses/export', 'phieu-chi.xlsx').catch(() => message.error('Export thất bại'))}
+            >
+              Export
+            </Button>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setDrawerOpen(true)}
+            >
+              Tạo yêu cầu
+            </Button>
+          </Space>
+        }
+      />
 
       {/* Summary cards */}
       <Row gutter={16} style={{ marginBottom: 20 }}>

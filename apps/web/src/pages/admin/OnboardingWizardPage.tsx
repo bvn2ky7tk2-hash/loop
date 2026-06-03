@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { moduleConfigApi } from '../../api/module-config';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -63,7 +64,7 @@ const DEMO_EMPLOYEES: EmployeeRow[] = [
 // ─── Component chính ─────────────────────────────────────────────────────────
 
 export default function OnboardingWizardPage() {
-  const { textPrimary, textMuted, bgCard, bgContainer, borderColor, isDark, preset, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, borderColor, isDark, preset, linkColor } = useThemePalette();
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -234,7 +235,7 @@ export default function OnboardingWizardPage() {
           <Text style={{ color: textPrimary, fontWeight: 600, display: 'block', marginBottom: 12 }}>
             Sơ đồ tổ chức
           </Text>
-          <Card style={cardStyle} bodyStyle={{ padding: 16 }}>
+          <SectionCard nested style={{ marginBottom: 16 }}>
             <Tree
               treeData={[
                 {
@@ -253,7 +254,7 @@ export default function OnboardingWizardPage() {
               ]}
               defaultExpandAll
             />
-          </Card>
+          </SectionCard>
         </Col>
       </Row>
     </div>,
@@ -428,7 +429,7 @@ export default function OnboardingWizardPage() {
           <Text style={{ color: textPrimary, fontWeight: 600, display: 'block', marginBottom: 8 }}>
             Preview ({validEmails.length} email hợp lệ)
           </Text>
-          <Card style={cardStyle} bodyStyle={{ padding: 12, maxHeight: 280, overflowY: 'auto' }}>
+          <SectionCard nested style={{ marginBottom: 16 }} bodyStyle={{ padding: 12, maxHeight: 280, overflowY: 'auto' }}>
             {validEmails.length > 0 ? (
               validEmails.map((email, i) => (
                 <div key={i} style={{ padding: '4px 0', borderBottom: i < validEmails.length - 1 ? `1px solid ${borderColor}` : 'none' }}>
@@ -439,7 +440,7 @@ export default function OnboardingWizardPage() {
             ) : (
               <Text style={{ color: textMuted, fontSize: 13 }}>Chưa có email nào hợp lệ</Text>
             )}
-          </Card>
+          </SectionCard>
         </Col>
       </Row>
     </div>,
@@ -531,18 +532,17 @@ export default function OnboardingWizardPage() {
       />
 
       {/* Steps navigation */}
-      <Card style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 12, marginBottom: 24 }}>
+      <SectionCard style={{ marginBottom: 24 }}>
         <Steps
           current={current}
           items={STEPS}
           responsive
           style={{ padding: '8px 0' }}
         />
-      </Card>
+      </SectionCard>
 
       {/* Step content */}
-      <Card style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 12, minHeight: 400 }}
-        bodyStyle={{ padding: 28 }}>
+      <SectionCard style={{ minHeight: 400 }} bodyStyle={{ padding: 28 }}>
         {stepContent[current]}
 
         <Divider style={{ borderColor }} />
@@ -566,7 +566,7 @@ export default function OnboardingWizardPage() {
             </Button>
           )}
         </div>
-      </Card>
+      </SectionCard>
     </div>
   );
 }

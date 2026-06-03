@@ -11,12 +11,13 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   useGetCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer,
   type Customer, type CustomerFilterDto,
 } from '../../api/crm';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function CustomersPage() {
   const { bgContainer, bgCard, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
@@ -126,16 +127,17 @@ export default function CustomersPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ShopOutlined style={{ color: '#DC2626', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Khách hàng</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); setCreateOpen(true); }}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Thêm KH
-        </Button>
-      </div>
+      <PageHeader
+        title="Khách hàng"
+        icon={<ShopOutlined />}
+        iconColor="#DC2626"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => { form.resetFields(); setCreateOpen(true); }}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Thêm KH
+          </Button>
+        }
+      />
 
       <div style={{ marginBottom: 12 }}>
         <Input.Search

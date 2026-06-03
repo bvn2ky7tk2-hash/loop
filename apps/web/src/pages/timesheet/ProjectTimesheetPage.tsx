@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Select, DatePicker, Table, Spin, Empty } from 'antd';
+import { Select, DatePicker, Table, Spin } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import dayjs, { Dayjs } from 'dayjs';
 import { timesheetApi, type ProjectSummaryMember } from '../../api/timesheet';
 import { projectsApi } from '../../api/projects';
 import { useThemePalette } from '../../hooks/useThemePalette';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 import { Typography } from 'antd';
 const { Text } = Typography;
@@ -169,7 +170,7 @@ export default function ProjectTimesheetPage() {
       </div>
 
       {!projectId ? (
-        <Empty description="Chọn dự án để xem timesheet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <EmptyState title="Chọn dự án để xem timesheet" />
       ) : (
         <Spin spinning={isLoading || isFetching}>
           <Table<RowData>

@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react';
 import {
-  Tabs, List, Badge, Typography, Space, Empty, Skeleton, Tag, Select, Switch, Radio,
+  Tabs, List, Badge, Typography, Space, Skeleton, Tag, Select, Switch, Radio,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useGetMyBugs, type Bug, type BugSeverity, type BugStatus, type BugItemType } from '../../api/bugs.api';
 import { BugStatusPill } from '../../components/bugs/BugStatusPill';
 import { BugDetailDrawer } from '../../components/bugs/BugDetailDrawer';
 import { SEVERITY_CONFIG } from '../../components/bugs/BugSeverityBadge';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 const SEVERITY_ORDER: BugSeverity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 
@@ -122,7 +123,7 @@ export default function MyBugsPage() {
       {isLoading && <Skeleton active />}
 
       {!isLoading && (!bugs || bugs.length === 0) && (
-        <Empty description="Không có bug nào được giao cho bạn" />
+        <EmptyState title="Không có bug nào được giao cho bạn" />
       )}
 
       {!isLoading && bugs && bugs.length > 0 && (
@@ -173,7 +174,7 @@ export default function MyBugsPage() {
             <BugGroup key={g.severity} severity={g.severity} bugs={g.bugs} onSelect={setSelectedBugId} />
           ))}
           {grouped.length === 0 && (
-            <Empty description="Không có bug nào phù hợp bộ lọc" />
+            <EmptyState title="Không có bug nào phù hợp bộ lọc" />
           )}
         </>
       )}

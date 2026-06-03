@@ -17,6 +17,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { FilterBar } from '../../components/FilterBar';
 import { forecastApi, type DealStage, type RevenueTarget } from '../../api/forecast';
 
@@ -55,7 +56,7 @@ function fmt(v: number): string {
 // ─── Overview Tab ────────────────────────────────────────────────────────────
 function OverviewTab() {
   const [year, setYear] = useState(2026);
-  const { isDark, textPrimary, textMuted, bgCard, bgContainer, borderColor } = useThemePalette();
+  const { isDark, textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
 
   const { data: monthly = [] } = useQuery({
     queryKey: ['forecast-monthly', year],
@@ -99,10 +100,7 @@ function OverviewTab() {
       </div>
 
       {/* Monthly chart */}
-      <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20, marginBottom: 20 }}>
-        <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 16 }}>
-          Doanh thu theo tháng (tỷ VNĐ)
-        </Text>
+      <SectionCard nested title="Doanh thu theo tháng (tỷ VNĐ)" style={{ marginBottom: 20 }}>
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={chartData} margin={{ left: 0, right: 8 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
@@ -119,15 +117,12 @@ function OverviewTab() {
             <Bar dataKey="Thực tế"  fill="#10B981" radius={[4,4,0,0]} />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </SectionCard>
 
       <Row gutter={16}>
         {/* Quarterly */}
         <Col xs={24} lg={14}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20 }}>
-            <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 16 }}>
-              Theo quý (tỷ VNĐ)
-            </Text>
+          <SectionCard nested title="Theo quý (tỷ VNĐ)">
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={qData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#E2E8F0'} />
@@ -143,15 +138,12 @@ function OverviewTab() {
                 <Bar dataKey="Thực tế"  fill="#10B981" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
+          </SectionCard>
         </Col>
 
         {/* Pipeline Funnel */}
         <Col xs={24} lg={10}>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20, height: '100%' }}>
-            <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15, display: 'block', marginBottom: 16 }}>
-              Pipeline theo giai đoạn (đang hoạt động)
-            </Text>
+          <SectionCard nested title="Pipeline theo giai đoạn (đang hoạt động)" style={{ height: '100%' }}>
             {activePipeline.map(p => (
               <div key={p.stage} style={{ marginBottom: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -167,7 +159,7 @@ function OverviewTab() {
                 />
               </div>
             ))}
-          </div>
+          </SectionCard>
         </Col>
       </Row>
     </div>

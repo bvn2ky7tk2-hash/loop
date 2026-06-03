@@ -12,6 +12,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { tenantsApi, type Tenant, type CreateTenantPayload } from '../../api/tenants';
 
 const { Text } = Typography;
@@ -169,33 +170,16 @@ export default function TenantsPage() {
     {
       title: 'Trạng thái',
       dataIndex: 'isActive',
-      render: (v: boolean) => v ? (
-        <Tag
-          color={isDark ? undefined : 'green'}
-          style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' } : {}}
-        >
-          Hoạt động
-        </Tag>
-      ) : (
-        <Tag
-          color={isDark ? undefined : 'default'}
-          style={isDark ? { background: 'rgba(148,163,184,0.15)', color: '#94A3B8', borderColor: 'rgba(148,163,184,0.3)' } : {}}
-        >
-          Vô hiệu
-        </Tag>
-      ),
+      render: (v: boolean) => v
+        ? <StatusBadge label="Hoạt động" tone="success" />
+        : <StatusBadge label="Vô hiệu" tone="neutral" />,
     },
     {
       title: 'Mặc định',
       dataIndex: 'isDefault',
-      render: (v: boolean) => v ? (
-        <Tag
-          color={isDark ? undefined : 'blue'}
-          style={isDark ? { background: 'rgba(96,165,250,0.15)', color: '#93C5FD', borderColor: 'rgba(96,165,250,0.3)' } : {}}
-        >
-          Mặc định
-        </Tag>
-      ) : null,
+      render: (v: boolean) => v
+        ? <StatusBadge label="Mặc định" tone="info" />
+        : null,
     },
     {
       title: 'Giới hạn gói',

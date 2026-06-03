@@ -4,6 +4,7 @@ import {
   Input, InputNumber, Tag, Modal, message,
 } from 'antd';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { PlusOutlined, EditOutlined, DeleteOutlined, FunnelPlotOutlined, SwapOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -18,7 +19,7 @@ import {
 } from '../../api/crm';
 import { useAuthStore } from '../../store/auth.store';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { TextArea } = Input;
 
 const SOURCE_META: Record<LeadSource, { label: string; color: string }> = {
@@ -176,16 +177,17 @@ export default function LeadsPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <FunnelPlotOutlined style={{ color: '#DC2626', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Leads</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Thêm lead
-        </Button>
-      </div>
+      <PageHeader
+        title="Leads"
+        icon={<FunnelPlotOutlined />}
+        iconColor="#DC2626"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Thêm lead
+          </Button>
+        }
+      />
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Select

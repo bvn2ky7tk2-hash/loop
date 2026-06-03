@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import {
-  Tabs, Table, Tag, Button, Modal, Form, Input, DatePicker, InputNumber,
-  Select, Row, Col, Typography, Space, Badge, Spin, Empty, Tooltip,
+  Tabs, Table, Button, Modal, Form, Input, DatePicker, InputNumber,
+  Select, Row, Col, Typography, Space, Badge, Spin, Tooltip,
 } from 'antd';
 import {
   UserAddOutlined, TeamOutlined, CheckCircleOutlined,
@@ -13,6 +13,8 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { CandidateDetailDrawer } from './CandidateDetailDrawer';
 import { useGetCandidates, useHireCandidate, type Candidate } from '../../api/recruit';
 import {
@@ -198,7 +200,7 @@ function OfferTab({ onHire }: { onHire: (c: Candidate) => void }) {
   ];
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>;
-  if (!candidates.length) return <Empty description="Không có ứng viên ở giai đoạn Offer" />;
+  if (!candidates.length) return <EmptyState title="Không có ứng viên ở giai đoạn Offer" />;
 
   return (
     <>
@@ -262,26 +264,20 @@ function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
       render: (_: unknown, r: ProcessInstance) => {
         if (status === 'COMPLETED') {
           return (
-            <Tag
-              style={isDark ? { background: 'rgba(16,185,129,0.15)', color: '#6EE7B7', borderColor: 'rgba(16,185,129,0.3)' } : {}}
-              color={isDark ? undefined : 'green'}
-              icon={<CheckCircleOutlined />}
-            >
-              Hoàn tất
-            </Tag>
+            <StatusBadge
+              tone="success"
+              label={<><CheckCircleOutlined /> Hoàn tất</>}
+            />
           );
         }
         const step = getStepStatus(r);
         if (!step) return <Text style={{ color: textMuted }}>—</Text>;
         return (
           <Space>
-            <Tag
-              style={isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)' } : {}}
-              color={isDark ? undefined : 'orange'}
-              icon={STEP_ICONS[step] ?? <ClockCircleOutlined />}
-            >
-              {STEP_LABELS[step] ?? step}
-            </Tag>
+            <StatusBadge
+              tone="warning"
+              label={<>{STEP_ICONS[step] ?? <ClockCircleOutlined />} {STEP_LABELS[step] ?? step}</>}
+            />
           </Space>
         );
       },
@@ -340,7 +336,7 @@ function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
 
   if (!onboardingDef && !isLoading) {
     return (
-      <Empty
+      <EmptyState
         description={
           <span>
             Chưa có process definition <strong>employee-onboarding-v1</strong>.{' '}
@@ -352,7 +348,7 @@ function OnboardingInstancesTab({ status }: { status: InstanceStatus }) {
   }
 
   if (isLoading) return <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>;
-  if (!instances.length) return <Empty description={status === 'RUNNING' ? 'Không có nhân viên đang onboarding' : 'Chưa có onboarding hoàn tất'} />;
+  if (!instances.length) return <EmptyState title={status === 'RUNNING' ? 'Không có nhân viên đang onboarding' : 'Chưa có onboarding hoàn tất'} />;
 
   return (
     <Table

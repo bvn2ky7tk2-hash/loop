@@ -1,4 +1,4 @@
-import { Row, Col, Card, Table, Tag, Typography, Select, Spin, Empty, Button } from 'antd';
+import { Row, Col, Card, Table, Tag, Typography, Select, Spin, Button } from 'antd';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import type { EmployeeInfoCellEmployee } from '../../components/ui/EmployeeInfoCell';
 import {
@@ -21,6 +21,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 const { Text } = Typography;
 
@@ -288,7 +289,7 @@ export default function HrAnalyticsPage() {
             style={chartCardStyle}
           >
             {headcountTrend.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu</Text>} />
+              <EmptyState title="Chưa có dữ liệu" />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={headcountTrend} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
@@ -325,7 +326,7 @@ export default function HrAnalyticsPage() {
             style={chartCardStyle}
           >
             {filteredAttrition.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Không có dữ liệu attrition</Text>} />
+              <EmptyState title="Không có dữ liệu attrition" />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart
@@ -367,7 +368,7 @@ export default function HrAnalyticsPage() {
             style={chartCardStyle}
           >
             {salaryDist.length === 0 ? (
-              <Empty description={<Text style={{ color: textMuted }}>Chưa có dữ liệu lương</Text>} />
+              <EmptyState title="Chưa có dữ liệu lương" />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={salaryDist} margin={{ top: 8, right: 16, left: -8, bottom: 0 }}>
@@ -411,13 +412,11 @@ export default function HrAnalyticsPage() {
             style={chartCardStyle}
           >
             {contractExpiry.length === 0 ? (
-              <Empty
-                description={
-                  <Text style={{ color: textMuted }}>
-                    {summary?.contractsExpiring60d
-                      ? `${summary.contractsExpiring60d} hợp đồng sắp hết hạn — xem tại module Contracts`
-                      : 'Không có hợp đồng sắp hết hạn'}
-                  </Text>
+              <EmptyState
+                title={
+                  summary?.contractsExpiring60d
+                    ? `${summary.contractsExpiring60d} hợp đồng sắp hết hạn — xem tại module Contracts`
+                    : 'Không có hợp đồng sắp hết hạn'
                 }
               />
             ) : (

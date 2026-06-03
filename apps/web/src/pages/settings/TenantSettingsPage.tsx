@@ -5,6 +5,7 @@ import {
 } from 'antd';
 import { BuildOutlined, SaveOutlined, EyeOutlined } from '@ant-design/icons';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { tenantApi } from '../../api/tenant';
 import type { TenantConfig } from '../../api/tenant';
@@ -21,7 +22,7 @@ const TIMEZONE_OPTIONS = [
 ];
 
 export default function TenantSettingsPage() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -163,12 +164,7 @@ export default function TenantSettingsPage() {
             style={{ background: bgContainer, border: `1px solid ${borderColor}` }}
           >
             {/* Sidebar preview mini */}
-            <div style={{
-              background: bgCard,
-              borderRadius: 8,
-              border: `1px solid ${borderColor}`,
-              overflow: 'hidden',
-            }}>
+            <SectionCard nested noPadding style={{ borderRadius: 8 }}>
               {/* Logo bar */}
               <div style={{
                 height: 52,
@@ -217,7 +213,7 @@ export default function TenantSettingsPage() {
                   <Text style={{ color: textPrimary, fontSize: 13 }}>{label}</Text>
                 </div>
               ))}
-            </div>
+            </SectionCard>
 
             <Divider style={{ borderColor }} />
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Row, Col, Typography, DatePicker, Card, List, Badge, Tooltip, Tag, Button, Skeleton } from 'antd';
+import { Row, Col, Typography, DatePicker, Card, List, Badge, Tooltip, Button, Skeleton } from 'antd';
 import {
   RiseOutlined,
   DollarOutlined,
@@ -35,6 +35,7 @@ import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { SparklineCard } from '../../components/ui/SparklineCard';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -450,16 +451,7 @@ export default function ExecutiveDashboardPage() {
                         <List.Item
                           style={{ borderColor, padding: '8px 0' }}
                           extra={
-                            <Tag
-                              style={
-                                urgent
-                                  ? isDark ? { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' } : {}
-                                  : isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)' } : {}
-                              }
-                              color={isDark ? undefined : urgent ? 'red' : 'orange'}
-                            >
-                              {daysLeft} ngày
-                            </Tag>
+                            <StatusBadge tone={urgent ? 'error' : 'warning'} label={`${daysLeft} ngày`} />
                           }
                         >
                           <div>
@@ -532,12 +524,7 @@ export default function ExecutiveDashboardPage() {
                       <List.Item
                         style={{ borderColor, padding: '8px 0' }}
                         extra={
-                          <Tag
-                            style={isDark ? { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' } : {}}
-                            color={isDark ? undefined : 'red'}
-                          >
-                            {item.daysOverdue} ngày
-                          </Tag>
+                          <StatusBadge tone="error" label={`${item.daysOverdue} ngày`} />
                         }
                       >
                         <div>
@@ -621,14 +608,7 @@ export default function ExecutiveDashboardPage() {
                         }}
                       >
                         <Text style={{ color: textPrimary, fontSize: 12 }}>{b.lineName}</Text>
-                        <Tag
-                          style={b.utilization >= 100
-                            ? isDark ? { background: 'rgba(248,113,113,0.15)', color: '#FCA5A5', borderColor: 'rgba(248,113,113,0.3)' } : {}
-                            : isDark ? { background: 'rgba(245,158,11,0.15)', color: '#FCD34D', borderColor: 'rgba(245,158,11,0.3)' } : {}}
-                          color={isDark ? undefined : b.utilization >= 100 ? 'red' : 'orange'}
-                        >
-                          {b.utilization}%
-                        </Tag>
+                        <StatusBadge tone={b.utilization >= 100 ? 'error' : 'warning'} label={`${b.utilization}%`} />
                       </div>
                     ))}
                   </>

@@ -2,9 +2,10 @@ import { useState, useMemo, useEffect } from 'react';
 import {
   Tabs, Table, Tag, Button, Modal, Form, Input, Switch, Select, Space,
   App, Popconfirm, Typography,
-  Tree, Badge, Avatar, Empty,
+  Tree, Badge, Avatar,
 } from 'antd';
 import { CenteredModal } from '../../../components/ui/CenteredModal';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import {
   DeleteOutlined, UserOutlined,
   TeamOutlined, SafetyCertificateOutlined, ApartmentOutlined,
@@ -281,7 +282,7 @@ export function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
                     columns={memberCols}
                     size="small"
                     pagination={false}
-                    locale={{ emptyText: <Empty description="Chưa có thành viên" /> }}
+                    locale={{ emptyText: <EmptyState compact title="Chưa có thành viên" /> }}
                   />
                   <Modal
                     open={addMemberOpen}
@@ -404,7 +405,7 @@ export function GroupDrawer({ open, groupId, onClose }: GroupDrawerProps) {
                         selectable={false}
                       />
                     ) : (
-                      <Empty description="Chưa có sơ đồ tổ chức" />
+                      <EmptyState title="Chưa có sơ đồ tổ chức" />
                     )}
                   </div>
                 </div>

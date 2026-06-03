@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 import {
   Table, Tag, Button, Modal, Form, Switch, Select, Space,
-  App, Popconfirm, Typography, Empty,
+  App, Popconfirm, Typography,
 } from 'antd';
 import { PlusOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { permissionsApi } from '../../../api/permissions';
 import { useThemePalette } from '../../../hooks/useThemePalette';
@@ -187,7 +188,7 @@ export function UserOverridesTab() {
               columns={overrideCols}
               size="small"
               pagination={false}
-              locale={{ emptyText: <Empty description="Chưa có override" /> }}
+              locale={{ emptyText: <EmptyState compact title="Chưa có override" /> }}
             />
           </>
         )}

@@ -9,12 +9,13 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, ContactsOutlined } from '@a
 import type { ColumnsType } from 'antd/es/table';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
+import { PageHeader } from '../../components/ui/PageHeader';
 import {
   useGetContacts, useCreateContact, useUpdateContact, useDeleteContact,
   useGetCustomers, type Contact, type ContactFilterDto,
 } from '../../api/crm';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function ContactsPage() {
   const { isDark, bgContainer, borderColor, textPrimary, textMuted, linkColor, preset } = useThemePalette();
@@ -96,16 +97,17 @@ export default function ContactsPage() {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ContactsOutlined style={{ color: '#DC2626', fontSize: 20 }} />
-          <Title level={4} style={{ margin: 0, color: textPrimary }}>Liên hệ</Title>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
-          style={{ background: preset.primary, borderColor: preset.primary }}>
-          Thêm liên hệ
-        </Button>
-      </div>
+      <PageHeader
+        title="Liên hệ"
+        icon={<ContactsOutlined />}
+        iconColor="#DC2626"
+        actions={
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}
+            style={{ background: preset.primary, borderColor: preset.primary }}>
+            Thêm liên hệ
+          </Button>
+        }
+      />
 
       <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
         <Input.Search

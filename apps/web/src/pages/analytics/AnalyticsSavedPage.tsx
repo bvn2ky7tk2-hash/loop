@@ -1,5 +1,5 @@
 import {
-  Table, Typography, Tag, Button, App, Tooltip, Space, Empty,
+  Table, Typography, Tag, Button, App, Tooltip, Space,
 } from 'antd';
 import {
   SaveOutlined, PlusOutlined, DeleteOutlined,
@@ -13,6 +13,8 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { confirmDelete } from '../../components/ui/confirmDelete';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 
 const { Text } = Typography;
 
@@ -91,13 +93,7 @@ export default function AnalyticsSavedPage() {
       width: 140,
       render: (v: boolean) => v
         ? (
-          <Tag
-            icon={<GlobalOutlined />}
-            style={isDark ? { background: 'rgba(52,211,153,0.15)', color: '#6EE7B7', borderColor: 'rgba(52,211,153,0.3)' } : {}}
-            color={isDark ? undefined : 'green'}
-          >
-            Công khai
-          </Tag>
+          <StatusBadge tone="success" label={<><GlobalOutlined /> Công khai</>} />
         )
         : (
           <Tag icon={<LockOutlined />} color="default">
@@ -174,8 +170,8 @@ export default function AnalyticsSavedPage() {
           pagination={paginationProps(data.length, 'báo cáo')}
           locale={{
             emptyText: (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              <EmptyState
+                compact
                 description={
                   <span>
                     <Text style={{ color: textMuted }}>Chưa có báo cáo nào. </Text>

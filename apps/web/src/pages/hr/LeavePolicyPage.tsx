@@ -10,6 +10,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { FilterBar } from '../../components/FilterBar';
 import { employeesApi } from '../../api/employees';
 import { leavePoliciesApi, type LeavePolicy } from '../../api/hr-attendance';
@@ -22,7 +23,7 @@ interface SeniorityRow {
 }
 
 export default function LeavePolicyPage() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
@@ -215,7 +216,7 @@ export default function LeavePolicyPage() {
                     Thêm chính sách
                   </Button>
                 </div>
-                <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
+                <SectionCard noPadding style={{ marginBottom: 24 }}>
                   <Table
                     rowKey="id"
                     columns={columns}
@@ -224,10 +225,10 @@ export default function LeavePolicyPage() {
                     pagination={paginationProps(policies.length, 'chính sách nghỉ')}
                     size="middle"
                   />
-                </div>
+                </SectionCard>
 
                 {/* Phân công chính sách */}
-                <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 20 }}>
+                <SectionCard>
                   <Text style={{ color: textPrimary, fontWeight: 600, fontSize: 15 }}>Phân công chính sách cho nhân viên</Text>
                   <Divider style={{ margin: '12px 0' }} />
                   <FilterBar>
@@ -258,7 +259,7 @@ export default function LeavePolicyPage() {
                       Gán chính sách
                     </Button>
                   </FilterBar>
-                </div>
+                </SectionCard>
               </>
             ),
           },

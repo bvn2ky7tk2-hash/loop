@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {
   Table, Button, Modal, Form, Input, DatePicker, Space, Tag, Typography,
-  App, Popconfirm, Row, Col, Empty,
+  App, Popconfirm, Row, Col,
 } from 'antd';
 import { StatCard } from '../../../components/ui/StatCard';
+import { EmptyState } from '../../../components/ui/EmptyState';
 import type { ColumnsType } from 'antd/es/table';
 import {
   PlusOutlined, ThunderboltOutlined, DollarOutlined,
@@ -215,10 +216,10 @@ export function Month13Tab() {
           scroll={{ x: 900 }}
           style={{ border: `1px solid ${borderColor}`, borderRadius: 8, background: bgContainer }}
           pagination={false}
-          locale={{ emptyText: <Empty description="Nhấn 'Tính lương T13' để tính." /> }}
+          locale={{ emptyText: <EmptyState compact title="Nhấn 'Tính lương T13' để tính." /> }}
         />
       ) : (
-        <Empty description={<Text style={{ color: textMuted }}>Chọn một kỳ lương tháng 13 để xem kết quả</Text>} />
+        <EmptyState title="Chọn một kỳ lương tháng 13 để xem kết quả" />
       )}
 
       {/* Modal tạo kỳ T13 */}
