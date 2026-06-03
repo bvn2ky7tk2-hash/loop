@@ -1,13 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Button, Form, Input, Select, InputNumber, DatePicker,
+  Button, Form, Input, Select,
   Space, Table, Tag, Tabs, Typography, Row, Col, App,
-  Segmented, Tooltip, Divider, Badge, Popover, List, Avatar,
+  Tooltip, Badge,
 } from 'antd';
 import {
   ClockCircleOutlined, PlusOutlined, EditOutlined, DeleteOutlined,
   TeamOutlined, CheckCircleOutlined, CalendarOutlined,
-  ArrowRightOutlined, MinusCircleOutlined, UserAddOutlined,
+  ArrowRightOutlined, UserAddOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -18,139 +18,23 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
-import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import {
   workShiftsApi,
-  type WorkShift, type ShiftAssignment, type ShiftType,
-  type WorkSchedule, type WorkScheduleEnrollment, type ScheduleRepeatType,
+  type WorkShift, type ShiftAssignment,
+  type WorkSchedule, type ScheduleRepeatType,
 } from '../../api/work-shifts';
 import { employeesApi } from '../../api/employees';
 
+import { REPEAT_META, calcNetHours, ShiftTypeTag } from './hr-shifts/components/constants';
+import { EnrollmentPopover } from './hr-shifts/components/EnrollmentPopover';
+import { ShiftFormModal } from './hr-shifts/components/ShiftFormModal';
+import { AssignmentFormModal } from './hr-shifts/components/AssignmentFormModal';
+import { ScheduleFormModal } from './hr-shifts/components/ScheduleFormModal';
+import { EnrollModal } from './hr-shifts/components/EnrollModal';
+
 const { Text } = Typography;
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const SHIFT_TYPE_MAP: Record<ShiftType, { label: string; color: string; darkBg: string; darkText: string; darkBorder: string }> = {
-  HANH_CHINH: { label: 'Hành chính', color: 'blue',   darkBg: 'rgba(96,165,250,0.15)',  darkText: '#93C5FD', darkBorder: 'rgba(96,165,250,0.3)' },
-  CA_SANG:    { label: 'Ca sáng',    color: 'gold',   darkBg: 'rgba(251,191,36,0.15)',  darkText: '#FCD34D', darkBorder: 'rgba(251,191,36,0.3)' },
-  CA_CHIEU:   { label: 'Ca chiều',   color: 'orange', darkBg: 'rgba(251,146,60,0.15)',  darkText: '#FDBA74', darkBorder: 'rgba(251,146,60,0.3)' },
-  CA_DEM:     { label: 'Ca đêm',     color: 'purple', darkBg: 'rgba(167,139,250,0.15)', darkText: '#C4B5FD', darkBorder: 'rgba(167,139,250,0.3)' },
-  LINH_HOAT:  { label: 'Linh hoạt', color: 'cyan',   darkBg: 'rgba(34,211,238,0.15)',  darkText: '#67E8F9', darkBorder: 'rgba(34,211,238,0.3)' },
-};
-
-const REPEAT_META: Record<ScheduleRepeatType, { label: string; phaseLabel: string; color: string }> = {
-  DAILY:   { label: 'Theo ngày',  phaseLabel: 'Ngày',  color: '#10B981' },
-  WEEKLY:  { label: 'Theo tuần',  phaseLabel: 'Tuần',  color: '#3B82F6' },
-  MONTHLY: { label: 'Theo tháng', phaseLabel: 'Tháng', color: '#8B5CF6' },
-};
-
-function calcNetHours(startTime: string, endTime: string, breakMinutes: number): number {
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-  let totalMin = (eh * 60 + em) - (sh * 60 + sm);
-  if (totalMin < 0) totalMin += 24 * 60;
-  totalMin -= breakMinutes;
-  return Math.max(0, totalMin / 60);
-}
-
-function ShiftTypeTag({ type, isDark }: { type: ShiftType; isDark: boolean }) {
-  const meta = SHIFT_TYPE_MAP[type];
-  if (!meta) return <Text>{type}</Text>;
-  return (
-    <Tag
-      color={isDark ? undefined : meta.color}
-      style={isDark ? { background: meta.darkBg, color: meta.darkText, borderColor: meta.darkBorder } : {}}
-    >
-      {meta.label}
-    </Tag>
-  );
-}
-
-// ── EnrollmentPopover — hiển thị danh sách nhân viên trong lịch ──────────────
-
-function EnrollmentPopover({
-  scheduleId,
-  count,
-  onRemove,
-  isDark,
-  textPrimary,
-  textMuted,
-  borderColor,
-}: {
-  scheduleId: string;
-  count: number;
-  onRemove: (id: string) => void;
-  isDark: boolean;
-  textPrimary: string;
-  textMuted: string;
-  borderColor: string;
-}) {
-  const [open, setOpen] = useState(false);
-  const { data: enrollments = [], isLoading } = useQuery({
-    queryKey: ['enrollments', scheduleId],
-    queryFn: () => workShiftsApi.listEnrollments(scheduleId),
-    enabled: open,
-  });
-
-  const content = (
-    <div style={{ width: 280, maxHeight: 320, overflowY: 'auto' }}>
-      {isLoading ? (
-        <Text style={{ color: textMuted }}>Đang tải...</Text>
-      ) : enrollments.length === 0 ? (
-        <Text style={{ color: textMuted }}>Chưa có nhân viên nào trong lịch này</Text>
-      ) : (
-        <List
-          size="small"
-          dataSource={enrollments}
-          renderItem={(e: WorkScheduleEnrollment) => (
-            <List.Item
-              style={{ borderColor }}
-              actions={[
-                <Button
-                  key="del"
-                  type="text" size="small" danger icon={<DeleteOutlined />}
-                  onClick={() => onRemove(e.id)}
-                />,
-              ]}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar size={28} style={{ background: isDark ? '#3B82F6' : '#6366F1', fontSize: 12 }}>
-                    {e.employee?.fullName?.[0] ?? '?'}
-                  </Avatar>
-                }
-                title={<Text style={{ color: textPrimary, fontSize: 13 }}>{e.employee?.fullName ?? 'Phòng ban'}</Text>}
-                description={
-                  <Text style={{ color: textMuted, fontSize: 11 }}>
-                    Từ {dayjs(e.effectiveFrom).format('DD/MM/YYYY')}
-                    {e.effectiveTo ? ` → ${dayjs(e.effectiveTo).format('DD/MM/YYYY')}` : ' (vô thời hạn)'}
-                  </Text>
-                }
-              />
-            </List.Item>
-          )}
-        />
-      )}
-    </div>
-  );
-
-  return (
-    <Popover
-      content={content}
-      title={<Text style={{ color: textPrimary }}>Nhân viên trong lịch ({count})</Text>}
-      trigger="click"
-      open={open}
-      onOpenChange={setOpen}
-      placement="bottomLeft"
-    >
-      <Button type="link" size="small" style={{ padding: 0, color: isDark ? '#93C5FD' : '#6366F1' }}>
-        <TeamOutlined /> {count} nhân sự
-      </Button>
-    </Popover>
-  );
-}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -749,274 +633,54 @@ export default function HrShiftsPage() {
       />
 
       {/* ── Modal: Tạo/Sửa ca ──────────────────────────────────────────────── */}
-      <CenteredModal
+      <ShiftFormModal
         open={shiftModalOpen}
         onClose={() => { setShiftModalOpen(false); setEditShift(null); shiftForm.resetFields(); }}
-        title={editShift ? `Sửa ca: ${editShift.name}` : 'Thêm ca làm việc'}
-        width={540}
-        footer={
-          <Space>
-            <Button onClick={() => { setShiftModalOpen(false); setEditShift(null); shiftForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createShiftMutation.isPending || updateShiftMutation.isPending} disabled={createShiftMutation.isPending || updateShiftMutation.isPending} onClick={handleShiftSave}>
-              {editShift ? 'Lưu thay đổi' : 'Tạo ca'}
-            </Button>
-          </Space>
-        }
-      >
-        <Form form={shiftForm} layout="vertical" requiredMark="optional">
-          <Row gutter={12}>
-            <Col span={14}>
-              <Form.Item name="name" label="Tên ca" rules={[{ required: true, message: 'Nhập tên ca' }]}>
-                <Input placeholder="VD: Ca Hành Chính" />
-              </Form.Item>
-            </Col>
-            <Col span={10}>
-              <Form.Item name="code" label="Mã ca" rules={[{ required: true }, { pattern: /^[A-Z0-9_-]+$/, message: 'Chỉ dùng chữ hoa, số' }]}>
-                <Input placeholder="VD: HC" onChange={(e) => shiftForm.setFieldValue('code', e.target.value.toUpperCase())} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="type" label="Loại ca" rules={[{ required: true }]}>
-            <Select placeholder="Chọn loại ca" options={Object.entries(SHIFT_TYPE_MAP).map(([k, v]) => ({ value: k, label: v.label }))} />
-          </Form.Item>
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item name="startTime" label="Giờ bắt đầu" rules={[{ required: true }]}>
-                <Input placeholder="HH:mm — VD: 08:00" maxLength={5} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="endTime" label="Giờ kết thúc" rules={[{ required: true }]}>
-                <Input placeholder="HH:mm — VD: 17:00" maxLength={5} />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="breakMinutes" label="Nghỉ giữa ca (phút)" initialValue={60}>
-            <InputNumber min={0} max={120} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item
-            name="workingDays" label="Thứ làm việc trong tuần"
-            initialValue={[1, 2, 3, 4, 5]}
-            tooltip="Dùng để tính công chuẩn. VD hành chính off T7+CN; công nhân chỉ off CN."
-          >
-            <Select
-              mode="multiple"
-              placeholder="Chọn các thứ làm việc"
-              options={[
-                { value: 1, label: 'Thứ 2' }, { value: 2, label: 'Thứ 3' },
-                { value: 3, label: 'Thứ 4' }, { value: 4, label: 'Thứ 5' },
-                { value: 5, label: 'Thứ 6' }, { value: 6, label: 'Thứ 7' },
-                { value: 7, label: 'Chủ nhật' },
-              ]}
-            />
-          </Form.Item>
-          {editShift && (
-            <Form.Item name="isActive" label="Trạng thái" initialValue={true}>
-              <Select options={[{ value: true, label: 'Hoạt động' }, { value: false, label: 'Dừng' }]} />
-            </Form.Item>
-          )}
-          <Form.Item name="description" label="Ghi chú">
-            <Input.TextArea rows={2} placeholder="Mô tả thêm..." />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        form={shiftForm}
+        editShift={editShift}
+        onSave={handleShiftSave}
+        saving={createShiftMutation.isPending || updateShiftMutation.isPending}
+      />
 
       {/* ── Modal: Phân công ca ────────────────────────────────────────────── */}
-      <CenteredModal
+      <AssignmentFormModal
         open={assignModalOpen}
         onClose={() => { setAssignModalOpen(false); assignForm.resetFields(); }}
-        title="Phân công ca làm việc"
-        width={520}
-        footer={
-          <Space>
-            <Button onClick={() => { setAssignModalOpen(false); assignForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createAssignmentMutation.isPending} disabled={createAssignmentMutation.isPending} onClick={handleAssignSave}>Phân công</Button>
-          </Space>
-        }
-      >
-        <Form form={assignForm} layout="vertical" requiredMark="optional">
-          <Form.Item name="employeeId" label="Nhân viên" rules={[{ required: true }]}>
-            <Select showSearch placeholder="Tìm và chọn nhân viên..." optionFilterProp="label" options={employeeOptions} />
-          </Form.Item>
-          <Form.Item name="shiftId" label="Ca làm việc" rules={[{ required: true }]}>
-            <Select showSearch placeholder="Chọn ca làm việc" optionFilterProp="label" options={shiftOptions} />
-          </Form.Item>
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item name="effectiveFrom" label="Hiệu lực từ ngày" rules={[{ required: true }]}>
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="effectiveTo" label="Đến ngày (nếu có)">
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea rows={2} placeholder="Ghi chú thêm..." />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        form={assignForm}
+        employeeOptions={employeeOptions}
+        shiftOptions={shiftOptions}
+        onSave={handleAssignSave}
+        saving={createAssignmentMutation.isPending}
+      />
 
       {/* ── Modal: Tạo lịch làm việc (template) ──────────────────────────── */}
-      <CenteredModal
+      <ScheduleFormModal
         open={scheduleModalOpen}
         onClose={() => { setScheduleModalOpen(false); scheduleForm.resetFields(); setScheduleRepeatType('WEEKLY'); }}
-        title="Tạo lịch làm việc xoay ca"
-        width={600}
-        footer={
-          <Space>
-            <Button onClick={() => { setScheduleModalOpen(false); scheduleForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={createScheduleMutation.isPending} disabled={createScheduleMutation.isPending} onClick={handleScheduleSave}>Tạo lịch</Button>
-          </Space>
-        }
-      >
-        <Form form={scheduleForm} layout="vertical" requiredMark="optional"
-          initialValues={{ repeatType: 'WEEKLY', phases: [{ shiftId: undefined }] }}>
-          <Row gutter={12}>
-            <Col span={24}>
-              <Form.Item name="name" label="Tên lịch" rules={[{ required: true, message: 'Nhập tên lịch' }]}>
-                <Input placeholder="VD: Lịch xoay ca sáng-chiều nhà máy A" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item name="description" label="Mô tả">
-            <Input placeholder="Mô tả ngắn về lịch này..." />
-          </Form.Item>
-
-          <Form.Item name="repeatType" label="Kiểu lặp" rules={[{ required: true }]}>
-            <Segmented
-              block
-              value={scheduleRepeatType}
-              options={[
-                { label: '🌅 Theo ngày', value: 'DAILY' },
-                { label: '📅 Theo tuần', value: 'WEEKLY' },
-                { label: '🗓️ Theo tháng', value: 'MONTHLY' },
-              ]}
-              onChange={(v) => {
-                setScheduleRepeatType(v as ScheduleRepeatType);
-                scheduleForm.setFieldValue('repeatType', v);
-              }}
-            />
-          </Form.Item>
-
-          <div style={{
-            background: isDark ? 'rgba(255,255,255,0.04)' : '#F8FAFC',
-            borderRadius: 8, padding: '6px 10px', marginBottom: 12, fontSize: 12, color: textMuted,
-          }}>
-            {scheduleRepeatType === 'DAILY' && '💡 Mỗi ngày đổi sang ca tiếp theo. VD: Ca sáng → Ca chiều → Ca đêm → Ca sáng → …'}
-            {scheduleRepeatType === 'WEEKLY' && '💡 Mỗi tuần đổi ca. VD: Tuần 1 ca sáng, tuần 2 ca chiều, rồi lặp lại.'}
-            {scheduleRepeatType === 'MONTHLY' && '💡 Mỗi tháng đổi ca. VD: 1 tháng hành chính, 1 tháng ca đêm.'}
-          </div>
-
-          <Divider style={{ margin: '8px 0 16px' }}>
-            <Text style={{ color: textMuted, fontSize: 12 }}>Các ca trong chu kỳ</Text>
-          </Divider>
-
-          <Form.List name="phases" rules={[{
-            validator: async (_, phases) => {
-              if (!phases || phases.length < 1) return Promise.reject('Cần ít nhất 1 ca');
-            },
-          }]}>
-            {(fields, { add, remove }, { errors }) => (
-              <>
-                {fields.map((field, index) => (
-                  <Form.Item key={field.key} style={{ marginBottom: 8 }}>
-                    <Row gutter={8} align="middle">
-                      <Col flex="100px">
-                        <Text style={{ color: textMuted, fontSize: 13 }}>
-                          {REPEAT_META[scheduleRepeatType].phaseLabel} {index + 1}
-                        </Text>
-                      </Col>
-                      <Col flex="auto">
-                        <Form.Item {...field} name={[field.name, 'shiftId']} noStyle rules={[{ required: true, message: 'Chọn ca' }]}>
-                          <Select
-                            placeholder="Chọn ca làm việc"
-                            showSearch optionFilterProp="label"
-                            options={shifts.map((s) => ({ value: s.id, label: `${s.name} (${s.startTime}–${s.endTime})` }))}
-                          />
-                        </Form.Item>
-                      </Col>
-                      {fields.length > 1 && (
-                        <Col flex="32px">
-                          <Button type="text" size="small" danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)} />
-                        </Col>
-                      )}
-                    </Row>
-                  </Form.Item>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed" onClick={() => add()} block icon={<PlusOutlined />}
-                    style={{ color: textMuted, borderColor }}
-                  >
-                    Thêm {REPEAT_META[scheduleRepeatType].phaseLabel.toLowerCase()} tiếp theo
-                  </Button>
-                  <Form.ErrorList errors={errors} />
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-        </Form>
-      </CenteredModal>
+        form={scheduleForm}
+        shifts={shifts}
+        scheduleRepeatType={scheduleRepeatType}
+        setScheduleRepeatType={setScheduleRepeatType}
+        onSave={handleScheduleSave}
+        saving={createScheduleMutation.isPending}
+        isDark={isDark}
+        textMuted={textMuted}
+        borderColor={borderColor}
+      />
 
       {/* ── Modal: Gán nhân sự vào lịch ─────────────────────────────────── */}
-      <CenteredModal
+      <EnrollModal
         open={enrollModalOpen}
         onClose={() => { setEnrollModalOpen(false); enrollForm.resetFields(); setEnrollTargetSchedule(null); }}
-        title={`Gán nhân sự — ${enrollTargetSchedule?.name ?? ''}`}
-        width={540}
-        footer={
-          <Space>
-            <Button onClick={() => { setEnrollModalOpen(false); enrollForm.resetFields(); }}>Huỷ</Button>
-            <Button type="primary" loading={enrollMutation.isPending} disabled={enrollMutation.isPending} onClick={handleEnrollSave}>Gán vào lịch</Button>
-          </Space>
-        }
-      >
-        <Form form={enrollForm} layout="vertical" requiredMark="optional">
-          <div style={{
-            background: isDark ? 'rgba(255,255,255,0.04)' : '#F8FAFC',
-            borderRadius: 8, padding: '8px 12px', marginBottom: 16, fontSize: 12, color: textMuted,
-          }}>
-            Chọn nhân viên hoặc phòng ban để áp dụng lịch xoay ca <strong style={{ color: textPrimary }}>
-              {enrollTargetSchedule?.name}
-            </strong>. Nhân sự trong lịch sẽ tự động nhận ca theo chu kỳ đã cấu hình.
-          </div>
-
-          <Form.Item name="employeeIds" label="Nhân viên (chọn nhiều)">
-            <Select
-              mode="multiple" showSearch placeholder="Tìm và chọn nhân viên..."
-              optionFilterProp="label" options={employeeOptions}
-            />
-          </Form.Item>
-
-          <Divider style={{ margin: '4px 0 12px' }}>
-            <Text style={{ color: textMuted, fontSize: 11 }}>hoặc theo phòng ban</Text>
-          </Divider>
-
-          <Form.Item name="orgUnitId" label="Phòng ban (tất cả nhân viên trong phòng)">
-            <Select allowClear placeholder="Chọn phòng ban..." options={[]} disabled />
-          </Form.Item>
-
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item name="effectiveFrom" label="Hiệu lực từ ngày" rules={[{ required: true, message: 'Chọn ngày bắt đầu' }]}>
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="effectiveTo" label="Đến ngày (để trống = vô thời hạn)">
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea rows={2} placeholder="VD: Áp dụng từ kỳ mới..." />
-          </Form.Item>
-        </Form>
-      </CenteredModal>
+        form={enrollForm}
+        target={enrollTargetSchedule}
+        employeeOptions={employeeOptions}
+        onSave={handleEnrollSave}
+        saving={enrollMutation.isPending}
+        isDark={isDark}
+        textPrimary={textPrimary}
+        textMuted={textMuted}
+      />
     </div>
   );
 }
