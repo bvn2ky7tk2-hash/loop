@@ -12,17 +12,20 @@ import { CreateWorkExperienceDto, UpdateWorkExperienceDto } from './dto/work-exp
 import { CreateFamilyMemberDto, UpdateFamilyMemberDto, RegisterDependentDto } from './dto/family-member.dto';
 import * as ExcelJS from 'exceljs';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { QuotaService } from '../common/services/quota.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class EmployeesService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly quota: QuotaService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
   }
 
   async create(dto: CreateEmployeeDto) {
+    await this.quota.assertCanAddEmployee();
     const code = dto.code ?? await this.generateNextCode();
 
     const existing = await this.prisma.employee.findFirst({ where: { code, deletedAt: null } });

@@ -4,6 +4,7 @@ import { ClsServiceManager } from 'nestjs-cls';
 import * as Minio from 'minio';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 import { isTenantEnforced } from '../common/config/tenant.config';
+import { QuotaService } from '../common/services/quota.service';
 
 export interface UploadOptions {
   bucket?: string;
@@ -29,7 +30,10 @@ export class StorageService implements OnModuleInit {
   private internalBase: string;
   private publicBase: string;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly quota: QuotaService,
+  ) {}
 
   onModuleInit() {
     const endpoint = this.config.get<string>('MINIO_ENDPOINT', 'localhost');
@@ -59,9 +63,13 @@ export class StorageService implements OnModuleInit {
     const tenantPrefix = opts.tenantId ? `${opts.tenantId}/` : 'shared/';
     const storagePath = `${tenantPrefix}${opts.folder}/${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
 
+    await this.quota.assertCanUpload(opts.size, opts.tenantId);
+
     await this.client.putObject(bucket, storagePath, opts.buffer, opts.size, {
       'Content-Type': opts.mimeType,
     });
+
+    await this.quota.addStorage(opts.size, opts.tenantId);
 
     return { bucket, storagePath };
   }

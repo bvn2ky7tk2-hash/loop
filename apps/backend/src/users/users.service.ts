@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { OrgScopeService } from '../common/services/org-scope.service';
+import { QuotaService } from '../common/services/quota.service';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -14,9 +15,12 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly orgScope: OrgScopeService,
+    private readonly quota: QuotaService,
   ) {}
 
   async create(dto: CreateUserDto) {
+    await this.quota.assertCanAddUser();
+
     const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (existing) throw new ConflictException('Email đã tồn tại');
 

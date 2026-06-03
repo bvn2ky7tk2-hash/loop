@@ -1871,6 +1871,11 @@ exports.Prisma.TenantScalarFieldEnum = {
   timezone: 'timezone',
   isDefault: 'isDefault',
   isActive: 'isActive',
+  maxUsers: 'maxUsers',
+  maxStorageMb: 'maxStorageMb',
+  maxProjects: 'maxProjects',
+  maxEmployees: 'maxEmployees',
+  storageUsedBytes: 'storageUsedBytes',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

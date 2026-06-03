@@ -4,6 +4,8 @@ import {
   IsOptional,
   IsEmail,
   IsArray,
+  IsInt,
+  Min,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -23,6 +25,12 @@ export class ProvisionTenantDto {
   @IsOptional() @IsString() customDomain?: string;
   @IsOptional() @IsString() @MaxLength(7) primaryColor?: string;
   @IsOptional() @IsString() timezone?: string;
+
+  // ── Quota giới hạn gói (platform admin đặt; null/bỏ trống = không giới hạn) ──
+  @IsOptional() @IsInt() @Min(0) maxUsers?: number;
+  @IsOptional() @IsInt() @Min(0) maxStorageMb?: number;
+  @IsOptional() @IsInt() @Min(0) maxProjects?: number;
+  @IsOptional() @IsInt() @Min(0) maxEmployees?: number;
 
   // ── Module bật (ngoài core luôn bật). Bỏ trống = bật tất cả. ──
   // Giá trị: 'people' | 'finance' | 'crm' | 'asset' | 'ops' (module không-core).

@@ -3561,6 +3561,12 @@ model Tenant {
   timezone                    String                     @default("Asia/Ho_Chi_Minh")
   isDefault                   Boolean                    @default(false) @map("is_default")
   isActive                    Boolean                    @default(true) @map("is_active")
+  // Quota per-tenant (null = không giới hạn). Platform admin đặt khi provision/update.
+  maxUsers                    Int?                       @map("max_users")
+  maxStorageMb                Int?                       @map("max_storage_mb")
+  maxProjects                 Int?                       @map("max_projects")
+  maxEmployees                Int?                       @map("max_employees")
+  storageUsedBytes            BigInt                     @default(0) @map("storage_used_bytes")
   createdAt                   DateTime                   @default(now()) @map("created_at")
   updatedAt                   DateTime                   @updatedAt @map("updated_at")
   users                       User[]

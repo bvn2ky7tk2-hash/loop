@@ -8,6 +8,7 @@ import { EmployeesService } from '../employees/employees.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { AddMemberDto } from './dto/add-member.dto';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { QuotaService } from '../common/services/quota.service';
 
 const WORK_DAYS = new Set([1, 2, 3, 4, 5]); // Mon–Fri
 
@@ -26,12 +27,14 @@ export class ProjectsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly employeesService: EmployeesService,
+    private readonly quota: QuotaService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
   }
 
   async create(dto: CreateProjectDto): Promise<Project> {
+    await this.quota.assertCanAddProject();
     return this.prisma.project.create({
       data: {
         code: dto.code,

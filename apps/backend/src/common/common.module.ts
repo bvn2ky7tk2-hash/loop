@@ -5,11 +5,12 @@ import { OrgScopeService } from './services/org-scope.service';
 import { OrgScopeInterceptor } from './guards/org-scope.interceptor';
 import { PermissionsService } from '../permissions/permissions.service';
 import { TenantRunner } from './cls/tenant-runner.service';
+import { QuotaService } from './services/quota.service';
 
 @Global()
 @Module({
   imports: [PrismaModule],
-  providers: [RedisService, OrgScopeService, OrgScopeInterceptor, PermissionsService, TenantRunner],
-  exports: [RedisService, OrgScopeService, OrgScopeInterceptor, PermissionsService, TenantRunner],
+  providers: [RedisService, OrgScopeService, OrgScopeInterceptor, PermissionsService, TenantRunner, QuotaService],
+  exports: [RedisService, OrgScopeService, OrgScopeInterceptor, PermissionsService, TenantRunner, QuotaService],
 })
 export class CommonModule {}
