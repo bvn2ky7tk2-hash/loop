@@ -40,6 +40,9 @@ export class AuditLogInterceptor implements NestInterceptor {
           await this.prisma.auditLog.create({
             data: {
               userId:    user.id,
+              // Set tenantId tường minh (không chỉ dựa CLS extension) → audit luôn
+              // truy nguyên được tenant, kể cả nếu chạy ngoài CLS context.
+              tenantId:  user.tenantId ?? undefined,
               action:    auditMeta.action,
               entity:    auditMeta.resource ?? context.getClass().name,
               entityId:  resourceId,
