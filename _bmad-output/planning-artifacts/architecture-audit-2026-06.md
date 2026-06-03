@@ -73,3 +73,16 @@ EventBus đăng ký BullMQ Worker `async (job)=>handler(job.data)` không `cls.r
 | **5** | Cụm 7 (SaaS-ops/lifecycle) | Chương trình riêng (provisioning/quota/audit/token/env/queue) | TB |
 
 **Khuyến nghị: Đợt 1+2 ngay** (khác biệt giữa "có vẻ multi-tenant" và "thực sự cách ly"). Mỗi đợt test-first + verify (tsc/jest/build) như các đợt trước.
+
+---
+
+## TIẾN ĐỘ FIX (cập nhật 2026-06-03)
+- ✅ **Đợt 1** (`f56d57a`): Cụm 4 authz/IDOR (resetDemo CRITICAL, tenant IDOR, payroll authz/ownership) + Cụm 6 throttle + Swagger-prod.
+- ✅ **Đợt 2** (`d0f52d0` Cụm 2, `43cd78e` Cụm 1): worker/event bus chạy trong CLS (7 bus auto-stamp + cls.run) + fail-closed getTenantId() (CLS-aware) + cache không fallback `:default`.
+- ✅ **Cụm 5** (`e9fc6a9`): storage per-tenant prefix (CV/payslip) + presignedUrl ownership guard.
+- ✅ **Raw SQL phụ** (`5fdb360`): automation UPDATE_FIELD + org-scope CTE thêm tenant filter.
+- ⏳ **Cụm 3 (schema migration)** — CHƯA: cần DB backup + backfill + `prisma migrate`. Gồm Category tenantId, 55 model nullable→default, insurance/tax config NOT NULL, unique global→composite, composite index. Cũng mở khóa: Category IDOR + RBAC global authz (phụ thuộc cột tenantId). **Cần làm deliberate có backup.**
+- ⏳ **Cụm 7 (SaaS-ops)** — CHƯA: provisioning seed, quota/throttle per-tenant, audit coverage+tenantId, token lifecycle, env validation (Joi), queue isolation. Chương trình riêng.
+- ⏳ **Perf** — CHƯA: N+1 (leave-accrual 40k query, payroll-engine ~5N, cost), composite index (gộp Cụm 3).
+
+Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
