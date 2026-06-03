@@ -13,8 +13,11 @@ export interface EnvIssue {
 const ENV_CHECKS: EnvCheck[] = [
   { key: 'DATABASE_URL', level: 'CRITICAL', description: 'PostgreSQL connection' },
   { key: 'JWT_SECRET', level: 'CRITICAL', description: 'JWT signing key' },
+  { key: 'JWT_REFRESH_SECRET', level: 'CRITICAL', description: 'JWT refresh signing key' },
   { key: 'REDIS_URL', level: 'WARNING', description: 'Redis for caching/queues' },
   { key: 'MINIO_ENDPOINT', level: 'WARNING', description: 'MinIO object storage' },
+  { key: 'MINIO_PUBLIC_URL', level: 'WARNING', description: 'MinIO public URL cho presigned (thiếu → lộ URL nội bộ)' },
+  { key: 'CORS_ORIGIN', level: 'WARNING', description: 'CORS allowlist (thiếu → fallback localhost)' },
   { key: 'SMTP_HOST', level: 'INFO', description: 'Email delivery' },
   { key: 'TELEGRAM_BOT_TOKEN', level: 'INFO', description: 'Telegram integration' },
 ];

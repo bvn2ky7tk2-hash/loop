@@ -2,7 +2,8 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ClsModule } from 'nestjs-cls';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { TenantThrottlerGuard } from './common/guards/tenant-throttler.guard';
 import { CommonModule } from './common/common.module';
 import { OrgScopeInterceptor } from './common/guards/org-scope.interceptor';
 import { TenantClsInterceptor } from './common/interceptors/tenant-cls.interceptor';
@@ -86,7 +87,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: TenantThrottlerGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: PermissionGuard },

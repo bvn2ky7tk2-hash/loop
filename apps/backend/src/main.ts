@@ -33,11 +33,16 @@ async function bootstrap() {
   installProcessGuards(appLogger);
   app.enableShutdownHooks();
 
-  // Validate required env vars and warn on missing ones
-  const { issues } = validateEnv();
+  // Validate required env vars. FAIL-FAST ở production khi thiếu CRITICAL
+  // (tránh khởi động với cấu hình sai → lỗi runtime khó truy/nguy hiểm bảo mật).
+  const { ok, issues } = validateEnv();
   issues.forEach((i) =>
     appLogger.warn(`ENV ${i.level}: ${i.key} — ${i.description}`, 'EnvValidation'),
   );
+  if (!ok && process.env.NODE_ENV === 'production') {
+    const missing = issues.filter((i) => i.level === 'CRITICAL').map((i) => i.key).join(', ');
+    throw new Error(`Thiếu biến môi trường CRITICAL ở production: ${missing}. Dừng khởi động.`);
+  }
   app.use(compression());
   app.use(helmet({
     contentSecurityPolicy: process.env.NODE_ENV === 'production',
