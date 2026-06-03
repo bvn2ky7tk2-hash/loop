@@ -7,14 +7,28 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@/modules': path.resolve(__dirname, './src/modules'),
-      '@/shared': path.resolve(__dirname, './src/modules/shared'),
       '@/api': path.resolve(__dirname, './src/api'),
       '@/config': path.resolve(__dirname, './src/config'),
     },
   },
   optimizeDeps: {
     include: ['@loop/shared'],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Tách vendor để tận dụng cache trình duyệt + giảm kích thước chunk chính.
+        // Dùng dạng hàm (kiểm tra '/recharts/' trước '/react' để tránh trùng chuỗi).
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('/recharts/')) return 'charts';
+          if (id.includes('/antd/') || id.includes('/@ant-design/')) return 'antd';
+          if (id.includes('/@tanstack/') || id.includes('/axios/')) return 'query';
+          if (id.includes('/react') || id.includes('/scheduler/')) return 'react';
+          return undefined;
+        },
+      },
+    },
   },
   server: {
     port: 5173,
