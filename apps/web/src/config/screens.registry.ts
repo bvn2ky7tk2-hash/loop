@@ -12,11 +12,15 @@
 
 export interface ScreenDef {
   route:     string;
-  module:    string;
+  module:    string;     // module để XẾP vào menu (vd self-service nằm trong 'workspace')
   label:     string;
   icon:      string;
   permCode:  string | null;
   sortOrder: number;
+  // Module NGHIỆP VỤ sở hữu chức năng này — dùng để ẩn khi module đó bị tắt.
+  // Vd /leaves nằm trong menu workspace nhưng thuộc 'attendance' → tắt attendance thì ẩn.
+  // Bỏ trống = gate theo `module` (chính nó).
+  featureOf?: string;
 }
 
 export const SCREEN_REGISTRY: ScreenDef[] = [
@@ -34,18 +38,18 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
 
   // ─── Workspace — Cá nhân hàng ngày ───────────────────────────────────────
   { route: '/feed',                module: 'workspace', label: 'Bảng tin công ty',      icon: 'MessageOutlined',     permCode: 'feed:read',              sortOrder: 1 },
-  { route: '/my-tasks',            module: 'workspace', label: 'Việc của tôi',          icon: 'AppstoreOutlined',    permCode: 'kanban:read',             sortOrder: 2 },
-  { route: '/my-bugs',             module: 'workspace', label: 'Lỗi của tôi',           icon: 'BugOutlined',         permCode: 'my_bugs:read',            sortOrder: 3 },
+  { route: '/my-tasks',            module: 'workspace', label: 'Việc của tôi',          icon: 'AppstoreOutlined',    permCode: 'kanban:read',             sortOrder: 2,  featureOf: 'projects' },
+  { route: '/my-bugs',             module: 'workspace', label: 'Lỗi của tôi',           icon: 'BugOutlined',         permCode: 'my_bugs:read',            sortOrder: 3,  featureOf: 'projects' },
   { route: '/processes/inbox',     module: 'workspace', label: 'Hộp thư quy trình',     icon: 'InboxOutlined',       permCode: 'bpm_inbox:read',          sortOrder: 4 },
   { route: '/approvals/inbox',     module: 'workspace', label: 'Hộp thư phê duyệt',     icon: 'InboxOutlined',       permCode: 'process_tasks:read',      sortOrder: 5 },
-  { route: '/leaves',              module: 'workspace', label: 'Đơn nghỉ phép',          icon: 'CalendarOutlined',    permCode: 'leaves:read',             sortOrder: 6 },
-  { route: '/my-overtime',         module: 'workspace', label: 'Đăng ký làm thêm giờ',  icon: 'FieldTimeOutlined',   permCode: 'employees:read',          sortOrder: 7 },
-  { route: '/payroll/my-payslips', module: 'workspace', label: 'Phiếu lương',            icon: 'FileTextOutlined',    permCode: 'my_payslips:read',        sortOrder: 8 },
-  { route: '/self-service',        module: 'workspace', label: 'Hồ sơ cá nhân',          icon: 'UserOutlined',        permCode: 'self_service:read',       sortOrder: 9 },
-  { route: '/timesheet',           module: 'workspace', label: 'Chấm công của tôi',      icon: 'ClockCircleOutlined', permCode: 'timesheets:read',         sortOrder: 10 },
+  { route: '/leaves',              module: 'workspace', label: 'Đơn nghỉ phép',          icon: 'CalendarOutlined',    permCode: 'leaves:read',             sortOrder: 6,  featureOf: 'attendance' },
+  { route: '/my-overtime',         module: 'workspace', label: 'Đăng ký làm thêm giờ',  icon: 'FieldTimeOutlined',   permCode: 'employees:read',          sortOrder: 7,  featureOf: 'attendance' },
+  { route: '/payroll/my-payslips', module: 'workspace', label: 'Phiếu lương',            icon: 'FileTextOutlined',    permCode: 'my_payslips:read',        sortOrder: 8,  featureOf: 'attendance' },
+  { route: '/self-service',        module: 'workspace', label: 'Hồ sơ cá nhân',          icon: 'UserOutlined',        permCode: 'self_service:read',       sortOrder: 9,  featureOf: 'people' },
+  { route: '/timesheet',           module: 'workspace', label: 'Chấm công của tôi',      icon: 'ClockCircleOutlined', permCode: 'timesheets:read',         sortOrder: 10, featureOf: 'attendance' },
   { route: '/calendar',            module: 'workspace', label: 'Lịch công ty',            icon: 'CalendarOutlined',    permCode: 'work_calendar:read',      sortOrder: 11 },
-  { route: '/assets/room-booking', module: 'workspace', label: 'Đặt phòng họp',          icon: 'CalendarOutlined',    permCode: 'room_booking:read',       sortOrder: 12 },
-  { route: '/assets/vehicles',     module: 'workspace', label: 'Đặt xe công ty',          icon: 'CarOutlined',         permCode: 'vehicles:read',           sortOrder: 13 },
+  { route: '/assets/room-booking', module: 'workspace', label: 'Đặt phòng họp',          icon: 'CalendarOutlined',    permCode: 'room_booking:read',       sortOrder: 12, featureOf: 'asset' },
+  { route: '/assets/vehicles',     module: 'workspace', label: 'Đặt xe công ty',          icon: 'CarOutlined',         permCode: 'vehicles:read',           sortOrder: 13, featureOf: 'asset' },
 
   // ─── Projects — Dự án & Công việc nhóm ───────────────────────────────────
   { route: '/projects',            module: 'projects', label: 'Tất cả dự án',      icon: 'ProjectOutlined',    permCode: 'projects:read',           sortOrder: 1 },
@@ -173,6 +177,16 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
 export const ROUTE_PERMISSION_MAP: Record<string, string | undefined> =
   Object.fromEntries(
     SCREEN_REGISTRY.map(s => [s.route, s.permCode ?? undefined]),
+  );
+
+/**
+ * route → module NGHIỆP VỤ quyết định ẩn/hiện khi module bị tắt.
+ * Self-service trong Workspace gate theo featureOf (vd /leaves → attendance),
+ * còn lại gate theo chính module của màn hình.
+ */
+export const ROUTE_GATE_MODULE: Record<string, string> =
+  Object.fromEntries(
+    SCREEN_REGISTRY.map(s => [s.route, s.featureOf ?? s.module]),
   );
 
 /**

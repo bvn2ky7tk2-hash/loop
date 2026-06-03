@@ -16,17 +16,19 @@ export const MODULE_DEFAULTS = [
   { moduleId: 'analytics',  displayName: 'Phân tích',        description: 'Trung tâm báo cáo và phân tích toàn doanh nghiệp', isCore: false, isEnabled: true },
 ] as const;
 
-// Prefix API ĐỘC QUYỀN của từng module nghiệp vụ (toggle được). Dùng cho ModuleEnabledGuard.
-// CHỦ Ý fail-open: chỉ liệt kê prefix KHÔNG dùng chung với Workspace cá nhân (luôn bật) —
-// vd /leaves, /overtime, /payroll, /tasks, /bugs, /assets/* (booking cá nhân) KHÔNG chặn.
+// Prefix API thuộc từng module nghiệp vụ (toggle được). Dùng cho ModuleEnabledGuard.
+// Tắt module = TẤT CẢ chức năng của nó tắt, KỂ CẢ self-service (vd tắt attendance →
+// chặn cả /leaves, /overtime, /payroll). Workspace/admin (core) không bao giờ tắt.
+// Lưu ý: /timesheets dùng chung giữa projects (timesheet dự án) và attendance
+// (chấm công cá nhân) → để NGOÀI map, tránh chặn nhầm; FE ẩn menu theo từng mục.
 export const MODULE_API_PREFIXES: Record<string, string[]> = {
-  projects:   ['api/v1/projects'],
+  projects:   ['api/v1/projects', 'api/v1/tasks', 'api/v1/bugs', 'api/v1/kb'],
   people:     ['api/v1/employees', 'api/v1/job-titles', 'api/v1/positions', 'api/v1/hr-decisions', 'api/v1/hr-profile', 'api/v1/skills', 'api/v1/hr/performance', 'api/v1/hr/training'],
-  attendance: ['api/v1/hr-attendance', 'api/v1/work-shifts', 'api/v1/leave-policies', 'api/v1/hr-holidays', 'api/v1/hr-insurance'],
+  attendance: ['api/v1/hr-attendance', 'api/v1/work-shifts', 'api/v1/leave-policies', 'api/v1/hr-holidays', 'api/v1/hr-insurance', 'api/v1/leaves', 'api/v1/overtime', 'api/v1/payroll'],
   recruit:    ['api/v1/recruit'],
   finance:    ['api/v1/expenses', 'api/v1/invoices', 'api/v1/accounting', 'api/v1/finance'],
   crm:        ['api/v1/crm'],
-  asset:      ['api/v1/procurement'],
+  asset:      ['api/v1/assets', 'api/v1/procurement', 'api/v1/vehicle-booking'],
   analytics:  ['api/v1/analytics', 'api/v1/reports'],
 };
 

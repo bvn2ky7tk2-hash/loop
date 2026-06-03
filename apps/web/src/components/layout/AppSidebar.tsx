@@ -8,7 +8,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { useMenuStore } from '../../store/menu.store';
 import { useModuleStore } from '../../store/module.store';
 import { MODULE_MAP, ICON_MAP, ROUTE_PERMISSION_MAP } from '../../config/modules.config';
-import { SCREEN_REGISTRY } from '../../config/screens.registry';
+import { SCREEN_REGISTRY, ROUTE_GATE_MODULE } from '../../config/screens.registry';
 import { tasksApi } from '../../api/tasks';
 import { processesApi } from '../../api/processes.api';
 import { useGetBugStats, useGetMyBugsCount } from '../../api/bugs.api';
@@ -179,7 +179,10 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
       ?? SCREEN_REGISTRY
            .filter(s => s.route !== '/' && pathname.startsWith(s.route))
            .sort((a, b) => b.route.length - a.route.length)[0];
-    if (derived && !isModuleEnabled(derived.module)) {
+    // Gate theo module NGHIỆP VỤ sở hữu route (featureOf) — bắt cả self-service
+    // trong Workspace (vd /leaves thuộc attendance) lẫn màn hình module thường.
+    const gate = derived ? (ROUTE_GATE_MODULE[derived.route] ?? derived.module) : null;
+    if (gate && !isModuleEnabled(gate)) {
       setActiveModule('workspace');
       navigate('/');
     }
@@ -241,11 +244,14 @@ export function AppSidebar({ collapsed }: AppSidebarProps) {
 
   const canAccess = useCallback((key: string): boolean => {
     if (!user) return false;
+    // Module nghiệp vụ sở hữu mục này bị tắt → ẩn (áp dụng cho MỌI vai trò, kể cả admin).
+    const gate = ROUTE_GATE_MODULE[key];
+    if (gate && !isModuleEnabled(gate)) return false;
     if (user.role === 'ADMIN') return true;
     const required = ROUTE_PERMISSION_MAP[key];
     if (!required) return true;
     return user.permissions.includes(required);
-  }, [user]);
+  }, [user, isModuleEnabled]);
 
   // isActive: khớp exact hoặc prefix (trừ dashboard '/')
   const isActive = useCallback((key: string): boolean => {
