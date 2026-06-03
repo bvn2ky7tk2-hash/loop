@@ -26,7 +26,7 @@ export class AssetsService extends TenantAwareService {
   }
 
   async create(dto: CreateAssetDto) {
-    const existing = await this.prisma.asset.findUnique({ where: { code: dto.code } });
+    const existing = await this.prisma.asset.findFirst({ where: { code: dto.code } });
     if (existing) throw new ConflictException(`Mã tài sản "${dto.code}" đã tồn tại`);
 
     return this.prisma.asset.create({

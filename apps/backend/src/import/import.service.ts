@@ -212,7 +212,7 @@ export class ImportService {
     let count = 0;
     for (const row of rows) {
       try {
-        const existing = await this.prisma.asset.findUnique({ where: { code: String(row.code) } });
+        const existing = await this.prisma.asset.findFirst({ where: { code: String(row.code) } });
         if (existing) continue;
 
         await this.prisma.asset.create({

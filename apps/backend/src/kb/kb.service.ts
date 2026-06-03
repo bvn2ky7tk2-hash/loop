@@ -21,7 +21,7 @@ async function uniqueSlug(prisma: PrismaService, base: string, excludeId?: strin
   let attempt = 0;
   while (true) {
     const candidate = attempt === 0 ? slug : `${slug}-${attempt}`;
-    const existing = await prisma.kbArticle.findUnique({ where: { slug: candidate } });
+    const existing = await prisma.kbArticle.findFirst({ where: { slug: candidate } });
     if (!existing || existing.id === excludeId) return candidate;
     attempt++;
   }
