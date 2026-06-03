@@ -411,10 +411,64 @@ export default function MyPage() {
 ## 7. STACK & MONOREPO
 
 ```
-apps/web/      → React 18, Vite, Ant Design 5, Zustand, TanStack Query
+apps/web/      → React 19, Vite, Ant Design 6, Zustand, TanStack Query
 apps/backend/  → NestJS, Prisma ORM, PostgreSQL, BullMQ, MinIO
 apps/mobile/   → React Native / Expo
 packages/shared/ → shared types, utils dùng chung
 
 _bmad-output/  → tài liệu thiết kế, PRD, planning artifacts (KHÔNG sửa khi dev)
 ```
+
+---
+
+## 8. KIẾN TRÚC MULTI-TENANT SaaS — Quy tắc BẮT BUỘC cho mọi tính năng MỚI
+
+> Loop là SaaS đa người thuê (shared DB + cột `tenant_id`, cách ly bằng CLS + Prisma `$extends`).
+> **Mọi model/service/endpoint/worker MỚI BẮT BUỘC tuân thủ các quy tắc dưới đây.**
+> Chi tiết audit + lý do → [`../_bmad-output/planning-artifacts/architecture-audit-2026-06.md`](../_bmad-output/planning-artifacts/architecture-audit-2026-06.md)
+
+### 8.1 — Schema (Prisma)
+- **Mọi model nghiệp vụ** (dữ liệu người dùng tạo) PHẢI có:
+  ```prisma
+  tenantId String @default("loop-default-tenant-001") @map("tenant_id")
+  tenant   Tenant @relation("Tenant<Model>", fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId])
+  ```
+- **Unique trên giá trị business** (code/slug/name/email) PHẢI là `@@unique([tenantId, code])` — KHÔNG `@unique` global (2 tenant phải trùng mã được). → khi tra cứu dùng `findFirst` (KHÔNG `findUnique`, vì tenant-extension rewrite findUnique→findFirst).
+- **Bảng lớn/hay lọc** PHẢI có composite index dẫn đầu tenantId: `@@index([tenantId, <field lọc>, <field sort>])`.
+- Migration: do shadow-DB history lệch → sinh SQL bằng `prisma migrate diff --from-config-datasource prisma.config.ts --to-schema prisma/schema.prisma --script`, apply bằng `psql --single-transaction`, ghi history bằng `prisma migrate resolve --applied`. **LUÔN `bash scripts/db-backup.sh` trước.**
+
+### 8.2 — Truy vấn DB
+- Prisma **model API** (`prisma.x.findMany/create/...`) tự inject tenantId qua extension — KHÔNG cần tự lọc tenant.
+- **Raw SQL** (`$queryRaw`/`$executeRaw`) BỎ QUA extension → BẮT BUỘC tự thêm: `${tenantId ? Prisma.sql\`AND tenant_id = ${tenantId}\` : Prisma.sql\`\`}` (mọi tầng JOIN). Lấy tenantId qua `this.getTenantId()`.
+- Service đụng tenant data PHẢI `extends TenantAwareService`. `getTenantId()` **fail-closed** (throw khi enforced mà thiếu tenant) — KHÔNG bao giờ chạy query không lọc tenant.
+
+### 8.3 — Luồng nền (cron / BullMQ / event) — KHÔNG có CLS sẵn
+- **Cron**: bọc trong `TenantRunner.forEachTenant(async (tenantId) => {...})`.
+- **BullMQ queue/event MỚI**: inject `ClsService`; **auto-stamp tenantId từ CLS lúc emit/enqueue**; **wrap worker callback** trong `cls.run(() => { cls.set(CLS_TENANT_ID, job.data.tenantId); return handler() })`. (Mẫu: các `*-event-bus.service.ts`, `payslip-queue`, `scheduled-reports.processor`.) Payload PHẢI mang `tenantId`.
+- Ngoài CLS, lấy tenant không cần inject: `ClsServiceManager.getClsService()?.get(CLS_TENANT_ID)`.
+
+### 8.4 — Cache & Storage
+- **Redis key** PHẢI chứa tenantId; bỏ qua cache khi tenantId rỗng lúc enforcement (KHÔNG fallback `:default`).
+- **Upload** PHẢI truyền `tenantId` vào `storage.upload({...})` → path per-tenant. (presignedUrl đã tự validate ownership tenant.)
+
+### 8.5 — Phân quyền (authz)
+- Thao tác **GLOBAL/cross-tenant** (quản lý tenant, RBAC system, master-data dùng chung, cấu hình nền tảng, demo/reset) → `@UseGuards(PlatformAdminGuard)` (chỉ platform admin, `User.isPlatformAdmin`).
+- Thao tác **tenant-scoped nhạy cảm** (payroll, xóa, export, admin) → `@Roles(...)` / `@RequirePermission(...)`.
+- Endpoint by-`:id` dựa vào tenant-extension scoping — KHÔNG dùng prisma client bypass.
+- Endpoint **public** (`@Public()`) KHÔNG nhận `:id` tùy ý lộ dữ liệu. Endpoint **nặng** (export/report/bulk) → `@Throttle`.
+
+### 8.6 — Auth / Token
+- JwtStrategy **stateful** (kiểm `isActive` + `tokenVersion` mỗi request). Khi **vô hiệu hóa user / đổi role / đổi mật khẩu** → `tokenVersion: { increment: 1 }` để thu hồi access token tức thì.
+
+### 8.7 — Quota (giới hạn theo tenant)
+- Thao tác **tạo tài nguyên đếm được** (user/project/employee) → gọi `QuotaService.assertCanAdd<X>()` TRƯỚC khi tạo. **Upload** → `assertCanUpload(bytes)` trước + `addStorage(bytes)` sau. Vượt → chặn cứng (ForbiddenException).
+- Giới hạn đặt trên `Tenant.max<X>` (null = không giới hạn), chỉ platform admin đặt.
+
+### 8.8 — Tenant lifecycle
+- Tạo tenant MỚI → dùng `POST /tenants/provision` (tạo tenant + bật/tắt module + cấp admin, atomic). Module mới → đăng ký trong `MODULE_DEFAULTS` (module-config.service).
+
+### 8.9 — Chung (perf + chuẩn)
+- KHÔNG N+1: query trong vòng lặp → prefetch `findMany({ where: { id: { in } } })` + `Map`, hoặc `groupBy`.
+- Ghi nhiều bảng liên quan → bọc `$transaction` (tính nặng để NGOÀI transaction, giữ transaction ngắn).
+- List endpoint → `PaginationDto` + `take`. DTO đủ `class-validator`. Mọi env mới → thêm vào `.env.example` + cân nhắc check trong `common/env-validation.ts`.
