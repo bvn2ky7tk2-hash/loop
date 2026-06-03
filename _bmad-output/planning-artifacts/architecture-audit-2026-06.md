@@ -116,3 +116,31 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 - **Index đầy đủ** (`bedaabd`): + LeaveRequest/Expense/TimeLog/TimeEntry composite.
 
 ### TẤT CẢ 7 CỤM + PERF + PROVISIONING + QUOTA → DONE. Không còn tồn đọng bảo mật/cách ly/correctness/vận hành. SaaS multi-tenant CHUẨN CHỈNH.
+
+---
+
+## v6.x — GO-LIVE HARDENING (mở 2026-06-03)
+
+> **Bối cảnh:** 7 cụm trên đóng phần CƠ CHẾ multi-tenant. Rà soát go-live thương mại (6 trục) cho thấy nền tảng kiến trúc đã chín nhưng phần THƯƠNG MẠI HÓA/VẬN HÀNH chưa đạt → **CHƯA go-live**. Khoảng cách là kỹ thuật vận hành, không phải refactor lớn.
+> **Chi tiết đầy đủ + bằng chứng:** [`go-live-readiness-2026-06.md`](go-live-readiness-2026-06.md). Mức sẵn sàng ~5.5/10. ETA P0 ~2–3 tuần.
+
+### ⛔ P0 — Chặn go-live (phải xong trước)
+- [ ] **P0-1 Test cách ly tenant + E2E** — Test ≈0% (BE ~1.9%, FE ~4.2%, e2e chỉ "Hello World"). Toàn bộ cách ly đặt cược vào 1 extension KHÔNG có test. Cần integration test "Tenant A ≠ Tenant B" cấp API + smoke E2E tiền/lương/chấm công, bật trong CI. *(2–3 tuần)*
+- [ ] **P0-2 CI/CD deploy thật** — `deploy-backend` đang là `echo "Deploying..."`; không staging/rollback. Dựng pipeline staging→prod + rollback. *(TB)*
+- [ ] **P0-3 Dọn secrets** — bỏ default yếu (`docker-compose` `JWT_SECRET:-change_me`, MinIO `get(...,'loop_minio_secret')`); ép `getOrThrow` + secret manager. *(1–2 ngày)*
+- [ ] **P0-4 Liveness public** — health đang `@Roles(ADMIN)` → orchestrator không probe được. Thêm `GET /health/liveness` `@Public()`. *(~30 phút)*
+
+### 🟠 P1 — Trong 1–2 tuần đầu
+- [ ] **P1-1** Defense-in-depth: `tenantWhere()` cho ~14 `findOne/findFirst`; cache `perm:{userId}`→`perm:{tenantId}:{userId}`.
+- [ ] **P1-2** Perf @ scale: ~10 composite index dẫn đầu tenantId (bug/payroll/contract/leave/invoice/deal/process_instance); thêm `take` (accounting/interviews/hr-attendance/invoices); `$transaction({timeout})` accounting/payroll; cache dashboard KPI.
+- [ ] **P1-3** Connection pool: `DB_POOL_MAX × N instance` vượt `max_connections` → PgBouncer hoặc tính lại pool.
+- [ ] **P1-4** Observability: OpenTelemetry/metrics + DLQ BullMQ + lịch cron backup (`db-backup.sh` đã có).
+- [ ] **P1-5** Chất lượng: bật gate eslint FE (372 lỗi đang bị nuốt `|| true`); bật `no-explicit-any` BE (151 `as any`); triage 85+ TODO.
+- [ ] **P1-6** Upload: validate magic bytes (không chỉ tin `file.mimetype`).
+- [ ] **P1-7** Auth siết: refresh TTL 7d→3d; throttle refresh 20→5/phút; password ≥8 + complexity.
+
+### 🚦 Cổng cuối trước go-live
+- [ ] Load test ≥500 user đồng thời.
+- [ ] Pen-test cross-tenant (privilege escalation / data exfiltration).
+
+> **Trade-off:** P0 là tối thiểu để go-live an toàn (beta khách hàng giới hạn). P1 làm song song/ngay sau. APM nâng cao, refactor god-service (bpmn-engine 793 LOC, accounting 723, ~13 page FE >700 LOC) là nợ kỹ thuật, KHÔNG chặn go-live.
