@@ -86,3 +86,6 @@ EventBus đăng ký BullMQ Worker `async (job)=>handler(job.data)` không `cls.r
 - ⏳ **Perf** — CHƯA: N+1 (leave-accrual 40k query, payroll-engine ~5N, cost), composite index (gộp Cụm 3).
 
 Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
+
+- ✅ **Cụm 3 schema** (`2ff62a0`): migration v6_tenancy_phase2 (apply qua psql, đã backup) — 55 model + insurance/tax thêm @default (non-breaking, giữ nullable); Asset.code/KbArticle.slug → composite unique [tenantId,...] (findUnique→findFirst); composite index tasks/notifications/audit_logs/attendance. tsc 0, jest 81/81.
+  - LƯU Ý: Category + RBAC authz BỊ CHẶN bởi thiếu role platform-admin (Category/RBAC là global reference data; fix sạch cần super-admin tách biệt) → gộp vào Cụm 7.
