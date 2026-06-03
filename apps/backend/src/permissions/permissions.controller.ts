@@ -1,8 +1,9 @@
 import {
-  Controller, Get, Post, Put, Delete, Body, Param, HttpCode,
+  Controller, Get, Post, Put, Delete, Body, Param, HttpCode, UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { PlatformAdminGuard } from '../common/guards/platform-admin.guard';
 import { Role } from '../generated/prisma';
 import { PERMISSIONS } from './permissions.constants';
 import { PermissionsAdminService } from './permissions-admin.service';
@@ -38,6 +39,7 @@ export class PermissionsController {
   }
 
   @Put('roles/:role')
+  @UseGuards(PlatformAdminGuard)
   @ApiOperation({ summary: 'Gán lại toàn bộ permissions cho system role' })
   setRolePermissions(@Param('role') role: Role, @Body() dto: SetRolePermissionsDto) {
     return this.service.setRolePermissions(role, dto);
@@ -52,6 +54,7 @@ export class PermissionsController {
   }
 
   @Post('module-roles')
+  @UseGuards(PlatformAdminGuard)
   @ApiOperation({ summary: 'Tạo module role mới' })
   createModuleRole(@Body() dto: CreateModuleRoleDto) {
     return this.service.createModuleRole(dto);
@@ -64,6 +67,7 @@ export class PermissionsController {
   }
 
   @Put('module-roles/:roleCode/permissions')
+  @UseGuards(PlatformAdminGuard)
   @ApiOperation({ summary: 'Gán lại permissions cho module role' })
   setModuleRolePermissions(
     @Param('roleCode') roleCode: string,
@@ -73,6 +77,7 @@ export class PermissionsController {
   }
 
   @Delete('module-roles/:roleCode')
+  @UseGuards(PlatformAdminGuard)
   @HttpCode(204)
   @ApiOperation({ summary: 'Xoá module role (không phải system role)' })
   deleteModuleRole(@Param('roleCode') roleCode: string) {

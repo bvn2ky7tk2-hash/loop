@@ -42,6 +42,8 @@ export class AuthService {
       role: user.role,
       orgUnitId: user.orgUnitId,
       tenantId: user.tenantId,
+      isPlatformAdmin: user.isPlatformAdmin,
+      tokenVersion: user.tokenVersion,
     };
 
     const accessToken = this.jwt.sign(payload, {
@@ -100,6 +102,8 @@ export class AuthService {
       role: user.role,
       orgUnitId: user.orgUnitId,
       tenantId: user.tenantId,
+      isPlatformAdmin: user.isPlatformAdmin,
+      tokenVersion: user.tokenVersion,
     };
 
     const newAccessToken = this.jwt.sign(jwtPayload, {
@@ -144,7 +148,8 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(dto.newPassword, 10);
     await this.prisma.user.update({
       where: { id: userId },
-      data: { passwordHash, refreshToken: null },
+      // refreshToken=null thu hồi refresh token; tokenVersion++ thu hồi cả access token cũ.
+      data: { passwordHash, refreshToken: null, tokenVersion: { increment: 1 } },
     });
 
     return { message: 'Đổi mật khẩu thành công' };

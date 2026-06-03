@@ -9,4 +9,5 @@ export interface JwtUser {
   orgUnitId: string | null;
   tenantId: string | null;
   isActive: boolean;
+  isPlatformAdmin?: boolean;
 }

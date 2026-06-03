@@ -129,6 +129,8 @@ exports.Prisma.UserScalarFieldEnum = {
   orgUnitId: 'orgUnitId',
   refreshToken: 'refreshToken',
   isActive: 'isActive',
+  isPlatformAdmin: 'isPlatformAdmin',
+  tokenVersion: 'tokenVersion',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId'

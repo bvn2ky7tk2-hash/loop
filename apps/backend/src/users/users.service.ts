@@ -68,9 +68,12 @@ export class UsersService {
 
   async update(id: string, dto: UpdateUserDto) {
     await this.findOneOrThrow(id);
+    // Đổi role hoặc vô hiệu hóa (isActive=false) phải thu hồi mọi access token cũ:
+    // bump tokenVersion → JwtStrategy từ chối token cũ ở request kế tiếp.
+    const revoke = dto.role !== undefined || dto.isActive !== undefined;
     const user = await this.prisma.user.update({
       where: { id },
-      data: dto,
+      data: revoke ? { ...dto, tokenVersion: { increment: 1 } } : dto,
       include: { orgUnit: { select: { name: true } } },
     });
     if (dto.orgUnitId !== undefined) {
@@ -84,7 +87,8 @@ export class UsersService {
     const passwordHash = await bcrypt.hash(dto.newPassword, BCRYPT_ROUNDS);
     await this.prisma.user.update({
       where: { id },
-      data: { passwordHash, refreshToken: null },
+      // refreshToken=null thu hồi refresh token; tokenVersion++ thu hồi cả access token cũ.
+      data: { passwordHash, refreshToken: null, tokenVersion: { increment: 1 } },
     });
     return { message: 'Mật khẩu đã được cập nhật' };
   }

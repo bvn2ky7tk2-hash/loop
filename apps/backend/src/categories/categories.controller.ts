@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { PlatformAdminGuard } from '../common/guards/platform-admin.guard';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/category.dto';
@@ -28,6 +29,7 @@ export class CategoriesController {
   }
 
   @Post()
+  @UseGuards(PlatformAdminGuard)
   @RequirePermission(PERMISSIONS.ADMIN_ORG)
   @ApiOperation({ summary: 'Tạo mục danh mục' })
   create(@Body() dto: CreateCategoryDto) {
@@ -35,6 +37,7 @@ export class CategoriesController {
   }
 
   @Patch(':id')
+  @UseGuards(PlatformAdminGuard)
   @RequirePermission(PERMISSIONS.ADMIN_ORG)
   @ApiOperation({ summary: 'Cập nhật mục danh mục' })
   update(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
@@ -42,6 +45,7 @@ export class CategoriesController {
   }
 
   @Delete(':id')
+  @UseGuards(PlatformAdminGuard)
   @RequirePermission(PERMISSIONS.ADMIN_ORG)
   @ApiOperation({ summary: 'Xóa mục danh mục' })
   remove(@Param('id') id: string) {
