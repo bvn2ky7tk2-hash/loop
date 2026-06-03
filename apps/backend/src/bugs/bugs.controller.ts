@@ -1,7 +1,7 @@
 import {
   Controller, Get, Post, Put, Patch, Delete,
   Body, Param, Query, Req, UseInterceptors, HttpCode, HttpStatus,
-  UploadedFile,
+  UploadedFile, BadRequestException,
 } from '@nestjs/common';
 import { IsString, MinLength } from 'class-validator';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -22,6 +22,21 @@ import { TransitionBugDto } from './dto/transition-bug.dto';
 import { AssignBugDto } from './dto/assign-bug.dto';
 import { FilterBugDto } from './dto/filter-bug.dto';
 import { ApproveBugDto } from './dto/approve-bug.dto';
+
+const ATTACHMENT_ALLOWED_MIMES = [
+  'image/png',
+  'image/jpeg',
+  'image/gif',
+  'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/zip',
+  'text/plain',
+];
+const ATTACHMENT_MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
 @ApiTags('bugs')
 @ApiBearerAuth()
@@ -153,7 +168,23 @@ export class BugsController {
 
   @Post(':id/attachments')
   @RequirePermission(PERMISSIONS.BUGS_UPDATE)
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: memoryStorage(),
+      limits: { fileSize: ATTACHMENT_MAX_SIZE },
+      fileFilter: (_req, file, cb) => {
+        if (!ATTACHMENT_ALLOWED_MIMES.includes(file.mimetype)) {
+          return cb(
+            new BadRequestException(
+              'Định dạng file không được hỗ trợ. Chỉ chấp nhận ảnh (png/jpeg/gif/webp), PDF, Word, Excel, ZIP, TXT',
+            ),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @ApiOperation({ summary: 'Upload ảnh đính kèm cho bug' })
   uploadAttachment(
     @Param('id') id: string,

@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ClsService } from 'nestjs-cls';
 import { TelegramService, TelegramUpdate } from './telegram.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { CLS_TENANT_ID } from '../../common/cls/cls-keys';
 
 const STATUS_LABELS: Record<string, string> = {
   DONE: 'Hoàn thành',
@@ -26,6 +28,7 @@ export class TelegramPollerService implements OnModuleInit {
   constructor(
     private readonly telegramService: TelegramService,
     private readonly prisma: PrismaService,
+    private readonly cls: ClsService,
   ) {}
 
   async onModuleInit() {
@@ -81,12 +84,25 @@ export class TelegramPollerService implements OnModuleInit {
 
     const { action, taskId } = parsed;
 
-    // Lookup task
+    // Resolve task NGOÀI CLS context: query này không bị tenant-extension inject
+    // (CLS rỗng) nên đọc được mọi tenant — đúng ý đồ để xác định tenant của task.
     const task = await this.prisma.task.findUnique({ where: { id: taskId } });
     if (!task) {
       await this.telegramService.answerCallbackQuery(
         query.id,
         '❌ Không tìm thấy task này',
+      );
+      return;
+    }
+
+    // Không có tenantId → không thể scope an toàn → từ chối ghi (phòng thủ).
+    if (!task.tenantId) {
+      this.logger.warn(
+        `Callback bỏ qua: task ${taskId} không có tenantId, không thể ghi an toàn`,
+      );
+      await this.telegramService.answerCallbackQuery(
+        query.id,
+        '❌ Không thể xử lý task này',
       );
       return;
     }
@@ -109,34 +125,40 @@ export class TelegramPollerService implements OnModuleInit {
     };
     const newStatus = statusMap[action];
 
-    // Update task
-    await this.prisma.task.update({
-      where: { id: taskId },
-      data: {
-        status: newStatus as never,
-        ...(newStatus === 'DONE' ? { progress: 100 } : {}),
-      },
+    // Mọi thao tác ghi DB phải nằm trong CLS context có tenantId của task,
+    // để tenant-extension scope đúng tenant (tránh ghi sang tenant khác).
+    await this.cls.run(async () => {
+      this.cls.set(CLS_TENANT_ID, task.tenantId);
+
+      // Update task
+      await this.prisma.task.update({
+        where: { id: taskId },
+        data: {
+          status: newStatus as never,
+          ...(newStatus === 'DONE' ? { progress: 100 } : {}),
+        },
+      });
+
+      // Build confirm text
+      const statusLabel = STATUS_LABELS[newStatus] ?? newStatus;
+      const confirmText = `✅ Đã cập nhật: ${statusLabel}`;
+      await this.telegramService.answerCallbackQuery(query.id, confirmText);
+
+      // Edit original message
+      const tgMsg = await this.prisma.telegramMessage.findFirst({
+        where: { taskId },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (tgMsg) {
+        const now = new Date();
+        const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}`;
+        const statusEmoji =
+          newStatus === 'DONE' ? '✅' : newStatus === 'IN_PROGRESS' ? '🔄' : '↩️';
+        const editedText = `📌 *\\[LOOP\\]* Task đã cập nhật\n_${statusEmoji} ${statusLabel} \\— ${timestamp}_`;
+        await this.telegramService.editMessageText(tgMsg.messageId, editedText);
+      }
     });
-
-    // Build confirm text
-    const statusLabel = STATUS_LABELS[newStatus] ?? newStatus;
-    const confirmText = `✅ Đã cập nhật: ${statusLabel}`;
-    await this.telegramService.answerCallbackQuery(query.id, confirmText);
-
-    // Edit original message
-    const tgMsg = await this.prisma.telegramMessage.findFirst({
-      where: { taskId },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (tgMsg) {
-      const now = new Date();
-      const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}`;
-      const statusEmoji =
-        newStatus === 'DONE' ? '✅' : newStatus === 'IN_PROGRESS' ? '🔄' : '↩️';
-      const editedText = `📌 *\\[LOOP\\]* Task đã cập nhật\n_${statusEmoji} ${statusLabel} \\— ${timestamp}_`;
-      await this.telegramService.editMessageText(tgMsg.messageId, editedText);
-    }
   }
 
   private sleep(ms: number): Promise<void> {

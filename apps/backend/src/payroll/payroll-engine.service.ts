@@ -67,7 +67,9 @@ export class PayrollEngineService {
       bonusByEmployee.set(b.employeeId, prev + Number(b.bonusAmount));
     }
 
-    let processed = 0;
+    // Tính toán nặng (đọc DB + compute) làm TRƯỚC transaction để giữ transaction ngắn.
+    // Gom kết quả per employee, chỉ phần GHI mới đưa vào transaction atomic bên dưới.
+    const recordsToWrite: { employeeId: string; recordData: any }[] = [];
 
     for (const emp of employees) {
       const contract = await this.prisma.contract.findFirst({
@@ -127,20 +129,29 @@ export class PayrollEngineService {
         salaryRecordsInPeriod,
       });
 
-      await this.prisma.payrollRecord.upsert({
-        where: { periodId_employeeId: { periodId, employeeId: emp.id } },
-        create: { periodId, employeeId: emp.id, ...recordData },
-        update: recordData,
-      });
-
-      processed++;
+      recordsToWrite.push({ employeeId: emp.id, recordData });
     }
 
-    await this.prisma.payrollPeriod.update({
-      where: { id: periodId },
-      data: { status: PayrollStatus.PROCESSING },
+    // Atomic: ghi toàn bộ PayrollRecord + chuyển trạng thái kỳ trong cùng 1 transaction.
+    // Lỗi giữa chừng → rollback toàn bộ, tránh trạng thái bất nhất
+    // (vài nhân viên có record nhưng kỳ đã đổi trạng thái).
+    // tx vẫn giữ tenant-extension ($extends) nên tenant-isolation không mất.
+    await this.prisma.$transaction(async (tx) => {
+      for (const { employeeId, recordData } of recordsToWrite) {
+        await tx.payrollRecord.upsert({
+          where: { periodId_employeeId: { periodId, employeeId } },
+          create: { periodId, employeeId, ...recordData },
+          update: recordData,
+        });
+      }
+
+      await tx.payrollPeriod.update({
+        where: { id: periodId },
+        data: { status: PayrollStatus.PROCESSING },
+      });
     });
 
+    const processed = recordsToWrite.length;
     return { periodId, processed };
   }
 
@@ -152,26 +163,30 @@ export class PayrollEngineService {
       include: { period: { select: { endDate: true } } },
     });
 
-    for (const r of records) {
-      const year = r.period.endDate.getFullYear();
-      await this.prisma.employeeYearlyTaxSummary.upsert({
-        where: { employeeId_year: { employeeId: r.employeeId, year } },
-        create: {
-          employeeId: r.employeeId,
-          year,
-          ytdGross: Number(r.grossSalary),
-          ytdTaxableIncome: Number(r.taxableIncome),
-          ytdPitPaid: Number(r.pitAmount),
-          ytdBhxhEmployee: Number(r.bhxhEmployee),
-        },
-        update: {
-          ytdGross: { increment: Number(r.grossSalary) },
-          ytdTaxableIncome: { increment: Number(r.taxableIncome) },
-          ytdPitPaid: { increment: Number(r.pitAmount) },
-          ytdBhxhEmployee: { increment: Number(r.bhxhEmployee) },
-        },
-      });
-    }
+    // Atomic: cập nhật YTD cho mọi nhân viên trong cùng 1 transaction.
+    // Các phép increment phải all-or-nothing, tránh chốt YTD nửa chừng gây sai lệch thuế.
+    await this.prisma.$transaction(async (tx) => {
+      for (const r of records) {
+        const year = r.period.endDate.getFullYear();
+        await tx.employeeYearlyTaxSummary.upsert({
+          where: { employeeId_year: { employeeId: r.employeeId, year } },
+          create: {
+            employeeId: r.employeeId,
+            year,
+            ytdGross: Number(r.grossSalary),
+            ytdTaxableIncome: Number(r.taxableIncome),
+            ytdPitPaid: Number(r.pitAmount),
+            ytdBhxhEmployee: Number(r.bhxhEmployee),
+          },
+          update: {
+            ytdGross: { increment: Number(r.grossSalary) },
+            ytdTaxableIncome: { increment: Number(r.taxableIncome) },
+            ytdPitPaid: { increment: Number(r.pitAmount) },
+            ytdBhxhEmployee: { increment: Number(r.bhxhEmployee) },
+          },
+        });
+      }
+    });
   }
 
   // ─── Core record computation ─────────────────────────────────────────────────
@@ -558,60 +573,66 @@ export class PayrollEngineService {
 
     let processed = 0;
 
-    for (const balance of leaveBalances) {
-      // remaining = totalDays - usedDays
-      const remaining = Number(balance.totalDays) - Number(balance.usedDays);
-      if (remaining <= 0) continue;
+    // Atomic: chốt số dư phép cuối năm là một thao tác nghiệp vụ toàn cục.
+    // Mỗi balance vừa reset năm hiện tại vừa carry sang năm mới — nếu lỗi nửa chừng,
+    // vài nhân viên đã carry+reset còn vài người chưa, gây bất nhất số dư phép.
+    // Bọc toàn bộ trong transaction để all-or-nothing. (Chạy 1 lần/năm, không phải hot path.)
+    await this.prisma.$transaction(async (tx) => {
+      for (const balance of leaveBalances) {
+        // remaining = totalDays - usedDays
+        const remaining = Number(balance.totalDays) - Number(balance.usedDays);
+        if (remaining <= 0) continue;
 
-      const maxCarryOver = balance.leaveType.maxCarryOver ?? 0;
+        const maxCarryOver = balance.leaveType.maxCarryOver ?? 0;
 
-      if (maxCarryOver <= 0) {
-        // Không cho carry — reset totalDays về usedDays (số dư = 0)
-        await this.prisma.leaveBalance.update({
-          where: { id: balance.id },
-          data: { totalDays: balance.usedDays },
-        });
-      } else {
-        // Carry forward — cộng vào balance năm mới (tạo mới nếu chưa có)
-        const carryDays = Math.min(remaining, maxCarryOver);
-
-        const existing = await this.prisma.leaveBalance.findFirst({
-          where: {
-            employeeId: balance.employeeId,
-            leaveTypeId: balance.leaveTypeId,
-            year: nextYear,
-          },
-        });
-
-        if (existing) {
-          await this.prisma.leaveBalance.update({
-            where: { id: existing.id },
-            data: {
-              totalDays: Number(existing.totalDays) + carryDays,
-            },
+        if (maxCarryOver <= 0) {
+          // Không cho carry — reset totalDays về usedDays (số dư = 0)
+          await tx.leaveBalance.update({
+            where: { id: balance.id },
+            data: { totalDays: balance.usedDays },
           });
         } else {
-          await this.prisma.leaveBalance.create({
-            data: {
+          // Carry forward — cộng vào balance năm mới (tạo mới nếu chưa có)
+          const carryDays = Math.min(remaining, maxCarryOver);
+
+          const existing = await tx.leaveBalance.findFirst({
+            where: {
               employeeId: balance.employeeId,
               leaveTypeId: balance.leaveTypeId,
               year: nextYear,
-              totalDays: carryDays,
-              usedDays: 0,
-              ...(balance.tenantId ? { tenantId: balance.tenantId } : {}),
             },
+          });
+
+          if (existing) {
+            await tx.leaveBalance.update({
+              where: { id: existing.id },
+              data: {
+                totalDays: Number(existing.totalDays) + carryDays,
+              },
+            });
+          } else {
+            await tx.leaveBalance.create({
+              data: {
+                employeeId: balance.employeeId,
+                leaveTypeId: balance.leaveTypeId,
+                year: nextYear,
+                totalDays: carryDays,
+                usedDays: 0,
+                ...(balance.tenantId ? { tenantId: balance.tenantId } : {}),
+              },
+            });
+          }
+
+          // Reset năm hiện tại: totalDays về usedDays (số dư = 0)
+          await tx.leaveBalance.update({
+            where: { id: balance.id },
+            data: { totalDays: balance.usedDays },
           });
         }
 
-        // Reset năm hiện tại: totalDays về usedDays (số dư = 0)
-        await this.prisma.leaveBalance.update({
-          where: { id: balance.id },
-          data: { totalDays: balance.usedDays },
-        });
+        processed++;
       }
-
-      processed++;
-    }
+    });
 
     return { processed };
   }

@@ -7,7 +7,7 @@ import { FinanceEventBus } from './finance-event-bus.service';
 import { paginate } from '../common/dto/pagination.dto';
 import { CreateJournalDto } from './dto/create-journal.dto';
 import { FilterJournalDto } from './dto/filter-journal.dto';
-import { AccountType } from '../generated/prisma';
+import { AccountType, Prisma } from '../generated/prisma';
 
 // Tài khoản TT200 dùng cho auto-journal
 const ACC = {
@@ -46,16 +46,17 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
     reference: string,
     lines: Array<{ accountCode: string; debit: number; credit: number }>,
     userId: string,
+    tx: Prisma.TransactionClient = this.prisma,
   ) {
     // Chỉ tạo nếu tài khoản tồn tại
     const codes = [...new Set(lines.map(l => l.accountCode))];
-    const existing = await this.prisma.chartOfAccount.findMany({
+    const existing = await tx.chartOfAccount.findMany({
       where: { code: { in: codes }, isActive: true },
       select: { code: true },
     });
     if (existing.length !== codes.length) return null; // skip nếu thiếu tài khoản
 
-    return this.prisma.journalEntry.create({
+    return tx.journalEntry.create({
       data: {
         date, description, reference,
         createdById: userId,
@@ -107,21 +108,24 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
         lines.push({ accountCode: vatAcc, debit: 0, credit: taxAmount });
       }
 
-      const entry = await this.createAutoEntry(
-        inv.paidAt ?? new Date(),
-        `Ghi nhận doanh thu hóa đơn ${inv.code}`,
-        `INV:${inv.code}`,
-        lines,
-        userId,
-      );
+      // Atomic: tạo journal entry và gắn journalEntryId vào invoice trong cùng transaction
+      await this.prisma.$transaction(async (tx) => {
+        const entry = await this.createAutoEntry(
+          inv.paidAt ?? new Date(),
+          `Ghi nhận doanh thu hóa đơn ${inv.code}`,
+          `INV:${inv.code}`,
+          lines,
+          userId,
+          tx,
+        );
 
-      // Gắn journalEntryId vào invoice nếu tạo thành công
-      if (entry) {
-        await this.prisma.invoice.update({
-          where: { id: invoiceId },
-          data: { journalEntryId: entry.id },
-        }).catch(() => {/* skip nếu không có cột */});
-      }
+        if (entry) {
+          await tx.invoice.update({
+            where: { id: invoiceId },
+            data: { journalEntryId: entry.id },
+          });
+        }
+      });
     } catch (err) {
       this.logger.error(`Auto-journal invoice.paid failed: ${err}`);
     }
@@ -135,22 +139,25 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
         select: { id: true, poNumber: true, receivedAt: true },
       });
       if (!po) return;
-      const entry = await this.createAutoEntry(
-        po.receivedAt ?? new Date(),
-        `Nhận hàng PO ${po.poNumber}`,
-        `PO:${po.poNumber}`,
-        [
-          { accountCode: ACC.INVENTORY, debit: amount, credit: 0 },
-          { accountCode: ACC.AP,        debit: 0,      credit: amount },
-        ],
-        userId,
-      );
-      if (entry) {
-        await this.prisma.purchaseOrder.update({
-          where: { id: poId },
-          data: { journalEntryId: entry.id },
-        }).catch(() => {});
-      }
+      await this.prisma.$transaction(async (tx) => {
+        const entry = await this.createAutoEntry(
+          po.receivedAt ?? new Date(),
+          `Nhận hàng PO ${po.poNumber}`,
+          `PO:${po.poNumber}`,
+          [
+            { accountCode: ACC.INVENTORY, debit: amount, credit: 0 },
+            { accountCode: ACC.AP,        debit: 0,      credit: amount },
+          ],
+          userId,
+          tx,
+        );
+        if (entry) {
+          await tx.purchaseOrder.update({
+            where: { id: poId },
+            data: { journalEntryId: entry.id },
+          });
+        }
+      });
     } catch (err) {
       this.logger.error(`Auto-journal po.received failed: ${err}`);
     }
@@ -164,22 +171,25 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
         select: { id: true, poNumber: true, paidAt: true },
       });
       if (!po) return;
-      const entry = await this.createAutoEntry(
-        po.paidAt ?? new Date(),
-        `Thanh toán PO ${po.poNumber}`,
-        `PO-PAY:${po.poNumber}`,
-        [
-          { accountCode: ACC.AP,   debit: amount, credit: 0 },
-          { accountCode: ACC.CASH, debit: 0,      credit: amount },
-        ],
-        userId,
-      );
-      if (entry) {
-        await this.prisma.purchaseOrder.update({
-          where: { id: poId },
-          data: { journalEntryId: entry.id },
-        }).catch(() => {});
-      }
+      await this.prisma.$transaction(async (tx) => {
+        const entry = await this.createAutoEntry(
+          po.paidAt ?? new Date(),
+          `Thanh toán PO ${po.poNumber}`,
+          `PO-PAY:${po.poNumber}`,
+          [
+            { accountCode: ACC.AP,   debit: amount, credit: 0 },
+            { accountCode: ACC.CASH, debit: 0,      credit: amount },
+          ],
+          userId,
+          tx,
+        );
+        if (entry) {
+          await tx.purchaseOrder.update({
+            where: { id: poId },
+            data: { journalEntryId: entry.id },
+          });
+        }
+      });
     } catch (err) {
       this.logger.error(`Auto-journal po.paid failed: ${err}`);
     }
@@ -286,15 +296,18 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
   async getProfitLoss(startDate: string, endDate: string) {
     const start = new Date(startDate);
     const end   = new Date(endDate);
+    const tenantId = this.getTenantId();
 
     const rows = await this.prisma.$queryRaw<Array<{ code: string; name: string; type: string; balance: number }>>`
       SELECT ca.code, ca.name, ca.type::text,
              COALESCE(SUM(CAST(jl.debit AS NUMERIC) - CAST(jl.credit AS NUMERIC)), 0) AS balance
       FROM chart_of_accounts ca
-      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code AND jl.tenant_id = ca.tenant_id
       LEFT JOIN journal_entries je ON je.id = jl.entry_id
         AND je.date >= ${start} AND je.date <= ${end}
+        ${tenantId ? Prisma.sql`AND je.tenant_id = ${tenantId}` : Prisma.sql``}
       WHERE ca.type IN ('REVENUE','EXPENSE')
+        ${tenantId ? Prisma.sql`AND ca.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY ca.code, ca.name, ca.type
       ORDER BY ca.code
     `;
@@ -327,15 +340,18 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
 
   async getBalanceSheet(asOfDate: string) {
     const asOf = new Date(asOfDate);
+    const tenantId = this.getTenantId();
 
     const rows = await this.prisma.$queryRaw<Array<{ code: string; name: string; type: string; balance: number }>>`
       SELECT ca.code, ca.name, ca.type::text,
              COALESCE(SUM(CAST(jl.debit AS NUMERIC) - CAST(jl.credit AS NUMERIC)), 0) AS balance
       FROM chart_of_accounts ca
-      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code AND jl.tenant_id = ca.tenant_id
       LEFT JOIN journal_entries je ON je.id = jl.entry_id
         AND je.date <= ${asOf}
+        ${tenantId ? Prisma.sql`AND je.tenant_id = ${tenantId}` : Prisma.sql``}
       WHERE ca.type IN ('ASSET','LIABILITY','EQUITY')
+        ${tenantId ? Prisma.sql`AND ca.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY ca.code, ca.name, ca.type
       ORDER BY ca.code
     `;
@@ -375,16 +391,19 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
   async getIncomeStatement(fromDate: string, toDate: string) {
     const from = new Date(fromDate);
     const to   = new Date(toDate);
+    const tenantId = this.getTenantId();
 
     // Lấy số dư tài khoản doanh thu & chi phí trong kỳ
     const rows = await this.prisma.$queryRaw<Array<{ code: string; name: string; net: number }>>`
       SELECT ca.code, ca.name,
              COALESCE(SUM(CAST(jl.credit AS NUMERIC) - CAST(jl.debit AS NUMERIC)), 0) AS net
       FROM chart_of_accounts ca
-      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code AND jl.tenant_id = ca.tenant_id
       LEFT JOIN journal_entries je ON je.id = jl.entry_id
         AND je.date >= ${from} AND je.date <= ${to}
+        ${tenantId ? Prisma.sql`AND je.tenant_id = ${tenantId}` : Prisma.sql``}
       WHERE ca.code ~ '^[56789]'
+        ${tenantId ? Prisma.sql`AND ca.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY ca.code, ca.name
       ORDER BY ca.code
     `;
@@ -446,6 +465,7 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
   async getCashFlowStatement(fromDate: string, toDate: string) {
     const from = new Date(fromDate);
     const to   = new Date(toDate);
+    const tenantId = this.getTenantId();
 
     // Phát sinh thuần từng tài khoản trong kỳ (debit - credit = dòng tiền ra, credit - debit = dòng tiền vào)
     const rows = await this.prisma.$queryRaw<Array<{ code: string; debit: number; credit: number }>>`
@@ -453,9 +473,10 @@ export class AccountingService extends TenantAwareService implements OnModuleIni
              COALESCE(SUM(CAST(jl.debit AS NUMERIC)), 0)  AS debit,
              COALESCE(SUM(CAST(jl.credit AS NUMERIC)), 0) AS credit
       FROM chart_of_accounts ca
-      LEFT JOIN journal_lines jl ON jl.account_code = ca.code
+      LEFT JOIN journal_lines jl ON jl.account_code = ca.code AND jl.tenant_id = ca.tenant_id
       LEFT JOIN journal_entries je ON je.id = jl.entry_id
         AND je.date >= ${from} AND je.date <= ${to}
+        ${tenantId ? Prisma.sql`AND je.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY ca.code
       ORDER BY ca.code
     `;

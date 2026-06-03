@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '../generated/prisma';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 import ExcelJS from 'exceljs';
 
@@ -234,6 +235,7 @@ export class ReportsService extends TenantAwareService {
         SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count
         FROM bugs
         WHERE created_at >= NOW() - INTERVAL '6 months'
+          ${tid ? Prisma.sql`AND tenant_id = ${tid}` : Prisma.sql``}
         GROUP BY month
         ORDER BY month ASC
       `,

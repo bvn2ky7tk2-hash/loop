@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '../../generated/prisma';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import {
   CreateClientContractDto, UpdateClientContractDto,
@@ -25,11 +28,16 @@ async function generateInvoiceCode(prisma: PrismaService): Promise<string> {
   return `${prefix}${String(seq).padStart(4, '0')}`;
 }
 
-@Injectable()
-export class ClientContractsService {
+@Injectable({ scope: Scope.REQUEST })
+export class ClientContractsService extends TenantAwareService {
   private readonly logger = new Logger(ClientContractsService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async findAll(
     customerId?: string,
@@ -236,8 +244,11 @@ export class ClientContractsService {
       this.prisma.clientContract.count(),
       this.prisma.clientContract.aggregate({ _sum: { value: true }, where: { status: { in: ['ACTIVE', 'COMPLETED'] } } }),
     ]);
+    const tenantId = this.getTenantId();
     const raw = await this.prisma.$queryRaw<{ status: string; cnt: bigint }[]>`
-      SELECT status, COUNT(*) as cnt FROM client_contracts GROUP BY status
+      SELECT status, COUNT(*) as cnt FROM client_contracts
+      ${tenantId ? Prisma.sql`WHERE tenant_id = ${tenantId}` : Prisma.sql``}
+      GROUP BY status
     `;
     const byStatus = Object.fromEntries(raw.map((r) => [r.status, Number(r.cnt)]));
     return { total, byStatus, activeValue: Number(totalValue._sum.value ?? 0) };

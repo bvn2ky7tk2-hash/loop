@@ -3,7 +3,7 @@ import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
-import { DealStage } from '../generated/prisma';
+import { DealStage, Prisma } from '../generated/prisma';
 
 const STAGE_LABEL: Record<string, string> = {
   QUALIFICATION: 'Qualification',
@@ -111,6 +111,7 @@ export class CrmAnalyticsService extends TenantAwareService {
   // ─── E22.3: Pipeline by stage ────────────────────────────────────────────
 
   async getPipelineByStage() {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{ stage: string; cnt: bigint; total_value: string }[]>`
       SELECT
         stage,
@@ -119,6 +120,7 @@ export class CrmAnalyticsService extends TenantAwareService {
       FROM deals
       WHERE deleted_at IS NULL
         AND stage NOT IN ('WON','LOST')
+        ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY stage
       ORDER BY stage
     `;
@@ -138,6 +140,7 @@ export class CrmAnalyticsService extends TenantAwareService {
     const cutoff = new Date();
     cutoff.setMonth(cutoff.getMonth() - months);
 
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{ month: string; stage: string; cnt: bigint }[]>`
       SELECT
         TO_CHAR(COALESCE(won_at, lost_at, created_at), 'YYYY-MM') AS month,
@@ -147,6 +150,7 @@ export class CrmAnalyticsService extends TenantAwareService {
       WHERE deleted_at IS NULL
         AND stage IN ('WON','LOST')
         AND COALESCE(won_at, lost_at, created_at) >= ${cutoff}
+        ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY 1, 2
       ORDER BY 1 ASC
     `;
@@ -168,6 +172,7 @@ export class CrmAnalyticsService extends TenantAwareService {
   // ─── E22.3: Top customers by revenue ────────────────────────────────────
 
   async getTopCustomers(limit = 5): Promise<{ customerId: string; name: string; revenue: number; wonDeals: number }[]> {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{
       customer_id: string;
       name: string;
@@ -184,6 +189,7 @@ export class CrmAnalyticsService extends TenantAwareService {
       WHERE d.deleted_at IS NULL
         AND d.stage = 'WON'
         AND c.deleted_at IS NULL
+        ${tenantId ? Prisma.sql`AND d.tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY d.customer_id, c.name
       ORDER BY SUM(d.value::numeric) DESC NULLS LAST
       LIMIT ${limit}

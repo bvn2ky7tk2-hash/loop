@@ -1,5 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '../../generated/prisma';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { CreateActivityDto, UpdateActivityDto } from './dto/crm-activity.dto';
 
@@ -8,9 +11,14 @@ const ACTIVITY_INCLUDE = {
   createdBy: { select: { id: true, name: true, email: true } },
 } as const;
 
-@Injectable()
-export class CrmActivitiesService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class CrmActivitiesService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async findAll(
     customerId?: string,
@@ -96,10 +104,13 @@ export class CrmActivitiesService {
   }
 
   async stats() {
+    const tenantId = this.getTenantId();
     const [total, byType] = await this.prisma.$transaction([
       this.prisma.crmActivity.count(),
       this.prisma.$queryRaw<{ type: string; cnt: bigint }[]>`
-        SELECT type, COUNT(*) as cnt FROM crm_activities GROUP BY type
+        SELECT type, COUNT(*) as cnt FROM crm_activities
+        ${tenantId ? Prisma.sql`WHERE tenant_id = ${tenantId}` : Prisma.sql``}
+        GROUP BY type
       `,
     ]);
 

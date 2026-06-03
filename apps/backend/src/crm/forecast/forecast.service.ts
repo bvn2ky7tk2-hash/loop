@@ -1,5 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '../../generated/prisma';
+import { TenantAwareService } from '../../common/services/tenant-aware.service';
 import { CreateRevenueTargetDto, UpdateRevenueTargetDto } from './dto/forecast.dto';
 
 const STAGE_PROBABILITY: Record<string, number> = {
@@ -10,11 +13,17 @@ const STAGE_PROBABILITY: Record<string, number> = {
   LOST:          0.0,
 };
 
-@Injectable()
-export class ForecastService {
-  constructor(private readonly prisma: PrismaService) {}
+@Injectable({ scope: Scope.REQUEST })
+export class ForecastService extends TenantAwareService {
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(REQUEST) req?: any,
+  ) {
+    super(req);
+  }
 
   async stats() {
+    const tenantId = this.getTenantId();
     const now = new Date();
     const yearStart = new Date(now.getFullYear(), 0, 1);
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -25,17 +34,20 @@ export class ForecastService {
         SELECT stage, COALESCE(SUM(value), 0)::text AS total
         FROM deals
         WHERE stage NOT IN ('WON','LOST')
+          ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
         GROUP BY stage
       `,
       this.prisma.$queryRaw<{ total: string }[]>`
         SELECT COALESCE(SUM(value), 0)::text AS total
         FROM deals
         WHERE stage = 'WON' AND won_at >= ${yearStart}
+          ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       `,
       this.prisma.$queryRaw<{ total: string }[]>`
         SELECT COALESCE(SUM(value), 0)::text AS total
         FROM deals
         WHERE stage = 'WON' AND won_at BETWEEN ${monthStart} AND ${monthEnd}
+          ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       `,
     ]);
 
@@ -65,6 +77,7 @@ export class ForecastService {
   }
 
   async pipelineFunnel() {
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{ stage: string; cnt: string; total: string; weighted: string }[]>`
       SELECT
         stage,
@@ -72,6 +85,7 @@ export class ForecastService {
         COALESCE(SUM(value), 0)::text AS total,
         COALESCE(SUM(value * probability / 100.0), 0)::text AS weighted
       FROM deals
+      ${tenantId ? Prisma.sql`WHERE tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY stage
       ORDER BY
         CASE stage
@@ -101,6 +115,7 @@ export class ForecastService {
     });
     const targetMap = Object.fromEntries(targets.map((t: { period: string; target: any }) => [t.period, Number(t.target)]));
 
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{ month: string; forecast: string; actual: string; cnt: string }[]>`
       SELECT
         TO_CHAR(expected_close_date, 'YYYY-MM') AS month,
@@ -109,6 +124,7 @@ export class ForecastService {
         COUNT(*)::text AS cnt
       FROM deals
       WHERE EXTRACT(YEAR FROM expected_close_date) = ${year}
+        ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY 1
       ORDER BY 1
     `;
@@ -136,6 +152,7 @@ export class ForecastService {
     });
     const targetMap = Object.fromEntries(targets.map((t: { period: string; target: any }) => [t.period, Number(t.target)]));
 
+    const tenantId = this.getTenantId();
     const rows = await this.prisma.$queryRaw<{ quarter: string; forecast: string; actual: string; cnt: string }[]>`
       SELECT
         CONCAT(EXTRACT(YEAR FROM expected_close_date)::text, '-Q', EXTRACT(QUARTER FROM expected_close_date)::text) AS quarter,
@@ -144,6 +161,7 @@ export class ForecastService {
         COUNT(*)::text AS cnt
       FROM deals
       WHERE EXTRACT(YEAR FROM expected_close_date) = ${year}
+        ${tenantId ? Prisma.sql`AND tenant_id = ${tenantId}` : Prisma.sql``}
       GROUP BY 1
       ORDER BY 1
     `;

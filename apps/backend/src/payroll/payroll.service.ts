@@ -301,14 +301,24 @@ export class PayrollService extends TenantAwareService {
       map.set(r.employeeId, { totalBase: cur.totalBase + base, months: cur.months + 1 });
     }
 
-    let generated = 0;
+    // Tính toán thuần (không I/O) làm TRƯỚC transaction để giữ transaction ngắn.
+    type Month13Row = { employeeId: string; month13: number; pit: number; net: number; months: number };
+    const rowsToWrite: Month13Row[] = [];
     for (const [employeeId, { totalBase, months }] of map) {
       const month13 = Math.round(totalBase / months); // bình quân tháng
       const pit     = month13 >= 2_000_000 ? Math.round(month13 * 0.1) : 0;
       const net     = month13 - pit;
+      rowsToWrite.push({ employeeId, month13, pit, net, months });
+    }
 
+    // Atomic: ghi toàn bộ PayrollRecord (MONTH_13) + chuyển trạng thái kỳ trong cùng 1 transaction.
+    // Lỗi giữa chừng → rollback, tránh trạng thái bất nhất (vài nhân viên có record nhưng kỳ đã đổi trạng thái).
+    // tx vẫn giữ tenant-extension ($extends) nên tenant-isolation không mất.
+    let generated = 0;
+    await this.prisma.$transaction(async (tx) => {
+    for (const { employeeId, month13, pit, net, months } of rowsToWrite) {
       // Upsert PayrollRecord cho kỳ MONTH_13
-      await this.prisma.payrollRecord.upsert({
+      await tx.payrollRecord.upsert({
         where: { periodId_employeeId: { periodId, employeeId } },
         create: {
           periodId,
@@ -349,10 +359,11 @@ export class PayrollService extends TenantAwareService {
       generated++;
     }
 
-    // Cập nhật trạng thái kỳ → PROCESSING
-    await this.prisma.payrollPeriod.update({
+    // Cập nhật trạng thái kỳ → PROCESSING (cùng transaction với loop ghi record)
+    await tx.payrollPeriod.update({
       where: { id: periodId },
       data:  { status: PayrollStatus.PROCESSING },
+    });
     });
 
     return { periodId, generated, year, status: PayrollStatus.PROCESSING };
