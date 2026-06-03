@@ -175,6 +175,8 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
       buffer: pdfBuffer,
       size: pdfBuffer.length,
       mimeType: 'application/pdf',
+      // Worker đã set CLS tenant (Cụm 2) → path per-tenant thay vì shared/.
+      tenantId: this.cls.isActive() ? this.cls.get<string>(CLS_TENANT_ID) : undefined,
     });
 
     await this.prisma.payrollRecord.update({

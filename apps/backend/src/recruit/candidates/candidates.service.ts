@@ -5,6 +5,8 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { ClsServiceManager } from 'nestjs-cls';
+import { CLS_TENANT_ID } from '../../common/cls/cls-keys';
 import { PrismaService } from '../../prisma/prisma.service';
 import { paginate, PaginatedResult } from '../../common/dto/pagination.dto';
 import { EmployeesService } from '../../employees/employees.service';
@@ -218,6 +220,7 @@ export class CandidatesService {
     const ext = file.originalname.split('.').pop() ?? 'pdf';
     const filename = `${id}-${randomUUID()}.${ext}`;
 
+    const cls = ClsServiceManager.getClsService();
     const { storagePath } = await this.storageService.upload({
       bucket: 'loop-hr-files',
       folder: 'cv',
@@ -225,6 +228,8 @@ export class CandidatesService {
       buffer: file.buffer,
       size: file.size,
       mimeType: file.mimetype,
+      // CV là PII — lưu per-tenant path thay vì shared/.
+      tenantId: cls?.isActive() ? cls.get<string>(CLS_TENANT_ID) : undefined,
     });
 
     return this.prisma.candidate.update({

@@ -1,6 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, ForbiddenException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ClsServiceManager } from 'nestjs-cls';
 import * as Minio from 'minio';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
+import { isTenantEnforced } from '../common/config/tenant.config';
 
 export interface UploadOptions {
   bucket?: string;
@@ -64,6 +67,15 @@ export class StorageService implements OnModuleInit {
   }
 
   async presignedUrl(storagePath: string, bucket?: string, expirySeconds = 3600): Promise<string> {
+    // Phòng thủ chiều sâu ở tầng storage: chỉ ký URL cho object thuộc tenant hiện hành
+    // (hoặc shared/). Caller đã verify ownership qua DB; đây là lưới chắn cuối.
+    if (isTenantEnforced()) {
+      const cls = ClsServiceManager.getClsService();
+      const tid = cls?.isActive() ? cls.get<string>(CLS_TENANT_ID) : undefined;
+      if (tid && !storagePath.startsWith(`${tid}/`) && !storagePath.startsWith('shared/')) {
+        throw new ForbiddenException('Không có quyền truy cập tệp của tenant khác');
+      }
+    }
     const raw = await this.client.presignedGetObject(bucket ?? this.defaultBucket, storagePath, expirySeconds);
     // Nếu MINIO_PUBLIC_URL được cấu hình, rewrite URL nội bộ (http://minio:9000/...)
     // thành URL công khai (http://localhost/storage/...) để trình duyệt có thể truy cập.
