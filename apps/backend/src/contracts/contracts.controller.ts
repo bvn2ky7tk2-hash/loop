@@ -5,6 +5,8 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 
 import { Audited } from '../common/interceptors/audit-log.interceptor';
@@ -30,6 +32,23 @@ export class ContractsController {
   ) {
     return this.service.findAll(
       employeeId, orgUnitId,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 20,
+    );
+  }
+
+  // Self-service: hợp đồng của chính nhân viên đang đăng nhập (resolve employeeId từ JWT).
+  // KHÔNG nhận employeeId tùy ý → tránh lộ dữ liệu (CLAUDE.md §8.5).
+  @Get('mine')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @ApiOperation({ summary: 'Hợp đồng của nhân viên hiện tại (self-service)' })
+  findMine(
+    @CurrentUser() user: JwtUser,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.service.findMine(
+      user.id,
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 20,
     );

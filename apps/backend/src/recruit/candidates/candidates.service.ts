@@ -15,7 +15,8 @@ import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
 import { FilterCandidateDto } from './dto/filter-candidate.dto';
 import { HireCandidateDto } from './dto/hire-candidate.dto';
-import { Candidate, CandidateStage } from '../../generated/prisma';
+import { ReferCandidateDto } from './dto/refer-candidate.dto';
+import { Candidate, CandidateStage, LeadSource } from '../../generated/prisma';
 import { HrEventBus } from '../../common/events/hr-event-bus.service';
 
 // Kanban: cho phép kéo-thả tự do giữa các stage không kết thúc (tiến/lùi/mở lại).
@@ -75,6 +76,60 @@ export class CandidatesService {
         skills: dto.skills ?? [],
         birthdate: dto.birthdate ? new Date(dto.birthdate) : undefined,
       },
+    });
+  }
+
+  // ─── Self-service referral (nhân viên giới thiệu ứng viên) ───────────────────
+
+  private async resolveEmployeeId(userId: string): Promise<string> {
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!employee) {
+      throw new BadRequestException('Tài khoản chưa được gắn hồ sơ nhân viên — không thể giới thiệu ứng viên.');
+    }
+    return employee.id;
+  }
+
+  /** Vị trí đang tuyển — để nhân viên chọn khi giới thiệu (không cần quyền recruit). */
+  async listOpenJobs() {
+    return this.prisma.jobOpening.findMany({
+      where: { status: 'OPEN' },
+      select: { id: true, code: true, title: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  /** Tạo ứng viên từ giới thiệu của nhân viên: source=REFERRAL, gắn referredById. */
+  async refer(userId: string, dto: ReferCandidateDto): Promise<Candidate> {
+    const employeeId = await this.resolveEmployeeId(userId);
+    await this.ensureJobExists(dto.jobOpeningId);
+    return this.prisma.candidate.create({
+      data: {
+        name: dto.name,
+        email: dto.email,
+        phone: dto.phone,
+        jobOpeningId: dto.jobOpeningId,
+        stage: CandidateStage.APPLIED,
+        source: LeadSource.REFERRAL,
+        referredById: employeeId,
+        notes: dto.note,
+        skills: [],
+      },
+    });
+  }
+
+  /** Ứng viên do nhân viên hiện tại giới thiệu. */
+  async myReferrals(userId: string) {
+    const employeeId = await this.resolveEmployeeId(userId);
+    return this.prisma.candidate.findMany({
+      where: { referredById: employeeId },
+      select: {
+        id: true, name: true, email: true, phone: true, stage: true, createdAt: true,
+        jobOpening: { select: { id: true, title: true, code: true } },
+      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

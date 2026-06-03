@@ -1024,6 +1024,7 @@ exports.Prisma.CandidateScalarFieldEnum = {
   employeeId: 'employeeId',
   processInstanceId: 'processInstanceId',
   notes: 'notes',
+  referredById: 'referredById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId'

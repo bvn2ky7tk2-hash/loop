@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   Request,
 } from '@nestjs/common';
 import { VehicleBookingService } from './vehicle-booking.service';
@@ -47,9 +48,17 @@ export class VehicleBookingController {
   // ─── Requests ────────────────────────────────────────────────────────────────
 
   @Get('requests')
-  listRequests(@Request() req: any) {
+  listRequests(
+    @Request() req: any,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     const isAdmin = req.user.role === Role.ADMIN || req.user.role === 'LEADERSHIP';
-    return this.svc.listRequests(req.user.id, isAdmin);
+    return this.svc.listRequests(
+      req.user.id, isAdmin,
+      page ? parseInt(page, 10) : 1,
+      limit ? parseInt(limit, 10) : 50,
+    );
   }
 
   @Post('requests')

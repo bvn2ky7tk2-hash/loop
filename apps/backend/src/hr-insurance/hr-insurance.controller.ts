@@ -18,6 +18,8 @@ import {
 } from './dto/insurance.dto';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RequirePermission } from '../common/decorators/require-permission.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import type { JwtUser } from '../common/types/jwt-user.type';
 import { Role } from '../generated/prisma';
 import { Throttle } from '@nestjs/throttler';
 
@@ -38,6 +40,13 @@ export class HrInsuranceController {
   @RequirePermission('insurance:write')
   enroll(@Body() dto: CreateEnrollmentDto) {
     return this.svc.enroll(dto);
+  }
+
+  // Self-service: BHXH của chính nhân viên đang đăng nhập (resolve employeeId từ JWT).
+  @Get('my-enrollment')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  getMyEnrollment(@CurrentUser() user: JwtUser) {
+    return this.svc.getMyEnrollment(user.id);
   }
 
   // QUAN TRỌNG: Route cụ thể phải đặt TRƯỚC route tham số :id

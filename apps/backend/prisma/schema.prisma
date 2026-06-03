@@ -132,6 +132,7 @@ model Employee {
   leaveBalances      LeaveBalance[]
   payrollRecords     PayrollRecord[]
   rates              EmployeeRate[]
+  referredCandidates Candidate[]                @relation("EmployeeReferrals")
   orgUnit            OrgUnit                    @relation(fields: [orgUnitId], references: [id])
   user               User?                      @relation(fields: [userId], references: [id])
   tasks              Task[]                     @relation("TaskAssignee")
@@ -1923,6 +1924,8 @@ model Candidate {
   employeeId        String?        @unique @map("employee_id")
   processInstanceId String?        @map("process_instance_id")
   notes             String?        @db.Text
+  referredById      String?        @map("referred_by_id")
+  referredBy        Employee?      @relation("EmployeeReferrals", fields: [referredById], references: [id], onDelete: SetNull)
   createdAt         DateTime       @default(now()) @map("created_at")
   updatedAt         DateTime       @updatedAt @map("updated_at")
   tenantId          String?        @default("loop-default-tenant-001") @map("tenant_id")
@@ -1930,6 +1933,7 @@ model Candidate {
 
   @@index([jobOpeningId, stage])
   @@index([assigneeId])
+  @@index([referredById])
   @@index([tenantId])
   @@map("candidates")
 }

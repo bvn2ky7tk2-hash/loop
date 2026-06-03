@@ -1,5 +1,5 @@
 import { useThemeStore } from '../store/theme.store';
-import type { ThemePreset } from '../store/theme.store';
+import { getPalette, type ThemePreset } from '@loop/shared';
 
 export interface ThemePalette {
   isDark: boolean;
@@ -30,20 +30,6 @@ export interface ThemePalette {
  */
 export function useThemePalette(): ThemePalette {
   const { mode, preset } = useThemeStore();
-  const isDark = mode === 'dark';
-
-  return {
-    isDark,
-    textPrimary:   isDark ? '#F1F5F9'               : '#0F172A',
-    textSecondary: isDark ? 'rgba(255,255,255,0.5)'  : '#475569',
-    textMuted:     isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)',
-    bgPage:        isDark ? '#0F172A'                : '#F1F5F9',
-    bgContainer:   isDark ? '#1E293B'                : '#ffffff',
-    bgCard:        isDark ? '#2D3F56'                : '#FAFAFA',
-    bgSubPanel:    isDark ? '#1A2744'                : '#F8FAFC',
-    borderColor:   isDark ? '#334155'                : '#E2E8F0',
-    linkColor:     isDark ? '#93C5FD'                : preset.primary,
-    primary:       preset.primary,
-    preset,
-  };
+  // Bảng giá trị token nằm ở @loop/shared (getPalette) — dùng chung với mobile.
+  return { ...getPalette(preset, mode === 'dark'), preset };
 }

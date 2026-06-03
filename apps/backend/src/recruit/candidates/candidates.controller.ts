@@ -25,6 +25,10 @@ import { UpdateCandidateDto } from './dto/update-candidate.dto';
 import { FilterCandidateDto } from './dto/filter-candidate.dto';
 import { HireCandidateDto } from './dto/hire-candidate.dto';
 import { RequirePermission } from '../../common/decorators/require-permission.decorator';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import type { JwtUser } from '../../common/types/jwt-user.type';
+import { Throttle } from '@nestjs/throttler';
+import { ReferCandidateDto } from './dto/refer-candidate.dto';
 import { PERMISSIONS } from '../../permissions/permissions.constants';
 
 class UpdateStageDto {
@@ -51,6 +55,30 @@ export class CandidatesController {
   @ApiOperation({ summary: 'Danh sách ứng viên' })
   findAll(@Query() filter: FilterCandidateDto) {
     return this.candidatesService.findAll(filter);
+  }
+
+  // ─── Self-service: nhân viên giới thiệu ứng viên (KHÔNG cần quyền recruit) ───
+  // Route tĩnh phải đặt TRƯỚC @Get(':id') để không bị nuốt bởi route tham số.
+
+  @Get('refer/openings')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @ApiOperation({ summary: 'Danh sách vị trí đang tuyển (để giới thiệu)' })
+  referOpenings() {
+    return this.candidatesService.listOpenJobs();
+  }
+
+  @Get('my-referrals')
+  @Throttle({ default: { ttl: 60_000, limit: 60 } })
+  @ApiOperation({ summary: 'Danh sách ứng viên do tôi giới thiệu' })
+  myReferrals(@CurrentUser() user: JwtUser) {
+    return this.candidatesService.myReferrals(user.id);
+  }
+
+  @Post('refer')
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
+  @ApiOperation({ summary: 'Giới thiệu ứng viên (self-service)' })
+  refer(@CurrentUser() user: JwtUser, @Body() dto: ReferCandidateDto) {
+    return this.candidatesService.refer(user.id, dto);
   }
 
   @Get(':id')

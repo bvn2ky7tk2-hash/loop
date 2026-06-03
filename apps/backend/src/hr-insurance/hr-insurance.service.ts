@@ -71,6 +71,16 @@ export class HrInsuranceService extends TenantAwareService {
     return paginate(data, total, page, limit);
   }
 
+  // Self-service: resolve employeeId từ user đang đăng nhập. Trả null nếu chưa gắn hồ sơ NV.
+  async getMyEnrollment(userId: string) {
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!employee) return { employee: null, enrollment: null };
+    return this.getEnrollmentByEmployee(employee.id);
+  }
+
   async getEnrollmentByEmployee(employeeId: string) {
     const employee = await this.prisma.employee.findUnique({ where: { id: employeeId } });
     if (!employee) throw new NotFoundException('Nhân viên không tìm thấy');

@@ -98,6 +98,16 @@ export class ContractsService extends TenantAwareService {
     return paginate(data, total, page, limit);
   }
 
+  // Self-service: resolve employeeId từ user đang đăng nhập, không nhận id tùy ý.
+  async findMine(userId: string, page = 1, limit = 20): Promise<PaginatedResult<any>> {
+    const employee = await this.prisma.employee.findFirst({
+      where: { userId },
+      select: { id: true },
+    });
+    if (!employee) return paginate([], 0, page, limit);
+    return this.findAll(employee.id, undefined, page, limit);
+  }
+
   async findOne(id: string) {
     const contract = await this.prisma.contract.findUnique({
       where: { id },

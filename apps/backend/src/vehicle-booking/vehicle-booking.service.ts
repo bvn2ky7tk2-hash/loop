@@ -87,7 +87,7 @@ export class VehicleBookingService extends TenantAwareService {
 
   // ─── Requests ────────────────────────────────────────────────────────────────
 
-  async listRequests(userId: string, isAdmin: boolean) {
+  async listRequests(userId: string, isAdmin: boolean, page = 1, limit = 50) {
     const tf = this.tenantFilter();
     const where = isAdmin
       ? { ...tf }
@@ -96,7 +96,8 @@ export class VehicleBookingService extends TenantAwareService {
     const [data, total] = await this.prisma.$transaction([
       this.prisma.vehicleRequest.findMany({
         where,
-        take: 200,
+        skip: (page - 1) * limit,
+        take: limit,
         orderBy: { createdAt: 'desc' },
         include: {
           vehicle:     { select: { id: true, name: true, plateNumber: true, type: true } },
@@ -107,7 +108,7 @@ export class VehicleBookingService extends TenantAwareService {
       this.prisma.vehicleRequest.count({ where }),
     ]);
 
-    return { data, total };
+    return { data, total, page, limit };
   }
 
   async createRequest(dto: CreateRequestDto, userId: string) {
