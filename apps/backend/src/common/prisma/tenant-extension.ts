@@ -38,7 +38,7 @@ const FILTER_OPS: ReadonlySet<string> = new Set([
  * mà KHÔNG phải filter operator (vd { periodId_employeeId: { periodId, employeeId } })
  * chính là khóa ghép → trải các field con ra ngoài.
  */
-function flattenCompoundWhere(where: Record<string, unknown>): Record<string, unknown> {
+export function flattenCompoundWhere(where: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...where };
   for (const [k, v] of Object.entries(where)) {
     if (v && typeof v === 'object' && !Array.isArray(v)) {

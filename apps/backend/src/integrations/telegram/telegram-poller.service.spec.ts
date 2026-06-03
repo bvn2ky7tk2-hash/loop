@@ -1,7 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ClsService } from 'nestjs-cls';
 import { TelegramPollerService } from './telegram-poller.service';
 import { TelegramService } from './telegram.service';
 import { PrismaService } from '../../prisma/prisma.service';
+
+// cls.run chạy callback ngay (mô phỏng hành vi thật: bọc tenant context rồi gọi cb).
+const mockClsService = {
+  run: jest.fn((cb: () => unknown) => cb()),
+  set: jest.fn(),
+  get: jest.fn(),
+  isActive: jest.fn().mockReturnValue(true),
+};
 
 const mockTelegramService = {
   getIsEnabled: jest.fn().mockReturnValue(false),
@@ -34,6 +43,7 @@ describe('TelegramPollerService', () => {
         TelegramPollerService,
         { provide: TelegramService, useValue: mockTelegramService },
         { provide: PrismaService, useValue: mockPrismaService },
+        { provide: ClsService, useValue: mockClsService },
       ],
     }).compile();
 
@@ -99,6 +109,7 @@ describe('TelegramPollerService', () => {
         id: 'task-1',
         status: 'DONE',
         title: 'Some task',
+        tenantId: 'tenant-1',
       });
 
       const pollerAny = service as unknown as {
@@ -122,6 +133,7 @@ describe('TelegramPollerService', () => {
         id: 'task-1',
         status: 'IN_PROGRESS',
         title: 'Some task',
+        tenantId: 'tenant-1',
       });
       mockPrismaService.task.update.mockResolvedValue({ id: 'task-1', status: 'DONE' });
       mockPrismaService.telegramMessage.findFirst.mockResolvedValue(null);
