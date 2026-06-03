@@ -250,6 +250,9 @@ export class TimesheetService extends TenantAwareService {
         // Bắt buộc có ca mới tính ngày chuẩn — không fallback Mon-Fri
         const shift = await this.workShiftsService.resolveShiftForDate(employeeId, day);
         if (!shift || (shift as any).type === 'CA_OFF') continue;
+        // Loại ngày không thuộc thứ làm việc của ca (vd office off T7/CN, công nhân off CN)
+        const wd = (shift as any).workingDays as number[] | undefined;
+        if (wd && wd.length > 0 && !wd.includes(isoWeekday(day))) continue;
       } else {
         // Không có employeeId (tính tổng quát): Mon-Fri
         if (!WORK_DAYS.has(isoWeekday(day))) continue;

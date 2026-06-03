@@ -3988,6 +3988,9 @@ model WorkShift {
   startTime      String              @map("start_time")
   endTime        String              @map("end_time")
   breakMinutes   Int                 @default(60) @map("break_minutes")
+  // Thứ làm việc trong tuần theo ISO (1=T2 … 7=CN). VD office [1,2,3,4,5] off T7/CN;
+  // công nhân [1,2,3,4,5,6] off CN. Dùng để tính công chuẩn động theo thứ.
+  workingDays    Int[]               @default([1, 2, 3, 4, 5]) @map("working_days")
   isActive       Boolean             @default(true) @map("is_active")
   description    String?
   createdAt      DateTime            @default(now()) @map("created_at")
