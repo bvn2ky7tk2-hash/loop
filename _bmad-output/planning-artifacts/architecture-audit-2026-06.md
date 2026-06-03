@@ -107,3 +107,12 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 - Queue admin IDOR (job đã tag tenantId từ Cụm 2; chỉ cần queues.service admin lọc tenant khi liệt kê) — minor.
 
 ## KẾT LUẬN: 7/7 cụm — TOÀN BỘ lỗ hổng bảo mật/cách ly/correctness + perf nặng ĐÃ FIX. Chỉ còn product-features (provisioning/quota) cần quyết định nghiệp vụ.
+
+---
+
+## ✅ HOÀN TẤT 100% (2026-06-03)
+- **Provisioning** (`bedaabd`): POST /tenants/provision (platform-admin) — tạo tenant + bật/tắt module + cấp admin, atomic.
+- **Quota per-tenant** (`1bf6bf6`): Tenant.maxUsers/maxStorageMb/maxProjects/maxEmployees + storageUsedBytes; QuotaService chặn cứng tại users/projects/employees.create + storage.upload; platform admin đặt limit qua provision/update DTO. Module bật/tắt qua ModuleConfig.
+- **Index đầy đủ** (`bedaabd`): + LeaveRequest/Expense/TimeLog/TimeEntry composite.
+
+### TẤT CẢ 7 CỤM + PERF + PROVISIONING + QUOTA → DONE. Không còn tồn đọng bảo mật/cách ly/correctness/vận hành. SaaS multi-tenant CHUẨN CHỈNH.
