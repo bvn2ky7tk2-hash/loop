@@ -1,5 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { Queue, Worker } from 'bullmq';
+import { ClsService } from 'nestjs-cls';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 
 export type FinanceEventType = 'invoice.paid' | 'expense.approved' | 'payroll.approved' | 'po.received' | 'po.paid';
 
@@ -9,6 +11,7 @@ export interface FinanceEvent {
   amount:    number;
   currency?: string;
   userId:    string;
+  tenantId?: string;
 }
 
 const QUEUE_PREFIX = 'finance';
@@ -18,6 +21,8 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(FinanceEventBus.name);
   private queues = new Map<FinanceEventType, Queue<FinanceEvent>>();
   private workers: Worker<FinanceEvent>[] = [];
+
+  constructor(private readonly cls: ClsService) {}
 
   private get connection() {
     return {
@@ -46,7 +51,9 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
       this.logger.warn(`FinanceEventBus: unknown event type "${event.type}"`);
       return;
     }
-    await queue.add(event.type, event, {
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
+    const stamped = { ...event, tenantId: event.tenantId ?? tid };
+    await queue.add(event.type, stamped, {
       removeOnComplete: 100,
       removeOnFail: 50,
     });
@@ -56,7 +63,12 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
     const queueName = `${QUEUE_PREFIX}.${type}`;
     const worker = new Worker<FinanceEvent>(
       queueName,
-      async (job) => handler(job.data),
+      async (job) =>
+        this.cls.run(async () => {
+          const t = job.data?.tenantId;
+          if (t) this.cls.set(CLS_TENANT_ID, t);
+          return handler(job.data);
+        }),
       { connection: this.connection },
     );
     worker.on('failed', (job, err) => {

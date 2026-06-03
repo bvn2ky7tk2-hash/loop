@@ -1,9 +1,12 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
 import { Queue, Worker } from 'bullmq';
+import { ClsService } from 'nestjs-cls';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 
 export interface ProcessCompletedPayload {
   instanceId: string;
   variables: Record<string, unknown>;
+  tenantId?: string;
 }
 
 const QUEUE_NAME = 'process.completed';
@@ -13,6 +16,8 @@ export class ProcessEventBus implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(ProcessEventBus.name);
   private queue!: Queue<ProcessCompletedPayload>;
   private workers: Worker<ProcessCompletedPayload>[] = [];
+
+  constructor(private readonly cls: ClsService) {}
 
   private get connection() {
     return {
@@ -34,7 +39,9 @@ export class ProcessEventBus implements OnModuleInit, OnModuleDestroy {
   }
 
   async emitCompleted(payload: ProcessCompletedPayload): Promise<void> {
-    await this.queue.add('completed', payload, {
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
+    const stamped = { ...payload, tenantId: payload.tenantId ?? tid };
+    await this.queue.add('completed', stamped, {
       removeOnComplete: 100,
       removeOnFail: 50,
     });
@@ -43,7 +50,12 @@ export class ProcessEventBus implements OnModuleInit, OnModuleDestroy {
   onCompleted(handler: (payload: ProcessCompletedPayload) => Promise<void>): void {
     const worker = new Worker<ProcessCompletedPayload>(
       QUEUE_NAME,
-      async (job) => handler(job.data),
+      async (job) =>
+        this.cls.run(async () => {
+          const t = job.data?.tenantId;
+          if (t) this.cls.set(CLS_TENANT_ID, t);
+          return handler(job.data);
+        }),
       { connection: this.connection },
     );
     worker.on('failed', (job, err) => {

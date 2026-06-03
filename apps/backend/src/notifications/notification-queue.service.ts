@@ -1,8 +1,10 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Queue, Worker, type Job } from 'bullmq';
+import { ClsService } from 'nestjs-cls';
 import { FirebaseService } from './firebase.service';
 import { MailService } from './mail.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 
 export const NOTIFICATION_QUEUE = 'notifications';
 
@@ -11,6 +13,7 @@ export interface DeliverJobData {
   type: string;
   title: string;
   body: string;
+  tenantId?: string;
 }
 
 @Injectable()
@@ -23,6 +26,7 @@ export class NotificationQueueService implements OnModuleInit, OnModuleDestroy {
     private readonly firebase: FirebaseService,
     private readonly mail: MailService,
     private readonly prisma: PrismaService,
+    private readonly cls: ClsService,
   ) {}
 
   onModuleInit() {
@@ -35,7 +39,12 @@ export class NotificationQueueService implements OnModuleInit, OnModuleDestroy {
 
     this.worker = new Worker<DeliverJobData>(
       NOTIFICATION_QUEUE,
-      (job) => this.process(job),
+      (job) =>
+        this.cls.run(async () => {
+          const t = job.data?.tenantId;
+          if (t) this.cls.set(CLS_TENANT_ID, t);
+          return this.process(job);
+        }),
       { connection, concurrency: 5 },
     );
 
@@ -50,7 +59,9 @@ export class NotificationQueueService implements OnModuleInit, OnModuleDestroy {
   }
 
   async enqueue(data: DeliverJobData): Promise<void> {
-    await this.queue.add('deliver', data, {
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
+    const stamped = { ...data, tenantId: data.tenantId ?? tid };
+    await this.queue.add('deliver', stamped, {
       attempts: 3,
       backoff: { type: 'exponential', delay: 5_000 },
       removeOnComplete: true,

@@ -1,6 +1,8 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Queue, Worker, type Job } from 'bullmq';
+import { ClsService } from 'nestjs-cls';
 import { BpmnEngineService } from '../engine/bpmn-engine.service';
+import { CLS_TENANT_ID } from '../../common/cls/cls-keys';
 
 export const PROCESS_TIMERS_QUEUE = 'process-timers';
 
@@ -8,6 +10,7 @@ export interface TimerJobData {
   instanceId: string;
   activityId: string;
   scheduledAt: string;
+  tenantId?: string;
 }
 
 @Injectable()
@@ -16,7 +19,10 @@ export class TimerEventService implements OnModuleInit, OnModuleDestroy {
   private queue!: Queue<TimerJobData>;
   private worker!: Worker<TimerJobData>;
 
-  constructor(private readonly engineService: BpmnEngineService) {}
+  constructor(
+    private readonly engineService: BpmnEngineService,
+    private readonly cls: ClsService,
+  ) {}
 
   onModuleInit() {
     const connection = {
@@ -28,7 +34,12 @@ export class TimerEventService implements OnModuleInit, OnModuleDestroy {
 
     this.worker = new Worker<TimerJobData>(
       PROCESS_TIMERS_QUEUE,
-      (job) => this.process(job),
+      (job) =>
+        this.cls.run(async () => {
+          const t = job.data?.tenantId;
+          if (t) this.cls.set(CLS_TENANT_ID, t);
+          return this.process(job);
+        }),
       { connection, concurrency: 3 },
     );
 
@@ -62,12 +73,14 @@ export class TimerEventService implements OnModuleInit, OnModuleDestroy {
       await existingJob.remove();
     }
 
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
     await this.queue.add(
       'fire-timer',
       {
         instanceId,
         activityId,
         scheduledAt: new Date().toISOString(),
+        tenantId: tid,
       },
       {
         jobId,

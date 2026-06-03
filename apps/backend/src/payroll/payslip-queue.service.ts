@@ -1,10 +1,12 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Queue, Worker, type Job } from 'bullmq';
+import { ClsService } from 'nestjs-cls';
 import { PrismaService } from '../prisma/prisma.service';
 import { StorageService } from '../storage/storage.service';
 import { MailService } from '../notifications/mail.service';
 import { PayslipGeneratorService, PayslipPayload } from './payslip-generator.service';
 import { NotificationType } from '../generated/prisma';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 import dayjs from 'dayjs';
 
 export const PAYSLIP_QUEUE = 'payslip-generation';
@@ -12,6 +14,7 @@ export const PAYSLIP_QUEUE = 'payslip-generation';
 export interface PayslipJobData {
   recordId: string;
   periodId: string;
+  tenantId?: string;
 }
 
 @Injectable()
@@ -25,6 +28,7 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
     private readonly storage: StorageService,
     private readonly mail: MailService,
     private readonly generator: PayslipGeneratorService,
+    private readonly cls: ClsService,
   ) {}
 
   onModuleInit() {
@@ -37,7 +41,12 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
 
     this.worker = new Worker<PayslipJobData>(
       PAYSLIP_QUEUE,
-      (job) => this.process(job),
+      (job) =>
+        this.cls.run(async () => {
+          const t = job.data?.tenantId;
+          if (t) this.cls.set(CLS_TENANT_ID, t);
+          return this.process(job);
+        }),
       { connection, concurrency: 3 },
     );
 
@@ -56,7 +65,8 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
   }
 
   async enqueueOne(recordId: string): Promise<string> {
-    const job = await this.queue.add('payslip', { recordId, periodId: '' }, {
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
+    const job = await this.queue.add('payslip', { recordId, periodId: '', tenantId: tid }, {
       attempts: 3,
       backoff: { type: 'exponential', delay: 10_000 },
       removeOnComplete: 50,
@@ -81,9 +91,10 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
       select: { id: true },
     });
 
+    const tid = this.cls.isActive() ? this.cls.get(CLS_TENANT_ID) : undefined;
     const jobs = records.map((r) => ({
       name: 'generate',
-      data: { recordId: r.id, periodId },
+      data: { recordId: r.id, periodId, tenantId: tid },
       opts: {
         attempts: 3,
         backoff: { type: 'exponential' as const, delay: 10_000 },
