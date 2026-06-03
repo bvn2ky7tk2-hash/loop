@@ -1,6 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ClsServiceManager } from 'nestjs-cls';
 import { PrismaService } from '../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 
 export interface ActionContext {
   entityId?: string;
@@ -173,12 +175,24 @@ export class AutomationService {
           this.logger.warn('UPDATE_FIELD: tên table/field không hợp lệ');
           return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await this.prisma.$executeRawUnsafe(
-          `UPDATE "${table}" SET "${field}" = $1, updated_at = NOW() WHERE "${whereField}" = $2`,
-          value,
-          whereValue ?? context.entityId,
-        );
+        // Ràng buộc tenant: chỉ update row thuộc tenant hiện hành (raw bỏ qua extension).
+        // Khi có tenant context → thêm AND tenant_id = $3 (bảng nghiệp vụ đều có tenant_id).
+        const cls = ClsServiceManager.getClsService();
+        const tid = cls?.isActive() ? cls.get<string>(CLS_TENANT_ID) : undefined;
+        if (tid) {
+          await this.prisma.$executeRawUnsafe(
+            `UPDATE "${table}" SET "${field}" = $1, updated_at = NOW() WHERE "${whereField}" = $2 AND tenant_id = $3`,
+            value,
+            whereValue ?? context.entityId,
+            tid,
+          );
+        } else {
+          await this.prisma.$executeRawUnsafe(
+            `UPDATE "${table}" SET "${field}" = $1, updated_at = NOW() WHERE "${whereField}" = $2`,
+            value,
+            whereValue ?? context.entityId,
+          );
+        }
         break;
       }
 

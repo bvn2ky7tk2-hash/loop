@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from '../../generated/prisma';
+import { ClsServiceManager } from 'nestjs-cls';
+import { Prisma, Role } from '../../generated/prisma';
 import type { JwtUser } from '../types/jwt-user.type';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RedisService } from './redis.service';
+import { CLS_TENANT_ID } from '../cls/cls-keys';
 
 const TTL = 600; // 10 minutes
 
@@ -61,12 +63,18 @@ export class OrgScopeService {
   }
 
   private async subtreeIds(rootId: string): Promise<string[]> {
+    // Lọc tenant ở CẢ anchor và recursive để cây tổ chức không đan chéo tenant
+    // (raw CTE bỏ qua tenant-extension). tenantId lấy từ CLS hiện hành.
+    const cls = ClsServiceManager.getClsService();
+    const tid = cls?.isActive() ? cls.get<string>(CLS_TENANT_ID) : undefined;
+    const tFilter = tid ? Prisma.sql`AND tenant_id = ${tid}` : Prisma.sql``;
+    const tFilterJoin = tid ? Prisma.sql`AND o.tenant_id = ${tid}` : Prisma.sql``;
     const rows = await this.prisma.$queryRaw<{ id: string }[]>`
       WITH RECURSIVE subtree AS (
-        SELECT id FROM org_units WHERE id = ${rootId}
+        SELECT id FROM org_units WHERE id = ${rootId} ${tFilter}
         UNION ALL
         SELECT o.id FROM org_units o
-        JOIN subtree s ON o.parent_id = s.id
+        JOIN subtree s ON o.parent_id = s.id ${tFilterJoin}
       )
       SELECT id FROM subtree
     `;
