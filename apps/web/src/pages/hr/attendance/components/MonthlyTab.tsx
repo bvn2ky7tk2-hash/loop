@@ -6,7 +6,7 @@ import {
 import { CheckOutlined, LockOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs, { type Dayjs } from 'dayjs';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useThemePalette } from '../../../../hooks/useThemePalette';
 import { usePagination } from '../../../../hooks/usePagination';
 import { EmployeeInfoCell } from '../../../../components/ui/EmployeeInfoCell';
@@ -24,6 +24,7 @@ const { Text } = Typography;
 export function MonthlyTab() {
   const { textPrimary, textMuted, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
+  const qc = useQueryClient();
 
   const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
   const [orgUnitId, setOrgUnitId] = useState<string | undefined>();
@@ -48,7 +49,12 @@ export function MonthlyTab() {
 
   const summarizeMutation = useMutation({
     mutationFn: () => hrAttendanceApi.summarize({ year, month, orgUnitId }),
-    onSuccess: () => { refetch(); message.success('Đã tổng hợp bảng công'); },
+    onSuccess: () => {
+      refetch();
+      // Nút Tổng hợp đã tính lại chi tiết từng ngày → làm mới luôn tab Chi tiết
+      qc.invalidateQueries({ queryKey: ['attendance-detail'] });
+      message.success('Đã tính lại chi tiết & tổng hợp bảng công');
+    },
     onError: () => message.error('Tổng hợp thất bại'),
   });
 

@@ -108,7 +108,7 @@ export function TaskCompleteDrawer({ task, open, onClose }: Props) {
   const handleComplete = async (extraVars?: Record<string, unknown>) => {
     if (!task) return;
 
-    let formVars: Record<string, unknown> = {};
+    const formVars: Record<string, unknown> = {};
     if (hasTaskForm) {
       try {
         const values = await form.validateFields();

@@ -372,27 +372,60 @@ export class HrAttendanceService extends TenantAwareService {
       },
     });
 
+    // ─── BƯỚC 1: Tính lại CHI TIẾT từng ngày theo công thức rồi LƯU vào DB ──────
+    // Nguồn sự thật là giờ check-in/out thực tế qua calculateShiftMetrics().
+    // Ghi đè dayCredit/lateMinutes/earlyLeaveMinutes/overtimeMinutes để tab Chi tiết
+    // hiển thị đúng; đồng thời cập nhật in-memory để BƯỚC 2 tổng hợp dùng số đã chuẩn hóa.
+    const recordUpdates: any[] = [];
+    for (const r of allRecords) {
+      if (!r.checkIn || !r.checkOut) continue;
+      const m = this.calculateShiftMetrics(
+        r.checkIn,
+        r.checkOut,
+        r.plannedStart ?? undefined,
+        r.plannedEnd ?? undefined,
+      );
+      const dayCredit = Math.round(m.dayCredit * 100) / 100;
+      // Cập nhật in-memory cho bước tổng hợp
+      (r as any).dayCredit = dayCredit;
+      r.lateMinutes = m.lateMinutes;
+      r.earlyLeaveMinutes = m.earlyLeaveMinutes;
+      r.overtimeMinutes = m.overtimeMinutes;
+      recordUpdates.push(
+        this.prisma.attendanceRecord.update({
+          where: { id: r.id },
+          data: {
+            dayCredit,
+            lateMinutes: m.lateMinutes,
+            earlyLeaveMinutes: m.earlyLeaveMinutes,
+            overtimeMinutes: m.overtimeMinutes,
+          },
+        }),
+      );
+    }
+    // Lưu theo lô để tránh transaction quá lớn (tháng nhiều NV → hàng nghìn bản ghi)
+    const RECORD_CHUNK = 200;
+    for (let i = 0; i < recordUpdates.length; i += RECORD_CHUNK) {
+      await this.prisma.$transaction(recordUpdates.slice(i, i + RECORD_CHUNK));
+    }
+
+    // ─── BƯỚC 2: Tổng hợp BẢNG CÔNG THÁNG từ chi tiết đã chuẩn hóa ──────────────
     const upserts = employees.map((emp) => {
       const records = allRecords.filter((r) => r.employeeId === emp.id);
 
-      // ✅ Helper: Tính dayCredit nếu NULL (cho records cũ)
-      const getDayCredit = (r: any): number => {
-        if (r.dayCredit !== null && r.dayCredit !== undefined) {
-          return Number(r.dayCredit);
-        }
-        // Nếu NULL, tính theo công thức: (480 - late - early) / 480
-        const standardWorkMinutes = 480;
-        const actualWorkMinutes = Math.max(
-          0,
-          standardWorkMinutes - (r.lateMinutes ?? 0) - (r.earlyLeaveMinutes ?? 0),
-        );
-        return actualWorkMinutes / standardWorkMinutes;
-      };
+      // Đọc số đã tính ở Bước 1 (in-memory). Bản ghi nhập tay không có giờ check-in/out
+      // → dùng giá trị đã lưu làm fallback.
+      const getRecordMetrics = (r: any): { dayCredit: number; overtimeMinutes: number } => ({
+        dayCredit: r.dayCredit != null ? Number(r.dayCredit) : 0,
+        overtimeMinutes: r.overtimeMinutes ?? 0,
+      });
 
-      // Tính ngày công dựa trên dayCredit: (480 - late - early) / 480
-      const workDays = records
+      const presentMetrics = records
         .filter((r) => r.status === AttendanceStatus.PRESENT)
-        .reduce((sum, r) => sum + getDayCredit(r), 0);
+        .map(getRecordMetrics);
+
+      // Ngày công = Σ dayCredit (mỗi ngày = (480 - đi muộn - về sớm) / 480)
+      const workDays = presentMetrics.reduce((sum, m) => sum + m.dayCredit, 0);
 
       // Phép có tính công
       const paidLeaveDays = records.filter(
@@ -404,10 +437,8 @@ export class HrAttendanceService extends TenantAwareService {
         (r) => (['LEAVE', 'ON_LEAVE'].includes(r.status as string)) && r.leaveType === 'UNPAID',
       ).length;
 
-      // OT giờ (tính từ overtimeMinutes)
-      const otHours = records
-        .filter((r) => r.overtimeMinutes > 0)
-        .reduce((sum, r) => sum + (r.overtimeMinutes ?? 0) / 60, 0);
+      // OT giờ = Σ overtimeMinutes / 60 (suy từ thời gian check-out vượt quá giờ tan ca)
+      const otHours = presentMetrics.reduce((sum, m) => sum + m.overtimeMinutes / 60, 0);
 
       // Vắng mặt
       const absentDays = records.filter((r) => r.status === AttendanceStatus.ABSENT).length;
@@ -499,10 +530,11 @@ export class HrAttendanceService extends TenantAwareService {
     }
 
     return {
-      message: `Đã tổng hợp bảng công cho ${employees.length} nhân viên`,
+      message: `Đã tính lại ${recordUpdates.length} ngày công chi tiết và tổng hợp bảng công cho ${employees.length} nhân viên`,
       year,
       month,
       updated: employees.length,
+      recordsRecalculated: recordUpdates.length,
     };
   }
 
