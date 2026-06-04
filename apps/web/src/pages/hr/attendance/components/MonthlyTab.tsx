@@ -11,6 +11,7 @@ import { useThemePalette } from '../../../../hooks/useThemePalette';
 import { usePagination } from '../../../../hooks/usePagination';
 import { EmployeeInfoCell } from '../../../../components/ui/EmployeeInfoCell';
 import { FilterBar } from '../../../../components/FilterBar';
+import { SectionCard } from '../../../../components/ui/SectionCard';
 import {
   hrAttendanceApi,
   type MonthlyAttendance,
@@ -21,7 +22,7 @@ import { flattenOrgTree, type OrgTreeNode } from '../constants';
 const { Text } = Typography;
 
 export function MonthlyTab() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
 
   const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
@@ -176,7 +177,7 @@ export function MonthlyTab() {
         />
       </FilterBar>
 
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
+      <SectionCard noPadding>
         <Table
           rowKey="id"
           columns={columns}
@@ -185,7 +186,7 @@ export function MonthlyTab() {
           pagination={paginationProps(monthlyRows.length, 'bản ghi')}
           size="middle"
         />
-      </div>
+      </SectionCard>
     </div>
   );
 }

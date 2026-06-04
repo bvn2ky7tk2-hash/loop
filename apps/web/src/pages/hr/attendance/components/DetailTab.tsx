@@ -16,6 +16,7 @@ import { usePagination } from '../../../../hooks/usePagination';
 import { EmployeeInfoCell } from '../../../../components/ui/EmployeeInfoCell';
 import { FilterBar } from '../../../../components/FilterBar';
 import { CenteredModal } from '../../../../components/ui/CenteredModal';
+import { SectionCard } from '../../../../components/ui/SectionCard';
 import { employeesApi } from '../../../../api/employees';
 import {
   hrAttendanceApi,
@@ -30,7 +31,7 @@ const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 export function DetailTab() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
   const { paginationProps: detailPaginationProps } = usePagination(20);
   const { message: msg } = App.useApp();
   const qc = useQueryClient();
@@ -383,7 +384,7 @@ export function DetailTab() {
       </FilterBar>
 
       {/* ── Bảng Chi tiết chấm công ──────────────────────────────────────────── */}
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden', marginBottom: 24 }}>
+      <SectionCard noPadding style={{ marginBottom: 24 }}>
         <Table
           rowKey="id"
           columns={detailColumns}
@@ -393,7 +394,7 @@ export function DetailTab() {
           size="small"
           scroll={{ x: 1000 }}
         />
-      </div>
+      </SectionCard>
 
       {/* ── Modal: Đổi ca nhanh ──────────────────────────────────────────────── */}
       <CenteredModal

@@ -16,6 +16,7 @@ import {
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 
 const STAGE_LABEL: Record<string, string> = {
@@ -44,7 +45,7 @@ const STAGE_COLOR: Record<string, string> = {
 
 export default function RecruitDashboard() {
   const navigate = useNavigate();
-  const { bgContainer, borderColor, textPrimary, textMuted, isDark } = useThemePalette();
+  const { bgContainer, borderColor, textMuted, isDark } = useThemePalette();
 
   const { data, isLoading } = useQuery({
     queryKey:        ['dashboard-recruit'],
@@ -141,20 +142,14 @@ export default function RecruitDashboard() {
       </Row>
 
       {/* ── Chart: Pipeline theo giai đoạn ── */}
-      <div style={{
-        background: bgContainer,
-        border: `1px solid ${borderColor}`,
-        borderRadius: 12,
-        padding: '16px 20px',
-      }}>
-        <div style={{
-          fontSize: 14, fontWeight: 600, color: textPrimary as string,
-          marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6,
-        }}>
-          <AppstoreAddOutlined style={{ color: '#0EA5E9' }} />
-          Ứng viên theo giai đoạn tuyển dụng
-        </div>
-
+      <SectionCard
+        title={
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <AppstoreAddOutlined style={{ color: '#0EA5E9' }} />
+            Ứng viên theo giai đoạn tuyển dụng
+          </span>
+        }
+      >
         {isLoading ? (
           <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Spin size="small" />
@@ -191,7 +186,7 @@ export default function RecruitDashboard() {
             </BarChart>
           </ResponsiveContainer>
         )}
-      </div>
+      </SectionCard>
     </div>
   );
 }

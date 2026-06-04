@@ -13,6 +13,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { StatusBadge } from '../../components/ui/StatusBadge';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { tenantsApi, type Tenant, type CreateTenantPayload } from '../../api/tenants';
 
 const { Text } = Typography;
@@ -33,7 +34,7 @@ const TIMEZONE_OPTIONS = [
 ];
 
 export default function TenantsPage() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, borderColor, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
   const { message } = App.useApp();
@@ -260,7 +261,7 @@ export default function TenantsPage() {
         </Col>
       </Row>
 
-      <div style={{ background: bgContainer, borderRadius: 12, padding: 0 }}>
+      <SectionCard noPadding>
         <Table
           rowKey="id"
           loading={isLoading}
@@ -268,7 +269,7 @@ export default function TenantsPage() {
           columns={columns}
           pagination={paginationProps(tenants.length, 'bản ghi')}
         />
-      </div>
+      </SectionCard>
 
       <Modal
         title={editing ? 'Chỉnh sửa Tenant' : 'Thêm Tenant mới'}

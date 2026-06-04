@@ -20,6 +20,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { OrgUnitSelect } from '../../components/selects';
 import { confirmDelete } from '../../components/ui/confirmDelete';
 import { okrApi, type OkrObjective, type OkrKeyResult, type KpiMetric, type OkrCycle, type OkrStatus } from '../../api/okr';
@@ -102,7 +103,7 @@ function KrRow({ kr, onUpdate, onDelete }: { kr: OkrKeyResult; onUpdate: () => v
 
 // ─── OKR Tab ──────────────────────────────────────────────────────────────────
 function OkrTab() {
-  const { textPrimary, textMuted, bgContainer, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgContainer, linkColor } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const user = useAuthStore(s => s.user);
   const qc = useQueryClient();
@@ -245,10 +246,10 @@ function OkrTab() {
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>Thêm Objective</Button>
       </FilterBar>
 
-      <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}` }}>
+      <SectionCard noPadding>
         <Table rowKey="id" columns={columns} dataSource={objectives?.data ?? []} loading={isLoading}
           pagination={paginationProps(objectives?.total, 'mục tiêu')} />
-      </div>
+      </SectionCard>
 
       {/* Detail Modal */}
       <CenteredModal open={!!detail} onClose={() => setDetail(null)} width={560} footer={null}

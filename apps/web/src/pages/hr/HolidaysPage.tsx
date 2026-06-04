@@ -12,6 +12,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { CenteredModal } from '../../components/ui/CenteredModal';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { hrHolidaysApi, type HolidayCalendar, type HolidayType } from '../../api/hr-attendance';
 
 dayjs.locale('vi');
@@ -47,7 +48,7 @@ const WEEKDAY_NAMES: Record<number, string> = {
 };
 
 export default function HolidaysPage() {
-  const { textPrimary, textMuted, bgContainer, borderColor, isDark } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
   const { paginationProps } = usePagination(20);
   const qc = useQueryClient();
 
@@ -223,7 +224,7 @@ export default function HolidaysPage() {
         </Text>
       </div>
 
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
+      <SectionCard noPadding>
         <Table
           rowKey="id"
           columns={columns}
@@ -232,7 +233,7 @@ export default function HolidaysPage() {
           pagination={paginationProps(sortedHolidays.length, 'ngày nghỉ lễ')}
           size="middle"
         />
-      </div>
+      </SectionCard>
 
       {/* Modal thêm ngày lễ */}
       <CenteredModal

@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -219,11 +220,11 @@ export default function AnalyticsReportsPage() {
       />
 
       {/* Filter bar */}
-      <div style={{
-        display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap',
-        background: bgCard, border: `1px solid ${borderColor}`,
-        borderRadius: 10, padding: '12px 16px',
-      }}>
+      <SectionCard
+        nested
+        style={{ marginBottom: 24 }}
+        bodyStyle={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}
+      >
         <Input
           prefix={<SearchOutlined />}
           placeholder="Tìm báo cáo..."
@@ -244,7 +245,7 @@ export default function AnalyticsReportsPage() {
         <Text style={{ color: textMuted, lineHeight: '32px' }}>
           {filtered.length} báo cáo
         </Text>
-      </div>
+      </SectionCard>
 
       {/* Grouped report cards */}
       {grouped.map(({ cat, items }) => {

@@ -18,6 +18,7 @@ import {
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { StatCard } from '../../components/ui/StatCard';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { dashboardV3Api } from '../../api/dashboard-v3';
 import { formatCurrency } from '../../utils/format';
 
@@ -165,20 +166,14 @@ export default function AttendanceDashboard() {
       </Row>
 
       {/* ── Chart: Xu hướng chấm công 7 ngày ── */}
-      <div style={{
-        background: bgContainer,
-        border: `1px solid ${borderColor}`,
-        borderRadius: 12,
-        padding: '16px 20px',
-      }}>
-        <div style={{
-          fontSize: 14, fontWeight: 600, color: textPrimary as string,
-          marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6,
-        }}>
-          <ClockCircleOutlined style={{ color: '#D97706' }} />
-          Xu hướng chấm công 7 ngày gần nhất
-        </div>
-
+      <SectionCard
+        title={
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ClockCircleOutlined style={{ color: '#D97706' }} />
+            Xu hướng chấm công 7 ngày gần nhất
+          </span>
+        }
+      >
         {trendLoading ? (
           <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Spin size="small" />
@@ -204,7 +199,7 @@ export default function AttendanceDashboard() {
             </BarChart>
           </ResponsiveContainer>
         )}
-      </div>
+      </SectionCard>
     </div>
   );
 }

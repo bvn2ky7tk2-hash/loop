@@ -11,6 +11,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { processesApi, useDefinitions, type ProcessUserTask } from '../../api/processes.api';
 import { usersApi } from '../../api/users';
 import { TaskCompleteDrawer } from '../processes/components/TaskCompleteDrawer';
@@ -27,7 +28,7 @@ const DATE_OPTIONS = [
 export default function ApprovalInboxPage() {
   const { message } = App.useApp();
   const qc = useQueryClient();
-  const { textPrimary, textMuted, borderColor, bgContainer, isDark } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
 
   const [dateFilter, setDateFilter] = useState('');
   const [search, setSearch]         = useState('');
@@ -334,7 +335,7 @@ export default function ApprovalInboxPage() {
       </FilterBar>
 
       {/* Table */}
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 12, overflow: 'hidden' }}>
+      <SectionCard noPadding>
         <Table
           rowKey="id"
           dataSource={filteredTasks}
@@ -348,7 +349,7 @@ export default function ApprovalInboxPage() {
           })}
           locale={{ emptyText: <Text style={{ color: textMuted }}>Không có yêu cầu nào đang chờ</Text> }}
         />
-      </div>
+      </SectionCard>
 
       {/* Modal chi tiết — xem nội dung đơn + form duyệt (dùng chung TaskCompleteDrawer) */}
       <TaskCompleteDrawer

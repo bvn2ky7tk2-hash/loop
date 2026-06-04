@@ -15,6 +15,7 @@ import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
 import { FilterBar } from '../../components/FilterBar';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { EmployeeInfoCell } from '../../components/ui/EmployeeInfoCell';
 import { orgUnitsApi } from '../../api/org-units';
 import { leavesApi } from '../../api/leaves';
@@ -293,7 +294,7 @@ function MonthlyTrendTab({
   year: number; orgUnitId?: string; orgOptions: { value: string; label: string }[];
   setYear: (y: number) => void; setOrgUnit: (v?: string) => void;
 }) {
-  const { textPrimary, textMuted, isDark, bgCard, borderColor } = useThemePalette();
+  const { textPrimary, textMuted, isDark } = useThemePalette();
 
   const { data: statsData, isLoading } = useQuery({
     queryKey: ['leave-monthly-stats', year, orgUnitId],
@@ -428,7 +429,7 @@ function MonthlyTrendTab({
         />
       </FilterBar>
 
-      <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, overflow: 'hidden' }}>
+      <SectionCard nested noPadding>
         <Table<MonthStat>
           rowKey="month"
           columns={columns}
@@ -471,7 +472,7 @@ function MonthlyTrendTab({
             );
           }}
         />
-      </div>
+      </SectionCard>
     </>
   );
 }

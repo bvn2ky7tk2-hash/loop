@@ -33,6 +33,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
+import { SectionCard } from '../../components/ui/SectionCard';
 
 const { Text } = Typography;
 
@@ -221,13 +222,6 @@ export default function ReportBuilderPage() {
     saveForm.resetFields();
   };
 
-  const panelStyle: React.CSSProperties = {
-    background: bgContainer,
-    border: `1px solid ${borderColor}`,
-    borderRadius: 12,
-    padding: 20,
-  };
-
   const canNext = [
     true,                        // step 0 always valid
     selectedCols.length > 0,     // step 1 needs cols
@@ -244,7 +238,7 @@ export default function ReportBuilderPage() {
       />
 
       {/* Steps header */}
-      <div style={{ ...panelStyle, marginBottom: 20 }}>
+      <SectionCard style={{ marginBottom: 20 }} bodyStyle={{ padding: 20 }}>
         <Steps
           current={step}
           size="small"
@@ -253,12 +247,12 @@ export default function ReportBuilderPage() {
             icon: i < step ? <CheckOutlined style={{ color: '#10B981' }} /> : undefined,
           }))}
         />
-      </div>
+      </SectionCard>
 
       <Row gutter={[16, 16]}>
         {/* ── Left panel ───────────────────────────────────────────────────── */}
         <Col xs={24} lg={8}>
-          <div style={panelStyle}>
+          <SectionCard bodyStyle={{ padding: 20 }}>
             {loadingEntities ? (
               <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
             ) : (
@@ -467,12 +461,12 @@ export default function ReportBuilderPage() {
                 </div>
               </>
             )}
-          </div>
+          </SectionCard>
         </Col>
 
         {/* ── Right panel: Preview ──────────────────────────────────────────── */}
         <Col xs={24} lg={16}>
-          <div style={{ ...panelStyle, display: 'flex', flexDirection: 'column', minHeight: 480 }}>
+          <SectionCard style={{ minHeight: 480 }} bodyStyle={{ padding: 20, display: 'flex', flexDirection: 'column', minHeight: 480 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
                 <Text style={{ color: textPrimary, fontWeight: 700, fontSize: 15 }}>
@@ -512,7 +506,7 @@ export default function ReportBuilderPage() {
                 />
               </div>
             )}
-          </div>
+          </SectionCard>
         </Col>
       </Row>
 

@@ -12,6 +12,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { FilterBar } from '../../components/FilterBar';
 import { confirmDelete } from '../../components/ui/confirmDelete';
@@ -81,7 +82,7 @@ function PortalDrawer({
 }: { portal: CustomerPortal | null; open: boolean; onClose: () => void }) {
   const [respondModal, setRespondModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<CustomerTicket | null>(null);
-  const { textPrimary, textMuted, bgCard, bgSubPanel, borderColor, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgSubPanel, linkColor } = useThemePalette();
   const { paginationProps: drawerTicketPagination } = usePagination(10);
   const qc = useQueryClient();
 
@@ -154,7 +155,7 @@ function PortalDrawer({
     >
       {portal && (
         <>
-          <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 8, padding: 16, marginBottom: 20 }}>
+          <SectionCard nested style={{ marginBottom: 20 }}>
             <Text style={{ color: textMuted, fontSize: 12, display: 'block', marginBottom: 6 }}>Link portal cho khách hàng</Text>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <Text style={{ color: linkColor, fontSize: 13, flex: 1, wordBreak: 'break-all' }}>{portalUrl}</Text>
@@ -163,7 +164,7 @@ function PortalDrawer({
               </Tooltip>
               <Button size="small" icon={<EyeOutlined />} onClick={() => window.open(`/portal/${portal.token}`, '_blank')}>Preview</Button>
             </div>
-          </div>
+          </SectionCard>
 
           <Descriptions size="small" column={2} style={{ marginBottom: 20 }}>
             <Descriptions.Item label="Khách hàng">

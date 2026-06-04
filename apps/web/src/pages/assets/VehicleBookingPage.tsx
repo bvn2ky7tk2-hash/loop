@@ -13,6 +13,7 @@ import { useThemePalette } from '../../hooks/useThemePalette';
 import { usePagination } from '../../hooks/usePagination';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { SectionCard } from '../../components/ui/SectionCard';
 import { FilterBar } from '../../components/FilterBar';
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { confirmDelete } from '../../components/ui/confirmDelete';
@@ -28,7 +29,7 @@ const { Text } = Typography;
 const { TextArea } = Input;
 
 export default function VehicleBookingPage() {
-  const { textPrimary, textMuted, bgContainer, bgCard, borderColor, isDark, linkColor } = useThemePalette();
+  const { textPrimary, textMuted, bgCard, borderColor, isDark, linkColor } = useThemePalette();
 
   const { paginationProps } = usePagination(20);
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -227,7 +228,7 @@ export default function VehicleBookingPage() {
         </Col>
       </Row>
 
-      <div style={{ background: bgContainer, borderRadius: 8, border: `1px solid ${borderColor}`, padding: '16px 16px 0' }}>
+      <SectionCard bodyStyle={{ padding: '16px 16px 0' }}>
         <Tabs
           defaultActiveKey="book"
           items={[
@@ -279,7 +280,7 @@ export default function VehicleBookingPage() {
             },
           ]}
         />
-      </div>
+      </SectionCard>
 
       <CenteredModal
         title="Đặt xe công vụ"

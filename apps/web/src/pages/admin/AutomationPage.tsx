@@ -10,6 +10,7 @@ import type { AutomationRule } from '../../api/automation';
 import { useThemePalette } from '../../hooks/useThemePalette';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { SectionCard } from '../../components/ui/SectionCard';
 
 const { Text } = Typography;
 
@@ -21,7 +22,7 @@ const CRON_LABELS: Record<string, string> = {
 };
 
 export default function AutomationPage() {
-  const { textPrimary, textMuted, bgContainer, borderColor } = useThemePalette();
+  const { textPrimary, textMuted } = useThemePalette();
   const qc = useQueryClient();
 
   const { data: stats } = useQuery({
@@ -172,7 +173,7 @@ export default function AutomationPage() {
         </Col>
       </Row>
 
-      <div style={{ background: bgContainer, border: `1px solid ${borderColor}`, borderRadius: 12, overflow: 'hidden' }}>
+      <SectionCard noPadding>
         <Table
           rowKey="id"
           columns={columns}
@@ -180,7 +181,7 @@ export default function AutomationPage() {
           loading={isLoading}
           pagination={false}
         />
-      </div>
+      </SectionCard>
     </div>
   );
 }
