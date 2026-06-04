@@ -38,3 +38,13 @@ export function formatCompact(n: number | null | undefined): string {
   if (Math.abs(num) >= 1_000)     return viNum2.format(num / 1_000) + 'K';
   return viNum.format(num);
 }
+
+/** Tiền VND rút gọn kiểu Việt: ≥1 tỷ → "3,32 tỷ đ", ≥1 triệu → "32,46 tr đ". Dùng cho StatCard hẹp. */
+export function formatCurrencyCompact(n: number | null | undefined): string {
+  if (!GUARD(n)) return '—';
+  const num = Number(n);
+  const abs = Math.abs(num);
+  if (abs >= 1_000_000_000) return viNum2.format(num / 1_000_000_000) + ' tỷ đ';
+  if (abs >= 1_000_000)     return viNum2.format(num / 1_000_000) + ' tr đ';
+  return viNum.format(num) + ' đ';
+}

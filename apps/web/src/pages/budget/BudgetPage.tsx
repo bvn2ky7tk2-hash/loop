@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { projectsApi, type Project } from '../../api/projects';
 import { apiClient } from '../../api/client';
 import { useThemePalette } from '../../hooks/useThemePalette';
-import { formatCurrency, formatHours } from '../../utils/format';
+import { formatCurrency, formatCurrencyCompact, formatHours } from '../../utils/format';
 
 const { Text, Title } = Typography;
 
@@ -138,15 +138,16 @@ function BudgetDetailDrawer({
         <Col span={12}>
           <StatCard
             label="Ngân sách"
-            value={formatCurrency(Number(project.budgetCost ?? 0))}
+            value={formatCurrencyCompact(Number(project.budgetCost ?? 0))}
+            subValue={formatCurrency(Number(project.budgetCost ?? 0))}
             color="#6366F1"
           />
         </Col>
         <Col span={12}>
           <StatCard
             label="Chi phí thực tế"
-            value={formatCurrency(Number(project.actualCost))}
-            subValue={`${costPct}% ngân sách`}
+            value={formatCurrencyCompact(Number(project.actualCost))}
+            subValue={`${formatCurrency(Number(project.actualCost))} · ${costPct}%`}
             color={costPct > 100 ? '#EF4444' : '#10B981'}
           />
         </Col>
