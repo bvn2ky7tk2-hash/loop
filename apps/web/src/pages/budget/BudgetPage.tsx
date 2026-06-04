@@ -104,11 +104,11 @@ function BudgetDetailDrawer({
     { title: 'Vai trò', dataIndex: 'allocationRole', width: 120 },
     {
       title: 'Đơn giá/ngày', dataIndex: 'ratePerDay', width: 130,
-      render: (v: number) => formatCurrency(v),
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatCurrency(v)}</Text>,
     },
     {
       title: 'Giờ thực tế', dataIndex: 'actualHours', width: 110,
-      render: (v: number) => formatHours(v),
+      render: (v: number) => <Text style={{ color: textPrimary }}>{formatHours(v)}</Text>,
     },
     {
       title: 'Chi phí', dataIndex: 'cost', width: 140,
