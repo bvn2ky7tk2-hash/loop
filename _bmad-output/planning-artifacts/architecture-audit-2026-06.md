@@ -139,6 +139,22 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 - [x] **P1-6** Upload: ✅ validate magic-byte tập trung tại `storage.upload` (chống spoof Content-Type). *(2026-06-04)*
 - 🟡 **P1-7** Auth siết: ✅ password policy mạnh (≥8 + chữ+số) mọi luồng đặt mật khẩu; throttle refresh 20→10. Giữ refresh TTL 7d (hợp lý ERP, UX trade-off).
 
+### 📐 Đánh giá KIẾN TRÚC & HIỆU NĂNG (2026-06-04, Winston — sau kiểm chứng sâu)
+**Kết luận: nền kiến trúc + hiệu năng ĐÃ ở mức thương mại.** Audit đa-agent BÁO QUÁ nhiều:
+- N+1 cảnh báo (bpmn-engine/tasks/portal/finance) → thực tế ĐÃ batch `findMany({in})`/cap `take`.
+- "Thiếu `take`" → hầu hết ĐÃ cap (interviews 200, expenses 5000, comments 200) hoặc là aggregation.
+- "Dashboard không cache" → ĐÃ cache Redis scoped tenant + fail-safe chống rò chéo.
+- "14 findOne thiếu tenantWhere" → extension đã scope (defense-in-depth, không phải leak).
+- "perm cache đụng chéo tenant" → userId là UUID toàn cục, không đụng.
+
+Sức khỏe kiến trúc: **0 forwardRef** (không circular dep), 89 module, 60 service TenantAware.
+Nợ duy nhất: 5 god service >600 dòng (bpmn-engine 793/accounting 723/payroll 664/leaves 651/
+hr-decisions 636) — **maintainability, KHÔNG chặn go-live**; refactor POST-go-live (cần test trước).
+
+Đã làm thật (verified-value): 6 composite index, cache finance-analytics, doc connection pool.
+→ **Lever scale thật còn lại KHÔNG phải refactor mà là: (1) sizing connection pool theo topology
+deploy, (2) LOAD TEST** (cách duy nhất tin cậy để tìm bottleneck thật — audit tĩnh đã chứng minh không đáng tin).
+
 ### 🚦 Cổng cuối trước go-live
 - [ ] Load test ≥500 user đồng thời.
 - [ ] Pen-test cross-tenant (privilege escalation / data exfiltration).
