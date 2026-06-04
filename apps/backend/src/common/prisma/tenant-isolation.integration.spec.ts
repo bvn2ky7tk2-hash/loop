@@ -126,4 +126,39 @@ d('Tenant isolation (DB thật)', () => {
     const still = await asTenant(A, () => prisma.orgUnit.findFirst({ where: { id: ouA.id } }));
     expect(still?.name).toBe('OU-A4');
   });
+
+  it('deleteMany không xóa được dữ liệu tenant khác', async () => {
+    const ouA = await asTenant(A, () =>
+      prisma.orgUnit.create({ data: { name: 'OU-A5', code: `A5-${suffix}` } }),
+    );
+    const del = await asTenant(B, () => prisma.orgUnit.deleteMany({ where: { id: ouA.id } }));
+    expect(del.count).toBe(0);
+    const still = await asTenant(A, () => prisma.orgUnit.findFirst({ where: { id: ouA.id } }));
+    expect(still?.id).toBe(ouA.id);
+  });
+
+  it('findFirst theo unique business (code) bị scope tenant — không lộ qua mã trùng', async () => {
+    // code unique theo [tenantId, code] → 2 tenant có thể trùng "code", nhưng KHÔNG thấy của nhau.
+    const sharedCode = `SHARED-${suffix}`;
+    await asTenant(A, () => prisma.orgUnit.create({ data: { name: 'OU-shared-A', code: sharedCode } }));
+    await asTenant(B, () => prisma.orgUnit.create({ data: { name: 'OU-shared-B', code: sharedCode } }));
+
+    const seenByA = await asTenant(A, () => prisma.orgUnit.findFirst({ where: { code: sharedCode } }));
+    const seenByB = await asTenant(B, () => prisma.orgUnit.findFirst({ where: { code: sharedCode } }));
+    expect(seenByA?.name).toBe('OU-shared-A');
+    expect(seenByB?.name).toBe('OU-shared-B');
+  });
+
+  it('groupBy & aggregate cũng scoped theo tenant', async () => {
+    // Mỗi tenant tự gom/nhóm trên dữ liệu của riêng mình.
+    const aGroups = await asTenant(A, () => prisma.orgUnit.groupBy({ by: ['tenantId'], _count: { _all: true } }));
+    const bGroups = await asTenant(B, () => prisma.orgUnit.groupBy({ by: ['tenantId'], _count: { _all: true } }));
+    // Chỉ có đúng 1 nhóm = chính tenant đang xét (không lẫn tenant khác).
+    expect(aGroups.every((g) => g.tenantId === A)).toBe(true);
+    expect(bGroups.every((g) => g.tenantId === B)).toBe(true);
+
+    const aCount = await asTenant(A, () => prisma.orgUnit.count());
+    const aAgg = await asTenant(A, () => prisma.orgUnit.aggregate({ _count: { _all: true } }));
+    expect(aAgg._count._all).toBe(aCount);
+  });
 });
