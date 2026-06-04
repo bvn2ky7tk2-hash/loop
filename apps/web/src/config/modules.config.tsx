@@ -219,18 +219,28 @@ export const MODULES: ModuleDefinition[] = [
     ],
     groups: [
       {
-        key: 'g-att-daily', label: 'Chấm công & Đơn từ', visible: true,
+        key: 'g-att-daily', label: 'Chấm công', visible: true,
         items: [
-          { key: '/timesheet/manager',          label: 'Bảng điểm danh',         visible: true },
           { key: '/hr/attendance',              label: 'Bảng công',               visible: true },
+          { key: '/timesheet/manager',          label: 'Bảng điểm danh',         visible: true },
           { key: '/hr/timekeeping',             label: 'Quản lý giờ quẹt thẻ',    visible: true },
           { key: '/hr/attendance/explanations', label: 'Giải trình chấm công',    visible: true },
-          { key: '/hr/leaves',                  label: 'Quản lý đơn nghỉ phép',   visible: true },
-          { key: '/hr/leave-summary',           label: 'Quản lý phép năm',        visible: true },
-          { key: '/hr/overtime',                label: 'Quản lý OT',              visible: true },
-          { key: '/hr/shifts',                  label: 'Ca làm việc',             visible: true },
-          { key: '/hr/holidays',                label: 'Ngày lễ',                 visible: true },
-          { key: '/hr/leave-policies',          label: 'Chính sách phép',         visible: true },
+        ],
+      },
+      {
+        key: 'g-att-leave', label: 'Nghỉ phép & Tăng ca', visible: true,
+        items: [
+          { key: '/hr/leaves',        label: 'Quản lý đơn nghỉ phép', visible: true },
+          { key: '/hr/leave-summary', label: 'Quản lý phép năm',      visible: true },
+          { key: '/hr/overtime',      label: 'Quản lý OT',            visible: true },
+        ],
+      },
+      {
+        key: 'g-att-config', label: 'Thiết lập chấm công', visible: true,
+        items: [
+          { key: '/hr/shifts',         label: 'Ca làm việc',     visible: true },
+          { key: '/hr/holidays',       label: 'Ngày lễ',         visible: true },
+          { key: '/hr/leave-policies', label: 'Chính sách phép', visible: true },
         ],
       },
       {
@@ -402,11 +412,17 @@ export const MODULES: ModuleDefinition[] = [
       {
         key: 'g-admin-users', label: 'Người dùng & Phân quyền', visible: true,
         items: [
-          { key: '/users',         label: 'Người dùng',       visible: true },
-          { key: '/permissions',   label: 'Phân quyền',       visible: true },
+          { key: '/users',                  label: 'Người dùng',         visible: true },
+          { key: '/permissions',            label: 'Phân quyền',         visible: true },
+          { key: '/admin/permission-audit', label: 'Báo cáo phân quyền', visible: true },
+        ],
+      },
+      {
+        key: 'g-admin-config', label: 'Tenant & Cấu hình hệ thống', visible: true,
+        items: [
+          { key: '/admin/tenants',    label: 'Quản lý Tenant',   visible: true },
+          { key: '/module-config',    label: 'Cấu hình phân hệ', visible: true },
           { key: '/admin/categories', label: 'Quản lý danh mục', visible: true },
-          { key: '/admin/tenants', label: 'Quản lý Tenant',   visible: true },
-          { key: '/module-config', label: 'Cấu hình phân hệ', visible: true },
         ],
       },
       {
@@ -427,12 +443,11 @@ export const MODULES: ModuleDefinition[] = [
         ],
       },
       {
-        key: 'g-admin-tools', label: 'Công cụ', visible: true,
+        key: 'g-admin-tools', label: 'Công cụ & Dữ liệu', visible: true,
         items: [
-          { key: '/import',                 label: 'Nhập dữ liệu',       visible: true },
-          { key: '/audit-log',              label: 'Nhật ký hệ thống',   visible: true },
-          { key: '/admin/announcements',    label: 'Thông báo hệ thống', visible: true },
-          { key: '/admin/permission-audit', label: 'Báo cáo phân quyền', visible: true },
+          { key: '/import',              label: 'Nhập dữ liệu',       visible: true },
+          { key: '/audit-log',           label: 'Nhật ký hệ thống',   visible: true },
+          { key: '/admin/announcements', label: 'Thông báo hệ thống', visible: true },
         ],
       },
       {
