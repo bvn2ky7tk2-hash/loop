@@ -6,6 +6,7 @@ import {
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { FilterBar } from '../../components/FilterBar';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SolutionOutlined, StopOutlined, TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -153,17 +154,12 @@ export default function JobsPage() {
     },
     {
       title: 'Trạng thái', dataIndex: 'status', width: 120,
-      render: (s: JobStatus) => {
-        const meta = STATUS_META[s];
-        return (
-          <Tag
-            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
-            color={isDark ? undefined : (s === 'OPEN' ? 'green' : s === 'ON_HOLD' ? 'orange' : 'default')}
-          >
-            {meta.label}
-          </Tag>
-        );
-      },
+      render: (s: JobStatus) => (
+        <StatusBadge
+          tone={s === 'OPEN' ? 'success' : s === 'ON_HOLD' ? 'warning' : 'neutral'}
+          label={STATUS_META[s].label}
+        />
+      ),
     },
     {
       title: '', key: 'actions', width: 100, align: 'right',

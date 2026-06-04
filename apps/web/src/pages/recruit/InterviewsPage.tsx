@@ -6,6 +6,7 @@ import {
 import { CenteredModal } from '../../components/ui/CenteredModal';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/ui/StatCard';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { PlusOutlined, CheckCircleOutlined, ScheduleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
@@ -123,17 +124,12 @@ export default function InterviewsPage() {
     },
     {
       title: 'Kết quả', dataIndex: 'result', width: 130,
-      render: (v: InterviewResult) => {
-        const meta = RESULT_META[v];
-        return (
-          <Tag
-            style={isDark ? { background: meta.darkBg, color: meta.color, borderColor: meta.darkBorder } : {}}
-            color={isDark ? undefined : (v === 'PASS' ? 'green' : v === 'FAIL' ? 'red' : 'default')}
-          >
-            {meta.label}
-          </Tag>
-        );
-      },
+      render: (v: InterviewResult) => (
+        <StatusBadge
+          tone={v === 'PASS' ? 'success' : v === 'FAIL' ? 'error' : 'neutral'}
+          label={RESULT_META[v].label}
+        />
+      ),
     },
     {
       title: '', key: 'actions', width: 80, align: 'right',
