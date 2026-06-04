@@ -126,7 +126,7 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 
 ### ⛔ P0 — Chặn go-live (phải xong trước)
 - 🟡 **P0-1 Test cách ly tenant + E2E** — ✅ ĐÃ CÓ nền: integration test cách ly tenant trên DB thật (`tenant-isolation.integration.spec.ts`: create gắn CLS tenant, cross-tenant read/update/delete bị chặn, count per-tenant) + **siết cổng CI** (`backend.yml`: db push loop_test + `jest` gate, bỏ `|| true`). CÒN LẠI: mở rộng coverage (smoke E2E tiền/lương/chấm công cấp API; thêm model/endpoint khác). *(2026-06-04: nền + CI gate xong)*
-- 🟡 **P0-2 CI/CD deploy thật** — ✅ `deploy.yml` hoàn chỉnh (build→GHCR→SSH→backup→healthcheck readiness→rollback; thủ công/tag) + `DEPLOYMENT.md`. CÒN: (a) anh cấp secrets hạ tầng (DEPLOY_HOST/USER/SSH_KEY/PATH); (b) ⛔ **BLOCKER mới: migrate deploy HỎNG (history drift)** — phải baseline/squash migration TRƯỚC deploy prod đầu (xem DEPLOYMENT.md mục 1). *(2026-06-04)*
+- 🟡 **P0-2 CI/CD deploy thật** — ✅ `deploy.yml` (build→GHCR→SSH→backup→healthcheck→rollback) + `DEPLOYMENT.md`. ✅ **Blocker migrate deploy ĐÃ GỠ**: entrypoint dùng `prisma db push` (tạo schema DB mới + additive deploy + fail-safe khi destructive; đã test DB rỗng + synced). CÒN: chỉ cần anh cấp secrets hạ tầng (DEPLOY_HOST/USER/SSH_KEY/PATH). *(2026-06-04)*
 - [x] **P0-3 Dọn secrets** — ✅ `env-validation` chặn boot ở production nếu JWT/JWT_REFRESH/MINIO secret mặc định/yếu/<32 ký tự (dev không ảnh hưởng). *(2026-06-04)*
 - [x] **P0-4 Liveness public** — ✅ `GET /health/liveness` (không kiểm dep) + `/health/readiness` (kiểm DB), `@Public()`. *(2026-06-04)*
 
