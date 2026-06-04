@@ -7,11 +7,27 @@ import { MODULE_DEFAULTS } from '../module-config/module-config.service';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { ProvisionTenantDto } from './dto/provision-tenant.dto';
+import { StorageService } from '../storage/storage.service';
 import type { JwtUser } from '../common/types/jwt-user.type';
 
 @Injectable()
 export class TenantService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private storage: StorageService,
+  ) {}
+
+  // logoUrl lưu dạng storagePath (object key); khi trả cho client thì presign để hiển thị.
+  private async withPresignedLogo<T extends { logoUrl?: string | null }>(t: T): Promise<T> {
+    if (t.logoUrl && !/^https?:\/\//.test(t.logoUrl)) {
+      try {
+        return { ...t, logoUrl: await this.storage.presignedUrl(t.logoUrl) };
+      } catch {
+        return t; // không chặn load branding nếu presign lỗi
+      }
+    }
+    return t;
+  }
 
   /**
    * Provision tenant mới (platform admin): tạo tenant + cấu hình bật/tắt module
@@ -158,22 +174,40 @@ export class TenantService {
   }
 
   async getDefault() {
-    let tenant = await this.prisma.tenant.findFirst({ where: { isDefault: true } });
+    // orderBy để xác định khi (lỗi dữ liệu) có >1 tenant isDefault=true → tránh trả khác nhau giữa các request.
+    let tenant = await this.prisma.tenant.findFirst({ where: { isDefault: true }, orderBy: { createdAt: 'asc' } });
     if (!tenant) tenant = await this.prisma.tenant.findFirst({ orderBy: { createdAt: 'asc' } });
     if (!tenant) throw new NotFoundException('Chưa có tenant nào được cấu hình');
-    return tenant;
+    return this.withPresignedLogo(tenant);
   }
 
   async getBySlug(slug: string) {
     const t = await this.prisma.tenant.findUnique({ where: { slug } });
     if (!t) throw new NotFoundException(`Tenant "${slug}" không tồn tại`);
-    return t;
+    return this.withPresignedLogo(t);
   }
 
   async update(id: string, dto: UpdateTenantDto, user: JwtUser | null) {
     this.assertCanAccess(id, user);
     const t = await this.prisma.tenant.findUnique({ where: { id } });
     if (!t) throw new NotFoundException('Tenant không tồn tại');
-    return this.prisma.tenant.update({ where: { id }, data: dto });
+    const updated = await this.prisma.tenant.update({ where: { id }, data: dto });
+    return this.withPresignedLogo(updated);
+  }
+
+  // Upload logo công ty → lưu storagePath vào logoUrl, trả URL hiển thị (presigned).
+  async uploadLogo(file: { buffer: Buffer; mimetype: string; size: number; originalname: string }, user: JwtUser | null) {
+    const tenant = await this.getDefault();
+    this.assertCanAccess(tenant.id, user);
+    const { storagePath } = await this.storage.upload({
+      folder: 'branding',
+      filename: file.originalname || 'logo.png',
+      buffer: file.buffer,
+      size: file.size,
+      mimeType: file.mimetype,
+      tenantId: tenant.id,
+    });
+    await this.prisma.tenant.update({ where: { id: tenant.id }, data: { logoUrl: storagePath } });
+    return { logoUrl: await this.storage.presignedUrl(storagePath) };
   }
 }

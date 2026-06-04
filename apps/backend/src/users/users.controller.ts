@@ -7,6 +7,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { InviteUsersDto } from './dto/invite-users.dto';
+import { Throttle } from '@nestjs/throttler';
 import { PERMISSIONS } from '../permissions/permissions.constants';
 
 @ApiTags('users')
@@ -21,6 +23,15 @@ export class UsersController {
   @ApiOperation({ summary: 'Tạo người dùng mới' })
   create(@Body() dto: CreateUserDto) {
     return this.service.create(dto);
+  }
+
+  @Post('invite')
+  @Roles(Role.ADMIN)
+  @RequirePermission(PERMISSIONS.ADMIN_USERS)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  @ApiOperation({ summary: 'Mời nhiều người dùng (tạo tài khoản + email mật khẩu tạm)' })
+  invite(@Body() dto: InviteUsersDto) {
+    return this.service.inviteMany(dto);
   }
 
   // Phục vụ dropdown "chọn người" dùng chung khắp UI (giao việc, người duyệt, mention…).

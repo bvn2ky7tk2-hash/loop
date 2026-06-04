@@ -1870,6 +1870,7 @@ exports.Prisma.TenantScalarFieldEnum = {
   customDomain: 'customDomain',
   address: 'address',
   timezone: 'timezone',
+  currency: 'currency',
   isDefault: 'isDefault',
   isActive: 'isActive',
   maxUsers: 'maxUsers',

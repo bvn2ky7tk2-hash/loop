@@ -9,6 +9,7 @@ export class UpdateTenantDto {
   @IsOptional() @IsString() customDomain?: string;
   @IsOptional() @IsString() address?: string;
   @IsOptional() @IsString() timezone?: string;
+  @IsOptional() @IsString() @MaxLength(8) currency?: string;
 
   // ── Quota giới hạn gói (null/bỏ trống = không giới hạn) ──
   @IsOptional() @IsInt() @Min(0) maxUsers?: number;

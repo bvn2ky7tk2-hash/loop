@@ -36,4 +36,8 @@ export const usersApi = {
     apiClient.put<UserRecord>(`/users/${id}`, data).then((r) => r.data),
   changePassword: (id: string, newPassword: string) =>
     apiClient.put(`/users/${id}/password`, { newPassword }),
+  invite: (data: { emails: string[]; role: string; orgUnitId?: string }) =>
+    apiClient.post<{ invited: number; invitedEmails: string[]; skipped: string[]; failed: { email: string; reason: string }[] }>(
+      '/users/invite', data,
+    ).then((r) => r.data),
 };

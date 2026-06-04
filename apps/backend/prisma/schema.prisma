@@ -3570,6 +3570,7 @@ model Tenant {
   customDomain                String?                    @map("custom_domain")
   address                     String?
   timezone                    String                     @default("Asia/Ho_Chi_Minh")
+  currency                    String                     @default("VND")
   isDefault                   Boolean                    @default(false) @map("is_default")
   isActive                    Boolean                    @default(true) @map("is_active")
   // Quota per-tenant (null = không giới hạn). Platform admin đặt khi provision/update.

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Patch, Put, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Put, Delete, Body, Param, Query, HttpCode, HttpStatus, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { TenantService } from './tenant.service';
@@ -103,6 +104,35 @@ export class TenantController {
     return this.tenantService.create(dto);
   }
 
+  // ⚠️ Route TĨNH phải đứng TRƯỚC route param ':id' (nếu không 'config'/'logo' bị
+  // match vào :id). Cập nhật config tenant hiện hành (ADMIN — chỉ tenant của mình).
+  @Patch('config')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Cập nhật config tenant hiện hành (ADMIN — chỉ tenant của mình)' })
+  async updateConfig(@Body() dto: UpdateTenantDto, @CurrentUser() user: JwtUser) {
+    const tenant = await this.tenantService.getDefault();
+    return this.tenantService.update(tenant.id, dto, user ?? null);
+  }
+
+  // Upload logo công ty (Onboarding bước 1)
+  @Post('logo')
+  @Roles(Role.ADMIN)
+  @Throttle({ default: { ttl: 60_000, limit: 20 } })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 2 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        const ok = /^image\//.test(file.mimetype);
+        cb(ok ? null : new BadRequestException('Chỉ chấp nhận file ảnh'), ok);
+      },
+    }),
+  )
+  @ApiOperation({ summary: 'Upload logo công ty (ADMIN)' })
+  uploadLogo(@UploadedFile() file: Express.Multer.File, @CurrentUser() user: JwtUser) {
+    if (!file) throw new BadRequestException('Thiếu file ảnh');
+    return this.tenantService.uploadLogo(file, user ?? null);
+  }
+
   @Patch(':id')
   @Roles(Role.ADMIN)
   @Throttle({ default: { ttl: 60_000, limit: 30 } })
@@ -120,12 +150,4 @@ export class TenantController {
     return this.tenantService.deactivate(id, user ?? null);
   }
 
-  // Cập nhật config tenant mặc định (backward compat)
-  @Patch('config')
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Cập nhật config tenant hiện hành (ADMIN — chỉ tenant của mình)' })
-  async updateConfig(@Body() dto: UpdateTenantDto, @CurrentUser() user: JwtUser) {
-    const tenant = await this.tenantService.getDefault();
-    return this.tenantService.update(tenant.id, dto, user ?? null);
-  }
 }
