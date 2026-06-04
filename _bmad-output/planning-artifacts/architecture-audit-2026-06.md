@@ -126,18 +126,18 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 
 ### ⛔ P0 — Chặn go-live (phải xong trước)
 - 🟡 **P0-1 Test cách ly tenant + E2E** — ✅ ĐÃ CÓ nền: integration test cách ly tenant trên DB thật (`tenant-isolation.integration.spec.ts`: create gắn CLS tenant, cross-tenant read/update/delete bị chặn, count per-tenant) + **siết cổng CI** (`backend.yml`: db push loop_test + `jest` gate, bỏ `|| true`). CÒN LẠI: mở rộng coverage (smoke E2E tiền/lương/chấm công cấp API; thêm model/endpoint khác). *(2026-06-04: nền + CI gate xong)*
-- [ ] **P0-2 CI/CD deploy thật** — `deploy-backend` đang là `echo "Deploying..."`; không staging/rollback. Dựng pipeline staging→prod + rollback. *(TB)*
+- 🟡 **P0-2 CI/CD deploy thật** — ✅ `deploy.yml` hoàn chỉnh (build→GHCR→SSH→backup→healthcheck readiness→rollback; thủ công/tag) + `DEPLOYMENT.md`. CÒN: (a) anh cấp secrets hạ tầng (DEPLOY_HOST/USER/SSH_KEY/PATH); (b) ⛔ **BLOCKER mới: migrate deploy HỎNG (history drift)** — phải baseline/squash migration TRƯỚC deploy prod đầu (xem DEPLOYMENT.md mục 1). *(2026-06-04)*
 - [x] **P0-3 Dọn secrets** — ✅ `env-validation` chặn boot ở production nếu JWT/JWT_REFRESH/MINIO secret mặc định/yếu/<32 ký tự (dev không ảnh hưởng). *(2026-06-04)*
 - [x] **P0-4 Liveness public** — ✅ `GET /health/liveness` (không kiểm dep) + `/health/readiness` (kiểm DB), `@Public()`. *(2026-06-04)*
 
 ### 🟠 P1 — Trong 1–2 tuần đầu
-- [ ] **P1-1** Defense-in-depth: `tenantWhere()` cho ~14 `findOne/findFirst`; cache `perm:{userId}`→`perm:{tenantId}:{userId}`.
-- [ ] **P1-2** Perf @ scale: ~10 composite index dẫn đầu tenantId (bug/payroll/contract/leave/invoice/deal/process_instance); thêm `take` (accounting/interviews/hr-attendance/invoices); `$transaction({timeout})` accounting/payroll; cache dashboard KPI.
+- 🟡 **P1-1** Defense-in-depth: cache `perm:{userId}` ✅ XÁC MINH không cần scope (userId UUID toàn cục). `tenantWhere()` cho ~14 findOne = defense-in-depth còn lại (extension đã scope; hoãn — rủi ro churn cao, lợi ích cận biên).
+- 🟡 **P1-2** Perf @ scale: ✅ 6 composite index dẫn đầu tenantId (bug/payroll/contract/invoice/deal/process_instance; leave đã có) + SQL CONCURRENTLY cho prod. `take` ✅ rà soát: hầu hết đã cap/aggregation. CÒN: `$transaction({timeout})` accounting/payroll; cache dashboard KPI.
 - [ ] **P1-3** Connection pool: `DB_POOL_MAX × N instance` vượt `max_connections` → PgBouncer hoặc tính lại pool.
 - [ ] **P1-4** Observability: OpenTelemetry/metrics + DLQ BullMQ + lịch cron backup (`db-backup.sh` đã có).
 - [ ] **P1-5** Chất lượng: bật gate eslint FE (372 lỗi đang bị nuốt `|| true`); bật `no-explicit-any` BE (151 `as any`); triage 85+ TODO.
-- [ ] **P1-6** Upload: validate magic bytes (không chỉ tin `file.mimetype`).
-- [ ] **P1-7** Auth siết: refresh TTL 7d→3d; throttle refresh 20→5/phút; password ≥8 + complexity.
+- [x] **P1-6** Upload: ✅ validate magic-byte tập trung tại `storage.upload` (chống spoof Content-Type). *(2026-06-04)*
+- 🟡 **P1-7** Auth siết: ✅ password policy mạnh (≥8 + chữ+số) mọi luồng đặt mật khẩu; throttle refresh 20→10. Giữ refresh TTL 7d (hợp lý ERP, UX trade-off).
 
 ### 🚦 Cổng cuối trước go-live
 - [ ] Load test ≥500 user đồng thời.
