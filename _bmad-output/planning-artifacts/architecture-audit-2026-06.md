@@ -156,7 +156,7 @@ hr-decisions 636) — **maintainability, KHÔNG chặn go-live**; refactor POST-
 deploy, (2) LOAD TEST** (cách duy nhất tin cậy để tìm bottleneck thật — audit tĩnh đã chứng minh không đáng tin).
 
 ### 🚦 Cổng cuối trước go-live
-- [ ] Load test ≥500 user đồng thời.
+- 🟡 **Load test** — ✅ Bộ harness (`apps/backend/test/load/`: k6 + Node smoke) + cờ `DISABLE_THROTTLE`. Baseline 1 instance dev: 50 conc→457 RPS/p95 243ms/0% lỗi; 100 conc→502 RPS/p95 500ms/0% lỗi (dashboards ~85ms cache OK; list /users chậm nhất 293ms). CÒN: chạy trên **staging** (nhiều instance, k6 VUS≥500). *(2026-06-04)*
 - [ ] Pen-test cross-tenant (privilege escalation / data exfiltration).
 
 > **Trade-off:** P0 là tối thiểu để go-live an toàn (beta khách hàng giới hạn). P1 làm song song/ngay sau. APM nâng cao, refactor god-service (bpmn-engine 793 LOC, accounting 723, ~13 page FE >700 LOC) là nợ kỹ thuật, KHÔNG chặn go-live.
