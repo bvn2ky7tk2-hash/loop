@@ -108,10 +108,11 @@ import { AnalyticsModule } from './analytics/analytics.module';
     CommonModule,
     ThrottlerModule.forRoot({
       throttlers: [
-        // Mọi endpoint: 100 req / 60s
-        { name: 'global', ttl: 60_000, limit: 100 },
+        // Mọi endpoint: mặc định 100 req / 60s / (tenant:IP). Cấu hình qua env
+        // (THROTTLE_GLOBAL_LIMIT) để nâng khi LOAD TEST hoặc theo nhu cầu vận hành.
+        { name: 'global', ttl: 60_000, limit: parseInt(process.env.THROTTLE_GLOBAL_LIMIT ?? '100', 10) },
         // Auth endpoint: 10 req / 60s (riêng, áp dụng qua @Throttle decorator)
-        { name: 'auth', ttl: 60_000, limit: 10 },
+        { name: 'auth', ttl: 60_000, limit: parseInt(process.env.THROTTLE_AUTH_LIMIT ?? '10', 10) },
       ],
     }),
     LoggerModule.forRoot({
