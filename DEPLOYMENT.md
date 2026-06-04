@@ -5,15 +5,21 @@
 
 ---
 
-## 1. ⛔ BLOCKER phải xử lý TRƯỚC lần deploy production đầu tiên
+## 1. ✅ Đồng bộ schema khi deploy (đã xử lý)
 
-**Migration history bị drift** — `prisma migrate deploy` trên DB mới **THẤT BẠI** (đã kiểm chứng: migration `20260527400000_process_workflow_integration` lỗi `relation "process_definitions" does not exist`). `apps/backend/entrypoint.sh` đang gọi `prisma migrate deploy` → **deploy production sẽ hỏng**.
+**Bối cảnh:** history migration bị drift → `prisma migrate deploy` THẤT BẠI trên DB mới
+(migration `process_workflow_integration` lỗi `relation "process_definitions" does not exist`).
 
-**Phải chọn 1 hướng trước khi go-live:**
-- **(A) Baseline/squash khuyến nghị:** từ DB production hiện hành (đã đúng schema), tạo 1 migration "init" sạch và `prisma migrate resolve --applied` để đồng bộ lại history. Sau đó `migrate deploy` chạy được.
-- **(B) Tạm thời:** đổi `entrypoint.sh` dùng `prisma db push` (đồng bộ schema trực tiếp, không cần history) — đơn giản nhưng mất rollback theo migration; **chỉ dùng nếu DB prod đã khớp schema** (db push sẽ chỉ additive).
+**Đã chọn hướng B (an toàn):** `entrypoint.sh` dùng `prisma db push` (KHÔNG `--accept-data-loss`):
+- Thay đổi **additive** (thêm bảng/cột/index — gồm index go-live) → áp **tự động** mỗi lần deploy.
+- Thay đổi **phá hủy** (drop) → **LỖI an toàn**, container thoát (KHÔNG âm thầm mất dữ liệu).
+  Khi gặp: người vận hành xem diff (`prisma migrate diff`), backup, rồi quyết định thủ công.
 
-> Index go-live (`prisma/scripts/golive-composite-indexes.sql`) áp riêng bằng `psql -f` (CONCURRENTLY, không khóa bảng).
+> Đánh đổi: bỏ history/rollback theo từng migration. Khi product ổn định, có thể chuyển lại
+> migration sạch bằng cách **baseline**: tạo init migration từ DB prod + `prisma migrate resolve --applied`.
+
+> Index go-live nằm trong `schema.prisma` (db push tự tạo). Muốn tạo **không khóa bảng** trên DB
+> đang chạy: `psql "$DATABASE_URL" -f apps/backend/prisma/scripts/golive-composite-indexes.sql` (CONCURRENTLY).
 
 ---
 
