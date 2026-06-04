@@ -135,7 +135,7 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 - 🟡 **P1-2** Perf @ scale: ✅ 6 composite index dẫn đầu tenantId (bug/payroll/contract/invoice/deal/process_instance; leave đã có) + SQL CONCURRENTLY cho prod. `take` ✅ rà soát: hầu hết đã cap/aggregation. CÒN: `$transaction({timeout})` accounting/payroll; cache dashboard KPI.
 - [ ] **P1-3** Connection pool: `DB_POOL_MAX × N instance` vượt `max_connections` → PgBouncer hoặc tính lại pool.
 - 🟡 **P1-4** Observability: ✅ Prometheus `/metrics` zero-dep (http_requests_total + duration histogram + node mem/uptime) + `backup.yml` cron + doc + ✅ **DLQ đầy đủ** (model DeadLetterJob; 8 worker record khi hết retry; admin list + replay; tenant-scoped). CÒN: OpenTelemetry tracing (cần collector). *(2026-06-04)*
-- [ ] **P1-5** Chất lượng: bật gate eslint FE (372 lỗi đang bị nuốt `|| true`); bật `no-explicit-any` BE (151 `as any`); triage 85+ TODO.
+- 🟡 **P1-5** Chất lượng: ✅ **eslint FE 372→0 ERROR + GATE bật** (frontend.yml bỏ `|| true`). Chiến lược: gate lỗi thật (fix 5 rules-of-hooks bug + unused + ts-ignore), hạ style/smell/dev-only→warn (353 warn dọn dần). tsc 0, build OK. CÒN: `no-explicit-any` BE (151 `as any`); triage 85+ TODO. *(2026-06-04)*
 - [x] **P1-6** Upload: ✅ validate magic-byte tập trung tại `storage.upload` (chống spoof Content-Type). *(2026-06-04)*
 - 🟡 **P1-7** Auth siết: ✅ password policy mạnh (≥8 + chữ+số) mọi luồng đặt mật khẩu; throttle refresh 20→10. Giữ refresh TTL 7d (hợp lý ERP, UX trade-off).
 
