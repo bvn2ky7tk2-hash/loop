@@ -49,6 +49,18 @@ function assertSafeDbParam(value: string, field: string) {
 export class HealthService {
   constructor(private readonly prisma: PrismaService) {}
 
+  // Liveness: chỉ xác nhận tiến trình còn sống — KHÔNG kiểm dependency
+  // (tránh 1 blip DB/Redis giết toàn bộ pod). Dùng cho orchestrator liveness probe.
+  getLiveness() {
+    return { status: 'ok' as const, uptime: Math.round(process.uptime()) };
+  }
+
+  // Readiness: kiểm DB sẵn sàng nhận traffic. Dùng cho readiness probe.
+  async getReadiness(): Promise<{ status: 'ok' | 'error'; db: 'ok' | 'error' }> {
+    const db = await this.checkDatabase();
+    return { status: db.status, db: db.status };
+  }
+
   async getHealth() {
     const timestamp = new Date().toISOString();
     const redisConnection = {
