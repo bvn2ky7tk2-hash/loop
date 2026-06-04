@@ -614,6 +614,7 @@ model ProcessInstance {
   @@index([startedBy])
   @@index([projectId])
   @@index([tenantId])
+  @@index([tenantId, status])
   @@map("process_instances")
 }
 
@@ -700,6 +701,7 @@ model Bug {
   @@index([dueDate])
   @@index([tenantId])
   @@index([deletedAt])
+  @@index([tenantId, status])
   @@map("bugs")
 }
 
@@ -1142,6 +1144,7 @@ model Contract {
   @@index([tenantId])
   @@index([deletedAt])
   @@index([previousContractId])
+  @@index([tenantId, status])
   @@map("contracts")
 }
 
@@ -1382,6 +1385,7 @@ model PayrollRecord {
   @@index([employeeId, periodId])
   @@index([periodId])
   @@index([tenantId])
+  @@index([tenantId, periodId])
   @@map("payroll_records")
 }
 
@@ -1569,6 +1573,7 @@ model Deal {
   @@index([assigneeId])
   @@index([tenantId])
   @@index([deletedAt])
+  @@index([tenantId, stage])
   @@map("deals")
 }
 
@@ -1837,6 +1842,7 @@ model Invoice {
   @@index([clientContractId])
   @@index([tenantId])
   @@index([deletedAt])
+  @@index([tenantId, status])
   @@map("invoices")
 }
 
