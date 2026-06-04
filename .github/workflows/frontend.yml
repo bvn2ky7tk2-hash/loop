@@ -29,7 +29,8 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
       - run: npx tsc --noEmit
-      - run: npm run lint 2>/dev/null || true
+      # GATE eslint: fail nếu có ERROR (đã dọn về 0). Warning (style/smell) không chặn.
+      - run: npm run lint
 
   web-build:
     name: Web Build

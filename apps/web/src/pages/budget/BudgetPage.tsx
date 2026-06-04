@@ -75,8 +75,6 @@ function BudgetDetailDrawer({
   onClose,
   isDark,
   bgContainer,
-  bgCard,
-  borderColor,
   textPrimary,
   textSecondary,
 }: {

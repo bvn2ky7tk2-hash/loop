@@ -53,10 +53,6 @@ export default function TimesheetManagerPage() {
     border: `1px solid ${isDark ? '#334155' : `${primary}28`}`,
   };
 
-  if (user && !ALLOWED_ROLES.includes(user.role)) {
-    return <Navigate to="/" replace />;
-  }
-
   const { data: teamStatus = [], isLoading } = useQuery({
     queryKey: ['timesheet-team-status'],
     queryFn: timesheetApi.teamStatus,
@@ -71,6 +67,11 @@ export default function TimesheetManagerPage() {
     const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 0;
     return { total, present, wfh, absent, attendanceRate };
   }, [teamStatus]);
+
+  // Guard SAU mọi hook (rules-of-hooks).
+  if (user && !ALLOWED_ROLES.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
 
   const columns: ColumnsType<TeamMemberStatus> = [
     {

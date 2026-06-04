@@ -30,10 +30,6 @@ export default function TimesheetApprovalsPage() {
 
   useEffect(() => { resetPage(); }, [search, resetPage]);
 
-  if (user && !ALLOWED_ROLES.includes(user.role)) {
-    return <Navigate to="/" replace />;
-  }
-
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['timesheet-pending'],
     queryFn: timesheetApi.pendingApproval,
@@ -53,6 +49,11 @@ export default function TimesheetApprovalsPage() {
       qc.invalidateQueries({ queryKey: ['timesheet-pending'] });
     },
   });
+
+  // Guard SAU mọi hook (rules-of-hooks): hook luôn chạy, redirect sau.
+  if (user && !ALLOWED_ROLES.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
 
   const filtered = items.filter((r) =>
     r.name.toLowerCase().includes(search.toLowerCase()),

@@ -3,9 +3,9 @@ import {
   Row, Col, Switch, Card, Typography, Space, Tag, message, Spin,
 } from 'antd';
 import {
-  AppstoreOutlined, LockOutlined, ApiOutlined,
+  AppstoreOutlined, LockOutlined,
   TeamOutlined, DollarOutlined, ShopOutlined, LaptopOutlined,
-  ToolOutlined, UserOutlined, SettingOutlined,
+  SettingOutlined,
   HomeOutlined, ProjectOutlined, ScheduleOutlined, SolutionOutlined, BarChartOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
