@@ -125,10 +125,10 @@ Tất cả fix code-only: backend tsc 0, jest 81/81 sau mỗi đợt.
 > **Chi tiết đầy đủ + bằng chứng:** [`go-live-readiness-2026-06.md`](go-live-readiness-2026-06.md). Mức sẵn sàng ~5.5/10. ETA P0 ~2–3 tuần.
 
 ### ⛔ P0 — Chặn go-live (phải xong trước)
-- [ ] **P0-1 Test cách ly tenant + E2E** — Test ≈0% (BE ~1.9%, FE ~4.2%, e2e chỉ "Hello World"). Toàn bộ cách ly đặt cược vào 1 extension KHÔNG có test. Cần integration test "Tenant A ≠ Tenant B" cấp API + smoke E2E tiền/lương/chấm công, bật trong CI. *(2–3 tuần)*
+- 🟡 **P0-1 Test cách ly tenant + E2E** — ✅ ĐÃ CÓ nền: integration test cách ly tenant trên DB thật (`tenant-isolation.integration.spec.ts`: create gắn CLS tenant, cross-tenant read/update/delete bị chặn, count per-tenant) + **siết cổng CI** (`backend.yml`: db push loop_test + `jest` gate, bỏ `|| true`). CÒN LẠI: mở rộng coverage (smoke E2E tiền/lương/chấm công cấp API; thêm model/endpoint khác). *(2026-06-04: nền + CI gate xong)*
 - [ ] **P0-2 CI/CD deploy thật** — `deploy-backend` đang là `echo "Deploying..."`; không staging/rollback. Dựng pipeline staging→prod + rollback. *(TB)*
-- [ ] **P0-3 Dọn secrets** — bỏ default yếu (`docker-compose` `JWT_SECRET:-change_me`, MinIO `get(...,'loop_minio_secret')`); ép `getOrThrow` + secret manager. *(1–2 ngày)*
-- [ ] **P0-4 Liveness public** — health đang `@Roles(ADMIN)` → orchestrator không probe được. Thêm `GET /health/liveness` `@Public()`. *(~30 phút)*
+- [x] **P0-3 Dọn secrets** — ✅ `env-validation` chặn boot ở production nếu JWT/JWT_REFRESH/MINIO secret mặc định/yếu/<32 ký tự (dev không ảnh hưởng). *(2026-06-04)*
+- [x] **P0-4 Liveness public** — ✅ `GET /health/liveness` (không kiểm dep) + `/health/readiness` (kiểm DB), `@Public()`. *(2026-06-04)*
 
 ### 🟠 P1 — Trong 1–2 tuần đầu
 - [ ] **P1-1** Defense-in-depth: `tenantWhere()` cho ~14 `findOne/findFirst`; cache `perm:{userId}`→`perm:{tenantId}:{userId}`.

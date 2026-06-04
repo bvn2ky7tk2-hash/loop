@@ -75,6 +75,12 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/loop_test
+      DEPLOYMENT_MODE: saas
+      TENANT_ENFORCEMENT: 'true'
+      JWT_SECRET: ci_test_secret_at_least_32_chars_long_xx
+      JWT_REFRESH_SECRET: ci_test_refresh_secret_at_least_32_chars
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -83,7 +89,10 @@ jobs:
           cache: npm
           cache-dependency-path: apps/backend/package-lock.json
       - run: npm ci
-      - run: npm test 2>/dev/null || true
+      # Đồng bộ schema vào DB test (CI dùng DB throwaway, db push an toàn ở đây)
+      - run: npx prisma db push --accept-data-loss
+      # Test GATE: bao gồm integration cách ly tenant. Fail = chặn merge (KHÔNG còn || true).
+      - run: npx jest --runInBand --forceExit
 
   deploy-backend:
     name: Deploy Backend to Staging
