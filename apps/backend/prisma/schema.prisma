@@ -4620,3 +4620,21 @@ model Category {
   @@index([type, parentId])
   @@map("categories")
 }
+
+// Dead Letter Queue: job BullMQ thất bại VĨNH VIỄN (hết retry) → lưu bền để
+// điều tra + replay. tenantId để tenant-extension tự scope (ops table, không FK).
+model DeadLetterJob {
+  id           String    @id @default(uuid())
+  queue        String
+  jobName      String    @map("job_name")
+  payload      Json
+  error        String    @db.Text
+  attemptsMade Int       @map("attempts_made")
+  failedAt     DateTime  @default(now()) @map("failed_at")
+  replayedAt   DateTime? @map("replayed_at")
+  tenantId     String?   @default("loop-default-tenant-001") @map("tenant_id")
+
+  @@index([tenantId, replayedAt])
+  @@index([tenantId, failedAt])
+  @@map("dead_letter_jobs")
+}

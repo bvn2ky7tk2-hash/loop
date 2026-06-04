@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import { Queue, Worker } from 'bullmq';
 import { ClsService } from 'nestjs-cls';
 import { CLS_TENANT_ID } from '../cls/cls-keys';
+import { DeadLetterService } from '../dead-letter/dead-letter.service';
 
 export type HrEventType = 'contract.expiring' | 'performance.approved' | 'offboarding.started' | 'payroll.processed' | 'leave.approved' | 'employee.onboarded';
 
@@ -31,7 +32,10 @@ export class HrEventBus implements OnModuleInit, OnModuleDestroy {
   private queues = new Map<HrEventType, Queue<HrEvent>>();
   private workers: Worker<HrEvent>[] = [];
 
-  constructor(private readonly cls: ClsService) {}
+  constructor(
+    private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
+  ) {}
 
   private get connection() {
     return {
@@ -82,6 +86,7 @@ export class HrEventBus implements OnModuleInit, OnModuleDestroy {
     );
     worker.on('failed', (job, err) => {
       this.logger.error(`HrEventBus job ${job?.id} (${type}) failed`, err);
+      void this.deadLetter.record(job, err);
     });
     this.workers.push(worker);
   }

@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import { Queue, Worker } from 'bullmq';
 import { ClsService } from 'nestjs-cls';
 import { CLS_TENANT_ID } from '../cls/cls-keys';
+import { DeadLetterService } from '../dead-letter/dead-letter.service';
 
 export type ProjectEventType = 'milestone.completed' | 'cost.threshold' | 'project.closed';
 
@@ -22,7 +23,10 @@ export class ProjectEventBus implements OnModuleInit, OnModuleDestroy {
   private queues = new Map<ProjectEventType, Queue<ProjectEvent>>();
   private workers: Worker<ProjectEvent>[] = [];
 
-  constructor(private readonly cls: ClsService) {}
+  constructor(
+    private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
+  ) {}
 
   private get connection() {
     return {
@@ -73,6 +77,7 @@ export class ProjectEventBus implements OnModuleInit, OnModuleDestroy {
     );
     worker.on('failed', (job, err) => {
       this.logger.error(`ProjectEventBus job ${job?.id} (${type}) failed`, err);
+      void this.deadLetter.record(job, err);
     });
     this.workers.push(worker);
   }

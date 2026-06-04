@@ -4,6 +4,7 @@ import { ClsService } from 'nestjs-cls';
 import { ScheduledReportsService } from './scheduled-reports.service';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 import { TenantRunner } from '../common/cls/tenant-runner.service';
+import { DeadLetterService } from '../common/dead-letter/dead-letter.service';
 
 export const SCHEDULED_REPORTS_QUEUE = 'scheduled-reports';
 
@@ -16,6 +17,7 @@ export class ScheduledReportsProcessor {
     private readonly svc: ScheduledReportsService,
     private readonly cls: ClsService,
     private readonly tenantRunner: TenantRunner,
+    private readonly deadLetter: DeadLetterService,
   ) {}
 
   init(connection: { host: string; port: number }) {
@@ -26,6 +28,7 @@ export class ScheduledReportsProcessor {
     );
     this.worker.on('failed', (job, err) => {
       this.logger.error(`Job ${job?.name} (${job?.id}) thất bại`, err);
+      void this.deadLetter.record(job, err);
     });
     this.worker.on('completed', (job) => {
       this.logger.log(`Job ${job.name} hoàn thành`);

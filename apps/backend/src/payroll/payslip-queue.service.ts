@@ -7,6 +7,7 @@ import { MailService } from '../notifications/mail.service';
 import { PayslipGeneratorService, PayslipPayload } from './payslip-generator.service';
 import { NotificationType } from '../generated/prisma';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
+import { DeadLetterService } from '../common/dead-letter/dead-letter.service';
 import dayjs from 'dayjs';
 
 export const PAYSLIP_QUEUE = 'payslip-generation';
@@ -29,6 +30,7 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
     private readonly mail: MailService,
     private readonly generator: PayslipGeneratorService,
     private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
   ) {}
 
   onModuleInit() {
@@ -52,6 +54,7 @@ export class PayslipQueueService implements OnModuleInit, OnModuleDestroy {
 
     this.worker.on('failed', (job, err) => {
       this.logger.error(`Payslip job ${job?.id} failed`, err);
+      void this.deadLetter.record(job, err);
     });
 
     this.worker.on('completed', (job) => {

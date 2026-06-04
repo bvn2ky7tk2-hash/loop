@@ -3,6 +3,7 @@ import { Queue, Worker, type Job } from 'bullmq';
 import { ClsService } from 'nestjs-cls';
 import { BpmnEngineService } from '../engine/bpmn-engine.service';
 import { CLS_TENANT_ID } from '../../common/cls/cls-keys';
+import { DeadLetterService } from '../../common/dead-letter/dead-letter.service';
 
 export const PROCESS_TIMERS_QUEUE = 'process-timers';
 
@@ -22,6 +23,7 @@ export class TimerEventService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly engineService: BpmnEngineService,
     private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
   ) {}
 
   onModuleInit() {
@@ -45,6 +47,7 @@ export class TimerEventService implements OnModuleInit, OnModuleDestroy {
 
     this.worker.on('failed', (job, err) => {
       this.logger.error(`Timer job ${job?.id} failed`, err);
+      void this.deadLetter.record(job, err);
     });
 
     this.worker.on('completed', (job) => {

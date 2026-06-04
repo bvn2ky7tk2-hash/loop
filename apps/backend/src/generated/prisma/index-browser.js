@@ -2330,6 +2330,18 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DeadLetterJobScalarFieldEnum = {
+  id: 'id',
+  queue: 'queue',
+  jobName: 'jobName',
+  payload: 'payload',
+  error: 'error',
+  attemptsMade: 'attemptsMade',
+  failedAt: 'failedAt',
+  replayedAt: 'replayedAt',
+  tenantId: 'tenantId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3243,7 +3255,8 @@ exports.Prisma.ModelName = {
   EducationRecord: 'EducationRecord',
   PreviousWorkExperience: 'PreviousWorkExperience',
   FamilyMember: 'FamilyMember',
-  Category: 'Category'
+  Category: 'Category',
+  DeadLetterJob: 'DeadLetterJob'
 };
 
 /**

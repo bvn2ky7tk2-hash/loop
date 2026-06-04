@@ -5,6 +5,7 @@ import { FirebaseService } from './firebase.service';
 import { MailService } from './mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
+import { DeadLetterService } from '../common/dead-letter/dead-letter.service';
 
 export const NOTIFICATION_QUEUE = 'notifications';
 
@@ -27,6 +28,7 @@ export class NotificationQueueService implements OnModuleInit, OnModuleDestroy {
     private readonly mail: MailService,
     private readonly prisma: PrismaService,
     private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
   ) {}
 
   onModuleInit() {
@@ -50,6 +52,7 @@ export class NotificationQueueService implements OnModuleInit, OnModuleDestroy {
 
     this.worker.on('failed', (job, err) => {
       this.logger.error(`Notification job ${job?.id} failed`, err);
+      void this.deadLetter.record(job, err);
     });
   }
 

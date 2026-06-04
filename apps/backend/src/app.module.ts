@@ -15,6 +15,7 @@ import { TenantGuard } from './common/guards/tenant.guard';
 import { ModuleEnabledGuard } from './common/guards/module-enabled.guard';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { MetricsInterceptor } from './common/metrics/metrics.interceptor';
+import { DeadLetterModule } from './common/dead-letter/dead-letter.module';
 import { LoggerModule } from 'nestjs-pino';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -111,6 +112,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     }),
     CommonModule,
     MetricsModule,
+    DeadLetterModule,
     ThrottlerModule.forRoot({
       throttlers: [
         // Mọi endpoint: mặc định 100 req / 60s / (tenant:IP). Cấu hình qua env

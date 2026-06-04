@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import { Queue, Worker } from 'bullmq';
 import { ClsService } from 'nestjs-cls';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
+import { DeadLetterService } from '../common/dead-letter/dead-letter.service';
 
 export type FinanceEventType = 'invoice.paid' | 'expense.approved' | 'payroll.approved' | 'po.received' | 'po.paid';
 
@@ -22,7 +23,10 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
   private queues = new Map<FinanceEventType, Queue<FinanceEvent>>();
   private workers: Worker<FinanceEvent>[] = [];
 
-  constructor(private readonly cls: ClsService) {}
+  constructor(
+    private readonly cls: ClsService,
+    private readonly deadLetter: DeadLetterService,
+  ) {}
 
   private get connection() {
     return {
@@ -73,6 +77,7 @@ export class FinanceEventBus implements OnModuleInit, OnModuleDestroy {
     );
     worker.on('failed', (job, err) => {
       this.logger.error(`FinanceEventBus job ${job?.id} (${type}) failed`, err);
+      void this.deadLetter.record(job, err);
     });
     this.workers.push(worker);
   }
