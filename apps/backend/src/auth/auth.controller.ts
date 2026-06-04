@@ -33,7 +33,7 @@ export class AuthController {
   @Post('refresh')
   @Public()
   @HttpCode(200)
-  @Throttle({ auth: { ttl: 60_000, limit: 20 } }) // 20 lần / phút / IP
+  @Throttle({ auth: { ttl: 60_000, limit: 10 } }) // 10 lần / phút / IP (access TTL 15p → đủ rộng)
   @ApiOperation({ summary: 'Refresh access token using cookie' })
   refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const token = req.cookies?.['refresh_token'] as string | undefined;

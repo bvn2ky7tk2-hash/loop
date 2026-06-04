@@ -1,5 +1,6 @@
 import { IsEmail, IsString, IsEnum, IsUUID, IsOptional, MinLength } from 'class-validator';
 import { Role } from '../../generated/prisma';
+import { IsStrongPassword } from '../../common/validators/strong-password.decorator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -9,8 +10,7 @@ export class CreateUserDto {
   @MinLength(1)
   name: string;
 
-  @IsString()
-  @MinLength(6)
+  @IsStrongPassword()
   password: string;
 
   @IsEnum(Role)

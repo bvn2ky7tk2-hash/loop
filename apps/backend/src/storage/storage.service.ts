@@ -5,6 +5,7 @@ import * as Minio from 'minio';
 import { CLS_TENANT_ID } from '../common/cls/cls-keys';
 import { isTenantEnforced } from '../common/config/tenant.config';
 import { QuotaService } from '../common/services/quota.service';
+import { assertMagicBytesMatch } from './magic-bytes';
 
 export interface UploadOptions {
   bucket?: string;
@@ -62,6 +63,9 @@ export class StorageService implements OnModuleInit {
     // Per-tenant path: <tenantId>/<folder>/... hoặc shared/<folder>/... nếu không có tenantId
     const tenantPrefix = opts.tenantId ? `${opts.tenantId}/` : 'shared/';
     const storagePath = `${tenantPrefix}${opts.folder}/${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+
+    // Chống spoof Content-Type: nội dung tệp phải khớp MIME khai báo.
+    assertMagicBytesMatch(opts.buffer, opts.mimeType);
 
     await this.quota.assertCanUpload(opts.size, opts.tenantId);
 

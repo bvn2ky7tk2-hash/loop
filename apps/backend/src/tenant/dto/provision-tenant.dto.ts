@@ -7,8 +7,8 @@ import {
   IsInt,
   Min,
   MaxLength,
-  MinLength,
 } from 'class-validator';
+import { IsStrongPassword } from '../../common/validators/strong-password.decorator';
 
 /**
  * Provision tenant mới: tạo tenant + cấu hình bật/tắt module + cấp admin tenant.
@@ -44,6 +44,6 @@ export class ProvisionTenantDto {
   @IsString() @IsNotEmpty() @MaxLength(200)
   adminName!: string;
 
-  @IsString() @MinLength(8) @MaxLength(100)
+  @IsStrongPassword()
   adminPassword!: string;
 }
