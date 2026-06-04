@@ -25,7 +25,7 @@ import {
 } from '../../../../api/hr-attendance';
 import { workShiftsApi } from '../../../../api/work-shifts';
 import { orgUnitsApi } from '../../../../api/org-units';
-import { ATTENDANCE_STATUS_MAP, StatusTag, flattenOrgTree, type OrgTreeNode } from '../constants';
+import { ATTENDANCE_STATUS_MAP, StatusTag, AnomalyTags, flattenOrgTree, type OrgTreeNode } from '../constants';
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -242,8 +242,13 @@ export function DetailTab() {
     {
       title: 'Trạng thái',
       dataIndex: 'status',
-      width: 110,
-      render: (v: string) => <StatusTag status={v} isDark={isDark} />,
+      width: 150,
+      render: (v: string, r: AttendanceRecord) => (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+          <StatusTag status={v} isDark={isDark} />
+          <AnomalyTags anomalies={r.anomalies} isDark={isDark} />
+        </div>
+      ),
     },
     {
       title: 'Loại phép',

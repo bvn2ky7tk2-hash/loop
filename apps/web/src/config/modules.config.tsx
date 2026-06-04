@@ -223,6 +223,7 @@ export const MODULES: ModuleDefinition[] = [
         items: [
           { key: '/timesheet/manager',          label: 'Bảng điểm danh',         visible: true },
           { key: '/hr/attendance',              label: 'Bảng công',               visible: true },
+          { key: '/hr/timekeeping',             label: 'Quản lý giờ quẹt thẻ',    visible: true },
           { key: '/hr/attendance/explanations', label: 'Giải trình chấm công',    visible: true },
           { key: '/hr/leaves',                  label: 'Quản lý đơn nghỉ phép',   visible: true },
           { key: '/hr/leave-summary',           label: 'Quản lý phép năm',        visible: true },
@@ -534,6 +535,7 @@ export const ICON_MAP: Record<string, ReactNode> = {
   '/hr/decisions':          <AuditOutlined />,
   '/timesheet/manager':     <LineChartOutlined />,
   '/hr/attendance':         <AuditOutlined />,
+  '/hr/timekeeping':        <ClockCircleOutlined />,
   '/hr/attendance/explanations': <FormOutlined />,
   '/hr/leaves':             <CalendarOutlined />,
   '/hr/leave-summary':      <ScheduleOutlined />,

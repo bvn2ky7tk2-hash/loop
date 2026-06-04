@@ -87,6 +87,7 @@ export const SCREEN_REGISTRY: ScreenDef[] = [
   // ─── Attendance — Chấm công & Lương ───────────────────────────────────────
   { route: '/timesheet/manager',            module: 'attendance', label: 'Bảng điểm danh',          icon: 'LineChartOutlined',   permCode: 'timesheet_manager:read',   sortOrder: 1 },
   { route: '/hr/attendance',                module: 'attendance', label: 'Bảng công',                icon: 'ScheduleOutlined',    permCode: 'attendance:read',          sortOrder: 2 },
+  { route: '/hr/timekeeping',               module: 'attendance', label: 'Quản lý giờ quẹt thẻ',     icon: 'ClockCircleOutlined', permCode: 'attendance:read',          sortOrder: 2.5 },
   { route: '/hr/attendance/explanations',   module: 'attendance', label: 'Giải trình Chấm công',    icon: 'FormOutlined',        permCode: 'attendance:read',          sortOrder: 3 },
   { route: '/hr/leaves',                    module: 'attendance', label: 'Quản lý đơn nghỉ phép',   icon: 'CalendarOutlined',    permCode: 'leaves:approve',           sortOrder: 4 },
   { route: '/hr/leave-summary',             module: 'attendance', label: 'Quản lý phép năm',         icon: 'ScheduleOutlined',    permCode: 'leaves:approve',           sortOrder: 5 },

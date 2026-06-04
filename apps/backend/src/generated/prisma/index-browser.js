@@ -2050,11 +2050,24 @@ exports.Prisma.AttendanceRecordScalarFieldEnum = {
   lateMinutes: 'lateMinutes',
   earlyLeaveMinutes: 'earlyLeaveMinutes',
   overtimeMinutes: 'overtimeMinutes',
+  anomalies: 'anomalies',
   leaveType: 'leaveType',
   note: 'note',
   isManual: 'isManual',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AttendancePunchScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  employeeId: 'employeeId',
+  punchedAt: 'punchedAt',
+  source: 'source',
+  deviceId: 'deviceId',
+  rawCode: 'rawCode',
+  note: 'note',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.MonthlyAttendanceScalarFieldEnum = {
@@ -3035,6 +3048,19 @@ exports.AttendanceStatus = exports.$Enums.AttendanceStatus = {
   WFH: 'WFH'
 };
 
+exports.AttendanceAnomaly = exports.$Enums.AttendanceAnomaly = {
+  LATE_ARRIVAL: 'LATE_ARRIVAL',
+  EARLY_DEPARTURE: 'EARLY_DEPARTURE',
+  MISSING_CHECKIN: 'MISSING_CHECKIN',
+  MISSING_CHECKOUT: 'MISSING_CHECKOUT'
+};
+
+exports.PunchSource = exports.$Enums.PunchSource = {
+  IMPORT: 'IMPORT',
+  DEVICE: 'DEVICE',
+  MANUAL: 'MANUAL'
+};
+
 exports.MonthlyAttendanceStatus = exports.$Enums.MonthlyAttendanceStatus = {
   OPEN: 'OPEN',
   LOCKED: 'LOCKED',
@@ -3235,6 +3261,7 @@ exports.Prisma.ModelName = {
   SocialInsuranceBook: 'SocialInsuranceBook',
   InsuranceEvent: 'InsuranceEvent',
   AttendanceRecord: 'AttendanceRecord',
+  AttendancePunch: 'AttendancePunch',
   MonthlyAttendance: 'MonthlyAttendance',
   AttendanceExplanation: 'AttendanceExplanation',
   WorkShift: 'WorkShift',

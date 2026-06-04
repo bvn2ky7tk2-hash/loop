@@ -2,14 +2,21 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Param,
   Body,
   Query,
   ParseIntPipe,
   DefaultValuePipe,
+  UploadedFile,
+  UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { HrAttendanceService } from './hr-attendance.service';
 import { AttendanceExplanationService } from './attendance-explanation.service';
+import { AttendancePunchService } from './attendance-punch.service';
+import { CreatePunchDto, PunchQueryDto } from './dto/attendance-punch.dto';
 import {
   AttendanceQueryDto,
   CalendarQueryDto,
@@ -33,7 +40,53 @@ export class HrAttendanceController {
   constructor(
     private readonly svc: HrAttendanceService,
     private readonly explanationSvc: AttendanceExplanationService,
+    private readonly punchSvc: AttendancePunchService,
   ) {}
+
+  // ─── Giờ quẹt thẻ thô (nguồn tính công) ──────────────────────────────────────
+
+  // GET /api/v1/hr-attendance/punches
+  @Get('punches')
+  @RequirePermission('attendance:read')
+  listPunches(@Query() query: PunchQueryDto) {
+    return this.punchSvc.list(query);
+  }
+
+  // POST /api/v1/hr-attendance/punches — thêm tay 1 lần quẹt
+  @Post('punches')
+  @RequirePermission('attendance:write')
+  createPunch(@Body() dto: CreatePunchDto) {
+    return this.punchSvc.create(dto);
+  }
+
+  // DELETE /api/v1/hr-attendance/punches/:id
+  @Delete('punches/:id')
+  @Roles(Role.ADMIN)
+  deletePunch(@Param('id') id: string) {
+    return this.punchSvc.remove(id);
+  }
+
+  // POST /api/v1/hr-attendance/punches/import?mode=preview|commit
+  @Post('punches/import')
+  @Roles(Role.ADMIN)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        const ok = /\.(xlsx|xls|csv)$/i.test(file.originalname);
+        cb(ok ? null : new BadRequestException('Chỉ chấp nhận file .xlsx, .xls, .csv'), ok);
+      },
+    }),
+  )
+  importPunches(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('mode') mode?: string,
+  ) {
+    if (!file) throw new BadRequestException('Thiếu file upload');
+    return mode === 'commit'
+      ? this.punchSvc.commit(file.buffer)
+      : this.punchSvc.preview(file.buffer);
+  }
 
   // GET /api/v1/hr-attendance
   @Get()

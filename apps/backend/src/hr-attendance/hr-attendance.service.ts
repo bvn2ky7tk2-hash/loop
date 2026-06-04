@@ -2,10 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  Inject,
 } from '@nestjs/common';
-import { Scope } from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   PaginatedResult,
@@ -18,18 +15,19 @@ import {
   MonthlyAttendanceQueryDto,
   SummarizeMonthDto,
 } from './dto/attendance.dto';
-import { AttendanceStatus, MonthlyAttendanceStatus, TimesheetStatus } from '../generated/prisma';
+import { AttendanceStatus, AttendanceAnomaly, MonthlyAttendanceStatus, TimesheetStatus } from '../generated/prisma';
 import { WorkShiftsService } from '../work-shifts/work-shifts.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
 
-@Injectable({ scope: Scope.REQUEST })
+// Default scope: tenant lấy qua CLS (HTTP middleware + worker đều set) → dùng được
+// trong cả request lẫn BullMQ worker (cơ chế tự tính lại công).
+@Injectable()
 export class HrAttendanceService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly workShiftsService: WorkShiftsService,
-    @Inject(REQUEST) req?: any,
   ) {
-    super(req);
+    super();
   }
 
   // ─── Tính toán chỉ số ca làm việc từ giờ check-in/out thực tế ───────────────
@@ -364,141 +362,337 @@ export class HrAttendanceService extends TenantAwareService {
       return { message: 'Không có nhân viên nào', updated: 0 };
     }
 
-    // Lấy tất cả bản ghi chấm công trong tháng
-    const allRecords = await this.prisma.attendanceRecord.findMany({
-      where: {
-        employeeId: { in: employees.map((e) => e.id) },
-        date: { gte: startDate, lte: endDate },
-      },
-    });
-
-    // ─── BƯỚC 1: Tính lại CHI TIẾT từng ngày theo công thức rồi LƯU vào DB ──────
-    // Nguồn sự thật là giờ check-in/out thực tế qua calculateShiftMetrics().
-    // Ghi đè dayCredit/lateMinutes/earlyLeaveMinutes/overtimeMinutes để tab Chi tiết
-    // hiển thị đúng; đồng thời cập nhật in-memory để BƯỚC 2 tổng hợp dùng số đã chuẩn hóa.
-    const recordUpdates: any[] = [];
-    for (const r of allRecords) {
-      if (!r.checkIn || !r.checkOut) continue;
-      const m = this.calculateShiftMetrics(
-        r.checkIn,
-        r.checkOut,
-        r.plannedStart ?? undefined,
-        r.plannedEnd ?? undefined,
-      );
-      const dayCredit = Math.round(m.dayCredit * 100) / 100;
-      // Cập nhật in-memory cho bước tổng hợp
-      (r as any).dayCredit = dayCredit;
-      r.lateMinutes = m.lateMinutes;
-      r.earlyLeaveMinutes = m.earlyLeaveMinutes;
-      r.overtimeMinutes = m.overtimeMinutes;
-      recordUpdates.push(
-        this.prisma.attendanceRecord.update({
-          where: { id: r.id },
-          data: {
-            dayCredit,
-            lateMinutes: m.lateMinutes,
-            earlyLeaveMinutes: m.earlyLeaveMinutes,
-            overtimeMinutes: m.overtimeMinutes,
-          },
-        }),
-      );
-    }
-    // Lưu theo lô để tránh transaction quá lớn (tháng nhiều NV → hàng nghìn bản ghi)
-    const RECORD_CHUNK = 200;
-    for (let i = 0; i < recordUpdates.length; i += RECORD_CHUNK) {
-      await this.prisma.$transaction(recordUpdates.slice(i, i + RECORD_CHUNK));
-    }
-
-    // ─── BƯỚC 2: Tổng hợp BẢNG CÔNG THÁNG từ chi tiết đã chuẩn hóa ──────────────
-    const upserts = employees.map((emp) => {
-      const records = allRecords.filter((r) => r.employeeId === emp.id);
-
-      // Đọc số đã tính ở Bước 1 (in-memory). Bản ghi nhập tay không có giờ check-in/out
-      // → dùng giá trị đã lưu làm fallback.
-      const getRecordMetrics = (r: any): { dayCredit: number; overtimeMinutes: number } => ({
-        dayCredit: r.dayCredit != null ? Number(r.dayCredit) : 0,
-        overtimeMinutes: r.overtimeMinutes ?? 0,
-      });
-
-      const presentMetrics = records
-        .filter((r) => r.status === AttendanceStatus.PRESENT)
-        .map(getRecordMetrics);
-
-      // Ngày công = Σ dayCredit (mỗi ngày = (480 - đi muộn - về sớm) / 480)
-      const workDays = presentMetrics.reduce((sum, m) => sum + m.dayCredit, 0);
-
-      // Phép có tính công
-      const paidLeaveDays = records.filter(
-        (r) => (['LEAVE', 'ON_LEAVE'].includes(r.status as string)) && r.leaveType !== 'UNPAID',
-      ).length;
-
-      // Phép không tính công
-      const unpaidLeaveDays = records.filter(
-        (r) => (['LEAVE', 'ON_LEAVE'].includes(r.status as string)) && r.leaveType === 'UNPAID',
-      ).length;
-
-      // OT giờ = Σ overtimeMinutes / 60 (suy từ thời gian check-out vượt quá giờ tan ca)
-      const otHours = presentMetrics.reduce((sum, m) => sum + m.overtimeMinutes / 60, 0);
-
-      // Vắng mặt
-      const absentDays = records.filter((r) => r.status === AttendanceStatus.ABSENT).length;
-
-      // Lễ/Nghỉ
-      const holidayDays = records.filter((r) => r.status === AttendanceStatus.HOLIDAY).length;
-
-      // Làm tròn 2 số thập phân
-      const roundedWorkDays = Math.round(workDays * 100) / 100;
-      const roundedOtHours = Math.round(otHours * 100) / 100;
-
-      return this.prisma.monthlyAttendance.upsert({
-        where: {
-          employeeId_year_month: {
-            employeeId: emp.id,
-            year,
-            month,
-          },
-        },
-        create: {
-          employeeId: emp.id,
-          year,
-          month,
-          workDays: roundedWorkDays,
-          paidLeaveDays,
-          unpaidLeaveDays,
-          otHours: roundedOtHours,
-          absentDays,
-          holidayDays,
-          status: MonthlyAttendanceStatus.OPEN,
-        },
-        update: {
-          workDays: roundedWorkDays,
-          paidLeaveDays,
-          unpaidLeaveDays,
-          otHours: roundedOtHours,
-          absentDays,
-          holidayDays,
-        },
-      });
-    });
-
-    const monthlyResults = await this.prisma.$transaction(upserts);
-
-    // E16F.2 — Sau khi upsert MonthlyAttendance, sync sang TimesheetRecord
-    // TimesheetRecord dùng userId (User), Monthly dùng employeeId (Employee)
-    // Cần map employeeId → userId qua Employee.userId
-    const periodStart = new Date(year, month - 1, 1);
-
-    // Lấy userId cho từng employee có kết quả (filter out null userId)
     const employeeIds = employees.map((e) => e.id);
+    const lastDay = endDate.getDate();
+    const dateKey = (d: Date) => d.toISOString().slice(0, 10);
+
+    // ─── Prefetch (tránh N+1): giờ quẹt + phép + lễ + phân ca + bản ghi hiện có ──
+    // Mở rộng +2 ngày cuối tháng để bắt giờ ra ca đêm vắt sang hôm sau.
+    const punchRangeEnd = new Date(year, month - 1, lastDay + 2, 23, 59, 59);
+    const punches = await this.prisma.attendancePunch.findMany({
+      where: { employeeId: { in: employeeIds }, punchedAt: { gte: startDate, lte: punchRangeEnd } },
+      select: { employeeId: true, punchedAt: true },
+      orderBy: { punchedAt: 'asc' },
+    });
+    const punchesByEmp = new Map<string, Date[]>();
+    for (const p of punches) {
+      const arr = punchesByEmp.get(p.employeeId) ?? [];
+      arr.push(p.punchedAt);
+      punchesByEmp.set(p.employeeId, arr);
+    }
+
+    const leaves = await this.prisma.leaveRequest.findMany({
+      where: { employeeId: { in: employeeIds }, status: 'APPROVED', startDate: { lte: endDate }, endDate: { gte: startDate } },
+      include: { leaveType: { select: { isPaid: true } } },
+    });
+    const leaveMap = new Map<string, { isPaid: boolean; half: boolean }>();
+    for (const lr of leaves) {
+      const s = new Date(lr.startDate as Date);
+      const e = new Date(lr.endDate as Date);
+      const half = s.toISOString().slice(0, 10) === e.toISOString().slice(0, 10) && Number(lr.days) === 0.5;
+      const c = new Date(s);
+      while (c <= e) {
+        leaveMap.set(`${lr.employeeId}_${dateKey(c)}`, { isPaid: lr.leaveType?.isPaid ?? true, half });
+        c.setDate(c.getDate() + 1);
+      }
+    }
+
+    const holidays = await this.prisma.holidayCalendar.findMany({
+      where: { date: { gte: startDate, lte: endDate } },
+      select: { date: true },
+    });
+    const holidaySet = new Set(holidays.map((h) => dateKey(h.date)));
+
+    const assignments = await this.prisma.shiftAssignment.findMany({
+      where: { employeeId: { in: employeeIds }, effectiveFrom: { lte: endDate }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }] },
+      orderBy: { effectiveFrom: 'desc' },
+      include: { shift: true },
+    });
+    const assignByEmp = new Map<string, typeof assignments>();
+    for (const a of assignments) {
+      const arr = assignByEmp.get(a.employeeId) ?? [];
+      arr.push(a);
+      assignByEmp.set(a.employeeId, arr);
+    }
+
+    const enrollments = await this.prisma.workScheduleEnrollment.findMany({
+      where: { employeeId: { in: employeeIds }, effectiveFrom: { lte: endDate }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }] },
+      orderBy: { effectiveFrom: 'desc' },
+      include: { schedule: { include: { phases: { orderBy: { phaseOrder: 'asc' }, include: { shift: true } } } } },
+    });
+    const enrollByEmp = new Map<string, typeof enrollments>();
+    for (const en of enrollments) {
+      if (!en.employeeId) continue;
+      const arr = enrollByEmp.get(en.employeeId) ?? [];
+      arr.push(en);
+      enrollByEmp.set(en.employeeId, arr);
+    }
+
+    const existing = await this.prisma.attendanceRecord.findMany({
+      where: { employeeId: { in: employeeIds }, date: { gte: startDate, lte: endDate } },
+    });
+    const existingMap = new Map<string, (typeof existing)[number]>();
+    for (const r of existing) existingMap.set(`${r.employeeId}_${dateKey(r.date)}`, r);
+
+    // Resolve ca cho 1 NV vào 1 ngày (in-memory, mirror workShifts.resolveShiftForDate)
+    const resolveShift = (empId: string, d: Date): any | null => {
+      const enrs = enrollByEmp.get(empId);
+      if (enrs) {
+        const en = enrs.find(
+          (x) => x.effectiveFrom <= d && (!x.effectiveTo || x.effectiveTo >= d) && (x.schedule?.phases?.length ?? 0) > 0,
+        );
+        if (en?.schedule) {
+          const phases = en.schedule.phases;
+          const total = phases.length;
+          const start = new Date(en.effectiveFrom).getTime();
+          const cur = d.getTime();
+          let idx = 0;
+          if (en.schedule.repeatType === 'WEEKLY') idx = Math.floor((cur - start) / (86400000 * 7));
+          else if (en.schedule.repeatType === 'DAILY') idx = Math.floor((cur - start) / 86400000);
+          else idx = (d.getFullYear() - new Date(en.effectiveFrom).getFullYear()) * 12 + (d.getMonth() - new Date(en.effectiveFrom).getMonth());
+          idx = ((idx % total) + total) % total;
+          return phases[idx].shift;
+        }
+      }
+      const asg = assignByEmp.get(empId);
+      const a = asg?.find((x) => x.effectiveFrom <= d && (!x.effectiveTo || x.effectiveTo >= d));
+      return a?.shift ?? null;
+    };
+
+    // ─── BUILD: dựng AttendanceRecord từ giờ quẹt cho từng NV × từng ngày ───────
+    // Giờ vào = MIN, giờ ra = MAX các lần quẹt trong cửa sổ ca (xử lý ca đêm).
+    const recordUpserts: any[] = [];
+    for (const empId of employeeIds) {
+      const empPunches = punchesByEmp.get(empId) ?? [];
+      for (let day = 1; day <= lastDay; day++) {
+        const d = new Date(Date.UTC(year, month - 1, day)); // UTC-midnight → @db.Date đúng ngày lịch
+        const key = `${empId}_${dateKey(d)}`;
+        const decision = this.computeDayDecision({
+          year, month, day,
+          shift: resolveShift(empId, d),
+          empPunches,
+          leave: leaveMap.get(key),
+          isHoliday: holidaySet.has(dateKey(d)),
+          prevIsManual: existingMap.get(key)?.isManual ?? false,
+        });
+        if (decision.action === 'upsert') {
+          recordUpserts.push(
+            this.prisma.attendanceRecord.upsert({
+              where: { employeeId_date: { employeeId: empId, date: d } },
+              create: { employeeId: empId, date: d, ...decision.data },
+              update: decision.data,
+            }),
+          );
+        }
+        // skip (ngày off) / preserve (record nhập tay) → không ghi đè
+      }
+    }
+
+    // Ghi AttendanceRecord theo lô (tránh transaction quá lớn)
+    const RECORD_CHUNK = 200;
+    for (let i = 0; i < recordUpserts.length; i += RECORD_CHUNK) {
+      await this.prisma.$transaction(recordUpserts.slice(i, i + RECORD_CHUNK));
+    }
+
+    // Tổng hợp tháng + sync timesheet — đọc lại từ records đã dựng (nguồn sự thật)
+    await this.aggregateAndPersistMonth(employeeIds, year, month);
+
+    return {
+      message: `Đã dựng ${recordUpserts.length} ngày công từ giờ quẹt và tổng hợp bảng công cho ${employees.length} nhân viên`,
+      year,
+      month,
+      updated: employees.length,
+      recordsBuilt: recordUpserts.length,
+    };
+  }
+
+  // ─── Tính lại 1 NV × 1 ngày từ giờ quẹt (dùng cho cơ chế tự động khi thêm quẹt) ──
+  async recomputeEmployeeDay(employeeId: string, dateISO: string): Promise<void> {
+    const base = new Date(dateISO);
+    const year = base.getUTCFullYear();
+    const month = base.getUTCMonth() + 1;
+    const day = base.getUTCDate();
+    const d = new Date(Date.UTC(year, month - 1, day));
+
+    const shift = await this.workShiftsService.resolveShiftForDate(employeeId, d);
+
+    // Gom giờ quẹt trong cửa sổ ca (chỉ query khi có ca hợp lệ)
+    let empPunches: Date[] = [];
+    if (shift && (shift as any).type !== 'CA_OFF') {
+      const [winStart, winEnd] = this.buildShiftWindow(year, month, day, (shift as any).startTime, (shift as any).endTime);
+      const punches = await this.prisma.attendancePunch.findMany({
+        where: { employeeId, punchedAt: { gte: winStart, lte: winEnd } },
+        select: { punchedAt: true },
+        orderBy: { punchedAt: 'asc' },
+      });
+      empPunches = punches.map((p) => p.punchedAt);
+    }
+
+    const leaveReq = await this.prisma.leaveRequest.findFirst({
+      where: { employeeId, status: 'APPROVED', startDate: { lte: d }, endDate: { gte: d } },
+      include: { leaveType: { select: { isPaid: true } } },
+    });
+    const leave = leaveReq
+      ? {
+          isPaid: leaveReq.leaveType?.isPaid ?? true,
+          half:
+            new Date(leaveReq.startDate as Date).toISOString().slice(0, 10) ===
+              new Date(leaveReq.endDate as Date).toISOString().slice(0, 10) && Number(leaveReq.days) === 0.5,
+        }
+      : undefined;
+
+    const holiday = await this.prisma.holidayCalendar.findFirst({ where: { date: d } });
+    const prev = await this.prisma.attendanceRecord.findFirst({ where: { employeeId, date: d } });
+
+    const decision = this.computeDayDecision({
+      year, month, day, shift, empPunches, leave, isHoliday: !!holiday, prevIsManual: prev?.isManual ?? false,
+    });
+    if (decision.action === 'upsert') {
+      await this.prisma.attendanceRecord.upsert({
+        where: { employeeId_date: { employeeId, date: d } },
+        create: { employeeId, date: d, ...decision.data },
+        update: decision.data,
+      });
+    }
+    // preserve/skip → giữ nguyên record hiện có
+
+    await this.aggregateAndPersistMonth([employeeId], year, month);
+  }
+
+  // ─── Quyết định bản ghi 1 ngày từ giờ quẹt (logic dùng chung batch + granular) ──
+  private computeDayDecision(p: {
+    year: number; month: number; day: number;
+    shift: any | null;
+    empPunches: Date[];
+    leave?: { isPaid: boolean; half: boolean };
+    isHoliday: boolean;
+    prevIsManual: boolean;
+  }): { action: 'skip' } | { action: 'preserve' } | { action: 'upsert'; data: any } {
+    const { year, month, day, shift, empPunches, leave, isHoliday, prevIsManual } = p;
+
+    // Ngày off → bỏ qua: chưa phân ca / CA_OFF / thứ không thuộc workingDays
+    if (!shift || shift.type === 'CA_OFF') return { action: 'skip' };
+    const dUTC = new Date(Date.UTC(year, month - 1, day));
+    const isoDow = dUTC.getUTCDay() === 0 ? 7 : dUTC.getUTCDay();
+    const workingDays: number[] = shift.workingDays?.length ? shift.workingDays : [1, 2, 3, 4, 5];
+    if (!workingDays.includes(isoDow)) return { action: 'skip' };
+
+    const plannedStart: string = shift.startTime;
+    const plannedEnd: string = shift.endTime;
+
+    const [winStart, winEnd] = this.buildShiftWindow(year, month, day, plannedStart, plannedEnd);
+    const dayPunches = empPunches
+      .filter((pp) => pp >= winStart && pp <= winEnd)
+      .sort((a, b) => a.getTime() - b.getTime());
+    const checkIn = dayPunches.length ? dayPunches[0] : null;
+    const checkOut = dayPunches.length > 1 ? dayPunches[dayPunches.length - 1] : null;
+
+    let baseStatus: AttendanceStatus = AttendanceStatus.PRESENT;
+    const anomalies: AttendanceAnomaly[] = [];
+    let dayCredit = 0;
+    let lateMinutes = 0;
+    let earlyLeaveMinutes = 0;
+    let overtimeMinutes = 0;
+    let leaveTypeFlag: string | null = null;
+
+    if (leave) {
+      // Nghỉ phép: có lương=1 / nửa ngày=0.5 / không lương=0
+      baseStatus = AttendanceStatus.LEAVE;
+      leaveTypeFlag = leave.isPaid ? null : 'UNPAID';
+      dayCredit = leave.isPaid ? (leave.half ? 0.5 : 1) : 0;
+    } else if (isHoliday) {
+      baseStatus = AttendanceStatus.HOLIDAY;
+    } else if (!checkIn) {
+      // Không có quẹt → bảo toàn record nhập tay (sửa/giải trình), còn lại = vắng
+      if (prevIsManual) return { action: 'preserve' };
+      baseStatus = AttendanceStatus.ABSENT;
+    } else {
+      baseStatus = AttendanceStatus.PRESENT;
+      if (!checkOut) {
+        anomalies.push(AttendanceAnomaly.MISSING_CHECKOUT);
+        dayCredit = 0; // thiếu giờ ra → chờ giải trình
+      } else {
+        const m = this.calculateShiftMetrics(checkIn, checkOut, plannedStart, plannedEnd);
+        dayCredit = Math.round(m.dayCredit * 100) / 100;
+        lateMinutes = m.lateMinutes;
+        earlyLeaveMinutes = m.earlyLeaveMinutes;
+        overtimeMinutes = m.overtimeMinutes;
+        if (lateMinutes > 0) anomalies.push(AttendanceAnomaly.LATE_ARRIVAL);
+        if (earlyLeaveMinutes > 0) anomalies.push(AttendanceAnomaly.EARLY_DEPARTURE);
+      }
+    }
+
+    const totalHours = checkIn && checkOut
+      ? Math.round(((checkOut.getTime() - checkIn.getTime()) / 3_600_000) * 100) / 100
+      : 0;
+
+    return {
+      action: 'upsert',
+      data: {
+        shiftId: shift.id ?? undefined,
+        checkIn, checkOut, plannedStart, plannedEnd, totalHours,
+        dayCredit, status: baseStatus, anomalies, leaveType: leaveTypeFlag,
+        lateMinutes, earlyLeaveMinutes, overtimeMinutes, isManual: false,
+      },
+    };
+  }
+
+  // ─── Tổng hợp MonthlyAttendance + sync TimesheetRecord từ records đã lưu ────────
+  private async aggregateAndPersistMonth(employeeIds: string[], year: number, month: number): Promise<void> {
+    if (employeeIds.length === 0) return;
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    const records = await this.prisma.attendanceRecord.findMany({
+      where: { employeeId: { in: employeeIds }, date: { gte: startDate, lte: endDate } },
+      select: { employeeId: true, status: true, dayCredit: true, overtimeMinutes: true, leaveType: true },
+    });
+    const byEmp = new Map<string, typeof records>();
+    for (const r of records) {
+      const a = byEmp.get(r.employeeId) ?? [];
+      a.push(r);
+      byEmp.set(r.employeeId, a);
+    }
+
+    const r1 = (n: number) => Math.round(n * 10) / 10;
+    const r2 = (n: number) => Math.round(n * 100) / 100;
+    const upserts = employeeIds.map((empId) => {
+      let workDays = 0, paidLeaveDays = 0, unpaidLeaveDays = 0, otHours = 0, absentDays = 0, holidayDays = 0;
+      for (const r of byEmp.get(empId) ?? []) {
+        const dc = r.dayCredit != null ? Number(r.dayCredit) : 0;
+        if (r.status === AttendanceStatus.PRESENT) { workDays += dc; otHours += (r.overtimeMinutes ?? 0) / 60; }
+        else if (r.status === AttendanceStatus.LEAVE) {
+          if (r.leaveType === 'UNPAID') unpaidLeaveDays += 1;
+          else paidLeaveDays += dc > 0 ? dc : 1;
+        } else if (r.status === AttendanceStatus.ABSENT) absentDays += 1;
+        else if (r.status === AttendanceStatus.HOLIDAY) holidayDays += 1;
+      }
+      const agg = {
+        workDays: r1(workDays), paidLeaveDays: r1(paidLeaveDays), unpaidLeaveDays: r1(unpaidLeaveDays),
+        otHours: r2(otHours), absentDays: r1(absentDays), holidayDays: r1(holidayDays),
+      };
+      return this.prisma.monthlyAttendance.upsert({
+        where: { employeeId_year_month: { employeeId: empId, year, month } },
+        create: { employeeId: empId, year, month, ...agg, status: MonthlyAttendanceStatus.OPEN },
+        update: agg,
+      });
+    });
+
+    const CHUNK = 200;
+    const monthlyResults: any[] = [];
+    for (let i = 0; i < upserts.length; i += CHUNK) {
+      monthlyResults.push(...(await this.prisma.$transaction(upserts.slice(i, i + CHUNK))));
+    }
+
+    // E16F.2 — sync TimesheetRecord (chỉ NV có account User)
+    const periodStart = new Date(year, month - 1, 1);
+    const periodEnd = new Date(year, month, 0);
     const employeesWithUser = await this.prisma.employee.findMany({
       where: { id: { in: employeeIds }, userId: { not: null } },
       select: { id: true, userId: true },
     });
-    const empToUser = new Map(
-      employeesWithUser.map((e) => [e.id, e.userId as string]),
-    );
+    const empToUser = new Map(employeesWithUser.map((e) => [e.id, e.userId as string]));
 
-    // Upsert TimesheetRecord cho từng nhân viên có account User
     const timesheetSyncs = monthlyResults
       .filter((m: any) => empToUser.has(m.employeeId))
       .map((m: any) => {
@@ -506,36 +700,38 @@ export class HrAttendanceService extends TenantAwareService {
         return this.prisma.timesheetRecord.upsert({
           where: { userId_periodStart: { userId, periodStart } },
           create: {
-            userId,
-            periodStart,
-            periodEnd: new Date(year, month, 0), // cuối tháng
-            workingDays: m.workDays,
-            leaveDays: m.paidLeaveDays,
-            unpaidLeaveDays: m.unpaidLeaveDays,
-            standardDays: 0, // sẽ được tính lại khi generatePeriod
-            overtimeHours: m.otHours,
-            status: TimesheetStatus.APPROVED,
+            userId, periodStart, periodEnd,
+            workingDays: m.workDays, leaveDays: m.paidLeaveDays, unpaidLeaveDays: m.unpaidLeaveDays,
+            standardDays: 0, overtimeHours: m.otHours, status: TimesheetStatus.APPROVED,
           },
           update: {
-            workingDays: m.workDays,
-            leaveDays: m.paidLeaveDays,
-            unpaidLeaveDays: m.unpaidLeaveDays,
+            workingDays: m.workDays, leaveDays: m.paidLeaveDays, unpaidLeaveDays: m.unpaidLeaveDays,
             status: TimesheetStatus.APPROVED,
           },
         });
       });
-
-    if (timesheetSyncs.length > 0) {
-      await this.prisma.$transaction(timesheetSyncs);
+    for (let i = 0; i < timesheetSyncs.length; i += CHUNK) {
+      await this.prisma.$transaction(timesheetSyncs.slice(i, i + CHUNK));
     }
+  }
 
-    return {
-      message: `Đã tính lại ${recordUpdates.length} ngày công chi tiết và tổng hợp bảng công cho ${employees.length} nhân viên`,
-      year,
-      month,
-      updated: employees.length,
-      recordsRecalculated: recordUpdates.length,
+  // ─── Cửa sổ thời gian gom giờ quẹt của 1 ca trong 1 ngày (giờ địa phương) ────
+  // Ca ngày: [start−tol, end+tol]. Ca đêm (end ≤ start): giờ ra vắt sang hôm sau →
+  // cộng 24h. Dùng local-midnight (new Date(y,m,d,0,0,0)) để khớp giờ quẹt thực tế.
+  private buildShiftWindow(year: number, month: number, day: number, start: string, end: string): [Date, Date] {
+    const TOL_BEFORE_MIN = 180; // quẹt sớm trước giờ vào
+    const TOL_AFTER_MIN = 360; // quẹt muộn sau giờ tan ca (gồm OT)
+    const toMin = (t: string) => {
+      const [h, m] = (t ?? '').split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
     };
+    const startMin = toMin(start);
+    const endMin = toMin(end);
+    const base = new Date(year, month - 1, day, 0, 0, 0, 0).getTime(); // 00:00 giờ địa phương
+    const overnight = endMin <= startMin;
+    const winStart = new Date(base + (startMin - TOL_BEFORE_MIN) * 60_000);
+    const winEnd = new Date(base + (endMin + (overnight ? 1440 : 0) + TOL_AFTER_MIN) * 60_000);
+    return [winStart, winEnd];
   }
 
   // ─── 5. Khóa bảng công tháng ─────────────────────────────────────────────────

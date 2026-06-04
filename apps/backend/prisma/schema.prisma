@@ -175,6 +175,7 @@ model Employee {
   insuranceEnrollments    InsuranceEnrollment[]
   socialInsuranceBook     SocialInsuranceBook?
   attendanceRecords       AttendanceRecord[]
+  attendancePunches       AttendancePunch[]
   monthlyAttendances      MonthlyAttendance[]
   shiftAssignments        ShiftAssignment[]
   workScheduleEnrollments WorkScheduleEnrollment[]
@@ -3614,6 +3615,7 @@ model Tenant {
   invoiceMappings             InvoiceAccountMapping[]    @relation("TenantInvoiceMappings")
   delegationRules             DelegationRule[]           @relation("TenantDelegations")
   attendanceExplanations      AttendanceExplanation[]    @relation("TenantAttendanceExplanations")
+  attendancePunches           AttendancePunch[]          @relation("TenantAttendancePunch")
   projectJournals             ProjectJournal[]           @relation("TenantProjectJournals")
   leadFollowUps               LeadFollowUpSchedule[]     @relation("TenantLeadFollowUps")
   customerSurveys             CustomerSurveySchedule[]   @relation("TenantCustomerSurveys")
@@ -4101,6 +4103,7 @@ model AttendanceRecord {
   lateMinutes         Int                     @default(0) @map("late_minutes")
   earlyLeaveMinutes   Int                     @default(0) @map("early_leave_minutes")
   overtimeMinutes     Int                     @default(0) @map("overtime_minutes")
+  anomalies           AttendanceAnomaly[]     @default([])
   leaveType           String?                 @map("leave_type")
   note                String?
   isManual            Boolean                 @default(false) @map("is_manual")
@@ -4115,6 +4118,44 @@ model AttendanceRecord {
   @@index([tenantId, date, status])
   @@index([tenantId])
   @@map("attendance_records")
+}
+
+enum PunchSource {
+  IMPORT
+  DEVICE
+  MANUAL
+
+  @@map("punch_source")
+}
+
+enum AttendanceAnomaly {
+  LATE_ARRIVAL
+  EARLY_DEPARTURE
+  MISSING_CHECKIN
+  MISSING_CHECKOUT
+
+  @@map("attendance_anomaly")
+}
+
+// Giờ quẹt thẻ THÔ — nguồn dữ liệu gốc để tính công. Mỗi bản ghi = 1 lần quẹt.
+// Sau này máy chấm công đẩy vào đây (source=DEVICE). Bảng công build từ MIN/MAX punch.
+model AttendancePunch {
+  id         String      @id @default(uuid())
+  tenantId   String      @default("loop-default-tenant-001") @map("tenant_id")
+  tenant     Tenant      @relation("TenantAttendancePunch", fields: [tenantId], references: [id], onDelete: Cascade)
+  employeeId String      @map("employee_id")
+  employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  punchedAt  DateTime    @map("punched_at")
+  source     PunchSource @default(IMPORT)
+  deviceId   String?     @map("device_id")
+  rawCode    String?     @map("raw_code")
+  note       String?
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  @@unique([tenantId, employeeId, punchedAt])
+  @@index([tenantId, employeeId, punchedAt])
+  @@index([tenantId])
+  @@map("attendance_punches")
 }
 
 model MonthlyAttendance {

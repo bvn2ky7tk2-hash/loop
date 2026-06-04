@@ -1,6 +1,10 @@
 import { apiClient } from './client';
 
-export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LEAVE' | 'HOLIDAY' | 'OT';
+export type AttendanceStatus =
+  | 'PRESENT' | 'ABSENT' | 'LEAVE' | 'ON_LEAVE' | 'HOLIDAY' | 'OT'
+  | 'LATE' | 'HALF_DAY' | 'BUSINESS_TRIP' | 'ONSITE' | 'WFH';
+export type AttendanceAnomaly = 'LATE_ARRIVAL' | 'EARLY_DEPARTURE' | 'MISSING_CHECKIN' | 'MISSING_CHECKOUT';
+export type PunchSource = 'IMPORT' | 'DEVICE' | 'MANUAL';
 export type MonthlyAttendanceStatus = 'OPEN' | 'LOCKED';
 export type HolidayType = 'NATIONAL_HOLIDAY' | 'COMPANY_HOLIDAY' | 'COMPENSATORY_DAY';
 
@@ -18,6 +22,7 @@ export interface AttendanceRecord {
   checkOut?: string;
   totalHours?: number;
   status: AttendanceStatus;
+  anomalies?: AttendanceAnomaly[];
   leaveType?: string;
   leaveInfo?: { name: string; color: string; isPaid: boolean } | null;
   dayCredit?: number;
@@ -112,6 +117,56 @@ export const hrAttendanceApi = {
       if (Array.isArray(d)) return d;
       return (d as PaginatedResult<MonthlyAttendance>).data ?? [];
     }),
+};
+
+// ─── Giờ quẹt thẻ thô ─────────────────────────────────────────────────────────
+export interface AttendancePunch {
+  id: string;
+  employeeId: string;
+  employee?: {
+    fullName: string;
+    code: string;
+    orgUnit?: { name: string } | null;
+  };
+  punchedAt: string;
+  source: PunchSource;
+  deviceId?: string | null;
+  rawCode?: string | null;
+  note?: string | null;
+}
+
+export interface PunchImportResult {
+  valid: { employeeId: string; code: string; fullName: string; punchedAt: string }[];
+  errors: { row: number; message: string }[];
+}
+
+export const attendancePunchesApi = {
+  list: (params?: { page?: number; limit?: number; employeeId?: string; orgUnitId?: string; dateFrom?: string; dateTo?: string }) =>
+    apiClient.get<PaginatedResult<AttendancePunch>>('/hr-attendance/punches', { params }).then(r => r.data),
+
+  create: (data: { employeeId: string; punchedAt: string; note?: string }) =>
+    apiClient.post<AttendancePunch>('/hr-attendance/punches', data).then(r => r.data),
+
+  remove: (id: string) =>
+    apiClient.delete(`/hr-attendance/punches/${id}`).then(r => r.data),
+
+  importPreview: (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return apiClient.post<PunchImportResult>('/hr-attendance/punches/import', fd, {
+      params: { mode: 'preview' },
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data);
+  },
+
+  importCommit: (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return apiClient.post<{ imported: number; skipped: number }>('/hr-attendance/punches/import', fd, {
+      params: { mode: 'commit' },
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(r => r.data);
+  },
 };
 
 export const leavePoliciesApi = {
