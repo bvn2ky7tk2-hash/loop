@@ -94,18 +94,5 @@ jobs:
       # Test GATE: bao gồm integration cách ly tenant. Fail = chặn merge (KHÔNG còn || true).
       - run: npx jest --runInBand --forceExit
 
-  deploy-backend:
-    name: Deploy Backend to Staging
-    runs-on: ubuntu-latest
-    needs: backend-build
-    if: github.ref == 'refs/heads/develop'
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: backend-build
-          path: dist/
-      - name: Deploy to server
-        run: echo "Deploying backend to staging..."
-        # Add your deployment script here
+  # Deploy đã chuyển sang .github/workflows/deploy.yml (build→push GHCR→SSH→healthcheck→rollback).
+  # Kích hoạt thủ công (workflow_dispatch) hoặc tag release. Xem DEPLOYMENT.md.

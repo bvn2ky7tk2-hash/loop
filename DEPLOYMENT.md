@@ -1,0 +1,68 @@
+# Loop — Hướng dẫn Deploy (Go-live)
+
+> Pipeline: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) — build image → push GHCR → SSH vào server → backup DB → cập nhật schema → `docker compose up` → healthcheck readiness → rollback nếu fail.
+> Kích hoạt **thủ công** (Actions → Deploy → Run workflow) hoặc gắn **tag `v*`**.
+
+---
+
+## 1. ⛔ BLOCKER phải xử lý TRƯỚC lần deploy production đầu tiên
+
+**Migration history bị drift** — `prisma migrate deploy` trên DB mới **THẤT BẠI** (đã kiểm chứng: migration `20260527400000_process_workflow_integration` lỗi `relation "process_definitions" does not exist`). `apps/backend/entrypoint.sh` đang gọi `prisma migrate deploy` → **deploy production sẽ hỏng**.
+
+**Phải chọn 1 hướng trước khi go-live:**
+- **(A) Baseline/squash khuyến nghị:** từ DB production hiện hành (đã đúng schema), tạo 1 migration "init" sạch và `prisma migrate resolve --applied` để đồng bộ lại history. Sau đó `migrate deploy` chạy được.
+- **(B) Tạm thời:** đổi `entrypoint.sh` dùng `prisma db push` (đồng bộ schema trực tiếp, không cần history) — đơn giản nhưng mất rollback theo migration; **chỉ dùng nếu DB prod đã khớp schema** (db push sẽ chỉ additive).
+
+> Index go-live (`prisma/scripts/golive-composite-indexes.sql`) áp riêng bằng `psql -f` (CONCURRENTLY, không khóa bảng).
+
+---
+
+## 2. GitHub Secrets cần đặt (Settings → Secrets and variables → Actions)
+
+| Secret | Mô tả |
+|---|---|
+| `DEPLOY_HOST` | IP/hostname server đích |
+| `DEPLOY_USER` | user SSH (vd `deploy`) |
+| `DEPLOY_SSH_KEY` | private key SSH (PEM) |
+| `DEPLOY_PATH` | thư mục chứa `docker-compose.yml` + `.env` trên server |
+
+GHCR dùng `GITHUB_TOKEN` sẵn có — không cần thêm.
+
+---
+
+## 3. Chuẩn bị server (1 lần)
+
+- Cài **Docker + Docker Compose**.
+- Có `docker-compose.yml` + `scripts/db-backup.sh` + file `.env` tại `DEPLOY_PATH`.
+- **`.env` production phải có secret MẠNH** (app từ chối boot nếu yếu — xem mục 4):
+  ```bash
+  JWT_SECRET=$(openssl rand -hex 32)
+  JWT_REFRESH_SECRET=$(openssl rand -hex 32)
+  MINIO_SECRET_KEY=$(openssl rand -hex 24)
+  POSTGRES_PASSWORD=<mật khẩu mạnh>
+  NODE_ENV=production
+  DEPLOYMENT_MODE=saas        # hoặc onprem nếu single-tenant
+  TENANT_ENFORCEMENT=true
+  CORS_ORIGIN=https://<domain-that-that>
+  MINIO_PUBLIC_URL=https://<domain>/storage
+  ```
+- Compose backend trỏ image `ghcr.io/<owner>/<repo>/backend:latest` (đăng nhập GHCR nếu repo private).
+
+---
+
+## 4. Chốt an toàn đã có sẵn (không cần làm gì thêm)
+
+- **Secret yếu → KHÔNG boot:** `env-validation` chặn khởi động ở `NODE_ENV=production` nếu JWT/JWT_REFRESH/MINIO secret là giá trị mặc định/yếu/<32 ký tự.
+- **Liveness/Readiness:** `GET /health/liveness` (process) + `/health/readiness` (DB) — pipeline dùng readiness để healthcheck; cấu hình orchestrator probe 2 path này.
+- **Backup trước deploy:** pipeline gọi `scripts/db-backup.sh` trước khi đổi schema, fail thì dừng.
+
+---
+
+## 5. Trình tự go-live đề xuất
+
+1. Xử lý **BLOCKER mục 1** (baseline migration).
+2. Đặt secrets (mục 2) + chuẩn bị server (mục 3) với secret mạnh.
+3. Deploy **staging** trước (`workflow_dispatch` → environment=staging), smoke test.
+4. Áp index: `psql "$DATABASE_URL" -f apps/backend/prisma/scripts/golive-composite-indexes.sql`.
+5. **Load test ≥500 user** + **pen-test cross-tenant** (cổng cuối, xem `_bmad-output/planning-artifacts/go-live-readiness-2026-06.md`).
+6. Deploy **production** + theo dõi readiness/health.
