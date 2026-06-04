@@ -2,19 +2,42 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../common/services/redis.service';
 import { TenantAwareService } from '../common/services/tenant-aware.service';
+import { isTenantEnforced } from '../common/config/tenant.config';
 import { InvoiceType, InvoiceStatus } from '../generated/prisma';
+
+const ANALYTICS_TTL = 120; // 2 phút — analytics tài chính ít đổi theo phút
 
 @Injectable({ scope: Scope.REQUEST })
 export class FinanceAnalyticsService extends TenantAwareService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
     @Inject(REQUEST) req?: any,
   ) {
     super(req);
   }
 
-  async getSummary() {
+  // Cache scoped tenant. Fail-safe: tenantId rỗng khi enforcement → KHÔNG cache
+  // (tránh đụng key chéo tenant). Cùng pattern với DashboardService.
+  private async cached<T>(name: string, fn: () => Promise<T>): Promise<T> {
+    const tid = this.getTenantId();
+    if (isTenantEnforced() && !tid) return fn();
+    const key = `finance-analytics:${name}:${tid ?? 'default'}`;
+    const hit = await this.redis.get(key).catch(() => null);
+    if (hit) return JSON.parse(hit) as T;
+    const data = await fn();
+    await this.redis.setex(key, ANALYTICS_TTL, JSON.stringify(data)).catch(() => {});
+    return data;
+  }
+
+  getSummary() { return this.cached('summary', () => this.computeSummary()); }
+  getArAging() { return this.cached('ar-aging', () => this.computeArAging()); }
+  getBudgetVsActual() { return this.cached('budget-vs-actual', () => this.computeBudgetVsActual()); }
+  getMonthlyPL() { return this.cached('monthly-pl', () => this.computeMonthlyPL()); }
+
+  private async computeSummary() {
     const now       = new Date();
     const yearStart = new Date(now.getFullYear(), 0, 1);
 
@@ -110,7 +133,7 @@ export class FinanceAnalyticsService extends TenantAwareService {
     };
   }
 
-  async getArAging() {
+  private async computeArAging() {
     const now = new Date();
 
     const overdueInvoices = await this.prisma.invoice.findMany({
@@ -156,7 +179,7 @@ export class FinanceAnalyticsService extends TenantAwareService {
    * E24.4 — Budget vs Actual: tổng hợp theo category từ BudgetLine ACTIVE.
    * Group by category, sum allocatedAmount và usedAmount.
    */
-  async getBudgetVsActual() {
+  private async computeBudgetVsActual() {
     const tid = this.getTenantId();
     const lines = await this.prisma.budgetLine.findMany({
       where: {
@@ -203,7 +226,7 @@ export class FinanceAnalyticsService extends TenantAwareService {
       .sort((a, b) => b.allocated - a.allocated);
   }
 
-  async getMonthlyPL() {
+  private async computeMonthlyPL() {
     const results: {
       month: string;
       revenue: number;
