@@ -66,3 +66,23 @@ GHCR dùng `GITHUB_TOKEN` sẵn có — không cần thêm.
 4. Áp index: `psql "$DATABASE_URL" -f apps/backend/prisma/scripts/golive-composite-indexes.sql`.
 5. **Load test ≥500 user** + **pen-test cross-tenant** (cổng cuối, xem `_bmad-output/planning-artifacts/go-live-readiness-2026-06.md`).
 6. Deploy **production** + theo dõi readiness/health.
+
+---
+
+## 6. Giám sát (Observability)
+
+- **Prometheus**: scrape `GET /metrics` (public, không auth — giới hạn ở tầng network/ingress).
+  Có sẵn: `http_requests_total{route,status}`, `http_request_duration_seconds` (histogram →
+  p50/p95/p99 qua `histogram_quantile`), `nodejs_heap_used_bytes`, `process_uptime_seconds`.
+  Dựng Grafana dashboard: request rate, error rate (status≥500), latency p95/p99 per route.
+- **Health**: `GET /api/v1/admin/health` (ADMIN) — DB/Redis/queue depth/storage/env. Probe hạ tầng:
+  `GET /health/liveness` + `GET /health/readiness` (public).
+- **Background jobs**: số job failed hiển thị ở `/admin/health` (queues). DLQ đầy đủ (re-queue) =
+  hạng mục follow-up; hiện job giữ `removeOnFail: 100` để điều tra.
+
+## 7. Backup
+
+- **Theo lịch**: `.github/workflows/backup.yml` — cron hằng ngày SSH chạy `scripts/db-backup.sh`
+  (giữ 15 bản). Dùng chung secrets DEPLOY_*. Production nâng cao: upload object storage hoặc
+  snapshot managed Postgres.
+- **Trước mỗi deploy**: pipeline `deploy.yml` tự `db-backup.sh` trước khi đổi schema (fail thì dừng).

@@ -1,0 +1,36 @@
+name: DB Backup (scheduled)
+
+# Backup DB tự động theo lịch — đúng kiến trúc: scheduler NGOÀI app (không backup trong
+# container ephemeral). SSH vào server chạy scripts/db-backup.sh (đã giữ 15 bản gần nhất).
+# Dùng chung secrets với deploy.yml (DEPLOY_HOST/USER/SSH_KEY/PATH). Xem DEPLOYMENT.md.
+#
+# Production nâng cao: trỏ db-backup.sh upload lên object storage (S3/MinIO) thay vì đĩa host,
+# hoặc dùng snapshot tự động của managed Postgres.
+
+on:
+  schedule:
+    - cron: '0 18 * * *' # 18:00 UTC = 01:00 giờ VN hằng ngày
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: Backup qua SSH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kiểm tra secrets
+        run: |
+          if [ -z "${{ secrets.DEPLOY_HOST }}" ]; then
+            echo "::warning::Chưa cấu hình DEPLOY_HOST — bỏ qua backup. Xem DEPLOYMENT.md."
+            exit 0
+          fi
+      - name: SSH chạy db-backup.sh
+        if: ${{ secrets.DEPLOY_HOST != '' }}
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            bash scripts/db-backup.sh scheduled

@@ -13,6 +13,8 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { PermissionGuard } from './common/guards/permission.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
 import { ModuleEnabledGuard } from './common/guards/module-enabled.guard';
+import { MetricsModule } from './common/metrics/metrics.module';
+import { MetricsInterceptor } from './common/metrics/metrics.interceptor';
 import { LoggerModule } from 'nestjs-pino';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
@@ -95,6 +97,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     { provide: APP_GUARD, useClass: TenantGuard },
     // Chạy SAU TenantGuard (đã có req.__tenantId) → chặn API của module bị tắt.
     { provide: APP_GUARD, useClass: ModuleEnabledGuard },
+    // NGOÀI CÙNG: đo metrics trọn vòng đời request (Prometheus).
+    { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor },
     // Chạy SAU guards, TRƯỚC OrgScopeInterceptor → set tenantId vào CLS cho Prisma extension.
     { provide: APP_INTERCEPTOR, useClass: TenantClsInterceptor },
     { provide: APP_INTERCEPTOR, useClass: OrgScopeInterceptor },
@@ -106,6 +110,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
       middleware: { mount: true, generateId: true },
     }),
     CommonModule,
+    MetricsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         // Mọi endpoint: mặc định 100 req / 60s / (tenant:IP). Cấu hình qua env
